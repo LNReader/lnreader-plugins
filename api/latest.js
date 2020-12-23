@@ -15,8 +15,6 @@ router.get("/latest", (req, res) => {
         $ = cheerio.load(body);
 
         $(".page-item-detail").each(function (result) {
-            let novelName = null;
-
             novelName = $(this).find("h5 > a").text();
             novelCover = $(this).find("img").attr("src");
             novelUrl = $(this)

@@ -17,6 +17,9 @@ app.get("/", (req, res) =>
 );
 
 app.use("/api/", require("./api/latest"));
+app.use("/api/", require("./api/novel"));
+app.use("/api/", require("./api/search"));
+app.use("/api/", require("./api/chapter"));
 
 const PORT = process.env.PORT || 5000;
 
