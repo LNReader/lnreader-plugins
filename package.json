@@ -1,0 +1,19 @@
+{
+    "name": "lnreader-backend",
+    "version": "1.0.0",
+    "description": "Backend for LNReader",
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon server"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.5",
+        "express": "^4.17.1",
+        "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.6"
+    }
+}
