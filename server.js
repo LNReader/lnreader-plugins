@@ -20,6 +20,7 @@ app.use("/api/", require("./api/latest"));
 app.use("/api/", require("./api/novel"));
 app.use("/api/", require("./api/search"));
 app.use("/api/", require("./api/chapter"));
+app.use("/api/", require("./api/all_novels"));
 
 const PORT = process.env.PORT || 5000;
 
