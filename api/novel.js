@@ -7,7 +7,9 @@ const router = express.Router();
 const baseUrl = "https://boxnovel.com/";
 
 router.get("/novel/:novelUrl", (req, res) => {
-    url = baseUrl + "novel/" + req.params.novelUrl;
+    novelUrl = req.params.novelUrl;
+    url = baseUrl + "novel/" + novelUrl;
+
     request(url, (err, response, body) => {
         if (err) throw err;
 
@@ -63,6 +65,7 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel = {
             novelName,
+            novelUrl,
             novelCover,
             novelSummary,
             novelDetails,
