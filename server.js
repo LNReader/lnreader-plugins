@@ -10,17 +10,17 @@ app.use(
 
 app.get("/", (req, res) =>
     res.json({
-        Author: "Rajarshee Chatterjee",
+        Author: "@rajarsheechatterjee",
         Version: "1.0.0",
-        Github: "https://github.com/rajarsheechatterjee/LNReader-backend",
+        Github: "https://github.com/rajarsheechatterjee/lnreader-extensions",
     })
 );
 
-app.use("/api/", require("./api/latest"));
-app.use("/api/", require("./api/novel"));
-app.use("/api/", require("./api/search"));
-app.use("/api/", require("./api/chapter"));
-app.use("/api/", require("./api/all_novels"));
+// Box Novel
+app.use("/api/1/", require("./src/en/boxnovel/boxnovel"));
+
+// ReadLightNovel
+app.use("/api/2/", require("./src/en/readlightnovel/readlightnovel"));
 
 const PORT = process.env.PORT || 5000;
 

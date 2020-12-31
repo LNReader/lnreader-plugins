@@ -4,7 +4,8 @@
     "description": "Backend for LNReader",
     "main": "server.js",
     "scripts": {
-        "start": "nodemon server"
+        "start": "node server",
+        "server": "nodemon server"
     },
     "author": "",
     "license": "ISC",
