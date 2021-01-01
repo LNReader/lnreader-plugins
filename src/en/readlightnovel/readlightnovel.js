@@ -57,6 +57,8 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel.extensionId = 2;
 
+        novel.sourceName = "ReadLightNovel";
+
         novel.sourceUrl = url;
 
         novel.novelUrl = `${novelUrl}/`;

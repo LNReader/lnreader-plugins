@@ -60,6 +60,8 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel.extensionId = 1;
 
+        novel.sourceName = "BoxNovel";
+
         novel.sourceUrl = url;
 
         novel.novelUrl = `${novelUrl}/`;
