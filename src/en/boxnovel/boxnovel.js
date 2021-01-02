@@ -208,7 +208,7 @@ router.get("/search/", (req, res) => {
             novelUrl = $(this)
                 .find("h4 > a")
                 .attr("href")
-                .replace(`${baseUrl}`, "");
+                .replace(`${baseUrl}/`, "");
 
             novels.push({
                 extensionId: 1,
