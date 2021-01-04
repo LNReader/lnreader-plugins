@@ -88,7 +88,15 @@ router.get("/novel/:novelUrl", (req, res) => {
             novel[detailName] = detail;
         });
 
-        novel.novelSummary = $(".c_000").text();
+        $(".description-summary > div.summary__content").find("em").remove();
+
+        novel.novelSummary = $(".description-summary > div.summary__content")
+            .text()
+            .replace(/[\t\n]/g, "");
+
+        // if (novel.novelSummary === "") {
+        //     novel.novelSummary = $(".c_000").text();
+        // }
 
         let novelChapters = [];
 
