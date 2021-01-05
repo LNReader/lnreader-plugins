@@ -90,7 +90,9 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         $(".description-summary > div.summary__content").find("em").remove();
 
-        novel.novelSummary = $(".description-summary > div.summary__content")
+        novel.novelSummary = $(
+            ".description-summary > div.summary__content > div"
+        )
             .text()
             .replace(/[\t\n]/g, "");
 
