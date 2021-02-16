@@ -150,7 +150,7 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
             nextChapter = $(".nav-next")
                 .find("a")
                 .attr("href")
-                .replace(baseUrl, "");
+                .replace(baseUrl + "/" + req.params.novelUrl + "/", "");
         }
 
         let prevChapter = null;
@@ -159,7 +159,7 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
             prevChapter = $(".nav-previous")
                 .find("a")
                 .attr("href")
-                .replace(baseUrl, "");
+                .replace(baseUrl + "/" + req.params.novelUrl + "/", "");
         }
 
         chapter = {
