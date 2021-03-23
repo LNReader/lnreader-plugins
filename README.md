@@ -6,7 +6,7 @@ This repository contains a REST API for [LNReader](https://github.com/rajarsheec
 
 #### Clone this repository
 ```
-git clone https://github.com/LNReader/lnreader-extensions.git
+git clone https://github.com/rajarsheechatterjee/lnreader-extensions.git
 ```
 
 #### Install dependencies
