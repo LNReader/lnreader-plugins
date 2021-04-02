@@ -26,6 +26,9 @@ app.use("/api/1/", require("./src/en/boxnovel/boxnovel"));
 // ReadLightNovel
 app.use("/api/2/", require("./src/en/readlightnovel/readlightnovel"));
 
+// WuxiaWorld
+app.use("/api/3/", require("./src/en/fastnovel/fastnovel"));
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

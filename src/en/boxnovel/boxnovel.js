@@ -193,26 +193,6 @@ router.get("/search/", (req, res) => {
 
         $(".c-tabs-item__content").each(function (result) {
             novelName = $(this).find("h4 > a").text();
-
-            // let novelDetails = {};
-
-            // $(this)
-            //     .find(".post-content_item")
-            //     .each(function (result) {
-            //         detailName = $(this)
-            //             .find(".summary-heading > h5")
-            //             .text()
-            //             .replace(/[\t\n]/g, "")
-            //             .trim();
-            //         detail = $(this)
-            //             .find(".summary-content")
-            //             .text()
-            //             .replace(/[\t\n]/g, "")
-            //             .trim();
-
-            //         novelDetails[detailName] = detail;
-            //     });
-
             novelCover = $(this).find("img").attr("src");
 
             novelUrl = $(this)

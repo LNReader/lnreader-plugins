@@ -104,11 +104,6 @@ router.get("/novel/:novelUrl", (req, res) => {
                     .trim();
 
                 releaseDate = null;
-                // $(this)
-                //     .find("span")
-                //     .text()
-                //     .replace(/[\t\n]/g, "")
-                //     .trim();
 
                 chapterUrl = $(this)
                     .find("a")
