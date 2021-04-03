@@ -19,6 +19,13 @@ extensions = [
             "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/fastnovel/icon.png?raw=true",
         sourceLanguage: "English",
     },
+    {
+        sourceId: 4,
+        sourceName: "ReadNovelFull",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/readnovelfull/icon.png?raw=true",
+        sourceLanguage: "English",
+    },
 ];
 
 module.exports = extensions;

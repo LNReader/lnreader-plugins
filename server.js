@@ -1,5 +1,4 @@
 const express = require("express");
-
 const extensions = require("./src/extensions");
 
 const app = express();
@@ -19,15 +18,10 @@ app.get("/", (req, res) =>
 );
 
 app.get("/api/", (req, res) => res.json(extensions));
-
-// Box Novel
 app.use("/api/1/", require("./src/en/boxnovel/boxnovel"));
-
-// ReadLightNovel
 app.use("/api/2/", require("./src/en/readlightnovel/readlightnovel"));
-
-// WuxiaWorld
 app.use("/api/3/", require("./src/en/fastnovel/fastnovel"));
+app.use("/api/4/", require("./src/en/readnovelfull/readnovelfull"));
 
 const PORT = process.env.PORT || 5000;
 
