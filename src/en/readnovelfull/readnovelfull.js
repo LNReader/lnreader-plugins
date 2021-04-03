@@ -22,6 +22,7 @@ router.get("/novels/", (req, res) => {
             let novelUrl = $(this)
                 .find("h3.novel-title > a")
                 .attr("href")
+                .replace(".html", "")
                 .substring(1);
             novelUrl = `${novelUrl}/`;
             let novelName = $(this).find("h3.novel-title > a").text();
@@ -43,7 +44,7 @@ router.get("/novels/", (req, res) => {
 
 router.get("/novel/:novelUrl", (req, res) => {
     let novelUrl = req.params.novelUrl;
-    url = `${baseUrl}/${novelUrl}`;
+    url = `${baseUrl}/${novelUrl}.html`;
 
     request(url, (err, response, body) => {
         $ = cheerio.load(body);
@@ -170,6 +171,7 @@ router.get("/search/", (req, res) => {
             let novelUrl = $(this)
                 .find("h3.novel-title > a")
                 .attr("href")
+                .replace(".html", "")
                 .substring(1);
             novelUrl = `${novelUrl}/`;
             let novelName = $(this).find("h3.novel-title > a").text();
