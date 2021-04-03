@@ -59,9 +59,9 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel.novelUrl = `${novelUrl}/`;
 
-        novel.novelName = $("h3.title").text();
+        novel.novelName = $("div.book > img").attr("alt");
 
-        novel.novelCover = $("img").attr("src");
+        novel.novelCover = $("div.book > img").attr("src");
 
         novel.novelSummary = $("div.desc-text").text();
 
