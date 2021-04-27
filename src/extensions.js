@@ -34,6 +34,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 5,
+        sourceUrl: "https://www.mtlnovel.com/",
+        sourceName: "MTLNovel",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/mtlnovel/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;

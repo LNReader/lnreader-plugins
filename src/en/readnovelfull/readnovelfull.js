@@ -155,7 +155,6 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
 
 router.get("/search/", (req, res) => {
     let searchTerm = req.query.s;
-    console.log(searchTerm);
     searchUrl = `https://readnovelfull.com/search?keyword=`;
 
     url = `${searchUrl}${searchTerm}`;
