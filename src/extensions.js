@@ -4,7 +4,7 @@ extensions = [
         sourceUrl: "https://boxnovel.com/",
         sourceName: "BoxNovel",
         sourceCover:
-            "https://boxnovel.com/wp-content/uploads/2018/04/BoxNovel-1.png",
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/boxnovel/icon.png?raw=true",
         sourceLanguage: "English",
         status: 1,
     },
@@ -12,7 +12,8 @@ extensions = [
         sourceId: 2,
         sourceUrl: "https://www.readlightnovel.org/",
         sourceName: "ReadLightNovel",
-        sourceCover: "https://www.readlightnovel.org/assets/images/logo6.png",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/readlightnovel/icon.png?raw=true",
         sourceLanguage: "English",
         status: 1,
     },
@@ -48,7 +49,7 @@ extensions = [
         sourceUrl: "https://www.novelhall.com/",
         sourceName: "NovelHall",
         sourceCover:
-            "https://www.novelhall.com/statics/default/images/logo.b5b4c.png",
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/novelhall/icon.png?raw=true",
         sourceLanguage: "English",
         status: 1,
     },
