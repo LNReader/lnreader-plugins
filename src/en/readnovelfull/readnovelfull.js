@@ -93,16 +93,17 @@ router.get("/novel/:novelUrl", (req, res) => {
         $(".panel-body")
             .find("li")
             .each(function (result) {
-                chapterName = $(this).find("a").attr("title");
+                let chapterName = $(this).find("a").attr("title");
 
-                releaseDate = null;
+                let releaseDate = null;
 
-                chapterUrl = $(this).find("a").attr("href");
+                let chapterUrl = $(this).find("a").attr("href");
+                chapterUrl = chapterUrl.replace(`/${novelUrl}/`, "");
 
                 novelChapters.push({
                     chapterName,
                     releaseDate,
-                    chapterUrl: chapterUrl.replace(`/${novelUrl}/`, ""),
+                    chapterUrl,
                 });
             });
 

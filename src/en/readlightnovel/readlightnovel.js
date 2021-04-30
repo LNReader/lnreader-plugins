@@ -109,10 +109,12 @@ router.get("/novel/:novelUrl", (req, res) => {
 
                     releaseDate = null;
 
-                    chapterUrl = $(this)
-                        .find("a")
-                        .attr("href")
-                        .replace(baseUrl, "");
+                    chapterUrl = $(this).find("a").attr("href");
+
+                    chapterUrl = chapterUrl.replace(
+                        `${baseUrl}/${novelUrl}/`,
+                        ""
+                    );
 
                     if (volumeName.includes("Volume")) {
                         chapterName = volumeName + " " + chapterName;
@@ -121,7 +123,7 @@ router.get("/novel/:novelUrl", (req, res) => {
                     novelChapters.push({
                         chapterName,
                         releaseDate,
-                        chapterUrl: chapterUrl.replace(`/${novelUrl}/`, ""),
+                        chapterUrl,
                     });
                 });
         });
