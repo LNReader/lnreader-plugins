@@ -1,6 +1,7 @@
 const express = require("express");
 const cheerio = require("cheerio");
 const request = require("request");
+const chromium = require("chrome-aws-lambda");
 const puppeteer = require("puppeteer");
 
 const baseUrl = "https://www.wuxiaworld.com/";
@@ -9,9 +10,12 @@ const router = express.Router();
 
 router.get("/novels/", async (req, res) => {
     let url = `https://www.wuxiaworld.com/novels`;
-
     const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
 
@@ -47,9 +51,12 @@ router.get("/novels/", async (req, res) => {
 router.get("/novel/:novelUrl", async (req, res) => {
     let novelUrl = req.params.novelUrl;
     let url = `${baseUrl}novel/${novelUrl}/`;
-
     const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
 
@@ -123,9 +130,12 @@ router.get("/novel/:novelUrl/:chapterUrl", async (req, res) => {
 
     const novelUrl = `${req.params.novelUrl}/`;
     const chapterUrl = `${req.params.chapterUrl}/`;
-
     const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
 
