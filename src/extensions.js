@@ -62,6 +62,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 8,
+        sourceUrl: "https://novelfull.com/",
+        sourceName: "NovelFull",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/novelfull/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;

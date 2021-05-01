@@ -25,6 +25,7 @@ app.use("/api/4/", require("./src/en/readnovelfull/readnovelfull"));
 app.use("/api/5/", require("./src/en/mtlnovel/mtlnovel"));
 app.use("/api/6/", require("./src/en/novelhall/novelhall"));
 app.use("/api/7/", require("./src/en/wuxiaworld/wuxiaworld"));
+app.use("/api/8/", require("./src/en/novelfull/novelfull"));
 
 const PORT = process.env.PORT || 5000;
 

@@ -4,12 +4,14 @@ const request = require("request");
 
 const router = express.Router();
 
-const baseUrl = "https://readnovelfull.com";
+const baseUrl = "https://novelfull.com";
 
 // Top novels
 
 router.get("/novels/", (req, res) => {
-    url = `${baseUrl}/most-popular-novel`;
+    let url = `${baseUrl}/most-popular`;
+
+    console.log(url);
 
     request(url, (err, response, body) => {
         if (err) throw err;
@@ -18,18 +20,21 @@ router.get("/novels/", (req, res) => {
 
         $ = cheerio.load(body);
 
-        $("div.col-novel-main > div.list-novel > .row").each(function (result) {
+        $("div.col-truyen-main > div.list-truyen > .row").each(function (
+            result
+        ) {
             let novelUrl = $(this)
-                .find("h3.novel-title > a")
+                .find("h3.truyen-title > a")
                 .attr("href")
                 .replace(".html", "")
                 .substring(1);
             novelUrl = `${novelUrl}/`;
-            let novelName = $(this).find("h3.novel-title > a").text();
+            let novelName = $(this).find("h3.truyen-title > a").text();
             let novelCover = $(this).find("img").attr("src");
+            novelCover = baseUrl + novelCover;
 
             novel = {
-                extensionId: 4,
+                extensionId: 8,
                 novelUrl,
                 novelName,
                 novelCover,
@@ -51,9 +56,9 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         let novel = {};
 
-        novel.extensionId = 4;
+        novel.extensionId = 8;
 
-        novel.sourceName = "ReadNovelFull";
+        novel.sourceName = "NovelFull";
 
         novel.sourceUrl = url;
 
@@ -61,18 +66,18 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel.novelName = $("div.book > img").attr("alt");
 
-        novel.novelCover = $("div.book > img").attr("src");
+        novel.novelCover = baseUrl + $("div.book > img").attr("src");
 
         novel.novelSummary = $("div.desc-text").text();
 
-        novel["Author(s)"] = $("li > h3")
+        novel["Author(s)"] = $("div.info > div > h3")
             .filter(function () {
                 return $(this).text().trim() === "Author:";
             })
             .siblings()
             .text();
 
-        novel["Genre(s)"] = $("li")
+        novel["Genre(s)"] = $("div.info > div")
             .filter(function () {
                 return $(this).find("h3").text().trim() === "Genre:";
             })
@@ -81,17 +86,18 @@ router.get("/novel/:novelUrl", (req, res) => {
 
         novel["Artist(s)"] = null;
 
-        novel.Status = $("li > h3")
+        novel.Status = $("div.info > div > h3")
             .filter(function () {
                 return $(this).text().trim() === "Status:";
             })
-            .siblings()
+            .next()
             .text();
 
         const novelId = $("#rating").attr("data-novel-id");
+        console.log(novelId);
 
         const chapterListUrl =
-            "https://readnovelfull.com/ajax/chapter-archive?novelId=" + novelId;
+            baseUrl + "/ajax/chapter-option?novelId=" + novelId;
 
         function callback(res) {
             console.log(res);
@@ -102,20 +108,18 @@ router.get("/novel/:novelUrl", (req, res) => {
             $ = cheerio.load(body);
             let novelChapters = [];
 
-            $(".panel-body")
-                .find("li")
-                .each(function (result) {
-                    let chapterName = $(this).find("a").attr("title");
-                    let releaseDate = null;
-                    let chapterUrl = $(this).find("a").attr("href");
-                    chapterUrl = chapterUrl.replace(`/${novelUrl}/`, "");
+            $("select > option").each(function (result) {
+                let chapterName = $(this).text();
+                let releaseDate = null;
+                let chapterUrl = $(this).attr("value");
+                chapterUrl = chapterUrl.replace(`/${novelUrl}/`, "");
 
-                    novelChapters.push({
-                        chapterName,
-                        releaseDate,
-                        chapterUrl,
-                    });
+                novelChapters.push({
+                    chapterName,
+                    releaseDate,
+                    chapterUrl,
                 });
+            });
             callback(novelChapters);
 
             res.json(novel);
@@ -132,9 +136,9 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
 
         $ = cheerio.load(body);
 
-        let chapterName = $(".chr-title").attr("title");
+        let chapterName = $(".chapter-title").attr("title");
 
-        chapterText = $("#chr-content").text();
+        let chapterText = $("#chapter-content").text();
 
         let nextChapter = null;
         if ($("a#next_chap").attr("href")) {
@@ -151,7 +155,7 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
         }
 
         chapter = {
-            extensionId: 4,
+            extensionId: 8,
             novelUrl: `${req.params.novelUrl}`,
             chapterUrl: `${req.params.chapterUrl}`,
             chapterName,
@@ -166,7 +170,7 @@ router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
 
 router.get("/search/", (req, res) => {
     let searchTerm = req.query.s;
-    searchUrl = `https://readnovelfull.com/search?keyword=`;
+    searchUrl = `https://novelfull.com/search?keyword=`;
 
     url = `${searchUrl}${searchTerm}`;
 
@@ -177,18 +181,20 @@ router.get("/search/", (req, res) => {
 
         let novels = [];
 
-        $("div.col-novel-main > div.list-novel > .row").each(function (result) {
+        $("div.col-truyen-main > div.list-truyen > .row").each(function (
+            result
+        ) {
             let novelUrl = $(this)
-                .find("h3.novel-title > a")
+                .find("h3.truyen-title > a")
                 .attr("href")
                 .replace(".html", "")
                 .substring(1);
             novelUrl = `${novelUrl}/`;
-            let novelName = $(this).find("h3.novel-title > a").text();
+            let novelName = $(this).find("h3.truyen-title > a").text();
             let novelCover = $(this).find("img").attr("src");
 
             novel = {
-                extensionId: 4,
+                extensionId: 8,
                 novelUrl,
                 novelName,
                 novelCover,
