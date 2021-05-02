@@ -1,29 +1,22 @@
 const express = require("express");
-const cheerio = require("cheerio");
-const request = require("request");
-const {
-    novelScraper,
-    searchScraper,
-    chapterScraper,
-    novelsScraper,
-} = require("./boxnovelScraper");
+const boxNovelScraper = require("./boxnovelScraper");
 
 const router = express.Router();
 
 // Top novels
 
-router.get("/novels/:pageNo/", novelsScraper);
+router.get("/novels/:pageNo/", boxNovelScraper.novelsScraper);
 
 // Novel
 
-router.get("/novel/:novelUrl", novelScraper);
+router.get("/novel/:novelUrl", boxNovelScraper.novelScraper);
 
 // Chapter
 
-router.get("/novel/:novelUrl/:chapterUrl", chapterScraper);
+router.get("/novel/:novelUrl/:chapterUrl", boxNovelScraper.chapterScraper);
 
 // Search
 
-router.get("/search/", searchScraper);
+router.get("/search/", boxNovelScraper.searchScraper);
 
 module.exports = router;

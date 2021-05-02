@@ -175,7 +175,12 @@ const searchScraper = async (req, res) => {
     res.json(novels);
 };
 
-module.exports = { novelsScraper, novelScraper, chapterScraper, searchScraper };
+module.exports = boxNovelScraper = {
+    novelsScraper,
+    novelScraper,
+    chapterScraper,
+    searchScraper,
+};
 
 const scraper = async (url) => {
     const result = await fetch(url);
