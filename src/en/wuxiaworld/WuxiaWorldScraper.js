@@ -11,7 +11,7 @@ const novelsScraper = async (req, res) => {
 
     let novels = [];
 
-    data.map((novel) => {
+    data.items.map((novel) => {
         let novelName = novel.name;
         let novelCover = novel.coverUrl;
         let novelUrl = novel.slug;
