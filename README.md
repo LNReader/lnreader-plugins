@@ -1,32 +1,36 @@
 # LNReader Sources
 
-This repository contains a REST API for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
+Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
+
+## Sources
+
+| Source         |       Status       |
+|----------------|:------------------:|
+| BoxNovel       | :heavy_check_mark: |
+| ReadLightNovel | :heavy_check_mark: |
+| FastNovel      |         :x:        |
+| ReadNovelFull  | :heavy_check_mark: |
+| MTLNovel       |         :x:        |
+| NovelHall      | :heavy_check_mark: |
+| WuxiaWorld     | :heavy_check_mark: |
+| NovelFull      | :heavy_check_mark: |
 
 ## Setup locally
 
-#### Clone this repository
+Clone this repository
 
 ```
 git clone https://github.com/rajarsheechatterjee/lnreader-extensions.git
 ```
 
-#### Install dependencies
+Install dependencies
 
 ```
 npm install
 ```
 
-#### Start the server
+Start the server
 
 ```
 npm start
 ```
-
-### Currently supported sources
-
--   BoxNovel
--   ReadLightNovel
--   FastNovel
--   ReadNovelFull
--   MTLNovel
--   NovelHall
