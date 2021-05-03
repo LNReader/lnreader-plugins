@@ -3,11 +3,7 @@ const fastNovelScraper = require("./FastNovelScraper");
 
 const router = express.Router();
 
-// Top Novels
-
 router.get("/novels/", fastNovelScraper.novelsScraper);
-
-// Novel
 
 router.get("/novel/:novelUrl", fastNovelScraper.novelScraper);
 
