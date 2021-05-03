@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
+const { htmlToText } = require("html-to-text");
 
 const baseUrl = "https://www.novelhall.com/";
 
@@ -107,7 +108,8 @@ const chapterScraper = async (req, res) => {
     $ = cheerio.load(body);
 
     const chapterName = $("h1").text();
-    const chapterText = $("div.entry-content").text();
+    let chapterText = $("div.entry-content").html();
+    chapterText = htmlToText(chapterText);
 
     let nextChapter = null;
     nextChapter = $('a[rel="next"]').attr("href");
