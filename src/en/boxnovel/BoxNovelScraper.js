@@ -5,7 +5,8 @@ const baseUrl = "https://boxnovel.com/novel";
 const searchUrl = "https://boxnovel.com/";
 
 const novelsScraper = async (req, res) => {
-    const orderBy = req.params.orderBy;
+    const orderBy = req.params.o;
+    const pageNo = req.params.pageNo;
 
     let url1 = `${baseUrl}/page/1/?m_orderby=${orderBy}`;
     let url2 = `${baseUrl}/page/2/?m_orderby=${orderBy}`;
@@ -23,6 +24,8 @@ const novelsScraper = async (req, res) => {
 const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}/`;
+
+    console.log(url);
 
     const result = await fetch(url);
     const body = await result.text();

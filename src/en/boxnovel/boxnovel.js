@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Top novels
 
-router.get("/novels/:pageNo/", boxNovelScraper.boxNovelScraper);
+router.get("/novels/:pageNo", boxNovelScraper.novelsScraper);
 
 // Novel
 
