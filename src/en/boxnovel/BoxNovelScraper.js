@@ -8,17 +8,33 @@ const novelsScraper = async (req, res) => {
     const orderBy = req.params.o;
     const pageNo = req.params.pageNo;
 
-    let url1 = `${baseUrl}/page/1/?m_orderby=${orderBy}`;
-    let url2 = `${baseUrl}/page/2/?m_orderby=${orderBy}`;
-    let url3 = `${baseUrl}/page/3/?m_orderby=${orderBy}`;
-    let url4 = `${baseUrl}/page/4/?m_orderby=${orderBy}`;
+    let url = `${baseUrl}/page/1/?m_orderby=${orderBy}`;
 
-    const page1 = await scraper(url1);
-    const page2 = await scraper(url2);
-    const page3 = await scraper(url3);
-    const page4 = await scraper(url4);
+    const result = await fetch(url);
+    const body = await result.text();
 
-    res.json([...page1, ...page2, ...page3, ...page4]);
+    $ = cheerio.load(body);
+
+    let novels = [];
+
+    $(".page-item-detail").each(function (result) {
+        const novelName = $(this).find("h5 > a").text();
+        const novelCover = $(this).find("img").attr("src");
+
+        let novelUrl = $(this).find("h5 > a").attr("href");
+        novelUrl = novelUrl.replace(`${baseUrl}/`, "");
+
+        const novel = {
+            extensionId: 1,
+            novelName,
+            novelCover,
+            novelUrl,
+        };
+
+        novels.push(novel);
+    });
+
+    res.json(novels);
 };
 
 const novelScraper = async (req, res) => {
@@ -183,32 +199,4 @@ module.exports = boxNovelScraper = {
     novelScraper,
     chapterScraper,
     searchScraper,
-};
-
-const scraper = async (url) => {
-    const result = await fetch(url);
-    const body = await result.text();
-
-    let novels = [];
-
-    $ = cheerio.load(body);
-
-    $(".page-item-detail").each(function (result) {
-        const novelName = $(this).find("h5 > a").text();
-        const novelCover = $(this).find("img").attr("src");
-
-        let novelUrl = $(this).find("h5 > a").attr("href");
-        novelUrl = novelUrl.replace(`${baseUrl}/`, "");
-
-        const novel = {
-            extensionId: 1,
-            novelName,
-            novelCover,
-            novelUrl,
-        };
-
-        novels.push(novel);
-    });
-
-    return novels;
 };
