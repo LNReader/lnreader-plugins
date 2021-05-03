@@ -181,7 +181,7 @@ const searchScraper = async (req, res) => {
         const novelCover = $(this).find("img").attr("src");
 
         let novelUrl = $(this).find("h4 > a").attr("href");
-        novelUrl = novelUrlreplace(`${baseUrl}/`, "");
+        novelUrl = novelUrl.replace(`${baseUrl}/`, "");
 
         const novel = {
             extensionId: 1,
