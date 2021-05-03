@@ -1,15 +1,10 @@
-const express = require("express");
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
 const baseUrl = "https://boxnovel.com/novel";
 const searchUrl = "https://boxnovel.com/";
 
-const router = express.Router();
-
-// Top novels
-
-router.get("/novels/:pageNo/", async (req, res) => {
+const novelsScraper = async (req, res) => {
     const orderBy = req.params.orderBy;
 
     let url1 = `${baseUrl}/page/1/?m_orderby=${orderBy}`;
@@ -23,11 +18,9 @@ router.get("/novels/:pageNo/", async (req, res) => {
     const page4 = await scraper(url4);
 
     res.json([...page1, ...page2, ...page3, ...page4]);
-});
+};
 
-// Novel
-
-router.get("/novel/:novelUrl", async (req, res) => {
+const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}/`;
 
@@ -99,11 +92,9 @@ router.get("/novel/:novelUrl", async (req, res) => {
     novel.novelChapters = novelChapters.reverse();
 
     res.json(novel);
-});
+};
 
-// Chapter
-
-router.get("/novel/:novelUrl/:chapterUrl", async (req, res) => {
+const chapterScraper = async (req, res) => {
     let novelUrl = req.params.novelUrl;
     let chapterUrl = req.params.chapterUrl;
 
@@ -149,11 +140,9 @@ router.get("/novel/:novelUrl/:chapterUrl", async (req, res) => {
     };
 
     res.json(chapter);
-});
+};
 
-// Search
-
-router.get("/search/", async (req, res) => {
+const searchScraper = async (req, res) => {
     const searchTerm = req.query.s;
     const orderBy = req.query.o;
 
@@ -184,9 +173,14 @@ router.get("/search/", async (req, res) => {
     });
 
     res.json(novels);
-});
+};
 
-module.exports = router;
+module.exports = boxNovelScraper = {
+    novelsScraper,
+    novelScraper,
+    chapterScraper,
+    searchScraper,
+};
 
 const scraper = async (url) => {
     const result = await fetch(url);
