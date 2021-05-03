@@ -1,131 +1,16 @@
 const express = require("express");
 const cheerio = require("cheerio");
 const request = require("request");
-
+const mtlNovelScraper = require("./MTLNovelScraper");
 const router = express.Router();
 
 const baseUrl = "https://mtlnovel.com";
 
 // Top novels
 
-router.get("/novels/", (req, res) => {
-    const url = `${baseUrl}/alltime-rank/`;
+router.get("/novels/", mtlNovelScraper.novelsScraper);
 
-    request(url, (err, response, body) => {
-        if (err) throw err;
-
-        let novels = [];
-
-        $ = cheerio.load(body);
-
-        $("div.box.wide").each(function (result) {
-            let novelUrl = $(this).find("a.list-title").attr("href");
-            novelUrl = novelUrl.replace("https://www.mtlnovel.com/", "");
-
-            let novelName = $(this).find("a.list-title").text().slice(4);
-            let novelCover = $(this).find("amp-img").attr("src");
-
-            novel = {
-                extensionId: 5,
-                novelUrl,
-                novelName,
-                novelCover,
-            };
-
-            novels.push(novel);
-        });
-
-        res.json(novels);
-    });
-});
-
-router.get("/novel/:novelUrl", (req, res) => {
-    let novelUrl = req.params.novelUrl;
-    const url = `${baseUrl}/${novelUrl}`;
-    console.log(url);
-
-    request(url, (err, response, body) => {
-        $ = cheerio.load(body);
-
-        let novel = {};
-
-        novel.extensionId = 5;
-
-        novel.sourceName = "MTLNovel";
-
-        novel.sourceUrl = url;
-
-        novel.novelUrl = `${novelUrl}/`;
-
-        novel.novelName = $("h1.entry-title").text();
-
-        novel.novelCover = $("amp-img").attr("src");
-
-        novel.novelSummary = $("div.desc > h2").next().text();
-
-        novel["Author(s)"] = $("tr > td")
-            .filter(function () {
-                return $(this).prev().text().trim() === "Author";
-            })
-            .next()
-            .text()
-            .replace("Auhtor:", "");
-
-        novel.Status = $("tr > td")
-            .filter(function () {
-                return $(this).prev().text().trim() === "Status";
-            })
-            .next()
-            .text()
-            .replace("Status:", "");
-
-        novel["Genre(s)"] = $("td")
-            .filter(function () {
-                return $(this).prev().text().trim() === "Genre";
-            })
-            .next()
-            .text()
-            .replace("Genre:", "");
-
-        novel["Artist(s)"] = null;
-
-        function callback(res) {
-            console.log(res);
-            novel.novelChapters = res;
-        }
-
-        request(`${url}/chapter-list/`, (err, response, body) => {
-            $ = cheerio.load(body);
-            console.log(`${url}/chapter-list/`);
-            // console.log($("div.ch-list").find("a.ch-link").next().html());
-            let novelChapters = [];
-
-            $("div.ch-list")
-                .find("a.ch-link")
-                .each(function (result) {
-                    let chapterName = $(this).text().replace("~ ", "");
-
-                    let releaseDate = null;
-
-                    let chapterUrl = $(this).attr("href");
-                    chapterUrl = chapterUrl.replace(
-                        `https://www.mtlnovel.com/${novelUrl}/`,
-                        ""
-                    );
-
-                    novelChapters.push({
-                        chapterUrl,
-                        chapterName,
-                        releaseDate,
-                    });
-                });
-
-            callback(novelChapters);
-
-            return res.json(novel);
-        });
-    });
-});
+router.get("/novel/:novelUrl", mtlNovelScraper.novelScraper);
 
 router.get("/novel/:novelUrl/:chapterUrl", (req, res) => {
     let novelUrl = req.params.novelUrl;

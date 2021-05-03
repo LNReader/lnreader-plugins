@@ -1,5 +1,4 @@
 const cheerio = require("cheerio");
-const fetch = require("node-fetch");
 const { scraper } = require("../../helper");
 
 const baseUrl = "https://fastnovel.net";
