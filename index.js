@@ -20,9 +20,9 @@ app.get("/", (req, res) =>
 app.get("/api/", (req, res) => res.json(extensions));
 app.use("/api/1/", require("./src/en/boxnovel/BoxNovel"));
 app.use("/api/2/", require("./src/en/readlightnovel/readlightnovel"));
-// app.use("/api/3/", require("./src/en/fastnovel/FastNovel"));
+app.use("/api/3/", require("./src/en/fastnovel/FastNovel"));
 app.use("/api/4/", require("./src/en/readnovelfull/readnovelfull"));
-// app.use("/api/5/", require("./src/en/mtlnovel/MTLNovel"));
+app.use("/api/5/", require("./src/en/mtlnovel/MTLNovel"));
 app.use("/api/6/", require("./src/en/novelhall/novelhall"));
 app.use("/api/7/", require("./src/en/wuxiaworld/wuxiaworld"));
 app.use("/api/8/", require("./src/en/novelfull/novelfull"));

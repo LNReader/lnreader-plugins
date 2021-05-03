@@ -122,39 +122,28 @@ const chapterScraper = async (req, res) => {
     let novelUrl = req.params.novelUrl;
     let chapterUrl = req.params.chapterUrl;
 
-    const url = `${baseUrl}/${novelUrl}/${chapterUrl}`;
+    const url = `${baseUrl}/${novelUrl}/${chapterUrl}/`;
 
     const result = await fetch(url);
     const body = await result.text();
 
     $ = cheerio.load(body);
 
-    const chapterName = $("div.text-left > h3").text();
-    const chapterText = $(".reading-content").text();
+    const chapterName = $("h1.main-title").text();
+    const chapterText = $("div.par").text();
 
     let nextChapter = null;
-
-    if ($(".nav-next").length) {
-        nextChapter = $(".nav-next")
-            .find("a")
-            .attr("href")
-            .replace(baseUrl + "/" + novelUrl + "/", "");
+    if ($("a.next").attr("href")) {
+        nextChapter = $("a.next").attr("href").replace(`/${novelUrl}/`, "");
     }
 
     let prevChapter = null;
-
-    if ($(".nav-previous").length) {
-        prevChapter = $(".nav-previous")
-            .find("a")
-            .attr("href")
-            .replace(baseUrl + "/" + novelUrl + "/", "");
+    if ($("a.prev").attr("href")) {
+        prevChapter = $("a.prev").attr("href").replace(`/${novelUrl}/`, "");
     }
 
-    novelUrl = novelUrl + "/";
-    chapterUrl = chapterUrl + "/";
-
-    const chapter = {
-        extensionId: 1,
+    chapter = {
+        extensionId: 5,
         novelUrl,
         chapterUrl,
         chapterName,
@@ -168,29 +157,29 @@ const chapterScraper = async (req, res) => {
 
 const searchScraper = async (req, res) => {
     const searchTerm = req.query.s;
-    const orderBy = req.query.o;
 
-    const url = `${searchUrl}?s=${searchTerm}&post_type=wp-manga&m_orderby=${orderBy}`;
-
-    const result = await fetch(url);
+    const result = await fetch(baseUrl, {
+        method: "POST",
+        body: { s: searchTerm },
+    });
     const body = await result.text();
 
     $ = cheerio.load(body);
 
     let novels = [];
 
-    $(".c-tabs-item__content").each(function (result) {
-        const novelName = $(this).find("h4 > a").text();
-        const novelCover = $(this).find("img").attr("src");
+    $("div.box").each(function (result) {
+        const novelName = $(this).find("a.list-title").text();
+        const novelCover = $(this).find("amp-img").attr("src");
 
-        let novelUrl = $(this).find("h4 > a").attr("href");
-        novelUrl = novelUrlreplace(`${baseUrl}/`, "");
+        let novelUrl = $(this).find("a").attr("href");
+        novelUrl = novelUrl.replace("https://www.mtlnovel.com/", "");
 
         const novel = {
-            extensionId: 1,
+            extensionId: 5,
+            novelUrl,
             novelName,
             novelCover,
-            novelUrl,
         };
 
         novels.push(novel);
