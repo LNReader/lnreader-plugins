@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
+const { scraper } = require("../../helper");
 
 const baseUrl = "https://fastnovel.net";
 const searchUrl = `https://fastnovel.net/search/`;
@@ -7,8 +8,7 @@ const searchUrl = `https://fastnovel.net/search/`;
 const novelsScraper = async (req, res) => {
     const url = `${baseUrl}/list/most-popular.html`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -36,8 +36,7 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}/`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -103,8 +102,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}/${novelUrl}/${chapterUrl}`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -150,8 +148,7 @@ const searchScraper = async (req, res) => {
 
     const url = `${searchUrl}${searchTerm}`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
