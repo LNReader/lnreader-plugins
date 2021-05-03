@@ -1,7 +1,7 @@
 const chromium = require("chrome-aws-lambda");
 const puppeteer = require("puppeteer");
 
-async function scraper(url) {
+const scraper = async (url) => {
     const browser = await puppeteer.launch({
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
@@ -15,6 +15,6 @@ async function scraper(url) {
     const body = await page.content();
 
     return body;
-}
+};
 
 module.exports = { scraper };

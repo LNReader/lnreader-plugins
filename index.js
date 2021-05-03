@@ -1,5 +1,5 @@
 const express = require("express");
-const extensions = require("./src/extensions");
+const sources = require("./sources");
 
 const app = express();
 
@@ -17,15 +17,15 @@ app.get("/", (req, res) =>
     })
 );
 
-app.get("/api/", (req, res) => res.json(extensions));
-app.use("/api/1/", require("./src/en/boxnovel/boxnovel"));
-app.use("/api/2/", require("./src/en/readlightnovel/readlightnovel"));
-app.use("/api/3/", require("./src/en/fastnovel/fastnovel"));
-app.use("/api/4/", require("./src/en/readnovelfull/readnovelfull"));
-app.use("/api/5/", require("./src/en/mtlnovel/mtlnovel"));
-app.use("/api/6/", require("./src/en/novelhall/novelhall"));
-app.use("/api/7/", require("./src/en/wuxiaworld/wuxiaworld"));
-app.use("/api/8/", require("./src/en/novelfull/novelfull"));
+app.get("/api/", (req, res) => res.json(sources));
+app.use("/api/1/", require("./src/en/boxnovel/BoxNovel"));
+app.use("/api/2/", require("./src/en/readlightnovel/ReadLightNovel"));
+app.use("/api/3/", require("./src/en/fastnovel/FastNovel"));
+app.use("/api/4/", require("./src/en/readnovelfull/ReadNovelFull"));
+app.use("/api/5/", require("./src/en/mtlnovel/MTLNovel"));
+app.use("/api/6/", require("./src/en/novelhall/Novelhall"));
+app.use("/api/7/", require("./src/en/wuxiaworld/WuxiaWorld"));
+app.use("/api/8/", require("./src/en/novelfull/NovelFull"));
 
 const PORT = process.env.PORT || 5000;
 
