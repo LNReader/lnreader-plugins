@@ -1,10 +1,7 @@
-const express = require("express");
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
 const baseUrl = "https://novelfull.com";
-
-const router = express.Router();
 
 const novelsScraper = async (req, res) => {
     const url = `${baseUrl}/most-popular`;
@@ -201,7 +198,7 @@ const searchScraper = async (req, res) => {
     res.json(novels);
 };
 
-module.exports = boxNovelScraper = {
+module.exports = novelFullScraper = {
     novelsScraper,
     novelScraper,
     chapterScraper,
