@@ -75,13 +75,11 @@ const novelScraper = async (req, res) => {
         novel[detailName] = detail;
     });
 
-    $(".description-summary > div.summary__content").find("em").remove();
+    // $(".description-summary > div.summary__content").find("em").remove();
 
-    novel.novelSummary = $(
-        ".description-summary > div.summary__content > div.j_synopsis p.c_000"
-    )
-        .text()
-        .replace(/[\t\n]/g, "");
+    let novelSummary = $(".description-summary > div.summary__content").html();
+
+    novel.novelSummary = htmlToText(novelSummary);
 
     let novelChapters = [];
 
