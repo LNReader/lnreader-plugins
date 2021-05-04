@@ -58,7 +58,7 @@ const novelScraper = async (req, res) => {
         .replace(/[\t\n]/g, "")
         .trim();
 
-    novel.novelCover = $(".summary_image > a > img").attr("data-src");
+    novel.novelCover = $(".summary_image > a > img").attr("src");
 
     $(".post-content_item").each(function (result) {
         detailName = $(this)
