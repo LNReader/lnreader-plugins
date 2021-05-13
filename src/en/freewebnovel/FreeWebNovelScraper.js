@@ -151,7 +151,7 @@ const chapterScraper = async (req, res) => {
     chapterUrl = chapterUrl;
 
     const chapter = {
-        extensionId: 10,
+        extensionId: 13,
         novelUrl,
         chapterUrl,
         chapterName,
