@@ -1,7 +1,5 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
-const chromium = require("chrome-aws-lambda");
-const puppeteer = require("puppeteer")
 
 const baseUrl = "https://wuxiaworldsite.co/";
 const searchUrl = "https://wuxiaworldsite.co/search/";
@@ -38,24 +36,8 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}${novelUrl}`;
 
-    // Puppeteer used for mouse click event to load the full list
-    const scraper = async () => {
-        const browser = await puppeteer.launch({
-            args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath,
-            headless: true,
-            ignoreHTTPSErrors: true,
-        });
-
-        const page = await browser.newPage();
-        await page.goto(url);
-        await page.click(".show-more-list");
-        await page.waitFor(1000);
-        return await page.content();
-    };
-
-    const body = await scraper(url);
+    const result = await fetch(url);
+    const body = await result.text();
 
     $ = cheerio.load(body);
 
@@ -94,25 +76,36 @@ const novelScraper = async (req, res) => {
 
     novel["Genre(s)"] = novel["Genre(s)"].join(",");    
 
-    let novelChapters = [];
+    const novelID = $(".show-more-list").attr("data-id");
 
-    $(".new-update-content").each((i, el) => {
-        let chapterName = $(el).text().split(/\t+/);
-        const releaseDate = chapterName.pop();
-        chapterName = chapterName[0];
-        let chapterUrl = $(el).attr("href");   
-        chapterUrl = chapterUrl.split("/").pop();
+    const getChapters = async (novelID) => {
+        const chapterListUrl = baseUrl + "/get-full-list.ajax?id=" + novelID;
 
-        const novel = {
-            chapterName,
-            releaseDate,
-            chapterUrl,
-        };
+        const data = await fetch(chapterListUrl);
+        const chapters = await data.text();
 
-        novelChapters.push(novel);
-    });
+        $ = cheerio.load(chapters);
 
-    novel.novelChapters = novelChapters.slice(3);
+        let novelChapters = [];
+
+        $(".new-update-content").each((i, el) => {
+            let chapterName = $(el).text().split(/\t+/);
+            const releaseDate = chapterName.pop();
+            chapterName = chapterName[0];
+            let chapterUrl = $(el).attr("href");   
+            chapterUrl = chapterUrl.split("/").pop();
+
+            const novel = {
+                chapterName,
+                releaseDate,
+                chapterUrl,
+            };
+            novelChapters.push(novel);
+        });
+        return novelChapters;
+    };
+
+    novel.novelChapters = await getChapters(novelID);
 
     res.json(novel);
 };
