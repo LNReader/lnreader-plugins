@@ -97,7 +97,7 @@ const novelScraper = async (req, res) => {
 
     latestChapter = latestChapter[1];
 
-    for (let i = 0; i <= parseInt(latestChapter); i++) {
+    for (let i = 1; i <= parseInt(latestChapter); i++) {
         const chapterName = "Chapter " + i;
 
         const releaseDate = null;
