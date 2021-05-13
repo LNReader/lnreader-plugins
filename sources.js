@@ -107,6 +107,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 13,
+        sourceUrl: "https://freewebnovel.com/",
+        sourceName: "FreeWebNovel",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/freewebnovel/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;
