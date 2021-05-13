@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get("/novels/", WuxiaWorldSiteScraper.novelsScraper);
 
-router.get("/novel/:novelID/:novelUrl", WuxiaWorldSiteScraper.novelScraper);
+router.get("/novel/:novelUrl", WuxiaWorldSiteScraper.novelScraper);
 
-router.get("/novel/:novelID/:novelUrl/:chapterUrl", WuxiaWorldSiteScraper.chapterScraper);
+router.get("/novel/:novelUrl/:chapterUrl", WuxiaWorldSiteScraper.chapterScraper);
 
 router.get("/search/", WuxiaWorldSiteScraper.searchScraper);
 

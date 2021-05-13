@@ -35,9 +35,8 @@ const novelsScraper = async (req, res) => {
 }
 
 const novelScraper = async (req, res) => {
-    const novelID = req.params.novelID;
     const novelUrl = req.params.novelUrl;
-    const url = `${baseUrl}${novelID}/${novelUrl}`;
+    const url = `${baseUrl}${novelUrl}`;
 
     // Puppeteer used for mouse click event to load the full list
     const scraper = async () => {
@@ -101,8 +100,8 @@ const novelScraper = async (req, res) => {
         let chapterName = $(el).text().split(/\t+/);
         const releaseDate = chapterName.pop();
         chapterName = chapterName[0];
-        let chapterUrl = $(el).attr("href");
-        chapterUrl = chapterUrl.replace(`/${novelID}/${novelUrl}/`, "");
+        let chapterUrl = $(el).attr("href");   
+        chapterUrl = chapterUrl.split("/").pop();
 
         const novel = {
             chapterName,
@@ -119,11 +118,10 @@ const novelScraper = async (req, res) => {
 };
 
 const chapterScraper = async (req, res) => {
-    const novelID = req.params.novelID;
     let novelUrl = req.params.novelUrl;
     let chapterUrl = req.params.chapterUrl;
 
-    const url = `${baseUrl}/${novelID}/${novelUrl}/${chapterUrl}`;
+    const url = `${baseUrl}/${novelUrl}/${chapterUrl}`;
 
     const result = await fetch(url);
     const body = await result.text();
@@ -148,11 +146,11 @@ const chapterScraper = async (req, res) => {
     chapterText = chapterText.join("\n");
 
     const prevChapter = $(".pre").attr("href") 
-        ? $(".pre").attr("href").split("/")[3] 
+        ? $(".pre").attr("href").split("/").pop() 
         : null;
 
     const nextChapter = $(".next_sesction > a").attr("href") 
-        ? $(".next_sesction > a").attr("href").split("/")[3] 
+        ? $(".next_sesction > a").attr("href").split("/").pop() 
         : null;
 
 
