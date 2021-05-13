@@ -125,7 +125,7 @@ const chapterScraper = async (req, res) => {
 
     $ = cheerio.load(body);
 
-    let chapterName = $("h4").text();
+    let chapterName = $("h1.tit").text();
 
     let chapterText = $("div.txt").html();
     chapterText = htmlToText(chapterText);
