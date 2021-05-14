@@ -86,7 +86,7 @@ const novelScraper = async (req, res) => {
 
     volumes.map((volume) => {
         volume.chapters.map((chapter) => {
-            const chapterName = "Vol. " + volume.volume + " " + chapter.title;
+            const chapterName = chapter.title;
             const releaseDate = chapter.created_at;
             const chapterUrl = chapter.id;
 
