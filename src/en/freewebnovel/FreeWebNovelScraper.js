@@ -90,12 +90,11 @@ const novelScraper = async (req, res) => {
 
     let novelChapters = [];
 
-    let latestChapter = $(".m-newest1 > ul > li")
-        .first()
+    let latestChapter = $("div.col-l > ul > li > div.txt > div > span.s3")
         .text()
-        .match(/Chapter (\d*)/);
+        .match(/\d+/);
 
-    latestChapter = latestChapter[1];
+    latestChapter = latestChapter[0];
 
     for (let i = 1; i <= parseInt(latestChapter); i++) {
         const chapterName = "Chapter " + i;
