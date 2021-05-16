@@ -16,7 +16,8 @@
         "html-to-text": "^7.1.1",
         "node-fetch": "^2.6.1",
         "puppeteer": "^9.0.0",
-        "request": "^2.88.2"
+        "request": "^2.88.2",
+        "user-agents": "^1.0.654"
     },
     "devDependencies": {
         "nodemon": "^2.0.7"
