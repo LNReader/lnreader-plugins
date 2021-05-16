@@ -2,6 +2,8 @@ const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 const UserAgent = require("user-agents");
 
+const { scraper } = require("../../helper");
+
 const baseUrl = "https://mtlnovel.com";
 
 const novelsScraper = async (req, res) => {
@@ -9,7 +11,13 @@ const novelsScraper = async (req, res) => {
 
     const userAgent = new UserAgent();
 
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
+    let headers = new fetch.Headers({
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "user-agent": userAgent,
+    });
+
+    const result = await fetch(url, { headers: headers });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -42,7 +50,13 @@ const novelScraper = async (req, res) => {
 
     const userAgent = new UserAgent();
 
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
+    let headers = new fetch.Headers({
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "user-agent": userAgent,
+    });
+
+    const result = await fetch(url, { headers: headers });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -132,7 +146,13 @@ const chapterScraper = async (req, res) => {
 
     const userAgent = new UserAgent();
 
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
+    let headers = new fetch.Headers({
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "user-agent": userAgent,
+    });
+
+    const result = await fetch(url, { headers: headers });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -168,10 +188,16 @@ const searchScraper = async (req, res) => {
 
     const userAgent = new UserAgent();
 
+    let headers = new fetch.Headers({
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "user-agent": userAgent,
+    });
+
     const result = await fetch(baseUrl, {
         method: "POST",
         body: { s: searchTerm },
-        headers: { "user-agent": userAgent },
+        headers: headers,
     });
     const body = await result.text();
 

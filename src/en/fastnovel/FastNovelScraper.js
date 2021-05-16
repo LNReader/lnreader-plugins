@@ -1,6 +1,5 @@
 const cheerio = require("cheerio");
-const fetch = require("node-fetch");
-const UserAgent = require("user-agents");
+const { scraper } = require("../../helper");
 
 const baseUrl = "https://fastnovel.net";
 const searchUrl = `https://fastnovel.net/search/`;
@@ -8,10 +7,7 @@ const searchUrl = `https://fastnovel.net/search/`;
 const novelsScraper = async (req, res) => {
     const url = `${baseUrl}/list/most-popular.html`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -39,10 +35,7 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}/`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -108,10 +101,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}/${novelUrl}/${chapterUrl}`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -157,10 +147,7 @@ const searchScraper = async (req, res) => {
 
     const url = `${searchUrl}${searchTerm}`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
