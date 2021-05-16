@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 const { htmlToText } = require("html-to-text");
-const UserAgent = require("user-agents");
+const { scraper } = require("../../helper");
 
 const baseUrl = "https://www.lightnovelpub.com/";
 
