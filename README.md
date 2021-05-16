@@ -10,7 +10,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | ReadLightNovel  | :heavy_check_mark: |
 | FastNovel       |        :x:         |
 | ReadNovelFull   | :heavy_check_mark: |
-| MTLNovel        |        :x:         |
+| MTLNovel        | :heavy_check_mark: |
 | NovelHall       | :heavy_check_mark: |
 | WuxiaWorld      | :heavy_check_mark: |
 | NovelFull       | :heavy_check_mark: |
