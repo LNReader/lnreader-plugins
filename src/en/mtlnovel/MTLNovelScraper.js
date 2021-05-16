@@ -9,16 +9,7 @@ const baseUrl = "https://mtlnovel.com";
 const novelsScraper = async (req, res) => {
     const url = `${baseUrl}/alltime-rank/`;
 
-    const userAgent = new UserAgent();
-
-    let headers = new fetch.Headers({
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "user-agent": userAgent,
-    });
-
-    const result = await fetch(url, { headers: headers });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -48,16 +39,7 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}`;
 
-    const userAgent = new UserAgent();
-
-    let headers = new fetch.Headers({
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "user-agent": userAgent,
-    });
-
-    const result = await fetch(url, { headers: headers });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -144,16 +126,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}/${novelUrl}/${chapterUrl}/`;
 
-    const userAgent = new UserAgent();
-
-    let headers = new fetch.Headers({
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "user-agent": userAgent,
-    });
-
-    const result = await fetch(url, { headers: headers });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 

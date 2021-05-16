@@ -8,10 +8,7 @@ const baseUrl = "https://www.lightnovelpub.com/";
 const novelsScraper = async (req, res) => {
     let url = baseUrl + "browse/all/popular/all/1";
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -50,10 +47,7 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}novel/${novelUrl}/`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -126,10 +120,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}novel/${novelUrl}/${chapterUrl}`;
 
-    const userAgent = new UserAgent();
-
-    const result = await fetch(url, { headers: { "user-agent": userAgent } });
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -176,6 +167,7 @@ const searchScraper = async (req, res) => {
 
     const result = await fetch(url);
     const body = await result.json();
+
     const data = body.resultview;
 
     $ = cheerio.load(data);
