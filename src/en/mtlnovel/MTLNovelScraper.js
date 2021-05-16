@@ -1,13 +1,16 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
-const { scraper } = require("../../helper");
+const UserAgent = require("user-agents");
 
 const baseUrl = "https://mtlnovel.com";
 
 const novelsScraper = async (req, res) => {
     const url = `${baseUrl}/alltime-rank/`;
 
-    const body = await scraper(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
+    const body = await result.text();
 
     $ = cheerio.load(body);
 
@@ -37,7 +40,10 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}/${novelUrl}`;
 
-    const body = await scraper(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
+    const body = await result.text();
 
     $ = cheerio.load(body);
 
@@ -124,7 +130,9 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}/${novelUrl}/${chapterUrl}/`;
 
-    const result = await fetch(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -158,9 +166,12 @@ const chapterScraper = async (req, res) => {
 const searchScraper = async (req, res) => {
     const searchTerm = req.query.s;
 
+    const userAgent = new UserAgent();
+
     const result = await fetch(baseUrl, {
         method: "POST",
         body: { s: searchTerm },
+        headers: { "user-agent": userAgent },
     });
     const body = await result.text();
 

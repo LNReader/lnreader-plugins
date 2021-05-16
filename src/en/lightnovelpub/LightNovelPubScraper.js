@@ -1,13 +1,16 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 const { htmlToText } = require("html-to-text");
+const UserAgent = require("user-agents");
 
 const baseUrl = "https://www.lightnovelpub.com/";
 
 const novelsScraper = async (req, res) => {
     let url = baseUrl + "browse/all/popular/all/1";
 
-    const result = await fetch(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -47,7 +50,9 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}novel/${novelUrl}/`;
 
-    const result = await fetch(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
     const body = await result.text();
 
     $ = cheerio.load(body);
@@ -121,7 +126,9 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}novel/${novelUrl}/${chapterUrl}`;
 
-    const result = await fetch(url);
+    const userAgent = new UserAgent();
+
+    const result = await fetch(url, { headers: { "user-agent": userAgent } });
     const body = await result.text();
 
     $ = cheerio.load(body);
