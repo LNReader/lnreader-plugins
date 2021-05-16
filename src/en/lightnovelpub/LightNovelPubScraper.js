@@ -1,14 +1,14 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 const { htmlToText } = require("html-to-text");
+const { scraper } = require("../../helper");
 
 const baseUrl = "https://www.lightnovelpub.com/";
 
 const novelsScraper = async (req, res) => {
     let url = baseUrl + "browse/all/popular/all/1";
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -47,8 +47,7 @@ const novelScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const url = `${baseUrl}novel/${novelUrl}/`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -121,8 +120,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}novel/${novelUrl}/${chapterUrl}`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -169,6 +167,7 @@ const searchScraper = async (req, res) => {
 
     const result = await fetch(url);
     const body = await result.json();
+
     const data = body.resultview;
 
     $ = cheerio.load(data);

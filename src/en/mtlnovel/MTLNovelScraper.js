@@ -1,5 +1,7 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
+const UserAgent = require("user-agents");
+
 const { scraper } = require("../../helper");
 
 const baseUrl = "https://mtlnovel.com";
@@ -124,8 +126,7 @@ const chapterScraper = async (req, res) => {
 
     const url = `${baseUrl}/${novelUrl}/${chapterUrl}/`;
 
-    const result = await fetch(url);
-    const body = await result.text();
+    const body = await scraper(url);
 
     $ = cheerio.load(body);
 
@@ -158,9 +159,18 @@ const chapterScraper = async (req, res) => {
 const searchScraper = async (req, res) => {
     const searchTerm = req.query.s;
 
+    const userAgent = new UserAgent();
+
+    let headers = new fetch.Headers({
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "user-agent": userAgent,
+    });
+
     const result = await fetch(baseUrl, {
         method: "POST",
         body: { s: searchTerm },
+        headers: headers,
     });
     const body = await result.text();
 

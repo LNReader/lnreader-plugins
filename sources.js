@@ -42,7 +42,7 @@ extensions = [
         sourceCover:
             "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/mtlnovel/icon.png?raw=true",
         sourceLanguage: "English",
-        status: 0,
+        status: 1,
     },
     {
         sourceId: 6,
@@ -132,7 +132,7 @@ extensions = [
         sourceCover:
             "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/lightnovelpub/icon.png?raw=true",
         sourceLanguage: "English",
-        status: 0,
+        status: 1,
     },
 ];
 
