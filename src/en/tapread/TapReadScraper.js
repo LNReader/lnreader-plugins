@@ -123,6 +123,7 @@ const chapterScraper = async (req, res) => {
     const chapterText = htmlToText(body.result.content);
     const nextChapter = body.result.nextChapterId;
     const prevChapter = body.result.preChapterId;
+    novelUrl += "/";
 
     const chapter = {
         extensionId: 17,
