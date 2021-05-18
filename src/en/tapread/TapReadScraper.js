@@ -13,7 +13,7 @@ const novelsScraper = async (req, res) => {
 
     let novels = [];
 
-    $(".section-item").each(function (result) {
+    $('.section-item[data-classify="1"]').each(function (result) {
         const novelName = $(this).find(".book-name").text();
         const novelCover = "http:" + $(this).find("img").attr("src");
         let novelUrl = $(this).attr("data-id");
