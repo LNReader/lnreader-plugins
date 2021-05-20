@@ -66,7 +66,7 @@ const novelScraper = async (req, res) => {
         .replace(/[\t\n]/g, "")
         .trim();
 
-    novel.novelCover = $("img").attr("src");
+    novel.novelCover = $("figure.cover > img").attr("src");
 
     novel["Genre(s)"] = "";
 
