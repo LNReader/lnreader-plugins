@@ -165,14 +165,15 @@ const searchScraper = async (req, res) => {
 
     const url = `${baseUrl}lnwsearchlive?inputContent=${searchTerm}`;
 
-    const result = await fetch(url);
-    const body = await result.json();
+    const result = await scraper(url);
 
-    const data = body.resultview;
-
-    $ = cheerio.load(data);
+    $ = cheerio.load(result);
 
     let novels = [];
+
+    let results = JSON.parse($("body").text());
+
+    $ = cheerio.load(results.resultview);
 
     $(".novel-item").each(function (result) {
         const novelName = $(this).find("h4.novel-title").text();
