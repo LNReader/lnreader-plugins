@@ -68,9 +68,7 @@ const novelScraper = async (req, res) => {
     $(".chapter-item").each(function (result) {
         const chapterName = $(this).find(".chapter-name").text();
         const releaseDate = null;
-        const chapterUrl = $(this)
-            .attr("href")
-            .replace("/" + novelUrl + "/", "");
+        const chapterUrl = $(this).attr("href").split("/")[2];
 
         novelChapters.push({
             chapterName,

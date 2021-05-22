@@ -156,7 +156,10 @@ const chapterScraper = async (req, res) => {
     $(".hidden").remove();
 
     let chapterText = $(".desc").html();
-    chapterText = htmlToText(chapterText).replace(/\n\nSponsored Content\n\n/g, "");
+    chapterText = htmlToText(chapterText).replace(
+        /\n\nSponsored Content\n\n/g,
+        ""
+    );
 
     let nextChapter = null;
 
