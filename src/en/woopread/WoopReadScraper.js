@@ -140,6 +140,7 @@ const chapterScraper = async (req, res) => {
     const chapterName = $("h1#chapter-heading").text();
     let chapterText = $(".reading-content").html();
     chapterText = parseHtml(chapterText);
+    chapterText = chapterText.replace(/(?<=[[])[\n](?=[h])/g, "");
 
     let nextChapter = null;
 
