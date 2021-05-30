@@ -84,9 +84,11 @@ const novelScraper = async (req, res) => {
 
     let novelChapters = [];
 
+    const novelId = $(".rating-post-id").attr("value");
+
     let formData = new FormData();
     formData.append("action", "manga_get_chapters");
-    formData.append("manga", 2746);
+    formData.append("manga", novelId);
 
     const data = await fetch("https://woopread.com/wp-admin/admin-ajax.php", {
         method: "POST",
