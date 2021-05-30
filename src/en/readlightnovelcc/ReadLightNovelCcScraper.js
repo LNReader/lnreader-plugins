@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 const { htmlToText } = require("html-to-text");
 const { parseHtml } = require("../../helper");
 
-const baseUrl = "https://www.novelupdates.cc/";
+const baseUrl = "https://m.readlightnovel.cc/";
 
 const novelsScraper = async (req, res) => {
     const result = await fetch(baseUrl);
@@ -20,7 +20,7 @@ const novelsScraper = async (req, res) => {
         let novelUrl = $(this).find("a").attr("href").slice(1);
 
         const novel = {
-            extensionId: 18,
+            extensionId: 19,
             novelName,
             novelCover,
             novelUrl,
@@ -43,9 +43,9 @@ const novelScraper = async (req, res) => {
 
     let novel = {};
 
-    novel.extensionId = 18;
+    novel.extensionId = 19;
 
-    novel.sourceName = "NovelUpdates.cc";
+    novel.sourceName = "ReadLightNovel.cc";
 
     novel.sourceUrl = url;
 
@@ -114,7 +114,7 @@ const chapterScraper = async (req, res) => {
     chapterUrl = chapterUrl + "/";
 
     const chapter = {
-        extensionId: 18,
+        extensionId: 19,
         novelUrl,
         chapterUrl,
         chapterName,
@@ -147,7 +147,7 @@ const searchScraper = async (req, res) => {
         let novelUrl = $(this).find("a").attr("href").slice(1);
 
         const novel = {
-            extensionId: 18,
+            extensionId: 19,
             novelName,
             novelCover,
             novelUrl,

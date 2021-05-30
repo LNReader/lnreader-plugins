@@ -161,6 +161,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 18,
+        sourceUrl: "https://m.readlightnovel.cc/",
+        sourceName: "ReadLightNovel.cc",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/readlightnovelcc/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;

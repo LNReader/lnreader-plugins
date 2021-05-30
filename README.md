@@ -24,7 +24,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | https://www.wuxiaworld.co/   | :heavy_check_mark: |
 | TapRead                      | :heavy_check_mark: |
 | https://www.novelupdates.cc/ | :heavy_check_mark: |
-| LightNovelPub                | :heavy_check_mark: |
+| https://m.readlightnovel.cc/ | :heavy_check_mark: |
 
 ## Setup locally
 
