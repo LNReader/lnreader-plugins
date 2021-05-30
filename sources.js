@@ -137,7 +137,7 @@ extensions = [
     {
         sourceId: 16,
         sourceUrl: "https://www.wuxiaworld.co/",
-        sourceName: "WuxiaWorldCo",
+        sourceName: "WuxiaWorld.co",
         sourceCover:
             "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/wuxiaworldco/icon.png?raw=true",
         sourceLanguage: "English",
@@ -173,9 +173,18 @@ extensions = [
     {
         sourceId: 20,
         sourceUrl: "http://wuxiaworld.cloud/",
-        sourceName: "WUxiaWorld.cloud",
+        sourceName: "WuxiaWorld.cloud",
         sourceCover:
             "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/wuxiaworldcloud/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
+    {
+        sourceId: 21,
+        sourceUrl: "https://woopread.com/",
+        sourceName: "WoopRead",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/woopread/icon.png?raw=true",
         sourceLanguage: "English",
         status: 1,
     },

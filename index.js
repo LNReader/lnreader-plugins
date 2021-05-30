@@ -38,6 +38,7 @@ app.use("/api/17/", require("./src/en/tapread/TapRead"));
 app.use("/api/18/", require("./src/en/novelupdatescc/NovelUpdatesCc"));
 app.use("/api/19/", require("./src/en/readlightnovelcc/ReadLightNovelCc"));
 app.use("/api/20/", require("./src/en/wuxiaworldcloud/WuxiaWorldCloud"));
+app.use("/api/21/", require("./src/en/woopread/WoopRead"));
 
 const PORT = process.env.PORT || 5000;
 
