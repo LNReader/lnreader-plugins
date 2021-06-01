@@ -100,7 +100,7 @@ const chapterScraper = async (req, res) => {
 
     let chapterName = item.chp_index_title;
 
-    let chapterText = item.chp_title + "\n\n" + item.chp_content;
+    let chapterText = htmlToText(item.chp_content, { preserveNewlines: true });
 
     let nextChapter = null;
     let prevChapter = null;
