@@ -28,6 +28,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | http://wuxiaworld.cloud/     | :heavy_check_mark: |
 | https://foxaholic.com/       | :heavy_check_mark: |
 | https://tunovelaligera.com/  | :heavy_check_mark: |
+| https://www.skynovels.net/   | :heavy_check_mark: |
 
 ## Setup locally
 

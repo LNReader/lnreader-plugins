@@ -206,6 +206,15 @@ extensions = [
         sourceLanguage: "Spanish",
         status: 1,
     },
+    {
+        sourceId: 24,
+        sourceUrl: "https://www.skynovels.net/",
+        sourceName: "SkyNovels",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/es/skynovels/icon.png?raw=true",
+        sourceLanguage: "Spanish",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;
