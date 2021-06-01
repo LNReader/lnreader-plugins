@@ -197,6 +197,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 23,
+        sourceUrl: "https://tunovelaligera.com/",
+        sourceName: "Tunovelaligera",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/es/tunovelaligera/icon.png?raw=true",
+        sourceLanguage: "Spanish",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;

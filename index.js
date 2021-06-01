@@ -17,6 +17,7 @@ app.get("/", (req, res) =>
     })
 );
 
+// English
 app.get("/api/", (req, res) => res.json(sources));
 app.use("/api/1/", require("./src/en/boxnovel/BoxNovel"));
 app.use("/api/2/", require("./src/en/readlightnovel/ReadLightNovel"));
@@ -40,6 +41,9 @@ app.use("/api/19/", require("./src/en/readlightnovelcc/ReadLightNovelCc"));
 app.use("/api/20/", require("./src/en/wuxiaworldcloud/WuxiaWorldCloud"));
 app.use("/api/21/", require("./src/en/woopread/WoopRead"));
 app.use("/api/22/", require("./src/en/foxaholic/Foxaholic"));
+
+// Spanish
+app.use("/api/23/", require("./src/es/tunovelaligera/Tunovelaligera"));
 
 const PORT = process.env.PORT || 5000;
 
