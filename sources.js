@@ -224,6 +224,15 @@ extensions = [
         sourceLanguage: "Spanish",
         status: 1,
     },
+    {
+        sourceId: 26,
+        sourceUrl: "https://novelasligera.com/",
+        sourceName: "NovelasLigera",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/es/novelasligera/icon.png?raw=true",
+        sourceLanguage: "Spanish",
+        status: 1,
+    },
 ];
 
 module.exports = extensions;

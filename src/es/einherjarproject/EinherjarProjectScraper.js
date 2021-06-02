@@ -131,7 +131,7 @@ const chapterScraper = async (req, res) => {
     let chapterName = $("h1.post-title").text();
 
     let chapterText = $(".post-content").html();
-    chapterText = htmlToText(chapterText, { preserveNewlines: true });
+    chapterText = parseHtml(chapterText);
 
     let nextChapter = null;
     let prevChapter = null;
