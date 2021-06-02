@@ -84,6 +84,11 @@ const novelScraper = async (req, res) => {
             }
         });
 
+    novel["Genre(s)"] = $(".post-content > h6")
+        .text()
+        .replace(/GÉNEROS: /, "")
+        .replace(/,\s/g, ",");
+
     let novelSummary = $(".post-content > .has-text-align-center").html();
 
     novel.novelSummary = htmlToText(novelSummary);
