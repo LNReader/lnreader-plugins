@@ -1,5 +1,5 @@
 const express = require("express");
-const einherjarProjectScraper = require("./einherjarProjectScraper");
+const einherjarProjectScraper = require("./EinherjarProjectScraper");
 
 const router = express.Router();
 
