@@ -56,7 +56,7 @@ const novelScraper = async (req, res) => {
 
     novel.novelName = $(".post-header").text();
 
-    novel.novelCover = $(".summary_image > a > img").attr("src");
+    novel.novelCover = $(".featured-media > img").attr("src");
 
     let details = $(".post-content").find("p").html();
 
