@@ -265,7 +265,7 @@ extensions = [
         sourceUrl: "https://hasutl.wordpress.com/",
         sourceName: "Hasu Translations",
         sourceCover:
-            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/es/yuukitls/icon.png?raw=true",
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/es/hasutl/icon.png?raw=true",
         sourceLanguage: "Spanish",
         status: 1,
     },
