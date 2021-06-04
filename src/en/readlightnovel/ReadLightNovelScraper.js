@@ -158,7 +158,7 @@ const chapterScraper = async (req, res) => {
     let chapterText = $(".desc").html();
 
     chapterText = parseHtml(chapterText).replace(
-        /\n\nSponsored Content\n\n/g,
+        /\n\nSponsored Content\n\n|If audio player doesn't work, press Stop then Play button again/g,
         ""
     );
 
