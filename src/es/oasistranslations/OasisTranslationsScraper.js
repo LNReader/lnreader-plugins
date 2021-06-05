@@ -66,21 +66,24 @@ const novelScraper = async (req, res) => {
 
     novel.novelCover = $('img[loading="lazy"]').attr("src");
 
-    let details = $(".entry-content").find("h2").next().html();
+    $(".entry-content > p").each(function (res) {
+        if ($(this).text().includes("Autor")) {
+            let details = $(this).html();
+            details = details.match(/<\/strong>(.|\n)*?<br>/g);
+            details = details.map((detail) =>
+                detail.replace(/<strong>|<\/strong>|<br>|:\s/g, "")
+            );
 
-    details = details.match(/<\/strong>(.|\n)*?<br>/g);
-    details = details.map((detail) =>
-        detail.replace(/<strong>|<\/strong>|<br>|:\s/g, "")
-    );
+            novel["Genre(s)"] = "";
 
-    novel["Genre(s)"] = "";
+            novel["Author(s)"] = details[2];
+            novel["Genre(s)"] = details[4].replace(/\s|&nbsp;/g, "");
+            novel["Artist(s)"] = details[3];
+        }
+    });
 
-    novel["Author(s)"] = details[2];
-    novel["Genre(s)"] = details[4].replace(/\s/g, "");
-    novel["Artist(s)"] = details[3];
-
-    let novelSummary = $(".entry-content").find("h2").next().next().html();
-    novel.novelSummary = htmlToText(novelSummary);
+    // let novelSummary = $(this).next().html();
+    novel.novelSummary = "";
 
     let novelChapters = [];
 
