@@ -167,29 +167,13 @@ const searchScraper = async (req, res) => {
         searchTerm +
         "&__amp_source_origin=https%3A%2F%2Fwww.mtlnovel.com";
 
-    const result = await fetch(searchUrl);
-    const body = await result.json();
+    const result = await scraper(searchUrl);
+
+    $ = cheerio.load(result);
+
+    let body = JSON.parse($("body").text());
 
     let novels = [];
-
-    // $("div.box").each(function (result) {
-    //     const novelName = $(this).find("a.list-title").text();
-    //     if (novelName && novelName !== "{{permalink}}") {
-    //         const novelCover = $(this).find("amp-img").attr("src");
-
-    //         let novelUrl = $(this).find("a").attr("href");
-    //         novelUrl = novelUrl.replace("https://www.mtlnovel.com/", "");
-
-    //         const novel = {
-    //             extensionId: 5,
-    //             novelUrl,
-    //             novelName,
-    //             novelCover,
-    //         };
-
-    //         novels.push(novel);
-    //     }
-    // });
 
     body.items[0].results.map((item) => {
         const novelName = item.title.replace(/<\/?strong>/g, "");
