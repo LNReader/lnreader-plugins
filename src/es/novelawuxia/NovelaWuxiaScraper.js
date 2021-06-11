@@ -83,7 +83,7 @@ const novelScraper = async (req, res) => {
             novel.Status = detail.replace("Estatus: ", "");
         }
         if (detailName.includes("Géneros:")) {
-            novel["Genres(s)"] = detail
+            novel["Genre(s)"] = detail
                 .replace("Géneros: ", "")
                 .replace(/,\s/g, ",");
         }
