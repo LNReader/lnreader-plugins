@@ -98,10 +98,13 @@ const novelScraper = async (req, res) => {
     formData.append("action", "manga_get_chapters");
     formData.append("manga", novelId);
 
-    const data = await fetch("https://foxaholic.com/wp-admin/admin-ajax.php", {
-        method: "POST",
-        body: formData,
-    });
+    const data = await fetch(
+        "https://www.foxaholic.com/wp-admin/admin-ajax.php",
+        {
+            method: "POST",
+            body: formData,
+        }
+    );
     const text = await data.text();
 
     $ = cheerio.load(text);
