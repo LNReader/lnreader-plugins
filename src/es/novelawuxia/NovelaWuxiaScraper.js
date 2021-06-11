@@ -77,7 +77,7 @@ const novelScraper = async (req, res) => {
         let detail = $(this)[0].nextSibling;
 
         if (detailName && detail) {
-            detail = detail.nodeValue.trim();
+            detail = detail.nodeValue;
 
             if (detailName.includes("Autor")) {
                 novel["Author(s)"] = detail.replace("Autor:", "");
