@@ -185,7 +185,7 @@ const searchScraper = async (req, res) => {
         novelUrl = `${novelUrl}/`;
 
         const novelName = $(this).find("h3.truyen-title > a").text();
-        const novelCover = $(this).find("img").attr("src");
+        const novelCover = baseUrl + $(this).find("img").attr("src");
 
         const novel = {
             extensionId: 8,
