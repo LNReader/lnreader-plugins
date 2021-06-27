@@ -42,6 +42,8 @@ app.use("/api/20/", require("./src/en/wuxiaworldcloud/WuxiaWorldCloud"));
 app.use("/api/21/", require("./src/en/woopread/WoopRead"));
 app.use("/api/22/", require("./src/en/foxaholic/Foxaholic"));
 app.use("/api/27/", require("./src/en/comrademao/ComradeMao"));
+app.use("/api/33/", require("./src/en/novelpassion/NovelPassion"));
+app.use("/api/34/", require("./src/en/royalroad/RoyalRoad"));
 
 // Spanish
 app.use("/api/23/", require("./src/es/tunovelaligera/Tunovelaligera"));
@@ -52,7 +54,6 @@ app.use("/api/28/", require("./src/es/yuukitls/YuukiTls"));
 app.use("/api/29/", require("./src/es/hasutl/Hasutl"));
 app.use("/api/30/", require("./src/es/oasistranslations/OasisTranslations"));
 app.use("/api/31/", require("./src/es/novelawuxia/NovelaWuxia"));
-app.use("/api/33/", require("./src/en/novelpassion/NovelPassion"));
 
 const PORT = process.env.PORT || 5000;
 
