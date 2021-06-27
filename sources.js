@@ -210,6 +210,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 27,
+        sourceUrl: "https://www.novelpassion.com/",
+        sourceName: "NovelPassion",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/novelpassion/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 
     /**
      * Spanish

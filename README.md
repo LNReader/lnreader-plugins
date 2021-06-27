@@ -8,7 +8,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | ---------------------------------------- | :----------------: |
 | BoxNovel                                 | :heavy_check_mark: |
 | ReadLightNovel                           | :heavy_check_mark: |
-| FastNovel                                |        :x:         |
+| FastNovel                                | :heavy_check_mark: |
 | ReadNovelFull                            | :heavy_check_mark: |
 | MTLNovel                                 | :heavy_check_mark: |
 | NovelHall                                | :heavy_check_mark: |
@@ -28,6 +28,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | http://wuxiaworld.cloud/                 | :heavy_check_mark: |
 | https://foxaholic.com/                   | :heavy_check_mark: |
 | https://comrademao.com/                  | :heavy_check_mark: |
+| https://www.novelpassion.com/            | :heavy_check_mark: |
 | https://tunovelaligera.com/              | :heavy_check_mark: |
 | https://www.skynovels.net/               | :heavy_check_mark: |
 | https://einherjarproject.net/            | :heavy_check_mark: |
