@@ -30,6 +30,7 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | https://comrademao.com/                  | :heavy_check_mark: |
 | https://www.novelpassion.com/            | :heavy_check_mark: |
 | https://www.royalroad.com/               | :heavy_check_mark: |
+| https://www.scribblehub.com/             | :heavy_check_mark: |
 | https://tunovelaligera.com/              | :heavy_check_mark: |
 | https://www.skynovels.net/               | :heavy_check_mark: |
 | https://einherjarproject.net/            | :heavy_check_mark: |

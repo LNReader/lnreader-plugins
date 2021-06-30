@@ -44,6 +44,7 @@ app.use("/api/22/", require("./src/en/foxaholic/Foxaholic"));
 app.use("/api/27/", require("./src/en/comrademao/ComradeMao"));
 app.use("/api/33/", require("./src/en/novelpassion/NovelPassion"));
 app.use("/api/34/", require("./src/en/royalroad/RoyalRoad"));
+app.use("/api/35/", require("./src/en/scribblehub/ScribbleHub"));
 
 // Spanish
 app.use("/api/23/", require("./src/es/tunovelaligera/Tunovelaligera"));

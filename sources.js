@@ -228,6 +228,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 35,
+        sourceUrl: "https://www.scribblehub.com/",
+        sourceName: "Scribble Hub",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/scribblehub/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 
     /**
      * Spanish
