@@ -61,7 +61,7 @@ const novelScraper = async (req, res) => {
     novelName = $("h2.mh").text();
     novel.novelName = novelName;
 
-    novel.novelCover = $("#thumbnail > img").attr("src");
+    novel.novelCover = baseUrl + $("i.g_thumb > img").attr("src");
 
     let novelSummary = $("div.j_synopsis").html();
     novel.novelSummary = htmlToText(novelSummary);
@@ -78,9 +78,10 @@ const novelScraper = async (req, res) => {
             case "Author:":
                 novel["Author(s)"] = detail.trim().replace(/ -  /g, ", ");
                 break;
-            case "Status:":
-                novel.Status = detail.trim();
-                break;
+        }
+
+        if (detailName.includes("Status:")) {
+            novel.Status = detailName.replace("Status:", "").trim();
         }
     });
 

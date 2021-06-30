@@ -59,8 +59,9 @@ const novelScraper = async (req, res) => {
 
     novelName = $("h1").text();
     novel.novelName = novelName;
+    novel["Author(s)"] = $("h1").next().text().replace("by ", "").trim();
 
-    novel.novelCover = $("#thumbnail > img").attr("src");
+    novel.novelCover = $("img.thumbnail").attr("src");
 
     novel.novelSummary = $("div.description").text().trim();
 
