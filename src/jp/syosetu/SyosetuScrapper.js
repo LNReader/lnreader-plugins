@@ -31,7 +31,7 @@ const extensionId = 36;
 const sourceName = "Syosetu";
 
 // there are 20 mangas per page
-const maxPageLoad = 0;
+const maxPageLoad = 3;
 
 const novelsScraper = async (req, res) => {
     // array of all the novels
@@ -39,9 +39,13 @@ const novelsScraper = async (req, res) => {
     // returns list of novels from given page
     let getNovelsFromPage = async (pagenumber) => {
         // load page
-        const body = await scraper(searchUrl(pagenumber));
+        console.log(searchUrl(pagenumber));
+        const body = await scraper(searchUrl(pagenumber || null));
+        console.log("Loaded");
         // Cheerio it!
         const cheerioQuery = cheerio.load(body, { decodeEntities: false });
+
+        console.log("Parsed");
 
         let pageNovels = [];
         // find class=searchkekka_box
@@ -58,6 +62,7 @@ const novelsScraper = async (req, res) => {
                 novelCover: "", // TODO: IDK what to do about covers... On Syo they don't have them
             });
         });
+        console.log("Read");
         // return all novels from this page
         return pageNovels;
     };
@@ -68,6 +73,7 @@ const novelsScraper = async (req, res) => {
         // always load first one
         novels.push(...(await getNovelsFromPage(pagesLoaded + 1)));
         pagesLoaded++;
+        console.log("Added");
     } while (pagesLoaded < maxPageLoad); // check if we should load more
 
     /** Use
@@ -206,12 +212,15 @@ let chapterScraper = async (req, res) => {
     console.log("Finished!");
 };
 
-let searchScraper = (req, res) => {
+let searchScraper = async (req, res) => {
     const searchTerm = req.query.s;
     const orderBy = req.query.o;
 
     // array of all the novels
     let novels = [];
+
+    let isNext = true;
+
     // returns list of novels from given page
     let getNovelsFromPage = async (pagenumber) => {
         // load page
@@ -221,6 +230,8 @@ let searchScraper = (req, res) => {
         );
         // Cheerio it!
         const cheerioQuery = cheerio.load(body, { decodeEntities: false });
+
+        if (cheerioQuery(".nextlink").length === 0) isNext = false;
 
         let pageNovels = [];
         // find class=searchkekka_box
@@ -247,7 +258,7 @@ let searchScraper = (req, res) => {
         // always load first one
         novels.push(...(await getNovelsFromPage(pagesLoaded + 1)));
         pagesLoaded++;
-    } while (pagesLoaded < maxPageLoad); // check if we should load more
+    } while (pagesLoaded < maxPageLoad && isNext); // check if we should load more
 
     /** Use
      * novels.push(...(await getNovelsFromPage(pageNumber)))
