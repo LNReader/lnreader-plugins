@@ -24,6 +24,9 @@ const getNovelUrl = (id) => `https://ncode.syosetu.com/${id}`;
 const getChapterUrl = (id, chn) =>
     `https://ncode.syosetu.com/${id}${chn === "oneshot" ? "" : `/${chn}`}`;
 
+// Because syosetu does not have any covers, I did a replacement for them
+const novelCover = "https://imgur.com/Wm5htpl";
+
 // ID of this extension
 const extensionId = 36;
 
@@ -31,6 +34,8 @@ const extensionId = 36;
 const sourceName = "Syosetu";
 
 // there are 20 mangas per page
+// this is number of pages loaded in the first "batch" of loads
+// TOOD: in-app dynamic loading on scroll
 const maxPageLoad = 3;
 
 const novelsScraper = async (req, res) => {
@@ -59,7 +64,7 @@ const novelsScraper = async (req, res) => {
                 novelName: novelDIV.text(), // get the name
                 novelUrl: getLastPartOfUrl(novelA.attribs.href), // get last part of the link
                 extensionId,
-                novelCover: "", // TODO: IDK what to do about covers... On Syo they don't have them
+                novelCover, // TODO: IDK what to do about covers... On Syo they don't have them
             });
         });
         console.log("Read");
@@ -101,7 +106,7 @@ const novelScraper = async (req, res) => {
         sourceUrl: novelUrl,
         novelUrl: req.params.novelUrl,
         novelName: cheerioQuery(".novel_title").text(),
-        novelCover: "",
+        novelCover,
     };
 
     // Get all the chapters
@@ -245,7 +250,7 @@ let searchScraper = async (req, res) => {
                 novelName: novelDIV.text(), // get the name
                 novelUrl: getLastPartOfUrl(novelA.attribs.href), // get last part of the link
                 extensionId,
-                novelCover: "", // TODO: IDK what to do about covers... On Syo they don't have them
+                novelCover, // TODO: IDK what to do about covers... On Syo they don't have them
             });
         });
         // return all novels from this page
