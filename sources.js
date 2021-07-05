@@ -322,7 +322,7 @@ extensions = [
         sourceId: 36,
         sourceUrl: "https://syosetsu.com",
         sourceName: "Syosetsu",
-        sourceCover: "",
+        sourceCover: "https://github.com/skillgg/lnreader-sources/blob/main/src/jp/syosetu/icon.png?raw=true",
         sourceLanguage: "Japanese",
         status: 0
     },

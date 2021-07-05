@@ -25,7 +25,7 @@ const getChapterUrl = (id, chn) =>
     `https://ncode.syosetu.com/${id}${chn === "oneshot" ? "" : `/${chn}`}`;
 
 // Because syosetu does not have any covers, I did a replacement for them
-const novelCover = "https://imgur.com/Wm5htpl";
+const novelCover = "https://raw.githubusercontent.com/skillgg/lnreader-sources/main/src/jp/syosetu/not_found.png";
 
 // ID of this extension
 const extensionId = 36;
