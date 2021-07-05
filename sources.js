@@ -314,6 +314,18 @@ extensions = [
         sourceLanguage: "Spanish",
         status: 1,
     },
+
+    /**
+     * Japanese
+     */
+    {
+        sourceId: 36,
+        sourceUrl: "https://syosetsu.com",
+        sourceName: "Syosetsu",
+        sourceCover: "",
+        sourceLanguage: "Japanese",
+        status: 0
+    },
 ];
 
 module.exports = extensions;
