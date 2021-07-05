@@ -5,8 +5,8 @@ const cheerio = require("cheerio");
 const baseUrl = "https://syosetu.com"; // base url for syosetu.com
 
 // get given page of search (if pagenum is 0 or >100 (max possible on site) see first page)
-const searchUrl = (pagenum) => {
-    return `https://yomou.syosetu.com/search.php?order=hyoka${
+const searchUrl = (pagenum, order) => {
+    return `https://yomou.syosetu.com/search.php?order=${order || "hyoka"}${
         !isNaN((pagenum = parseInt(pagenum))) // check if pagenum is a number
             ? `&p=${pagenum <= 1 || pagenum > 100 ? "1" : pagenum}` // check if pagenum is between 1 and 100
             : "" // if isn't don't set ?p
@@ -39,7 +39,7 @@ const novelsScraper = async (req, res) => {
     // returns list of novels from given page
     let getNovelsFromPage = async (pagenumber) => {
         // load page
-        const body = await scraper(searchUrl());
+        const body = await scraper(searchUrl(pagenumber));
         // Cheerio it!
         const cheerioQuery = cheerio.load(body, { decodeEntities: false });
 
@@ -127,10 +127,6 @@ const novelScraper = async (req, res) => {
          * but every oneshot is set as "there are no chapters" and all contents are thrown into the description!!
          */
         // get summary for oneshot chapter
-        console.log(
-            "Searching for description:",
-            searchUrl() + `&word=${novel.novelName}`
-        );
         novel.novelSummary = cheerio // because there is no summary anywhere on the novel page, we have to take it from search page for a one-shot manga
             .load(await scraper(searchUrl() + `&word=${novel.novelName}`), {
                 decodeEntities: false,
@@ -159,8 +155,8 @@ let chapterScraper = async (req, res) => {
     const novelUrl = req.params.novelUrl;
     const chapterUrl = req.params.chapterUrl;
 
-    const url = getChapterUrl(novelUrl, chapterUrl);
-    console.log(url);
+    const url = getChapterUrl(novelUrl, chapterUrl); // get Url
+
     // create cheerioQuery
     const cheerioQuery = cheerio.load(await scraper(url), {
         decodeEntities: false,
@@ -172,19 +168,24 @@ let chapterScraper = async (req, res) => {
         novelUrl,
         chapterUrl,
         chapterName: "",
-        chapterText: cheerioQuery("#novel_honbun")
+        chapterText: cheerioQuery("#novel_honbun") // get chapter text
             .text()
             .replace(/<\s*br.*?>/g, "")
-            .replace(/\n{2,}/g, "\n"),
+            .replace(/\n{2,}/g, "\n"), // remove double breaklines
         nextChapter: null,
         prevChapter: null,
     };
 
     if (chapterUrl === "oneshot")
-        // oneshot
+        // oneshot get name
         chapter.chapterName = cheerioQuery("#novel_title").text();
     else {
+        // single chapter
+
+        // get name
         chapter.chapterName = cheerioQuery(".novel_subtitle").first().text();
+
+        // get next/prev buttons
         const chapterButtons = cheerioQuery(
             "#novel_contents .novel_bn"
         ).first();
@@ -205,7 +206,58 @@ let chapterScraper = async (req, res) => {
     console.log("Finished!");
 };
 
-let searchScraper = (req, res) => {};
+let searchScraper = (req, res) => {
+    const searchTerm = req.query.s;
+    const orderBy = req.query.o;
+
+    // array of all the novels
+    let novels = [];
+    // returns list of novels from given page
+    let getNovelsFromPage = async (pagenumber) => {
+        // load page
+        const body = await scraper(
+            searchUrl(pagenumber || null, req.query.o || null) +
+                `&word=${searchTerm}`
+        );
+        // Cheerio it!
+        const cheerioQuery = cheerio.load(body, { decodeEntities: false });
+
+        let pageNovels = [];
+        // find class=searchkekka_box
+        cheerioQuery(".searchkekka_box").each(function (i, e) {
+            // get div with link and name
+            const novelDIV = cheerioQuery(this).find(".novel_h");
+            // get link element
+            const novelA = novelDIV.children()[0];
+            // add new novel to array
+            pageNovels.push({
+                novelName: novelDIV.text(), // get the name
+                novelUrl: getLastPartOfUrl(novelA.attribs.href), // get last part of the link
+                extensionId,
+                novelCover: "", // TODO: IDK what to do about covers... On Syo they don't have them
+            });
+        });
+        // return all novels from this page
+        return pageNovels;
+    };
+
+    // counter of loaded pages
+    let pagesLoaded = 0;
+    do {
+        // always load first one
+        novels.push(...(await getNovelsFromPage(pagesLoaded + 1)));
+        pagesLoaded++;
+    } while (pagesLoaded < maxPageLoad); // check if we should load more
+
+    /** Use
+     * novels.push(...(await getNovelsFromPage(pageNumber)))
+     * if you want to load more
+     */
+
+    // respond with novels!
+    res.json(novels);
+    console.log("Finished!");
+};
 
 module.exports = mtlNovelScraper = {
     novelsScraper,
