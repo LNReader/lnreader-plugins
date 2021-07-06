@@ -237,6 +237,15 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 37,
+        sourceUrl: "https://lnmtl.com/",
+        sourceName: "LNMTL",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/src/en/lnmtl/icon.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 
     /**
      * Spanish
@@ -322,9 +331,10 @@ extensions = [
         sourceId: 36,
         sourceUrl: "https://syosetsu.com",
         sourceName: "Syosetsu",
-        sourceCover: "https://github.com/skillgg/lnreader-sources/blob/main/src/jp/syosetu/icon.png?raw=true",
+        sourceCover:
+            "https://github.com/skillgg/lnreader-sources/blob/main/src/jp/syosetu/icon.png?raw=true",
         sourceLanguage: "Japanese",
-        status: 0
+        status: 1,
     },
 ];
 
