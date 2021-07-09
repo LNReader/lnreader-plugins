@@ -336,6 +336,24 @@ extensions = [
         sourceLanguage: "English",
         status: 1,
     },
+    {
+        sourceId: 48,
+        sourceUrl: "https://www.wuxia.blog/",
+        sourceName: "Wuxia.Blog",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/multisrc/madara/icons/daonovel.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
+    {
+        sourceId: 49,
+        sourceUrl: "https://wuxia.city/",
+        sourceName: "Wuxia.City",
+        sourceCover:
+            "https://github.com/rajarsheechatterjee/lnreader-extensions/blob/main/multisrc/madara/icons/daonovel.png?raw=true",
+        sourceLanguage: "English",
+        status: 1,
+    },
 
     /**
      * Spanish

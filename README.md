@@ -42,6 +42,8 @@ Sources for [LNReader](https://github.com/rajarsheechatterjee/lnreader)
 | https://freenovel.me/                    | :heavy_check_mark: |
 | https://1stkissnovel.love/               | :heavy_check_mark: |
 | https://daonovel.com/                    | :heavy_check_mark: |
+| https://www.wuxia.blog/                  | :heavy_check_mark: |
+| https://wuxia.city/                      | :heavy_check_mark: |
 | https://syosetu.com                      | :heavy_check_mark: |
 | https://tunovelaligera.com/              | :heavy_check_mark: |
 | https://www.skynovels.net/               | :heavy_check_mark: |
