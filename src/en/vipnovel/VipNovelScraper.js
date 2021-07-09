@@ -76,8 +76,6 @@ const novelScraper = async (req, res) => {
         novel[detailName] = detail;
     });
 
-    // $(".description-summary > div.summary__content").find("em").remove();
-
     let novelSummary = $(".description-summary > div.summary__content").html();
 
     novel.novelSummary = htmlToText(novelSummary);
