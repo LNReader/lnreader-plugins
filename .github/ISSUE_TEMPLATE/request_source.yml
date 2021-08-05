@@ -1,0 +1,33 @@
+name: Source request
+description: Suggest a new source for LNReader
+labels: [Source request]
+body:
+    - type: input
+      id: name
+      attributes:
+          label: Source name
+      validations:
+          required: true
+
+    - type: input
+      id: link
+      attributes:
+          label: Source link
+      validations:
+          required: true
+
+    - type: input
+      id: language
+      attributes:
+          label: Language
+          placeholder: |
+              Example: "English"
+      validations:
+          required: true
+
+    - type: textarea
+      id: other-details
+      attributes:
+          label: Other details
+          placeholder: |
+              Additional details and attachments.
