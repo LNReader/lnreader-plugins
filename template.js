@@ -1,5 +1,6 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-// fetch will be removed after generating plugin json (because it's unnecessary on RN)
+// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+// You can use fetch above to test. Remember to remove it when commit.
 
 /**
  * choose any lib you want
@@ -7,7 +8,8 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
  * 
  */
 
-// You can change @ to real path for convenient using 
+// You can change @ to real path for convenient using
+// But after you finish your job. Please change it back
 
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
@@ -50,11 +52,12 @@ const fetchImage = async (url) => {
 };
 
 module.exports = {
-    id,
+    id,       // string and must be unique.
     name,
-    version,
+    icon,     /** The relative path to icon without @icons . For example: 'src/vi/hakolightnovel/icon.png' */
+    version,  // xx.xx.xx   For example: 1.2.12
     site,
-    lang,
+    lang,     // must be included in languages
     description,
     fetchImage,
     popularNovels,
