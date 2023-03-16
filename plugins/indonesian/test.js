@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
-const status = require('../../src/pluginStatus');
-const languages = require('../../src/languages');
+const status = require('@libs/pluginStatus');
+const languages = require('@libs/languages');
 
 const sourceId = 81;
 const baseUrl = 'https://id.mtlnovel.com';

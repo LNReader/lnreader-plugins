@@ -1,44 +1,35 @@
 {
-    "English": [
-        {
-            "id":"English - 1",
-            "name":"yayaya",
-            "lang":"English",
-            "version":"1.0.2",
-            "iconUrl":"https://github.com/nyagami/LNReader-plugins/blob/master/icons/indonesian/test.png?raw=true",
-            "url":"https://raw.githubusercontent.com/nyagami/LNReader-plugins/master/plugins/english/test.js?newtest=true",
-            "description": "This is description for plugin"
-        },
-        {
-            "id":"English - 2",
-            "name":"Absolute Url",
-            "lang":"English",
-            "version":"1.0.7",
-            "iconUrl":"https://github.com/nyagami/LNReader-plugins/blob/master/icons/english/painful.png?raw=true",
-            "url":"https://raw.githubusercontent.com/nyagami/LNReader-plugins/master/plugins/english/LightNovelReader.js?newtest=true",
-            "description": "This is description for plugin"
-        }
-    ],
-    "Bahasa Indonesia": [
-        {   
-            "id":"Bahasa Indonesia - 1",
-            "name": "test",
-            "lang": "Bahasa Indonesia",
-            "version": "1.0.0",
-            "iconUrl": "https://github.com/nyagami/LNReader-plugins/blob/master/icons/indonesian/test.png?raw=true",
-            "url": "https://raw.githubusercontent.com/nyagami/LNReader-plugins/master/plugins/indonesian/test.js?newtest=true",
-            "description": "This is description for plugin"
-        }
-    ],
-    "Tiếng Việt": [
-        {
-            "id":"Tiếng Việt - 1",
-            "name": "Hako.re",
-            "lang": "Tiếng Việt",
-            "version": "1.0.15",
-            "iconUrl": "https://github.com/nyagami/LNReader-plugins/blob/master/icons/vietnamese/chie_panik.png?raw=true",
-            "url": "https://raw.githubusercontent.com/nyagami/LNReader-plugins/master/plugins/vietnamese/hako.js?newtest=true",
-            "description": "This is description for plugin"
-        }
-    ]
+	"English": [
+		{
+			"id": "English - 2",
+			"name": "Absolute Url",
+			"lang": "English",
+			"version": "1.0.7",
+			"description": "This is description for plugin",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/LightNovelReader.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/undefined?raw=true"
+		}
+	],
+	"Bahasa Indonesia": [
+		{
+			"id": "Bahasa Indonesia - 1",
+			"name": "test",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"description": "This is description for plugin",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/test.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/undefined?raw=true"
+		}
+	],
+	"Tiếng Việt": [
+		{
+			"id": "Tiếng Việt - 1",
+			"name": "Hako",
+			"lang": "Tiếng Việt",
+			"version": "1.0.15",
+			"description": "This is description for plugin",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/hako.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/vi/hakolightnovel/icon.png?raw=true"
+		}
+	]
 }

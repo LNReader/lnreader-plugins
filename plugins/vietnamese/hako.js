@@ -190,6 +190,7 @@ module.exports = {
   id: 'Tiếng Việt - 1',
   name: 'Hako',
   version: '1.0.15',
+  icon: 'src/vi/hakolightnovel/icon.png',
   site: baseUrl,
   lang: languages.Vietnamese,
   description: 'This is description for plugin',
