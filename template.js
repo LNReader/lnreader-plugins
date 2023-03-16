@@ -11,7 +11,6 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
-const pluginStatus = require('@libs/pluginStatus');
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -50,10 +49,6 @@ const fetchImage = async (url) => {
     return base64; // 
 };
 
-const valid = async () => {
-    return pluginStatus.OK;
-}
-
 module.exports = {
     id,
     name,
@@ -61,7 +56,6 @@ module.exports = {
     site,
     lang,
     description,
-    valid,
     fetchImage,
     popularNovels,
     parseNovelAndChapters,

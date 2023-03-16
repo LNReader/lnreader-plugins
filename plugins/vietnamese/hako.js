@@ -1,7 +1,6 @@
 const cheerio = require('cheerio');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const languages = require('@libs/languages');
-const status = require('@libs/pluginStatus');
 
 const sourceId = 115;
 const baseUrl = 'https://ln.hako.vn';
@@ -182,19 +181,14 @@ const searchNovels = async (searchTerm) => {
 
 const fetchImage = async (url) => 'base64';
 
-const valid = async () => {
-  return status.OK;
-}
-
 module.exports = {
   id: 'Tiếng Việt - 1',
   name: 'Hako',
   version: '1.0.15',
-  icon: 'src/vi/hakolightnovel/icon.png',
+  icon: 'src/vi/hakolightnovel/icon.png',   //relative path without 'icons' prefix
   site: baseUrl,
   lang: languages.Vietnamese,
   description: 'This is description for plugin',
-  valid,
   fetchImage,
   popularNovels,
   parseNovelAndChapters,
