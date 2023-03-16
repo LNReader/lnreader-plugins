@@ -7,7 +7,7 @@
 
 Repository to host plugins and related issues, and requests for [LNReader](https://github.com/LNReader/lnreader).
 
-## Contributing plugin
+## Contributing
 
 1. Please use this [template](./template.js).
 2. Choose your language in ./plugins/
