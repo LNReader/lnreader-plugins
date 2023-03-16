@@ -22,7 +22,13 @@ const languages = require('@libs/languages');
 const popularNovels = async (pageNo) => {
   const novels = [];
   /*
-    Do somethin....
+    Do something....
+    novel = {
+      name: '',
+      url: '',      must be absoulute
+      cover: '',    
+    }
+    novels.push(novel);
   */
   return novels;
 };
@@ -32,15 +38,48 @@ const parseNovelAndChapters = async (novelUrl) => {
     url: novelUrl,
     chapters: [],
   };
+
+  /**
+   * novel.name = '';
+   * novel.cover = '';
+   * novel.summary = '';
+   * novel.author = '';
+   * novel.artist = '';
+   * novel.status = '';   use @novelStatus
+   * novel.genres = '';   join by commas. For example: 'romcom, action, school'
+   */
+
+  /*
+    Do something....
+    chapter = {
+      name: '',
+      url: '',      must be absoulute
+      releaseTime: '',
+    }
+    novel.chapters.push(chapter);
+  */
+
   return novel;
 };
 
 const parseChapter = async (chapterUrl) => {
+  // Do something...
+  chapterText = '';
   return chapterText;
 };
 
 
 const searchNovels = async (searchTerm, pageNo) => {
+  novels = [];
+  /*
+    Do something....
+    novel = {
+      name: '',
+      url: '',      must be absoulute
+      cover: '',    
+    }
+    novels.push(novel);
+  */
   return novels;
 };
 
