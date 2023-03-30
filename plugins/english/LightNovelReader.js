@@ -161,21 +161,16 @@ async function searchNovels (searchTerm) {
 
 async function fetchImage (url) {
   return 'base64';
-} 
-  
-
-async function valid(){
-  return status.OK;
 }
 
 module.exports = {
     id: languages.English + ' - 2',
     name: 'Absolute Url',
-    version: '1.0.7',
+    icon: 'src/en/lightnovelreader/icon.png',
+    version: '1.0.8',
     site: baseUrl,
     lang: languages.English,
     description: 'This is description for plugin',
-    valid: valid,
     fetchImage: fetchImage,
     popularNovels,
     parseNovelAndChapters,

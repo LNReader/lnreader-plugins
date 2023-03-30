@@ -39,6 +39,7 @@ const githubPluginSuffix = '?newtest=true';
                         info.url = `${githubPluginsLink}/${language.toLowerCase()}/${plugin}${githubPluginSuffix}`;
                         info.iconUrl = `${githubIconsLink}/${icon}${githubIconSuffix}`;
                         json[lang].push(info);
+                        console.log('collected', name);
                     });
                 }catch(e){
                     console.log(e);

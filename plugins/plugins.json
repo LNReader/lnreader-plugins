@@ -4,10 +4,10 @@
 			"id": "English - 2",
 			"name": "Absolute Url",
 			"lang": "English",
-			"version": "1.0.7",
+			"version": "1.0.8",
 			"description": "This is description for plugin",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/LightNovelReader.js?newtest=true",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/undefined?raw=true"
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png?raw=true"
 		}
 	],
 	"Tiếng Việt": [
