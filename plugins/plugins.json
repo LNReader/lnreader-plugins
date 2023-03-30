@@ -10,17 +10,6 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/undefined?raw=true"
 		}
 	],
-	"Bahasa Indonesia": [
-		{
-			"id": "Bahasa Indonesia - 1",
-			"name": "test",
-			"lang": "Bahasa Indonesia",
-			"version": "1.0.0",
-			"description": "This is description for plugin",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/test.js?newtest=true",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/undefined?raw=true"
-		}
-	],
 	"Tiếng Việt": [
 		{
 			"id": "Tiếng Việt - 1",

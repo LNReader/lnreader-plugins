@@ -1,8 +1,10 @@
 require('module-alias/register')
+
 const fs = require('fs');
 const path = require('path')
 const languages = require('@libs/languages');
 const root = path.dirname(require.main.filename);
+
 const githubIconsLink = 'https://raw.githubusercontent.com/nyagami/plugins/main/icons';
 const githubIconSuffix = '?raw=true';
 const githubPluginsLink = 'https://raw.githubusercontent.com/nyagami/plugins/main/plugins';
@@ -44,9 +46,10 @@ const githubPluginSuffix = '?newtest=true';
             }
             fs.writeFileSync(jsonMinPath, JSON.stringify(json));
             fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
-            console.log('done');
+            console.log('done ✅');
             break;
         case 'valid':
+            console.log('done ✅')
             break;
         default:
             console.log(command, 'is not valid command. Using help to see');

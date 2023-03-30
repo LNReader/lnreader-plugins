@@ -7,7 +7,7 @@ const sourceId = 114;
 const sourceName = 'LightNovelReader';
 const baseUrl = 'https://lightnovelreader.org';
 
-const popularNovels = async (page) => {
+async function popularNovels(page) {
   const url = baseUrl + '/ranking/top-rated/' + page;
 
   const result = await fetch(url);
@@ -52,7 +52,7 @@ const popularNovels = async (page) => {
   return novels;
 };
 
-const parseNovelAndChapters = async (novelUrl) => {
+async function parseNovelAndChapters (novelUrl) {
   const url = novelUrl;
   const result = await fetch(url);
   const body = await result.text();
@@ -122,7 +122,7 @@ const parseNovelAndChapters = async (novelUrl) => {
   return novel;
 };
 
-const parseChapter = async (chapterUrl) => {
+async function parseChapter (chapterUrl) {
   const url = chapterUrl;
   const result = await fetch(url);
   const body = await result.text();
@@ -136,7 +136,7 @@ const parseChapter = async (chapterUrl) => {
 };
 
 
-const searchNovels = async (searchTerm) => {
+async function searchNovels (searchTerm) {
   const url = baseUrl + '/search/autocomplete?dataType=json&query=' + searchTerm;
   const result = await fetch(url, { method: 'POST' });
   const body = await result.json();
@@ -159,9 +159,12 @@ const searchNovels = async (searchTerm) => {
   return novels;
 };
 
-const fetchImage = async (url) => 'base64';
+async function fetchImage (url) {
+  return 'base64';
+} 
+  
 
-const valid = async () => {
+async function valid(){
   return status.OK;
 }
 
