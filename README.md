@@ -15,7 +15,7 @@ If your languages doenst exist, please request us. We will add it soon.
 3. Write your script
 4. Valid your script
 ```
-npm start valid
+npm start test
 ```
 5. Generate json
 ```
