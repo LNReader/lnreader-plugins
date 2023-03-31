@@ -1,15 +1,12 @@
 // const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-// You can use fetch above to test. Remember to remove it when commit.
+// You can use fetch above to test. Remember to comment or remove it when commit.
 
 /**
  * choose any lib you want
  * @cheerio and @languages are required
  * 
  */
-
-// You can change @ to real path for convenient using
-// But after you finish your job. Please change it back
 
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
@@ -19,7 +16,7 @@ const languages = require('@libs/languages');
 // const htmlToText = require('@libs/htmlToText');
 
 
-const popularNovels = async (pageNo) => {
+async function popularNovels (pageNo) {
   const novels = [];
   /*
     Do something....
@@ -33,7 +30,7 @@ const popularNovels = async (pageNo) => {
   return novels;
 };
 
-const parseNovelAndChapters = async (novelUrl) => {
+async function parseNovelAndChapters (novelUrl) {
   const novel = {
     url: novelUrl,
     chapters: [],
@@ -62,14 +59,14 @@ const parseNovelAndChapters = async (novelUrl) => {
   return novel;
 };
 
-const parseChapter = async (chapterUrl) => {
+async function parseChapter (chapterUrl) {
   // Do something...
   chapterText = '';
   return chapterText;
 };
 
 
-const searchNovels = async (searchTerm, pageNo) => {
+async function searchNovels (searchTerm, pageNo) {
   novels = [];
   /*
     Do something....
@@ -83,7 +80,7 @@ const searchNovels = async (searchTerm, pageNo) => {
   return novels;
 };
 
-const fetchImage = async (url) => {
+async function fetchImage (url) {
     // This is needed for download chapter. Because we dont save image in database
     // And some site cant fetch image normally (maybe need some headers)
     // const base64 = smt ...
@@ -92,12 +89,12 @@ const fetchImage = async (url) => {
 
 module.exports = {
     id,       // string and must be unique.
-    name,
-    icon,     /** The relative path to icon without @icons . For example: 'src/vi/hakolightnovel/icon.png' */
+    name: 'Source name',
+    icon,     /** The relative path to the icon without @icons . For example: 'src/vi/hakolightnovel/icon.png' */
     version,  // xx.xx.xx   For example: 1.2.12
     site,
-    lang,     // must be included in languages
-    description,
+    lang: languages.English,     // must be included in languages
+    description: 'This is descriptions',
     fetchImage,
     popularNovels,
     parseNovelAndChapters,
