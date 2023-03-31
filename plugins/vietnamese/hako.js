@@ -1,7 +1,9 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
 const cheerio = require('cheerio');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const languages = require('@libs/languages');
+const fetchFile = require('@libs/fetchFile');
 
 const baseUrl = 'https://ln.hako.vn';
 
@@ -171,7 +173,10 @@ async function searchNovels (searchTerm) {
 };
 
 async function fetchImage (url){
-  return 'base64';
+  const headers = {
+    Referer: 'https://ln.hako.vn',
+  }
+  return await fetchFile(url, {headers: headers});
 };
 
 module.exports = {
@@ -182,6 +187,7 @@ module.exports = {
   site: baseUrl,
   lang: languages.Vietnamese,
   description: 'This is description for plugin',
+  protected: true,
   fetchImage,
   popularNovels,
   parseNovelAndChapters,

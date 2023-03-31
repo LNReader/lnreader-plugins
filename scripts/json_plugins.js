@@ -20,6 +20,7 @@ const run = () => {
             const plugins = fs.readdirSync(langPath);
             json[languages[language]] = [];
             plugins.forEach(plugin => {
+                if(plugin.startsWith('.')) return;
                 const instance = require(`@plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`)
                 const { id, name, lang, version, icon, description } = instance
                 const info = { id, name, lang, version, description } // lang: language with native name

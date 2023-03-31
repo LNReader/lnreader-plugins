@@ -11,7 +11,7 @@ const requiredProps = [
     'id', 'name', 'site', 'lang',
     'fetchImage', 'popularNovels', 'parseNovelAndChapters', 'parseChapter', 'searchNovels'
 ]
-const optionalProps = ['icon', 'version', 'description'];
+const optionalProps = ['icon', 'version', 'description', 'protected'];
 
 const testPlugin = async (file, index) => {
     console.log(clc.blue(index));

@@ -10,6 +10,7 @@
 
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
+const fetchFile = require('@libs/fetchFile');
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -82,9 +83,9 @@ async function searchNovels (searchTerm, pageNo) {
 
 async function fetchImage (url) {
     // This is needed for download chapter. Because we dont save image in database
-    // And some site cant fetch image normally (maybe need some headers)
+    // And some site cant fetch images normally (maybe need some headers)
     // const base64 = smt ...
-    return base64; // 
+    return await fetchFile(url, {});
 };
 
 module.exports = {
@@ -95,6 +96,7 @@ module.exports = {
     site,
     lang: languages.English,     // must be included in languages
     description: 'This is descriptions',
+    protected: false,   // this site protect its resources (images) and you have to define header or smt to bypass
     fetchImage,
     popularNovels,
     parseNovelAndChapters,

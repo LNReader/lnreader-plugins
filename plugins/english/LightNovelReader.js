@@ -1,7 +1,9 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
+const fetchFile = require('@libs/fetchFile');
 
 const baseUrl = 'https://lightnovelreader.org';
 
@@ -127,7 +129,6 @@ async function parseChapter(chapterUrl) {
 
   const loadedCheerio = cheerio.load(body);
 
-  const chapterName = loadedCheerio('.section-header-title h2').text();
   const chapterText = loadedCheerio('#chapterText').html() || '';
 
   return chapterText;
@@ -158,7 +159,7 @@ async function searchNovels (searchTerm) {
 };
 
 async function fetchImage (url) {
-  return 'base64';
+  return await fetchFile(url, {});
 }
 
 module.exports = {
@@ -169,7 +170,8 @@ module.exports = {
     site: baseUrl,
     lang: languages.English,
     description: 'This is description for plugin',
-    fetchImage: fetchImage,
+    protected: false,
+    fetchImage,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,
