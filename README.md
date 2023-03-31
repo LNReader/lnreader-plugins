@@ -11,15 +11,22 @@ Repository to host plugins and related issues, and requests for [LNReader](https
 
 1. Please use this [template](./template.js).
 2. Choose your language in ./plugins/
-If your languages doenst exist, please request us. We will add it soon.
+If your language doenst exist, please request us. We will add it soon.
 3. Write your script
 4. Valid your script
 ```
 npm start test
 ```
 5. Generate json
+
+Finally, uncomment or remove fetch import in your script
+```ts
+// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+```
+And generate json file by
 ```
 npm start json
 ```
+----------
 
 The developer of this application does not have any affiliation with the content providers available.
