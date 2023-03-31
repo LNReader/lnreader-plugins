@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@libs/*": [
+        "./libs/*",
+      ],
+      "@icons/*": [
+        "./icons/*",
+      ],
+      "@plugins/*": [
+        "./plugins/*",
+      ],
+      "@scripts/*": [
+        "./scripts/*",
+      ]
+    },
+  },
+}

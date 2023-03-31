@@ -1,10 +1,8 @@
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
-const status = require('@libs/pluginStatus');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 
-const sourceId = 114;
-const sourceName = 'LightNovelReader';
 const baseUrl = 'https://lightnovelreader.org';
 
 async function popularNovels(page) {
@@ -122,7 +120,7 @@ async function parseNovelAndChapters (novelUrl) {
   return novel;
 };
 
-async function parseChapter (chapterUrl) {
+async function parseChapter(chapterUrl) {
   const url = chapterUrl;
   const result = await fetch(url);
   const body = await result.text();
@@ -165,9 +163,9 @@ async function fetchImage (url) {
 
 module.exports = {
     id: languages.English + ' - 2',
-    name: 'Absolute Url',
+    name: 'LightNovelReader',
     icon: 'src/en/lightnovelreader/icon.png',
-    version: '1.0.8',
+    version: '1.0.9',
     site: baseUrl,
     lang: languages.English,
     description: 'This is description for plugin',

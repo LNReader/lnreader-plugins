@@ -1,11 +1,11 @@
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cheerio = require('cheerio');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const languages = require('@libs/languages');
 
-const sourceId = 115;
 const baseUrl = 'https://ln.hako.vn';
 
-const popularNovels = async (page) => {
+async function popularNovels (page) {
   const url = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + page;
   const result = await fetch(url);
   const body = await result.text();
@@ -15,7 +15,7 @@ const popularNovels = async (page) => {
   const novels = [];
 
   loadedCheerio('main.row > .thumb-item-flow').each(function () {
-    let novelUrl = loadedCheerio(this)
+    let novelUrl = baseUrl + loadedCheerio(this)
       .find('div.thumb_attr.series-title > a')
       .attr('href');
 
@@ -46,7 +46,7 @@ const popularNovels = async (page) => {
   return novels;
 };
 
-const parseNovelAndChapters = async (novelUrl) => {
+async function parseNovelAndChapters (novelUrl){
   const url = novelUrl;
   const result = await fetch(url);
   const body = await result.text();
@@ -119,28 +119,19 @@ const parseNovelAndChapters = async (novelUrl) => {
   return novel;
 };
 
-const parseChapter = async (novelUrl, chapterUrl) => {
+async function parseChapter (chapterUrl){
   const url = chapterUrl;
   const result = await fetch(url);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
 
-  const chapterName = loadedCheerio('.title-item').text();
   const chapterText = loadedCheerio('#chapter-content').html() || '';
-
-  const chapter = {
-    sourceId,
-    novelUrl,
-    chapterUrl,
-    chapterName,
-    chapterText,
-  };
 
   return chapterText;
 };
 
-const searchNovels = async (searchTerm) => {
+async function searchNovels (searchTerm) {
   const url = baseUrl + '/tim-kiem?keywords=' + searchTerm;
   const result = await fetch(url);
   const body = await result.text();
@@ -179,12 +170,14 @@ const searchNovels = async (searchTerm) => {
   return novels;
 };
 
-const fetchImage = async (url) => 'base64';
+async function fetchImage (url){
+  return 'base64';
+};
 
 module.exports = {
   id: 'Tiếng Việt - 1',
   name: 'Hako',
-  version: '1.0.15',
+  version: '1.0.16',
   icon: 'src/vi/hakolightnovel/icon.png',   //relative path without 'icons' prefix
   site: baseUrl,
   lang: languages.Vietnamese,
