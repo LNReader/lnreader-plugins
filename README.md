@@ -10,14 +10,15 @@ Repository to host plugins and related issues, and requests for [LNReader](https
 ## Contributing
 
 1. Please use this [template](./template.js) or [template.min](./template.min.js)
-2. Choose your language in [./plugins](./plugins)
+2. Choose your language in [./plugins](./plugins) <br>
 If your language doenst exist, please request us. We will add it soon.
-3. Write your script
+3. Write your script <br>
 See example: [Hako](./plugins/vietnamese/hako.js)
-4. Valid your script
+4. Valid your script <br>
 ```
 npm start test
 ```
+<br>
 5. Generate json
 
 Finally, comment or remove fetch import in your script
