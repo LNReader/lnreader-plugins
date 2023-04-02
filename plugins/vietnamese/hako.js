@@ -1,4 +1,4 @@
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const cheerio = require('cheerio');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
@@ -182,11 +182,11 @@ async function fetchImage (url){
 module.exports = {
   id: 'Tiếng Việt - 1',
   name: 'Hako',
-  version: '1.0.16',
+  version: '1.0.17',
   icon: 'src/vi/hakolightnovel/icon.png',   //relative path without 'icons' prefix
   site: baseUrl,
   lang: languages.Vietnamese,
-  description: 'This is description for plugin',
+  description: 'Vietnamese',
   protected: true,
   fetchImage,
   popularNovels,
