@@ -13,11 +13,11 @@
 	],
 	"Tiếng Việt": [
 		{
-			"id": "Tiếng Việt - 1",
+			"id": "Tiếng Việt Hako",
 			"name": "Hako",
 			"lang": "Tiếng Việt",
-			"version": "1.0.17",
-			"description": "Vietnamese",
+			"version": "1.0.0",
+			"description": "Cổng Light Novel",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/hako.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/vi/hakolightnovel/icon.png?raw=true"
 		}

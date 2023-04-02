@@ -23,7 +23,7 @@ async function popularNovels (pageNo) {
     Do something....
     novel = {
       name: '',
-      url: '',      must be absoulute
+      url: '',      must be absolute
       cover: '',    
     }
     novels.push(novel);
@@ -73,7 +73,7 @@ async function searchNovels (searchTerm, pageNo) {
     Do something....
     novel = {
       name: '',
-      url: '',      must be absoulute
+      url: '',      must be absolute
       cover: '',    
     }
     novels.push(novel);
@@ -82,21 +82,20 @@ async function searchNovels (searchTerm, pageNo) {
 };
 
 async function fetchImage (url) {
-    // This is needed for download chapter. Because we dont save image in database
-    // And some site cant fetch images normally (maybe need some headers)
-    // const base64 = smt ...
+    // Some site cant fetch images normally (maybe need some headers)
+    // Must return base64 of image
     return await fetchFile(url, {});
 };
 
 module.exports = {
-    id,       // string and must be unique.
+    id,       // string and must be unique. For example: languages.Vietnamese + 'Hako';
     name: 'Source name',
     icon,     /** The relative path to the icon without @icons . For example: 'src/vi/hakolightnovel/icon.png' */
     version,  // xx.xx.xx   For example: 1.2.12
     site,
     lang: languages.English,     // must be included in languages
     description: 'This is descriptions',
-    protected: false,   // this site protect its resources (images) and you have to define header or smt to bypass
+    protected: false,   // true if this site protect its resources (images) and you have to define header or smt to bypass
     fetchImage,
     popularNovels,
     parseNovelAndChapters,

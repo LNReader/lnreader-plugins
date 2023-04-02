@@ -8,8 +8,8 @@ const fetchFile = require('@libs/fetchFile');
 const baseUrl = 'https://ln.hako.vn';
 
 async function popularNovels (page) {
-  const url = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + page;
-  const result = await fetch(url);
+  const link = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + page;
+  const result = await fetch(link);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -17,28 +17,28 @@ async function popularNovels (page) {
   const novels = [];
 
   loadedCheerio('main.row > .thumb-item-flow').each(function () {
-    let novelUrl = baseUrl + loadedCheerio(this)
+    let url = loadedCheerio(this)
       .find('div.thumb_attr.series-title > a')
       .attr('href');
 
-    if (novelUrl && !isUrlAbsolute(novelUrl)) {
-      novelUrl = baseUrl + novelUrl;
+    if (url && !isUrlAbsolute(url)) {
+      url = baseUrl + url;
     }
 
-    if (novelUrl) {
-      const novelName = loadedCheerio(this).find('.series-title').text().trim();
-      let novelCover = loadedCheerio(this)
+    if (url) {
+      const name = loadedCheerio(this).find('.series-title').text().trim();
+      let cover = loadedCheerio(this)
         .find('.img-in-ratio')
         .attr('data-bg');
 
-      if (novelCover && !isUrlAbsolute(novelCover)) {
-        novelCover = baseUrl + novelCover;
+      if (cover && !isUrlAbsolute(cover)) {
+        cover = baseUrl + cover;
       }
 
       const novel = {
-        url: novelUrl,
-        name: novelName,
-        cover: novelCover,
+        name,
+        url,
+        cover,
       };
 
       novels.push(novel);
@@ -56,7 +56,7 @@ async function parseNovelAndChapters (novelUrl){
   let loadedCheerio = cheerio.load(body);
 
   const novel = {
-    url: novelUrl,
+    url,
     chapters: [],
   };
 
@@ -74,7 +74,7 @@ async function parseNovelAndChapters (novelUrl){
     ? isUrlAbsolute(novelCover)
       ? novelCover
       : baseUrl + novelCover
-    : undefined;
+    : '';
 
   novel.summary = loadedCheerio('.summary-content').text().trim();
 
@@ -87,6 +87,10 @@ async function parseNovelAndChapters (novelUrl){
   novel.genres = loadedCheerio('.series-gernes')
     .text()
     .trim()
+    .replaceAll(/ +/g," ")
+    .split('\n')
+    .filter(e => e.trim())
+    .join(', ');
 
   novel.status = loadedCheerio(
     '#mainpart > div:nth-child(2) > div > div:nth-child(1) > section > main > div.top-part > div > div.col-12.col-md-9 > div.series-information > div:nth-child(4) > span.info-value > a',
@@ -106,11 +110,11 @@ async function parseNovelAndChapters (novelUrl){
         .find('.chapter-name')
         .text()
         .trim();
-      const releaseDate = loadedCheerio(this).find('.chapter-time').text();
+      const releaseTime = loadedCheerio(this).find('.chapter-time').text();
 
       const chapter = {
         name: chapterName,
-        releaseTime: releaseDate,
+        releaseTime: releaseTime,
         url: chapterUrl,
       };
 
@@ -122,8 +126,7 @@ async function parseNovelAndChapters (novelUrl){
 };
 
 async function parseChapter (chapterUrl){
-  const url = chapterUrl;
-  const result = await fetch(url);
+  const result = await fetch(chapterUrl);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -162,8 +165,8 @@ async function searchNovels (searchTerm) {
       }
 
       novels.push({
-        url: novelUrl,
         name: novelName,
+        url: novelUrl,
         cover: novelCover,
       });
     }
@@ -180,13 +183,13 @@ async function fetchImage (url){
 };
 
 module.exports = {
-  id: 'Tiếng Việt - 1',
+  id: languages.Vietnamese + ' Hako',
   name: 'Hako',
-  version: '1.0.17',
-  icon: 'src/vi/hakolightnovel/icon.png',   //relative path without 'icons' prefix
+  version: '1.0.0',
+  icon: 'src/vi/hakolightnovel/icon.png',
   site: baseUrl,
   lang: languages.Vietnamese,
-  description: 'Vietnamese',
+  description: 'Cổng Light Novel',
   protected: true,
   fetchImage,
   popularNovels,
