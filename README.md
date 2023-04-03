@@ -15,8 +15,12 @@ If your language doenst exist, please request us. We will add it soon.
 3. Write your script <br>
 See example: [Hako](./plugins/vietnamese/hako.js)
 4. Valid your script <br>
-```
+```js
 npm start test
+
+// Or test with specified file
+npm start test [path]
+// For example: npm run test ./plugins/vietnamese/hako.js
 ```
 <br>
 5. Generate json

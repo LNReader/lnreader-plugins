@@ -16,7 +16,13 @@ const test = require('@scripts/test');
             json_plugins();
             break;
         case 'test':
-            test();
+            if(args.length > 3){
+                // test specified file
+                test(args[3]);
+            }else{
+                // test all modified | added files
+                test()
+            }
             break;
         default:
             console.log(clc.red(command), "is not a valid command");

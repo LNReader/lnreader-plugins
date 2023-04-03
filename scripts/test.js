@@ -84,22 +84,31 @@ const testPlugin = async (file, index) => {
     console.log('fetchImage');
     const base64 = await plugin.fetchImage(novel.cover || searchResults[0].cover);
     if(!base64 || base64.length === 0){
-        console.log(clc.bgYellow('Error'), clc.yellow(plugin.id), 'cant fetch images');
+        console.log(clc.bgYellowBright('Error'), clc.yellow(plugin.id), 'cant fetch images');
     }
 
     console.log(clc.green(plugin.id), 'passed ✔️');
     console.log('----------');
 }
 
-const test = async () => {
-    const command = `cd ${root} && git add . && git status -s`;
-    const files = child_process.execSync(command)
-        .toString().trim().split('\n')
-        .map(status => status.replace(/\s+/g, ' ').split(' ')[1])
-        .filter(file => file.endsWith('.js') && file.startsWith('plugins/'));
-
-    for(let index in files){
-        await testPlugin(files[index], index);
+const test = async (filePath) => {
+    if(filePath){
+        const cleanPath = path.join(...filePath.split(/\\+/g)).replaceAll("\\", "\/");
+        if(!cleanPath.startsWith('plugins') || !cleanPath.endsWith('.js')){
+            console.log(clc.bgRedBright('Error'), 'wrong file path!');
+            return;
+        }
+        await testPlugin(cleanPath, 0);
+    }else{
+        const command = `cd ${root} && git add . && git status -s`;
+        const files = child_process.execSync(command)
+            .toString().trim().split('\n')
+            .map(status => status.replace(/\s+/g, ' ').split(' ')[1])
+            .filter(file => file.endsWith('.js') && file.startsWith('plugins/'));
+    
+        for(let index in files){
+            await testPlugin(files[index], index);
+        }
     }
 
     console.log("done ✅");
