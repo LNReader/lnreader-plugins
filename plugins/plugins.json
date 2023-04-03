@@ -2,15 +2,16 @@
 	"中文 (Zhōngwén), 汉语, 漢語": [],
 	"English": [
 		{
-			"id": "English - 2",
+			"id": "English LightNovelReader",
 			"name": "LightNovelReader",
 			"lang": "English",
-			"version": "1.0.9",
+			"version": "1.0.0",
 			"description": "This is description for plugin",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/LightNovelReader.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png?raw=true"
 		}
 	],
+	"日本語 (にほんご／にっぽんご)": [],
 	"Tiếng Việt": [
 		{
 			"id": "Tiếng Việt Hako",

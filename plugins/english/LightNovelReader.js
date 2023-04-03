@@ -163,10 +163,10 @@ async function fetchImage (url) {
 }
 
 module.exports = {
-    id: languages.English + ' - 2',
+    id: languages.English + ' LightNovelReader',
     name: 'LightNovelReader',
     icon: 'src/en/lightnovelreader/icon.png',
-    version: '1.0.9',
+    version: '1.0.0',
     site: baseUrl,
     lang: languages.English,
     description: 'This is description for plugin',
