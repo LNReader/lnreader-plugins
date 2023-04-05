@@ -1,4 +1,4 @@
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
@@ -136,10 +136,10 @@ async function parseChapter(chapterUrl) {
 
 
 async function searchNovels (searchTerm) {
-  const url = baseUrl + '/search/autocomplete?dataType=json&query=' + searchTerm;
-  const result = await fetch(url, { method: 'POST' });
+  const url = baseUrl + `/search/autocomplete?dataType=json&query=${searchTerm}`;
+  const result = await fetch(url);
   const body = await result.json();
-  const data = body.results;
+  const data = body.results || [];
 
   const novels = [];
 
