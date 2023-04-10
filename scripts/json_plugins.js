@@ -12,21 +12,6 @@ const json = {};
 const jsonPath = path.join(root, 'plugins', 'plugins.json');
 const jsonMinPath = path.join(root, 'plugins', 'plugins.min.json');
 
-const commentFetch = (pluginPath) => {
-    let lines = fs.readFileSync(pluginPath, {encoding: 'utf-8'}).split('\n');
-    lines = lines.map(line => {
-        if(line.includes(`import('node-fetch')`)){
-            if(line.includes(`//`)) return line;
-            line = '// ' + line;
-            console.log(`Auto comment for ${pluginPath}`);
-            return line;
-        }else{
-            return line;
-        }
-    })
-    fs.writeFileSync(pluginPath, lines.join('\n'));
-}
-
 const run = () => {
     for (let language in languages) {     //language with English name
         const langPath = path.join(root, 'plugins', language.toLowerCase());
@@ -46,7 +31,6 @@ const run = () => {
 
                 json[lang].push(info);
 
-                commentFetch(path.join('plugins', language.toLowerCase(), plugin));
                 console.log('Collected', name);
             });
         } catch (e) {

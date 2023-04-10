@@ -1,15 +1,6 @@
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
-// You can use fetch above to test. Remember to comment or remove it when commit.
-
-/**
- * choose any lib you want
- * @cheerio and @languages are required
- * 
- */
-
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
+const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');

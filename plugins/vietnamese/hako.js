@@ -1,15 +1,15 @@
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
 const cheerio = require('cheerio');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const languages = require('@libs/languages');
+const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 
+const pluginId = languages.Vietnamese + ' Hako';
 const baseUrl = 'https://ln.hako.vn';
 
 async function popularNovels (page) {
   const link = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + page;
-  const result = await fetch(link);
+  const result = await fetchApi(link);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -50,7 +50,7 @@ async function popularNovels (page) {
 
 async function parseNovelAndChapters (novelUrl){
   const url = novelUrl;
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.text();
 
   let loadedCheerio = cheerio.load(body);
@@ -126,7 +126,7 @@ async function parseNovelAndChapters (novelUrl){
 };
 
 async function parseChapter (chapterUrl){
-  const result = await fetch(chapterUrl);
+  const result = await fetchApi(chapterUrl);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -138,7 +138,7 @@ async function parseChapter (chapterUrl){
 
 async function searchNovels (searchTerm) {
   const url = baseUrl + '/tim-kiem?keywords=' + searchTerm;
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -183,7 +183,7 @@ async function fetchImage (url){
 };
 
 module.exports = {
-  id: languages.Vietnamese + ' Hako',
+  id: pluginId,
   name: 'Hako',
   version: '1.0.0',
   icon: 'src/vi/hakolightnovel/icon.png',

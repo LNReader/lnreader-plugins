@@ -1,16 +1,15 @@
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
 const cheerio = require('cheerio');
 const languages = require('@libs/languages');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
+const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 
+const pluginId = languages.English + ' LNR.org';
 const baseUrl = 'https://lightnovelreader.org';
 
 async function popularNovels(page) {
   const url = baseUrl + '/ranking/top-rated/' + page;
-
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -54,7 +53,7 @@ async function popularNovels(page) {
 
 async function parseNovelAndChapters (novelUrl) {
   const url = novelUrl;
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.text();
 
   let loadedCheerio = cheerio.load(body);
@@ -124,7 +123,7 @@ async function parseNovelAndChapters (novelUrl) {
 
 async function parseChapter(chapterUrl) {
   const url = chapterUrl;
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
@@ -137,7 +136,7 @@ async function parseChapter(chapterUrl) {
 
 async function searchNovels (searchTerm) {
   const url = baseUrl + `/search/autocomplete?dataType=json&query=${searchTerm}`;
-  const result = await fetch(url);
+  const result = await fetchApi(url);
   const body = await result.json();
   const data = body.results || [];
 
@@ -163,7 +162,7 @@ async function fetchImage (url) {
 }
 
 module.exports = {
-    id: languages.English + ' LightNovelReader',
+    id: pluginId,
     name: 'LightNovelReader',
     icon: 'src/en/lightnovelreader/icon.png',
     version: '1.0.0',

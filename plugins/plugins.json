@@ -2,7 +2,7 @@
 	"中文 (Zhōngwén), 汉语, 漢語": [],
 	"English": [
 		{
-			"id": "English LightNovelReader",
+			"id": "English LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
 			"version": "1.0.0",
@@ -19,7 +19,7 @@
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
 			"description": "Cổng Light Novel",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/hako.js?newtest=true",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/Hako.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/vi/hakolightnovel/icon.png?raw=true"
 		}
 	]

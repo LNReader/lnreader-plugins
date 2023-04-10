@@ -24,13 +24,6 @@ npm start test [path]
 ```
 
 5. Generate json
-
-Finally, comment or remove fetch import in your script
-```js
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-```
-Dont worry if you forget it, below command will do it for you xD
-
 Generate json file by
 ```
 npm start json
