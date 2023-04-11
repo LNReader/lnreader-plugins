@@ -6,7 +6,7 @@ const fetchFile = require('@libs/fetchFile');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
 
-const pluginId = languages.Japanese + ' syosetu';
+const pluginId = 'yomou.syosetu';
 
 const defaultCoverUri =
     'https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true';

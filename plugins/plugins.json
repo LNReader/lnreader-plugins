@@ -2,7 +2,7 @@
 	"中文 (Zhōngwén), 汉语, 漢語": [],
 	"English": [
 		{
-			"id": "English LNR.org",
+			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
 			"version": "1.0.0",
@@ -13,7 +13,7 @@
 	],
 	"日本語 (にほんご／にっぽんご)": [
 		{
-			"id": "日本語 (にほんご／にっぽんご) syosetu",
+			"id": "yomou.syosetu",
 			"name": "Syosetu",
 			"lang": "日本語 (にほんご／にっぽんご)",
 			"version": "1.0.0",
@@ -24,12 +24,12 @@
 	],
 	"Tiếng Việt": [
 		{
-			"id": "Tiếng Việt Hako",
+			"id": "ln.hako",
 			"name": "Hako",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
 			"description": "Cổng Light Novel",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/Hako.js?newtest=true",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/LNHako.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/vi/hakolightnovel/icon.png?raw=true"
 		}
 	]

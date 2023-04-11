@@ -103,7 +103,7 @@ const test = async (filePath) => {
         const command = `cd ${root} && git add . && git status -s`;
         const files = child_process.execSync(command)
             .toString().trim().split('\n')
-            ?.map(status => status.replace(/\s+/g, ' ').split(' ')[1])
+            ?.map(status => status.replaceAll(/\s+/g, ' ').split(' ').pop())
             .filter(file => file.endsWith('.js') && file.startsWith('plugins/'));
     
         for(let index in files){

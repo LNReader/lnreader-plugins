@@ -4,7 +4,7 @@ const languages = require('@libs/languages');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 
-const pluginId = languages.Vietnamese + ' Hako';
+const pluginId = 'ln.hako';
 const baseUrl = 'https://ln.hako.vn';
 
 async function popularNovels (page) {

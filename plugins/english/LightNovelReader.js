@@ -4,7 +4,7 @@ const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 
-const pluginId = languages.English + ' LNR.org';
+const pluginId = 'LNR.org';
 const baseUrl = 'https://lightnovelreader.org';
 
 async function popularNovels(page) {
