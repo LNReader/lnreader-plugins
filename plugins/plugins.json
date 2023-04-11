@@ -1,5 +1,5 @@
 {
-	"中文 (Zhōngwén), 汉语, 漢語": [],
+	"中文, 汉语, 漢語": [],
 	"English": [
 		{
 			"id": "LNR.org",
@@ -11,11 +11,11 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png?raw=true"
 		}
 	],
-	"日本語 (にほんご／にっぽんご)": [
+	"日本語": [
 		{
 			"id": "yomou.syosetu",
 			"name": "Syosetu",
-			"lang": "日本語 (にほんご／にっぽんご)",
+			"lang": "日本語",
 			"version": "1.0.0",
 			"description": "小説を読もう！は｢小説家になろう｣に投稿された",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/japanese/Syosetu.js?newtest=true",
