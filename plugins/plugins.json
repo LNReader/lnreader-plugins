@@ -11,7 +11,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png?raw=true"
 		}
 	],
-	"日本語 (にほんご／にっぽんご)": [],
+	"日本語 (にほんご／にっぽんご)": [
+		{
+			"id": "日本語 (にほんご／にっぽんご) syosetu",
+			"name": "Syosetu",
+			"lang": "日本語 (にほんご／にっぽんご)",
+			"version": "1.0.0",
+			"description": "小説を読もう！は｢小説家になろう｣に投稿された",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/japanese/Syosetu.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/jp/syosetu/icon.png?raw=true"
+		}
+	],
 	"Tiếng Việt": [
 		{
 			"id": "Tiếng Việt Hako",
