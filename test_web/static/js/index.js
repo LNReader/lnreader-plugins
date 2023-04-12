@@ -239,7 +239,6 @@ const parseChapter = () => {
     })
     .then(res => res.json())
     .then(chapterText => {
-        console.log(chapterText);
         $('#parseChapter textarea').text(chapterText);
         $('#parseChapter .spinner-border').hide();  
     })
