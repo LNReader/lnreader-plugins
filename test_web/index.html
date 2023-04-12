@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" sizes="128x128" type="image/png" href="/static/ico.png" defer />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <title>Testing plugin</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <input id="plugin" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="clear-search">Clear</button>
+            <div id="search-results">
+            </div>
+        </form>
+        <div class="input-group">
+            <select class="custom-select" id="language">
+                <option value=""></option>
+            </select>
+            <div class="input-group-append">
+                <label class="input-group-text" for="language">Language</label>
+            </div>
+        </div>
+        <button onclick="fetch('/json')" class="btn btn-outline-success my-2 my-sm-0" type="button" id="clear-search">JSON plugins</button>
+    </nav>
+    <div id="test-container">
+        <div class="test-wrapper" id="popularNovels">
+            <div class="title">
+                popularNovels
+                <button type="button" class="btn btn-primary" onclick="popularNovels()">fetch</button>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="novel-list">
+            </div>
+        </div>
+        <div class="test-wrapper" id="searchNovels">
+            <div class="title">
+                searchNovels
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="searchTerm">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="searchNovels()">search</button>
+                    </div>
+                </div>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="novel-list">
+            </div>
+        </div>
+        <div class="test-wrapper" id="parseNovelAndChapters">
+            <div class="title">
+                parseNovelAndChapters
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="novel url">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="parseNovelAndChapters()">fetch</button>
+                    </div>
+                </div>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="novel-list">
+                <div class="novel-item">
+                </div>
+                <div class="chapter-list">
+                </div>
+            </div>
+        </div>
+        <div class="test-wrapper" id="parseChapter">
+            <div class="title">
+                parseChapter
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="chapter url">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="parseChapter()">fetch</button>
+                    </div>
+                </div>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" rows="10">
+                </textarea>
+            </div>
+        </div>
+        <div class="test-wrapper" id="fetchImage">
+            <div class="title">
+                fetchImage
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="image url (shoule be in chapterText)">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="fetchImage()">fetch</button>
+                    </div>
+                </div>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <img src="" style="min-height: 300px; max-width: 450px;" alt="">
+        </div>
+    </div>
+</body>
+<script src="/static/js/jquery-3.6.4.min.js"></script>
+<script src="/static/js/index.js"></script>
+
+</html>

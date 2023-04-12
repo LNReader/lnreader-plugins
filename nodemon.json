@@ -1,0 +1,3 @@
+{   
+    "ignore": ["plugins/plugins.json", "plugins/plugins.min.json"]
+}
