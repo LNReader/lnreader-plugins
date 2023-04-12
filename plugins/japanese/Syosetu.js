@@ -18,14 +18,6 @@ const searchUrl = (pagenum, order) => {
         }`;
 };
 
-// get the Syosetu ID of the chapter
-const getLastPartOfUrl = url => {
-    let temp = /.*(?=\/)(.{2,})$/.exec(url);
-    return temp ? temp[1].replace(/\//g, '') : null;
-};
-
-const getNovelUrl = id => `https://ncode.syosetu.com/${id}`;
-
 const novelCover = defaultCoverUri;
 
 async function popularNovels(pageNo) {
@@ -47,7 +39,7 @@ async function popularNovels(pageNo) {
             // add new novel to array
             pageNovels.push({
                 name: novelDIV.text(), // get the name
-                url: getLastPartOfUrl(novelA.attribs.href), // get last part of the link
+                url: novelA.attribs.href, // get last part of the link
                 cover: novelCover, // TODO: IDK what to do about covers... On Syo they don't have them
             });
         });
@@ -61,16 +53,14 @@ async function popularNovels(pageNo) {
 };
 
 async function parseNovelAndChapters(novelUrl) {
-    const url = getNovelUrl(novelUrl);
     let chapters = [];
-
-    const result = await fetchApi(url);
+    const result = await fetchApi(novelUrl);
     const body = await result.text();
     const cheerioQuery = cheerio.load(body, { decodeEntities: false });
 
     // create novel object
     let novel = {
-        url: url,
+        url: novelUrl,
         name: cheerioQuery('.novel_title').text(),
         author: cheerioQuery('.novel_writername').text().replace('作者：', ''),
         cover: novelCover,
@@ -121,7 +111,7 @@ async function parseNovelAndChapters(novelUrl) {
             releaseTime: cheerioQuery('head')
                 .find("meta[name='WWWC']")
                 .attr('content'), // get date from metadata
-            url: url, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot
+            url: novelUrl, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot
         });
     }
     novel.chapters = chapters;
@@ -166,7 +156,7 @@ async function searchNovels(searchTerm, pageNo) {
         // add new novel to array
         pageNovels.push({
           name: novelDIV.text(), // get the name
-          url: getLastPartOfUrl(novelA.attribs.href), // get last part of the link
+          url: novelA.attribs.href, // get last part of the link
           cover: novelCover, // TODO: IDK what to do about covers... On Syo they don't have them
         });
       });
