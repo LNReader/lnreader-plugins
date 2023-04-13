@@ -32,6 +32,13 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelOnline.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/coverNotAvailable.jpg?raw=true"
+		},
+		{
+			"id": "novelpub.com",
+			"name": "NovelPub",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/novelpub.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/novelpub/icon.png?raw=true"
 		}
 	],
 	"français, française": [
