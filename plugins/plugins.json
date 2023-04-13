@@ -21,6 +21,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/fr/chireads/icon.png?raw=true"
 		}
 	],
+	"Bahasa Indonesia": [
+		{
+			"id": "sakura.id",
+			"name": "SakuraNovel",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/sakuranovel.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/id/sakuranovel/icon.png?raw=true"
+		}
+	],
 	"日本語": [
 		{
 			"id": "yomou.syosetu",
