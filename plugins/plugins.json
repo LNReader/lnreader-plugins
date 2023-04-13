@@ -22,6 +22,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/jp/syosetu/icon.png?raw=true"
 		}
 	],
+	"русский язык": [
+		{
+			"id": "RNBH.org",
+			"name": "RanobeHub",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranobehub.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ranobehub/icon.png?raw=true"
+		}
+	],
 	"Tiếng Việt": [
 		{
 			"id": "ln.hako",
