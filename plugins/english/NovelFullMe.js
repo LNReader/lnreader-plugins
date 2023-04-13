@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
-const languagess = require('@libs/languages');
+const languages = require('@libs/languages');
 const fetchFile = require('@libs/fetchFile');
 
 const pluginId = 'NF.me';
@@ -156,7 +156,7 @@ module.exports = {
     id: pluginId,
     name: sourceName,
     site: baseUrl,
-    lang: languagess.English,
+    lang: languages.English,
     version: '1.0.0',
     icon: 'src/en/novelfullme/icon.png',
     popularNovels,
