@@ -2,6 +2,13 @@
 	"中文, 汉语, 漢語": [],
 	"English": [
 		{
+			"id": "ANF.com",
+			"name": "AllNovelFull",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/allnovelfull.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/allnovelfull/icon.png?raw=true"
+		},
+		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
