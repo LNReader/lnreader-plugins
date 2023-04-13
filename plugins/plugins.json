@@ -72,6 +72,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/skynovels/icon.png?raw=true"
 		}
 	],
+	"Türkçe": [
+		{
+			"id": "epiknovel.com",
+			"name": "EpikNovel",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/turkish/epiknovel.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/tr/epiknovel/icon.png?raw=true"
+		}
+	],
 	"Tiếng Việt": [
 		{
 			"id": "ln.hako",
