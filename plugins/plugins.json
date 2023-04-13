@@ -95,6 +95,13 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/hasutl/icon.png?raw=true"
 		},
 		{
+			"id": "ligera.com",
+			"name": "Novelas Ligera",
+			"lang": "español, castellano",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/novelasligera.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/novelasligera/icon.png?raw=true"
+		},
+		{
 			"id": "skynovels.net",
 			"name": "SkyNovels",
 			"lang": "español, castellano",
