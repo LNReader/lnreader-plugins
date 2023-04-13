@@ -69,8 +69,8 @@ async function parseNovelAndChapters (novUrl) {
 
   return novel;
 };
-// https://www.skynovels.net/novelas/1/el-senor-de-los-misterios/27701/lotm-capitulo-74
-const parseChapter = async (chapUrl) => {
+
+async function parseChapter  (chapUrl) {
   let chapterId = chapUrl.split('/')[6];
   const url = `https://api.skynovels.net/api/novel-chapter/${chapterId}`;
 
