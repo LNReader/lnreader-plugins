@@ -24,7 +24,9 @@ app.get('/json', (req, res) => {
     }
 }); 
 app.post('/popularNovels/', async (req, res) => {
-    const novels = await pluginApi.popularNovels(req.body['pluginRequirePath']);
+    const filters = req.body['filters'] || {};
+    const showLatestNovels = req.body['showLatestNovels'] || false
+    const novels = await pluginApi.popularNovels(req.body['pluginRequirePath'], {showLatestNovels, filters});
     res.json(novels);
 });
 app.post('/searchNovels/', async(req, res) => {
