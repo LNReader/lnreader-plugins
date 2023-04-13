@@ -59,8 +59,8 @@ async function parseNovelAndChapters (novelUrl) {
     summary: json.data.description,
     author: json.data?.authors[0]?.name_eng || '',
     status: json.data.status.title.includes('процессе')
-      ? Status.ONGOING
-      : Status.COMPLETED,
+      ? Status.Ongoing
+      : Status.Completed,
   };
 
   let tags = []
