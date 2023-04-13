@@ -1120,7 +1120,7 @@ module.exports = {
   name: sourceName,
   version: '1.0.0',
   site: baseUrl,
-  icon: 'src/ranobehub/icon.png',
+  icon: 'src/ru/ranobehub/icon.png',
   lang: languages.Russian,
   popularNovels,
   parseNovelAndChapters,
