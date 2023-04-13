@@ -86,6 +86,7 @@ module.exports = {
     lang: languages.English,     // must be included in languages
     description: 'This is descriptions',
     protected: false,   // true if this site protect its resources (images) and you have to define header or smt to bypass
+    filters,
     fetchImage,
     popularNovels,
     parseNovelAndChapters,
