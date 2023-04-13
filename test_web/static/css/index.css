@@ -18,6 +18,10 @@
     background-color: white;
 }
 
+.btn.disabled, .btn:disabled{
+    opacity: 1;
+}
+
 #test-container{
     align-items: center;
     height: max-content;
