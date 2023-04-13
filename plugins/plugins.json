@@ -11,6 +11,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png?raw=true"
 		}
 	],
+	"français, française": [
+		{
+			"id": "chireads.com",
+			"name": "Chireads",
+			"lang": "français, française",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/french/chireads.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/fr/chireads/icon.png?raw=true"
+		}
+	],
 	"日本語": [
 		{
 			"id": "yomou.syosetu",
