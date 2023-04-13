@@ -88,6 +88,13 @@
 	],
 	"español, castellano": [
 		{
+			"id": "HasuTL",
+			"name": "Hasu Translations",
+			"lang": "español, castellano",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/hasutl.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/hasutl/icon.png?raw=true"
+		},
+		{
 			"id": "skynovels.net",
 			"name": "SkyNovels",
 			"lang": "español, castellano",
