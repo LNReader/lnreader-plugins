@@ -17,6 +17,14 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelFullMe.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/novelfullme/icon.png?raw=true"
+		},
+		{
+			"id": "NO.net",
+			"name": "novelsOnline",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelOnline.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/coverNotAvailable.jpg?raw=true"
 		}
 	],
 	"français, française": [
