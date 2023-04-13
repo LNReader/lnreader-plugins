@@ -52,6 +52,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/ranobehub/icon.png?raw=true"
 		}
 	],
+	"español, castellano": [
+		{
+			"id": "skynovels.net",
+			"name": "SkyNovels",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/skynovels.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/skynovels/icon.png?raw=true"
+		}
+	],
 	"Tiếng Việt": [
 		{
 			"id": "ln.hako",
