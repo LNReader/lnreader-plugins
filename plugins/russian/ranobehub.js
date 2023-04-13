@@ -47,7 +47,7 @@ async function popularNovels (page, { showLatestNovels, filters }){
 };
  
 async function parseNovelAndChapters (novelUrl) {
-  const novelId = novelUrl.substring(baseUrl.length).split('-')[0];
+  const novelId = novelUrl.substring('https://ranobehub.org/ranobe/'.length).split('-')[0];
   const result = await fetchApi(`${baseUrl}api/ranobe/${novelId}`);
   const json = await result.json();
 
@@ -127,7 +127,7 @@ async function searchNovels (searchTerm) {
     ?.data.forEach(novel =>
       novels.push({
         name: novel.names.rus,
-        url: baseUrl + novel.url.match(
+        url: "https://ranobehub.org/ranobe/" + novel.url.match(
           /https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/,
         )[1],
         cover: novel.image.replace('/small', '/medium'),
