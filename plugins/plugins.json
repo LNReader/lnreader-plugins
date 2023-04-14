@@ -85,6 +85,13 @@
 	"Português": [],
 	"русский язык": [
 		{
+			"id": "jaomix.ru",
+			"name": "Jaomix",
+			"lang": "русский язык",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/jaomix.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/jaomix/icon.png?raw=true"
+		},
+		{
 			"id": "RNBH.org",
 			"name": "RanobeHub",
 			"lang": "русский язык",
