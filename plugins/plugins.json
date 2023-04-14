@@ -5,6 +5,7 @@
 			"id": "ANF.com",
 			"name": "AllNovelFull",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/allnovelfull.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/allnovelfull/icon.png?raw=true"
 		},
@@ -12,6 +13,7 @@
 			"id": "BLN.com",
 			"name": "BestLightNovel",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/bestlightnovel.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/bestlightnovel/icon.png?raw=true"
 		},
@@ -19,6 +21,7 @@
 			"id": "comrademao",
 			"name": "Comrade Mao",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/comrademao.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/comrademao/icon.png?raw=true"
 		},
@@ -26,6 +29,7 @@
 			"id": "DDL.com",
 			"name": "Divine Dao Library",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/divinedaolibrary.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/divinedaolibrary/icon.png?raw=true"
 		},
@@ -33,6 +37,7 @@
 			"id": "FWN.com",
 			"name": "Web NOVEL",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/freewebnovel.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/freewebnovel/icon.png?raw=true"
 		},
@@ -65,6 +70,7 @@
 			"id": "novelpub.com",
 			"name": "NovelPub",
 			"lang": "English",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/novelpub.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/novelpub/icon.png?raw=true"
 		}
@@ -140,6 +146,7 @@
 			"id": "jaomix.ru",
 			"name": "Jaomix",
 			"lang": "русский язык",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/jaomix.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/jaomix/icon.png?raw=true"
 		},
@@ -155,6 +162,7 @@
 			"id": "RNRF",
 			"name": "РанобэРФ",
 			"lang": "русский язык",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranoberf.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/ranoberf/icon.png?raw=true"
 		}
@@ -164,6 +172,7 @@
 			"id": "HasuTL",
 			"name": "Hasu Translations",
 			"lang": "español, castellano",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/hasutl.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/hasutl/icon.png?raw=true"
 		},
@@ -171,6 +180,7 @@
 			"id": "ligera.com",
 			"name": "Novelas Ligera",
 			"lang": "español, castellano",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/novelasligera.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/novelasligera/icon.png?raw=true"
 		},
