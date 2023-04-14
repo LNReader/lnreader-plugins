@@ -61,6 +61,14 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/id/indowebnovel/icon.png?raw=true"
 		},
 		{
+			"id": "novelringan.com",
+			"name": "NovelRingan",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/novelringan.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/id/novelringan/icon.png?raw=true"
+		},
+		{
 			"id": "sakura.id",
 			"name": "SakuraNovel",
 			"lang": "Bahasa Indonesia",
