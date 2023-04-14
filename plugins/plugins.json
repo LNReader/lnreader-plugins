@@ -23,6 +23,13 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/comrademao/icon.png?raw=true"
 		},
 		{
+			"id": "DDL.com",
+			"name": "Divine Dao Library",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/divinedaolibrary.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/divinedaolibrary/icon.png?raw=true"
+		},
+		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
