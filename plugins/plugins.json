@@ -98,6 +98,13 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranobehub.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/ranobehub/icon.png?raw=true"
+		},
+		{
+			"id": "RNRF",
+			"name": "РанобэРФ",
+			"lang": "русский язык",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranoberf.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/ru/ranoberf/icon.png?raw=true"
 		}
 	],
 	"español, castellano": [

@@ -208,6 +208,7 @@ module.exports = {
     verison: '1.0.0',
     lang: languages.Russian,
     icon: 'src/ru/jaomix/icon.png',
+    filters,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,
