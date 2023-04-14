@@ -147,6 +147,14 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/novelasligera/icon.png?raw=true"
 		},
 		{
+			"id": "awuxia.com",
+			"name": "ReinoWuxia",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/novelawuxia.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/novelwuxia/icon.png?raw=true"
+		},
+		{
 			"id": "skynovels.net",
 			"name": "SkyNovels",
 			"lang": "español, castellano",
