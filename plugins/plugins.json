@@ -9,6 +9,13 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/allnovelfull/icon.png?raw=true"
 		},
 		{
+			"id": "BLN.com",
+			"name": "BestLightNovel",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/bestlightnovel.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/bestlightnovel/icon.png?raw=true"
+		},
+		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
