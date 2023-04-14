@@ -66,7 +66,7 @@ async function parseNovelAndChapters (novelUrl) {
     if (text[0] === 'Автор:') {
       novel.author = text.splice(1).join(' ');
     } else if (text[0] === 'Жанры:') {
-      novel.genre = text.splice(1).join(',');
+      novel.genres = text.splice(1).join(',');
     } else if (text[0] === 'Статус:') {
       novel.status = text.includes('продолжается')
         ? Status.Ongoing
