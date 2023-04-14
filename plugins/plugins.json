@@ -49,6 +49,14 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/french/chireads.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/fr/chireads/icon.png?raw=true"
+		},
+		{
+			"id": "NDG.com",
+			"name": "NovelDeGlace",
+			"lang": "français, française",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/french/noveldeglace.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/fr/noveldeglace/icon.png?raw=true"
 		}
 	],
 	"Bahasa Indonesia": [
