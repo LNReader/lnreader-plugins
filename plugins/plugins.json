@@ -53,6 +53,14 @@
 	],
 	"Bahasa Indonesia": [
 		{
+			"id": "IDWN.id",
+			"name": "IndoWebNovel",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/indowebnovel.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/id/indowebnovel/icon.png?raw=true"
+		},
+		{
 			"id": "sakura.id",
 			"name": "SakuraNovel",
 			"lang": "Bahasa Indonesia",
