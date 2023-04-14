@@ -166,7 +166,7 @@ module.exports = {
     id: "ligera.com",
     name: "Novelas Ligera",
     site: baseUrl,
-    verison: '1.0.0',
+    version: '1.0.0',
     lang: languages.Spanish,
     icon: 'src/es/novelasligera/icon.png',
     popularNovels,
