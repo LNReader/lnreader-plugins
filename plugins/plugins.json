@@ -30,6 +30,13 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/divinedaolibrary/icon.png?raw=true"
 		},
 		{
+			"id": "FWN.com",
+			"name": "Web NOVEL",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/freewebnovel.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/freewebnovel/icon.png?raw=true"
+		},
+		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
