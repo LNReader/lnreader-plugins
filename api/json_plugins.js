@@ -24,8 +24,8 @@ const json_plugins = () => {
 
                 const instance = require(`@plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`);
 
-                const { id, name, lang, version, icon, description } = instance;
-                const info = { id, name, lang, version, description } // lang: language with native name
+                const { id, name, site, lang, version, icon, description } = instance;
+                const info = { id, name, site, lang, version, description } // lang: language with native name
                 info.url = `${githubPluginsLink}/${language.toLowerCase()}/${plugin}${githubPluginSuffix}`;
                 info.iconUrl = `${githubIconsLink}/${icon}${githubIconSuffix}`;
 

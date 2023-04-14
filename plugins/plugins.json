@@ -4,6 +4,7 @@
 		{
 			"id": "ANF.com",
 			"name": "AllNovelFull",
+			"site": "https://allnovelfull.com",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/allnovelfull.js?newtest=true",
@@ -12,6 +13,7 @@
 		{
 			"id": "BLN.com",
 			"name": "BestLightNovel",
+			"site": "https://bestlightnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/bestlightnovel.js?newtest=true",
@@ -20,6 +22,7 @@
 		{
 			"id": "comrademao",
 			"name": "Comrade Mao",
+			"site": "https://comrademao.com/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/comrademao.js?newtest=true",
@@ -28,6 +31,7 @@
 		{
 			"id": "DDL.com",
 			"name": "Divine Dao Library",
+			"site": "https://www.divinedaolibrary.com/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/divinedaolibrary.js?newtest=true",
@@ -36,6 +40,7 @@
 		{
 			"id": "FWN.com",
 			"name": "Web NOVEL",
+			"site": "https://freewebnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/freewebnovel.js?newtest=true",
@@ -44,6 +49,7 @@
 		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
+			"site": "https://lightnovelreader.org",
 			"lang": "English",
 			"version": "1.0.0",
 			"description": "This is description for plugin",
@@ -53,6 +59,7 @@
 		{
 			"id": "NF.me",
 			"name": "NovelFull.me",
+			"site": "https://novelfull.me/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelFullMe.js?newtest=true",
@@ -61,6 +68,7 @@
 		{
 			"id": "NO.net",
 			"name": "novelsOnline",
+			"site": "https://novelsonline.net",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelOnline.js?newtest=true",
@@ -69,6 +77,7 @@
 		{
 			"id": "novelpub.com",
 			"name": "NovelPub",
+			"site": "https://www.novelpub.com/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/novelpub.js?newtest=true",
@@ -79,6 +88,7 @@
 		{
 			"id": "chireads.com",
 			"name": "Chireads",
+			"site": "https://chireads.com/",
 			"lang": "français, française",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/french/chireads.js?newtest=true",
@@ -87,6 +97,7 @@
 		{
 			"id": "NDG.com",
 			"name": "NovelDeGlace",
+			"site": "https://noveldeglace.com/",
 			"lang": "français, française",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/french/noveldeglace.js?newtest=true",
@@ -97,6 +108,7 @@
 		{
 			"id": "IDWN.id",
 			"name": "IndoWebNovel",
+			"site": "https://indowebnovel.id/id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/indowebnovel.js?newtest=true",
@@ -105,6 +117,7 @@
 		{
 			"id": "novelringan.com",
 			"name": "NovelRingan",
+			"site": "https://novelringan.com/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/novelringan.js?newtest=true",
@@ -113,6 +126,7 @@
 		{
 			"id": "sakura.id",
 			"name": "SakuraNovel",
+			"site": "https://sakuranovel.id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/indonesian/sakuranovel.js?newtest=true",
@@ -123,6 +137,7 @@
 		{
 			"id": "yomou.syosetu",
 			"name": "Syosetu",
+			"site": "https://yomou.syosetu.com/",
 			"lang": "日本語",
 			"version": "1.0.0",
 			"description": "小説を読もう！は｢小説家になろう｣に投稿された",
@@ -134,6 +149,7 @@
 		{
 			"id": "agit.xyz",
 			"name": "Agitoon",
+			"site": "https://agit501.xyz/",
 			"lang": "한국어, 조선말",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/korean/Agitoon.js?newtest=true",
@@ -145,6 +161,7 @@
 		{
 			"id": "jaomix.ru",
 			"name": "Jaomix",
+			"site": "https://jaomix.ru",
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/jaomix.js?newtest=true",
@@ -153,6 +170,7 @@
 		{
 			"id": "RNBH.org",
 			"name": "RanobeHub",
+			"site": "https://ranobehub.org/",
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranobehub.js?newtest=true",
@@ -161,6 +179,7 @@
 		{
 			"id": "RNRF",
 			"name": "РанобэРФ",
+			"site": "https://ранобэ.рф",
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/russian/ranoberf.js?newtest=true",
@@ -171,6 +190,7 @@
 		{
 			"id": "HasuTL",
 			"name": "Hasu Translations",
+			"site": "https://hasutl.wordpress.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/hasutl.js?newtest=true",
@@ -179,6 +199,7 @@
 		{
 			"id": "ligera.com",
 			"name": "Novelas Ligera",
+			"site": "https://novelasligera.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/novelasligera.js?newtest=true",
@@ -187,6 +208,7 @@
 		{
 			"id": "awuxia.com",
 			"name": "ReinoWuxia",
+			"site": "http://www.reinowuxia.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/novelawuxia.js?newtest=true",
@@ -195,6 +217,7 @@
 		{
 			"id": "oasisTL.wp",
 			"name": "Oasis Translations",
+			"site": "https://oasistranslations.wordpress.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/oasistranslations.js?newtest=true",
@@ -203,6 +226,7 @@
 		{
 			"id": "skynovels.net",
 			"name": "SkyNovels",
+			"site": "https://www.skynovels.net/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/skynovels.js?newtest=true",
@@ -211,6 +235,7 @@
 		{
 			"id": "TNL.com",
 			"name": "TuNovelaLigera",
+			"site": "https://tunovelaligera.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/tunovelaligera.js?newtest=true",
@@ -219,6 +244,7 @@
 		{
 			"id": "yuukitls.com",
 			"name": "Yuuki Tls",
+			"site": "https://yuukitls.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/yukitls.js?newtest=true",
@@ -229,6 +255,7 @@
 		{
 			"id": "epiknovel.com",
 			"name": "EpikNovel",
+			"site": "https://www.epiknovel.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/turkish/epiknovel.js?newtest=true",
@@ -239,6 +266,7 @@
 		{
 			"id": "ln.hako",
 			"name": "Hako",
+			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
 			"description": "Cổng Light Novel",
