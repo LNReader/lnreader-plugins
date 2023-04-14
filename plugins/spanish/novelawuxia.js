@@ -195,7 +195,7 @@ module.exports = {
     name: "ReinoWuxia",
     site: baseUrl,
     version: '1.0.0',
-    icon: 'src/es/novelwuxia/icon.png',
+    icon: 'src/es/novelawuxia/icon.png',
     lang: languages.Spanish,
     popularNovels,
     parseNovelAndChapters,
