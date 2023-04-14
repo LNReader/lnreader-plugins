@@ -16,6 +16,13 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/bestlightnovel/icon.png?raw=true"
 		},
 		{
+			"id": "comrademao",
+			"name": "Comrade Mao",
+			"lang": "English",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/comrademao.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/comrademao/icon.png?raw=true"
+		},
+		{
 			"id": "LNR.org",
 			"name": "LightNovelReader",
 			"lang": "English",
