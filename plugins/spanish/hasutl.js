@@ -128,7 +128,7 @@ module.exports = {
     id: "HasuTL",
     name: 'Hasu Translations',
     site: baseUrl,
-    verison: '1.0.0',
+    version: '1.0.0',
     lang: languages.Spanish,
     icon: 'src/es/hasutl/icon.png',
     popularNovels,

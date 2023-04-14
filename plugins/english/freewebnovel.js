@@ -162,7 +162,7 @@ module.exports = {
     id: pluginId,
     name: sourceName,
     site: baseUrl,
-    verison: '1.0.0',
+    version: '1.0.0',
     lang: languages.English,
     icon: 'src/en/freewebnovel/icon.png',
     popularNovels,
