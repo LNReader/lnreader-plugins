@@ -169,6 +169,14 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/skynovels.js?newtest=true",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/skynovels/icon.png?raw=true"
+		},
+		{
+			"id": "TNL.com",
+			"name": "TuNovelaLigera",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/spanish/tunovelaligera.js?newtest=true",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/es/tunovelaligera/icon.png?raw=true"
 		}
 	],
 	"Türkçe": [
