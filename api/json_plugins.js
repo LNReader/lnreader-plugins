@@ -3,17 +3,19 @@ const languages = require('@libs/languages');
 const path = require('path')
 const root = path.dirname(require.main.filename);
 
-const githubIconsLink = 'https://raw.githubusercontent.com/nyagami/plugins/main/icons';
-const githubIconSuffix = '?raw=true';
-const githubPluginsLink = 'https://raw.githubusercontent.com/nyagami/plugins/main/plugins';
-const githubPluginSuffix = '?newtest=true';
+const username = "nyagami";
+const repo = "plugins";
+const branch = "main"
+
+const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
+const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/plugins`;
 
 const json = {};
 const jsonPath = path.join(root, 'plugins', 'plugins.json');
 const jsonMinPath = path.join(root, 'plugins', 'plugins.min.json');
 
 const json_plugins = () => {
-    for (let language in languages) {     //language with English name
+    for (let language in languages) {     // language with English name
         const langPath = path.join(root, 'plugins', language.toLowerCase());
         if (!fs.existsSync(langPath)) continue;
         try {
@@ -25,9 +27,10 @@ const json_plugins = () => {
                 const instance = require(`@plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`);
 
                 const { id, name, site, lang, version, icon, description } = instance;
-                const info = { id, name, site, lang, version, description } // lang: language with native name
-                info.url = `${githubPluginsLink}/${language.toLowerCase()}/${plugin}${githubPluginSuffix}`;
-                info.iconUrl = `${githubIconsLink}/${icon}${githubIconSuffix}`;
+                // lang: language with native name
+                const info = { id, name, site, lang, version, description }
+                info.url = `${githubPluginsLink}/${language.toLowerCase()}/${plugin}`;
+                info.iconUrl = `${githubIconsLink}/${icon}`;
 
                 json[lang].push(info);
 
