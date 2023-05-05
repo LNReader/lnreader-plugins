@@ -189,7 +189,7 @@ module.exports = {
   icon: 'src/vi/hakolightnovel/icon.png',
   site: baseUrl,
   lang: languages.Vietnamese,
-  description: 'Cổng Light Novel',
+  description: 'Cổng LightNovel',
   protected: true,
   fetchImage,
   popularNovels,

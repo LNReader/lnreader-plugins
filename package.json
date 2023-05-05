@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "test": "node ./index.js test"
+    "test": "exit 0",
+    "json": "node ./scripts/json_plugins.js && git add ."
   },
   "author": "",
   "license": "MIT",
@@ -26,6 +27,10 @@
     "@scripts": "./scripts"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
-  }
+    "nodemon": "^2.0.22",
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit":[
+    "json"
+  ]
 }

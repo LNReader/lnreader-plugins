@@ -4,7 +4,6 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const pluginApi = require('@api/plugins');
-const json_plugins = require('@api/json_plugins');
 
 const app = express();
 const port = 3000;
@@ -15,14 +14,6 @@ app.use('/static', express.static(path.join(__dirname, 'test_web', 'static')));
 app.get('/all_plugins', (req, res) => {
     res.json(pluginApi.all_plugins());
 });
-app.get('/json', (req, res) => {
-    try{
-        json_plugins();
-        res.json("success");
-    }catch{
-        res.json("error");
-    }
-}); 
 app.post('/popularNovels/', async (req, res) => {
     const filters = req.body['filters'] || {};
     const showLatestNovels = req.body['showLatestNovels'] || false

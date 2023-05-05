@@ -269,7 +269,7 @@
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
-			"description": "Cổng Light Novel",
+			"description": "Cổng LightNovel",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/vietnamese/LNHako.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/vi/hakolightnovel/icon.png"
 		}
