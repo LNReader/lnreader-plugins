@@ -15,7 +15,7 @@ Repository to host plugins and related issues, and requests for [LNReader](https
 2. Choose your language in [./plugins](./plugins)
 + If your language doenst exist, please request us. We will add it soon.
 3. Write your scripts
-+ See example: [Hako](./plugins/vietnamese/hako.js)
++ See example: [Hako](./plugins/vietnamese/LNHako.js)
 
 ## Test your script
 We use expressjs to make an UI web for testing.
