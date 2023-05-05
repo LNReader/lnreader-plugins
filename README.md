@@ -32,15 +32,12 @@ We use expressjs to make an UI web for testing.
 	+ Find you plugin
 	+ Check if all functions of your plugin work properly
 ####  No need to reload webpage after changing your plugin script. 
-4. JSON
-	+ Just press `JSON plugins` button
-	+ The results will be printed in your console
 - One more thing: you can use [cheerio_space](./cheerio_space) to build functions without requesting to the site.
 ----------
 
  If you want to test plugin in app side, remember to config these things.
 
-in [json_plugin.js](./api/json_plugins.js)
+in [scripts/json_plugin.js](./script/json_plugins.js)
 ```ts
 const  username = "nyagami";
 const  repo = "plugins";
