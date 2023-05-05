@@ -37,11 +37,11 @@ We use expressjs to make an UI web for testing.
 
  If you want to test plugin in app side, remember to config these things.
 
-in [scripts/json_plugin.js](./script/json_plugins.js)
-```ts
-const  username = "nyagami";
-const  repo = "plugins";
-const  branch = "main"
+in [.env](./.env)
+```
+GITHUB_USERNAME='nyagami'
+GITHUB_REPOSITORY='plugins'
+GITHUB_BRANCH='main'
 ```
 
 in [pluginManager.ts](https://github.com/nyagami/lnreader/blob/install_sources/src/plugins/pluginManager.ts)
