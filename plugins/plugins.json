@@ -2,6 +2,34 @@
 	"中文, 汉语, 漢語": [],
 	"English": [
 		{
+			"id": "LNR.org",
+			"name": "LightNovelReader",
+			"site": "https://lightnovelreader.org",
+			"lang": "English",
+			"version": "1.0.0",
+			"description": "This is description for plugin",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/LightNovelReader.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png"
+		},
+		{
+			"id": "NF.me",
+			"name": "NovelFull.me",
+			"site": "https://novelfull.me/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelFullMe.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/novelfullme/icon.png"
+		},
+		{
+			"id": "NO.net",
+			"name": "novelsOnline",
+			"site": "https://novelsonline.net",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelOnline.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/coverNotAvailable.jpg"
+		},
+		{
 			"id": "ANF.com",
 			"name": "AllNovelFull",
 			"site": "https://allnovelfull.com",
@@ -38,6 +66,16 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/divinedaolibrary/icon.png"
 		},
 		{
+			"id": "foxaholic",
+			"name": "Foxaholic",
+			"site": "https://www.foxaholic.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"description": "Digging Pits",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/foxaholic.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/foxaholic/icon.png"
+		},
+		{
 			"id": "FWN.com",
 			"name": "Web NOVEL",
 			"site": "https://freewebnovel.com/",
@@ -45,34 +83,6 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/freewebnovel.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/freewebnovel/icon.png"
-		},
-		{
-			"id": "LNR.org",
-			"name": "LightNovelReader",
-			"site": "https://lightnovelreader.org",
-			"lang": "English",
-			"version": "1.0.0",
-			"description": "This is description for plugin",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/LightNovelReader.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/lightnovelreader/icon.png"
-		},
-		{
-			"id": "NF.me",
-			"name": "NovelFull.me",
-			"site": "https://novelfull.me/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelFullMe.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/en/novelfullme/icon.png"
-		},
-		{
-			"id": "NO.net",
-			"name": "novelsOnline",
-			"site": "https://novelsonline.net",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/main/plugins/english/NovelOnline.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/main/icons/src/coverNotAvailable.jpg"
 		},
 		{
 			"id": "novelpub.com",
