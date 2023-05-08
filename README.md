@@ -35,23 +35,20 @@ We use expressjs to make an UI web for testing.
 - One more thing: you can use [cheerio_space](./cheerio_space) to build functions without requesting to the site.
 ----------
 
- If you want to test plugin in app side, remember to config these things.
+If you want to test plugin in app side, remember to config these things.
 
-in [.env](./.env)
-```
-GITHUB_USERNAME='nyagami'
-GITHUB_REPOSITORY='plugins'
-GITHUB_BRANCH='main'
+in [config.json](./config.json)
+```json
+{
+    "githubRepository": "LNReader/lnreader-sources",
+    "githubBranch": "plugins"
+}
 ```
 
-in [pluginManager.ts](https://github.com/nyagami/lnreader/blob/install_sources/src/plugins/pluginManager.ts)
+in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/plugins/src/plugins/pluginManager.ts)
 ```ts
-const fetchPlugins = async () => {
-  const availablePlugins: Record<Languages, Array<PluginItem>> = await fetch(
-    'https://raw.githubusercontent.com/nyagami/plugins/main/plugins/plugins.min.json',
-  ).then(res => res.json());
-  return availablePlugins;
-};
+  const githubRepository = 'LNReader/lnreader-sources';
+  const githubBranch = 'plugins';
 ```
 
 ----------
