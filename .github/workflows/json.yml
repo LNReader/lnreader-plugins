@@ -1,0 +1,26 @@
+name: JSON checker
+
+on: [pull_request]
+
+jobs:
+  check:
+    if: github.repository == 'LNReader/lnreader-sources'
+    name: Check github path
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: install dependencies
+      run: |
+        npm install
+    - name: check
+      run: |
+        cat > check_json.js << EOF
+          const plugins = require('./plugins/plugins.min.json');
+          for(let lang in plugins) for(let plugin of plugins[lang]) if(plugin.url.indexOf('LNReader/lnreader-sources/plugins') === -1)
+          throw new Error('Unexpected github path');
+          console.log("Look good to me xD");
+        EOF
+        node check_json.js
