@@ -1,0 +1,37 @@
+{
+  "name": "lnreader-plugins",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "test": "exit 0",
+    "json": "node ./scripts/json_plugins.js && git add ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.10",
+    "cli-color": "^2.0.3",
+    "dayjs": "^1.11.4",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "module-alias": "^2.2.2",
+    "node-fetch": "^3.3.1"
+  },
+  "_moduleAliases": {
+    "@api": "./api",
+    "@libs": "./libs",
+    "@icons": "./icons",
+    "@plugins": "./plugins",
+    "@scripts": "./scripts"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit": [
+    "json"
+  ]
+}

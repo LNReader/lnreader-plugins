@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@api/*": [
+        "./api/*",
+      ],
+      "@libs/*": [
+        "./libs/*",
+      ],
+      "@icons/*": [
+        "./icons/*",
+      ],
+      "@plugins/*": [
+        "./plugins/*",
+      ],
+      "@scripts/*": [
+        "./scripts/*",
+      ]
+    },
+  },
+}
