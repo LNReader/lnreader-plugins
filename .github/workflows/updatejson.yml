@@ -32,7 +32,7 @@ jobs:
     - name: Make json files
       id: json
       run: |
-        node scripts/json_plugins.json
+        node scripts/json_plugins.js
         echo "json-diff=$(git diff dist/LNReader/plugins.min.json)" > $GITHUB_OUTPUT
 
     - name: Create pull request
