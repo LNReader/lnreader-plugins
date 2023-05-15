@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./index.js",
     "test": "exit 0",
-    "json": "node ./scripts/json_plugins.js && git add ."
+    "json": "node ./scripts/json_plugins.js && git add dist"
   },
   "author": "",
   "license": "MIT",
