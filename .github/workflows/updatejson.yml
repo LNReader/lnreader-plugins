@@ -3,7 +3,6 @@ name: Update json files
 on:
   push:
     branches:
-      - PR_actions
       - plugins
 
 jobs:
@@ -17,7 +16,7 @@ jobs:
     - name: Install dependencies
       run: npm install
  
-    - name: Update json files
+    - name: Empty current dist
       run: |
         rm -rf dist
         mkdir dist
@@ -33,8 +32,8 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         token: ${{ secrets.REPO_SCOPED_TOKEN }}
-        author: nyagami <hoangquan05112002@gmail.com>
-        committer: nyagami <hoangquan05112002@gmail.com>
+        author: rajarsheechatterjee <rajarshee.adm@gmail.com>
+        committer: rajarsheechatterjee <rajarshee.adm@gmail.com>
         commit-message: 'plugins: update json files for new plugins'
         title: Update json files
         labels: enhancement
