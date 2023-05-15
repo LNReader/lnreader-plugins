@@ -17,14 +17,14 @@ jobs:
     - name: Install dependencies
       run: npm install
  
-    - name: Empty current dist
+    - name: clean current dist
       run: |
         rm -rf dist
         mkdir dist
         cat > config.json << EOF
         {
-            "githubUsername": "nyagami",
-            "githubRepository": "plugins",
+            "githubUsername": "LNReader",
+            "githubRepository": "lnreader-sources",
             "githubBranch": "plugins"
         }
         EOF
