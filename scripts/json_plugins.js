@@ -3,7 +3,7 @@ const fs = require('fs');
 const languages = require('@libs/languages');
 const path = require('path')
 const root = path.dirname(__dirname);
-const config = fs.existsSync("../config/json") ? require("../config.json") : {};
+const config = fs.existsSync(path.join(root, "config.json")) ? require("../config.json") : {};
 const username = config.githubUsername;
 const repo = config.githubRepository;
 const branch = config.githubBranch;
@@ -11,7 +11,9 @@ const branch = config.githubBranch;
 if(!username || !repo || !branch){
     process.exit();
 }
-
+if(!fs.existsSync(path.join(root, "dist", username))){
+    fs.mkdirSync(path.join(root, "dist", username));
+}
 const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
 const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/plugins`;
 
