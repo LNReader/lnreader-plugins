@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: npm install
  
-    - name: clean current dist
+    - name: Clean up current dist
       run: |
         rm -rf dist
         mkdir dist
@@ -28,8 +28,15 @@ jobs:
             "githubBranch": "plugins"
         }
         EOF
+      
+    - name: Make json files
+      id: json
+      run: |
+        node scripts/json_plugins.json
+        echo "json-diff=$(git diff dist/LNReader/plugins.min.json)" > $GITHUB_OUTPUT
 
     - name: Create pull request
+      if: ${{ steps.json.outputs.json-diff }}
       uses: peter-evans/create-pull-request@v4
       with:
         token: ${{ secrets.REPO_SCOPED_TOKEN }}
@@ -40,3 +47,4 @@ jobs:
         labels: enhancement
         body: Auto-generated PR for updating json files
         branch: update-json
+        delete-branch: true
