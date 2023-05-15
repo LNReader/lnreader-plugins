@@ -1,6 +1,10 @@
 name: Update json files
 
-on: [push]
+on:
+  push:
+    branches:
+      - PR_actions
+      - plugins
 
 jobs:
   make_json:
@@ -24,7 +28,7 @@ jobs:
             "githubBranch": "plugins"
         }
         EOF
-        git add plugins
+        git add dist
 
     - name: Create pull request
       uses: peter-evans/create-pull-request@v4
@@ -34,5 +38,6 @@ jobs:
         committer: nyagami <hoangquan05112002@gmail.com>
         commit-message: 'plugins: update json files for new plugins'
         title: Update json files
+        labels: enhancement
         body: Auto-generated PR for updating json files
         branch: update-json
