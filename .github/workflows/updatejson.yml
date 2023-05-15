@@ -3,6 +3,7 @@ name: Update json files
 on:
   push:
     branches:
+      - PR_actions
       - plugins
 
 jobs:
@@ -32,8 +33,8 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         token: ${{ secrets.REPO_SCOPED_TOKEN }}
-        author: rajarsheechatterjee <rajarshee.adm@gmail.com>
-        committer: rajarsheechatterjee <rajarshee.adm@gmail.com>
+        author: nyagami <hoangquan05112002@gmail.com>
+        committer: nyagami <hoangquan05112002@gmail.com>
         commit-message: 'plugins: update json files for new plugins'
         title: Update json files
         labels: enhancement
