@@ -33,7 +33,14 @@ jobs:
       id: json
       run: |
         node scripts/json_plugins.js
-        echo "json-diff=$(git diff dist/LNReader/plugins.min.json)" >> $GITHUB_OUTPUT
+        changes="$(git diff)"
+        if [ "$changes" ]
+        then
+        changes=1
+        else
+        changes=""
+        fi
+        echo "json-diff=$changes" >> $GITHUB_OUTPUT
 
     - name: Create pull request
       if: ${{ steps.json.outputs.json-diff }}
