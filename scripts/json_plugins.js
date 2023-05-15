@@ -1,12 +1,16 @@
 require('module-alias/register');
-require('dotenv').config();
 const fs = require('fs');
 const languages = require('@libs/languages');
 const path = require('path')
 const root = path.dirname(__dirname);
-const username = process.env.GITHUB_USERNAME;
-const repo = process.env.GITHUB_REPOSITORY;
-const branch = process.env.GITHUB_BRANCH;
+const config = fs.existsSync("../config/json") ? require("../config.json") : {};
+const username = config.githubUsername;
+const repo = config.githubRepository;
+const branch = config.githubBranch;
+
+if(!username || !repo || !branch){
+    process.exit();
+}
 
 const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
 const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/plugins`;
