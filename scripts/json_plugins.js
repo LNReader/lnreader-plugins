@@ -12,8 +12,8 @@ const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/$
 const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/plugins`;
 
 const json = {};
-const jsonPath = path.join(root, 'plugins', 'plugins.json');
-const jsonMinPath = path.join(root, 'plugins', 'plugins.min.json');
+const jsonPath = path.join(root, 'dist', username, 'plugins.json');
+const jsonMinPath = path.join(root, 'dist', username, 'plugins.min.json');
 
 for (let language in languages) {     // language with English name
     const langPath = path.join(root, 'plugins', language.toLowerCase());
