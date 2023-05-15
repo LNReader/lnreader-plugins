@@ -23,8 +23,8 @@ jobs:
         mkdir dist
         cat > config.json << EOF
         {
-            "githubUsername": "LNReader",
-            "githubRepository": "lnreader-sources",
+            "githubUsername": "nyagami",
+            "githubRepository": "plugins",
             "githubBranch": "plugins"
         }
         EOF
