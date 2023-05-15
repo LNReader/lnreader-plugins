@@ -1,0 +1,38 @@
+name: Update json files
+
+on: [push]
+
+jobs:
+  make_json:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: Install dependencies
+      run: npm install
+ 
+    - name: Update json files
+      run: |
+        rm -rf dist
+        mkdir dist
+        cat > config.json << EOF
+        {
+            "githubUsername": "LNReader",
+            "githubRepository": "lnreader-sources",
+            "githubBranch": "plugins"
+        }
+        EOF
+        git add plugins
+
+    - name: Create pull request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        token: ${{ secrets.REPO_SCOPED_TOKEN }}
+        author: nyagami <hoangquan05112002@gmail.com>
+        committer: nyagami <hoangquan05112002@gmail.com>
+        commit-message: 'plugins: update json files for new plugins'
+        title: Update json files
+        body: Auto-generated PR for updating json files
+        branch: update-json
