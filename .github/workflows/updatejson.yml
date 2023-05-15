@@ -25,10 +25,9 @@ jobs:
         {
             "githubUsername": "LNReader",
             "githubRepository": "lnreader-sources",
-            "githubBranch": "plugins"
+            "githubBranch": "test"
         }
         EOF
-        git add dist
 
     - name: Create pull request
       uses: peter-evans/create-pull-request@v4
