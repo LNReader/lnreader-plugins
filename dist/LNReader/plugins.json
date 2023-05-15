@@ -2,34 +2,6 @@
 	"中文, 汉语, 漢語": [],
 	"English": [
 		{
-			"id": "LNR.org",
-			"name": "LightNovelReader",
-			"site": "https://lightnovelreader.org",
-			"lang": "English",
-			"version": "1.0.0",
-			"description": "This is description for plugin",
-			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/LightNovelReader.js",
-			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/en/lightnovelreader/icon.png"
-		},
-		{
-			"id": "NF.me",
-			"name": "NovelFull.me",
-			"site": "https://novelfull.me/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/NovelFullMe.js",
-			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/en/novelfullme/icon.png"
-		},
-		{
-			"id": "NO.net",
-			"name": "novelsOnline",
-			"site": "https://novelsonline.net",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/NovelOnline.js",
-			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/coverNotAvailable.jpg"
-		},
-		{
 			"id": "ANF.com",
 			"name": "AllNovelFull",
 			"site": "https://allnovelfull.com",
@@ -83,6 +55,34 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/freewebnovel.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/en/freewebnovel/icon.png"
+		},
+		{
+			"id": "LNR.org",
+			"name": "LightNovelReader",
+			"site": "https://lightnovelreader.org",
+			"lang": "English",
+			"version": "1.0.0",
+			"description": "This is description for plugin",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/LightNovelReader.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/en/lightnovelreader/icon.png"
+		},
+		{
+			"id": "NF.me",
+			"name": "NovelFull.me",
+			"site": "https://novelfull.me/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/NovelFullMe.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/en/novelfullme/icon.png"
+		},
+		{
+			"id": "NO.net",
+			"name": "novelsOnline",
+			"site": "https://novelsonline.net",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/english/NovelOnline.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/coverNotAvailable.jpg"
 		},
 		{
 			"id": "novelpub.com",
@@ -198,6 +198,15 @@
 	],
 	"español, castellano": [
 		{
+			"id": "awuxia.com",
+			"name": "ReinoWuxia",
+			"site": "http://www.reinowuxia.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/spanish/novelawuxia.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/novelawuxia/icon.png"
+		},
+		{
 			"id": "HasuTL",
 			"name": "Hasu Translations",
 			"site": "https://hasutl.wordpress.com/",
@@ -214,15 +223,6 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/spanish/novelasligera.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/novelasligera/icon.png"
-		},
-		{
-			"id": "awuxia.com",
-			"name": "ReinoWuxia",
-			"site": "http://www.reinowuxia.com/",
-			"lang": "español, castellano",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/spanish/novelawuxia.js",
-			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/novelawuxia/icon.png"
 		},
 		{
 			"id": "oasisTL.wp",
