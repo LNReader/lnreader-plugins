@@ -279,7 +279,7 @@
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
-			"description": "Cổng LightNovel",
+			"description": "Hầm trú ẩn Hako",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/plugins/vietnamese/LNHako.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/vi/hakolightnovel/icon.png"
 		}
