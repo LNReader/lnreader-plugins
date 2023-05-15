@@ -41,6 +41,9 @@ for (let language in languages) {     // language with English name
         console.log('Collected', name);
     });
 }
+
+for(let lang in json) json[lang].sort((a, b) => a.id.localeCompare(b.id))
+
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
 console.log('Done ✅');
