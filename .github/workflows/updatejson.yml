@@ -6,7 +6,7 @@ on:
       - plugins
 
 jobs:
-  make_json:
+  updatejson:
     if: github.repository == 'LNReader/lnreader-sources'
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +29,7 @@ jobs:
         }
         EOF
       
-    - name: Make json files
+    - name: Update json files
       id: json
       run: |
         node scripts/json_plugins.js
