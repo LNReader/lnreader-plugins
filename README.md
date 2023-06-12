@@ -23,7 +23,7 @@ Repository to host plugins and related issues, and requests for [LNReader](https
 3. Write your scripts
 
 + See example: [Hako](./plugins/vietnamese/LNHako.js)
-
++ Note: async arrow functions `const fn = () => {}` are not allowed. Please use normal async functions `async function (){}`
 
 ## Test your script
 
@@ -68,7 +68,7 @@ in [.env](./.env)
 	"githubBranch": "plugins"
 }
 ```
-3. Just commit and push it. And you will see your own json files in github folk: dist/`username`/
+3. Just commit and push it. And you will see your own json files in github fork: dist/`username`/
 
 also in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/plugins/src/plugins/pluginManager.ts) (app repo)
 
