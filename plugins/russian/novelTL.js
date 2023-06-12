@@ -865,7 +865,6 @@ module.exports = {
   name: sourceName,
   site: baseUrl,
   version: "1.0.0",
-  lang: languages.Russian,
   icon: "src/ru/noveltl/icon.png",
   filters,
   popularNovels,

@@ -194,8 +194,6 @@ module.exports = {
     icon: 'src/jp/syosetu/icon.png',
     version: '1.0.0',
     site: 'https://yomou.syosetu.com/',
-    lang: languages.Japanese,
-    description: '小説を読もう！は｢小説家になろう｣に投稿された',
     protected: false,
     fetchImage,
     popularNovels,

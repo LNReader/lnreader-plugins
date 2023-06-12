@@ -109,7 +109,6 @@ module.exports = {
     id: pluginId,
     name: sourceName,
     site: baseUrl,
-    lang: languages.English,
     icon: 'src/coverNotAvailable.jpg',
     version: '1.0.0',
     popularNovels,

@@ -156,7 +156,6 @@ module.exports = {
     id: pluginId,
     name: sourceName,
     site: baseUrl,
-    lang: languages.English,
     version: '1.0.0',
     icon: 'src/en/novelfullme/icon.png',
     popularNovels,

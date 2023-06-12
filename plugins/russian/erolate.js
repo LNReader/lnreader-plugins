@@ -691,7 +691,6 @@ module.exports = {
   name: sourceName,
   site: baseUrl,
   version: "1.0.0",
-  lang: languages.Russian,
   icon: "src/ru/erolate/icon.png",
   filters,
   popularNovels,

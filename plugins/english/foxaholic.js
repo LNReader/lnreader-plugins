@@ -151,8 +151,6 @@ module.exports = {
   version: '1.0.0',
   icon: 'src/en/foxaholic/icon.png',
   site: baseUrl,
-  lang: languages.English,
-  description: 'Digging Pits',
   protected: false,
   fetchImage,
   popularNovels,

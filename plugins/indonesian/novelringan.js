@@ -153,7 +153,6 @@ module.exports = {
     site: baseUrl,
     icon: 'src/id/novelringan/icon.png',
     version: '1.0.0',
-    lang: languages.Indonesian,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

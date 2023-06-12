@@ -30,13 +30,12 @@ for (let language in languages) {     // language with English name
         if(plugin.startsWith('.')) return;
         const instance = require(`@plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`);
 
-        const { id, name, site, lang, version, icon, description } = instance;
-        // lang: language with native name
-        const info = { id, name, site, lang, version, description }
+        const { id, name, site, version, icon } = instance;
+        const info = { id, name, site, lang: languages[language], version }
         info.url = `${githubPluginsLink}/${language.toLowerCase()}/${plugin}`;
         info.iconUrl = `${githubIconsLink}/${icon}`;
 
-        json[lang].push(info);
+        json[languages[language]].push(info);
 
         console.log('Collected', name);
     });

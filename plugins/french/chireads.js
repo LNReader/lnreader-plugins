@@ -117,7 +117,6 @@ module.exports = {
     site: baseUrl,
     version: '1.0.0',
     icon: 'src/fr/chireads/icon.png',
-    lang: languages.French,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

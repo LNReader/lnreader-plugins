@@ -172,7 +172,6 @@ module.exports = {
     name: sourceName,
     site: baseUrl,
     version: '1.0.0',
-    lang: languages.English,
     icon: 'src/en/novelpub/icon.png',
     popularNovels,
     parseNovelAndChapters,

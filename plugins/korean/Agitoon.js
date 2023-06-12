@@ -146,7 +146,6 @@ module.exports = {
     site: baseUrl,
     version: '1.0.0',
     icon: 'src/kr/agitoon/agit.png',
-    lang: languages.Korean,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

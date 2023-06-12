@@ -133,7 +133,6 @@ module.exports = {
     site: baseUrl,
     icon: 'src/id/indowebnovel/icon.png',
     version: '1.0.0',
-    lang: languages.Indonesian,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

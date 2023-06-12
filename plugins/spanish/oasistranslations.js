@@ -158,7 +158,6 @@ module.exports = {
     site: baseUrl,
     version: '1.0.0',
     icon: 'src/es/oasistranslations/icon.png',
-    lang: languages.Spanish,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

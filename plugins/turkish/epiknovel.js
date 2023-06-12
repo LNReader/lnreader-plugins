@@ -158,7 +158,6 @@ module.exports = {
     site: baseUrl,
     version: '1.0.0',
     icon: 'src/tr/epiknovel/icon.png',
-    lang: languages.Turkish,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

@@ -142,7 +142,6 @@ module.exports = {
     site: baseUrl,
     icon: 'src/id/sakuranovel/icon.png',
     version: '1.0.0',
-    lang: languages.Indonesian,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

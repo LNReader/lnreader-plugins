@@ -196,7 +196,6 @@ module.exports = {
     site: baseUrl,
     version: '1.0.0',
     icon: 'src/es/novelawuxia/icon.png',
-    lang: languages.Spanish,
     popularNovels,
     parseNovelAndChapters,
     parseChapter,

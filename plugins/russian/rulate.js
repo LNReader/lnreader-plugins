@@ -1431,7 +1431,6 @@ module.exports = {
   name: sourceName,
   site: baseUrl,
   version: "1.0.0",
-  lang: languages.Russian,
   icon: "src/ru/rulate/icon.png",
   filters,
   popularNovels,

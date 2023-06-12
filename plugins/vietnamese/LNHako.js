@@ -188,8 +188,6 @@ module.exports = {
   version: '1.0.0',
   icon: 'src/vi/hakolightnovel/icon.png',
   site: baseUrl,
-  lang: languages.Vietnamese,
-  description: 'Hầm trú ẩn Hako',
   protected: true,
   fetchImage,
   popularNovels,

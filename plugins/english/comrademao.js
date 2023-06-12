@@ -139,7 +139,6 @@ module.exports = {
     name: sourceName,
     site: baseUrl,
     version: '1.0.0',
-    lang: languages.English,
     icon: 'src/en/comrademao/icon.png',
     popularNovels,
     parseNovelAndChapters,

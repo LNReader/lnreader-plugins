@@ -167,8 +167,6 @@ module.exports = {
     icon: 'src/en/lightnovelreader/icon.png',
     version: '1.0.0',
     site: baseUrl,
-    lang: languages.English,
-    description: 'This is description for plugin',
     protected: false,
     fetchImage,
     popularNovels,
