@@ -2,7 +2,6 @@ const cheerio = require("cheerio");
 const dayjs = require("dayjs");
 const fetchApi = require("@libs/fetchApi");
 const fetchFile = require("@libs/fetchFile");
-const languages = require("@libs/languages");
 const Status = require("@libs/novelStatus");
 const FilterInputs = require("@libs/filterInputs");
 

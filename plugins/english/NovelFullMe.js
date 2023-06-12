@@ -1,6 +1,5 @@
 const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
-const languages = require('@libs/languages');
 const fetchFile = require('@libs/fetchFile');
 
 const pluginId = 'NF.me';

@@ -3,7 +3,6 @@ const cheerio = require("cheerio");
 const Status = require("@libs/novelStatus");
 const fetchApi = require("@libs/fetchApi");
 const fetchFile = require("@libs/fetchFile");
-const languages = require("@libs/languages");
 const FilterInputs = require("@libs/filterInputs");
 
 const pluginId = "RNBH.org";

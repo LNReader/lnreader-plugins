@@ -1,7 +1,6 @@
 const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
-const languages = require('@libs/languages');
 
 const defaultCoverUri =
     'https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true';

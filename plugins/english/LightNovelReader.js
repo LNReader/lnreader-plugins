@@ -1,5 +1,4 @@
 const cheerio = require('cheerio');
-const languages = require('@libs/languages');
 const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
