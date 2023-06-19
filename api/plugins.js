@@ -14,10 +14,10 @@ const all_plugins = () => {
             if(plugin.startsWith('.')) return;
             const requirePath = `@plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`
             const instance = require(requirePath);
-            const { id, name, lang, version, description } = instance;
-            const info = { id, name, lang, version, description } // lang: language with native name
+            const { id, name, version, description } = instance;
+            const info = { id, name, lang: languages[language], version, description } // lang: language with native name
             info.requirePath = requirePath;
-            res[lang].push(info);
+            res[info.lang].push(info);
         });
     }
     return res;
