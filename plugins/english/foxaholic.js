@@ -5,7 +5,7 @@ const fetchFile = require('@libs/fetchFile');
 const pluginId = 'foxaholic';
 const baseUrl = 'https://www.foxaholic.com/';
 
-async function popularNovels (page){
+async function popularNovels(page) {
   const link = `${baseUrl}novel/page/${page}/?m_orderby=rating`;
 
   const result = await fetchApi(link, {}, pluginId);
@@ -16,23 +16,23 @@ async function popularNovels (page){
   const novels = [];
 
   loadedCheerio('.page-item-detail').each(function () {
-    const name = loadedCheerio(this).find('.h5 > a').text();
-    const cover = loadedCheerio(this).find('img').attr('data-src');
-    const url = loadedCheerio(this).find('.h5 > a').attr('href');
+    const novelName = loadedCheerio(this).find('.h5 > a').text();
+    const novelCover = loadedCheerio(this).find('img').attr('data-src');
+    const novelUrl = loadedCheerio(this).find('.h5 > a').attr('href');
 
     const novel = {
-      name,
-      url,
-      cover,
+      name: novelName,
+      cover: novelCover,
+      url: novelUrl,
     };
 
     novels.push(novel);
   });
 
   return novels;
-};
+}
 
-async function parseNovelAndChapters (novelUrl){
+async function parseNovelAndChapters(novelUrl) {
   const url = novelUrl;
   const result = await fetchApi(url, {}, pluginId);
   const body = await result.text();
@@ -44,10 +44,7 @@ async function parseNovelAndChapters (novelUrl){
     chapters: [],
   };
 
-  novel.name = loadedCheerio('.post-title > h1')
-    .text()
-    .replace(/[\t\n]/g, '')
-    .trim();
+  novel.name = loadedCheerio('.post-title > h1').text().trim();
 
   novel.cover = loadedCheerio('.summary_image > a > img').attr('data-src');
 
@@ -55,30 +52,31 @@ async function parseNovelAndChapters (novelUrl){
     const detailName = loadedCheerio(this)
       .find('.summary-heading > h5')
       .text()
-      .replace(/[\t\n]/g, '')
       .trim();
-    const detail = loadedCheerio(this)
-      .find('.summary-content')
-      .text()
-      .replace(/[\t\n]/g, '')
-      .trim();
+    const detail = loadedCheerio(this).find('.summary-content').html();
 
     switch (detailName) {
       case 'Genre':
-        novel.genre = detail.trim().replace(/[\t\n]/g, ',');
+        novel.genre = loadedCheerio(detail)
+          .children('a')
+          .map((i, el) => loadedCheerio(el).text())
+          .toArray()
+          .join(',');
         break;
       case 'Author':
-        novel.author = detail.trim();
+        novel.author = loadedCheerio(detail)
+          .children('a')
+          .map((i, el) => loadedCheerio(el).text())
+          .toArray()
+          .join(', ');
         break;
       case 'Novel':
-        novel.status = detail.trim();
+        novel.status = detail.trim().replace(/G/g,'g');
         break;
     }
   });
 
-  loadedCheerio('.description-summary > div.summary__content')
-    .find('em')
-    .remove();
+  loadedCheerio('.description-summary > div.summary__content > div').remove();
 
   novel.summary = loadedCheerio('.description-summary > div.summary__content')
     .text()
@@ -86,34 +84,39 @@ async function parseNovelAndChapters (novelUrl){
 
   let chapter = [];
   loadedCheerio('.wp-manga-chapter').each(function () {
-    const name = loadedCheerio(this)
+    const chapterName = loadedCheerio(this)
       .find('a')
       .text()
       .replace(/[\t\n]/g, '')
       .trim();
-	  const releaseTime = loadedCheerio(this).find('span').text().trim();
-	  const url = loadedCheerio(this).find('a').attr('href');
-    
-    chapter.push({ name, releaseTime, url });
+    const releaseDate = loadedCheerio(this).find('span').text().trim();
+    const chapterUrl = loadedCheerio(this).find('a').attr('href');
+
+    chapter.push({
+      name: chapterName,
+      releaseTime: releaseDate,
+      url: chapterUrl,
+    });
   });
 
   novel.chapters = chapter.reverse();
 
   return novel;
-};
+}
 
-async function parseChapter (chapterUrl){
+async function parseChapter(chapterUrl) {
   const result = await fetchApi(chapterUrl, {}, pluginId);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
 
+  loadedCheerio('img').removeAttr('srcset');
   let chapterText = loadedCheerio('.reading-content').html();
 
   return chapterText;
-};
+}
 
-async function searchNovels (searchTerm) {
+async function searchNovels(searchTerm) {
   const url = `${baseUrl}?s=${searchTerm}&post_type=wp-manga`;
   const result = await fetchApi(url, {}, pluginId);
   const body = await result.text();
@@ -126,7 +129,7 @@ async function searchNovels (searchTerm) {
     const novelName = loadedCheerio(this).find('.h4 > a').text();
     const novelCover = loadedCheerio(this).find('img').attr('data-src');
     const novelUrl = loadedCheerio(this).find('.h4 > a').attr('href');
-    
+
     novels.push({
       name: novelName,
       url: novelUrl,
@@ -135,14 +138,14 @@ async function searchNovels (searchTerm) {
   });
 
   return novels;
-};
+}
 
-async function fetchImage (url){
+async function fetchImage(url) {
   const headers = {
     Referer: baseUrl,
-  }
-  return await fetchFile(url, {headers: headers});
-};
+  };
+  return await fetchFile(url, { headers: headers });
+}
 
 module.exports = {
   id: pluginId,
