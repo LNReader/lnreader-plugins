@@ -83,7 +83,7 @@ async function parseNovelAndChapters(novelUrl) {
     }
   });
 
-  novel.genre = loadedCheerio('.genxed').text().trim().replace(/\s/g, ',');
+  novel.genres = loadedCheerio('.genxed').text().trim().replace(/\s/g, ',');
 
   loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
   novel.summary = loadedCheerio('div[itemprop="description"]')

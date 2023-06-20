@@ -55,13 +55,13 @@ async function parseNovelAndChapters(novelUrl) {
 
   novel.cover = loadedCheerio('figure.cover > img').attr('data-src');
 
-  novel.genre = '';
+  novel.genres = '';
 
   loadedCheerio('.categories > ul > li > a').each(function () {
-    novel.genre += loadedCheerio(this).text() + ',';
+    novel.genres += loadedCheerio(this).text() + ',';
   });
 
-  novel.genre = novel.genre.slice(0, -1);
+  novel.genres = novel.genre.slice(0, -1);
 
   loadedCheerio('div.header-stats > span').each(function () {
     if (loadedCheerio(this).find('small').text() === 'Status') {

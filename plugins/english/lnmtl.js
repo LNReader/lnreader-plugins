@@ -65,8 +65,8 @@ async function parseNovelAndChapters(novelUrl) {
         break;
     }
   });
-
-  novel.genre = loadedCheerio('.panel-heading:contains(" Genres ")')
+  
+  novel.genres = loadedCheerio('.panel-heading:contains(" Genres ")')
     .next()
     .text()
     .trim()

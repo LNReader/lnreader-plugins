@@ -78,7 +78,7 @@ async function parseNovelAndChapters(novelUrl) {
 
   novel.status = loadedCheerio('div.sertostat > span').attr('class');
 
-  novel.genre = loadedCheerio('.sertogenre')
+  novel.genres = loadedCheerio('.sertogenre')
     .children('a')
     .map((i, el) => loadedCheerio(el).text())
     .toArray()

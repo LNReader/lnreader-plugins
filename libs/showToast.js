@@ -1,4 +1,4 @@
-async function showToast(message) {
+function showToast(message) {
   console.log(message);
 }
 module.exports = showToast;

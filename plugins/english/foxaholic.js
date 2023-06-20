@@ -57,7 +57,7 @@ async function parseNovelAndChapters(novelUrl) {
 
     switch (detailName) {
       case 'Genre':
-        novel.genre = loadedCheerio(detail)
+        novel.genres = loadedCheerio(detail)
           .children('a')
           .map((i, el) => loadedCheerio(el).text())
           .toArray()

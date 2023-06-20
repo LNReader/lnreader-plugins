@@ -61,7 +61,7 @@ async function parseNovelAndChapters(novelUrl) {
       genres.push(loadedCheerio(this).find('div > div').text());
     });
 
-  novel.genre = genres.join(',');
+  novel.genres = genres.join(',');
   
   novel.status = null;
 
