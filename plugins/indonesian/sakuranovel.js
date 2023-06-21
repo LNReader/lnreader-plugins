@@ -1,13 +1,13 @@
-const cheerio = require('cheerio')
+const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 
-const pluginId = "sakura.id";
+const pluginId = 'sakura.id';
 const sourceName = 'SakuraNovel';
 
 const baseUrl = 'https://sakuranovel.id/';
 
-async function popularNovels (page) {
+async function popularNovels(page) {
   const url = `${baseUrl}advanced-search/page/${page}/?title&author&yearx&status&type&order=rating&country%5B0%5D=china&country%5B1%5D=jepang&country%5B2%5D=unknown`;
 
   const result = await fetchApi(url, {}, pluginId);
@@ -27,15 +27,15 @@ async function popularNovels (page) {
       .find('.flexbox2-content > a')
       .attr('href');
 
-    const novel = {name: novelName, cover: novelCover, url: novelUrl };
+    const novel = { name: novelName, cover: novelCover, url: novelUrl };
 
     novels.push(novel);
   });
 
   return novels;
-};
+}
 
-async function parseNovelAndChapters (novelUrl) {
+async function parseNovelAndChapters(novelUrl) {
   const result = await fetchApi(novelUrl, {}, pluginId);
   const body = await result.text();
 
@@ -63,11 +63,13 @@ async function parseNovelAndChapters (novelUrl) {
 
   novel.status = loadedCheerio('.status').text().trim();
 
-  novel.genres = loadedCheerio('.series-genres')
-    .prop('innerHTML')
-    .replace(/<.*?>(.*?)<.*?>/g, '$1,')
-    .slice(0, -1);
+  novel.genre = loadedCheerio('.series-genres')
+    .children('a')
+    .map((i, el) => loadedCheerio(el).text())
+    .toArray()
+    .join(',');
 
+  loadedCheerio('.series-synops div').remove();
   novel.summary = loadedCheerio('.series-synops').text().trim();
 
   let chapters = [];
@@ -77,8 +79,8 @@ async function parseNovelAndChapters (novelUrl) {
       .find('a span')
       .first()
       .text()
-      .replace(`${novel.novelName} – `, '')
-      .replace('Bahasa Indonesia', '')
+      .replace(/.*?(Chapter.|[0-9])/g, '$1')
+      .replace(/Bahasa Indonesia/g, '')
       .replace(/\s+/g, ' ')
       .trim();
 
@@ -89,26 +91,30 @@ async function parseNovelAndChapters (novelUrl) {
       .text();
     const chapterUrl = loadedCheerio(this).find('a').attr('href');
 
-    chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+    chapters.push({
+      name: chapterName,
+      releaseTime: releaseDate,
+      url: chapterUrl,
+    });
   });
 
   novel.chapters = chapters.reverse();
 
   return novel;
-};
+}
 
-async function parseChapter (chapterUrl) {
-  const result = await fetchApi( chapterUrl, {}, pluginId);
+async function parseChapter(chapterUrl) {
+  const result = await fetchApi(chapterUrl, {}, pluginId);
   const body = await result.text();
 
   let loadedCheerio = cheerio.load(body);
 
-  const chapterText = loadedCheerio('.reader').html();
+  const chapterText = loadedCheerio('.readers').html();
 
-  return chapterText
-};
+  return chapterText;
+}
 
-async function searchNovels (searchTerm)  {
+async function searchNovels(searchTerm) {
   const url = `${baseUrl}?s=${searchTerm}`;
   const result = await fetchApi(url, {}, pluginId);
   const body = await result.text();
@@ -133,17 +139,17 @@ async function searchNovels (searchTerm)  {
   });
 
   return novels;
-};
+}
 
 module.exports = {
-    id: pluginId,
-    name: sourceName,
-    site: baseUrl,
-    icon: 'src/id/sakuranovel/icon.png',
-    version: '1.0.0',
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-    fetchImage: fetchFile,
+  id: pluginId,
+  name: sourceName,
+  site: baseUrl,
+  icon: 'src/id/sakuranovel/icon.png',
+  version: '1.0.0',
+  popularNovels,
+  parseNovelAndChapters,
+  parseChapter,
+  searchNovels,
+  fetchImage: fetchFile,
 };
