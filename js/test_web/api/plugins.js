@@ -32,7 +32,7 @@ const all_plugins = () => {
         plugins.forEach((plugin) => {
             if (plugin.startsWith("."))
                 return;
-            const requirePath = `../plugins/${languageEnglish.toLowerCase()}/${plugin.split(".")[0]}`;
+            const requirePath = `@plugins/${languageEnglish.toLowerCase()}/${plugin.split(".")[0]}`;
             const instance = require(requirePath);
             const { id, name, version } = instance;
             const info = {

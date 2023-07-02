@@ -4,7 +4,7 @@ import path from "path";
 import dayjs from "dayjs";
 import express from "express";
 import bodyParser from "body-parser";
-import * as pluginApi from "@api/plugins";
+import * as pluginApi from "./test_web/api/plugins";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
 const app = express();

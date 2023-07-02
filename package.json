@@ -23,7 +23,6 @@
         "typescript": "^5.1.3"
     },
     "_moduleAliases": {
-        "@api": "./js/api",
         "@libs": "./js/libs",
         "@icons": "./js/icons",
         "@plugins": "./js/plugins",
