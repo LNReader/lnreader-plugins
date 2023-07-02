@@ -14,4 +14,3 @@ export interface Filter {
     inputType: FilterInputs;
 }
 export default FilterInputs;
-module.exports = FilterInputs;

@@ -16,4 +16,3 @@ const fetchFile: Plugin.fetchImage = async function (url, init) {
     }
 };
 export default  fetchFile;
-module.exports = fetchFile;
