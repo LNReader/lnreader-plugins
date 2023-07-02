@@ -7,10 +7,11 @@ const generate = async (name) => {
     const generator = require(`./${name}/template`);
     for(let sourceJson of sourcesJson){
         if(!sourceJson) continue;
-        const { name, pluginScript } = generator(sourceJson);
-        const filename = name.replace(/[\s-\.]+/g, '') + '_multisrc.ts';
-        console.log(filename)
-        // Write plugin with specific lang (English is default)
+        const { lang, sourceName, pluginScript } = generator(sourceJson);
+        const filename = sourceName.replace(/[\s-\.]+/g, '') + `_${name}.ts`;
+        const pluginsDir = path.join(path.dirname(path.dirname(__dirname)), 'plugins');
+        const filePath = path.join(pluginsDir, lang.toLowerCase(), filename);
+        fs.writeFileSync(filePath, pluginScript, {encoding: 'utf-8'});
     }
 }
 

@@ -1,14 +1,4 @@
-module.exports = function generator(sourceJson){
-    const { baseUrl, sourceName, options } = sourceJson;
-    const lang = options?.lang || 'English';
-    const path = options?.path || {
-        novels: 'novel',
-        novel: 'novel',
-        chapter: 'novel',
-    };
-    const useNewChapterEndpoint = options?.useNewChapterEndpoint || false;
-    const iconFileName = sourceName.replace(/\s+/g, '').toLowerCase();
-    const pluginScript = `
+
 import * as cheerio from "cheerio";
 import fetchApi from "@libs/fetchApi";
 import fetchFile from "@libs/fetchFile";
@@ -18,11 +8,11 @@ import novelStatus from "@libs/novelStatus"
 import { parseMadaraDate } from "@libs/parseDate";
 import dayjs from "dayjs";
 
-export const id = "${baseUrl.replace(/http|https/g, '').replace(/[\:\/]/g, '')}";
-export const name = "${sourceName}_madara";
-export const icon = "icon/multisrc/madara/icons/${iconFileName}";
+export const id = "steamxnovel.com";
+export const name = "TeamXNovel_madara";
+export const icon = "icon/multisrc/madara/icons/teamxnovel";
 export const version = "1.0.0";
-export const site = "${baseUrl}";
+export const site = "https://teamxnovel.com/";
 const baseUrl = site;
 
 export const popularNovels: Plugin.popularNovels = async (pageNo, {showLatestNovels}) => {
@@ -31,7 +21,7 @@ export const popularNovels: Plugin.popularNovels = async (pageNo, {showLatestNov
     ? '?m_orderby=latest'
     : '/?m_orderby=rating';
 
-    let url = site + "${path.novels}" + '/page/' + pageNo + sortOrder;
+    let url = site + "novel" + '/page/' + pageNo + sortOrder;
 
     const body = await fetchApi(url).then(res => res.text());
 
@@ -89,7 +79,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
     switch (detailName) {
         case 'Genre(s)':
         case 'التصنيفات':
-            novel.genres = detail.replace(/[\\t\\n]/g, ',');
+            novel.genres = detail.replace(/[\t\n]/g, ',');
             break;
         case 'Author(s)':
         case 'المؤلف':
@@ -111,7 +101,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
 
     let html;
 
-    if (${useNewChapterEndpoint}) {
+    if (true) {
         const novelId =
             loadedCheerio('.rating-post-id').attr('value') ||
             loadedCheerio('#manga-chapters-holder').attr('data-id') || '';
@@ -172,7 +162,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
 };
 
 export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
-    const url = baseUrl + "/" + "${path.chapter}" + "/" + chapterUrl;
+    const url = baseUrl + "/" + "novel" + "/" + chapterUrl;
 
     const body = await fetchApi(chapterUrl).then(res => res.text());
 
@@ -220,11 +210,4 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
 export const fetchImage: Plugin.fetchImage = async (url) => {
     return await fetchFile(url);
 };
-    `
-
-    return { 
-        lang,
-        sourceName,
-        pluginScript,
-    };
-};
+    
