@@ -90,7 +90,7 @@ function parseNovelAndChapters(novelUrl) {
         novel.name = loadedCheerio('.seriestitlenu').text();
         novel.cover = loadedCheerio('.seriesimg > img').attr('src');
         novel.author = loadedCheerio('#showauthors').text().trim();
-        novel.genre = loadedCheerio('#seriesgenre')
+        novel.genres = loadedCheerio('#seriesgenre')
             .children('a')
             .map((i, el) => loadedCheerio(el).text())
             .toArray()

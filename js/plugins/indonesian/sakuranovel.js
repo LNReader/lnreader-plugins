@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
-const pluginId = "sakura.id";
+const pluginId = 'sakura.id';
 const sourceName = 'SakuraNovel';
 const baseUrl = 'https://sakuranovel.id/';
 function popularNovels(page) {
@@ -36,7 +36,6 @@ function popularNovels(page) {
         return novels;
     });
 }
-;
 function parseNovelAndChapters(novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield fetchApi(novelUrl, {}, pluginId);
@@ -58,10 +57,12 @@ function parseNovelAndChapters(novelUrl) {
             }
         });
         novel.status = loadedCheerio('.status').text().trim();
-        novel.genres = loadedCheerio('.series-genres')
-            .prop('innerHTML')
-            .replace(/<.*?>(.*?)<.*?>/g, '$1,')
-            .slice(0, -1);
+        novel.genre = loadedCheerio('.series-genres')
+            .children('a')
+            .map((i, el) => loadedCheerio(el).text())
+            .toArray()
+            .join(',');
+        loadedCheerio('.series-synops div').remove();
         novel.summary = loadedCheerio('.series-synops').text().trim();
         let chapters = [];
         loadedCheerio('.series-chapterlist li').each(function () {
@@ -69,8 +70,8 @@ function parseNovelAndChapters(novelUrl) {
                 .find('a span')
                 .first()
                 .text()
-                .replace(`${novel.novelName} – `, '')
-                .replace('Bahasa Indonesia', '')
+                .replace(/.*?(Chapter.|[0-9])/g, '$1')
+                .replace(/Bahasa Indonesia/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
             const releaseDate = loadedCheerio(this)
@@ -79,23 +80,25 @@ function parseNovelAndChapters(novelUrl) {
                 .next()
                 .text();
             const chapterUrl = loadedCheerio(this).find('a').attr('href');
-            chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+            chapters.push({
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
+            });
         });
         novel.chapters = chapters.reverse();
         return novel;
     });
 }
-;
 function parseChapter(chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield fetchApi(chapterUrl, {}, pluginId);
         const body = yield result.text();
         let loadedCheerio = cheerio.load(body);
-        const chapterText = loadedCheerio('.reader').html();
+        const chapterText = loadedCheerio('.readers').html();
         return chapterText;
     });
 }
-;
 function searchNovels(searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}?s=${searchTerm}`;
@@ -118,7 +121,6 @@ function searchNovels(searchTerm) {
         return novels;
     });
 }
-;
 module.exports = {
     id: pluginId,
     name: sourceName,

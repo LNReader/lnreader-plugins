@@ -12,8 +12,8 @@ const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 const FilterInputs = require('@libs/filterInputs');
-const pluginId = 'PandaMTL';
-const baseUrl = 'https://www.pandamtl.com/';
+const pluginId = 'lightnovelbrasil';
+const baseUrl = 'https://lightnovelbrasil.com/';
 function popularNovels(page, { filters }) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,11 +29,11 @@ function popularNovels(page, { filters }) {
         const body = yield fetchApi(link, {}, pluginId).then(result => result.text());
         const loadedCheerio = cheerio.load(body);
         const novels = [];
-        loadedCheerio('article.maindet').each(function () {
-            const novelName = loadedCheerio(this).find('h2').text();
+        loadedCheerio('article.bs').each(function () {
+            const novelName = loadedCheerio(this).find('.ntitle').text().trim();
             let image = loadedCheerio(this).find('img');
             const novelCover = image.attr('data-src') || image.attr('src');
-            const novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+            const novelUrl = loadedCheerio(this).find('a').attr('href');
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -54,27 +54,29 @@ function parseNovelAndChapters(novelUrl) {
             url,
             chapters: [],
         };
-        novel.name = loadedCheerio('h1.entry-title').text();
+        novel.name = loadedCheerio('.entry-title').text();
         novel.cover =
             loadedCheerio('img.wp-post-image').attr('data-src') ||
                 loadedCheerio('img.wp-post-image').attr('src');
-        loadedCheerio('div.serl:nth-child(3) > span').each(function () {
-            const detailName = loadedCheerio(this).text().trim();
-            const detail = loadedCheerio(this).next().text().trim();
+        loadedCheerio('div.spe > span').each(function () {
+            const detailName = loadedCheerio(this).find('b').text().trim();
+            const detail = loadedCheerio(this).find('b').remove().end().text().trim();
             switch (detailName) {
-                case 'الكاتب':
-                case 'Author':
+                case 'المؤلف:':
+                case 'Yazar:':
+                case 'Autor:':
+                case 'Author:':
                     novel.author = detail;
+                    break;
+                case 'Status:':
+                case 'Seviye:':
+                    novel.status = detail;
                     break;
             }
         });
-        novel.status = loadedCheerio('div.sertostat > span').attr('class');
-        novel.genres = loadedCheerio('.sertogenre')
-            .children('a')
-            .map((i, el) => loadedCheerio(el).text())
-            .toArray()
-            .join(',');
-        novel.summary = loadedCheerio('.sersys')
+        novel.genres = loadedCheerio('.genxed').text().trim().replace(/\s/g, ',');
+        loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
+        novel.summary = loadedCheerio('div[itemprop="description"]')
             .find('br')
             .replaceWith('\n')
             .end()
@@ -103,7 +105,7 @@ function parseChapter(chapterUrl) {
         const result = yield fetchApi(chapterUrl, {}, pluginId);
         const body = yield result.text();
         const loadedCheerio = cheerio.load(body);
-        let chapterText = loadedCheerio('.epcontent').html();
+        let chapterText = loadedCheerio('div.epcontent').html();
         return chapterText;
     });
 }
@@ -114,11 +116,10 @@ function searchNovels(searchTerm) {
         const body = yield result.text();
         const loadedCheerio = cheerio.load(body);
         const novels = [];
-        loadedCheerio('article.maindet').each(function () {
-            const novelName = loadedCheerio(this).find('h2').text();
-            let image = loadedCheerio(this).find('img');
-            const novelCover = image.attr('data-src') || image.attr('src');
-            const novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+        loadedCheerio('article.bs').each(function () {
+            const novelName = loadedCheerio(this).find('.ntitle').text().trim();
+            const novelCover = loadedCheerio(this).find('img').attr('src');
+            const novelUrl = loadedCheerio(this).find('a').attr('href');
             novels.push({
                 name: novelName,
                 url: novelUrl,
@@ -165,8 +166,12 @@ const filters = [
         key: 'type',
         label: 'Type',
         values: [
-            { label: 'Light Novel (KR)', value: 'light-novel-kr' },
+            { label: 'Chinese novel', value: 'chinese-novel' },
+            { label: 'habyeol', value: 'habyeol' },
+            { label: 'korean novel', value: 'korean-novel' },
             { label: 'Web Novel', value: 'web-novel' },
+            { label: '삼심', value: '%ec%82%bc%ec%8b%ac' },
+            { label: '호곡', value: '%ed%98%b8%ea%b3%a1' },
         ],
         inputType: FilterInputs.Checkbox,
     },
@@ -174,34 +179,101 @@ const filters = [
         key: 'genres',
         label: 'Genres',
         values: [
+            { label: 'A.I', value: 'a.i' },
+            { label: 'Academy', value: 'academy' },
             { label: 'Action', value: 'action' },
             { label: 'Adult', value: 'adult' },
             { label: 'Adventure', value: 'adventure' },
+            { label: 'Alternative History', value: 'alternative-history' },
+            { label: 'Another World', value: 'another-world' },
+            { label: 'Apocalypse', value: 'apocalypse' },
+            { label: 'Bromance', value: 'bromance' },
             { label: 'Comedy', value: 'comedy' },
+            { label: 'Dark fantasy', value: 'dark-fantasy' },
+            { label: 'Demons', value: 'demons' },
+            { label: 'Drama', value: 'drama' },
+            { label: 'Dystopia', value: 'dystopia' },
             { label: 'Ecchi', value: 'ecchi' },
-            { label: 'Fantasy', value: 'fantasy' },
+            { label: 'Entertainment', value: 'entertainment' },
+            { label: 'Exhaustion', value: 'exhaustion' },
+            { label: 'Fanfiction', value: 'fanfiction' },
+            { label: 'fantasy', value: 'fantasy' },
+            { label: 'finance', value: 'finance' },
+            { label: 'Full color', value: 'full-color' },
+            { label: 'Game', value: 'game' },
+            { label: 'Gender Bender', value: 'gender-bender' },
+            { label: 'Genius', value: 'genius' },
             { label: 'Harem', value: 'harem' },
-            { label: 'Josei', value: 'josei' },
+            { label: 'Hero', value: 'hero' },
+            { label: 'Historical', value: 'historical' },
+            { label: 'Hunter', value: 'hunter' },
+            { label: 'korean novel', value: 'korean-novel' },
+            { label: 'Light Novel', value: 'light-novel' },
+            {
+                label: 'List Adventure Manga Genres',
+                value: 'list-adventure-manga-genres',
+            },
+            { label: 'Long Strip', value: 'long-strip' },
+            { label: 'Love comedy', value: 'love-comedy' },
+            { label: 'magic', value: 'magic' },
+            { label: 'Manhua', value: 'manhua' },
             { label: 'Martial Arts', value: 'martial-arts' },
             { label: 'Mature', value: 'mature' },
+            { label: 'Medieval', value: 'medieval' },
+            { label: 'Misunderstanding', value: 'misunderstanding' },
+            { label: 'Modern', value: 'modern' },
+            { label: 'modern fantasy', value: 'modern-fantasy' },
+            { label: 'music', value: 'music' },
+            { label: 'Mystery', value: 'mystery' },
+            { label: 'Necromancy', value: 'necromancy' },
+            { label: 'No Romance', value: 'no-romance' },
+            { label: 'NTL', value: 'ntl' },
+            { label: 'o', value: 'o' },
+            { label: 'Obsession', value: 'obsession' },
+            { label: 'Politics', value: 'politics' },
+            { label: 'Possession', value: 'possession' },
+            { label: 'Programming', value: 'programming' },
+            { label: 'Psychological', value: 'psychological' },
+            { label: 'Pure Love', value: 'pure-love' },
+            { label: 'Redemption', value: 'redemption' },
+            { label: 'Regression', value: 'regression' },
+            { label: 'Regret', value: 'regret' },
+            { label: 'Reincarnation', value: 'reincarnation' },
+            { label: 'Revenge', value: 'revenge' },
             { label: 'Romance', value: 'romance' },
+            { label: 'Romance Fanrasy', value: 'romance-fanrasy' },
+            { label: 'Salvation', value: 'salvation' },
             { label: 'School Life', value: 'school-life' },
             { label: 'Sci-fi', value: 'sci-fi' },
+            { label: 'Science fiction', value: 'science-fiction' },
             { label: 'Seinen', value: 'seinen' },
+            { label: 'Shounen', value: 'shounen' },
             { label: 'Slice of Life', value: 'slice-of-life' },
-            { label: 'Smut', value: 'smut' },
+            { label: 'Soft yandere', value: 'soft-yandere' },
             { label: 'Sports', value: 'sports' },
             { label: 'Supernatural', value: 'supernatural' },
+            { label: 'Survival', value: 'survival' },
+            { label: 'system', value: 'system' },
+            { label: 'Time limit', value: 'time-limit' },
             { label: 'Tragedy', value: 'tragedy' },
+            { label: 'Transmigration', value: 'transmigration' },
+            { label: 'TS', value: 'ts' },
+            { label: 'Tsundere', value: 'tsundere' },
+            { label: 'Unique', value: 'unique' },
+            { label: 'Wholesome', value: 'wholesome' },
+            { label: 'Wuxia', value: 'wuxia' },
+            { label: 'Xuanhuan', value: 'xuanhuan' },
+            { label: 'Yandere', value: 'yandere' },
+            { label: 'Yuri', value: 'yuri' },
         ],
         inputType: FilterInputs.Checkbox,
     },
 ];
 module.exports = {
     id: pluginId,
-    name: 'PandaMTL',
+    name: 'Light Novel Brasil',
     version: '1.0.0',
-    icon: 'src/en/wordpress/icon.png',
+    icon: 'multisrc/wpmangastream/icons/lightnovelbrasil.png',
     site: baseUrl,
     protected: false,
     fetchImage,

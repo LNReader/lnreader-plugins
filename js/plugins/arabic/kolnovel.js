@@ -12,8 +12,8 @@ const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 const FilterInputs = require('@libs/filterInputs');
-const pluginId = 'PandaMTL';
-const baseUrl = 'https://www.pandamtl.com/';
+const pluginId = 'kolnovel';
+const baseUrl = 'https://kolnovel.com/';
 function popularNovels(page, { filters }) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -103,6 +103,8 @@ function parseChapter(chapterUrl) {
         const result = yield fetchApi(chapterUrl, {}, pluginId);
         const body = yield result.text();
         const loadedCheerio = cheerio.load(body);
+        let ignore = loadedCheerio('.epcontent > p').next().attr('class');
+        loadedCheerio(`p.${ignore}`).remove();
         let chapterText = loadedCheerio('.epcontent').html();
         return chapterText;
     });
@@ -139,20 +141,20 @@ function fetchImage(url) {
 const filters = [
     {
         key: 'order',
-        label: 'Sort By',
+        label: 'ترتيب حسب',
         values: [
-            { label: 'Default', value: '' },
+            { label: 'الإعداد الأولي', value: '' },
             { label: 'A-Z', value: 'title' },
             { label: 'Z-A', value: 'titlereverse' },
-            { label: 'Latest Update', value: 'update' },
-            { label: 'Latest Added', value: 'latest' },
-            { label: 'Popular', value: 'popular' },
+            { label: 'أخر التحديثات', value: 'update' },
+            { label: 'أخر ما تم إضافته', value: 'latest' },
+            { label: 'الرائجة', value: 'popular' },
         ],
         inputType: FilterInputs.Picker,
     },
     {
         key: 'status',
-        label: 'Status',
+        label: 'الحالة',
         values: [
             { label: 'All', value: '' },
             { label: 'Ongoing', value: 'ongoing' },
@@ -163,45 +165,68 @@ const filters = [
     },
     {
         key: 'type',
-        label: 'Type',
+        label: 'النوع',
         values: [
-            { label: 'Light Novel (KR)', value: 'light-novel-kr' },
-            { label: 'Web Novel', value: 'web-novel' },
+            { label: 'إنجليزية', value: 'english' },
+            { label: 'روايةلايت', value: 'light-novel' },
+            { label: 'روايةويب', value: 'web-novel' },
+            { label: 'صينية', value: 'chinese' },
+            { label: 'عربية', value: 'arabic' },
+            { label: 'كورية', value: 'korean' },
+            { label: 'يابانية', value: 'japanese' },
         ],
         inputType: FilterInputs.Checkbox,
     },
     {
         key: 'genres',
-        label: 'Genres',
+        label: 'تصنيف',
         values: [
-            { label: 'Action', value: 'action' },
-            { label: 'Adult', value: 'adult' },
-            { label: 'Adventure', value: 'adventure' },
-            { label: 'Comedy', value: 'comedy' },
-            { label: 'Ecchi', value: 'ecchi' },
-            { label: 'Fantasy', value: 'fantasy' },
-            { label: 'Harem', value: 'harem' },
-            { label: 'Josei', value: 'josei' },
-            { label: 'Martial Arts', value: 'martial-arts' },
-            { label: 'Mature', value: 'mature' },
-            { label: 'Romance', value: 'romance' },
-            { label: 'School Life', value: 'school-life' },
-            { label: 'Sci-fi', value: 'sci-fi' },
-            { label: 'Seinen', value: 'seinen' },
-            { label: 'Slice of Life', value: 'slice-of-life' },
-            { label: 'Smut', value: 'smut' },
-            { label: 'Sports', value: 'sports' },
-            { label: 'Supernatural', value: 'supernatural' },
-            { label: 'Tragedy', value: 'tragedy' },
+            { label: 'Wuxia', value: 'wuxia' },
+            { label: 'Xianxia', value: 'xianxia' },
+            { label: 'XUANHUAN', value: 'xuanhuan' },
+            { label: 'أكشن', value: 'action' },
+            { label: 'إثارة', value: 'excitement' },
+            { label: 'إنتقالالىعالمأخر', value: 'isekai' },
+            { label: 'إيتشي', value: 'etchi' },
+            { label: 'الخيالالعلمي', value: 'sci-fi' },
+            { label: 'بوليسي', value: 'policy' },
+            { label: 'تاريخي', value: 'historical' },
+            { label: 'تحقيقات', value: '%d8%aa%d8%ad%d9%82%d9%8a%d9%82' },
+            { label: 'تقمصشخصيات', value: 'rpg' },
+            { label: 'جريمة', value: 'crime' },
+            { label: 'جوسى', value: 'josei' },
+            { label: 'حريم', value: 'harem' },
+            { label: 'حياةمدرسية', value: 'school-life' },
+            { label: 'خيالي(فانتازيا)', value: 'fantasy' },
+            { label: 'دراما', value: 'drama' },
+            { label: 'رعب', value: 'horror' },
+            { label: 'رومانسي', value: 'romantic' },
+            { label: 'سحر', value: 'magic' },
+            { label: 'سينن', value: 'senen' },
+            { label: 'شريحةمنالحياة', value: 'slice-of-life' },
+            { label: 'شوجو', value: 'shojo' },
+            { label: 'شونين', value: 'shonen' },
+            { label: 'طبي', value: 'medical' },
+            { label: 'ظواهرخارقةللطبيعة', value: 'supernatural' },
+            { label: 'غموض', value: 'mysteries' },
+            { label: 'فنونالقتال', value: 'martial-arts' },
+            { label: 'قوىخارقة', value: 'superpower' },
+            { label: 'كوميدي', value: 'comedy' },
+            { label: 'مأساوي', value: 'tragedy' },
+            { label: 'مابعدالكارثة', value: 'after-the-disaster' },
+            { label: 'مغامرة', value: 'adventure' },
+            { label: 'ميكا', value: 'mechanical' },
+            { label: 'ناضج', value: 'mature' },
+            { label: 'نفسي', value: 'psychological' },
         ],
         inputType: FilterInputs.Checkbox,
     },
 ];
 module.exports = {
     id: pluginId,
-    name: 'PandaMTL',
+    name: 'KolNovel',
     version: '1.0.0',
-    icon: 'src/en/wordpress/icon.png',
+    icon: 'multisrc/wpmangastream/icons/kolnovel.png',
     site: baseUrl,
     protected: false,
     fetchImage,

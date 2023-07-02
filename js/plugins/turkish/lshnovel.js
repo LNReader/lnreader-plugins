@@ -12,8 +12,8 @@ const cheerio = require('cheerio');
 const fetchApi = require('@libs/fetchApi');
 const fetchFile = require('@libs/fetchFile');
 const FilterInputs = require('@libs/filterInputs');
-const pluginId = 'PandaMTL';
-const baseUrl = 'https://www.pandamtl.com/';
+const pluginId = 'lshnovel';
+const baseUrl = 'https://lshnovel.com/';
 function popularNovels(page, { filters }) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,11 +29,11 @@ function popularNovels(page, { filters }) {
         const body = yield fetchApi(link, {}, pluginId).then(result => result.text());
         const loadedCheerio = cheerio.load(body);
         const novels = [];
-        loadedCheerio('article.maindet').each(function () {
-            const novelName = loadedCheerio(this).find('h2').text();
+        loadedCheerio('article.bs').each(function () {
+            const novelName = loadedCheerio(this).find('.ntitle').text().trim();
             let image = loadedCheerio(this).find('img');
             const novelCover = image.attr('data-src') || image.attr('src');
-            const novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+            const novelUrl = loadedCheerio(this).find('a').attr('href');
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -54,27 +54,29 @@ function parseNovelAndChapters(novelUrl) {
             url,
             chapters: [],
         };
-        novel.name = loadedCheerio('h1.entry-title').text();
+        novel.name = loadedCheerio('.entry-title').text();
         novel.cover =
             loadedCheerio('img.wp-post-image').attr('data-src') ||
                 loadedCheerio('img.wp-post-image').attr('src');
-        loadedCheerio('div.serl:nth-child(3) > span').each(function () {
-            const detailName = loadedCheerio(this).text().trim();
-            const detail = loadedCheerio(this).next().text().trim();
+        loadedCheerio('div.spe > span').each(function () {
+            const detailName = loadedCheerio(this).find('b').text().trim();
+            const detail = loadedCheerio(this).find('b').remove().end().text().trim();
             switch (detailName) {
-                case 'الكاتب':
-                case 'Author':
+                case 'المؤلف:':
+                case 'Yazar:':
+                case 'Autor:':
+                case 'Author:':
                     novel.author = detail;
+                    break;
+                case 'Status:':
+                case 'Seviye:':
+                    novel.status = detail;
                     break;
             }
         });
-        novel.status = loadedCheerio('div.sertostat > span').attr('class');
-        novel.genres = loadedCheerio('.sertogenre')
-            .children('a')
-            .map((i, el) => loadedCheerio(el).text())
-            .toArray()
-            .join(',');
-        novel.summary = loadedCheerio('.sersys')
+        novel.genres = loadedCheerio('.genxed').text().trim().replace(/\s/g, ',');
+        loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
+        novel.summary = loadedCheerio('div[itemprop="description"]')
             .find('br')
             .replaceWith('\n')
             .end()
@@ -103,7 +105,7 @@ function parseChapter(chapterUrl) {
         const result = yield fetchApi(chapterUrl, {}, pluginId);
         const body = yield result.text();
         const loadedCheerio = cheerio.load(body);
-        let chapterText = loadedCheerio('.epcontent').html();
+        let chapterText = loadedCheerio('div.epcontent').html();
         return chapterText;
     });
 }
@@ -114,11 +116,10 @@ function searchNovels(searchTerm) {
         const body = yield result.text();
         const loadedCheerio = cheerio.load(body);
         const novels = [];
-        loadedCheerio('article.maindet').each(function () {
-            const novelName = loadedCheerio(this).find('h2').text();
-            let image = loadedCheerio(this).find('img');
-            const novelCover = image.attr('data-src') || image.attr('src');
-            const novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+        loadedCheerio('article.bs').each(function () {
+            const novelName = loadedCheerio(this).find('.ntitle').text().trim();
+            const novelCover = loadedCheerio(this).find('img').attr('src');
+            const novelUrl = loadedCheerio(this).find('a').attr('href');
             novels.push({
                 name: novelName,
                 url: novelUrl,
@@ -139,22 +140,22 @@ function fetchImage(url) {
 const filters = [
     {
         key: 'order',
-        label: 'Sort By',
+        label: 'Önerilen',
         values: [
-            { label: 'Default', value: '' },
+            { label: 'Varsayılan', value: '' },
             { label: 'A-Z', value: 'title' },
             { label: 'Z-A', value: 'titlereverse' },
-            { label: 'Latest Update', value: 'update' },
-            { label: 'Latest Added', value: 'latest' },
-            { label: 'Popular', value: 'popular' },
+            { label: 'Son Yüklemeler', value: 'update' },
+            { label: 'Son Eklenenler', value: 'latest' },
+            { label: 'Bestimiz', value: 'popular' },
         ],
         inputType: FilterInputs.Picker,
     },
     {
         key: 'status',
-        label: 'Status',
+        label: 'Statü',
         values: [
-            { label: 'All', value: '' },
+            { label: 'Tümü', value: '' },
             { label: 'Ongoing', value: 'ongoing' },
             { label: 'Hiatus', value: 'hiatus' },
             { label: 'Completed', value: 'completed' },
@@ -163,45 +164,63 @@ const filters = [
     },
     {
         key: 'type',
-        label: 'Type',
+        label: 'Tür',
         values: [
-            { label: 'Light Novel (KR)', value: 'light-novel-kr' },
+            { label: 'Çeviri Novel', value: 'ceviri-novel' },
+            { label: 'Liz-Chan', value: 'liz-chan' },
+            { label: 'Manhwa', value: 'manhwa' },
+            { label: 'Orijinal Novel', value: 'orijinal-novel' },
             { label: 'Web Novel', value: 'web-novel' },
         ],
         inputType: FilterInputs.Checkbox,
     },
     {
         key: 'genres',
-        label: 'Genres',
+        label: 'Kategori',
         values: [
+            { label: '+18', value: '18' },
             { label: 'Action', value: 'action' },
             { label: 'Adult', value: 'adult' },
-            { label: 'Adventure', value: 'adventure' },
+            { label: 'Aksiyon', value: 'aksiyon' },
+            { label: 'BL', value: 'bl' },
             { label: 'Comedy', value: 'comedy' },
+            { label: 'Doğaüstü', value: 'dogaustu' },
+            { label: 'Dram', value: 'dram' },
+            { label: 'Drama', value: 'drama' },
             { label: 'Ecchi', value: 'ecchi' },
+            { label: 'Fantastik', value: 'fantastik' },
             { label: 'Fantasy', value: 'fantasy' },
+            { label: 'Gizem', value: 'gizem' },
             { label: 'Harem', value: 'harem' },
+            { label: 'Historical', value: 'historical' },
             { label: 'Josei', value: 'josei' },
+            { label: 'Macera', value: 'macera' },
+            { label: 'Manhwa', value: 'manhwa' },
             { label: 'Martial Arts', value: 'martial-arts' },
             { label: 'Mature', value: 'mature' },
+            { label: 'Novel', value: 'novel' },
+            { label: 'Okul', value: 'okul' },
+            { label: 'Psikolojik', value: 'psikolojik' },
+            { label: 'Psychological', value: 'psychological' },
+            { label: 'Reverse Harem', value: 'reverse-harem' },
             { label: 'Romance', value: 'romance' },
-            { label: 'School Life', value: 'school-life' },
-            { label: 'Sci-fi', value: 'sci-fi' },
-            { label: 'Seinen', value: 'seinen' },
-            { label: 'Slice of Life', value: 'slice-of-life' },
+            { label: 'Romantik', value: 'romantik' },
+            { label: 'Shoujo', value: 'shoujo' },
+            { label: 'Slice Of Life', value: 'slice-of-life' },
             { label: 'Smut', value: 'smut' },
-            { label: 'Sports', value: 'sports' },
             { label: 'Supernatural', value: 'supernatural' },
+            { label: 'Tarihi', value: 'tarihi' },
             { label: 'Tragedy', value: 'tragedy' },
+            { label: 'Yaoi', value: 'yaoi' },
         ],
         inputType: FilterInputs.Checkbox,
     },
 ];
 module.exports = {
     id: pluginId,
-    name: 'PandaMTL',
+    name: 'Liebe Schnee Hiver Novel',
     version: '1.0.0',
-    icon: 'src/en/wordpress/icon.png',
+    icon: 'multisrc/wpmangastream/icons/lshnovel.png',
     site: baseUrl,
     protected: false,
     fetchImage,

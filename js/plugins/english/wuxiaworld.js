@@ -58,7 +58,7 @@ function parseNovelAndChapters(novelUrl) {
         loadedCheerio('a.MuiLink-underlineNone').each(function () {
             genres.push(loadedCheerio(this).find('div > div').text());
         });
-        novel.genre = genres.join(',');
+        novel.genres = genres.join(',');
         novel.status = null;
         novel.status = loadedCheerio('div.font-set-b10').text().includes('Complete');
         let chapter = [];
