@@ -1,19 +1,30 @@
-const cheerio = require('cheerio');
-const isUrlAbsolute = require('@libs/isAbsoluteUrl');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
+import * as cheerio from "cheerio";
+import fetchApi from "@libs/fetchApi";
+import fetchFile from "@libs/fetchFile";
+import { Chapter, Novel, Plugin } from "@typings/plugin";
+// const dayjs = require('dayjs');
+// const FilterInputs = require('@libs/filterInputs');
+// const novelStatus = require('@libs/novelStatus');
+import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
+// const parseDate = require('@libs/parseDate');
 
 const pluginId = 'ln.hako';
 const baseUrl = 'https://ln.hako.vn';
 
-async function popularNovels (page) {
-  const link = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + page;
-  const result = await fetchApi(link);
-  const body = await result.text();
+export const id = pluginId; // string and must be unique
+export const name = "Hako";
+export const icon = "src/vi/hakolightnovel/icon.png"; // The relative path to the icon without @icons . For example: 'src/vi/hakolightnovel/icon.png'
+export const version = "1.0.0"; // xx.xx.xx
+export const site = baseUrl; // the link to the site
+exports["protected"] = true;
 
-  const loadedCheerio = cheerio.load(body);
+export const popularNovels: Plugin.popularNovels = async (pageNo) => {
+    const novels: Novel.Item[] = [];
+    const link = baseUrl + '/danh-sach?truyendich=1&sapxep=topthang&page=' + pageNo;
+    const result = await fetchApi(link);
+    const body = await result.text();
 
-  const novels = [];
+    const loadedCheerio = cheerio.load(body);
 
   loadedCheerio('main.row > .thumb-item-flow').each(function () {
     let url = loadedCheerio(this)
@@ -44,26 +55,25 @@ async function popularNovels (page) {
     }
   });
 
-  return novels;
+    return novels;
 };
 
-async function parseNovelAndChapters (novelUrl){
-  const url = novelUrl;
-  const result = await fetchApi(url);
+export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
+    novelUrl
+) => {
+  const novel: Novel.instance = {
+      url: novelUrl,
+  };
+  const result = await fetchApi(novelUrl);
   const body = await result.text();
 
   let loadedCheerio = cheerio.load(body);
-
-  const novel = {
-    url,
-    chapters: [],
-  };
 
   novel.name = loadedCheerio('.series-name').text();
 
   const background = loadedCheerio('.series-cover > .a6-ratio > div').attr(
     'style',
-  );
+  ) || '';
   const novelCover = background.substring(
     background.indexOf('http'),
     background.length - 2,
@@ -86,7 +96,7 @@ async function parseNovelAndChapters (novelUrl){
   novel.genres = loadedCheerio('.series-gernes')
     .text()
     .trim()
-    .replaceAll(/ +/g," ")
+    .replace(/ +/g," ")
     .split('\n')
     .filter(e => e.trim())
     .join(', ');
@@ -97,6 +107,7 @@ async function parseNovelAndChapters (novelUrl){
     .text()
     .trim();
 
+  const chapters: Chapter.Item[] = [];
   loadedCheerio('.list-chapters li').each(function () {
     let chapterUrl = loadedCheerio(this).find('a').attr('href');
 
@@ -117,14 +128,14 @@ async function parseNovelAndChapters (novelUrl){
         url: chapterUrl,
       };
 
-      novel.chapters.push(chapter);
+      chapters.push(chapter);
     }
   });
-
+  novel.chapters = chapters;
   return novel;
 };
 
-async function parseChapter (chapterUrl){
+export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
   const result = await fetchApi(chapterUrl);
   const body = await result.text();
 
@@ -135,14 +146,14 @@ async function parseChapter (chapterUrl){
   return chapterText;
 };
 
-async function searchNovels (searchTerm) {
+export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
+  const novels: Novel.Item[] = [];
+
   const url = baseUrl + '/tim-kiem?keywords=' + searchTerm;
   const result = await fetchApi(url);
   const body = await result.text();
 
   const loadedCheerio = cheerio.load(body);
-
-  const novels = [];
 
   loadedCheerio('div.row > .thumb-item-flow').each(function () {
     let novelUrl = loadedCheerio(this)
@@ -174,23 +185,9 @@ async function searchNovels (searchTerm) {
   return novels;
 };
 
-async function fetchImage (url){
+export const fetchImage: Plugin.fetchImage = async (url) => {
   const headers = {
     Referer: 'https://ln.hako.vn',
   }
   return await fetchFile(url, {headers: headers});
-};
-
-module.exports = {
-  id: pluginId,
-  name: 'Hako',
-  version: '1.0.0',
-  icon: 'src/vi/hakolightnovel/icon.png',
-  site: baseUrl,
-  protected: true,
-  fetchImage,
-  popularNovels,
-  parseNovelAndChapters,
-  parseChapter,
-  searchNovels,
 };

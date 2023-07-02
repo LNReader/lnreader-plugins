@@ -4,7 +4,7 @@ const fs = require('fs');
 const generate = async (name) => {
     const sourcesJson = require(`./${name}/sources.json`);
     if(!sourcesJson) return;
-    const generator = require(`./${name}/template`);
+    const generator = require(`./${name}/generator`);
     for(let sourceJson of sourcesJson){
         if(!sourceJson) continue;
         const { lang, sourceName, pluginScript } = generator(sourceJson);

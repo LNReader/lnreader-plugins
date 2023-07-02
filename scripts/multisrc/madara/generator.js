@@ -8,6 +8,7 @@ module.exports = function generator(sourceJson){
     };
     const useNewChapterEndpoint = options?.useNewChapterEndpoint || false;
     const iconFileName = sourceName.replace(/\s+/g, '').toLowerCase();
+
     const pluginScript = `
 import * as cheerio from "cheerio";
 import fetchApi from "@libs/fetchApi";
