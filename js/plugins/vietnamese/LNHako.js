@@ -42,7 +42,7 @@ const fetchFile_1 = __importDefault(require("@libs/fetchFile"));
 // const dayjs = require('dayjs');
 // const FilterInputs = require('@libs/filterInputs');
 // const novelStatus = require('@libs/novelStatus');
-const isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
+const isAbsoluteUrl_1 = __importDefault(require("@libs/isAbsoluteUrl"));
 // const parseDate = require('@libs/parseDate');
 const pluginId = 'ln.hako';
 const baseUrl = 'https://ln.hako.vn';
@@ -62,7 +62,7 @@ const popularNovels = (pageNo) => __awaiter(void 0, void 0, void 0, function* ()
         let url = loadedCheerio(this)
             .find('div.thumb_attr.series-title > a')
             .attr('href');
-        if (url && !(0, isAbsoluteUrl_1.isUrlAbsolute)(url)) {
+        if (url && !(0, isAbsoluteUrl_1.default)(url)) {
             url = baseUrl + url;
         }
         if (url) {
@@ -70,7 +70,7 @@ const popularNovels = (pageNo) => __awaiter(void 0, void 0, void 0, function* ()
             let cover = loadedCheerio(this)
                 .find('.img-in-ratio')
                 .attr('data-bg');
-            if (cover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(cover)) {
+            if (cover && !(0, isAbsoluteUrl_1.default)(cover)) {
                 cover = baseUrl + cover;
             }
             const novel = {
@@ -95,7 +95,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
     const background = loadedCheerio('.series-cover > .a6-ratio > div').attr('style') || '';
     const novelCover = background.substring(background.indexOf('http'), background.length - 2);
     novel.cover = novelCover
-        ? (0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)
+        ? (0, isAbsoluteUrl_1.default)(novelCover)
             ? novelCover
             : baseUrl + novelCover
         : '';
@@ -116,7 +116,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
     const chapters = [];
     loadedCheerio('.list-chapters li').each(function () {
         let chapterUrl = loadedCheerio(this).find('a').attr('href');
-        if (chapterUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(chapterUrl)) {
+        if (chapterUrl && !(0, isAbsoluteUrl_1.default)(chapterUrl)) {
             chapterUrl = baseUrl + chapterUrl;
         }
         if (chapterUrl) {
@@ -155,7 +155,7 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
         let novelUrl = loadedCheerio(this)
             .find('div.thumb_attr.series-title > a')
             .attr('href');
-        if (novelUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelUrl)) {
+        if (novelUrl && !(0, isAbsoluteUrl_1.default)(novelUrl)) {
             novelUrl = baseUrl + novelUrl;
         }
         if (novelUrl) {
@@ -163,7 +163,7 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
             let novelCover = loadedCheerio(this)
                 .find('.img-in-ratio')
                 .attr('data-bg');
-            if (novelCover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)) {
+            if (novelCover && !(0, isAbsoluteUrl_1.default)(novelCover)) {
                 novelCover = baseUrl + novelCover;
             }
             novels.push({

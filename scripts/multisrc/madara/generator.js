@@ -16,7 +16,7 @@ import fetchFile from "@libs/fetchFile";
 import { Novel, Plugin, Chapter } from "@typings/plugin";
 import defaultCover from "@libs/defaultCover";
 import novelStatus from "@libs/novelStatus"
-import { parseMadaraDate } from "@libs/parseDate";
+import parseMadaraDate from "@libs/parseDate";
 import dayjs from "dayjs";
 
 export const id = "${baseUrl.replace(/http|https/g, '').replace(/[\:\/]/g, '')}";

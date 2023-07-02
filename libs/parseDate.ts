@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export const parseMadaraDate = (date: string) => {
+const parseMadaraDate = (date: string) => {
     if (date.includes("ago")) {
         const dayJSDate = dayjs(new Date()); // today
         const timeAgo = date.match(/\d+/)?.[0] || "";
@@ -24,3 +24,5 @@ export const parseMadaraDate = (date: string) => {
     }
     return date; // there is no "ago" so don't mess with the date
 };
+
+export default parseMadaraDate;

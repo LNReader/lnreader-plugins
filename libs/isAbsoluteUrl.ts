@@ -1,4 +1,4 @@
-export const isUrlAbsolute = (url: string) => {
+const isUrlAbsolute = (url: string) => {
     if (url) {
         if (url.indexOf("//") === 0) {
             return true;
@@ -21,3 +21,5 @@ export const isUrlAbsolute = (url: string) => {
     }
     return false; // Anything else must be relative
 };
+
+export default isUrlAbsolute;

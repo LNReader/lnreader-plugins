@@ -5,7 +5,7 @@ import { Chapter, Novel, Plugin } from "@typings/plugin";
 // const dayjs = require('dayjs');
 // const FilterInputs = require('@libs/filterInputs');
 // const novelStatus = require('@libs/novelStatus');
-import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
+import isUrlAbsolute from "@libs/isAbsoluteUrl";
 // const parseDate = require('@libs/parseDate');
 
 const pluginId = 'ln.hako';

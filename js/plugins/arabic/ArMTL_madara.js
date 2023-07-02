@@ -41,7 +41,7 @@ const fetchApi_1 = __importDefault(require("@libs/fetchApi"));
 const fetchFile_1 = __importDefault(require("@libs/fetchFile"));
 const defaultCover_1 = __importDefault(require("@libs/defaultCover"));
 const novelStatus_1 = __importDefault(require("@libs/novelStatus"));
-const parseDate_1 = require("@libs/parseDate");
+const parseDate_1 = __importDefault(require("@libs/parseDate"));
 const dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "sar-mtl.club";
 exports.name = "ArMTL_madara";
@@ -141,7 +141,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
             .text()
             .trim();
         if (releaseDate) {
-            releaseDate = (0, parseDate_1.parseMadaraDate)(releaseDate);
+            releaseDate = (0, parseDate_1.default)(releaseDate);
         }
         else {
             /**
