@@ -1,6 +1,5 @@
 import { Filter } from "@libs/filterInputs";
 import { languages } from "@libs/languages";
-import NovelStatus from "@libs/novelStatus";
 import { NodeFetchParams } from "@libs/nodeFetch";
 
 export namespace Chapter {
