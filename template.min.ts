@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import fetchApi from "@libs/fetchApi";
 import fetchFile from "@libs/fetchFile";
 import { Filter } from "@libs/filterInputs";
@@ -14,7 +14,7 @@ export const name = "Source name";
 export const icon = ""; // The relative path to the icon without @icons . For example: 'src/vi/hakolightnovel/icon.png'
 export const version = "0.0.0"; // xx.xx.xx
 export const site = ""; // the link to the site
-export const filters: Filter[] = []; // optional
+// export const filters: Filter[] = [];
 exports["protected"] = false; // true if this site protect its resources (images) and you have to define headers or smt to bypass
 
 export const popularNovels: Plugin.popularNovels = async (pageNo) => {
