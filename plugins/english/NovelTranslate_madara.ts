@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snoveltranslate.com";
 export const name = "NovelTranslate_madara";
-export const icon = "icon/multisrc/madara/icons/noveltranslate";
+export const icon = "icon/multisrc/madara/icons/noveltranslate.png";
 export const version = "1.0.0";
 export const site = "https://noveltranslate.com/";
 const baseUrl = site;

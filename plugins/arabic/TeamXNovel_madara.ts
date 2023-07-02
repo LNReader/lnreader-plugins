@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "steamxnovel.com";
 export const name = "TeamXNovel_madara";
-export const icon = "icon/multisrc/madara/icons/teamxnovel";
+export const icon = "icon/multisrc/madara/icons/teamxnovel.png";
 export const version = "1.0.0";
 export const site = "https://teamxnovel.com/";
 const baseUrl = site;

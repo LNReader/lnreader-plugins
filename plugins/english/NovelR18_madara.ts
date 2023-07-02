@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snovelr18.com";
 export const name = "NovelR18 _madara";
-export const icon = "icon/multisrc/madara/icons/novelr18";
+export const icon = "icon/multisrc/madara/icons/novelr18.png";
 export const version = "1.0.0";
 export const site = "https://novelr18.com/";
 const baseUrl = site;

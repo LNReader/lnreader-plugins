@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.webnoveloku.com";
 export const name = "WebNovelOku _madara";
-export const icon = "icon/multisrc/madara/icons/webnoveloku";
+export const icon = "icon/multisrc/madara/icons/webnoveloku.png";
 export const version = "1.0.0";
 export const site = "https://www.webnoveloku.com/";
 const baseUrl = site;

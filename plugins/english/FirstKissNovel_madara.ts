@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "s1stkissnovel.love";
 export const name = "FirstKissNovel_madara";
-export const icon = "icon/multisrc/madara/icons/firstkissnovel";
+export const icon = "icon/multisrc/madara/icons/firstkissnovel.png";
 export const version = "1.0.0";
 export const site = "https://1stkissnovel.love/";
 const baseUrl = site;

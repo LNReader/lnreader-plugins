@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snovelstic.com";
 export const name = "Novelstic_madara";
-export const icon = "icon/multisrc/madara/icons/novelstic";
+export const icon = "icon/multisrc/madara/icons/novelstic.png";
 export const version = "1.0.0";
 export const site = "https://novelstic.com/";
 const baseUrl = site;

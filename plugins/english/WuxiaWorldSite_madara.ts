@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swuxiaworld.site";
 export const name = "WuxiaWorld.Site_madara";
-export const icon = "icon/multisrc/madara/icons/wuxiaworld.site";
+export const icon = "icon/multisrc/madara/icons/wuxiaworld.site.png";
 export const version = "1.0.0";
 export const site = "https://wuxiaworld.site/";
 const baseUrl = site;

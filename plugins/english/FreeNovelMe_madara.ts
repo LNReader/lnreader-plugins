@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sfreenovel.me";
 export const name = "FreeNovelMe_madara";
-export const icon = "icon/multisrc/madara/icons/freenovelme";
+export const icon = "icon/multisrc/madara/icons/freenovelme.png";
 export const version = "1.0.0";
 export const site = "https://freenovel.me/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "smysticalmerries.com";
 export const name = "MysticalSeries_madara";
-export const icon = "icon/multisrc/madara/icons/mysticalseries";
+export const icon = "icon/multisrc/madara/icons/mysticalseries.png";
 export const version = "1.0.0";
 export const site = "https://mysticalmerries.com/";
 const baseUrl = site;

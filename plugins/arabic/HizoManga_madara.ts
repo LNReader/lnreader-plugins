@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "shizomanga.com";
 export const name = "HizoManga_madara";
-export const icon = "icon/multisrc/madara/icons/hizomanga";
+export const icon = "icon/multisrc/madara/icons/hizomanga.png";
 export const version = "1.0.0";
 export const site = "https://hizomanga.com/";
 const baseUrl = site;

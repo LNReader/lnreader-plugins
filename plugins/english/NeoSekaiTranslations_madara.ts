@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.neosekaitranslations.com";
 export const name = "NeoSekai Translations_madara";
-export const icon = "icon/multisrc/madara/icons/neosekaitranslations";
+export const icon = "icon/multisrc/madara/icons/neosekaitranslations.png";
 export const version = "1.0.0";
 export const site = "https://www.neosekaitranslations.com/";
 const baseUrl = site;

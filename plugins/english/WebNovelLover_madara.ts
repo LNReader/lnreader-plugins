@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.webnovelover.com";
 export const name = "WebNovelLover_madara";
-export const icon = "icon/multisrc/madara/icons/webnovellover";
+export const icon = "icon/multisrc/madara/icons/webnovellover.png";
 export const version = "1.0.0";
 export const site = "https://www.webnovelover.com/";
 const baseUrl = site;

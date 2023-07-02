@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.onlymtl.com";
 export const name = "OnlyMTL_madara";
-export const icon = "icon/multisrc/madara/icons/onlymtl";
+export const icon = "icon/multisrc/madara/icons/onlymtl.png";
 export const version = "1.0.0";
 export const site = "https://www.onlymtl.com/";
 const baseUrl = site;

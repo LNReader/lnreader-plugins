@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.novelmultiverse.com";
 export const name = "NovelMultiverse_madara";
-export const icon = "icon/multisrc/madara/icons/novelmultiverse";
+export const icon = "icon/multisrc/madara/icons/novelmultiverse.png";
 export const version = "1.0.0";
 export const site = "https://www.novelmultiverse.com/";
 const baseUrl = site;

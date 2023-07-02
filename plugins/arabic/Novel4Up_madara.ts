@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snovel4up.com";
 export const name = "Novel4Up_madara";
-export const icon = "icon/multisrc/madara/icons/novel4up";
+export const icon = "icon/multisrc/madara/icons/novel4up.png";
 export const version = "1.0.0";
 export const site = "https://novel4up.com/";
 const baseUrl = site;

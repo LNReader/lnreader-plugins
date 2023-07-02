@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sdaonovel.com";
 export const name = "DaoNovel_madara";
-export const icon = "icon/multisrc/madara/icons/daonovel";
+export const icon = "icon/multisrc/madara/icons/daonovel.png";
 export const version = "1.0.0";
 export const site = "https://daonovel.com/";
 const baseUrl = site;

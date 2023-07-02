@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.sonicmtl.com";
 export const name = "SonicMTL_madara";
-export const icon = "icon/multisrc/madara/icons/sonicmtl";
+export const icon = "icon/multisrc/madara/icons/sonicmtl.png";
 export const version = "1.0.0";
 export const site = "https://www.sonicmtl.com/";
 const baseUrl = site;

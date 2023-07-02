@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swbnovel.com";
 export const name = "WBNovel_madara";
-export const icon = "icon/multisrc/madara/icons/wbnovel";
+export const icon = "icon/multisrc/madara/icons/wbnovel.png";
 export const version = "1.0.0";
 export const site = "https://wbnovel.com/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "smtl-novel.com";
 export const name = "MTL-Novel_madara";
-export const icon = "icon/multisrc/madara/icons/mtl-novel";
+export const icon = "icon/multisrc/madara/icons/mtl-novel.png";
 export const version = "1.0.0";
 export const site = "https://mtl-novel.com/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snoobchan.xyz";
 export const name = "Noobchan Translation_madara";
-export const icon = "icon/multisrc/madara/icons/noobchantranslation";
+export const icon = "icon/multisrc/madara/icons/noobchantranslation.png";
 export const version = "1.0.0";
 export const site = "https://noobchan.xyz/";
 const baseUrl = site;
