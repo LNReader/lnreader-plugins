@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "ssugarbbscan.com";
 export const name = "Sugar Babies_madara";
-export const icon = "icon/multisrc/madara/icons/sugarbabies.png";
+export const icon = "multisrc/madara/icons/sugarbabies.png";
 export const version = "1.0.0";
 export const site = "https://sugarbbscan.com/";
 const baseUrl = site;

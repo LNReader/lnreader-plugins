@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snovelroom.net";
 export const name = "Novelroom.net_madara";
-export const icon = "icon/multisrc/madara/icons/novelroom.net.png";
+export const icon = "multisrc/madara/icons/novelroom.net.png";
 export const version = "1.0.0";
 export const site = "https://novelroom.net/";
 const baseUrl = site;

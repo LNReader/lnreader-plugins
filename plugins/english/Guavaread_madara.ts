@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sguavaread.com";
 export const name = "Guavaread_madara";
-export const icon = "icon/multisrc/madara/icons/guavaread.png";
+export const icon = "multisrc/madara/icons/guavaread.png";
 export const version = "1.0.0";
 export const site = "https://guavaread.com/";
 const baseUrl = site;

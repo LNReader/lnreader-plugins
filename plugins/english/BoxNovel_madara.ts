@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sboxnovel.com";
 export const name = "BoxNovel_madara";
-export const icon = "icon/multisrc/madara/icons/boxnovel.png";
+export const icon = "multisrc/madara/icons/boxnovel.png";
 export const version = "1.0.0";
 export const site = "https://boxnovel.com/";
 const baseUrl = site;

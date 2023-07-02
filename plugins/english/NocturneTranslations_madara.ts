@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "snocturnetls.net";
 export const name = "Nocturne Translations_madara";
-export const icon = "icon/multisrc/madara/icons/nocturnetranslations.png";
+export const icon = "multisrc/madara/icons/nocturnetranslations.png";
 export const version = "1.0.0";
 export const site = "https://nocturnetls.net/";
 const baseUrl = site;

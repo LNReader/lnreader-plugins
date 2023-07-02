@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "swww.lunarletters.com";
 export const name = "LunarLetters_madara";
-export const icon = "icon/multisrc/madara/icons/lunarletters.png";
+export const icon = "multisrc/madara/icons/lunarletters.png";
 export const version = "1.0.0";
 export const site = "https://www.lunarletters.com/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sfanstranslations.com";
 export const name = "Fans Translations_madara";
-export const icon = "icon/multisrc/madara/icons/fanstranslations.png";
+export const icon = "multisrc/madara/icons/fanstranslations.png";
 export const version = "1.0.0";
 export const site = "https://fanstranslations.com/";
 const baseUrl = site;

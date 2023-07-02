@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sarnovel.me";
 export const name = "ArNovel_madara";
-export const icon = "icon/multisrc/madara/icons/arnovel.png";
+export const icon = "multisrc/madara/icons/arnovel.png";
 export const version = "1.0.0";
 export const site = "https://arnovel.me/";
 const baseUrl = site;

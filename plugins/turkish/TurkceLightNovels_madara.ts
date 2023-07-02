@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sturkcelightnovels.com";
 export const name = "TurkceLightNovels_madara";
-export const icon = "icon/multisrc/madara/icons/turkcelightnovels.png";
+export const icon = "multisrc/madara/icons/turkcelightnovels.png";
 export const version = "1.0.0";
 export const site = "https://turkcelightnovels.com/";
 const baseUrl = site;

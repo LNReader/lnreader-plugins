@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "smostnovel.com";
 export const name = "MostNovel_madara";
-export const icon = "icon/multisrc/madara/icons/mostnovel.png";
+export const icon = "multisrc/madara/icons/mostnovel.png";
 export const version = "1.0.0";
 export const site = "https://mostnovel.com/";
 const baseUrl = site;

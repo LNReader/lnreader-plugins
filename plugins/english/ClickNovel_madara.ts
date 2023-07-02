@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sclicknovel.net";
 export const name = "ClickNovel_madara";
-export const icon = "icon/multisrc/madara/icons/clicknovel.png";
+export const icon = "multisrc/madara/icons/clicknovel.png";
 export const version = "1.0.0";
 export const site = "https://clicknovel.net/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "ssweetescapetranslations.com";
 export const name = "Sweet Escape Translations_madara";
-export const icon = "icon/multisrc/madara/icons/sweetescapetranslations.png";
+export const icon = "multisrc/madara/icons/sweetescapetranslations.png";
 export const version = "1.0.0";
 export const site = "https://sweetescapetranslations.com/";
 const baseUrl = site;

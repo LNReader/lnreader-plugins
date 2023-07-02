@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "szinnovel.com";
 export const name = "ZinnNovel_madara";
-export const icon = "icon/multisrc/madara/icons/zinnnovel.png";
+export const icon = "multisrc/madara/icons/zinnnovel.png";
 export const version = "1.0.0";
 export const site = "https://zinnovel.com/";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "sar-mtl.club";
 export const name = "ArMTL_madara";
-export const icon = "icon/multisrc/madara/icons/armtl.png";
+export const icon = "multisrc/madara/icons/armtl.png";
 export const version = "1.0.0";
 export const site = "https://ar-mtl.club/";
 const baseUrl = site;

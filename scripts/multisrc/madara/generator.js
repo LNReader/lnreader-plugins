@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 
 export const id = "${baseUrl.replace(/http|https/g, '').replace(/[\:\/]/g, '')}";
 export const name = "${sourceName}_madara";
-export const icon = "icon/multisrc/madara/icons/${iconFileName}.png";
+export const icon = "multisrc/madara/icons/${iconFileName}.png";
 export const version = "1.0.0";
 export const site = "${baseUrl}";
 const baseUrl = site;

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 export const id = "ssleepytranslations.com";
 export const name = "SleepyTranslations_madara";
-export const icon = "icon/multisrc/madara/icons/sleepytranslations.png";
+export const icon = "multisrc/madara/icons/sleepytranslations.png";
 export const version = "1.0.0";
 export const site = "https://sleepytranslations.com/";
 const baseUrl = site;
