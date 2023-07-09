@@ -48,9 +48,7 @@ export const popularNovels: Plugin.popularNovels = async (pageNo, {showLatestNov
 
     let novelUrl = loadedCheerio(this).find('.post-title')
         .find('a')
-        .attr('href')
-        ?.split('/')[4] || '';
-
+        .attr('href') || '';
     const novel: Novel.Item = {
         name: novelName,
         cover: novelCover,
@@ -79,11 +77,12 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
     novel.name = loadedCheerio('.post-title h1').text().trim();
 
     novel.cover =
+    loadedCheerio('.summary_image > a > img').attr('data-lazy-src') ||
     loadedCheerio('.summary_image > a > img').attr('data-src') ||
     loadedCheerio('.summary_image > a > img').attr('src') ||
     defaultCover;
 
-    loadedCheerio('.post-content_item', '.post-content').each(function () {
+    loadedCheerio('.post-content_item, .post-content').each(function () {
     const detailName = loadedCheerio(this).find('h5').text().trim();
     const detail = loadedCheerio(this).find('.summary-content').text().trim();
 
@@ -94,6 +93,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
             break;
         case 'Author(s)':
         case 'المؤلف':
+        case 'المؤلف (ين)':
             novel.author = detail;
             break;
         case 'Status':
@@ -106,7 +106,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
     }
     });
 
-    loadedCheerio('div.summary__content .code-block').remove();
+    loadedCheerio('div.summary__content .code-block,script').remove();
     novel.summary = loadedCheerio('div.summary__content').text().trim();
 
 
@@ -117,15 +117,15 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
             loadedCheerio('.rating-post-id').attr('value') ||
             loadedCheerio('#manga-chapters-holder').attr('data-id') || '';
 
-        let formData = new FormData();
-        formData.append('action', 'manga_get_chapters');
-        formData.append('manga', novelId);
-
+        const body = {
+            action: "manga_get_chapters",
+            manga: novelId,
+        }
         html = await fetchApi(
             baseUrl + 'wp-admin/admin-ajax.php',
             {
             method: 'POST',
-            body: formData,
+            body: JSON.stringify(body),
             })
             .then(res => res.text());
     } else {
@@ -159,11 +159,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
             releaseDate = dayjs().format('LL');
         }
 
-        let chapterUrl = loadedCheerio(this).find('a').attr('href')?.split('/') || '';
-
-        chapterUrl[6]
-            ? (chapterUrl = chapterUrl[5] + '/' + chapterUrl[6])
-            : (chapterUrl = chapterUrl[5]);
+        let chapterUrl = loadedCheerio(this).find('a').attr('href') || '';
 
         chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
     });
@@ -204,9 +200,7 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
     let novelUrl = loadedCheerio(this)
         .find('.post-title')
         .find('a')
-        .attr('href')
-        ?.split('/')[4] || '';
-
+        .attr('href') || '';
     const novel = {
         name: novelName,
         cover: novelCover,

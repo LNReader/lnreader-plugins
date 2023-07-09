@@ -59,13 +59,12 @@ const popularNovels = (pageNo, { showLatestNovels }) => __awaiter(void 0, void 0
     const loadedCheerio = cheerio.load(body);
     loadedCheerio('.manga-title-badges').remove();
     loadedCheerio('.page-item-detail').each(function () {
-        var _a;
         const novelName = loadedCheerio(this).find('.post-title').text().trim();
         let image = loadedCheerio(this).find('img');
         const novelCover = image.attr('data-src') || image.attr('src');
-        let novelUrl = ((_a = loadedCheerio(this).find('.post-title')
+        let novelUrl = loadedCheerio(this).find('.post-title')
             .find('a')
-            .attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[4]) || '';
+            .attr('href') || '';
         const novel = {
             name: novelName,
             cover: novelCover,
@@ -85,10 +84,11 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
     loadedCheerio('.manga-title-badges').remove();
     novel.name = loadedCheerio('.post-title h1').text().trim();
     novel.cover =
-        loadedCheerio('.summary_image > a > img').attr('data-src') ||
+        loadedCheerio('.summary_image > a > img').attr('data-lazy-src') ||
+            loadedCheerio('.summary_image > a > img').attr('data-src') ||
             loadedCheerio('.summary_image > a > img').attr('src') ||
             defaultCover_1.default;
-    loadedCheerio('.post-content_item', '.post-content').each(function () {
+    loadedCheerio('.post-content_item, .post-content').each(function () {
         const detailName = loadedCheerio(this).find('h5').text().trim();
         const detail = loadedCheerio(this).find('.summary-content').text().trim();
         switch (detailName) {
@@ -98,6 +98,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
                 break;
             case 'Author(s)':
             case 'المؤلف':
+            case 'المؤلف (ين)':
                 novel.author = detail;
                 break;
             case 'Status':
@@ -109,18 +110,19 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
                 break;
         }
     });
-    loadedCheerio('div.summary__content .code-block').remove();
+    loadedCheerio('div.summary__content .code-block,script').remove();
     novel.summary = loadedCheerio('div.summary__content').text().trim();
     let html;
     if (false) {
         const novelId = loadedCheerio('.rating-post-id').attr('value') ||
             loadedCheerio('#manga-chapters-holder').attr('data-id') || '';
-        let formData = new FormData();
-        formData.append('action', 'manga_get_chapters');
-        formData.append('manga', novelId);
+        const body = {
+            action: "manga_get_chapters",
+            manga: novelId,
+        };
         html = yield (0, fetchApi_1.default)(baseUrl + 'wp-admin/admin-ajax.php', {
             method: 'POST',
-            body: formData,
+            body: JSON.stringify(body),
         })
             .then(res => res.text());
     }
@@ -133,7 +135,6 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
     }
     const chapters = [];
     loadedCheerio('.wp-manga-chapter').each(function () {
-        var _a;
         const chapterName = loadedCheerio(this).find('a').text().trim();
         let releaseDate = null;
         releaseDate = loadedCheerio(this)
@@ -149,10 +150,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
              */
             releaseDate = (0, dayjs_1.default)().format('LL');
         }
-        let chapterUrl = ((_a = loadedCheerio(this).find('a').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')) || '';
-        chapterUrl[6]
-            ? (chapterUrl = chapterUrl[5] + '/' + chapterUrl[6])
-            : (chapterUrl = chapterUrl[5]);
+        let chapterUrl = loadedCheerio(this).find('a').attr('href') || '';
         chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
     });
     novel.chapters = chapters.reverse();
@@ -175,14 +173,13 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
     const body = yield (0, fetchApi_1.default)(url).then(res => res.text());
     const loadedCheerio = cheerio.load(body);
     loadedCheerio('.c-tabs-item__content').each(function () {
-        var _a;
         const novelName = loadedCheerio(this).find('.post-title').text().trim();
         let image = loadedCheerio(this).find('img');
         const novelCover = image.attr('data-src') || image.attr('src');
-        let novelUrl = ((_a = loadedCheerio(this)
+        let novelUrl = loadedCheerio(this)
             .find('.post-title')
             .find('a')
-            .attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[4]) || '';
+            .attr('href') || '';
         const novel = {
             name: novelName,
             cover: novelCover,

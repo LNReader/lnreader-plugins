@@ -237,9 +237,9 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/wordpress/icon.png"
 		},
 		{
-			"id": "s1stkissnovel.love",
+			"id": "s1stkissnovel.org",
 			"name": "FirstKissNovel_madara",
-			"site": "https://1stkissnovel.love/",
+			"site": "https://1stkissnovel.org/",
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FirstKissNovel_madara.js",
