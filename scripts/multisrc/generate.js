@@ -8,7 +8,7 @@ const generate = async (name) => {
     for(let sourceJson of sourcesJson){
         if(!sourceJson) continue;
         const { lang, sourceName, pluginScript } = generator(sourceJson);
-        const filename = sourceName.replace(/[\s-\.]+/g, '') + `_${name}.ts`;
+        const filename = sourceName.replace(/[\s-\.]+/g, '') + `[${name}].ts`;
         const pluginsDir = path.join(path.dirname(path.dirname(__dirname)), 'plugins');
         const filePath = path.join(pluginsDir, lang.toLowerCase(), filename);
         fs.writeFileSync(filePath, pluginScript, {encoding: 'utf-8'});

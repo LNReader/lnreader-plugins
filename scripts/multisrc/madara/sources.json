@@ -1,6 +1,6 @@
 [
     {
-      "sourceId": 1,
+      "pluginId": "boxnovel",
       "baseUrl": "https://boxnovel.com/",
       "sourceName": "BoxNovel",
       "options": {
@@ -8,7 +8,7 @@
       }
     },
     {
-      "sourceId": 41,
+      "pluginId": "zinnovel",
       "baseUrl": "https://zinnovel.com/",
       "sourceName": "ZinnNovel",
       "options": {
@@ -16,7 +16,7 @@
       }
     },
     {
-      "sourceId": 42,
+      "pluginId": "novelTL",
       "baseUrl": "https://noveltranslate.com/",
       "sourceName": "NovelTranslate",
       "options": {
@@ -24,7 +24,7 @@
       }
     },
     {
-      "sourceId": 43,
+      "pluginId": "lunarletters",
       "baseUrl": "https://www.lunarletters.com/",
       "sourceName": "LunarLetters",
       "options": {
@@ -33,7 +33,7 @@
       }
     },
     {
-      "sourceId": 44,
+      "pluginId": "sleeptTLS",
       "baseUrl": "https://sleepytranslations.com/",
       "sourceName": "SleepyTranslations",
       "options": {
@@ -42,12 +42,12 @@
       }
     },
     {
-      "sourceId": 45,
+      "pluginId": "freenovel.me",
       "baseUrl": "https://freenovel.me/",
       "sourceName": "FreeNovelMe"
     },
     {
-      "sourceId": 46,
+      "pluginId": "1stkissnovel",
       "baseUrl": "https://1stkissnovel.org/",
       "sourceName": "FirstKissNovel",
       "options": {
@@ -55,7 +55,7 @@
       }
     },
     {
-      "sourceId": 47,
+      "pluginId": "daonovel",
       "baseUrl": "https://daonovel.com/",
       "sourceName": "DaoNovel",
       "options": {
@@ -68,7 +68,7 @@
       }
     },
     {
-      "sourceId": 55,
+      "pluginId": "mostnovel",
       "baseUrl": "https://mostnovel.com/",
       "sourceName": "MostNovel",
       "options": {
@@ -76,12 +76,12 @@
       }
     },
     {
-      "sourceId": 56,
+      "pluginId": "novelmultiverse",
       "baseUrl": "https://www.novelmultiverse.com/",
       "sourceName": "NovelMultiverse"
     },
     {
-      "sourceId": 57,
+      "pluginId": "lnheaven",
       "baseUrl": "https://lightnovelheaven.com/",
       "sourceName": "LightNovelHeaven",
       "options": {
@@ -90,7 +90,7 @@
       }
     },
     {
-      "sourceId": 59,
+      "pluginId": "arnovel",
       "baseUrl": "https://arnovel.me/",
       "sourceName": "ArNovel",
       "options": {
@@ -99,7 +99,7 @@
       }
     },
     {
-      "sourceId": 60,
+      "pluginId": "meionovel",
       "baseUrl": "https://meionovel.id/",
       "sourceName": "MeioNovel",
       "options": {
@@ -108,12 +108,12 @@
       }
     },
     {
-      "sourceId": 61,
+      "pluginId": "webnovelover",
       "baseUrl": "https://www.webnovelover.com/",
       "sourceName": "WebNovelLover"
     },
     {
-      "sourceId": 63,
+      "pluginId": "cratenovel",
       "baseUrl": "https://cratenovel.com/",
       "sourceName": "CrateNovel",
       "options": {
@@ -121,23 +121,23 @@
       }
     },
     {
-      "sourceId": 64,
+      "pluginId": "clicknovel",
       "baseUrl": "https://clicknovel.net/",
       "sourceName": "ClickNovel"
     },
     {
-      "sourceId": 65,
+      "pluginId": "readwebnovels",
       "baseUrl": "https://readwebnovels.net/",
       "sourceName": "ReadWebNovels"
     },
     {
-      "sourceId": 66,
+      "pluginId": "wbnovel",
       "baseUrl": "https://wbnovel.com/",
       "sourceName": "WBNovel",
       "options": { "lang": "Indonesian" }
     },
     {
-      "sourceId": 74,
+      "pluginId": "wuxiaworld",
       "baseUrl": "https://wuxiaworld.site/",
       "sourceName": "WuxiaWorld.Site",
       "options": {
@@ -145,7 +145,7 @@
       }
     },
     {
-      "sourceId": 75,
+      "pluginId": "mysticalmerries",
       "baseUrl": "https://mysticalmerries.com/",
       "sourceName": "MysticalSeries",
       "options": {
@@ -154,7 +154,7 @@
       }
     },
     {
-      "sourceId": 84,
+      "pluginId": "morenovel",
       "baseUrl": "https://morenovel.net/",
       "sourceName": "MoreNovel",
       "options": {
@@ -163,7 +163,7 @@
       }
     },
     {
-      "sourceId": 91,
+      "pluginId": "onlymtl",
       "baseUrl": "https://www.onlymtl.com/",
       "sourceName": "OnlyMTL",
       "options": {
@@ -171,7 +171,7 @@
       }
     },
     {
-      "sourceId": 96,
+      "pluginId": "hizomanga",
       "baseUrl": "https://hizomanga.com/",
       "sourceName": "HizoManga",
       "options": {
@@ -181,7 +181,7 @@
       }
     },
     {
-      "sourceId": 101,
+      "pluginId": "ar-mtl",
       "baseUrl": "https://ar-mtl.club/",
       "sourceName": "ArMTL",
       "options": {
@@ -190,7 +190,7 @@
       }
     },
     {
-      "sourceId": 104,
+      "pluginId": "novel4up",
       "baseUrl": "https://novel4up.com/",
       "sourceName": "Novel4Up",
       "options": {
@@ -198,7 +198,7 @@
       }
     },
     {
-      "sourceId": 107,
+      "pluginId": "teamxnovel",
       "baseUrl": "https://teamxnovel.com/",
       "sourceName": "TeamXNovel",
       "options": {
@@ -207,7 +207,7 @@
       }
     },
     {
-      "sourceId": 110,
+      "pluginId": "turkcelightnovels",
       "baseUrl": "https://turkcelightnovels.com/",
       "sourceName": "TurkceLightNovels",
       "options": {
@@ -220,7 +220,7 @@
       }
     },
     {
-      "sourceId": 121,
+      "pluginId": "sonicmtl",
       "baseUrl": "https://www.sonicmtl.com/",
       "sourceName": "SonicMTL",
       "options": {
@@ -228,7 +228,7 @@
       }
     },
     {
-      "sourceId": 122,
+      "pluginId": "mtlnovel.club",
       "baseUrl": "https://mtlnovel.club/",
       "sourceName": "MTLNovel.Club",
       "options": {
@@ -236,7 +236,7 @@
       }
     },
     {
-      "sourceId": 124,
+      "pluginId": "noobchanTL",
       "baseUrl": "https://noobchan.xyz/",
       "sourceName": "Noobchan Translation",
       "options": {
@@ -244,7 +244,7 @@
       }
     },
     {
-      "sourceId": 125,
+      "pluginId": "guavaread",
       "baseUrl": "https://guavaread.com/",
       "sourceName": "Guavaread",
       "options": {
@@ -252,7 +252,7 @@
       }
     },
     {
-      "sourceId": 126,
+      "pluginId": "sweetEscapeTL",
       "baseUrl": "https://sweetescapetranslations.com/",
       "sourceName": "Sweet Escape Translations",
       "options": {
@@ -261,7 +261,7 @@
       }
     },
     {
-      "sourceId": 127,
+      "pluginId": "fanTLS",
       "baseUrl": "https://fanstranslations.com/",
       "sourceName": "Fans Translations",
       "options": {
@@ -269,7 +269,7 @@
       }
     },
     {
-      "sourceId": 130,
+      "pluginId": "riwyat",
       "baseUrl": "https://riwyat.com/",
       "sourceName": "Riwyat",
       "options": {
@@ -278,7 +278,7 @@
       }
     },
     {
-      "sourceId": 131,
+      "pluginId": "novelstic",
       "baseUrl": "https://novelstic.com/",
       "sourceName": "Novelstic",
       "options": {
@@ -287,7 +287,7 @@
       }
     },
     {
-      "sourceId": 133,
+      "pluginId": "neosekaiTLS",
       "baseUrl": "https://www.neosekaitranslations.com/",
       "sourceName": "NeoSekai Translations",
       "options": {
@@ -295,7 +295,7 @@
       }
     },
     {
-      "sourceId": 134,
+      "pluginId": "mtl-novel",
       "baseUrl": "https://mtl-novel.com/",
       "sourceName": "MTL-Novel",
       "options": {
@@ -305,7 +305,7 @@
       }
     },
     {
-      "sourceId": 135,
+      "pluginId": "zetroTL",
       "baseUrl": "https://zetrotranslation.com/",
       "sourceName": "Zetro Translation",
       "options": {
@@ -313,7 +313,7 @@
       }
     },
     {
-      "sourceId": 136,
+      "pluginId": "nocturneTLS",
       "baseUrl": "https://nocturnetls.net/",
       "sourceName": "Nocturne Translations",
       "options": {
@@ -322,7 +322,7 @@
       }
     },
     {
-      "sourceId": 138,
+      "pluginId": "sugarbbscan",
       "baseUrl": "https://sugarbbscan.com/",
       "sourceName": "Sugar Babies",
       "options": {
@@ -331,7 +331,7 @@
       }
     },
     {
-      "sourceId": 140,
+      "pluginId": "novelroom",
       "baseUrl": "https://novelroom.net/",
       "sourceName": "Novelroom.net",
       "options": {
@@ -340,7 +340,7 @@
       }
     },
     {
-      "sourceId": 141,
+      "pluginId": "novelr18",
       "baseUrl": "https://novelr18.com/",
       "sourceName": "NovelR18 ",
       "options": {
@@ -350,7 +350,7 @@
       }
     },
     {
-      "sourceId": 143,
+      "pluginId": "webnoveloku",
       "baseUrl": "https://www.webnoveloku.com/",
       "sourceName": "WebNovelOku ",
       "options": {

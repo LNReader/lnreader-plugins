@@ -1,6 +1,33 @@
 {
 	"العربية": [
 		{
+			"id": "ar-mtl",
+			"name": "ArMTL [madara]",
+			"site": "https://ar-mtl.club/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/ArMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/armtl.png"
+		},
+		{
+			"id": "arnovel",
+			"name": "ArNovel [madara]",
+			"site": "https://arnovel.me/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/ArNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/arnovel.png"
+		},
+		{
+			"id": "hizomanga",
+			"name": "HizoManga [madara]",
+			"site": "https://hizomanga.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/HizoManga[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/hizomanga.png"
+		},
+		{
 			"id": "kolnovel",
 			"name": "KolNovel",
 			"site": "https://kolnovel.com/",
@@ -10,61 +37,43 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/wpmangastream/icons/kolnovel.png"
 		},
 		{
-			"id": "sar-mtl.club",
-			"name": "ArMTL_madara",
-			"site": "https://ar-mtl.club/",
-			"lang": "العربية",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/ArMTL_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/armtl.png"
-		},
-		{
-			"id": "sarnovel.me",
-			"name": "ArNovel_madara",
-			"site": "https://arnovel.me/",
-			"lang": "العربية",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/ArNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/arnovel.png"
-		},
-		{
-			"id": "shizomanga.com",
-			"name": "HizoManga_madara",
-			"site": "https://hizomanga.com/",
-			"lang": "العربية",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/HizoManga_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/hizomanga.png"
-		},
-		{
-			"id": "snovel4up.com",
-			"name": "Novel4Up_madara",
+			"id": "novel4up",
+			"name": "Novel4Up [madara]",
 			"site": "https://novel4up.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/Novel4Up_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/Novel4Up[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novel4up.png"
 		},
 		{
-			"id": "sriwyat.com",
-			"name": "Riwyat_madara",
+			"id": "riwyat",
+			"name": "Riwyat [madara]",
 			"site": "https://riwyat.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/Riwyat_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/Riwyat[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/riwyat.png"
 		},
 		{
-			"id": "steamxnovel.com",
-			"name": "TeamXNovel_madara",
+			"id": "teamxnovel",
+			"name": "TeamXNovel [madara]",
 			"site": "https://teamxnovel.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/TeamXNovel_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/arabic/TeamXNovel[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/teamxnovel.png"
 		}
 	],
 	"English": [
+		{
+			"id": "1stkissnovel",
+			"name": "FirstKissNovel [madara]",
+			"site": "https://1stkissnovel.org/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FirstKissNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/firstkissnovel.png"
+		},
 		{
 			"id": "ANF.com",
 			"name": "AllNovelFull",
@@ -84,6 +93,24 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/bestlightnovel/icon.png"
 		},
 		{
+			"id": "boxnovel",
+			"name": "BoxNovel [madara]",
+			"site": "https://boxnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/BoxNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/boxnovel.png"
+		},
+		{
+			"id": "clicknovel",
+			"name": "ClickNovel [madara]",
+			"site": "https://clicknovel.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ClickNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/clicknovel.png"
+		},
+		{
 			"id": "comrademao",
 			"name": "Comrade Mao",
 			"site": "https://comrademao.com/",
@@ -93,6 +120,24 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/comrademao/icon.png"
 		},
 		{
+			"id": "cratenovel",
+			"name": "CrateNovel [madara]",
+			"site": "https://cratenovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/CrateNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/cratenovel.png"
+		},
+		{
+			"id": "daonovel",
+			"name": "DaoNovel [madara]",
+			"site": "https://daonovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/DaoNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/daonovel.png"
+		},
+		{
 			"id": "earlynovel",
 			"name": "Early Novel",
 			"site": "https://earlynovel.net/",
@@ -100,6 +145,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/earlynovel.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/latestnovel.png"
+		},
+		{
+			"id": "fanTLS",
+			"name": "Fans Translations [madara]",
+			"site": "https://fanstranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FansTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/fanstranslations.png"
 		},
 		{
 			"id": "fastnovel",
@@ -120,6 +174,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/foxaholic/icon.png"
 		},
 		{
+			"id": "freenovel.me",
+			"name": "FreeNovelMe [madara]",
+			"site": "https://freenovel.me/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FreeNovelMe[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/freenovelme.png"
+		},
+		{
 			"id": "freenovelupdates",
 			"name": "Free Novel Updates (Broken)",
 			"site": "https://www.freenovelupdates.com",
@@ -127,6 +190,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/freenovelupdates.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/freenovelupdates/icon.png"
+		},
+		{
+			"id": "guavaread",
+			"name": "Guavaread [madara]",
+			"site": "https://guavaread.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Guavaread[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/guavaread.png"
 		},
 		{
 			"id": "lightnovelpub",
@@ -147,6 +219,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/lightnovelupdates/icon.png"
 		},
 		{
+			"id": "lnheaven",
+			"name": "LightNovelHeaven [madara]",
+			"site": "https://lightnovelheaven.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/LightNovelHeaven[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/lightnovelheaven.png"
+		},
+		{
 			"id": "lnmtl",
 			"name": "LNMTL",
 			"site": "https://lnmtl.com/",
@@ -165,6 +246,33 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/lightnovelreader/icon.png"
 		},
 		{
+			"id": "lunarletters",
+			"name": "LunarLetters [madara]",
+			"site": "https://www.lunarletters.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/LunarLetters[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/lunarletters.png"
+		},
+		{
+			"id": "mostnovel",
+			"name": "MostNovel [madara]",
+			"site": "https://mostnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MostNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mostnovel.png"
+		},
+		{
+			"id": "mtl-novel",
+			"name": "MTL-Novel [madara]",
+			"site": "https://mtl-novel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MTLNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mtl-novel.png"
+		},
+		{
 			"id": "mtlnovel",
 			"name": "MTL Novel",
 			"site": "https://www.mtlnovel.com/",
@@ -174,6 +282,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/mtlnovel/icon.png"
 		},
 		{
+			"id": "mtlnovel.club",
+			"name": "MTLNovel.Club [madara]",
+			"site": "https://mtlnovel.club/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MTLNovelClub[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mtlnovel.club.png"
+		},
+		{
 			"id": "mtlreader",
 			"name": "MTL Reader",
 			"site": "https://mtlreader.com/",
@@ -181,6 +298,24 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/mtlreader.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/mtlreader/icon.png"
+		},
+		{
+			"id": "mysticalmerries",
+			"name": "MysticalSeries [madara]",
+			"site": "https://mysticalmerries.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MysticalSeries[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mysticalseries.png"
+		},
+		{
+			"id": "neosekaiTLS",
+			"name": "NeoSekai Translations [madara]",
+			"site": "https://www.neosekaitranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NeoSekaiTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
 			"id": "nitroscans",
@@ -201,6 +336,24 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/noblemtl/icon.png"
 		},
 		{
+			"id": "nocturneTLS",
+			"name": "Nocturne Translations [madara]",
+			"site": "https://nocturnetls.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NocturneTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/nocturnetranslations.png"
+		},
+		{
+			"id": "noobchanTL",
+			"name": "Noobchan Translation [madara]",
+			"site": "https://noobchan.xyz/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NoobchanTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/noobchantranslation.png"
+		},
+		{
 			"id": "novelfull",
 			"name": "NovelFull",
 			"site": "https://novelfull.com/",
@@ -219,6 +372,51 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/novelhold/icon.png"
 		},
 		{
+			"id": "novelmultiverse",
+			"name": "NovelMultiverse [madara]",
+			"site": "https://www.novelmultiverse.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelMultiverse[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelmultiverse.png"
+		},
+		{
+			"id": "novelr18",
+			"name": "NovelR18  [madara]",
+			"site": "https://novelr18.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelR18[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelr18.png"
+		},
+		{
+			"id": "novelroom",
+			"name": "Novelroom.net [madara]",
+			"site": "https://novelroom.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Novelroomnet[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelroom.net.png"
+		},
+		{
+			"id": "novelstic",
+			"name": "Novelstic [madara]",
+			"site": "https://novelstic.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Novelstic[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelstic.png"
+		},
+		{
+			"id": "novelTL",
+			"name": "NovelTranslate [madara]",
+			"site": "https://noveltranslate.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelTranslate[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/noveltranslate.png"
+		},
+		{
 			"id": "novelupdates",
 			"name": "Novel Updates",
 			"site": "https://www.novelupdates.com/",
@@ -226,6 +424,15 @@
 			"version": "0.5.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/novelupdates.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/novelupdates/icon.png"
+		},
+		{
+			"id": "onlymtl",
+			"name": "OnlyMTL [madara]",
+			"site": "https://www.onlymtl.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/OnlyMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/onlymtl.png"
 		},
 		{
 			"id": "PandaMTL",
@@ -237,292 +444,58 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/wordpress/icon.png"
 		},
 		{
-			"id": "s1stkissnovel.org",
-			"name": "FirstKissNovel_madara",
-			"site": "https://1stkissnovel.org/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FirstKissNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/firstkissnovel.png"
-		},
-		{
-			"id": "sboxnovel.com",
-			"name": "BoxNovel_madara",
-			"site": "https://boxnovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/BoxNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/boxnovel.png"
-		},
-		{
-			"id": "sclicknovel.net",
-			"name": "ClickNovel_madara",
-			"site": "https://clicknovel.net/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ClickNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/clicknovel.png"
-		},
-		{
-			"id": "scratenovel.com",
-			"name": "CrateNovel_madara",
-			"site": "https://cratenovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/CrateNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/cratenovel.png"
-		},
-		{
-			"id": "sdaonovel.com",
-			"name": "DaoNovel_madara",
-			"site": "https://daonovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/DaoNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/daonovel.png"
-		},
-		{
-			"id": "sfanstranslations.com",
-			"name": "Fans Translations_madara",
-			"site": "https://fanstranslations.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FansTranslations_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/fanstranslations.png"
-		},
-		{
-			"id": "sfreenovel.me",
-			"name": "FreeNovelMe_madara",
-			"site": "https://freenovel.me/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/FreeNovelMe_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/freenovelme.png"
-		},
-		{
-			"id": "sguavaread.com",
-			"name": "Guavaread_madara",
-			"site": "https://guavaread.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Guavaread_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/guavaread.png"
-		},
-		{
-			"id": "slightnovelheaven.com",
-			"name": "LightNovelHeaven_madara",
-			"site": "https://lightnovelheaven.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/LightNovelHeaven_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/lightnovelheaven.png"
-		},
-		{
-			"id": "smostnovel.com",
-			"name": "MostNovel_madara",
-			"site": "https://mostnovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MostNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mostnovel.png"
-		},
-		{
-			"id": "smtl-novel.com",
-			"name": "MTL-Novel_madara",
-			"site": "https://mtl-novel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MTLNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mtl-novel.png"
-		},
-		{
-			"id": "smtlnovel.club",
-			"name": "MTLNovel.Club_madara",
-			"site": "https://mtlnovel.club/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MTLNovelClub_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mtlnovel.club.png"
-		},
-		{
-			"id": "smysticalmerries.com",
-			"name": "MysticalSeries_madara",
-			"site": "https://mysticalmerries.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/MysticalSeries_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/mysticalseries.png"
-		},
-		{
-			"id": "snocturnetls.net",
-			"name": "Nocturne Translations_madara",
-			"site": "https://nocturnetls.net/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NocturneTranslations_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/nocturnetranslations.png"
-		},
-		{
-			"id": "snoobchan.xyz",
-			"name": "Noobchan Translation_madara",
-			"site": "https://noobchan.xyz/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NoobchanTranslation_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/noobchantranslation.png"
-		},
-		{
-			"id": "snovelr18.com",
-			"name": "NovelR18 _madara",
-			"site": "https://novelr18.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelR18_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelr18.png"
-		},
-		{
-			"id": "snovelroom.net",
-			"name": "Novelroom.net_madara",
-			"site": "https://novelroom.net/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Novelroomnet_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelroom.net.png"
-		},
-		{
-			"id": "snovelstic.com",
-			"name": "Novelstic_madara",
-			"site": "https://novelstic.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/Novelstic_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelstic.png"
-		},
-		{
-			"id": "snoveltranslate.com",
-			"name": "NovelTranslate_madara",
-			"site": "https://noveltranslate.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelTranslate_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/noveltranslate.png"
-		},
-		{
-			"id": "sreadwebnovels.net",
-			"name": "ReadWebNovels_madara",
+			"id": "readwebnovels",
+			"name": "ReadWebNovels [madara]",
 			"site": "https://readwebnovels.net/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ReadWebNovels_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ReadWebNovels[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/readwebnovels.png"
 		},
 		{
-			"id": "ssleepytranslations.com",
-			"name": "SleepyTranslations_madara",
+			"id": "sleeptTLS",
+			"name": "SleepyTranslations [madara]",
 			"site": "https://sleepytranslations.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SleepyTranslations_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SleepyTranslations[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sleepytranslations.png"
 		},
 		{
-			"id": "ssugarbbscan.com",
-			"name": "Sugar Babies_madara",
-			"site": "https://sugarbbscan.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SugarBabies_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sugarbabies.png"
-		},
-		{
-			"id": "ssweetescapetranslations.com",
-			"name": "Sweet Escape Translations_madara",
-			"site": "https://sweetescapetranslations.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SweetEscapeTranslations_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sweetescapetranslations.png"
-		},
-		{
-			"id": "swuxiaworld.site",
-			"name": "WuxiaWorld.Site_madara",
-			"site": "https://wuxiaworld.site/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/WuxiaWorldSite_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/wuxiaworld.site.png"
-		},
-		{
-			"id": "swww.lunarletters.com",
-			"name": "LunarLetters_madara",
-			"site": "https://www.lunarletters.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/LunarLetters_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/lunarletters.png"
-		},
-		{
-			"id": "swww.neosekaitranslations.com",
-			"name": "NeoSekai Translations_madara",
-			"site": "https://www.neosekaitranslations.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NeoSekaiTranslations_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/neosekaitranslations.png"
-		},
-		{
-			"id": "swww.novelmultiverse.com",
-			"name": "NovelMultiverse_madara",
-			"site": "https://www.novelmultiverse.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/NovelMultiverse_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/novelmultiverse.png"
-		},
-		{
-			"id": "swww.onlymtl.com",
-			"name": "OnlyMTL_madara",
-			"site": "https://www.onlymtl.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/OnlyMTL_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/onlymtl.png"
-		},
-		{
-			"id": "swww.sonicmtl.com",
-			"name": "SonicMTL_madara",
+			"id": "sonicmtl",
+			"name": "SonicMTL [madara]",
 			"site": "https://www.sonicmtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SonicMTL_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SonicMTL[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sonicmtl.png"
 		},
 		{
-			"id": "swww.webnovelover.com",
-			"name": "WebNovelLover_madara",
+			"id": "sugarbbscan",
+			"name": "Sugar Babies [madara]",
+			"site": "https://sugarbbscan.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SugarBabies[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sugarbabies.png"
+		},
+		{
+			"id": "sweetEscapeTL",
+			"name": "Sweet Escape Translations [madara]",
+			"site": "https://sweetescapetranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/SweetEscapeTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/sweetescapetranslations.png"
+		},
+		{
+			"id": "webnovelover",
+			"name": "WebNovelLover [madara]",
 			"site": "https://www.webnovelover.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/WebNovelLover_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/WebNovelLover[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/webnovellover.png"
-		},
-		{
-			"id": "szetrotranslation.com",
-			"name": "Zetro Translation_madara",
-			"site": "https://zetrotranslation.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ZetroTranslation_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/zetrotranslation.png"
-		},
-		{
-			"id": "szinnovel.com",
-			"name": "ZinnNovel_madara",
-			"site": "https://zinnovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ZinnNovel_madara.js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/zinnnovel.png"
 		},
 		{
 			"id": "wuxiaworld",
@@ -532,35 +505,62 @@
 			"version": "0.5.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/wuxiaworld.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/wuxiaworld/icon.png"
+		},
+		{
+			"id": "wuxiaworld",
+			"name": "WuxiaWorld.Site [madara]",
+			"site": "https://wuxiaworld.site/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/WuxiaWorldSite[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/wuxiaworld.site.png"
+		},
+		{
+			"id": "zetroTL",
+			"name": "Zetro Translation [madara]",
+			"site": "https://zetrotranslation.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ZetroTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/zetrotranslation.png"
+		},
+		{
+			"id": "zinnovel",
+			"name": "ZinnNovel [madara]",
+			"site": "https://zinnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/english/ZinnNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/zinnnovel.png"
 		}
 	],
 	"français, française": [],
 	"Bahasa Indonesia": [
 		{
-			"id": "smeionovel.id",
-			"name": "MeioNovel_madara",
+			"id": "meionovel",
+			"name": "MeioNovel [madara]",
 			"site": "https://meionovel.id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/MeioNovel_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/MeioNovel[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/meionovel.png"
 		},
 		{
-			"id": "smorenovel.net",
-			"name": "MoreNovel_madara",
+			"id": "morenovel",
+			"name": "MoreNovel [madara]",
 			"site": "https://morenovel.net/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/MoreNovel_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/MoreNovel[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/morenovel.png"
 		},
 		{
-			"id": "swbnovel.com",
-			"name": "WBNovel_madara",
+			"id": "wbnovel",
+			"name": "WBNovel [madara]",
 			"site": "https://wbnovel.com/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/WBNovel_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/indonesian/WBNovel[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/wbnovel.png"
 		}
 	],
@@ -600,21 +600,21 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/wpmangastream/icons/lshnovel.png"
 		},
 		{
-			"id": "sturkcelightnovels.com",
-			"name": "TurkceLightNovels_madara",
+			"id": "turkcelightnovels",
+			"name": "TurkceLightNovels [madara]",
 			"site": "https://turkcelightnovels.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/turkish/TurkceLightNovels_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/turkish/TurkceLightNovels[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/turkcelightnovels.png"
 		},
 		{
-			"id": "swww.webnoveloku.com",
-			"name": "WebNovelOku _madara",
+			"id": "webnoveloku",
+			"name": "WebNovelOku  [madara]",
 			"site": "https://www.webnoveloku.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/turkish/WebNovelOku_madara.js",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/reducing/js/plugins/turkish/WebNovelOku[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/multisrc/madara/icons/webnoveloku.png"
 		}
 	],
