@@ -1,8 +1,8 @@
 const cheerio = require("cheerio");
-const fetchApi = require("@libs/fetchApi");
-const fetchFile = require("@libs/fetchFile");
-const Status = require("@libs/novelStatus");
-const FilterInputs = require("@libs/filterInputs");
+const fetchApi = require("@libs/fetchApi").default;
+const fetchFile = require("@libs/fetchFile").default;
+const Status = require("@libs/novelStatus").default;
+const FilterInputs = require("@libs/filterInputs").default;
 
 const pluginId = "jaomix.ru";
 const sourceName = "Jaomix";

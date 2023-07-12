@@ -1,8 +1,8 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const showToast = require('@libs/showToast');
-const isUrlAbsolute = require('@libs/isAbsoluteUrl');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
+const showToast = require('@libs/showToast').default;
+const isUrlAbsolute = require('@libs/isAbsoluteUrl').default;
 
 const pluginId = 'freenovelupdates';
 const baseUrl = 'https://www.freenovelupdates.com';

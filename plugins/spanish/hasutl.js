@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
 
 const baseUrl = 'https://hasutl.wordpress.com/';
 

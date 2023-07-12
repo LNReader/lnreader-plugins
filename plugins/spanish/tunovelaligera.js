@@ -1,7 +1,7 @@
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
 const cheerio = require('cheerio');
-const Status = require('@libs/novelStatus');
+const Status = require('@libs/novelStatus').default;
 const defaultCoverUri =
     'https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true';
  

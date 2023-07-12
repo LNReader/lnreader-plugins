@@ -1,5 +1,5 @@
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
 const cheerio = require('cheerio');
 
 const pluginId = "yuukitls.com";

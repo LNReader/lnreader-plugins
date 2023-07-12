@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
 const baseUrl = 'https://www.skynovels.net/';
 function popularNovels(page) {
     return __awaiter(this, void 0, void 0, function* () {

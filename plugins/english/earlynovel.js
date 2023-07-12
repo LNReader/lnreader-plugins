@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const showToast = require('@libs/showToast');
+const fetchApi = require('@libs/fetchApi').default;
+const fetchFile = require('@libs/fetchFile').default;
+const showToast = require('@libs/showToast').default;
 
 const pluginId = 'earlynovel';
 const baseUrl = 'https://earlynovel.net/';

@@ -137,7 +137,7 @@
       "options": { "lang": "Indonesian" }
     },
     {
-      "pluginId": "wuxiaworld.site",
+      "pluginId": "wuxiaworld",
       "baseUrl": "https://wuxiaworld.site/",
       "sourceName": "WuxiaWorld.Site",
       "options": {

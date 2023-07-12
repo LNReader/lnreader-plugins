@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-
+const fetchApi = require('@libs/fetchApi').default;
+import fetchFile from '@libs/fetchFile';
 const pluginId = 'novelforest';
 const baseUrl = 'https://novelforest.com/';
 
@@ -159,4 +159,5 @@ module.exports = {
   parseNovelAndChapters,
   parseChapter,
   searchNovels,
+  fetchImage: fetchFile,
 };

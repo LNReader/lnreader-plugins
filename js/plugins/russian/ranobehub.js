@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const dayjs = require("dayjs");
 const cheerio = require("cheerio");
-const Status = require("@libs/novelStatus");
-const fetchApi = require("@libs/fetchApi");
-const fetchFile = require("@libs/fetchFile");
-const FilterInputs = require("@libs/filterInputs");
+const Status = require("@libs/novelStatus").default;
+const fetchApi = require("@libs/fetchApi").default;
+const fetchFile = require("@libs/fetchFile").default;
+const FilterInputs = require("@libs/filterInputs").default;
 const pluginId = "RNBH.org";
 const sourceName = "RanobeHub";
 const baseUrl = "https://ranobehub.org/";

@@ -36,6 +36,14 @@ const json: {
 const jsonPath = path.join(outRoot, "dist", username, "plugins.json");
 const jsonMinPath = path.join(outRoot, "dist", username, "plugins.min.json");
 const pluginSet = new Set();
+interface PluginError {
+    message: string,
+    lang: string,
+    filename: string
+}
+
+const errors: PluginError[] = [];
+
 
 for (let language in languages) {
     // language with English name
@@ -47,12 +55,21 @@ for (let language in languages) {
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
         const instance:
-            | Plugin.instance
+            | Plugin.instance 
             | unknown = require(`../plugins/${language.toLowerCase()}/${
             plugin.split(".")[0]
         }`);
 
-        if (!isPlugin(instance)) return;
+        try{
+            isPlugin(instance);
+        }catch(error: any){ 
+            errors.push({
+                message: error.message,
+                lang: language + ' | ' + languageNative,
+                filename: plugin
+            });
+            return;
+        }
 
         const { id, name, site, version, icon } = instance;
         const info = {
@@ -66,17 +83,33 @@ for (let language in languages) {
         } as const;
 
         if(pluginSet.has(id)){
-            console.log("There's already a plugin with id:", id);
-            throw new Error("2 or more plugins have the same id");
+            errors.push({
+                message: "Multiple plugins with same id: " + id, 
+                lang: language + ' | ' + languageNative,
+                filename: plugin
+            });
+            return;
         }else{
             pluginSet.add(id);
         }
 
         json[languageNative].push(info);
-        console.log("Collected", name);
     });
 }
 
+const FgRed = "\x1b[31m";
+const Reset = "\x1b[0m";
+
+if(errors.length){
+    errors.forEach(error => {
+        console.error(FgRed, 'Plugin Error:');
+        console.error('\tFileName:', error.filename);
+        console.error('\tLang:', error.lang)
+        console.error('\tMessage:', error.message);
+        console.error(Reset, '\n');
+    });
+    process.exit(1);
+}
 for (let lang in json) json[lang].sort((a, b) => a.id.localeCompare(b.id));
 
 console.log(jsonPath);
