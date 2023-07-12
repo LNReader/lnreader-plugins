@@ -507,7 +507,7 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/reducing/icons/src/en/wuxiaworld/icon.png"
 		},
 		{
-			"id": "wuxiaworld",
+			"id": "wuxiaworld.site",
 			"name": "WuxiaWorld.Site [madara]",
 			"site": "https://wuxiaworld.site/",
 			"lang": "English",

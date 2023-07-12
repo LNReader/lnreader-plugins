@@ -8,7 +8,7 @@ import novelStatus from "@libs/novelStatus"
 import parseMadaraDate from "@libs/parseDate";
 import dayjs from "dayjs";
 
-export const id = "wuxiaworld";
+export const id = "wuxiaworld.site";
 export const name = "WuxiaWorld.Site [madara]";
 export const icon = "multisrc/madara/icons/wuxiaworld.site.png";
 export const version = "1.0.0";

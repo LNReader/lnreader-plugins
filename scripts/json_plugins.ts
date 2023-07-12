@@ -35,6 +35,7 @@ const json: {
 } = {};
 const jsonPath = path.join(outRoot, "dist", username, "plugins.json");
 const jsonMinPath = path.join(outRoot, "dist", username, "plugins.min.json");
+const pluginSet = new Set();
 
 for (let language in languages) {
     // language with English name
@@ -64,8 +65,14 @@ for (let language in languages) {
             iconUrl: `${githubIconsLink}/${icon}`,
         } as const;
 
-        json[languageNative].push(info);
+        if(pluginSet.has(id)){
+            console.log("There's already a plugin with id:", id);
+            throw new Error("2 or more plugins have the same id");
+        }else{
+            pluginSet.add(id);
+        }
 
+        json[languageNative].push(info);
         console.log("Collected", name);
     });
 }
