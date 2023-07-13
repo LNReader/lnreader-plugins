@@ -76,11 +76,19 @@ export namespace Plugin {
     ) => Promise<string | undefined>;
 }
 
-export function isPlugin (p: any): asserts p is Plugin.instance {
+export const isPlugin = (p: any): p is Plugin.instance => {
     const pl = p as Plugin.instance;
 
     const errorOut = (key: string) => {
-        throw new Error(`Plugin doesn't have ${key}!`);
+        console.error(
+            "=".repeat(6) +
+                `Plugin doesn't have ${key}!` +
+                "=".repeat(6) +
+                "\n" +
+                JSON.stringify(pl) +
+                "=".repeat(6)
+        );
+        return false;
     };
 
     const required_funcs: (keyof Plugin.instance)[] = [
@@ -92,7 +100,7 @@ export function isPlugin (p: any): asserts p is Plugin.instance {
     ];
     for (let i = 0; i < required_funcs.length; i++) {
         const key = required_funcs[i];
-        if (!pl[key] || typeof pl[key] !== "function") errorOut(key);
+        if (!pl[key] || typeof pl[key] !== "function") return errorOut(key);
     }
     const requireds_fields: (keyof Plugin.instance)[] = [
         "id",
@@ -103,6 +111,8 @@ export function isPlugin (p: any): asserts p is Plugin.instance {
     ];
     for (let i = 0; i < requireds_fields.length; i++) {
         const key = requireds_fields[i];
-        if (pl[key] === undefined) errorOut(key);
+        if (pl[key] === undefined) return errorOut(key);
     }
+
+    return true;
 };

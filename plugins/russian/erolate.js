@@ -1,9 +1,9 @@
 const cheerio = require("cheerio");
 const dayjs = require("dayjs");
-const fetchApi = require("@libs/fetchApi").default;
-const fetchFile = require("@libs/fetchFile").default;
-const Status = require("@libs/novelStatus").default;
-const FilterInputs = require("@libs/filterInputs").default;
+const fetchApi = require("@libs/fetchApi");
+const fetchFile = require("@libs/fetchFile");
+const Status = require("@libs/novelStatus");
+const FilterInputs = require("@libs/filterInputs");
 const defaultCoverUri =
   "https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true";
 

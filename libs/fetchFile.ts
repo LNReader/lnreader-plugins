@@ -15,4 +15,4 @@ const fetchFile: Plugin.fetchImage = async function (url, init) {
         return undefined;
     }
 };
-export default fetchFile;
+export default  fetchFile;

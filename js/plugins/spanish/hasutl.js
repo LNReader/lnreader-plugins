@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
 const baseUrl = 'https://hasutl.wordpress.com/';
 function popularNovels(page) {
     return __awaiter(this, void 0, void 0, function* () {

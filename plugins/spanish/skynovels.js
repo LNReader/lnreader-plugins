@@ -1,5 +1,5 @@
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
 
 const baseUrl = 'https://www.skynovels.net/';
 

@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
-const FilterInputs = require('@libs/filterInputs').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
+const FilterInputs = require('@libs/filterInputs');
 
 const pluginId = 'lightnovelbrasil';
 const baseUrl = 'https://lightnovelbrasil.com/';

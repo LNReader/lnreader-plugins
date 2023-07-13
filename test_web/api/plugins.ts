@@ -43,8 +43,8 @@ const getPlugin = async (
     requirePath: string
 ): Promise<Plugin.instance | null> => {
     const plugin = await require(requirePath);
-    isPlugin(plugin);
-    return plugin;
+    if (isPlugin(plugin)) return plugin;
+    return null;
 };
 
 export const popularNovels = async (

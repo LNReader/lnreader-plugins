@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
-const FilterInputs = require('@libs/filterInputs').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
+const FilterInputs = require('@libs/filterInputs');
 const pluginId = 'lshnovel';
 const baseUrl = 'https://lshnovel.com/';
 function popularNovels(page, { filters }) {

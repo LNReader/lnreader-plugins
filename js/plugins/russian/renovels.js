@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const dayjs = require("dayjs");
-const fetchApi = require("@libs/fetchApi").default;
-const fetchFile = require("@libs/fetchFile").default;
-const Status = require("@libs/novelStatus").default;
-const FilterInputs = require("@libs/filterInputs").default;
+const fetchApi = require("@libs/fetchApi");
+const fetchFile = require("@libs/fetchFile");
+const Status = require("@libs/novelStatus");
+const FilterInputs = require("@libs/filterInputs");
 const pluginId = "ReN";
 const sourceName = "Renovels";
 const baseUrl = "https://renovels.org";

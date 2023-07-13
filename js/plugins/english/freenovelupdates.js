@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
-const showToast = require('@libs/showToast').default;
-const isUrlAbsolute = require('@libs/isAbsoluteUrl').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
+const showToast = require('@libs/showToast');
+const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 const pluginId = 'freenovelupdates';
 const baseUrl = 'https://www.freenovelupdates.com';
 function popularNovels(page) {

@@ -8,10 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
 const cheerio = require('cheerio');
-const Status = require('@libs/novelStatus').default;
+const Status = require('@libs/novelStatus');
 const defaultCoverUri = 'https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true';
 const pluginId = "TNL.com";
 const sourceName = 'TuNovelaLigera';

@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi').default;
-const fetchFile = require('@libs/fetchFile').default;
+const fetchApi = require('@libs/fetchApi');
+const fetchFile = require('@libs/fetchFile');
 
 const pluginId = 'novelfull';
 const baseUrl = 'https://novelfull.com/';
