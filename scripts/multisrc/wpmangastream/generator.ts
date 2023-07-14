@@ -12,7 +12,7 @@ export const generateAll: ScrpitGeneratorFunction = function () {
 const generator = function generator(sourceJson: sourceData) {
     return { 
         lang: '',
-        sourceName: '',
+        filename: '',
         pluginScript: '',
     };
 };

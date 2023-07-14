@@ -228,7 +228,7 @@ export const fetchImage: Plugin.fetchImage = async (url) => {
 
     return {
         lang,
-        sourceName,
+        filename: sourceName,
         pluginScript,
     };
 };

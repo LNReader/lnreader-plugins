@@ -1,6 +1,6 @@
 export interface FilterValue {
     label: string;
-    value: string;
+    value: string | number;
 }
 export enum FilterInputs {
     TextInput,

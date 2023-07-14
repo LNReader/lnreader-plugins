@@ -3,7 +3,7 @@ import fs from "fs";
 
 type GeneratedScript = {
     lang: string;
-    sourceName: string;
+    filename: string;
     pluginScript: string;
 };
 
@@ -21,13 +21,12 @@ const generate = async (name: string): Promise<boolean> => {
     const sources = generateAll();
 
     for (let source of sources) {
-        const { lang, sourceName, pluginScript } = source;
-        const filename = sourceName.replace(/[\s-\.]+/g, "") + `[${name}].ts`;
+        const { lang, filename, pluginScript } = source;
         const pluginsDir = path.join(
             path.dirname(path.dirname(__dirname)),
             "plugins"
         );
-        const filePath = path.join(pluginsDir, lang.toLowerCase(), filename);
+        const filePath = path.join(pluginsDir, lang.toLowerCase(), filename.replace(/[\s-\.]+/g, "") + `[${name}].ts`);
         fs.writeFileSync(filePath, pluginScript, { encoding: "utf-8" });
     }
     return true;

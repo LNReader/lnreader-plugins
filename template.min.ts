@@ -18,24 +18,27 @@ export const site = "";
 // export const filters: Filter[] = [];
 exports["protected"] = false;
 
-export const popularNovels: Plugin.popularNovels = async (pageNo) => {
+export const popularNovels: Plugin.popularNovels = async function (
+    page,
+    { filters, showLatestNovels }
+) {
     const novels: Novel.Item[] = [];
 
     return novels;
 };
 
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
-    novelUrl
-) => {
-    const novel: Novel.instance = {
-        url: novelUrl,
-        chapters: [],
+
+export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
+    async function (novelUrl) {
+        const novel: Novel.instance = {
+            url: novelUrl,
+            chapters: [],
+        };
+
+        return novel;
     };
 
-    return novel;
-};
-
-export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
+export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
     const chapterText = "";
 
     return chapterText;
