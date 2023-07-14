@@ -46,9 +46,6 @@ for (let language in languages) {
     json[languageNative] = [];
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
-        if (plugin.endsWith("broken")) {
-            console.log(`${plugin} is broken and requires author's attention!`);
-        }
         const instance:
             | Plugin.instance
             | unknown = require(`../plugins/${language.toLowerCase()}/${
@@ -85,8 +82,25 @@ for (let language in languages) {
 
 for (let lang in json) json[lang].sort((a, b) => a.id.localeCompare(b.id));
 
-console.log(jsonPath);
-
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, "\t"));
+
+// check for broken plugins
+for (let language in languages) {
+    const tsFiles = fs.readdirSync(
+        path.join(root, "..", "plugins", language.toLocaleLowerCase())
+    );
+    tsFiles
+        .filter((f) => f.endsWith(".broken.ts"))
+        .forEach((fn) => {
+            console.error(
+                language.toLocaleLowerCase() +
+                    "/" +
+                    fn.replace(".broken.ts", "") +
+                    " ❌"
+            );
+        });
+}
+
+console.log(jsonPath);
 console.log("Done ✅");

@@ -38,10 +38,5 @@
     },
     "pre-commit": [
         "json"
-    ],
-    "eslintConfig": {
-        "ignorePatterns": [
-            "**/*.broken"
-        ]
-    }
+    ]
 }
