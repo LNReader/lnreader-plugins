@@ -21,7 +21,7 @@ const fetch_1 = require("@libs/fetch");
 // import { defaultCover } from "@libs/defaultCover";
 exports.id = "Readwn.com";
 exports.name = "Readwn.com";
-exports.icon = "";
+exports.icon = "multisrc/readwn/icon/readwn.png";
 exports.version = "1.0.0";
 exports.site = "https://www.readwn.com/";
 // export const filters: Filter[] = [];

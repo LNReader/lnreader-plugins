@@ -13,7 +13,7 @@
     
     export const id = "Novelmt.com";
     export const name = "Novelmt.com";
-    export const icon = "";
+    export const icon = "multisrc/readwn/icon/novelmt.png";
     export const version = "1.0.0";
     export const site = "https://www.novelmt.com/";
     // export const filters: Filter[] = [];

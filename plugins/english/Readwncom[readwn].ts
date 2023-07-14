@@ -13,7 +13,7 @@
     
     export const id = "Readwn.com";
     export const name = "Readwn.com";
-    export const icon = "";
+    export const icon = "multisrc/readwn/icon/readwn.png";
     export const version = "1.0.0";
     export const site = "https://www.readwn.com/";
     // export const filters: Filter[] = [];

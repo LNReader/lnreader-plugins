@@ -243,7 +243,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Ltnovelcom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/multisrc/readwn/icon/ltnovel.png"
 		},
 		{
 			"id": "lunarletters",
@@ -396,7 +396,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Novelmtcom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/multisrc/readwn/icon/novelmt.png"
 		},
 		{
 			"id": "novelmultiverse",
@@ -486,7 +486,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Readwncom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/multisrc/readwn/icon/readwn.png"
 		},
 		{
 			"id": "sleeptTLS",

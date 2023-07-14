@@ -13,7 +13,7 @@ const generator = function generator(sourceJson: sourceData) {
     const pluginId = sourceJson.id;
     const sourceName = sourceJson.sourceName;
     const site = sourceJson.sourceSite;
-
+    const iconFileName = sourceName.split('.')[0].toLowerCase() + '.png';
     const pluginScript = `
     import { load as parseHTML } from "cheerio";
     // import dayjs from 'dayjs';
@@ -29,7 +29,7 @@ const generator = function generator(sourceJson: sourceData) {
     
     export const id = "${pluginId}";
     export const name = "${sourceName}";
-    export const icon = "";
+    export const icon = "multisrc/readwn/icon/${iconFileName}";
     export const version = "1.0.0";
     export const site = "${site}";
     // export const filters: Filter[] = [];

@@ -21,7 +21,7 @@ const fetch_1 = require("@libs/fetch");
 // import { defaultCover } from "@libs/defaultCover";
 exports.id = "Novelmt.com";
 exports.name = "Novelmt.com";
-exports.icon = "";
+exports.icon = "multisrc/readwn/icon/novelmt.png";
 exports.version = "1.0.0";
 exports.site = "https://www.novelmt.com/";
 // export const filters: Filter[] = [];

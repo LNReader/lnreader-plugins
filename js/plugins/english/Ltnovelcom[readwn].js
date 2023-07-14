@@ -21,7 +21,7 @@ const fetch_1 = require("@libs/fetch");
 // import { defaultCover } from "@libs/defaultCover";
 exports.id = "Ltnovel.com";
 exports.name = "Ltnovel.com";
-exports.icon = "";
+exports.icon = "multisrc/readwn/icon/ltnovel.png";
 exports.version = "1.0.0";
 exports.site = "https://www.ltnovel.com/";
 // export const filters: Filter[] = [];

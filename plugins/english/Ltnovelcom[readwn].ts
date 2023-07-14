@@ -13,7 +13,7 @@
     
     export const id = "Ltnovel.com";
     export const name = "Ltnovel.com";
-    export const icon = "";
+    export const icon = "multisrc/readwn/icon/ltnovel.png";
     export const version = "1.0.0";
     export const site = "https://www.ltnovel.com/";
     // export const filters: Filter[] = [];
