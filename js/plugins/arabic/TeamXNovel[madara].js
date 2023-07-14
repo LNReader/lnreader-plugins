@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,12 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.version = exports.icon = exports.name = exports.id = void 0;
-const cheerio = __importStar(require("cheerio"));
-const fetchApi_1 = __importDefault(require("@libs/fetchApi"));
-const fetchFile_1 = __importDefault(require("@libs/fetchFile"));
-const defaultCover_1 = __importDefault(require("@libs/defaultCover"));
-const novelStatus_1 = __importDefault(require("@libs/novelStatus"));
-const parseDate_1 = __importDefault(require("@libs/parseDate"));
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+const defaultCover_1 = require("@libs/defaultCover");
+const novelStatus_1 = require("@libs/novelStatus");
+const parseMadaraDate_1 = require("@libs/parseMadaraDate");
 const dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "teamxnovel";
 exports.name = "TeamXNovel [madara]";
@@ -55,8 +31,8 @@ const popularNovels = (pageNo, { showLatestNovels }) => __awaiter(void 0, void 0
         ? '?m_orderby=latest'
         : '/?m_orderby=rating';
     let url = exports.site + "novel" + '/page/' + pageNo + sortOrder;
-    const body = yield (0, fetchApi_1.default)(url).then(res => res.text());
-    const loadedCheerio = cheerio.load(body);
+    const body = yield (0, fetch_1.fetchApi)(url).then(res => res.text());
+    const loadedCheerio = (0, cheerio_1.load)(body);
     loadedCheerio('.manga-title-badges').remove();
     loadedCheerio('.page-item-detail').each(function () {
         const novelName = loadedCheerio(this).find('.post-title').text().trim();
@@ -79,15 +55,15 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
     const novel = {
         url: novelUrl,
     };
-    const body = yield (0, fetchApi_1.default)(novelUrl).then(res => res.text());
-    let loadedCheerio = cheerio.load(body);
+    const body = yield (0, fetch_1.fetchApi)(novelUrl).then(res => res.text());
+    let loadedCheerio = (0, cheerio_1.load)(body);
     loadedCheerio('.manga-title-badges').remove();
     novel.name = loadedCheerio('.post-title h1').text().trim();
     novel.cover =
         loadedCheerio('.summary_image > a > img').attr('data-lazy-src') ||
             loadedCheerio('.summary_image > a > img').attr('data-src') ||
             loadedCheerio('.summary_image > a > img').attr('src') ||
-            defaultCover_1.default;
+            defaultCover_1.defaultCover;
     loadedCheerio('.post-content_item, .post-content').each(function () {
         const detailName = loadedCheerio(this).find('h5').text().trim();
         const detail = loadedCheerio(this).find('.summary-content').text().trim();
@@ -105,8 +81,8 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
             case 'الحالة':
                 novel.status =
                     detail.includes('OnGoing') || detail.includes('مستمرة')
-                        ? novelStatus_1.default.Ongoing
-                        : novelStatus_1.default.Completed;
+                        ? novelStatus_1.NovelStatus.Ongoing
+                        : novelStatus_1.NovelStatus.Completed;
                 break;
         }
     });
@@ -120,18 +96,18 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
             action: "manga_get_chapters",
             manga: novelId,
         };
-        html = yield (0, fetchApi_1.default)(baseUrl + 'wp-admin/admin-ajax.php', {
+        html = yield (0, fetch_1.fetchApi)(baseUrl + 'wp-admin/admin-ajax.php', {
             method: 'POST',
             body: JSON.stringify(body),
         })
             .then(res => res.text());
     }
     else {
-        html = yield (0, fetchApi_1.default)(baseUrl + 'ajax/chapters/', { method: 'POST' })
+        html = yield (0, fetch_1.fetchApi)(baseUrl + 'ajax/chapters/', { method: 'POST' })
             .then(res => res.text());
     }
     if (html !== '0') {
-        loadedCheerio = cheerio.load(html);
+        loadedCheerio = (0, cheerio_1.load)(html);
     }
     const chapters = [];
     loadedCheerio('.wp-manga-chapter').each(function () {
@@ -142,7 +118,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
             .text()
             .trim();
         if (releaseDate) {
-            releaseDate = (0, parseDate_1.default)(releaseDate);
+            releaseDate = (0, parseMadaraDate_1.parseMadaraDate)(releaseDate);
         }
         else {
             /**
@@ -159,8 +135,8 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function* () {
     const url = baseUrl + "/" + "novel" + "/" + chapterUrl;
-    const body = yield (0, fetchApi_1.default)(chapterUrl).then(res => res.text());
-    const loadedCheerio = cheerio.load(body);
+    const body = yield (0, fetch_1.fetchApi)(chapterUrl).then(res => res.text());
+    const loadedCheerio = (0, cheerio_1.load)(body);
     const chapterText = loadedCheerio('.text-left').html() ||
         loadedCheerio('.text-right').html() ||
         loadedCheerio('.entry-content').html();
@@ -170,8 +146,8 @@ exports.parseChapter = parseChapter;
 const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
     const novels = [];
     const url = baseUrl + "?s=" + searchTerm + "&post_type=wp-manga";
-    const body = yield (0, fetchApi_1.default)(url).then(res => res.text());
-    const loadedCheerio = cheerio.load(body);
+    const body = yield (0, fetch_1.fetchApi)(url).then(res => res.text());
+    const loadedCheerio = (0, cheerio_1.load)(body);
     loadedCheerio('.c-tabs-item__content').each(function () {
         const novelName = loadedCheerio(this).find('.post-title').text().trim();
         let image = loadedCheerio(this).find('img');
@@ -191,6 +167,6 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.searchNovels = searchNovels;
 const fetchImage = (url) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, fetchFile_1.default)(url);
+    return yield (0, fetch_1.fetchFile)(url);
 });
 exports.fetchImage = fetchImage;

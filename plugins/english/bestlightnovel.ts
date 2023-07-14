@@ -1,9 +1,8 @@
 import { load as cheerioload } from "cheerio";
-import fetchApi  from "@libs/fetchApi";
 import { Chapter, Novel, Plugin } from "@typings/plugin";
-import defaultCover from "@libs/defaultCover";
-import  fetchFile  from "@libs/fetchFile";
-import NovelStatus from "@libs/novelStatus";
+import { defaultCover } from "@libs/defaultCover";
+import { fetchApi, fetchFile } from "@libs/fetch";
+import { NovelStatus } from "@libs/novelStatus";
 
 export const id = "BLN.com";
 export const name = "BestLightNovel";

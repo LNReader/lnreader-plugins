@@ -8,28 +8,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const showToast = require('@libs/showToast');
-const isUrlAbsolute = require('@libs/isAbsoluteUrl');
-const pluginId = 'freenovelupdates';
-const baseUrl = 'https://www.freenovelupdates.com';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.icon = exports.version = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+const showToast_1 = require("@libs/showToast");
+const isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
+exports.id = "freenovelupdates";
+exports.name = "Free Novel Updates (Broken)";
+exports.version = "1.0.0";
+exports.icon = "src/en/freenovelupdates/icon.png";
+exports.site = "https://www.freenovelupdates.com";
+exports.protected = false;
+const pluginId = exports.id;
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}genres/light-novel-1002`;
-        const body = yield fetchApi(url, {}, pluginId).then(r => r.text());
-        const loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(url, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('.books-item').each(function () {
-            let novelUrl = loadedCheerio(this).find('a').attr('href');
-            if (novelUrl && !isUrlAbsolute(novelUrl)) {
+        loadedCheerio(".books-item").each(function () {
+            let novelUrl = loadedCheerio(this).find("a").attr("href");
+            if (novelUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelUrl)) {
                 novelUrl = baseUrl + novelUrl;
             }
             if (novelUrl) {
-                const novelName = loadedCheerio(this).find('.title').text().trim();
-                let novelCover = loadedCheerio(this).find('img').attr('src');
-                if (novelCover && !isUrlAbsolute(novelCover)) {
+                const novelName = loadedCheerio(this).find(".title").text().trim();
+                let novelCover = loadedCheerio(this).find("img").attr("src");
+                if (novelCover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)) {
                     novelCover = baseUrl + novelCover;
                 }
                 const novel = {
@@ -42,35 +49,36 @@ function popularNovels(page) {
         });
         return novels;
     });
-}
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const body = yield fetchApi(url, {}, pluginId).then(r => r.text());
-        let loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(url, {}, pluginId).then((r) => r.text());
+        let loadedCheerio = (0, cheerio_1.load)(body);
         const novel = {
             url,
             chapters: [],
         };
-        novel.name = loadedCheerio('h1').text();
-        let novelCover = loadedCheerio('.img > img').attr('src');
+        novel.name = loadedCheerio("h1").text();
+        let novelCover = loadedCheerio(".img > img").attr("src");
         novel.cover = novelCover
-            ? isUrlAbsolute(novelCover)
+            ? (0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)
                 ? novelCover
                 : baseUrl + novelCover
             : undefined;
-        novel.summary = loadedCheerio('.description-content').text().trim();
-        novel.author = loadedCheerio('.author').text().trim();
-        novel.genres = loadedCheerio('.category').text().trim();
-        novel.status = loadedCheerio('.status').text().trim();
-        loadedCheerio('.chapter').each(function () {
+        novel.summary = loadedCheerio(".description-content").text().trim();
+        novel.author = loadedCheerio(".author").text().trim();
+        novel.genres = loadedCheerio(".category").text().trim();
+        novel.status = loadedCheerio(".status").text().trim();
+        loadedCheerio(".chapter").each(function () {
             var _a;
-            let chapterUrl = loadedCheerio(this).find('a').attr('href');
-            if (chapterUrl && !isUrlAbsolute(chapterUrl)) {
+            let chapterUrl = loadedCheerio(this).find("a").attr("href");
+            if (chapterUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(chapterUrl)) {
                 chapterUrl = baseUrl + chapterUrl;
             }
             if (chapterUrl) {
-                const chapterName = loadedCheerio(this).find('a').text().trim();
+                const chapterName = loadedCheerio(this).find("a").text().trim();
                 const releaseDate = null;
                 const chapter = {
                     name: chapterName,
@@ -82,39 +90,30 @@ function parseNovelAndChapters(novelUrl) {
         });
         return novel;
     });
-}
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = yield fetchApi(chapterUrl, {}, pluginId).then(r => r.text());
-        const loadedCheerio = cheerio.load(body);
-        const chapterText = loadedCheerio('.content').html() || '';
+        const body = yield (0, fetch_1.fetchApi)(chapterUrl, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = (0, cheerio_1.load)(body);
+        const chapterText = loadedCheerio(".content").html() || "";
         return chapterText;
     });
-}
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        showToast('Search is not available in this source');
+        (0, showToast_1.showToast)("Search is not available in this source");
         return [];
     });
-}
-function fetchImage(url) {
+};
+exports.searchNovels = searchNovels;
+const fetchImage = function (url) {
     return __awaiter(this, void 0, void 0, function* () {
         const headers = {
             Referer: baseUrl,
         };
-        return yield fetchFile(url, { headers: headers });
+        return yield (0, fetch_1.fetchFile)(url, { headers: headers });
     });
-}
-module.exports = {
-    id: pluginId,
-    name: 'Free Novel Updates (Broken)',
-    version: '1.0.0',
-    icon: 'src/en/freenovelupdates/icon.png',
-    site: baseUrl,
-    protected: false,
-    fetchImage,
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
 };
+exports.fetchImage = fetchImage;

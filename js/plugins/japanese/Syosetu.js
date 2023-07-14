@@ -8,15 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.version = exports.icon = exports.name = exports.id = void 0;
 const cheerio_1 = require("cheerio");
-const fetchApi_1 = __importDefault(require("@libs/fetchApi"));
-const fetchFile_1 = __importDefault(require("@libs/fetchFile"));
-const defaultCover_1 = __importDefault(require("@libs/defaultCover"));
+const fetch_1 = require("@libs/fetch");
+const defaultCover_1 = require("@libs/defaultCover");
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -38,7 +34,7 @@ const popularNovels = function (pageNo) {
         function getNovelsFromPage(pagenumber) {
             return __awaiter(this, void 0, void 0, function* () {
                 // load page
-                const result = yield (0, fetchApi_1.default)(searchUrl(pagenumber));
+                const result = yield (0, fetch_1.fetchApi)(searchUrl(pagenumber));
                 const body = yield result.text();
                 // Cheerio it!
                 const cheerioQuery = (0, cheerio_1.load)(body, { decodeEntities: false });
@@ -53,7 +49,7 @@ const popularNovels = function (pageNo) {
                     pageNovels.push({
                         name: novelDIV.text(),
                         url: novelA.attribs.href,
-                        cover: defaultCover_1.default,
+                        cover: defaultCover_1.defaultCover,
                     });
                 });
                 // return all novels from this page
@@ -68,7 +64,7 @@ exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         let chapters = [];
-        const result = yield (0, fetchApi_1.default)(novelUrl);
+        const result = yield (0, fetch_1.fetchApi)(novelUrl);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body, { decodeEntities: false });
         // create novel object
@@ -78,7 +74,7 @@ const parseNovelAndChapters = function (novelUrl) {
             author: loadedCheerio(".novel_writername")
                 .text()
                 .replace("作者：", ""),
-            cover: defaultCover_1.default,
+            cover: defaultCover_1.defaultCover,
         };
         // Get all the chapters
         const cqGetChapters = loadedCheerio(".novel_sublist2");
@@ -113,7 +109,7 @@ const parseNovelAndChapters = function (novelUrl) {
              * but every oneshot is set as "there are no chapters" and all contents are thrown into the description!!
              */
             // get summary for oneshot chapter
-            const nameResult = yield (0, fetchApi_1.default)(searchUrl() + `&word=${novel.name}`);
+            const nameResult = yield (0, fetch_1.fetchApi)(searchUrl() + `&word=${novel.name}`);
             const nameBody = yield nameResult.text();
             const summaryQuery = (0, cheerio_1.load)(nameBody, {
                 decodeEntities: false,
@@ -140,7 +136,7 @@ const parseNovelAndChapters = function (novelUrl) {
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield (0, fetchApi_1.default)(chapterUrl);
+        const result = yield (0, fetch_1.fetchApi)(chapterUrl);
         const body = yield result.text();
         // create cheerioQuery
         const cheerioQuery = (0, cheerio_1.load)(body, {
@@ -159,7 +155,7 @@ const searchNovels = function (searchTerm) {
         function getNovelsFromPage(pagenumber) {
             return __awaiter(this, void 0, void 0, function* () {
                 // load page
-                const result = yield (0, fetchApi_1.default)(searchUrl(pagenumber) + `&word=${searchTerm}`);
+                const result = yield (0, fetch_1.fetchApi)(searchUrl(pagenumber) + `&word=${searchTerm}`);
                 const body = yield result.text();
                 // Cheerio it!
                 const cheerioQuery = (0, cheerio_1.load)(body, { decodeEntities: false });
@@ -174,7 +170,7 @@ const searchNovels = function (searchTerm) {
                     pageNovels.push({
                         name: novelDIV.text(),
                         url: novelA.attribs.href,
-                        cover: defaultCover_1.default,
+                        cover: defaultCover_1.defaultCover,
                     });
                 });
                 // return all novels from this page
@@ -200,7 +196,7 @@ const searchNovels = function (searchTerm) {
 exports.searchNovels = searchNovels;
 const fetchImage = function (url) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield (0, fetchFile_1.default)(url);
+        return yield (0, fetch_1.fetchFile)(url);
     });
 };
 exports.fetchImage = fetchImage;

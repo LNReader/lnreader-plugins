@@ -8,23 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const pluginId = 'fastnovel';
-const baseUrl = 'https://fastnovel.org/';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.icon = exports.version = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+exports.id = "fastnovel";
+exports.name = "Fast Novel";
+exports.version = "1.0.0";
+exports.icon = "src/en/fastnovel/icon.png";
+exports.site = "https://fastnovel.org/";
+exports.protected = false;
+const pluginId = exports.id;
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}sort/p/?page=${page}`;
-        const body = yield fetchApi(url, {}, pluginId).then(r => r.text());
-        const loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(url, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('.col-novel-main .list-novel .row').each(function () {
-            const novelName = loadedCheerio(this).find('h3.novel-title > a').text();
-            const novelCover = loadedCheerio(this).find('img.cover').attr('src');
+        loadedCheerio(".col-novel-main .list-novel .row").each(function () {
+            const novelName = loadedCheerio(this).find("h3.novel-title > a").text();
+            const novelCover = loadedCheerio(this).find("img.cover").attr("src");
             const novelUrl = loadedCheerio(this)
-                .find('h3.novel-title > a')
-                .attr('href');
+                .find("h3.novel-title > a")
+                .attr("href");
+            if (!novelUrl)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -34,50 +43,53 @@ function popularNovels(page) {
         });
         return novels;
     });
-}
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const body = yield fetchApi(url, {}, pluginId).then(r => r.text());
-        let loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(url, {}, pluginId).then((r) => r.text());
+        let loadedCheerio = (0, cheerio_1.load)(body);
         const novel = {
             url,
             chapters: [],
         };
-        novel.name = loadedCheerio('div.book > img').attr('alt');
-        novel.cover = loadedCheerio('div.book > img').attr('src');
-        novel.summary = loadedCheerio('div.desc-text').text().trim();
-        loadedCheerio('ul.info > li > h3').each(function () {
+        novel.name = loadedCheerio("div.book > img").attr("alt");
+        novel.cover = loadedCheerio("div.book > img").attr("src");
+        novel.summary = loadedCheerio("div.desc-text").text().trim();
+        loadedCheerio("ul.info > li > h3").each(function () {
             let detailName = loadedCheerio(this).text();
             let detail = loadedCheerio(this)
                 .siblings()
                 .map((i, el) => loadedCheerio(el).text())
                 .toArray()
-                .join(',');
+                .join(",");
             switch (detailName) {
-                case 'Author:':
+                case "Author:":
                     novel.author = detail;
                     break;
-                case 'Status:':
+                case "Status:":
                     novel.status = detail;
                     break;
-                case 'Genre:':
+                case "Genre:":
                     novel.genres = detail;
                     break;
             }
         });
-        const novelId = loadedCheerio('#rating').attr('data-novel-id');
+        const novelId = loadedCheerio("#rating").attr("data-novel-id");
         function getChapters(id) {
             return __awaiter(this, void 0, void 0, function* () {
-                const chapterListUrl = baseUrl + 'ajax/chapter-archive?novelId=' + id;
-                const data = yield fetchApi(chapterListUrl);
+                const chapterListUrl = baseUrl + "ajax/chapter-archive?novelId=" + id;
+                const data = yield (0, fetch_1.fetchApi)(chapterListUrl);
                 const chapterdata = yield data.text();
-                loadedCheerio = cheerio.load(chapterdata);
+                loadedCheerio = (0, cheerio_1.load)(chapterdata);
                 let chapter = [];
-                loadedCheerio('ul.list-chapter > li').each(function () {
-                    const chapterName = loadedCheerio(this).find('a').attr('title');
+                loadedCheerio("ul.list-chapter > li").each(function () {
+                    const chapterName = loadedCheerio(this).find("a").attr("title");
                     const releaseDate = null;
-                    const chapterUrl = loadedCheerio(this).find('a').attr('href');
+                    const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                    if (!chapterName || !chapterUrl)
+                        return;
                     chapter.push({
                         name: chapterName,
                         releaseTime: releaseDate,
@@ -92,28 +104,32 @@ function parseNovelAndChapters(novelUrl) {
         }
         return novel;
     });
-}
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = yield fetchApi(chapterUrl, {}, pluginId).then(r => r.text());
-        const loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(chapterUrl, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = (0, cheerio_1.load)(body);
         loadedCheerio('#chr-content > div,h6,p[style="display: none;"]').remove();
-        let chapterText = loadedCheerio('#chr-content').html();
+        let chapterText = loadedCheerio("#chr-content").html();
         return chapterText;
     });
-}
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}search/?keyword=${searchTerm}`;
-        const body = yield fetchApi(url, {}, pluginId).then(r => r.text());
-        const loadedCheerio = cheerio.load(body);
+        const body = yield (0, fetch_1.fetchApi)(url, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('div.col-novel-main > div.list-novel > .row').each(function () {
+        loadedCheerio("div.col-novel-main > div.list-novel > .row").each(function () {
             const novelUrl = loadedCheerio(this)
-                .find('h3.novel-title > a')
-                .attr('href');
-            const novelName = loadedCheerio(this).find('h3.novel-title > a').text();
-            const novelCover = loadedCheerio(this).find('img').attr('src');
+                .find("h3.novel-title > a")
+                .attr("href");
+            const novelName = loadedCheerio(this)
+                .find("h3.novel-title > a")
+                .text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
             if (novelUrl) {
                 novels.push({
                     url: novelUrl,
@@ -124,25 +140,14 @@ function searchNovels(searchTerm) {
         });
         return novels;
     });
-}
-function fetchImage(url) {
+};
+exports.searchNovels = searchNovels;
+const fetchImage = function (url) {
     return __awaiter(this, void 0, void 0, function* () {
         const headers = {
             Referer: baseUrl,
         };
-        return yield fetchFile(url, { headers: headers });
+        return yield (0, fetch_1.fetchFile)(url, { headers: headers });
     });
-}
-module.exports = {
-    id: pluginId,
-    name: 'Fast Novel',
-    version: '1.0.0',
-    icon: 'src/en/fastnovel/icon.png',
-    site: baseUrl,
-    protected: false,
-    fetchImage,
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
 };
+exports.fetchImage = fetchImage;

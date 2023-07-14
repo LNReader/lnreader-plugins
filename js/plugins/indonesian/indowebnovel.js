@@ -8,23 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const pluginId = "IDWN.id";
-const sourceName = 'IndoWebNovel';
-const baseUrl = 'https://indowebnovel.id/id/';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.version = exports.icon = exports.site = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+const defaultCover_1 = require("@libs/defaultCover");
+exports.id = "IDWN.id";
+exports.name = "IndoWebNovel";
+exports.site = "https://indowebnovel.id/id/";
+exports.icon = "src/id/indowebnovel/icon.png";
+exports.version = "1.0.0";
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}daftar-novel/`;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('.novellist-blc li').each(function () {
-            const novelName = loadedCheerio(this).find('a').text();
-            const novelCover = null;
-            const novelUrl = loadedCheerio(this).find('a').attr('href');
+        loadedCheerio(".novellist-blc li").each(function () {
+            const novelName = loadedCheerio(this).find("a").text();
+            const novelCover = defaultCover_1.defaultCover;
+            const novelUrl = loadedCheerio(this).find("a").attr("href");
+            if (!novelUrl || !novelName)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -34,67 +41,75 @@ function popularNovels(page) {
         });
         return novels;
     });
-}
-;
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
+        let loadedCheerio = (0, cheerio_1.load)(body);
         let novel = {
             url,
-            name: '',
-            cover: '',
-            author: '',
-            status: '',
-            genres: '',
-            summary: '',
+            name: "",
+            cover: "",
+            author: "",
+            status: "",
+            genres: "",
+            summary: "",
             chapters: [],
         };
-        novel.name = loadedCheerio('.series-title').text().trim();
-        novel.cover = loadedCheerio('.series-thumb > img').attr('src');
-        novel.summary = loadedCheerio('.series-synops').text().trim();
-        novel.status = loadedCheerio('.status').text().trim();
-        novel.genres = [];
-        loadedCheerio('.series-genres').each(function () {
-            novel.genres.push(loadedCheerio(this).find('a').text().trim());
+        novel.name = loadedCheerio(".series-title").text().trim();
+        novel.cover = loadedCheerio(".series-thumb > img").attr("src");
+        novel.summary = loadedCheerio(".series-synops").text().trim();
+        novel.status = loadedCheerio(".status").text().trim();
+        const genres = [];
+        loadedCheerio(".series-genres").each(function () {
+            genres.push(loadedCheerio(this).find("a").text().trim());
         });
-        novel.genres = novel.genres.toString();
+        novel.genres = genres.join(",");
         let chapters = [];
-        loadedCheerio('.series-chapterlist li').each(function () {
-            const chapterName = loadedCheerio(this).find('a').text().trim();
+        loadedCheerio(".series-chapterlist li").each(function () {
+            const chapterName = loadedCheerio(this).find("a").text().trim();
             const releaseDate = null;
-            const chapterUrl = loadedCheerio(this).find('a').attr('href');
-            chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+            const chapterUrl = loadedCheerio(this).find("a").attr("href");
+            if (!chapterUrl)
+                return;
+            chapters.push({
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
+            });
         });
         novel.chapters = chapters.reverse();
         return novel;
     });
-}
-;
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = chapterUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
-        const chapterText = loadedCheerio('.reader').html();
+        let loadedCheerio = (0, cheerio_1.load)(body);
+        const chapterText = loadedCheerio(".reader").html();
         return chapterText;
     });
-}
-;
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}daftar-novel/`;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('.novellist-blc li').each(function () {
-            const novelName = loadedCheerio(this).find('a').text();
-            const novelCover = null;
-            const novelUrl = loadedCheerio(this).find('a').attr('href');
+        loadedCheerio(".novellist-blc li").each(function () {
+            const novelName = loadedCheerio(this).find("a").text();
+            const novelCover = defaultCover_1.defaultCover;
+            const novelUrl = loadedCheerio(this).find("a").attr("href");
+            if (!novelUrl)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -106,17 +121,6 @@ function searchNovels(searchTerm) {
         });
         return novels;
     });
-}
-;
-module.exports = {
-    id: pluginId,
-    name: sourceName,
-    site: baseUrl,
-    icon: 'src/id/indowebnovel/icon.png',
-    version: '1.0.0',
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-    fetchImage: fetchFile,
 };
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;

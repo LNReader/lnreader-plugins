@@ -8,23 +8,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const baseUrl = 'https://hasutl.wordpress.com/';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+exports.id = "HasuTL";
+exports.name = "Hasu Translations";
+exports.site = "https://hasutl.wordpress.com/";
+exports.version = "1.0.0";
+exports.icon = "src/es/hasutl/icon.png";
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + 'light-novels-activas/';
-        const result = yield fetchApi(url);
+        let url = baseUrl + "light-novels-activas/";
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
+        let loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('div.wp-block-columns').each(function () {
-            const novelName = loadedCheerio(this).find('.wp-block-button').text();
-            const novelCover = loadedCheerio(this).find('img').attr('src');
+        loadedCheerio("div.wp-block-columns").each(function () {
+            const novelName = loadedCheerio(this).find(".wp-block-button").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
             let novelUrl = loadedCheerio(this)
-                .find('.wp-block-button > a')
-                .attr('href');
+                .find(".wp-block-button > a")
+                .attr("href");
+            if (!novelUrl)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -34,61 +42,70 @@ function popularNovels(page) {
         });
         return novels;
     });
-}
-;
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
-        let novel = {};
-        novel.url = url;
+        let loadedCheerio = (0, cheerio_1.load)(body);
+        let novel = {
+            url,
+        };
         novel.url = novelUrl;
-        novel.name = loadedCheerio('.post-header').text();
-        novel.cover = loadedCheerio('.featured-media > img').attr('src');
-        let novelSummary = loadedCheerio('.post-content').find('p').html();
+        novel.name = loadedCheerio(".post-header").text();
+        novel.cover = loadedCheerio(".featured-media > img").attr("src");
+        let novelSummary = loadedCheerio(".post-content").find("p").html();
         novel.summary = novelSummary;
         let novelChapters = [];
-        loadedCheerio('.wp-block-media-text__content')
-            .find('a')
+        loadedCheerio(".wp-block-media-text__content")
+            .find("a")
             .each(function () {
             const chapterName = loadedCheerio(this).text().trim();
             const releaseDate = null;
-            let chapterUrl = loadedCheerio(this).attr('href');
-            const chapter = { name: chapterName, releaseTime: releaseDate, url: chapterUrl };
+            let chapterUrl = loadedCheerio(this).attr("href");
+            if (!chapterUrl)
+                return;
+            const chapter = {
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
+            };
             novelChapters.push(chapter);
         });
         novel.chapters = novelChapters;
         return novel;
     });
-}
-;
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = chapterUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
-        let chapterText = loadedCheerio('.post-content').html();
+        let loadedCheerio = (0, cheerio_1.load)(body);
+        let chapterText = loadedCheerio(".post-content").html();
         return chapterText;
     });
-}
-;
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}?s=${searchTerm}&post_type=wp-manga`;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
+        let loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('.post-container ').each(function () {
-            const novelName = loadedCheerio(this).find('.post-header').text();
-            if (!novelName.includes('Cap') &&
-                !novelName.includes('Vol') &&
-                !novelName.includes('Light Novels')) {
-                const novelCover = loadedCheerio(this).find('img').attr('src');
-                let novelUrl = loadedCheerio(this).find('a').attr('href');
+        loadedCheerio(".post-container ").each(function () {
+            const novelName = loadedCheerio(this).find(".post-header").text();
+            if (!novelName.includes("Cap") &&
+                !novelName.includes("Vol") &&
+                !novelName.includes("Light Novels")) {
+                const novelCover = loadedCheerio(this).find("img").attr("src");
+                let novelUrl = loadedCheerio(this).find("a").attr("href");
+                if (!novelUrl)
+                    return;
                 const novel = {
                     name: novelName,
                     cover: novelCover,
@@ -99,17 +116,6 @@ function searchNovels(searchTerm) {
         });
         return novels;
     });
-}
-;
-module.exports = {
-    id: "HasuTL",
-    name: 'Hasu Translations',
-    site: baseUrl,
-    version: '1.0.0',
-    icon: 'src/es/hasutl/icon.png',
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-    fetchImage: fetchFile,
 };
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;

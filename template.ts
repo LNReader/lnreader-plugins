@@ -1,8 +1,7 @@
-import * as cheerio from "cheerio";
-import fetchApi from "@libs/fetchApi";
-import fetchFile from "@libs/fetchFile";
+// import { load as parseHTML } from "cheerio";
+import { fetchFile, fetchApi } from "@libs/fetch";
 import { Novel, Plugin } from "@typings/plugin";
-import FilterInputs, { Filter } from "@libs/filterInputs";
+// import { Filter, FilterInputs } from "@libs/filterInputs";
 // import dayjs from 'dayjs';
 // import FilterInputs from '@libs/filterInputs';
 // import novelStatus from '@libs/novelStatus';

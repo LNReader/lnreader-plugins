@@ -1,7 +1,6 @@
-import * as cheerio from "cheerio";
-import fetchApi from "@libs/fetchApi";
-import fetchFile from "@libs/fetchFile";
-import { Filter } from "@libs/filterInputs";
+// import * as cheerio from "cheerio";
+import { fetchFile, fetchApi } from "@libs/fetch";
+// import { Filter, FilterInputs } from "@libs/filterInputs";
 import { Novel, Plugin } from "@typings/plugin";
 // const dayjs = require('dayjs');
 // const FilterInputs = require('@libs/filterInputs');

@@ -1,8 +1,7 @@
 import { load as loadCheerio } from "cheerio";
-import fetchApi from "@libs/fetchApi";
-import fetchFile from "@libs/fetchFile";
+import { fetchApi, fetchFile } from "@libs/fetch";
 import { Chapter, Novel, Plugin } from "@typings/plugin";
-import defaultCover from "@libs/defaultCover";
+import { defaultCover } from "@libs/defaultCover";
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');

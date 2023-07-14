@@ -1,11 +1,9 @@
-
-import * as cheerio from "cheerio";
-import fetchApi from "@libs/fetchApi";
-import fetchFile from "@libs/fetchFile";
+import { load as parseHTML } from "cheerio";
+import { fetchFile, fetchApi } from "@libs/fetch";
 import { Novel, Plugin, Chapter } from "@typings/plugin";
-import defaultCover from "@libs/defaultCover";
-import novelStatus from "@libs/novelStatus"
-import parseMadaraDate from "@libs/parseDate";
+import { defaultCover } from "@libs/defaultCover";
+import { NovelStatus } from "@libs/novelStatus"
+import { parseMadaraDate } from "@libs/parseMadaraDate";
 import dayjs from "dayjs";
 
 export const id = "novelroom";
@@ -25,7 +23,7 @@ export const popularNovels: Plugin.popularNovels = async (pageNo, {showLatestNov
 
     const body = await fetchApi(url).then(res => res.text());
 
-    const loadedCheerio = cheerio.load(body);
+    const loadedCheerio = parseHTML(body);
 
 
     loadedCheerio('.manga-title-badges').remove();
@@ -59,7 +57,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
 
     const body = await fetchApi(novelUrl).then(res => res.text());
 
-    let loadedCheerio = cheerio.load(body);
+    let loadedCheerio = parseHTML(body);
 
     loadedCheerio('.manga-title-badges').remove();
 
@@ -89,8 +87,8 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
         case 'الحالة':
             novel.status =
                 detail.includes('OnGoing') || detail.includes('مستمرة')
-                ? novelStatus.Ongoing
-                : novelStatus.Completed;
+                ? NovelStatus.Ongoing
+                : NovelStatus.Completed;
             break;
     }
     });
@@ -125,7 +123,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
     }
 
     if (html !== '0') {
-        loadedCheerio = cheerio.load(html);
+        loadedCheerio = parseHTML(html);
     }
 
     const chapters: Chapter.Item[] = [];
@@ -162,7 +160,7 @@ export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
 
     const body = await fetchApi(chapterUrl).then(res => res.text());
 
-    const loadedCheerio = cheerio.load(body);
+    const loadedCheerio = parseHTML(body);
     const chapterText =
     loadedCheerio('.text-left').html() ||
     loadedCheerio('.text-right').html() ||
@@ -177,7 +175,7 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
 
     const body = await fetchApi(url).then(res => res.text());
 
-    const loadedCheerio = cheerio.load(body);
+    const loadedCheerio = parseHTML(body);
 
 
     loadedCheerio('.c-tabs-item__content').each(function () {
@@ -204,4 +202,3 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
 export const fetchImage: Plugin.fetchImage = async (url) => {
     return await fetchFile(url);
 };
-    

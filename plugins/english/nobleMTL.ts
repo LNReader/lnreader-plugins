@@ -1,8 +1,7 @@
 ﻿import { load as cheerioload } from "cheerio";
-import fetchApi from "@libs/fetchApi";
-import fetchFile from "@libs/fetchFile";
+import { fetchApi, fetchFile } from "@libs/fetch";
 import { Novel, Plugin, Chapter } from "@typings/plugin";
-import FilterInputs, { Filter } from "@libs/filterInputs";
+import { Filter, FilterInputs } from "@libs/filterInputs";
 
 export const id = "NobleMTL";
 export const name = "NobleMTL";

@@ -6,7 +6,8 @@
     "scripts": {
         "start": "nodemon",
         "test": "exit 0",
-        "json": "rm -r ./js && tsc  && node ./js/scripts/json_plugins.js && git add dist && git add js/plugins"
+        "json": "tsc  && node ./js/scripts/json_plugins.js && git add dist && git add js/plugins",
+        "generate": "ts-node ./scripts/multisrc/generate.ts"
     },
     "author": "",
     "license": "MIT",
@@ -37,5 +38,10 @@
     },
     "pre-commit": [
         "json"
-    ]
+    ],
+    "eslintConfig": {
+        "ignorePatterns": [
+            "**/*.broken"
+        ]
+    }
 }

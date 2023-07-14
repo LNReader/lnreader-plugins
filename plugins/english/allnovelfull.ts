@@ -1,7 +1,6 @@
 import { load as cheerioload } from "cheerio";
-import fetchApi from "@libs/fetchApi";
 import { Chapter, Novel, Plugin } from "@typings/plugin";
-import fetchFile from "@libs/fetchFile";
+import { fetchApi, fetchFile } from "@libs/fetch";
 
 export const id = "ANF.com";
 export const name = "AllNovelFull";

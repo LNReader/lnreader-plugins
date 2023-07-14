@@ -80,14 +80,7 @@ export const isPlugin = (p: any): p is Plugin.instance => {
     const pl = p as Plugin.instance;
 
     const errorOut = (key: string) => {
-        console.error(
-            "=".repeat(6) +
-                `Plugin doesn't have ${key}!` +
-                "=".repeat(6) +
-                "\n" +
-                JSON.stringify(pl) +
-                "=".repeat(6)
-        );
+        console.error(`Plugin ${pl.name} doesn't have ${key}!`);
         return false;
     };
 

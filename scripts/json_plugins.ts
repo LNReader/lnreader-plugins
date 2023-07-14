@@ -4,17 +4,17 @@ import * as fs from "fs";
 import { languages } from "@libs/languages";
 import * as path from "path";
 import { Plugin, isPlugin } from "@typings/plugin";
+
+import config from "./../config.json";
+
 const root = path.dirname(__dirname);
 const outRoot = path.join(root, "..");
-const config = fs.existsSync(path.join(outRoot, "config.json"))
-    ? // @ts-ignore
-      require("../../config.json")
-    : {};
 const username = config.githubUsername;
 const repo = config.githubRepository;
 const branch = config.githubBranch;
 if (!username || !repo || !branch) {
-    process.exit();
+    console.error("config.json not provided!");
+    process.exit(1);
 }
 if (!fs.existsSync(path.join(outRoot, "dist", username))) {
     fs.mkdirSync(path.join(outRoot, "dist", username));
@@ -46,13 +46,19 @@ for (let language in languages) {
     json[languageNative] = [];
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
+        if (plugin.endsWith("broken")) {
+            console.log(`${plugin} is broken and requires author's attention!`);
+        }
         const instance:
             | Plugin.instance
             | unknown = require(`../plugins/${language.toLowerCase()}/${
             plugin.split(".")[0]
         }`);
 
-        if (!isPlugin(instance)) return;
+        if (!isPlugin(instance)) {
+            console.log(plugin);
+            return;
+        }
 
         const { id, name, site, version, icon } = instance;
         const info = {
@@ -65,15 +71,15 @@ for (let language in languages) {
             iconUrl: `${githubIconsLink}/${icon}`,
         } as const;
 
-        if(pluginSet.has(id)){
+        if (pluginSet.has(id)) {
             console.log("There's already a plugin with id:", id);
             throw new Error("2 or more plugins have the same id");
-        }else{
+        } else {
             pluginSet.add(id);
         }
 
         json[languageNative].push(info);
-        console.log("Collected", name);
+        console.log(name, "✅");
     });
 }
 

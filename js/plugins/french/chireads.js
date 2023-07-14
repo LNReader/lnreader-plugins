@@ -8,104 +8,106 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const pluginId = 'chireads.com';
-const sourceName = 'Chireads';
-const baseUrl = 'https://chireads.com/';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+exports.id = "chireads.com";
+exports.name = "Chireads";
+exports.site = "https://chireads.com/";
+exports.version = "1.0.0";
+exports.icon = "src/fr/chireads/icon.png";
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}category/translatedtales/page/${page}/`;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('#content li').each(function () {
-            const novelName = loadedCheerio(this).find('.news-list-tit h5').text();
-            const novelCover = loadedCheerio(this).find('img').attr('src');
+        loadedCheerio("#content li").each(function () {
+            const novelName = loadedCheerio(this).find(".news-list-tit h5").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
             const novelUrl = loadedCheerio(this)
-                .find('.news-list-tit h5 a')
-                .attr('href');
+                .find(".news-list-tit h5 a")
+                .attr("href");
+            if (!novelUrl)
+                return;
             const novel = { name: novelName, cover: novelCover, url: novelUrl };
             novels.push(novel);
         });
         return novels;
     });
-}
-;
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
+        let loadedCheerio = (0, cheerio_1.load)(body);
         let novel = {
             url,
-            name: '',
-            cover: '',
-            author: '',
-            artist: '',
-            status: '',
-            genres: '',
-            summary: '',
+            name: "",
+            cover: "",
+            author: "",
+            status: "",
+            genres: "",
+            summary: "",
             chapters: [],
         };
-        novel.name = loadedCheerio('.inform-title').text().trim();
-        novel.cover = loadedCheerio('.inform-product img').attr('src');
-        novel.summary = loadedCheerio('.inform-inform-txt').text().trim();
+        novel.name = loadedCheerio(".inform-title").text().trim();
+        novel.cover = loadedCheerio(".inform-product img").attr("src");
+        novel.summary = loadedCheerio(".inform-inform-txt").text().trim();
         let chapters = [];
-        loadedCheerio('.chapitre-table a').each(function () {
+        loadedCheerio(".chapitre-table a").each(function () {
             const chapterName = loadedCheerio(this).text().trim();
             const releaseDate = null;
-            const chapterUrl = loadedCheerio(this).attr('href');
-            chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+            const chapterUrl = loadedCheerio(this).attr("href");
+            if (!chapterUrl)
+                return;
+            chapters.push({
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
+            });
         });
         novel.chapters = chapters;
         return novel;
     });
-}
-;
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = chapterUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
-        const chapterText = loadedCheerio('#content').html();
+        let loadedCheerio = (0, cheerio_1.load)(body);
+        const chapterText = loadedCheerio("#content").html();
         return chapterText;
     });
-}
-;
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${baseUrl}search?x=0&y=0&name=${searchTerm}`;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        let loadedCheerio = cheerio.load(body);
+        let loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('#content li').each(function () {
-            const novelName = loadedCheerio(this).find('.news-list-tit h5').text();
-            const novelCover = loadedCheerio(this).find('img').attr('src');
+        loadedCheerio("#content li").each(function () {
+            const novelName = loadedCheerio(this).find(".news-list-tit h5").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
             const novelUrl = loadedCheerio(this)
-                .find('.news-list-tit h5 a')
-                .attr('href');
+                .find(".news-list-tit h5 a")
+                .attr("href");
+            if (!novelUrl)
+                return;
             const novel = { name: novelName, cover: novelCover, url: novelUrl };
             novels.push(novel);
         });
         return novels;
     });
-}
-;
-module.exports = {
-    id: pluginId,
-    name: sourceName,
-    site: baseUrl,
-    version: '1.0.0',
-    icon: 'src/fr/chireads/icon.png',
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-    fetchImage: fetchFile,
 };
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;

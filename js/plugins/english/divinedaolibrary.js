@@ -8,26 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const cheerio = require('cheerio');
-const fetchApi = require('@libs/fetchApi');
-const fetchFile = require('@libs/fetchFile');
-const defaultCoverUri = 'https://github.com/LNReader/lnreader-sources/blob/main/icons/src/coverNotAvailable.jpg?raw=true';
-const pluginId = 'DDL.com';
-const sourceName = 'Divine Dao Library';
-const baseUrl = 'https://www.divinedaolibrary.com/';
-function popularNovels(page) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
+const cheerio_1 = require("cheerio");
+const fetch_1 = require("@libs/fetch");
+const defaultCover_1 = require("@libs/defaultCover");
+exports.id = "DDL.com";
+exports.name = "Divine Dao Library";
+exports.site = "https://www.divinedaolibrary.com/";
+exports.version = "1.0.0";
+exports.icon = "src/`en/divinedaolibrary/icon.png";
+const baseUrl = exports.site;
+const popularNovels = function (page) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + 'novels';
-        const result = yield fetchApi(url);
+        let url = baseUrl + "novels";
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('#main')
-            .find('li')
+        loadedCheerio("#main")
+            .find("li")
             .each(function () {
-            const novelName = loadedCheerio(this).find('a').text();
-            const novelCover = defaultCoverUri;
-            const novelUrl = loadedCheerio(this).find(' a').attr('href');
+            const novelName = loadedCheerio(this).find("a").text();
+            const novelCover = defaultCover_1.defaultCover;
+            const novelUrl = loadedCheerio(this).find(" a").attr("href");
+            if (!novelUrl)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -37,70 +43,77 @@ function popularNovels(page) {
         });
         return novels;
     });
-}
-;
-function parseNovelAndChapters(novelUrl) {
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novel = { url };
-        novel.name = loadedCheerio('h1.entry-title').text().trim();
+        novel.name = loadedCheerio("h1.entry-title").text().trim();
         novel.cover =
-            loadedCheerio('.entry-content').find('img').attr('data-ezsrc') || defaultCoverUri;
-        novel.summary = loadedCheerio('#main > article > div > p:nth-child(6)')
+            loadedCheerio(".entry-content").find("img").attr("data-ezsrc") ||
+                defaultCover_1.defaultCover;
+        novel.summary = loadedCheerio("#main > article > div > p:nth-child(6)")
             .text()
             .trim();
-        novel.genres = null;
-        novel.status = null;
-        novel.author = loadedCheerio('#main > article > div > h3:nth-child(2)')
+        novel.author = loadedCheerio("#main > article > div > h3:nth-child(2)")
             .text()
-            .replace(/Author:/g, '')
+            .replace(/Author:/g, "")
             .trim();
         let novelChapters = [];
-        loadedCheerio('#main')
-            .find('li > span > a')
+        loadedCheerio("#main")
+            .find("li > span > a")
             .each(function () {
             const chapterName = loadedCheerio(this).text().trim();
             const releaseDate = null;
-            const chapterUrl = loadedCheerio(this).attr('href');
-            novelChapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+            const chapterUrl = loadedCheerio(this).attr("href");
+            if (!chapterUrl)
+                return;
+            novelChapters.push({
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
+            });
         });
         novel.chapters = novelChapters;
         return novel;
     });
-}
-;
-function parseChapter(chapterUrl) {
+};
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = chapterUrl;
-        const result = yield fetchApi(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
-        let chapterName = loadedCheerio('.entry-title').text().trim();
-        let chapterText = loadedCheerio('.entry-content').html();
+        const loadedCheerio = (0, cheerio_1.load)(body);
+        let chapterName = loadedCheerio(".entry-title").text().trim();
+        let chapterText = loadedCheerio(".entry-content").html();
         if (!chapterText) {
-            chapterText = loadedCheerio('.page-header').html();
+            chapterText = loadedCheerio(".page-header").html();
         }
         chapterText = `<p><h1>${chapterName}</h1></p>` + chapterText;
         return chapterText;
     });
-}
-;
-function searchNovels(searchTerm) {
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + 'novels';
-        const result = yield fetchApi(url);
+        let url = baseUrl + "novels";
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = (0, cheerio_1.load)(body);
         let novels = [];
-        loadedCheerio('#main')
-            .find('li')
+        loadedCheerio("#main")
+            .find("li")
             .each(function () {
-            const novelName = loadedCheerio(this).find('a').text();
-            const novelCover = defaultCoverUri;
-            const novelUrl = loadedCheerio(this).find(' a').attr('href');
+            const novelName = loadedCheerio(this).find("a").text();
+            const novelCover = defaultCover_1.defaultCover;
+            const novelUrl = loadedCheerio(this).find(" a").attr("href");
+            if (!novelUrl)
+                return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -108,20 +121,14 @@ function searchNovels(searchTerm) {
             };
             novels.push(novel);
         });
-        novels = novels.filter(novel => novel.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        novels = novels.filter((novel) => novel.name.toLowerCase().includes(searchTerm.toLowerCase()));
         return novels;
     });
-}
-;
-module.exports = {
-    id: pluginId,
-    name: sourceName,
-    site: baseUrl,
-    version: '1.0.0',
-    icon: 'src/en/divinedaolibrary/icon.png',
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-    fetchImage: fetchFile,
 };
+exports.searchNovels = searchNovels;
+const fetchImage = function (url, init) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield (0, fetch_1.fetchFile)(url, init);
+    });
+};
+exports.fetchImage = fetchImage;

@@ -1,13 +1,87 @@
 {
+	"العربية": [
+		{
+			"id": "ar-mtl",
+			"name": "ArMTL [madara]",
+			"site": "https://ar-mtl.club/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/ArMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/armtl.png"
+		},
+		{
+			"id": "arnovel",
+			"name": "ArNovel [madara]",
+			"site": "https://arnovel.me/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/ArNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/arnovel.png"
+		},
+		{
+			"id": "hizomanga",
+			"name": "HizoManga [madara]",
+			"site": "https://hizomanga.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/HizoManga[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/hizomanga.png"
+		},
+		{
+			"id": "kolnovel",
+			"name": "KolNovel",
+			"site": "https://kolnovel.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/kolnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/wpmangastream/icons/kolnovel.png"
+		},
+		{
+			"id": "novel4up",
+			"name": "Novel4Up [madara]",
+			"site": "https://novel4up.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/Novel4Up[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/novel4up.png"
+		},
+		{
+			"id": "riwyat",
+			"name": "Riwyat [madara]",
+			"site": "https://riwyat.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/Riwyat[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/riwyat.png"
+		},
+		{
+			"id": "teamxnovel",
+			"name": "TeamXNovel [madara]",
+			"site": "https://teamxnovel.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/arabic/TeamXNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/teamxnovel.png"
+		}
+	],
 	"English": [
+		{
+			"id": "1stkissnovel",
+			"name": "FirstKissNovel [madara]",
+			"site": "https://1stkissnovel.org/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/FirstKissNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/firstkissnovel.png"
+		},
 		{
 			"id": "ANF.com",
 			"name": "AllNovelFull",
 			"site": "https://allnovelfull.com",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/allnovelfull.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/allnovelfull/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/allnovelfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/allnovelfull/icon.png"
 		},
 		{
 			"id": "BLN.com",
@@ -15,8 +89,26 @@
 			"site": "https://bestlightnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/bestlightnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/bestlightnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/bestlightnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/bestlightnovel/icon.png"
+		},
+		{
+			"id": "boxnovel",
+			"name": "BoxNovel [madara]",
+			"site": "https://boxnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/BoxNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/boxnovel.png"
+		},
+		{
+			"id": "clicknovel",
+			"name": "ClickNovel [madara]",
+			"site": "https://clicknovel.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/ClickNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/clicknovel.png"
 		},
 		{
 			"id": "comrademao",
@@ -24,8 +116,26 @@
 			"site": "https://comrademao.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/comrademao.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/comrademao/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/comrademao.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/comrademao/icon.png"
+		},
+		{
+			"id": "cratenovel",
+			"name": "CrateNovel [madara]",
+			"site": "https://cratenovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/CrateNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/cratenovel.png"
+		},
+		{
+			"id": "daonovel",
+			"name": "DaoNovel [madara]",
+			"site": "https://daonovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/DaoNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/daonovel.png"
 		},
 		{
 			"id": "DDL.com",
@@ -33,8 +143,35 @@
 			"site": "https://www.divinedaolibrary.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/divinedaolibrary.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/divinedaolibrary/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/divinedaolibrary.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/`en/divinedaolibrary/icon.png"
+		},
+		{
+			"id": "earlynovel",
+			"name": "Early Novel",
+			"site": "https://earlynovel.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/earlynovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/latestnovel.png"
+		},
+		{
+			"id": "fanTLS",
+			"name": "Fans Translations [madara]",
+			"site": "https://fanstranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/FansTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/fanstranslations.png"
+		},
+		{
+			"id": "fastnovel",
+			"name": "Fast Novel",
+			"site": "https://fastnovel.org/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/fastnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/fastnovel/icon.png"
 		},
 		{
 			"id": "foxaholic",
@@ -42,8 +179,26 @@
 			"site": "https://www.foxaholic.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/foxaholic.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/foxaholic/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/foxaholic.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/foxaholic/icon.png"
+		},
+		{
+			"id": "freenovel.me",
+			"name": "FreeNovelMe [madara]",
+			"site": "https://freenovel.me/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/FreeNovelMe[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/freenovelme.png"
+		},
+		{
+			"id": "freenovelupdates",
+			"name": "Free Novel Updates (Broken)",
+			"site": "https://www.freenovelupdates.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/freenovelupdates.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/freenovelupdates/icon.png"
 		},
 		{
 			"id": "FWN.com",
@@ -51,8 +206,17 @@
 			"site": "https://freewebnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/freewebnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/freewebnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/freewebnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/freewebnovel/icon.png"
+		},
+		{
+			"id": "guavaread",
+			"name": "Guavaread [madara]",
+			"site": "https://guavaread.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/Guavaread[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/guavaread.png"
 		},
 		{
 			"id": "lightnovelpub",
@@ -60,26 +224,80 @@
 			"site": "https://www.lightnovelpub.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/lightnovelpub.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/lightnovelpub/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/lightnovelpub.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/lightnovelpub/icon.png"
 		},
 		{
-			"id": "lnmtl",
-			"name": "LNMTL",
-			"site": "https://lnmtl.com/",
+			"id": "lnheaven",
+			"name": "LightNovelHeaven [madara]",
+			"site": "https://lightnovelheaven.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/lnmtl.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/lnmtl/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/LightNovelHeaven[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
-			"id": "LNR.org",
-			"name": "LightNovelReader",
-			"site": "https://lightnovelreader.org",
+			"id": "lunarletters",
+			"name": "LunarLetters [madara]",
+			"site": "https://www.lunarletters.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/LightNovelReader.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/lightnovelreader/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/LunarLetters[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/lunarletters.png"
+		},
+		{
+			"id": "mostnovel",
+			"name": "MostNovel [madara]",
+			"site": "https://mostnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/MostNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/mostnovel.png"
+		},
+		{
+			"id": "mtl-novel",
+			"name": "MTL-Novel [madara]",
+			"site": "https://mtl-novel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/MTLNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/mtl-novel.png"
+		},
+		{
+			"id": "mtlnovel.club",
+			"name": "MTLNovel.Club [madara]",
+			"site": "https://mtlnovel.club/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/MTLNovelClub[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/mtlnovel.club.png"
+		},
+		{
+			"id": "mtlreader",
+			"name": "MTL Reader",
+			"site": "https://mtlreader.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/mtlreader.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/mtlreader/icon.png"
+		},
+		{
+			"id": "mysticalmerries",
+			"name": "MysticalSeries [madara]",
+			"site": "https://mysticalmerries.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/MysticalSeries[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/mysticalseries.png"
+		},
+		{
+			"id": "neosekaiTLS",
+			"name": "NeoSekai Translations [madara]",
+			"site": "https://www.neosekaitranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NeoSekaiTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
 			"id": "NF.me",
@@ -87,8 +305,17 @@
 			"site": "https://novelfull.me/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/NovelFullMe.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/novelfullme/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NovelFullMe.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/novelfullme/icon.png"
+		},
+		{
+			"id": "nitroscans",
+			"name": "Nitroscans",
+			"site": "https://nitroscans.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/nitroscans.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/nitroscans/icon.png"
 		},
 		{
 			"id": "NO.net",
@@ -96,8 +323,8 @@
 			"site": "https://novelsonline.net",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/NovelOnline.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/coverNotAvailable.jpg"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NovelOnline.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/coverNotAvailable.jpg"
 		},
 		{
 			"id": "NobleMTL",
@@ -105,8 +332,62 @@
 			"site": "https://www.noblemtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/nobleMTL.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/noblemtl/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/nobleMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/noblemtl/icon.png"
+		},
+		{
+			"id": "nocturneTLS",
+			"name": "Nocturne Translations [madara]",
+			"site": "https://nocturnetls.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NocturneTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/nocturnetranslations.png"
+		},
+		{
+			"id": "noobchanTL",
+			"name": "Noobchan Translation [madara]",
+			"site": "https://noobchan.xyz/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NoobchanTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/noobchantranslation.png"
+		},
+		{
+			"id": "novelforest",
+			"name": "Novel Forest (Broken)",
+			"site": "https://novelforest.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/novelforest.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/novelforest/icon.png"
+		},
+		{
+			"id": "novelfull",
+			"name": "NovelFull",
+			"site": "https://novelfull.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/novelfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/novelfull/icon.png"
+		},
+		{
+			"id": "novelhold",
+			"name": "Novel Hold",
+			"site": "https://novelhold.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/novelhold.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/novelhold/icon.png"
+		},
+		{
+			"id": "novelmultiverse",
+			"name": "NovelMultiverse [madara]",
+			"site": "https://www.novelmultiverse.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NovelMultiverse[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/novelmultiverse.png"
 		},
 		{
 			"id": "novelpub.com",
@@ -114,17 +395,53 @@
 			"site": "https://www.novelpub.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/novelpub.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/novelpub/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/novelpub.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/novelpub/icon.png"
 		},
 		{
-			"id": "novelupdates",
-			"name": "Novel Updates",
-			"site": "https://www.novelupdates.com/",
+			"id": "novelr18",
+			"name": "NovelR18  [madara]",
+			"site": "https://novelr18.com/",
 			"lang": "English",
-			"version": "0.5.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/novelupdates.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/novelupdates/icon.png"
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NovelR18[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/novelr18.png"
+		},
+		{
+			"id": "novelroom",
+			"name": "Novelroom.net [madara]",
+			"site": "https://novelroom.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/Novelroomnet[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/novelroom.net.png"
+		},
+		{
+			"id": "novelstic",
+			"name": "Novelstic [madara]",
+			"site": "https://novelstic.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/Novelstic[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/novelstic.png"
+		},
+		{
+			"id": "novelTL",
+			"name": "NovelTranslate [madara]",
+			"site": "https://noveltranslate.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/NovelTranslate[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/noveltranslate.png"
+		},
+		{
+			"id": "onlymtl",
+			"name": "OnlyMTL [madara]",
+			"site": "https://www.onlymtl.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/OnlyMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/onlymtl.png"
 		},
 		{
 			"id": "PandaMTL",
@@ -132,17 +449,89 @@
 			"site": "https://www.pandamtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/pandaMTL.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/wordpress/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/pandaMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/en/wordpress/icon.png"
 		},
 		{
-			"id": "wuxiaworld",
-			"name": "Wuxia World (WIP)",
-			"site": "https://www.wuxiaworld.com/",
+			"id": "readwebnovels",
+			"name": "ReadWebNovels [madara]",
+			"site": "https://readwebnovels.net/",
 			"lang": "English",
-			"version": "0.5.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/english/wuxiaworld.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/en/wuxiaworld/icon.png"
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/ReadWebNovels[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/readwebnovels.png"
+		},
+		{
+			"id": "sleeptTLS",
+			"name": "SleepyTranslations [madara]",
+			"site": "https://sleepytranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/SleepyTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/sleepytranslations.png"
+		},
+		{
+			"id": "sonicmtl",
+			"name": "SonicMTL [madara]",
+			"site": "https://www.sonicmtl.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/SonicMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/sonicmtl.png"
+		},
+		{
+			"id": "sugarbbscan",
+			"name": "Sugar Babies [madara]",
+			"site": "https://sugarbbscan.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/SugarBabies[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/sugarbabies.png"
+		},
+		{
+			"id": "sweetEscapeTL",
+			"name": "Sweet Escape Translations [madara]",
+			"site": "https://sweetescapetranslations.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/SweetEscapeTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/sweetescapetranslations.png"
+		},
+		{
+			"id": "webnovelover",
+			"name": "WebNovelLover [madara]",
+			"site": "https://www.webnovelover.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/WebNovelLover[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/webnovellover.png"
+		},
+		{
+			"id": "wuxiaworld.site",
+			"name": "WuxiaWorld.Site [madara]",
+			"site": "https://wuxiaworld.site/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/WuxiaWorldSite[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/wuxiaworld.site.png"
+		},
+		{
+			"id": "zetroTL",
+			"name": "Zetro Translation [madara]",
+			"site": "https://zetrotranslation.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/ZetroTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/zetrotranslation.png"
+		},
+		{
+			"id": "zinnovel",
+			"name": "ZinnNovel [madara]",
+			"site": "https://zinnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/english/ZinnNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/zinnnovel.png"
 		}
 	],
 	"français, française": [
@@ -152,17 +541,8 @@
 			"site": "https://chireads.com/",
 			"lang": "français, française",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/french/chireads.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/fr/chireads/icon.png"
-		},
-		{
-			"id": "NDG.com",
-			"name": "NovelDeGlace",
-			"site": "https://noveldeglace.com/",
-			"lang": "français, française",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/french/noveldeglace.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/fr/noveldeglace/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/french/chireads.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/fr/chireads/icon.png"
 		}
 	],
 	"Bahasa Indonesia": [
@@ -172,8 +552,26 @@
 			"site": "https://indowebnovel.id/id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/indonesian/indowebnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/id/indowebnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/indowebnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/id/indowebnovel/icon.png"
+		},
+		{
+			"id": "meionovel",
+			"name": "MeioNovel [madara]",
+			"site": "https://meionovel.id/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/MeioNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/meionovel.png"
+		},
+		{
+			"id": "morenovel",
+			"name": "MoreNovel [madara]",
+			"site": "https://morenovel.net/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/MoreNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/morenovel.png"
 		},
 		{
 			"id": "novelringan.com",
@@ -181,8 +579,8 @@
 			"site": "https://novelringan.com/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/indonesian/novelringan.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/id/novelringan/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/novelringan.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/id/novelringan/icon.png"
 		},
 		{
 			"id": "sakura.id",
@@ -190,8 +588,17 @@
 			"site": "https://sakuranovel.id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/indonesian/sakuranovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/id/sakuranovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/sakuranovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/id/sakuranovel/icon.png"
+		},
+		{
+			"id": "wbnovel",
+			"name": "WBNovel [madara]",
+			"site": "https://wbnovel.com/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/indonesian/WBNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/wbnovel.png"
 		}
 	],
 	"日本語": [
@@ -201,131 +608,41 @@
 			"site": "https//yomou.syosetu.com/",
 			"lang": "日本語",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/japanese/Syosetu.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/jp/syosetu/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/japanese/Syosetu.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/jp/syosetu/icon.png"
 		}
 	],
-	"한국어, 조선말": [
+	"Português": [
 		{
-			"id": "agit.xyz",
-			"name": "Agitoon",
-			"site": "https://agit501.xyz/",
-			"lang": "한국어, 조선말",
+			"id": "lightnovelbrasil",
+			"name": "Light Novel Brasil",
+			"site": "https://lightnovelbrasil.com/",
+			"lang": "Português",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/korean/Agitoon.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/kr/agitoon/agit.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/portuguese/lightnovelbrasil.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/wpmangastream/icons/lightnovelbrasil.png"
 		}
 	],
 	"русский язык": [
-		{
-			"id": "AT",
-			"name": "Автор Тудей",
-			"site": "https://author.today",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/authortoday.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/authortoday/icon.png"
-		},
-		{
-			"id": "bookriver",
-			"name": "Bookriver",
-			"site": "https://bookriver.ru",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/bookriver.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/bookriver/icon.png"
-		},
-		{
-			"id": "EROLATE",
-			"name": "Erolate",
-			"site": "https://erolate.com",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/erolate.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/erolate/icon.png"
-		},
 		{
 			"id": "jaomix.ru",
 			"name": "Jaomix",
 			"site": "https://jaomix.ru",
 			"lang": "русский язык",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/jaomix.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/jaomix/icon.png"
-		},
-		{
-			"id": "ReN",
-			"name": "Renovels",
-			"site": "https://renovels.org",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/renovels.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/renovels/icon.png"
-		},
-		{
-			"id": "RLIB",
-			"name": "RanobeLib",
-			"site": "https://ranobelib.me",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/ranobelib.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/ranobelib/icon.png"
-		},
-		{
-			"id": "RNBH.org",
-			"name": "RanobeHub",
-			"site": "https://ranobehub.org/",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/ranobehub.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/ranobehub/icon.png"
-		},
-		{
-			"id": "RNRF",
-			"name": "РанобэРФ",
-			"site": "https://ранобэ.рф",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/ranoberf.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/ranoberf/icon.png"
-		},
-		{
-			"id": "RULATE",
-			"name": "Rulate",
-			"site": "https://tl.rulate.ru",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/rulate.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/rulate/icon.png"
-		},
-		{
-			"id": "TL",
-			"name": "NovelTL",
-			"site": "https://novel.tl",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/russian/novelTL.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/ru/noveltl/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/russian/jaomix.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/ru/jaomix/icon.png"
 		}
 	],
 	"español, castellano": [
-		{
-			"id": "awuxia.com",
-			"name": "ReinoWuxia",
-			"site": "http://www.reinowuxia.com/",
-			"lang": "español, castellano",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/novelawuxia.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/novelawuxia/icon.png"
-		},
 		{
 			"id": "HasuTL",
 			"name": "Hasu Translations",
 			"site": "https://hasutl.wordpress.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/hasutl.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/hasutl/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/spanish/hasutl.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/es/hasutl/icon.png"
 		},
 		{
 			"id": "ligera.com",
@@ -333,26 +650,8 @@
 			"site": "https://novelasligera.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/novelasligera.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/novelasligera/icon.png"
-		},
-		{
-			"id": "oasisTL.wp",
-			"name": "Oasis Translations",
-			"site": "https://oasistranslations.wordpress.com/",
-			"lang": "español, castellano",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/oasistranslations.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/oasistranslations/icon.png"
-		},
-		{
-			"id": "skynovels.net",
-			"name": "SkyNovels",
-			"site": "https://www.skynovels.net/",
-			"lang": "español, castellano",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/skynovels.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/skynovels/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/spanish/novelasligera.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/es/novelasligera/icon.png"
 		},
 		{
 			"id": "TNL.com",
@@ -360,8 +659,8 @@
 			"site": "https://tunovelaligera.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/tunovelaligera.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/tunovelaligera/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/spanish/tunovelaligera.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/es/tunovelaligera/icon.png"
 		},
 		{
 			"id": "yuukitls.com",
@@ -369,8 +668,8 @@
 			"site": "https://yuukitls.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/spanish/yukitls.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/es/yuukitls/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/spanish/yukitls.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/es/yuukitls/icon.png"
 		}
 	],
 	"Türkçe": [
@@ -380,8 +679,35 @@
 			"site": "https://www.epiknovel.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/turkish/epiknovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/tr/epiknovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/turkish/epiknovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/tr/epiknovel/icon.png"
+		},
+		{
+			"id": "lshnovel",
+			"name": "Liebe Schnee Hiver Novel",
+			"site": "https://lshnovel.com/",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/turkish/lshnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/wpmangastream/icons/lshnovel.png"
+		},
+		{
+			"id": "turkcelightnovels",
+			"name": "TurkceLightNovels [madara]",
+			"site": "https://turkcelightnovels.com/",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/turkish/TurkceLightNovels[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/turkcelightnovels.png"
+		},
+		{
+			"id": "webnoveloku",
+			"name": "WebNovelOku  [madara]",
+			"site": "https://www.webnoveloku.com/",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/turkish/WebNovelOku[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/multisrc/madara/icons/webnoveloku.png"
 		}
 	],
 	"Tiếng Việt": [
@@ -391,8 +717,8 @@
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/js/plugins/vietnamese/LNHako.js",
-			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/tssupport/icons/src/vi/hakolightnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/js/plugins/vietnamese/LNHako.js",
+			"iconUrl": "https://raw.githubusercontent.com/SkillGG/lnreader-plugins/ts-support/icons/src/vi/hakolightnovel/icon.png"
 		}
 	]
 }

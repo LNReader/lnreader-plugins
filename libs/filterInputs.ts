@@ -13,4 +13,3 @@ export interface Filter {
     values: FilterValue[];
     inputType: FilterInputs;
 }
-export default FilterInputs;

@@ -8,15 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.icon = exports.version = exports.name = exports.id = void 0;
 const cheerio_1 = require("cheerio");
-const fetchApi_1 = __importDefault(require("@libs/fetchApi"));
-const fetchFile_1 = __importDefault(require("@libs/fetchFile"));
-const filterInputs_1 = __importDefault(require("@libs/filterInputs"));
+const fetch_1 = require("@libs/fetch");
+const filterInputs_1 = require("@libs/filterInputs");
 exports.id = "NobleMTL";
 exports.name = "NobleMTL";
 exports.version = "1.0.0";
@@ -37,7 +33,7 @@ const popularNovels = function (page, { filters }) {
         }
         link += "&status=" + ((filters === null || filters === void 0 ? void 0 : filters.status) ? filters === null || filters === void 0 ? void 0 : filters.status : "");
         link += "&order=" + ((filters === null || filters === void 0 ? void 0 : filters.order) ? filters === null || filters === void 0 ? void 0 : filters.order : "popular");
-        const body = yield (0, fetchApi_1.default)(link).then((result) => result.text());
+        const body = yield (0, fetch_1.fetchApi)(link).then((result) => result.text());
         const loadedCheerio = (0, cheerio_1.load)(body);
         const novels = [];
         loadedCheerio("article.bs").each(function () {
@@ -61,7 +57,7 @@ exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function parseNovelAndChapters(novelUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = novelUrl;
-        const result = yield (0, fetchApi_1.default)(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
         let loadedCheerio = (0, cheerio_1.load)(body);
         const novel = {
@@ -130,7 +126,7 @@ const parseNovelAndChapters = function parseNovelAndChapters(novelUrl) {
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield (0, fetchApi_1.default)(chapterUrl);
+        const result = yield (0, fetch_1.fetchApi)(chapterUrl);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         let chapterText = loadedCheerio("div.epcontent").html();
@@ -141,7 +137,7 @@ exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${exports.site}?s=${searchTerm}`;
-        const result = yield (0, fetchApi_1.default)(url);
+        const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         const novels = [];
@@ -166,7 +162,7 @@ const fetchImage = function (url) {
         const headers = {
             Referer: exports.site,
         };
-        return yield (0, fetchFile_1.default)(url, { headers: headers });
+        return yield (0, fetch_1.fetchFile)(url, { headers: headers });
     });
 };
 exports.fetchImage = fetchImage;
@@ -182,7 +178,7 @@ exports.filters = [
             { label: "Latest Added", value: "latest" },
             { label: "Popular", value: "popular" },
         ],
-        inputType: filterInputs_1.default.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "status",
@@ -193,7 +189,7 @@ exports.filters = [
             { label: "Hiatus", value: "hiatus" },
             { label: "Completed", value: "completed" },
         ],
-        inputType: filterInputs_1.default.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "type",
@@ -206,7 +202,7 @@ exports.filters = [
             { label: "삼심", value: "%ec%82%bc%ec%8b%ac" },
             { label: "호곡", value: "%ed%98%b8%ea%b3%a1" },
         ],
-        inputType: filterInputs_1.default.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "genres",
@@ -299,6 +295,6 @@ exports.filters = [
             { label: "Yandere", value: "yandere" },
             { label: "Yuri", value: "yuri" },
         ],
-        inputType: filterInputs_1.default.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
 ];
