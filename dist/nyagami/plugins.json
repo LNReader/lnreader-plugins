@@ -643,6 +643,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
 		},
 		{
+			"id": "erolate",
+			"name": "Erolate",
+			"site": "https://erolate.com",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/Erolate[rulate].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+		},
+		{
 			"id": "jaomix.ru",
 			"name": "Jaomix",
 			"site": "https://jaomix.ru",
@@ -739,6 +748,15 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/snailulitkanoveltl[noveltl].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+		},
+		{
+			"id": "tl.rulate",
+			"name": "Rulate",
+			"site": "https://tl.rulate.ru",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/Rulate[rulate].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
 		},
 		{

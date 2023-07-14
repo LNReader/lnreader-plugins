@@ -22,6 +22,10 @@ const generate = async (name: string): Promise<boolean> => {
 
     for (let source of sources) {
         const { lang, filename, pluginScript } = source;
+        if(!lang || !filename || !pluginScript){
+            console.warn(name, ": lang, filename, pluginScript are required!");
+            continue;
+        }
         const pluginsDir = path.join(
             path.dirname(path.dirname(__dirname)),
             "plugins"
