@@ -733,6 +733,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
 		},
 		{
+			"id": "snailulitka.novel",
+			"name": "Snailulitka",
+			"site": "https://snailulitka.novel.tl",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/snailulitkanoveltl[noveltl].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+		},
+		{
 			"id": "tsundoku.novel",
 			"name": "TsundokuTrans",
 			"site": "https://tsundoku.novel.tl",
@@ -748,15 +757,6 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/ukrnoveltl[noveltl].js",
-			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
-		},
-		{
-			"id": "undefined",
-			"name": "Snailulitka",
-			"site": "https://snailulitka.novel.tl",
-			"lang": "русский язык",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/russian/snailulitkanoveltl[noveltl].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
 		}
 	],

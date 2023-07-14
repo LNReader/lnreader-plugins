@@ -11,7 +11,7 @@
     import { defaultCover } from "@libs/defaultCover";
     
     
-    export const id = "undefined";
+    export const id = "snailulitka.novel";
     export const name = "Snailulitka";
     export const icon = "";
     export const version = "1.0.0";
