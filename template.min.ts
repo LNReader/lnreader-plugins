@@ -1,20 +1,22 @@
-// import * as cheerio from "cheerio";
+// import { load as parseHTML } from "cheerio";
+// import dayjs from 'dayjs';
 import { fetchFile, fetchApi } from "@libs/fetch";
-// import { Filter, FilterInputs } from "@libs/filterInputs";
 import { Novel, Plugin } from "@typings/plugin";
-// const dayjs = require('dayjs');
-// const FilterInputs = require('@libs/filterInputs');
-// const novelStatus = require('@libs/novelStatus');
-// const isUrlAbsolute = require('@libs/isAbsoluteUrl');
-// const parseDate = require('@libs/parseDate');
+// import { parseMadaraDate } from "@libs/parseMadaraDate";
+// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+// import { showToast } from "@libs/showToast";
+// import { Filter, FilterInputs } from "@libs/filterInputs";
+// import { NovelStatus } from '@libs/novelStatus';
+// import { defaultCover } from "@libs/defaultCover";
 
-export const id = ""; // string and must be unique
+
+export const id = "";
 export const name = "Source name";
-export const icon = ""; // The relative path to the icon without @icons . For example: 'src/vi/hakolightnovel/icon.png'
-export const version = "0.0.0"; // xx.xx.xx
-export const site = ""; // the link to the site
+export const icon = "";
+export const version = "0.0.0";
+export const site = "";
 // export const filters: Filter[] = [];
-exports["protected"] = false; // true if this site protect its resources (images) and you have to define headers or smt to bypass
+exports["protected"] = false;
 
 export const popularNovels: Plugin.popularNovels = async (pageNo) => {
     const novels: Novel.Item[] = [];

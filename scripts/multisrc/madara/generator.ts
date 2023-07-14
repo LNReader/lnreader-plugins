@@ -20,7 +20,8 @@ const generator = function generator(sourceJson: sourceData) {
     const useNewChapterEndpoint = options?.useNewChapterEndpoint || false;
     const iconFileName = sourceName.replace(/\s+/g, "").toLowerCase();
 
-    const pluginScript = `import { load as parseHTML } from "cheerio";
+    const pluginScript = `
+import { load as parseHTML } from "cheerio";
 import { fetchFile, fetchApi } from "@libs/fetch";
 import { Novel, Plugin, Chapter } from "@typings/plugin";
 import { defaultCover } from "@libs/defaultCover";

@@ -1,12 +1,13 @@
 // import { load as parseHTML } from "cheerio";
+// import dayjs from 'dayjs';
 import { fetchFile, fetchApi } from "@libs/fetch";
 import { Novel, Plugin } from "@typings/plugin";
+// import { parseMadaraDate } from "@libs/parseMadaraDate";
+// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+// import { showToast } from "@libs/showToast";
 // import { Filter, FilterInputs } from "@libs/filterInputs";
-// import dayjs from 'dayjs';
-// import FilterInputs from '@libs/filterInputs';
-// import novelStatus from '@libs/novelStatus';
-// import isUrlAbsolute from '@libs/isAbsoluteUrl';
-// import parseDate from '@libs/parseDate';
+// import { NovelStatus } from '@libs/novelStatus';
+// import { defaultCover } from "@libs/defaultCover";
 
 export const id = ""; // string and must be unique
 export const name = "Source name";
@@ -53,7 +54,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         /*
     Do something....
     chapter = {
-      name: '',
+      name: '',     chapter name should contain vol, chap num (eg: vol 1 chap 11.5: abcxyz) - it helps a alot in migation
       url: '',      must be absoulute
       releaseTime: '',
     }
@@ -73,7 +74,7 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
     const novels: Novel.Item[] = [];
     /*
     Do something....
-    novel = {
+    const novel = {
       name: '',
       url: '',      must be absolute
       cover: '',    
