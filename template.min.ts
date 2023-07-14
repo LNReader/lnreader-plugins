@@ -1,7 +1,7 @@
 // import { load as parseHTML } from "cheerio";
 // import dayjs from 'dayjs';
 import { fetchFile, fetchApi } from "@libs/fetch";
-import { Novel, Plugin } from "@typings/plugin";
+import { Novel, Plugin, Chapter } from "@typings/plugin";
 // import { parseMadaraDate } from "@libs/parseMadaraDate";
 // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 // import { showToast } from "@libs/showToast";

@@ -237,6 +237,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
+			"id": "Ltnovel.com",
+			"name": "Ltnovel.com",
+			"site": "https://www.ltnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Ltnovelcom[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+		},
+		{
 			"id": "lunarletters",
 			"name": "LunarLetters [madara]",
 			"site": "https://www.lunarletters.com/",
@@ -381,6 +390,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/src/en/novelhold/icon.png"
 		},
 		{
+			"id": "Novelmt.com",
+			"name": "Novelmt.com",
+			"site": "https://www.novelmt.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Novelmtcom[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
+		},
+		{
 			"id": "novelmultiverse",
 			"name": "NovelMultiverse [madara]",
 			"site": "https://www.novelmultiverse.com/",
@@ -460,6 +478,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/ReadWebNovels[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/multisrc/madara/icons/readwebnovels.png"
+		},
+		{
+			"id": "Readwn.com",
+			"name": "Readwn.com",
+			"site": "https://www.readwn.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/js/plugins/english/Readwncom[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/ts-support/icons/"
 		},
 		{
 			"id": "sleeptTLS",

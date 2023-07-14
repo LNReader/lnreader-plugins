@@ -1,20 +1,4 @@
-import { ScrpitGeneratorFunction } from "../generate";
-import list from "./sources.json";
 
-type sourceData = (typeof list)[number];
-
-export const generateAll: ScrpitGeneratorFunction = function () {
-    return list.map((source) => {
-        return generator(source);
-    });
-};
-
-const generator = function generator(sourceJson: sourceData) {
-    const pluginId = sourceJson.id;
-    const sourceName = sourceJson.sourceName;
-    const site = sourceJson.sourceSite;
-
-    const pluginScript = `
     import { load as parseHTML } from "cheerio";
     // import dayjs from 'dayjs';
     import { fetchFile, fetchApi } from "@libs/fetch";
@@ -27,11 +11,11 @@ const generator = function generator(sourceJson: sourceData) {
     // import { defaultCover } from "@libs/defaultCover";
     
     
-    export const id = "${pluginId}";
-    export const name = "${sourceName}";
+    export const id = "Ltnovel.com";
+    export const name = "Ltnovel.com";
     export const icon = "";
     export const version = "1.0.0";
-    export const site = "${site}";
+    export const site = "https://www.ltnovel.com/";
     // export const filters: Filter[] = [];
     exports["protected"] = false;
     
@@ -211,10 +195,4 @@ const generator = function generator(sourceJson: sourceData) {
         return await fetchFile(url, {});
     };
     
-    `
-    return {
-        lang: "English",
-        filename: sourceName,
-        pluginScript,
-    };
-};
+    
