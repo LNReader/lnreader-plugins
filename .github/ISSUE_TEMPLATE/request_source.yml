@@ -1,6 +1,6 @@
 name: Source request
 description: Suggest a new source for LNReader
-labels: [Source Request]
+labels: [Source request]
 body:
   - type: input
     id: name
