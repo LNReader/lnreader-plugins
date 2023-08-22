@@ -113,25 +113,24 @@ const generator = function generator(sourceJson: sourceData) {
         { filters, showLatestNovels }
     ) {
         let url = baseUrl + '/search?t=&cat=2';
-        url += '&sort=' + showLatestNovels ? '4' : filters?.sort || '6';
-        url += '&type=' + filters?.type || '0';
-        url += '&atmosphere=' + filters?.atmosphere || '0';
-        url += '&adult=' + filters?.adult || '0';
-    
+        url += '&sort=' + (showLatestNovels ? '4' : (filters?.sort || '6'));
+        url += '&type=' + (filters?.type || '0');
+        url += '&atmosphere=' + (filters?.atmosphere || '0');
+        url += '&adult=' + (filters?.adult || '0');
+        
         if (filters?.genres instanceof Array) {
-            url += filters.genres.map(i => '&genres[]='+i).join('');
+            url += filters.genres.map(i => '&genres[]=' + i).join('');
         }
-    
+        
         if (filters?.tags instanceof Array) {
-            url += filters.tags.map(i => '&tags[]='+i).join('');
+            url += filters.tags.map(i => '&tags[]=' + i).join('');
         }
-    
+        
         if (filters?.trash instanceof Array) {
-            url += filters.trash.map(i => '&' + i + '=1');
+            url += filters.trash.map(i => '&' + i + '=1').join('');
         }
-    
         url += '&Book_page=' + page;
-    
+
         const result = await fetchApi(url);
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
