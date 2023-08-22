@@ -11,6 +11,7 @@ export const generateAll: ScrpitGeneratorFunction = function () {
 
 const generator = function generator(sourceJson: sourceData) {
     const pluginId = sourceJson.id;
+    const icon = sourceJson.icon;
     const souceName = sourceJson.sourceName;
     const site = sourceJson.sourceSite;
     const filters = sourceJson.filters;
@@ -30,7 +31,7 @@ const generator = function generator(sourceJson: sourceData) {
     
     export const id = "${pluginId}";
     export const name = "${souceName}";
-    export const icon = "";
+    export const icon = "${icon}";
     export const version = "1.0.0";
     export const site = "${site}";
     exports["protected"] = false;
@@ -254,11 +255,14 @@ const generator = function generator(sourceJson: sourceData) {
         }
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
-        
-        
-        const chapterText = loadedCheerio('.content-text').html();
-    
-    
+
+        const chapterText = loadedCheerio('.content-text').html(); 
+        loadedCheerio('.content-text img').each(function () {
+            if (!loadedCheerio(this).attr('src')?.startsWith('http')) {
+                const src = loadedCheerio(this).attr('src');
+                loadedCheerio(this).attr('src', baseUrl + src);
+            }
+        });
         return chapterText;
     };
     

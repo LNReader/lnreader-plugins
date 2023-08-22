@@ -658,7 +658,7 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/Erolate[rulate].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/erolate/icon.png"
 		},
 		{
 			"id": "jaomix.ru",
@@ -685,7 +685,7 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/Rulate[rulate].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/rulate/icon.png"
 		}
 	],
 	"español, castellano": [

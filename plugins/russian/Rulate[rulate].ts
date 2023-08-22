@@ -13,7 +13,7 @@
     
     export const id = "tl.rulate";
     export const name = "Rulate";
-    export const icon = "";
+    export const icon = "src/ru/rulate/icon.png";
     export const version = "1.0.0";
     export const site = "https://tl.rulate.ru";
     exports["protected"] = false;
@@ -237,11 +237,14 @@
         }
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
-        
-        
-        const chapterText = loadedCheerio('.content-text').html();
-    
-    
+
+        const chapterText = loadedCheerio('.content-text').html(); 
+        loadedCheerio('.content-text img').each(function () {
+            if (!loadedCheerio(this).attr('src')?.startsWith('http')) {
+                const src = loadedCheerio(this).attr('src');
+                loadedCheerio(this).attr('src', baseUrl + src);
+            }
+        });
         return chapterText;
     };
     

@@ -13,7 +13,7 @@
     
     export const id = "erolate";
     export const name = "Erolate";
-    export const icon = "";
+    export const icon = "src/ru/erolate/icon.png";
     export const version = "1.0.0";
     export const site = "https://erolate.com";
     exports["protected"] = false;
@@ -237,11 +237,14 @@
         }
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
-        
-        
-        const chapterText = loadedCheerio('.content-text').html();
-    
-    
+
+        const chapterText = loadedCheerio('.content-text').html(); 
+        loadedCheerio('.content-text img').each(function () {
+            if (!loadedCheerio(this).attr('src')?.startsWith('http')) {
+                const src = loadedCheerio(this).attr('src');
+                loadedCheerio(this).attr('src', baseUrl + src);
+            }
+        });
         return chapterText;
     };
     

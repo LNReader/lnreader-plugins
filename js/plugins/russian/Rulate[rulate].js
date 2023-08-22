@@ -21,7 +21,7 @@ const novelStatus_1 = require("@libs/novelStatus");
 // import { defaultCover } from "@libs/defaultCover";
 exports.id = "tl.rulate";
 exports.name = "Rulate";
-exports.icon = "";
+exports.icon = "src/ru/rulate/icon.png";
 exports.version = "1.0.0";
 exports.site = "https://tl.rulate.ru";
 exports["protected"] = false;
@@ -221,6 +221,13 @@ const parseChapter = function (chapterUrl) {
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         const chapterText = loadedCheerio('.content-text').html();
+        loadedCheerio('.content-text img').each(function () {
+            var _a;
+            if (!((_a = loadedCheerio(this).attr('src')) === null || _a === void 0 ? void 0 : _a.startsWith('http'))) {
+                const src = loadedCheerio(this).attr('src');
+                loadedCheerio(this).attr('src', baseUrl + src);
+            }
+        });
         return chapterText;
     });
 };
