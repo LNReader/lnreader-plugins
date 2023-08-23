@@ -17,7 +17,7 @@ const filterInputs_1 = require("@libs/filterInputs");
 const defaultCover_1 = require("@libs/defaultCover");
 const fetch_1 = require("@libs/fetch");
 const novelStatus_1 = require("@libs/novelStatus");
-const cheerio_1 = __importDefault(require("cheerio"));
+const cheerio_1 = require("cheerio");
 const dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "TL";
 exports.name = "NovelTL";
@@ -135,7 +135,7 @@ const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function*
         }),
     });
     const json = (yield result.json());
-    const loadedCheerio = cheerio_1.default.load(json.data.chapter.text.text);
+    const loadedCheerio = (0, cheerio_1.load)(json.data.chapter.text.text);
     loadedCheerio("p > a[href]").each(function () {
         let url = exports.site + loadedCheerio(this).attr("href");
         if (!url.startsWith("http")) {

@@ -652,6 +652,24 @@
 	],
 	"русский язык": [
 		{
+			"id": "AT",
+			"name": "Автор Тудей",
+			"site": "https://author.today",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/authortoday.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/authortoday/icon.png"
+		},
+		{
+			"id": "bookriver",
+			"name": "Bookriver",
+			"site": "https://bookriver.ru",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/bookriver.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/bookriver/icon.png"
+		},
+		{
 			"id": "erolate",
 			"name": "Erolate",
 			"site": "https://erolate.com",
@@ -668,6 +686,42 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/jaomix.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/jaomix/icon.png"
+		},
+		{
+			"id": "ReN",
+			"name": "Renovels",
+			"site": "https://renovels.org",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/renovels.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/renovels/icon.png"
+		},
+		{
+			"id": "RLIB",
+			"name": "RanobeLib",
+			"site": "https://ranobelib.me",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/ranobelib.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/ranobelib/icon.png"
+		},
+		{
+			"id": "RNBH.org",
+			"name": "RanobeHub",
+			"site": "https://ranobehub.org/",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/ranobehub.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/ranobehub/icon.png"
+		},
+		{
+			"id": "RNRF",
+			"name": "РанобэРФ",
+			"site": "https://ранобэ.рф",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/ranoberf.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/ranoberf/icon.png"
 		},
 		{
 			"id": "TL",

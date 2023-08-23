@@ -1,144 +1,141 @@
-import dayjs from "dayjs";
-import { fetchApi } from "@libs/fetch";
-import { NovelStatus } from "@libs/novelStatus";
-import { FilterInputs } from "@libs/filterInputs";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
-
-export const id = "ReN";
-export const name = "Renovels";
-export const site = "https://renovels.org";
-export const version = "1.0.0";
-export const icon = "src/ru/renovels/icon.png";
-
-const baseUrl = site;
-
-export const popularNovels: Plugin.popularNovels = async function (
-    page,
-    { showLatestNovels, filters }
-) {
-    let url = baseUrl + "/api/search/catalog/?count=30&ordering=";
-    url += filters?.order ? filters?.order?.replace("+", "") : "-";
-    url += showLatestNovels ? "chapter_date" : filters?.sort || "rating";
-
-    if (filters?.type?.length) {
-        url += filters.type.map((i) => `&types=${i}`).join("");
-    }
-
-    if (filters?.statuss?.length) {
-        url += filters?.statuss.map((i) => `&status=${i}`).join("");
-    }
-
-    if (filters?.genres?.length) {
-        url += filters.genres.map((i) => `&genres=${i}`).join("");
-    }
-
-    if (filters?.categories?.length) {
-        url += filters.categories.map((i) => `&categories=${i}`).join("");
-    }
-
-    url += "&page=" + page;
-
-    const result = await fetchApi(url);
-    let body = await result.json();
-
-    let novels: Novel.Item[] = [];
-
-    body.content.forEach((novel) =>
-        novels.push({
-            name: novel.rus_name,
-            cover:
-                baseUrl + (novel.img?.high || novel.img?.mid || novel.img.low),
-            url: baseUrl + "/novel/" + novel.dir,
-        })
-    );
-
-    return novels;
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
+const filterInputs_1 = require("@libs/filterInputs");
+const fetch_1 = require("@libs/fetch");
+const novelStatus_1 = require("@libs/novelStatus");
+const dayjs_1 = __importDefault(require("dayjs"));
+exports.id = "ReN";
+exports.name = "Renovels";
+exports.site = "https://renovels.org";
+exports.version = "1.0.0";
+exports.icon = "src/ru/renovels/icon.png";
+const baseUrl = exports.site;
+const popularNovels = function (page, { showLatestNovels, filters }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = baseUrl + "/api/search/catalog/?count=30&ordering=";
+        url += (filters === null || filters === void 0 ? void 0 : filters.order) ? (filters === null || filters === void 0 ? void 0 : filters.order).replace("+", "") : "-";
+        url += showLatestNovels ? "chapter_date" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "rating";
+        if (filters) {
+            if (Array.isArray(filters.type) && filters.type.length) {
+                url += filters.type.map((i) => `&types=${i}`).join("");
+            }
+            if (Array.isArray(filters.statuss) && filters.statuss.length) {
+                url += filters === null || filters === void 0 ? void 0 : filters.statuss.map((i) => `&status=${i}`).join("");
+            }
+            if (Array.isArray(filters.genres) && filters.genres.length) {
+                url += filters.genres.map((i) => `&genres[include][]=${i}`).join("");
+            }
+            if (Array.isArray(filters.categories) && filters.categories.length) {
+                url += filters.categories.map((i) => `&categories=${i}`).join("");
+            }
+        }
+        url += "&page=" + page;
+        const result = yield (0, fetch_1.fetchApi)(url);
+        let body = yield result.json();
+        let novels = [];
+        body.content.forEach((novel) => {
+            var _a, _b;
+            return novels.push({
+                name: novel.rus_name,
+                cover: baseUrl + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
+                url: baseUrl + "/novel/" + novel.dir,
+            });
+        });
+        return novels;
+    });
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
         let novelID = novelUrl.split("/")[4];
-        const result = await fetchApi(baseUrl + "/api/titles/" + novelID);
-        let body = await result.json();
-
-        let novel: Novel.instance = {
+        const result = yield (0, fetch_1.fetchApi)(baseUrl + "/api/titles/" + novelID);
+        let body = yield result.json();
+        let novel = {
             url: novelUrl,
             name: body.content.rus_name,
             summary: body.content.description,
-            cover:
-                baseUrl +
-                (body.content.img?.high ||
-                    body.content.img?.mid ||
+            cover: baseUrl +
+                (((_a = body.content.img) === null || _a === void 0 ? void 0 : _a.high) ||
+                    ((_b = body.content.img) === null || _b === void 0 ? void 0 : _b.mid) ||
                     body.content.img.low),
-            status:
-                body.content.status.name === "Продолжается"
-                    ? NovelStatus.Ongoing
-                    : NovelStatus.Completed,
+            status: body.content.status.name === "Продолжается"
+                ? novelStatus_1.NovelStatus.Ongoing
+                : novelStatus_1.NovelStatus.Completed,
         };
-
         let tags = []
             .concat(body.content.genres, body.content.categories, [])
             .map((item) => item.name);
-
         if (tags.length > 0) {
             novel.genres = tags.join(", ");
         }
-
         let all = (body.content.count_chapters / 100 + 1) ^ 0;
-        let chapters: Chapter.Item[] = [];
-
+        let chapters = [];
         for (let i = 0; i < all; i++) {
-            let chapterResult = await fetchApi(
-                baseUrl +
-                    "/api/titles/chapters/?branch_id=" +
-                    body.content.branches[0].id +
-                    "&count=100&page=" +
-                    (i + 1)
-            );
-            let volumes = await chapterResult.json();
-
+            let chapterResult = yield (0, fetch_1.fetchApi)(baseUrl +
+                "/api/titles/chapters/?branch_id=" +
+                body.content.branches[0].id +
+                "&count=100&page=" +
+                (i + 1));
+            let volumes = yield chapterResult.json();
             volumes.content.forEach((chapter) => {
+                var _a;
                 if (!chapter.is_paid || chapter.is_bought) {
                     chapters.push({
-                        name: `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`?.trim(),
-                        releaseTime: dayjs(chapter.upload_date).format("LLL"),
+                        name: (_a = `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`) === null || _a === void 0 ? void 0 : _a.trim(),
+                        releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
                         url: `${baseUrl}/novel/${novelID}/${chapter.id}/`,
                     });
                 }
             });
         }
-
         novel.chapters = chapters.reverse();
         return novel;
-    };
-
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    let url = baseUrl + "/api/titles/chapters/" + chapterUrl.split("/")[5];
-    const result = await fetchApi(url);
-    const body = await result.json();
-
-    return body.content.content;
+    });
 };
-
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const url = `${baseUrl}/api/search/?query=${searchTerm}&count=100&field=titles`;
-    const result = await fetchApi(url);
-    let body = await result.json();
-    let novels: Novel.Item[] = [];
-
-    body.content.forEach((novel) =>
-        novels.push({
-            name: novel.rus_name,
-            cover:
-                baseUrl + (novel.img?.high || novel.img?.mid || novel.img.low),
-            url: baseUrl + "/novel/" + novel.dir,
-        })
-    );
-
-    return novels;
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = baseUrl + "/api/titles/chapters/" + chapterUrl.split("/")[5];
+        const result = yield (0, fetch_1.fetchApi)(url);
+        const body = (yield result.json());
+        return body.content.content;
+    });
 };
-
-export const filters = [
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = `${baseUrl}/api/search/?query=${searchTerm}&count=100&field=titles`;
+        const result = yield (0, fetch_1.fetchApi)(url);
+        let body = yield result.json();
+        let novels = [];
+        body.content.forEach((novel) => {
+            var _a, _b;
+            return novels.push({
+                name: novel.rus_name,
+                cover: baseUrl + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
+                url: baseUrl + "/novel/" + novel.dir,
+            });
+        });
+        return novels;
+    });
+};
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;
+exports.filters = [
     {
         key: "sort",
         label: "Сортировка",
@@ -150,16 +147,16 @@ export const filters = [
             { label: "Дате обновления", value: "chapter_date" },
             { label: "Количество глав", value: "count_chapters" },
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "order",
         label: "Порядок",
         values: [
-            { label: "По убыванию", value: "-" }, // desc
+            { label: "По убыванию", value: "-" },
             { label: "По возрастанию", value: "+" }, // asc
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "type",
@@ -173,7 +170,7 @@ export const filters = [
             { label: "Фанфики", value: "6" },
             { label: "Япония", value: "2" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "statuss",
@@ -186,7 +183,7 @@ export const filters = [
             { label: "Анонс", value: "4" },
             { label: "Лицензировано", value: "5" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "genres",
@@ -223,7 +220,7 @@ export const filters = [
             { label: "Эротика", value: "118" },
             { label: "Юмор", value: "104" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "categories",
@@ -927,6 +924,6 @@ export const filters = [
             { label: "R-15 Японское возрастное огр.", value: "332" },
             { label: "R-18", value: "424" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
 ];

@@ -220,7 +220,6 @@ const parseChapter = function (chapterUrl) {
         }
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
-        const chapterText = loadedCheerio('.content-text').html();
         loadedCheerio('.content-text img').each(function () {
             var _a;
             if (!((_a = loadedCheerio(this).attr('src')) === null || _a === void 0 ? void 0 : _a.startsWith('http'))) {
@@ -228,6 +227,7 @@ const parseChapter = function (chapterUrl) {
                 loadedCheerio(this).attr('src', baseUrl + src);
             }
         });
+        const chapterText = loadedCheerio('.content-text').html();
         return chapterText;
     });
 };
@@ -245,7 +245,4 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
     return novels;
 });
 exports.searchNovels = searchNovels;
-const fetchImage = (url) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, fetch_1.fetchFile)(url, {});
-});
-exports.fetchImage = fetchImage;
+exports.fetchImage = fetch_1.fetchFile;

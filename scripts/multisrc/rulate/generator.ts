@@ -256,13 +256,14 @@ const generator = function generator(sourceJson: sourceData) {
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
 
-        const chapterText = loadedCheerio('.content-text').html(); 
         loadedCheerio('.content-text img').each(function () {
             if (!loadedCheerio(this).attr('src')?.startsWith('http')) {
                 const src = loadedCheerio(this).attr('src');
                 loadedCheerio(this).attr('src', baseUrl + src);
             }
         });
+
+        const chapterText = loadedCheerio('.content-text').html();
         return chapterText;
     };
     
@@ -284,11 +285,8 @@ const generator = function generator(sourceJson: sourceData) {
         return novels;
     };
     
-    export const fetchImage: Plugin.fetchImage = async (url) => {
-        return await fetchFile(url, {});
-    };
-    
-    `
+    export const fetchImage: Plugin.fetchImage = fetchFile;`
+
     return {
         lang: "Russian",
         filename: souceName,

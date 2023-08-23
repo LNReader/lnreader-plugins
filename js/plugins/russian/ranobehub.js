@@ -1,166 +1,138 @@
-import dayjs from "dayjs";
-import cheerio from "cheerio";
-import { NovelStatus } from "@libs/novelStatus";
-import { fetchApi, fetchFile } from "@libs/fetch";
-import { FilterInputs } from "@libs/filterInputs";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
-
-export const id = "RNBH.org";
-export const name = "RanobeHub";
-export const version = "1.0.0";
-export const site = "https://ranobehub.org/";
-export const icon = "src/ru/ranobehub/icon.png";
-
-const baseUrl = site;
-
-export const popularNovels: Plugin.popularNovels = async function (
-    page,
-    { showLatestNovels, filters }
-) {
-    let url = baseUrl + `api/search?page=${page}&sort=`;
-    url += showLatestNovels
-        ? "last_chapter_at"
-        : filters?.sort || "computed_rating";
-    url += "&status=" + (filters?.status ? filters?.status : "0");
-
-    if (filters) {
-        if (filters?.country?.length) {
-            url += "&country=" + filters?.country.join(",");
-        }
-        if (filters.tags && filters.events) {
-            let tags: string[] = [];
-            if (Array.isArray(filters.tags)) {
-                tags.push(...filters.tags);
-            } else tags.push(filters.tags);
-            if (Array.isArray(filters.events)) {
-                tags.push(...filters.events);
-            } else tags.push(filters.events);
-            tags = tags.filter((t) => t);
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.site = exports.version = exports.name = exports.id = void 0;
+const filterInputs_1 = require("@libs/filterInputs");
+const fetch_1 = require("@libs/fetch");
+const novelStatus_1 = require("@libs/novelStatus");
+const cheerio_1 = require("cheerio");
+const dayjs_1 = __importDefault(require("dayjs"));
+exports.id = "RNBH.org";
+exports.name = "RanobeHub";
+exports.version = "1.0.0";
+exports.site = "https://ranobehub.org/";
+exports.icon = "src/ru/ranobehub/icon.png";
+const popularNovels = function (page, { showLatestNovels, filters }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = exports.site + `api/search?page=${page}&sort=`;
+        url += showLatestNovels
+            ? "last_chapter_at"
+            : (filters === null || filters === void 0 ? void 0 : filters.sort) || "computed_rating";
+        url += "&status=" + ((filters === null || filters === void 0 ? void 0 : filters.status) ? filters === null || filters === void 0 ? void 0 : filters.status : "0");
+        if (filters) {
+            if (Array.isArray(filters.country) && filters.country.length) {
+                url += "&country=" + filters.country.join(",");
+            }
+            let tags = []
+                .concat(filters === null || filters === void 0 ? void 0 : filters.tags, filters === null || filters === void 0 ? void 0 : filters.events)
+                .filter((t) => t);
             if (tags.length) {
                 url += "&tags:positive=" + tags.join(",");
             }
         }
-    }
-
-    url += "&take=40";
-    const result = await fetchApi(url);
-    const body = await result.json();
-
-    let novels: Novel.Item[] = [];
-    body.resource.forEach((novel) =>
-        novels.push({
+        url += "&take=40";
+        const result = yield (0, fetch_1.fetchApi)(url);
+        const body = yield result.json();
+        let novels = [];
+        body.resource.forEach((novel) => novels.push({
             name: novel.names.rus,
             cover: novel.poster.medium,
             url: novel.url,
-        })
-    );
-
-    return novels;
+        }));
+        return novels;
+    });
 };
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
         const novelId = novelUrl
             .substring("https://ranobehub.org/ranobe/".length)
             .split("-")[0];
-        const result = await fetchApi(`${baseUrl}api/ranobe/${novelId}`);
-        const json = await result.json();
-
-        let novel: Novel.instance = {
+        const result = yield (0, fetch_1.fetchApi)(`${exports.site}api/ranobe/${novelId}`);
+        const json = yield result.json();
+        let novel = {
             url: json.data.url,
-            novelUrl,
             name: json.data.names.rus,
             cover: json.data.posters.medium,
             summary: json.data.description,
-            author: json.data?.authors[0]?.name_eng || "",
+            author: ((_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.authors[0]) === null || _b === void 0 ? void 0 : _b.name_eng) || "",
             status: json.data.status.title.includes("процессе")
-                ? NovelStatus.Ongoing
-                : NovelStatus.Completed,
+                ? novelStatus_1.NovelStatus.Ongoing
+                : novelStatus_1.NovelStatus.Completed,
         };
-
         let tags = []
             .concat(json.data.tags.events, json.data.tags.genres)
-            .map((item) => item?.names?.rus || item?.names?.eng || item?.title)
+            .map((item) => { var _a, _b; return ((_a = item === null || item === void 0 ? void 0 : item.names) === null || _a === void 0 ? void 0 : _a.rus) || ((_b = item === null || item === void 0 ? void 0 : item.names) === null || _b === void 0 ? void 0 : _b.eng) || (item === null || item === void 0 ? void 0 : item.title); })
             .filter((item) => item);
-
         if (tags.length > 0) {
             novel.genres = tags.join(", ");
         }
-
-        let novelChapters: Chapter.Item[] = [];
-
-        const fetchChaptersUrl = `${baseUrl}api/ranobe/${novelId}/contents`;
-
-        const chaptersRaw = await fetchApi(fetchChaptersUrl);
-        const chaptersJSON = await chaptersRaw.json();
-
-        chaptersJSON.volumes.forEach((volume) =>
-            volume.chapters.forEach((chapter) =>
-                novelChapters.push({
-                    name: chapter.name,
-                    url: chapter.url,
-                    releaseTime: dayjs(
-                        parseInt(chapter.changed_at, 10) * 1000
-                    ).format("LLL"),
-                })
-            )
-        );
-
+        let novelChapters = [];
+        const fetchChaptersUrl = `${exports.site}api/ranobe/${novelId}/contents`;
+        const chaptersRaw = yield (0, fetch_1.fetchApi)(fetchChaptersUrl);
+        const chaptersJSON = yield chaptersRaw.json();
+        chaptersJSON.volumes.forEach((volume) => volume.chapters.forEach((chapter) => novelChapters.push({
+            name: chapter.name,
+            url: chapter.url,
+            releaseTime: (0, dayjs_1.default)(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
+        })));
         novel.chapters = novelChapters;
         return novel;
-    };
-
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const result = await fetchApi(chapterUrl);
-    const body = await result.text();
-
-    let loadedCheerio = cheerio.load(body);
-
-    loadedCheerio(".chapter-hoticons").remove();
-    loadedCheerio("div.text:nth-child(1)  img").each(function () {
-        if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-            const dataMediaId = loadedCheerio(this).attr("data-media-id");
-            loadedCheerio(this).attr(
-                "src",
-                `${baseUrl}api/media/${dataMediaId}`
-            );
-        }
     });
-
-    let chapterText = loadedCheerio("div.text:nth-child(1)").html();
-
-    // Remove script tags
-    chapterText = chapterText?.replace(
-        /<\s*script[^>]*>[\s\S]*?<\/script>/gim,
-        ""
-    );
-    return chapterText;
 };
-
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const url = `${baseUrl}api/fulltext/global?query=${searchTerm}&take=5`;
-
-    const result = await fetchApi(url);
-    const data = await result.json();
-
-    let novels: Novel.Item[] = [];
-
-    data.find((item) => item.meta.key === "ranobe")?.data.forEach((novel) =>
-        novels.push({
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield (0, fetch_1.fetchApi)(chapterUrl);
+        const body = yield result.text();
+        let loadedCheerio = (0, cheerio_1.load)(body);
+        loadedCheerio(".chapter-hoticons").remove();
+        loadedCheerio("div.text:nth-child(1)  img").each(function () {
+            var _a;
+            if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
+                const dataMediaId = loadedCheerio(this).attr("data-media-id");
+                loadedCheerio(this).attr("src", exports.site + "api/media/" + dataMediaId);
+            }
+        });
+        let chapterText = loadedCheerio("div.text:nth-child(1)").html() || "";
+        // Remove script tags
+        chapterText = chapterText === null || chapterText === void 0 ? void 0 : chapterText.replace(/<\s*script[^>]*>[\s\S]*?<\/script>/gim, "");
+        return chapterText;
+    });
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = `${exports.site}api/fulltext/global?query=${searchTerm}&take=10`;
+        const result = yield (0, fetch_1.fetchApi)(url);
+        const data = yield result.json();
+        let novels = [];
+        (_a = data
+            .find((item) => item.meta.key === "ranobe")) === null || _a === void 0 ? void 0 : _a.data.forEach((novel) => novels.push({
             name: novel.names.rus,
-            url:
-                "https://ranobehub.org/ranobe/" +
-                novel.url.match(
-                    /https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/
-                )[1],
+            url: "https://ranobehub.org/ranobe/" +
+                novel.url.match(/https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/)[1],
             cover: novel.image.replace("/small", "/medium"),
-        })
-    );
-
-    return novels;
+        }));
+        return novels;
+    });
 };
-
-export const filters = [
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;
+exports.filters = [
     {
         key: "sort",
         label: "Сортировка",
@@ -173,7 +145,7 @@ export const filters = [
             { label: "по количеству глав", value: "count_chapters" },
             { label: "по объему перевода", value: "count_of_symbols" },
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "status",
@@ -185,7 +157,7 @@ export const filters = [
             { label: "Заморожено", value: "3" },
             { label: "Неизвестно", value: "4" },
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "country",
@@ -196,7 +168,7 @@ export const filters = [
             { label: "США", value: "4" },
             { label: "Япония", value: "1" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "events",
@@ -1094,7 +1066,7 @@ export const filters = [
             { label: "Weak-lead", value: "885" },
             { label: "Web-novel", value: "1024" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "tags",
@@ -1143,6 +1115,6 @@ export const filters = [
             { label: "Isekai", value: "999" },
             { label: "Video games", value: "993" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
 ];

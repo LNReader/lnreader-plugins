@@ -3,7 +3,7 @@ import { FilterInputs } from "@libs/filterInputs";
 import { defaultCover } from "@libs/defaultCover";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
-import cheerio from "cheerio";
+import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
 export const id = "TL";
@@ -28,7 +28,7 @@ interface NovelsContents {
 
 export const popularNovels: Plugin.popularNovels = async (
   page,
-  { filters },
+  { filters }
 ) => {
   const result = await fetchApi(site + "/api/site/v2/graphql", {
     method: "post",
@@ -64,14 +64,14 @@ export const popularNovels: Plugin.popularNovels = async (
       cover: novel?.covers?.[0]?.url
         ? site + novel.covers[0].url
         : defaultCover,
-    }),
+    })
   );
 
   return novels;
 };
 
 export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
-  novelUrl,
+  novelUrl
 ) => {
   const result = await fetchApi(site + "/api/site/v2/graphql", {
     method: "post",
@@ -124,15 +124,16 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
   let novelChapters: Chapter.Item[] = [];
   json.data.project.subprojects.content.forEach((work: any) =>
     work.volumes.content.forEach((volume: any) =>
-      volume.chapters.forEach((chapter: any) =>
+      volume.chapters.forEach(
+        (chapter: any) =>
           chapter?.published &&
           novelChapters.push({
             name: volume.shortName + " " + chapter.title,
             url: "https://" + chapter.fullUrl,
             releaseTime: dayjs(chapter.publishDate).format("LLL"),
-          }),
-      ),
-    ),
+          })
+      )
+    )
   );
 
   novel.chapters = novelChapters;
@@ -159,7 +160,7 @@ export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
     data: { chapter: { text: { text: string } } };
   };
 
-  const loadedCheerio = cheerio.load(json.data.chapter.text.text);
+  const loadedCheerio = parseHTML(json.data.chapter.text.text);
   loadedCheerio("p > a[href]").each(function () {
     let url = site + loadedCheerio(this).attr("href");
     if (!url.startsWith("http")) {
@@ -207,7 +208,7 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
       cover: novel?.covers?.[0]?.url
         ? site + novel.covers[0].url
         : defaultCover,
-    }),
+    })
   );
 
   return novels;

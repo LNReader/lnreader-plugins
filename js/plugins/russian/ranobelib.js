@@ -1,196 +1,164 @@
-import cheerio from "cheerio";
-import dayjs from "dayjs";
-import { fetchApi, fetchFile } from "@libs/fetch";
-import { NovelStatus } from "@libs/novelStatus";
-import { FilterInputs } from "@libs/filterInputs";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
-
-export const id = "RLIB";
-export const name = "RanobeLib";
-export const site = "https://ranobelib.me";
-export const version = "1.0.0";
-export const icon = "src/ru/ranobelib/icon.png";
-
-const baseUrl = site;
-var ui = null;
-
-export const popularNovels: Plugin.popularNovels = async function (
-    page,
-    { showLatestNovels, filters }
-) {
-    let url = `${baseUrl}/manga-list?sort=`;
-    url += showLatestNovels ? "last_chapter_at" : filters?.sort || "rate";
-    url += "&dir=" + (filters?.order || "desc");
-
-    if (filters) {
-        if (Array.isArray(filters.type) && filters.type.length) {
-            url += filters.type.map((i) => `&types[]=${i}`).join("");
-        }
-
-        if (Array.isArray(filters.format) && filters.format.length) {
-            url += filters.format
-                .map((i) => `&format[include][]=${i}`)
-                .join("");
-        }
-
-        if (Array.isArray(filters.status) && filters.status.length) {
-            url += filters.status.map((i) => `&status[]=${i}`).join("");
-        }
-
-        if (Array.isArray(filters.statuss) && filters.statuss.length) {
-            url += filters.statuss.map((i) => `&manga_status[]=${i}`).join("");
-        }
-
-        if (Array.isArray(filters.genres) && filters.genres.length) {
-            url += filters.genres
-                .map((i) => `&genres[include][]=${i}`)
-                .join("");
-        }
-
-        if (Array.isArray(filters.tags) && filters.tags.length) {
-            url += filters.tags.map((i) => `&tags[include][]=${i}`).join("");
-        }
-    }
-
-    url += "&page=" + page;
-
-    const result = await fetchApi(url);
-    const body = await result.text();
-
-    const loadedCheerio = cheerio.load(body);
-    ui = loadedCheerio("a.header-right-menu__item")
-        .attr("href")
-        ?.replace?.(/[^0-9]/g, "");
-
-    let novels: Novel.Item[] = [];
-    loadedCheerio(".media-card-wrap").each(function () {
-        const name = loadedCheerio(this).find(".media-card__title").text();
-        const cover = loadedCheerio(this).find("a.media-card").attr("data-src");
-        const url = loadedCheerio(this).find("a.media-card").attr("href");
-        if (!url) return;
-        novels.push({ name, cover, url });
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-
-    return novels;
 };
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
-        const result = await fetchApi(novelUrl);
-        const body = await result.text();
-
-        const loadedCheerio = cheerio.load(body);
-
-        let novel: Novel.instance = {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
+const filterInputs_1 = require("@libs/filterInputs");
+const fetch_1 = require("@libs/fetch");
+const novelStatus_1 = require("@libs/novelStatus");
+const cheerio_1 = require("cheerio");
+const dayjs_1 = __importDefault(require("dayjs"));
+exports.id = "RLIB";
+exports.name = "RanobeLib";
+exports.site = "https://ranobelib.me";
+exports.version = "1.0.0";
+exports.icon = "src/ru/ranobelib/icon.png";
+var ui;
+const popularNovels = function (page, { showLatestNovels, filters }) {
+    var _a, _b, _c;
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = `${exports.site}/manga-list?sort=`;
+        url += showLatestNovels ? "last_chapter_at" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "rate";
+        url += "&dir=" + ((filters === null || filters === void 0 ? void 0 : filters.order) || "desc");
+        if (filters) {
+            if (Array.isArray(filters.type) && filters.type.length) {
+                url += filters.type.map((i) => `&types[]=${i}`).join("");
+            }
+            if (Array.isArray(filters.format) && ((_a = filters.format) === null || _a === void 0 ? void 0 : _a.length)) {
+                url += filters.format.map((i) => `&format[include][]=${i}`).join("");
+            }
+            if (Array.isArray(filters.status) && filters.status.length) {
+                url += filters.status.map((i) => `&status[]=${i}`).join("");
+            }
+            if (Array.isArray(filters.statuss) && filters.statuss.length) {
+                url += filters.statuss.map((i) => `&manga_status[]=${i}`).join("");
+            }
+            if (Array.isArray(filters.genres) && filters.genres.length) {
+                url += filters.genres.map((i) => `&genres[include][]=${i}`).join("");
+            }
+            if (Array.isArray(filters.tags) && filters.tags.length) {
+                url += filters.tags.map((i) => `&tags[include][]=${i}`).join("");
+            }
+        }
+        url += "&page=" + page;
+        const result = yield (0, fetch_1.fetchApi)(url);
+        const body = yield result.text();
+        const loadedCheerio = (0, cheerio_1.load)(body);
+        ui = (_c = (_b = loadedCheerio("a.header-right-menu__item")
+            .attr("href")) === null || _b === void 0 ? void 0 : _b.replace) === null || _c === void 0 ? void 0 : _c.call(_b, /[^0-9]/g, "");
+        let novels = [];
+        loadedCheerio(".media-card-wrap").each(function () {
+            const name = loadedCheerio(this).find(".media-card__title").text();
+            const cover = loadedCheerio(this).find("a.media-card").attr("data-src");
+            const url = loadedCheerio(this).find("a.media-card").attr("href");
+            if (!url)
+                return;
+            novels.push({ name, cover, url });
+        });
+        return novels;
+    });
+};
+exports.popularNovels = popularNovels;
+const parseNovelAndChapters = function (novelUrl) {
+    var _a, _b, _c, _d, _e;
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield (0, fetch_1.fetchApi)(novelUrl);
+        const body = yield result.text();
+        const loadedCheerio = (0, cheerio_1.load)(body);
+        let novel = {
             url: novelUrl,
         };
-
         novel.name = loadedCheerio(".media-name__main").text().trim();
-
         novel.cover = loadedCheerio(".media-sidebar__cover img").attr("src");
-
         novel.summary = loadedCheerio(".media-description__text").text().trim();
-
         novel.genres = loadedCheerio('div[class="media-tags"]')
             .text()
             .trim()
             .replace(/[\n\r]+/g, ", ")
             .replace(/  /g, "");
-
-        loadedCheerio(
-            'div[class="media-info-list paper"] > [class="media-info-list__item"]'
-        ).each(function () {
+        loadedCheerio('div[class="media-info-list paper"] > [class="media-info-list__item"]').each(function () {
             let name = loadedCheerio(this)
                 .find('div[class="media-info-list__title"]')
                 .text();
-
             if (name === "Статус перевода") {
                 novel.status =
-                    loadedCheerio(this)
-                        .find("div:nth-child(2)")
-                        .text()
-                        .trim() === "Продолжается"
-                        ? NovelStatus.Ongoing
-                        : NovelStatus.Completed;
-            } else if (name === "Автор") {
+                    loadedCheerio(this).find("div:nth-child(2)").text().trim() ===
+                        "Продолжается"
+                        ? novelStatus_1.NovelStatus.Ongoing
+                        : novelStatus_1.NovelStatus.Completed;
+            }
+            else if (name === "Автор") {
                 novel.author = loadedCheerio(this)
                     .find("div:nth-child(2)")
                     .text()
                     .trim();
             }
         });
-
-        let chapters: Chapter.Item[] = [];
-
-        let chaptersJson = body.match(
-            /window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm
-        );
-
-        chaptersJson = chaptersJson?.[0]
-            ?.replace("window.__DATA__ = ", "")
-            ?.replace("window._SITE_COLOR_", "")
-            ?.trim()
-            ?.slice(0, -1);
-
+        let chapters = [];
+        let chaptersJson = body.match(/window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm);
+        chaptersJson = (_d = (_c = (_b = (_a = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
         chaptersJson = JSON.parse(chaptersJson);
-        ui = chaptersJson?.user?.id;
-
-        chaptersJson.chapters.list.forEach((chapter) =>
-            chapters.push({
-                name: `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`?.trim(),
-                releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
-                url:
-                    `${baseUrl}/${chaptersJson.manga.slug}/v${chapter.chapter_volume}/c${chapter.chapter_number}?bid=` +
-                    (chapter?.branch_id || ""),
-            })
-        );
-
+        ui = (_e = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson.user) === null || _e === void 0 ? void 0 : _e.id;
+        chaptersJson.chapters.list.forEach((chapter) => {
+            var _a;
+            return chapters.push({
+                name: (_a = `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`) === null || _a === void 0 ? void 0 : _a.trim(),
+                releaseTime: (0, dayjs_1.default)(chapter.chapter_created_at).format("LLL"),
+                url: `${exports.site}/${chaptersJson.manga.slug}/v${chapter.chapter_volume}/c${chapter.chapter_number}?bid=` +
+                    ((chapter === null || chapter === void 0 ? void 0 : chapter.branch_id) || ""),
+            });
+        });
         novel.chapters = chapters.reverse();
         return novel;
-    };
-
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const result = await fetchApi(chapterUrl + (ui ? `&ui=${ui}` : ""));
-    const body = await result.text();
-
-    const loadedCheerio = cheerio.load(body);
-
-    loadedCheerio(".reader-container img").each(function () {
-        const url =
-            loadedCheerio(this).attr("data-src") ||
-            loadedCheerio(this).attr("src");
-        if (!url?.startsWith("http")) {
-            loadedCheerio(this).attr("src", baseUrl + url);
-        } else {
-            loadedCheerio(this).attr("src", url);
-        }
-        loadedCheerio(this).removeAttr("data-src");
     });
-
-    const chapterText = loadedCheerio(".reader-container").html();
-
-    return chapterText;
 };
-
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const result = await fetchApi(
-        `${baseUrl}/search?q=${searchTerm}&type=manga`
-    );
-    const body = await result.json();
-
-    let novels: Novel.Item[] = [];
-    body.forEach((novel) =>
-        novels.push({
-            name: novel?.rus_name || novel.name,
+exports.parseNovelAndChapters = parseNovelAndChapters;
+const parseChapter = function (chapterUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield (0, fetch_1.fetchApi)(chapterUrl + (ui ? `&ui=${ui}` : ""));
+        const body = yield result.text();
+        const loadedCheerio = (0, cheerio_1.load)(body);
+        loadedCheerio(".reader-container img").each(function () {
+            const url = loadedCheerio(this).attr("data-src") || loadedCheerio(this).attr("src");
+            if (!(url === null || url === void 0 ? void 0 : url.startsWith("http"))) {
+                loadedCheerio(this).attr("src", exports.site + url);
+            }
+            else {
+                loadedCheerio(this).attr("src", url);
+            }
+            loadedCheerio(this).removeAttr("data-src");
+        });
+        const chapterText = loadedCheerio(".reader-container").html();
+        return chapterText;
+    });
+};
+exports.parseChapter = parseChapter;
+const searchNovels = function (searchTerm) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield (0, fetch_1.fetchApi)(`${exports.site}/search?q=${searchTerm}&type=manga`);
+        const body = (yield result.json());
+        let novels = [];
+        body.forEach((novel) => novels.push({
+            name: (novel === null || novel === void 0 ? void 0 : novel.rus_name) || novel.name,
             cover: novel.coverImage,
-            url: novel?.href || baseUrl + "/" + novel.slug,
-        })
-    );
-
-    return novels;
+            url: (novel === null || novel === void 0 ? void 0 : novel.href) || exports.site + "/" + novel.slug,
+        }));
+        return novels;
+    });
 };
-
-export const filters = [
+exports.searchNovels = searchNovels;
+exports.fetchImage = fetch_1.fetchFile;
+exports.filters = [
     {
         key: "sort",
         label: "Сортировка",
@@ -202,7 +170,7 @@ export const filters = [
             { label: "Дате обновления", value: "last_chapter_at" },
             { label: "Количество глав", value: "chap_count" },
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "order",
@@ -211,7 +179,7 @@ export const filters = [
             { label: "По убыванию", value: "desc" },
             { label: "По возрастанию", value: "asc" },
         ],
-        inputType: FilterInputs.Picker,
+        inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
         key: "type",
@@ -224,7 +192,7 @@ export const filters = [
             { label: "Фанфик", value: "15" },
             { label: "Япония", value: "10" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "format",
@@ -238,7 +206,7 @@ export const filters = [
             { label: "Сборник", value: "2" },
             { label: "Сингл", value: "5" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "status",
@@ -249,7 +217,7 @@ export const filters = [
             { label: "Заморожен", value: "3" },
             { label: "Заброшен", value: "4" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "statuss",
@@ -261,7 +229,7 @@ export const filters = [
             { label: "Приостановлен", value: "4" },
             { label: "Выпуск прекращён", value: "5" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "genres",
@@ -323,7 +291,7 @@ export const filters = [
             { label: "Юри", value: "73" },
             { label: "Яой", value: "74" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
     {
         key: "tags",
@@ -401,6 +369,6 @@ export const filters = [
             { label: "Эльфы", value: "217" },
             { label: "Якудза", value: "165" },
         ],
-        inputType: FilterInputs.Checkbox,
+        inputType: filterInputs_1.FilterInputs.Checkbox,
     },
 ];

@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchImage = exports.filters = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
-const cheerio_1 = require("cheerio");
+const filterInputs_1 = require("@libs/filterInputs");
 const fetch_1 = require("@libs/fetch");
 const novelStatus_1 = require("@libs/novelStatus");
-const filterInputs_1 = require("@libs/filterInputs");
+const cheerio_1 = require("cheerio");
 exports.id = "jaomix.ru";
 exports.name = "Jaomix";
 exports.site = "https://jaomix.ru";
