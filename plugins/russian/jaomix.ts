@@ -10,13 +10,11 @@ export const site = "https://jaomix.ru";
 export const version = "1.0.0";
 export const icon = "src/ru/jaomix/icon.png";
 
-const baseUrl = site;
-
 export const popularNovels: Plugin.popularNovels = async function (
   page,
   { showLatestNovels, filters }
 ) {
-  let url = baseUrl + "/?searchrn&sortby=";
+  let url = site + "/?searchrn&sortby=";
   url += showLatestNovels ? "upd" : filters?.sort || "count";
 
   if (filters) {
@@ -110,7 +108,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 };
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `${baseUrl}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd`;
+  const url = `${site}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd`;
   const result = await fetchApi(url);
   let body = await result.text();
   const loadedCheerio = parseHTML(body);

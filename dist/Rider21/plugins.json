@@ -144,7 +144,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/english/divinedaolibrary.js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/`en/divinedaolibrary/icon.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/divinedaolibrary/icon.png"
 		},
 		{
 			"id": "earlynovel",
@@ -639,6 +639,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/jp/syosetu/icon.png"
 		}
 	],
+	"한국어, 조선말": [
+		{
+			"id": "agit.xyz",
+			"name": "Agitoon",
+			"site": "https://agit501.xyz/",
+			"lang": "한국어, 조선말",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/korean/Agitoon.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/kr/agitoon/agit.png"
+		}
+	],
 	"Português": [
 		{
 			"id": "lightnovelbrasil",
@@ -760,6 +771,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/spanish/novelasligera.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/es/novelasligera/icon.png"
+		},
+		{
+			"id": "skynovels.net",
+			"name": "SkyNovels",
+			"site": "https://www.skynovels.net/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/spanish/skynovels.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/es/skynovels/icon.png"
 		},
 		{
 			"id": "TNL.com",

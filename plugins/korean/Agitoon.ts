@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import { load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { Chapter, Novel, Plugin } from "@typings/plugin";
 
@@ -21,15 +21,16 @@ export const popularNovels: Plugin.popularNovels = async function (page) {
         body: `mode=get_data_novel_list_p&novel_menu=3&np_day=${day}&np_rank=1&np_distributor=0&np_genre=00&np_order=1&np_genre_ex_1=00&np_genre_ex_2=00&list_limit=${list_limit}&is_query_first=true`,
         method: "POST",
     });
+    const resJson = await res.json() as response;
 
-    const resJson = await res.json();
+    const novels: Novel.Item[] = []
 
-    const novels: Novel.Item[] = resJson.list.map((novel) => {
-        return {
+    resJson?.list?.forEach((novel) => {
+        novels.push({
             url: baseUrl + "novel/list/" + novel.wr_id,
             name: novel.wr_subject,
             cover: baseUrl + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
-        };
+        });
     });
 
     return novels;
@@ -43,7 +44,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         const result = await fetchApi(novelUrl);
         const body = await result.text();
 
-        const loadedCheerio = cheerio.load(body, { decodeEntities: false });
+        const loadedCheerio = parseHTML(body, { decodeEntities: false });
         const name = loadedCheerio("h5.pt-2").text();
         const summary = loadedCheerio(".pt-1.mt-1.pb-1.mb-1").text();
         const author = loadedCheerio(".post-item-list-cate-v")
@@ -75,14 +76,14 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
             method: "POST",
         });
 
-        const resJson = await res.json();
+        const resJson = await res.json() as responseBook
 
-        chapters = resJson.list.map((chapter) => {
-            return {
+        resJson?.list?.forEach((chapter) => {
+            chapters.push({
                 name: chapter.wr_subject,
                 url: baseUrl + `novel/view/${chapter.wr_id}/2`,
                 releaseTime: chapter.wr_datetime,
-            };
+            });
         });
 
         const novel: Novel.instance = {
@@ -102,7 +103,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
     const result = await fetchApi(chapterUrl);
     const body = await result.text();
 
-    const loadedCheerio = cheerio.load(body);
+    const loadedCheerio = parseHTML(body);
 
     const contentTag = loadedCheerio("#id_wr_content > p");
 
@@ -129,19 +130,54 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
         body: `mode=get_data_novel_list_p_sch&search_novel=${searchTerm}&list_limit=0`,
         method: "POST",
     });
+    const resJson = await rawResults.json() as response;
 
-    const results = await rawResults.json();
-    if (results.list_count === 0) {
-        return [];
-    }
+    const novels: Novel.Item[] = []
 
-    const novels: Novel.Item[] = results.list.map((result) => {
-        return {
-            url: baseUrl + "novel/list/" + result.wr_id,
-            name: result.wr_subject,
-            cover:
-                baseUrl + result.np_dir + "/thumbnail/" + result.np_thumbnail,
-        };
+    resJson?.list?.forEach((novel) => {
+        novels.push({
+            url: baseUrl + "novel/list/" + novel.wr_id,
+            name: novel.wr_subject,
+            cover: baseUrl + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
+        });
     });
+
     return novels;
 };
+
+export const fetchImage: Plugin.fetchImage = fetchFile;
+
+export interface response {
+  list_limit: number;
+  list?: (ListEntity)[] | null;
+  list_count: number;
+}
+export interface ListEntity {
+  wr_id: string;
+  wr_subject: string;
+  np_dir: string;
+  np_type_02: string;
+  np_thumbnail: string;
+  np_author: string;
+  wr_subject2: string;
+  wr_datetime: string;
+  np_distributor: string;
+  np_genre: string;
+  np_country: string;
+  np_age: string;
+  is_scrap: number;
+}
+
+export interface responseBook {
+  list?: (ListEntity2)[] | null;
+  download_time: string;
+}
+export interface ListEntity2 {
+  wr_id: string;
+  wr_subject: string;
+  wr_datetime: string;
+  url_view1: string;
+  novel_c_style1: string;
+  novel_c_str1: string;
+  data_novel_c_view: string;
+}

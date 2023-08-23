@@ -19,10 +19,9 @@ exports.name = "Jaomix";
 exports.site = "https://jaomix.ru";
 exports.version = "1.0.0";
 exports.icon = "src/ru/jaomix/icon.png";
-const baseUrl = exports.site;
 const popularNovels = function (page, { showLatestNovels, filters }) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + "/?searchrn&sortby=";
+        let url = exports.site + "/?searchrn&sortby=";
         url += showLatestNovels ? "upd" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "count";
         if (filters) {
             if (Array.isArray(filters.type) && filters.type.length) {
@@ -107,7 +106,7 @@ const parseChapter = function (chapterUrl) {
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${baseUrl}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd`;
+        const url = `${exports.site}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd`;
         const result = yield (0, fetch_1.fetchApi)(url);
         let body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);

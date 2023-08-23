@@ -12,13 +12,11 @@ export const site = "https://ранобэ.рф";
 export const version = "1.0.0";
 export const icon = "src/ru/ranoberf/icon.png";
 
-const baseUrl = site;
-
 export const popularNovels: Plugin.popularNovels = async function (
   page,
   { showLatestNovels, filters }
 ) {
-  let url = baseUrl + "/books?order=";
+  let url = site + "/books?order=";
   url += showLatestNovels ? "lastPublishedChapter" : filters?.sort || "popular";
   url += "&page=" + page;
 
@@ -34,9 +32,9 @@ export const popularNovels: Plugin.popularNovels = async function (
     novels.push({
       name: novel.title,
       cover: novel?.verticalImage?.url
-        ? baseUrl + novel.verticalImage.url
+        ? site + novel.verticalImage.url
         : defaultCover,
-      url: baseUrl + "/" + novel.slug,
+      url: site + "/" + novel.slug,
     })
   );
 
@@ -56,7 +54,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       url: novelUrl,
       name: book.title,
       cover: book?.verticalImage?.url
-        ? baseUrl + book.verticalImage.url
+        ? site + book.verticalImage.url
         : defaultCover,
       summary: book.description,
       author: book?.author || "",
@@ -73,7 +71,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         chapters.push({
           name: chapter.title,
           releaseTime: dayjs(chapter.publishedAt).format("LLL"),
-          url: baseUrl + chapter.url,
+          url: site + chapter.url,
         });
       }
     });
@@ -94,7 +92,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
   loadedCheerio("img").each(function () {
     if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
       const src = loadedCheerio(this).attr("src");
-      loadedCheerio(this).attr("src", baseUrl + src);
+      loadedCheerio(this).attr("src", site + src);
     }
   });
 
@@ -104,7 +102,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 };
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `${baseUrl}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
+  const url = `${site}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
   const result = await fetchApi(url);
   const body: any = await result.json();
   let novels: Novel.Item[] = [];
@@ -113,9 +111,9 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
     novels.push({
       name: novel.title,
       cover: novel?.verticalImage?.url
-        ? baseUrl + novel.verticalImage.url
+        ? site + novel.verticalImage.url
         : defaultCover,
-      url: baseUrl + "/" + novel.slug,
+      url: site + "/" + novel.slug,
     })
   );
 

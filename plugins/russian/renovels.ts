@@ -10,13 +10,11 @@ export const site = "https://renovels.org";
 export const version = "1.0.0";
 export const icon = "src/ru/renovels/icon.png";
 
-const baseUrl = site;
-
 export const popularNovels: Plugin.popularNovels = async function (
   page,
   { showLatestNovels, filters }
 ) {
-  let url = baseUrl + "/api/search/catalog/?count=30&ordering=";
+  let url = site + "/api/search/catalog/?count=30&ordering=";
   url += filters?.order ? (filters?.order as string).replace("+", "") : "-";
   url += showLatestNovels ? "chapter_date" : filters?.sort || "rating";
   if (filters) {
@@ -47,8 +45,8 @@ export const popularNovels: Plugin.popularNovels = async function (
   body.content.forEach((novel: any) =>
     novels.push({
       name: novel.rus_name,
-      cover: baseUrl + (novel.img?.high || novel.img?.mid || novel.img.low),
-      url: baseUrl + "/novel/" + novel.dir,
+      cover: site + (novel.img?.high || novel.img?.mid || novel.img.low),
+      url: site + "/novel/" + novel.dir,
     })
   );
 
@@ -58,7 +56,7 @@ export const popularNovels: Plugin.popularNovels = async function (
 export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
   async function (novelUrl) {
     let novelID = novelUrl.split("/")[4];
-    const result = await fetchApi(baseUrl + "/api/titles/" + novelID);
+    const result = await fetchApi(site + "/api/titles/" + novelID);
     let body: any = await result.json();
 
     let novel: Novel.instance = {
@@ -66,7 +64,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       name: body.content.rus_name,
       summary: body.content.description,
       cover:
-        baseUrl +
+        site +
         (body.content.img?.high ||
           body.content.img?.mid ||
           body.content.img.low),
@@ -89,7 +87,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
     for (let i = 0; i < all; i++) {
       let chapterResult = await fetchApi(
-        baseUrl +
+        site +
           "/api/titles/chapters/?branch_id=" +
           body.content.branches[0].id +
           "&count=100&page=" +
@@ -102,7 +100,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
           chapters.push({
             name: `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`?.trim(),
             releaseTime: dayjs(chapter.upload_date).format("LLL"),
-            url: `${baseUrl}/novel/${novelID}/${chapter.id}/`,
+            url: `${site}/novel/${novelID}/${chapter.id}/`,
           });
         }
       });
@@ -113,7 +111,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
   };
 
 export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-  let url = baseUrl + "/api/titles/chapters/" + chapterUrl.split("/")[5];
+  let url = site + "/api/titles/chapters/" + chapterUrl.split("/")[5];
   const result = await fetchApi(url);
   const body = (await result.json()) as { content: { content: string } };
 
@@ -121,7 +119,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 };
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `${baseUrl}/api/search/?query=${searchTerm}&count=100&field=titles`;
+  const url = `${site}/api/search/?query=${searchTerm}&count=100&field=titles`;
   const result = await fetchApi(url);
   let body: any = await result.json();
   let novels: Novel.Item[] = [];
@@ -129,8 +127,8 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
   body.content.forEach((novel: any) =>
     novels.push({
       name: novel.rus_name,
-      cover: baseUrl + (novel.img?.high || novel.img?.mid || novel.img.low),
-      url: baseUrl + "/novel/" + novel.dir,
+      cover: site + (novel.img?.high || novel.img?.mid || novel.img.low),
+      url: site + "/novel/" + novel.dir,
     })
   );
 

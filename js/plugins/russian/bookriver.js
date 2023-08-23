@@ -23,10 +23,9 @@ exports.name = "Bookriver";
 exports.site = "https://bookriver.ru";
 exports.version = "1.0.0";
 exports.icon = "src/ru/bookriver/icon.png";
-const baseUrl = exports.site;
 const popularNovels = function (page, { showLatestNovels, filters }) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + `/genre?page=${page}&perPage=24&sortingType=`;
+        let url = exports.site + `/genre?page=${page}&perPage=24&sortingType=`;
         url += showLatestNovels ? "last-update" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "bestseller";
         if (filters) {
             if (Array.isArray(filters.genres) && filters.genres.length) {
@@ -42,7 +41,7 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         json.props.pageProps.state.pagesFilter.genre.books.forEach((novel) => novels.push({
             name: novel.name,
             cover: novel.coverImages[0].url,
-            url: baseUrl + "/book/" + novel.slug,
+            url: exports.site + "/book/" + novel.slug,
         }));
         return novels;
     });
@@ -72,7 +71,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 chapters.push({
                     name: chapter.name,
                     releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.firstPublishedAt) || chapter.createdAt).format("LLL"),
-                    url: baseUrl + "/reader/" + book.slug + "/" + chapter.chapterId,
+                    url: exports.site + "/reader/" + book.slug + "/" + chapter.chapterId,
                 });
             }
         });
@@ -93,7 +92,7 @@ const parseChapter = function (chapterUrl) {
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${baseUrl}/search/books?keyword=${searchTerm}`;
+        const url = `${exports.site}/search/books?keyword=${searchTerm}`;
         const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
@@ -103,7 +102,7 @@ const searchNovels = function (searchTerm) {
         json.props.pageProps.state.catalog.books.books.forEach((novel) => novels.push({
             name: novel.name,
             cover: novel.coverImages[0].url,
-            url: baseUrl + "/book/" + novel.slug,
+            url: exports.site + "/book/" + novel.slug,
         }));
         return novels;
     });

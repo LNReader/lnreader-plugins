@@ -11,13 +11,11 @@ export const site = "https://bookriver.ru";
 export const version = "1.0.0";
 export const icon = "src/ru/bookriver/icon.png";
 
-const baseUrl = site;
-
 export const popularNovels: Plugin.popularNovels = async function (
   page,
   { showLatestNovels, filters }
 ) {
-  let url = baseUrl + `/genre?page=${page}&perPage=24&sortingType=`;
+  let url = site + `/genre?page=${page}&perPage=24&sortingType=`;
   url += showLatestNovels ? "last-update" : filters?.sort || "bestseller";
 
   if (filters) {
@@ -38,7 +36,7 @@ export const popularNovels: Plugin.popularNovels = async function (
     novels.push({
       name: novel.name,
       cover: novel.coverImages[0].url,
-      url: baseUrl + "/book/" + novel.slug,
+      url: site + "/book/" + novel.slug,
     })
   );
 
@@ -76,7 +74,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
           releaseTime: dayjs(
             chapter?.firstPublishedAt || chapter.createdAt
           ).format("LLL"),
-          url: baseUrl + "/reader/" + book.slug + "/" + chapter.chapterId,
+          url: site + "/reader/" + book.slug + "/" + chapter.chapterId,
         });
       }
     });
@@ -95,7 +93,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 };
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `${baseUrl}/search/books?keyword=${searchTerm}`;
+  const url = `${site}/search/books?keyword=${searchTerm}`;
   const result = await fetchApi(url);
   const body = await result.text();
 
@@ -108,7 +106,7 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
     novels.push({
       name: novel.name,
       cover: novel.coverImages[0].url,
-      url: baseUrl + "/book/" + novel.slug,
+      url: site + "/book/" + novel.slug,
     })
   );
 

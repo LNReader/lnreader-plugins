@@ -22,10 +22,9 @@ exports.name = "Renovels";
 exports.site = "https://renovels.org";
 exports.version = "1.0.0";
 exports.icon = "src/ru/renovels/icon.png";
-const baseUrl = exports.site;
 const popularNovels = function (page, { showLatestNovels, filters }) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + "/api/search/catalog/?count=30&ordering=";
+        let url = exports.site + "/api/search/catalog/?count=30&ordering=";
         url += (filters === null || filters === void 0 ? void 0 : filters.order) ? (filters === null || filters === void 0 ? void 0 : filters.order).replace("+", "") : "-";
         url += showLatestNovels ? "chapter_date" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "rating";
         if (filters) {
@@ -50,8 +49,8 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
             var _a, _b;
             return novels.push({
                 name: novel.rus_name,
-                cover: baseUrl + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
-                url: baseUrl + "/novel/" + novel.dir,
+                cover: exports.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
+                url: exports.site + "/novel/" + novel.dir,
             });
         });
         return novels;
@@ -62,13 +61,13 @@ const parseNovelAndChapters = function (novelUrl) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let novelID = novelUrl.split("/")[4];
-        const result = yield (0, fetch_1.fetchApi)(baseUrl + "/api/titles/" + novelID);
+        const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/titles/" + novelID);
         let body = yield result.json();
         let novel = {
             url: novelUrl,
             name: body.content.rus_name,
             summary: body.content.description,
-            cover: baseUrl +
+            cover: exports.site +
                 (((_a = body.content.img) === null || _a === void 0 ? void 0 : _a.high) ||
                     ((_b = body.content.img) === null || _b === void 0 ? void 0 : _b.mid) ||
                     body.content.img.low),
@@ -85,7 +84,7 @@ const parseNovelAndChapters = function (novelUrl) {
         let all = (body.content.count_chapters / 100 + 1) ^ 0;
         let chapters = [];
         for (let i = 0; i < all; i++) {
-            let chapterResult = yield (0, fetch_1.fetchApi)(baseUrl +
+            let chapterResult = yield (0, fetch_1.fetchApi)(exports.site +
                 "/api/titles/chapters/?branch_id=" +
                 body.content.branches[0].id +
                 "&count=100&page=" +
@@ -97,7 +96,7 @@ const parseNovelAndChapters = function (novelUrl) {
                     chapters.push({
                         name: (_a = `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`) === null || _a === void 0 ? void 0 : _a.trim(),
                         releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
-                        url: `${baseUrl}/novel/${novelID}/${chapter.id}/`,
+                        url: `${exports.site}/novel/${novelID}/${chapter.id}/`,
                     });
                 }
             });
@@ -109,7 +108,7 @@ const parseNovelAndChapters = function (novelUrl) {
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = function (chapterUrl) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + "/api/titles/chapters/" + chapterUrl.split("/")[5];
+        let url = exports.site + "/api/titles/chapters/" + chapterUrl.split("/")[5];
         const result = yield (0, fetch_1.fetchApi)(url);
         const body = (yield result.json());
         return body.content.content;
@@ -118,7 +117,7 @@ const parseChapter = function (chapterUrl) {
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${baseUrl}/api/search/?query=${searchTerm}&count=100&field=titles`;
+        const url = `${exports.site}/api/search/?query=${searchTerm}&count=100&field=titles`;
         const result = yield (0, fetch_1.fetchApi)(url);
         let body = yield result.json();
         let novels = [];
@@ -126,8 +125,8 @@ const searchNovels = function (searchTerm) {
             var _a, _b;
             return novels.push({
                 name: novel.rus_name,
-                cover: baseUrl + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
-                url: baseUrl + "/novel/" + novel.dir,
+                cover: exports.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
+                url: exports.site + "/novel/" + novel.dir,
             });
         });
         return novels;

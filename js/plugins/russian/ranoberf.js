@@ -24,10 +24,9 @@ exports.name = "РанобэРФ";
 exports.site = "https://ранобэ.рф";
 exports.version = "1.0.0";
 exports.icon = "src/ru/ranoberf/icon.png";
-const baseUrl = exports.site;
 const popularNovels = function (page, { showLatestNovels, filters }) {
     return __awaiter(this, void 0, void 0, function* () {
-        let url = baseUrl + "/books?order=";
+        let url = exports.site + "/books?order=";
         url += showLatestNovels ? "lastPublishedChapter" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "popular";
         url += "&page=" + page;
         const result = yield (0, fetch_1.fetchApi)(url);
@@ -41,9 +40,9 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
             return novels.push({
                 name: novel.title,
                 cover: ((_a = novel === null || novel === void 0 ? void 0 : novel.verticalImage) === null || _a === void 0 ? void 0 : _a.url)
-                    ? baseUrl + novel.verticalImage.url
+                    ? exports.site + novel.verticalImage.url
                     : defaultCover_1.defaultCover,
-                url: baseUrl + "/" + novel.slug,
+                url: exports.site + "/" + novel.slug,
             });
         });
         return novels;
@@ -62,7 +61,7 @@ const parseNovelAndChapters = function (novelUrl) {
             url: novelUrl,
             name: book.title,
             cover: ((_a = book === null || book === void 0 ? void 0 : book.verticalImage) === null || _a === void 0 ? void 0 : _a.url)
-                ? baseUrl + book.verticalImage.url
+                ? exports.site + book.verticalImage.url
                 : defaultCover_1.defaultCover,
             summary: book.description,
             author: (book === null || book === void 0 ? void 0 : book.author) || "",
@@ -77,7 +76,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 chapters.push({
                     name: chapter.title,
                     releaseTime: (0, dayjs_1.default)(chapter.publishedAt).format("LLL"),
-                    url: baseUrl + chapter.url,
+                    url: exports.site + chapter.url,
                 });
             }
         });
@@ -98,7 +97,7 @@ const parseChapter = function (chapterUrl) {
             var _a;
             if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
                 const src = loadedCheerio(this).attr("src");
-                loadedCheerio(this).attr("src", baseUrl + src);
+                loadedCheerio(this).attr("src", exports.site + src);
             }
         });
         const chapterText = loadedCheerio.html();
@@ -108,7 +107,7 @@ const parseChapter = function (chapterUrl) {
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${baseUrl}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
+        const url = `${exports.site}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
         const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.json();
         let novels = [];
@@ -117,9 +116,9 @@ const searchNovels = function (searchTerm) {
             return novels.push({
                 name: novel.title,
                 cover: ((_a = novel === null || novel === void 0 ? void 0 : novel.verticalImage) === null || _a === void 0 ? void 0 : _a.url)
-                    ? baseUrl + novel.verticalImage.url
+                    ? exports.site + novel.verticalImage.url
                     : defaultCover_1.defaultCover,
-                url: baseUrl + "/" + novel.slug,
+                url: exports.site + "/" + novel.slug,
             });
         });
         return novels;

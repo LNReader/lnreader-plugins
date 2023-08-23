@@ -13,8 +13,8 @@ export const version = "1.0.0";
 export const icon = "src/ru/authortoday/icon.png";
 
 const apiUrl = "https://api.author.today/";
-
 const token = "Bearer guest";
+
 export const popularNovels: Plugin.popularNovels = async function (
   page,
   { showLatestNovels, filters }
