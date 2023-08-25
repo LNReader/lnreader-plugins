@@ -27,18 +27,17 @@ const generator = function generator(sourceJson: sourceData) {
     import { Filter, FilterInputs } from "@libs/filterInputs";
     import { NovelStatus } from '@libs/novelStatus';
     // import { defaultCover } from "@libs/defaultCover";
-    
-    
+
     export const id = "${pluginId}";
     export const name = "${souceName}";
     export const icon = "${icon}";
     export const version = "1.0.0";
     export const site = "${site}";
-    
+
     const baseUrl = site;
-    
+
     const customFilters: Filter[] = ${filetersString};
-    
+
     export const filters = [
         {
             key: 'sort',
@@ -107,7 +106,7 @@ const generator = function generator(sourceJson: sourceData) {
             inputType: FilterInputs.Picker,
         },
     ];
-    
+
     export const popularNovels: Plugin.popularNovels = async function (
         page,
         { filters, showLatestNovels }
@@ -117,15 +116,15 @@ const generator = function generator(sourceJson: sourceData) {
         url += '&type=' + (filters?.type || '0');
         url += '&atmosphere=' + (filters?.atmosphere || '0');
         url += '&adult=' + (filters?.adult || '0');
-        
+
         if (filters?.genres instanceof Array) {
             url += filters.genres.map(i => '&genres[]=' + i).join('');
         }
-        
+
         if (filters?.tags instanceof Array) {
             url += filters.tags.map(i => '&tags[]=' + i).join('');
         }
-        
+
         if (filters?.trash instanceof Array) {
             url += filters.trash.map(i => '&' + i + '=1').join('');
         }
@@ -134,9 +133,9 @@ const generator = function generator(sourceJson: sourceData) {
         const result = await fetchApi(url);
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
-    
+
         const novels: Novel.Item[] = [];
-    
+
         loadedCheerio(
             'ul[class="search-results"] > li:not([class="ad_type_catalog"])',
         ).each(function () {
@@ -146,11 +145,11 @@ const generator = function generator(sourceJson: sourceData) {
                 url: baseUrl + loadedCheerio(this).find('p > a').attr('href') || '',
             });
         });
-    
+
         return novels;
     };
-    
-    
+
+
     export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         async function (novelUrl) {
             const novel: Novel.instance = {
@@ -162,17 +161,17 @@ const generator = function generator(sourceJson: sourceData) {
                 const formData = new FormData();
                 formData.append('path', novelUrl);
                 formData.append('ok', 'Да');
-    
+
                 await fetch(result.url, {
                     method: 'POST',
                     body: formData,
                 });
-    
+
                 result = await fetchApi(novelUrl);
             }
             const body = await result.text();
             const loadedCheerio = parseHTML(body);
-    
+
             novel.name = loadedCheerio('div[class="container"] > div > div > h1')
                 .text()
                 .trim();
@@ -180,7 +179,7 @@ const generator = function generator(sourceJson: sourceData) {
                 baseUrl + loadedCheerio('div[class="images"] > div img').attr('src');
             novel.summary = loadedCheerio('#Info > div:nth-child(3)').text();
             let genres: string[] = [];
-    
+
             loadedCheerio('div[class="span5"] > p').each(function () {
                 switch (loadedCheerio(this).find('strong').text()) {
                     case 'Автор:':
@@ -208,11 +207,11 @@ const generator = function generator(sourceJson: sourceData) {
                         break;
                 }
             });
-    
+
             if (genres.length > 0) {
                 novel.genres = genres.reverse().join(',');
             }
-    
+
             const chapters: Chapter.Item[] = [];
             loadedCheerio('table > tbody > tr.chapter_row').each(function () {
                 const chapterName = loadedCheerio(this)
@@ -226,7 +225,7 @@ const generator = function generator(sourceJson: sourceData) {
                 const chapterUrl = baseUrl + loadedCheerio(this)
                     .find('td[class="t"] > a')
                     .attr('href');
-    
+
                 if (
                     loadedCheerio(this).find('td > span[class="disabled"]').length < 1 &&
                     releaseDate
@@ -234,7 +233,7 @@ const generator = function generator(sourceJson: sourceData) {
                     chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
                 }
             });
-    
+
             novel.chapters = chapters;
             return novel;
         };
@@ -244,12 +243,12 @@ const generator = function generator(sourceJson: sourceData) {
         if (result.url.includes('mature?path=')) {
           const formData = new FormData();
           formData.append('ok', 'Да');
-    
+
           await fetch(result.url, {
             method: 'POST',
             body: formData,
           });
-    
+
           result = await fetchApi(chapterUrl);
         }
         const body = await result.text();
@@ -265,26 +264,34 @@ const generator = function generator(sourceJson: sourceData) {
         const chapterText = loadedCheerio('.content-text').html();
         return chapterText;
     };
-    
+
     export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
         const novels: Novel.Item[] = [];
         const result = await fetchApi(
             baseUrl + '/search/autocomplete?query=' + searchTerm,
           );
-          let json: any = await result.json();
-      
-          json.forEach((item: any) => {
+          let json = await result.json() as response[];
+
+          json.forEach((item) => {
             const novelName = item.title_one + ' / ' + item.title_two;
             const novelCover = baseUrl + item.img;
             const novelUrl = baseUrl + item.url;
-      
+
             novels.push({ name: novelName, cover: novelCover, url: novelUrl });
           });
-      
+
         return novels;
     };
-    
-    export const fetchImage: Plugin.fetchImage = fetchFile;`
+
+    export const fetchImage: Plugin.fetchImage = fetchFile;
+
+    interface response {
+        id: number;
+        title_one: string;
+        title_two: string;
+        url: string;
+        img: string;
+    };`
 
     return {
         lang: "Russian",

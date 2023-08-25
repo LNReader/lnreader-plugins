@@ -27,6 +27,7 @@ exports.icon = "src/ru/authortoday/icon.png";
 const apiUrl = "https://api.author.today/";
 const token = "Bearer guest";
 const popularNovels = function (page, { showLatestNovels, filters }) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         let url = apiUrl + "v1/catalog/search?page=" + page;
         if (filters === null || filters === void 0 ? void 0 : filters.genre) {
@@ -44,12 +45,12 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
                 Authorization: token,
             },
         });
-        const json = yield result.json();
+        const json = (yield result.json());
         if ((json === null || json === void 0 ? void 0 : json.code) === "NotFound") {
             return [];
         }
         let novels = [];
-        json.searchResults.forEach((novel) => novels.push({
+        (_a = json === null || json === void 0 ? void 0 : json.searchResults) === null || _a === void 0 ? void 0 : _a.forEach((novel) => novels.push({
             name: novel.title,
             cover: (novel === null || novel === void 0 ? void 0 : novel.coverUrl)
                 ? "https://cm.author.today/content/" + novel.coverUrl
@@ -69,7 +70,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 Authorization: token,
             },
         });
-        let json = yield result.json();
+        let json = (yield result.json());
         let novel = {
             url: novelUrl,
             name: json.title,
@@ -89,14 +90,14 @@ const parseNovelAndChapters = function (novelUrl) {
             ? "Примечания автора:\n" + json.authorNotes
             : "";
         // all chapters
-        result = yield (0, fetch_1.fetchApi)(`${apiUrl}v1/work/${workID}/content`, {
+        let chaptersRaw = yield (0, fetch_1.fetchApi)(`${apiUrl}v1/work/${workID}/content`, {
             headers: {
                 Authorization: token,
             },
         });
-        json = yield result.json();
+        let chaptersJSON = (yield chaptersRaw.json());
         let chapters = [];
-        json === null || json === void 0 ? void 0 : json.forEach((chapter, index) => {
+        chaptersJSON === null || chaptersJSON === void 0 ? void 0 : chaptersJSON.forEach((chapter, index) => {
             if ((chapter === null || chapter === void 0 ? void 0 : chapter.isAvailable) && !(chapter === null || chapter === void 0 ? void 0 : chapter.isDraft)) {
                 chapters.push({
                     name: (chapter === null || chapter === void 0 ? void 0 : chapter.title) || `Глава ${index + 1}`,
@@ -117,7 +118,7 @@ const parseChapter = function (chapterUrl) {
                 Authorization: token,
             },
         });
-        const json = yield result.json();
+        const json = (yield result.json());
         if (json === null || json === void 0 ? void 0 : json.code) {
             return json.code + "\n" + (json === null || json === void 0 ? void 0 : json.message);
         }

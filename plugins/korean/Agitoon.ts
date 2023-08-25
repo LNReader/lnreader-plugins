@@ -147,12 +147,12 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
 
 export const fetchImage: Plugin.fetchImage = fetchFile;
 
-export interface response {
+interface response {
   list_limit: number;
   list?: (ListEntity)[] | null;
   list_count: number;
 }
-export interface ListEntity {
+interface ListEntity {
   wr_id: string;
   wr_subject: string;
   np_dir: string;
@@ -168,11 +168,11 @@ export interface ListEntity {
   is_scrap: number;
 }
 
-export interface responseBook {
+interface responseBook {
   list?: (ListEntity2)[] | null;
   download_time: string;
 }
-export interface ListEntity2 {
+interface ListEntity2 {
   wr_id: string;
   wr_subject: string;
   wr_datetime: string;

@@ -245,3 +245,4 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.searchNovels = searchNovels;
 exports.fetchImage = fetch_1.fetchFile;
+;

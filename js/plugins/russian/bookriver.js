@@ -24,6 +24,7 @@ exports.site = "https://bookriver.ru";
 exports.version = "1.0.0";
 exports.icon = "src/ru/bookriver/icon.png";
 const popularNovels = function (page, { showLatestNovels, filters }) {
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         let url = exports.site + `/genre?page=${page}&perPage=24&sortingType=`;
         url += showLatestNovels ? "last-update" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "bestseller";
@@ -35,43 +36,47 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
-        let json = loadedCheerio("#__NEXT_DATA__").html();
-        json = JSON.parse(json);
         let novels = [];
-        json.props.pageProps.state.pagesFilter.genre.books.forEach((novel) => novels.push({
-            name: novel.name,
-            cover: novel.coverImages[0].url,
-            url: exports.site + "/book/" + novel.slug,
-        }));
+        const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+        if (jsonRaw) {
+            let json = JSON.parse(jsonRaw);
+            (_c = (_b = (_a = json.props.pageProps.state.pagesFilter) === null || _a === void 0 ? void 0 : _a.genre) === null || _b === void 0 ? void 0 : _b.books) === null || _c === void 0 ? void 0 : _c.forEach((novel) => novels.push({
+                name: novel.name,
+                cover: novel.coverImages[0].url,
+                url: exports.site + "/book/" + novel.slug,
+            }));
+        }
         return novels;
     });
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield (0, fetch_1.fetchApi)(novelUrl);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
-        const json = loadedCheerio("#__NEXT_DATA__").html();
-        const book = JSON.parse(json).props.pageProps.state.book.bookPage;
+        const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+        const json = JSON.parse(jsonRaw);
+        let book = (_a = json.props.pageProps.state.book) === null || _a === void 0 ? void 0 : _a.bookPage;
         let novel = {
             url: novelUrl,
-            name: book.name,
-            cover: book.coverImages[0].url,
-            summary: book.annotation,
-            author: book.author.name,
-            genres: book.tags.map((item) => item.name).join(", "),
-            status: book.statusComplete === "writing"
+            name: book === null || book === void 0 ? void 0 : book.name,
+            cover: book === null || book === void 0 ? void 0 : book.coverImages[0].url,
+            summary: book === null || book === void 0 ? void 0 : book.annotation,
+            author: (_b = book === null || book === void 0 ? void 0 : book.author) === null || _b === void 0 ? void 0 : _b.name,
+            genres: (_c = book === null || book === void 0 ? void 0 : book.tags) === null || _c === void 0 ? void 0 : _c.map((item) => item.name).join(", "),
+            status: (book === null || book === void 0 ? void 0 : book.statusComplete) === "writing"
                 ? novelStatus_1.NovelStatus.Ongoing
                 : novelStatus_1.NovelStatus.Completed,
         };
         let chapters = [];
-        book.ebook.chapters.forEach((chapter) => {
+        (_e = (_d = book === null || book === void 0 ? void 0 : book.ebook) === null || _d === void 0 ? void 0 : _d.chapters) === null || _e === void 0 ? void 0 : _e.forEach((chapter) => {
             if (chapter.available) {
                 chapters.push({
                     name: chapter.name,
                     releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.firstPublishedAt) || chapter.createdAt).format("LLL"),
-                    url: exports.site + "/reader/" + book.slug + "/" + chapter.chapterId,
+                    url: exports.site + "/reader/" + (book === null || book === void 0 ? void 0 : book.slug) + "/" + chapter.chapterId,
                 });
             }
         });
@@ -81,25 +86,27 @@ const parseNovelAndChapters = function (novelUrl) {
 };
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = function (chapterUrl) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
         const result = yield (0, fetch_1.fetchApi)(url + chapterUrl.split("/").pop());
         const json = (yield result.json());
-        const chapterText = json.data.content;
+        let chapterText = json.data.content || "Конец произведения";
+        if ((_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.audio) === null || _b === void 0 ? void 0 : _b.available) {
+            chapterText += "\n" + json.data.audio.url;
+        }
         return chapterText;
     });
 };
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${exports.site}/search/books?keyword=${searchTerm}`;
+        const url = `https://api.bookriver.ru/api/v1/search/autocomplete?keyword=${searchTerm}&page=1&perPage=10`;
         const result = yield (0, fetch_1.fetchApi)(url);
-        const body = yield result.text();
-        const loadedCheerio = (0, cheerio_1.load)(body);
-        let json = loadedCheerio("#__NEXT_DATA__").html();
-        json = JSON.parse(json);
+        const json = (yield result.json());
         let novels = [];
-        json.props.pageProps.state.catalog.books.books.forEach((novel) => novels.push({
+        (_b = (_a = json === null || json === void 0 ? void 0 : json.data) === null || _a === void 0 ? void 0 : _a.books) === null || _b === void 0 ? void 0 : _b.forEach((novel) => novels.push({
             name: novel.name,
             cover: novel.coverImages[0].url,
             url: exports.site + "/book/" + novel.slug,

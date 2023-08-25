@@ -70,7 +70,7 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield (0, fetch_1.fetchApi)(novelUrl);
         const body = yield result.text();
@@ -105,11 +105,11 @@ const parseNovelAndChapters = function (novelUrl) {
             }
         });
         let chapters = [];
-        let chaptersJson = body.match(/window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm);
-        chaptersJson = (_d = (_c = (_b = (_a = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
-        chaptersJson = JSON.parse(chaptersJson);
+        let chaptersRaw = body.match(/window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm);
+        chaptersRaw = (_d = (_c = (_b = (_a = chaptersRaw === null || chaptersRaw === void 0 ? void 0 : chaptersRaw[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
+        let chaptersJson = JSON.parse(chaptersRaw);
         ui = (_e = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson.user) === null || _e === void 0 ? void 0 : _e.id;
-        chaptersJson.chapters.list.forEach((chapter) => {
+        (_g = (_f = chaptersJson.chapters) === null || _f === void 0 ? void 0 : _f.list) === null || _g === void 0 ? void 0 : _g.forEach((chapter) => {
             var _a;
             return chapters.push({
                 name: (_a = `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`) === null || _a === void 0 ? void 0 : _a.trim(),
@@ -150,7 +150,7 @@ const searchNovels = function (searchTerm) {
         let novels = [];
         body.forEach((novel) => novels.push({
             name: (novel === null || novel === void 0 ? void 0 : novel.rus_name) || novel.name,
-            cover: novel.coverImage,
+            cover: novel === null || novel === void 0 ? void 0 : novel.coverImage,
             url: (novel === null || novel === void 0 ? void 0 : novel.href) || exports.site + "/" + novel.slug,
         }));
         return novels;

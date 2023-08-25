@@ -34,60 +34,64 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
             if (Array.isArray(filters.country) && filters.country.length) {
                 url += "&country=" + filters.country.join(",");
             }
-            let tags = []
-                .concat(filters === null || filters === void 0 ? void 0 : filters.tags, filters === null || filters === void 0 ? void 0 : filters.events)
-                .filter((t) => t);
+            let tags = [filters === null || filters === void 0 ? void 0 : filters.tags, filters === null || filters === void 0 ? void 0 : filters.events].flat().filter((t) => t);
             if (tags.length) {
                 url += "&tags:positive=" + tags.join(",");
             }
         }
         url += "&take=40";
         const result = yield (0, fetch_1.fetchApi)(url);
-        const body = yield result.json();
+        const body = (yield result.json());
         let novels = [];
-        body.resource.forEach((novel) => novels.push({
-            name: novel.names.rus,
-            cover: novel.poster.medium,
-            url: novel.url,
-        }));
+        body.resource.forEach((novel) => {
+            var _a;
+            return novels.push({
+                name: ((_a = novel.names) === null || _a === void 0 ? void 0 : _a.rus) || novel.names.eng,
+                cover: novel.poster.medium,
+                url: novel.url,
+            });
+        });
         return novels;
     });
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         const novelId = novelUrl
             .substring("https://ranobehub.org/ranobe/".length)
             .split("-")[0];
         const result = yield (0, fetch_1.fetchApi)(`${exports.site}api/ranobe/${novelId}`);
-        const json = yield result.json();
+        const json = (yield result.json());
         let novel = {
             url: json.data.url,
-            name: json.data.names.rus,
+            name: ((_a = json.data.names) === null || _a === void 0 ? void 0 : _a.rus) || json.data.names.eng,
             cover: json.data.posters.medium,
             summary: json.data.description,
-            author: ((_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.authors[0]) === null || _b === void 0 ? void 0 : _b.name_eng) || "",
+            author: ((_d = (_c = (_b = json.data) === null || _b === void 0 ? void 0 : _b.authors) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.name_eng) || "",
             status: json.data.status.title.includes("процессе")
                 ? novelStatus_1.NovelStatus.Ongoing
                 : novelStatus_1.NovelStatus.Completed,
         };
-        let tags = []
-            .concat(json.data.tags.events, json.data.tags.genres)
-            .map((item) => { var _a, _b; return ((_a = item === null || item === void 0 ? void 0 : item.names) === null || _a === void 0 ? void 0 : _a.rus) || ((_b = item === null || item === void 0 ? void 0 : item.names) === null || _b === void 0 ? void 0 : _b.eng) || (item === null || item === void 0 ? void 0 : item.title); })
-            .filter((item) => item);
+        let tags = [json.data.tags.events, json.data.tags.genres]
+            .flat()
+            .map((tags) => { var _a, _b; return ((_a = tags === null || tags === void 0 ? void 0 : tags.names) === null || _a === void 0 ? void 0 : _a.rus) || ((_b = tags === null || tags === void 0 ? void 0 : tags.names) === null || _b === void 0 ? void 0 : _b.eng) || (tags === null || tags === void 0 ? void 0 : tags.title); })
+            .filter((tags) => tags);
         if (tags.length > 0) {
             novel.genres = tags.join(", ");
         }
         let novelChapters = [];
         const fetchChaptersUrl = `${exports.site}api/ranobe/${novelId}/contents`;
         const chaptersRaw = yield (0, fetch_1.fetchApi)(fetchChaptersUrl);
-        const chaptersJSON = yield chaptersRaw.json();
-        chaptersJSON.volumes.forEach((volume) => volume.chapters.forEach((chapter) => novelChapters.push({
-            name: chapter.name,
-            url: chapter.url,
-            releaseTime: (0, dayjs_1.default)(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
-        })));
+        const chaptersJSON = (yield chaptersRaw.json());
+        chaptersJSON.volumes.forEach((volume) => {
+            var _a;
+            return (_a = volume.chapters) === null || _a === void 0 ? void 0 : _a.forEach((chapter) => novelChapters.push({
+                name: chapter.name,
+                url: chapter.url,
+                releaseTime: (0, dayjs_1.default)(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
+            }));
+        });
         novel.chapters = novelChapters;
         return novel;
     });
@@ -114,19 +118,21 @@ const parseChapter = function (chapterUrl) {
 };
 exports.parseChapter = parseChapter;
 const searchNovels = function (searchTerm) {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${exports.site}api/fulltext/global?query=${searchTerm}&take=10`;
         const result = yield (0, fetch_1.fetchApi)(url);
-        const data = yield result.json();
+        const data = (yield result.json());
         let novels = [];
-        (_a = data
-            .find((item) => item.meta.key === "ranobe")) === null || _a === void 0 ? void 0 : _a.data.forEach((novel) => novels.push({
-            name: novel.names.rus,
-            url: "https://ranobehub.org/ranobe/" +
-                novel.url.match(/https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/)[1],
-            cover: novel.image.replace("/small", "/medium"),
-        }));
+        (_b = (_a = data === null || data === void 0 ? void 0 : data.find((item) => { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.meta) === null || _a === void 0 ? void 0 : _a.key) === "ranobe"; })) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.forEach((novel) => {
+            var _a, _b, _c, _d, _e;
+            return novels.push({
+                name: ((_a = novel === null || novel === void 0 ? void 0 : novel.names) === null || _a === void 0 ? void 0 : _a.rus) || ((_b = novel === null || novel === void 0 ? void 0 : novel.names) === null || _b === void 0 ? void 0 : _b.eng) || (novel === null || novel === void 0 ? void 0 : novel.name) || "",
+                url: "https://ranobehub.org/ranobe/" +
+                    ((_d = (_c = novel === null || novel === void 0 ? void 0 : novel.url) === null || _c === void 0 ? void 0 : _c.match(/https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/)) === null || _d === void 0 ? void 0 : _d[1]),
+                cover: (_e = novel === null || novel === void 0 ? void 0 : novel.image) === null || _e === void 0 ? void 0 : _e.replace("/small", "/medium"),
+            });
+        });
         return novels;
     });
 };

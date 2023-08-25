@@ -25,6 +25,7 @@ exports.site = "https://ранобэ.рф";
 exports.version = "1.0.0";
 exports.icon = "src/ru/ranoberf/icon.png";
 const popularNovels = function (page, { showLatestNovels, filters }) {
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         let url = exports.site + "/books?order=";
         url += showLatestNovels ? "lastPublishedChapter" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "popular";
@@ -32,10 +33,10 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         const result = yield (0, fetch_1.fetchApi)(url);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
-        let json = loadedCheerio("#__NEXT_DATA__").html();
-        json = JSON.parse(json);
+        const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+        let json = JSON.parse(jsonRaw);
         let novels = [];
-        json.props.pageProps.totalData.items.forEach((novel) => {
+        (_c = (_b = (_a = json.props.pageProps) === null || _a === void 0 ? void 0 : _a.totalData) === null || _b === void 0 ? void 0 : _b.items) === null || _c === void 0 ? void 0 : _c.forEach((novel) => {
             var _a;
             return novels.push({
                 name: novel.title,
@@ -50,29 +51,29 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield (0, fetch_1.fetchApi)(novelUrl);
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
-        const json = loadedCheerio("#__NEXT_DATA__").html();
-        const book = JSON.parse(json).props.pageProps.book;
+        const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+        const book = JSON.parse(jsonRaw).props.pageProps.book;
         let novel = {
             url: novelUrl,
-            name: book.title,
+            name: book === null || book === void 0 ? void 0 : book.title,
             cover: ((_a = book === null || book === void 0 ? void 0 : book.verticalImage) === null || _a === void 0 ? void 0 : _a.url)
                 ? exports.site + book.verticalImage.url
                 : defaultCover_1.defaultCover,
-            summary: book.description,
+            summary: book === null || book === void 0 ? void 0 : book.description,
             author: (book === null || book === void 0 ? void 0 : book.author) || "",
-            genres: book.genres.map((item) => item.title).join(", "),
-            status: book.additionalInfo.includes("Активен")
+            genres: book === null || book === void 0 ? void 0 : book.genres.map((item) => item.title).join(", "),
+            status: (book === null || book === void 0 ? void 0 : book.additionalInfo.includes("Активен"))
                 ? novelStatus_1.NovelStatus.Ongoing
                 : novelStatus_1.NovelStatus.Completed,
         };
         let chapters = [];
-        book.chapters.forEach((chapter) => {
-            if (!chapter.isDonate || chapter.isUserPaid) {
+        (_b = book === null || book === void 0 ? void 0 : book.chapters) === null || _b === void 0 ? void 0 : _b.forEach((chapter) => {
+            if (!(chapter === null || chapter === void 0 ? void 0 : chapter.isDonate) || (chapter === null || chapter === void 0 ? void 0 : chapter.isUserPaid)) {
                 chapters.push({
                     name: chapter.title,
                     releaseTime: (0, dayjs_1.default)(chapter.publishedAt).format("LLL"),
@@ -86,13 +87,14 @@ const parseNovelAndChapters = function (novelUrl) {
 };
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = function (chapterUrl) {
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield (0, fetch_1.fetchApi)(chapterUrl);
         const body = yield result.text();
         let loadedCheerio = (0, cheerio_1.load)(body);
-        let json = loadedCheerio("#__NEXT_DATA__").html();
-        json = JSON.parse(json);
-        loadedCheerio = (0, cheerio_1.load)(json.props.pageProps.chapter.content.text);
+        let jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+        let json = JSON.parse(jsonRaw);
+        loadedCheerio = (0, cheerio_1.load)(((_c = (_b = (_a = json.props.pageProps) === null || _a === void 0 ? void 0 : _a.chapter) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.text) || "");
         loadedCheerio("img").each(function () {
             var _a;
             if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
@@ -109,7 +111,7 @@ const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${exports.site}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
         const result = yield (0, fetch_1.fetchApi)(url);
-        const body = yield result.json();
+        const body = (yield result.json());
         let novels = [];
         body.items.forEach((novel) => {
             var _a;

@@ -25,9 +25,7 @@ export const popularNovels: Plugin.popularNovels = async function (
     if (Array.isArray(filters.country) && filters.country.length) {
       url += "&country=" + filters.country.join(",");
     }
-    let tags = ([] as string[])
-      .concat(filters?.tags, filters?.events)
-      .filter((t) => t);
+    let tags = [filters?.tags, filters?.events].flat().filter((t) => t);
     if (tags.length) {
       url += "&tags:positive=" + tags.join(",");
     }
@@ -35,12 +33,12 @@ export const popularNovels: Plugin.popularNovels = async function (
 
   url += "&take=40";
   const result = await fetchApi(url);
-  const body: any = await result.json();
+  const body = (await result.json()) as { resource: responseNovels[] };
 
   let novels: Novel.Item[] = [];
-  body.resource.forEach((novel: any) =>
+  body.resource.forEach((novel) =>
     novels.push({
-      name: novel.names.rus,
+      name: novel.names?.rus || novel.names.eng,
       cover: novel.poster.medium,
       url: novel.url,
     })
@@ -55,23 +53,23 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       .substring("https://ranobehub.org/ranobe/".length)
       .split("-")[0];
     const result = await fetchApi(`${site}api/ranobe/${novelId}`);
-    const json: any = await result.json();
+    const json = (await result.json()) as { data: responseNovel };
 
     let novel: Novel.instance = {
       url: json.data.url,
-      name: json.data.names.rus,
+      name: json.data.names?.rus || json.data.names.eng,
       cover: json.data.posters.medium,
       summary: json.data.description,
-      author: json.data?.authors[0]?.name_eng || "",
+      author: json.data?.authors?.[0]?.name_eng || "",
       status: json.data.status.title.includes("процессе")
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
     };
 
-    let tags = []
-      .concat(json.data.tags.events, json.data.tags.genres)
-      .map((item: any) => item?.names?.rus || item?.names?.eng || item?.title)
-      .filter((item) => item);
+    let tags = [json.data.tags.events, json.data.tags.genres]
+      .flat()
+      .map((tags) => tags?.names?.rus || tags?.names?.eng || tags?.title)
+      .filter((tags) => tags);
 
     if (tags.length > 0) {
       novel.genres = tags.join(", ");
@@ -82,10 +80,12 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
     const fetchChaptersUrl = `${site}api/ranobe/${novelId}/contents`;
 
     const chaptersRaw = await fetchApi(fetchChaptersUrl);
-    const chaptersJSON: any = await chaptersRaw.json();
+    const chaptersJSON = (await chaptersRaw.json()) as {
+      volumes: VolumesEntity[];
+    };
 
-    chaptersJSON.volumes.forEach((volume: any) =>
-      volume.chapters.forEach((chapter: any) =>
+    chaptersJSON.volumes.forEach((volume) =>
+      volume.chapters?.forEach((chapter) =>
         novelChapters.push({
           name: chapter.name,
           url: chapter.url,
@@ -128,21 +128,21 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
   const url = `${site}api/fulltext/global?query=${searchTerm}&take=10`;
 
   const result = await fetchApi(url);
-  const data: any = await result.json();
+  const data = (await result.json()) as responseSearch[];
 
   let novels: Novel.Item[] = [];
 
   data
-    .find((item: any) => item.meta.key === "ranobe")
-    ?.data.forEach((novel: any) =>
+    ?.find((item) => item?.meta?.key === "ranobe")
+    ?.data?.forEach((novel) =>
       novels.push({
-        name: novel.names.rus,
+        name: novel?.names?.rus || novel?.names?.eng || novel?.name || "",
         url:
           "https://ranobehub.org/ranobe/" +
-          novel.url.match(
+          novel?.url?.match(
             /https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/
-          )[1],
-        cover: novel.image.replace("/small", "/medium"),
+          )?.[1],
+        cover: novel?.image?.replace("/small", "/medium"),
       })
     );
 
@@ -1139,3 +1139,143 @@ export const filters = [
     inputType: FilterInputs.Checkbox,
   },
 ];
+
+interface responseNovels {
+  id: number;
+  names: Names;
+  rating: number;
+  synopsis: string;
+  url: string;
+  poster: Poster;
+  created_at: number;
+  status: string;
+  user?: User;
+  counts: Counts;
+}
+interface Names {
+  eng: string;
+  rus?: string;
+  original?: string;
+}
+interface Poster {
+  medium: string;
+  small: string;
+  color: string;
+}
+interface User {
+  status?: null;
+  liked: boolean;
+}
+interface Counts {
+  volumes: string;
+  chapters: string;
+}
+
+interface responseNovel {
+  id: number;
+  names: Names;
+  rating: number;
+  year: number;
+  synopsis: string;
+  url: string;
+  posters: Posters;
+  isSpecial: boolean;
+  liked: boolean;
+  authors?: AuthorsEntity[] | null;
+  translators?: TranslatorsEntity[] | null;
+  description: string;
+  status: Status;
+  start_reading_url: string;
+  html: string;
+  tags: Tags;
+}
+interface Posters {
+  big: string;
+  medium: string;
+  small: string;
+  tiny: string;
+  color: string;
+}
+interface AuthorsEntity {
+  name_eng: string;
+  pivot: Pivot;
+}
+interface Pivot {
+  ranobe_id: number;
+  author_id?: number;
+  translator_id?: number;
+}
+interface TranslatorsEntity {
+  name: string;
+  pivot: Pivot;
+}
+interface Status {
+  id: number;
+  title: string;
+}
+interface Tags {
+  events?: GenresOrEntity[] | null;
+  genres?: GenresOrEntity[] | null;
+}
+interface GenresOrEntity {
+  id: number;
+  names: Names;
+  url: string;
+  title: string;
+  description?: string | null;
+}
+
+interface responseChapters {
+  marked_chapters_ids?: null[] | null;
+  volumes?: VolumesEntity[] | null;
+}
+interface VolumesEntity {
+  id: number;
+  num: number;
+  name: string;
+  status: Status;
+  chapters?: ChaptersEntity[] | null;
+}
+interface Status {
+  id: number;
+  name: string;
+}
+interface ChaptersEntity {
+  id: number;
+  name: string;
+  num: number;
+  url: string;
+  is_new: boolean;
+  has_images: boolean;
+  changed_at: string;
+  comments_count: string;
+}
+
+interface responseSearch {
+  meta: Meta;
+  collections?: DataEntity[] | null;
+  data?: DataEntity[] | null;
+}
+interface Meta {
+  key: string;
+  title: string;
+}
+interface DataEntity {
+  id: number;
+  names?: Names | null;
+  description?: string | null;
+  url: string;
+  image?: string | null;
+  name?: string | null;
+  level?: number | null;
+  evolution_scheme?: null;
+  roles?: null[] | null;
+  avatar?: Avatar | null;
+  has_plus?: boolean | null;
+}
+interface Avatar {
+  big: string;
+  color: string;
+  thumb: string;
+  is_default: boolean;
+}

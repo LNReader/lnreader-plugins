@@ -12,20 +12,6 @@ export const site = "https://novel.tl";
 export const version = "1.0.0";
 export const icon = "src/ru/noveltl/icon.png";
 
-interface NovelsContents {
-  data: {
-    projects: {
-      content?: {
-        title: string;
-        fullUrl: string;
-        covers?: {
-          url: string;
-        }[];
-      }[];
-    };
-  };
-}
-
 export const popularNovels: Plugin.popularNovels = async (
   page,
   { filters }
@@ -54,10 +40,10 @@ export const popularNovels: Plugin.popularNovels = async (
     }),
   });
 
-  const json = (await result.json()) as NovelsContents;
+  const json = (await result.json()) as response;
   let novels: Novel.Item[] = [];
 
-  json.data.projects?.content?.forEach((novel) =>
+  json.data?.projects?.content?.forEach((novel) =>
     novels.push({
       name: novel.title,
       url: "https://" + novel.fullUrl,
@@ -90,31 +76,30 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
       },
     }),
   });
-  const json: any = await result.json();
-
+  const json = (await result.json()) as response;
   let novel: Novel.instance = {
     url: novelUrl,
-    name: json.data.project.title,
+    name: json.data.project?.title,
     cover: json.data.project?.covers?.[0]?.url
       ? site + json.data.project.covers[0].url
       : defaultCover,
     summary: json.data.project?.annotation?.text,
     status:
-      json.data.project.translationStatus === "active"
+      json.data.project?.translationStatus === "active"
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
   };
 
-  let genres = []
-    .concat(json.data.project?.tags || [], json.data.project?.genres || [])
-    .map((item: any) => item?.nameRu || item?.nameEng)
+  let genres = [json.data.project?.tags, json.data.project?.genres]
+    .flat()
+    .map((item) => item?.nameRu || item?.nameEng)
     .filter((item) => item);
 
   if (genres?.length) {
     novel.genres = genres.join(", ");
   }
 
-  json.data.project.persons.forEach((person: any) => {
+  json.data.project?.persons?.forEach((person) => {
     if (person.role == "author" && person.name.firstName) {
       novel.author =
         person.name.firstName + " " + (person.name?.lastName || "");
@@ -122,10 +107,10 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters = async (
   });
 
   let novelChapters: Chapter.Item[] = [];
-  json.data.project.subprojects.content.forEach((work: any) =>
-    work.volumes.content.forEach((volume: any) =>
+  json.data.project?.subprojects?.content?.forEach((work) =>
+    work.volumes.content.forEach((volume) =>
       volume.chapters.forEach(
-        (chapter: any) =>
+        (chapter) =>
           chapter?.published &&
           novelChapters.push({
             name: volume.shortName + " " + chapter.title,
@@ -156,11 +141,9 @@ export const parseChapter: Plugin.parseChapter = async (chapterUrl) => {
       },
     }),
   });
-  const json = (await result.json()) as {
-    data: { chapter: { text: { text: string } } };
-  };
+  const json = (await result.json()) as response;
 
-  const loadedCheerio = parseHTML(json.data.chapter.text.text);
+  const loadedCheerio = parseHTML(json.data.chapter?.text?.text || "");
   loadedCheerio("p > a[href]").each(function () {
     let url = site + loadedCheerio(this).attr("href");
     if (!url.startsWith("http")) {
@@ -198,7 +181,7 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
       },
     }),
   });
-  const json = (await result.json()) as NovelsContents;
+  const json = (await result.json()) as response;
   let novels: Novel.Item[] = [];
 
   json?.data?.projects?.content?.forEach((novel) =>
@@ -880,3 +863,87 @@ export const filters = [
     inputType: FilterInputs.Checkbox,
   },
 ];
+
+interface response {
+  data: Data;
+}
+
+interface Data {
+  projects?: Projects;
+  project?: Project;
+  chapter?: DataChapter;
+}
+
+interface DataChapter {
+  text: Text;
+}
+
+interface Text {
+  text: string;
+}
+
+interface Project {
+  title: string;
+  translationStatus: string;
+  fullUrl: string;
+  covers: Cover[];
+  persons: Person[];
+  genres: Genre[];
+  tags: Genre[];
+  annotation: Text;
+  subprojects: Subprojects;
+}
+
+interface Cover {
+  url: string;
+}
+
+interface Genre {
+  nameRu: string;
+  nameEng: string;
+}
+
+interface Person {
+  role: string;
+  name: Name;
+}
+
+interface Name {
+  firstName: string;
+  lastName: string;
+}
+
+interface Subprojects {
+  content: SubprojectsContent[];
+}
+
+interface SubprojectsContent {
+  title: null | string;
+  volumes: Volumes;
+}
+
+interface Volumes {
+  content: VolumesContent[];
+}
+
+interface VolumesContent {
+  shortName: string;
+  chapters: ChapterElement[];
+}
+
+interface ChapterElement {
+  title: string;
+  publishDate: Date;
+  fullUrl: string;
+  published: boolean;
+}
+
+interface Projects {
+  content: ProjectsContent[];
+}
+
+interface ProjectsContent {
+  title: string;
+  fullUrl: string;
+  covers: Cover[];
+}

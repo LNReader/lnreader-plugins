@@ -130,10 +130,10 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
 
 export const fetchImage: Plugin.fetchImage = fetchFile;
 
-export interface response {
+interface response {
   novels?: (NovelsEntity)[] | null;
 }
-export interface NovelsEntity {
+interface NovelsEntity {
   id: number;
   nvl_author?: number | null;
   nvl_content: string;
@@ -155,16 +155,16 @@ export interface NovelsEntity {
   nvl_ratings_count: number;
   genres?: (GenresEntity)[] | null;
 }
-export interface GenresEntity {
+interface GenresEntity {
   id: number;
   genre_name: string;
 }
 
 
-export interface responseBook {
+interface responseBook {
   novel?: (NovelEntity)[] | null;
 }
-export interface NovelEntity {
+interface NovelEntity {
   id: number;
   nvl_author: number;
   nvl_content: string;
@@ -189,20 +189,20 @@ export interface NovelEntity {
   collaborators?: (CollaboratorsEntity)[] | null;
   genres?: (GenresEntity)[] | null;
 }
-export interface BookmarksEntity {
+interface BookmarksEntity {
   id: number;
   user_id: number;
   chp_id: number;
   chp_name: string;
 }
-export interface VolumesEntity {
+interface VolumesEntity {
   vlm_title: string;
   id: number;
   nvl_id: number;
   user_id?: number | null;
   chapters?: (ChaptersEntity)[] | null;
 }
-export interface ChaptersEntity {
+interface ChaptersEntity {
   id: number;
   chp_index_title: string;
   chp_name: string;
@@ -210,7 +210,7 @@ export interface ChaptersEntity {
   chp_status: string;
   createdAt: string;
 }
-export interface NovelRatingsEntity {
+interface NovelRatingsEntity {
   user_id: number;
   rate_value: number;
   rate_comment: string;
@@ -222,21 +222,21 @@ export interface NovelRatingsEntity {
   image?: string | null;
   likes?: (LikesEntity | null)[] | null;
 }
-export interface LikesEntity {
+interface LikesEntity {
   id: number;
   user_id: number;
   user_login: string;
 }
-export interface CollaboratorsEntity {
+interface CollaboratorsEntity {
   user_id: number;
   user_login: string;
 }
 
 
-export interface responseChapter {
+interface responseChapter {
   chapter?: (ChapterEntity)[] | null;
 }
-export interface ChapterEntity {
+interface ChapterEntity {
   id: number;
   chp_author: number;
   chp_translator?: null;
@@ -259,7 +259,7 @@ export interface ChapterEntity {
   reactions?: (null)[] | null;
   total_reactions?: (TotalReactionsEntity)[] | null;
 }
-export interface TotalReactionsEntity {
+interface TotalReactionsEntity {
   reaction_id: number;
   reaction_name: string;
   reaction_count: number;

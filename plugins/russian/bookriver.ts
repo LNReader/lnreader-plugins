@@ -28,18 +28,19 @@ export const popularNovels: Plugin.popularNovels = async function (
   const body = await result.text();
 
   const loadedCheerio = parseHTML(body);
-  let json: any = loadedCheerio("#__NEXT_DATA__").html();
-  json = JSON.parse(json);
-
   let novels: Novel.Item[] = [];
-  json.props.pageProps.state.pagesFilter.genre.books.forEach((novel: any) =>
-    novels.push({
-      name: novel.name,
-      cover: novel.coverImages[0].url,
-      url: site + "/book/" + novel.slug,
-    })
-  );
 
+  const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+  if (jsonRaw) {
+    let json: response = JSON.parse(jsonRaw);
+    json.props.pageProps.state.pagesFilter?.genre?.books?.forEach((novel) =>
+      novels.push({
+        name: novel.name,
+        cover: novel.coverImages[0].url,
+        url: site + "/book/" + novel.slug,
+      })
+    );
+  }
   return novels;
 };
 
@@ -49,36 +50,35 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-    const json: any = loadedCheerio("#__NEXT_DATA__").html();
-    const book: any = JSON.parse(json).props.pageProps.state.book.bookPage;
-
+    const jsonRaw: any = loadedCheerio("#__NEXT_DATA__").html();
+    const json: response = JSON.parse(jsonRaw);
+    let book = json.props.pageProps.state.book?.bookPage;
     let novel: Novel.instance = {
       url: novelUrl,
-      name: book.name,
-      cover: book.coverImages[0].url,
-      summary: book.annotation,
-      author: book.author.name,
-      genres: book.tags.map((item: any) => item.name).join(", "),
+      name: book?.name,
+      cover: book?.coverImages[0].url,
+      summary: book?.annotation,
+      author: book?.author?.name,
+      genres: book?.tags?.map((item) => item.name).join(", "),
       status:
-        book.statusComplete === "writing"
+        book?.statusComplete === "writing"
           ? NovelStatus.Ongoing
           : NovelStatus.Completed,
     };
 
     let chapters: Chapter.Item[] = [];
 
-    book.ebook.chapters.forEach((chapter: any) => {
+    book?.ebook?.chapters?.forEach((chapter) => {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
           releaseTime: dayjs(
             chapter?.firstPublishedAt || chapter.createdAt
           ).format("LLL"),
-          url: site + "/reader/" + book.slug + "/" + chapter.chapterId,
+          url: site + "/reader/" + book?.slug + "/" + chapter.chapterId,
         });
       }
     });
-
     novel.chapters = chapters;
     return novel;
   };
@@ -86,23 +86,23 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
   const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
   const result = await fetchApi(url + chapterUrl.split("/").pop());
-  const json = (await result.json()) as { data: { content: string } };
+  const json = (await result.json()) as responseChapter;
 
-  const chapterText = json.data.content;
+  let chapterText = json.data.content || "Конец произведения";
+  if (json.data?.audio?.available) {
+    chapterText += "\n" + json.data.audio.url;
+  }
+
   return chapterText;
 };
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `${site}/search/books?keyword=${searchTerm}`;
+  const url = `https://api.bookriver.ru/api/v1/search/autocomplete?keyword=${searchTerm}&page=1&perPage=10`;
   const result = await fetchApi(url);
-  const body = await result.text();
-
-  const loadedCheerio = parseHTML(body);
-  let json: any = loadedCheerio("#__NEXT_DATA__").html();
-  json = JSON.parse(json);
+  const json = (await result.json()) as responseSearch;
 
   let novels: Novel.Item[] = [];
-  json.props.pageProps.state.catalog.books.books.forEach((novel: any) =>
+  json?.data?.books?.forEach((novel) =>
     novels.push({
       name: novel.name,
       cover: novel.coverImages[0].url,
@@ -219,3 +219,75 @@ export const filters = [
     inputType: FilterInputs.Checkbox,
   },
 ];
+
+interface response {
+  props: {
+    pageProps: {
+      state: {
+        book?: {
+          bookPage: BooksEntity;
+        };
+        pagesFilter?: {
+          genre: {
+            books: BooksEntity[];
+          };
+        };
+      };
+    };
+  };
+}
+
+interface BooksEntity {
+  name: string;
+  coverImages: { url: string }[];
+  slug: string;
+  annotation?: string;
+  author?: {
+    name: string;
+  };
+  tags?: { name: string }[];
+  ebook?: {
+    chapters: Chapter[];
+  };
+  statusComplete: string;
+}
+
+interface Chapter {
+  name: string;
+  available: boolean;
+  firstPublishedAt?: Date | null;
+  createdAt?: Date | null;
+  chapterId: number | string;
+}
+
+interface responseChapter {
+  data: {
+    id: number;
+    bookId: number;
+    name: string;
+    content: string;
+    symbols: number;
+    number: number;
+    authorPages: number;
+    createdAt: string;
+    updatedAt: string;
+    firstPublishedAt: string;
+    status: string;
+    protected: boolean;
+    free: boolean;
+    audio?: {
+      available: boolean;
+      url: string;
+      duration: number;
+    };
+    publicationScheduledFor?: null;
+  };
+}
+
+interface responseSearch {
+  data: Data;
+  total: number;
+}
+interface Data {
+  books?: BooksEntity[] | null;
+}

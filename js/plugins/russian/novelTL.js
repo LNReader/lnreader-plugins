@@ -25,7 +25,7 @@ exports.site = "https://novel.tl";
 exports.version = "1.0.0";
 exports.icon = "src/ru/noveltl/icon.png";
 const popularNovels = (page, { filters }) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c;
     const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
         method: "post",
         headers: {
@@ -50,7 +50,7 @@ const popularNovels = (page, { filters }) => __awaiter(void 0, void 0, void 0, f
     });
     const json = (yield result.json());
     let novels = [];
-    (_b = (_a = json.data.projects) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.forEach((novel) => {
+    (_c = (_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.projects) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.forEach((novel) => {
         var _a, _b;
         return novels.push({
             name: novel.title,
@@ -64,7 +64,7 @@ const popularNovels = (page, { filters }) => __awaiter(void 0, void 0, void 0, f
 });
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d, _e, _f, _g, _h, _j;
+    var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
     const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
         method: "post",
         headers: {
@@ -81,26 +81,26 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
             },
         }),
     });
-    const json = yield result.json();
+    const json = (yield result.json());
     let novel = {
         url: novelUrl,
-        name: json.data.project.title,
-        cover: ((_e = (_d = (_c = json.data.project) === null || _c === void 0 ? void 0 : _c.covers) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.url)
+        name: (_d = json.data.project) === null || _d === void 0 ? void 0 : _d.title,
+        cover: ((_g = (_f = (_e = json.data.project) === null || _e === void 0 ? void 0 : _e.covers) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.url)
             ? exports.site + json.data.project.covers[0].url
             : defaultCover_1.defaultCover,
-        summary: (_g = (_f = json.data.project) === null || _f === void 0 ? void 0 : _f.annotation) === null || _g === void 0 ? void 0 : _g.text,
-        status: json.data.project.translationStatus === "active"
+        summary: (_j = (_h = json.data.project) === null || _h === void 0 ? void 0 : _h.annotation) === null || _j === void 0 ? void 0 : _j.text,
+        status: ((_k = json.data.project) === null || _k === void 0 ? void 0 : _k.translationStatus) === "active"
             ? novelStatus_1.NovelStatus.Ongoing
             : novelStatus_1.NovelStatus.Completed,
     };
-    let genres = []
-        .concat(((_h = json.data.project) === null || _h === void 0 ? void 0 : _h.tags) || [], ((_j = json.data.project) === null || _j === void 0 ? void 0 : _j.genres) || [])
+    let genres = [(_l = json.data.project) === null || _l === void 0 ? void 0 : _l.tags, (_m = json.data.project) === null || _m === void 0 ? void 0 : _m.genres]
+        .flat()
         .map((item) => (item === null || item === void 0 ? void 0 : item.nameRu) || (item === null || item === void 0 ? void 0 : item.nameEng))
         .filter((item) => item);
     if (genres === null || genres === void 0 ? void 0 : genres.length) {
         novel.genres = genres.join(", ");
     }
-    json.data.project.persons.forEach((person) => {
+    (_p = (_o = json.data.project) === null || _o === void 0 ? void 0 : _o.persons) === null || _p === void 0 ? void 0 : _p.forEach((person) => {
         var _a;
         if (person.role == "author" && person.name.firstName) {
             novel.author =
@@ -108,7 +108,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
         }
     });
     let novelChapters = [];
-    json.data.project.subprojects.content.forEach((work) => work.volumes.content.forEach((volume) => volume.chapters.forEach((chapter) => (chapter === null || chapter === void 0 ? void 0 : chapter.published) &&
+    (_s = (_r = (_q = json.data.project) === null || _q === void 0 ? void 0 : _q.subprojects) === null || _r === void 0 ? void 0 : _r.content) === null || _s === void 0 ? void 0 : _s.forEach((work) => work.volumes.content.forEach((volume) => volume.chapters.forEach((chapter) => (chapter === null || chapter === void 0 ? void 0 : chapter.published) &&
         novelChapters.push({
             name: volume.shortName + " " + chapter.title,
             url: "https://" + chapter.fullUrl,
@@ -119,6 +119,7 @@ const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.parseNovelAndChapters = parseNovelAndChapters;
 const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function* () {
+    var _t, _u;
     const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
         method: "post",
         headers: {
@@ -135,7 +136,7 @@ const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function*
         }),
     });
     const json = (yield result.json());
-    const loadedCheerio = (0, cheerio_1.load)(json.data.chapter.text.text);
+    const loadedCheerio = (0, cheerio_1.load)(((_u = (_t = json.data.chapter) === null || _t === void 0 ? void 0 : _t.text) === null || _u === void 0 ? void 0 : _u.text) || "");
     loadedCheerio("p > a[href]").each(function () {
         let url = exports.site + loadedCheerio(this).attr("href");
         if (!url.startsWith("http")) {
@@ -150,7 +151,7 @@ const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.parseChapter = parseChapter;
 const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k, _l, _m;
+    var _v, _w, _x;
     const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
         method: "post",
         headers: {
@@ -174,7 +175,7 @@ const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function*
     });
     const json = (yield result.json());
     let novels = [];
-    (_m = (_l = (_k = json === null || json === void 0 ? void 0 : json.data) === null || _k === void 0 ? void 0 : _k.projects) === null || _l === void 0 ? void 0 : _l.content) === null || _m === void 0 ? void 0 : _m.forEach((novel) => {
+    (_x = (_w = (_v = json === null || json === void 0 ? void 0 : json.data) === null || _v === void 0 ? void 0 : _v.projects) === null || _w === void 0 ? void 0 : _w.content) === null || _x === void 0 ? void 0 : _x.forEach((novel) => {
         var _a, _b;
         return novels.push({
             name: novel.title,

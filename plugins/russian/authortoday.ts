@@ -38,14 +38,14 @@ export const popularNovels: Plugin.popularNovels = async function (
       Authorization: token,
     },
   });
-  const json: any = await result.json();
+  const json = (await result.json()) as response;
 
   if (json?.code === "NotFound") {
     return [];
   }
 
   let novels: Novel.Item[] = [];
-  json.searchResults.forEach((novel: any) =>
+  json?.searchResults?.forEach((novel) =>
     novels.push({
       name: novel.title,
       cover: novel?.coverUrl
@@ -67,7 +67,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       },
     });
 
-    let json: any = await result.json();
+    let json = (await result.json()) as responseBook;
     let novel: Novel.instance = {
       url: novelUrl,
       name: json.title,
@@ -89,15 +89,16 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       ? "Примечания автора:\n" + json.authorNotes
       : "";
     // all chapters
-    result = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
+    let chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
       headers: {
         Authorization: token,
       },
     });
-    json = await result.json();
+
+    let chaptersJSON = (await chaptersRaw.json()) as ChaptersEntity[];
 
     let chapters: Chapter.Item[] = [];
-    json?.forEach((chapter: any, index: number) => {
+    chaptersJSON?.forEach((chapter, index) => {
       if (chapter?.isAvailable && !chapter?.isDraft) {
         chapters.push({
           name: chapter?.title || `Глава ${index + 1}`,
@@ -119,7 +120,7 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
       Authorization: token,
     },
   });
-  const json: any = await result.json();
+  const json = (await result.json()) as encryptedСhapter;
 
   if (json?.code) {
     return json.code + "\n" + json?.message;
@@ -333,3 +334,213 @@ export const filters = [
     inputType: FilterInputs.Picker,
   },
 ];
+
+interface response {
+  searchResults?: SearchResultsEntity[] | null;
+  realTotalCount: number;
+  code?: string;
+  errorMessage?: null;
+  isLastPage: boolean;
+  format: Format;
+  duration: Duration;
+  isWorkMarkEnabled: boolean;
+}
+interface SearchResultsEntity {
+  id: number;
+  title: string;
+  annotation: string;
+  authorId: number;
+  authorFIO: string;
+  authorUserName: string;
+  originalAuthor?: null;
+  coAuthorId?: number | null;
+  coAuthorFIO?: string | null;
+  coAuthorUserName?: string | null;
+  coAuthorConfirmed: boolean;
+  seriesId: number;
+  seriesTitle?: string | null;
+  publishTime: string;
+  lastModificationTime: string;
+  finishTime?: string | null;
+  isDraft: boolean;
+  formEnum: string;
+  genreId: number;
+  firstSubGenreId: number;
+  secondSubGenreId?: number | null;
+  adultOnly: boolean;
+  tags?: (string | null)[] | null;
+  coverUrl: string;
+  viewCount: number;
+  commentCount: number;
+  reviewCount: number;
+  textLength: number;
+  likeCount: number;
+  showAuthor: boolean;
+  price?: number | null;
+  discount?: null;
+  discountStartDate?: null;
+  discountEndDate?: null;
+  status: string;
+  promoFragment: boolean;
+  isExclusive: boolean;
+  format: string;
+  marks?: null[] | null;
+  isLiked: boolean;
+  isWorkMarkEnabled: boolean;
+  workInLibraryState: string;
+}
+interface Format {
+  enumValue: string;
+  value: string;
+  title: string;
+  mobileTitle: string;
+}
+interface Duration {
+  value: string;
+  title: string;
+  mobileTitle: string;
+}
+
+interface responseBook {
+  chapters?: ChaptersEntity[] | null;
+  allowDownloads: boolean;
+  downloadErrorCode: string;
+  downloadErrorMessage: string;
+  privacyDownloads: string;
+  collectionCount: number;
+  annotation: string;
+  authorNotes: string;
+  atRecommendation: boolean;
+  seriesWorkIds?: number[] | null;
+  seriesWorkNumber: number;
+  reviewCount: number;
+  tags?: string[] | null;
+  orderId?: null;
+  orderStatus: string;
+  orderStatusMessage?: null;
+  contests?: null[] | null;
+  galleryImages?: GalleryImagesEntity[] | null;
+  booktrailerVideoUrl?: null;
+  isExclusive: boolean;
+  freeChapterCount: number;
+  promoFragment: boolean;
+  recommendations?: RecommendationsEntity[] | null;
+  linkedWork?: null;
+  id: number;
+  title: string;
+  coverUrl: string;
+  lastModificationTime: string;
+  lastUpdateTime: string;
+  finishTime?: null;
+  isFinished: boolean;
+  textLength: number;
+  textLengthLastRead: number;
+  price: number;
+  discount?: null;
+  workForm: string;
+  status: string;
+  authorId: number;
+  authorFIO: string;
+  authorUserName: string;
+  originalAuthor?: null;
+  translator?: null;
+  reciter?: null;
+  coAuthorId?: null;
+  coAuthorFIO?: null;
+  coAuthorUserName?: null;
+  coAuthorConfirmed: boolean;
+  secondCoAuthorId?: null;
+  secondCoAuthorFIO?: null;
+  secondCoAuthorUserName?: null;
+  secondCoAuthorConfirmed: boolean;
+  isPurchased: boolean;
+  userLikeId?: null;
+  lastReadTime?: null;
+  lastChapterId?: null;
+  lastChapterProgress: number;
+  likeCount: number;
+  commentCount: number;
+  rewardCount: number;
+  rewardsEnabled: boolean;
+  inLibraryState: string;
+  addedToLibraryTime: string;
+  updateInLibraryTime: string;
+  privacyDisplay: string;
+  state: string;
+  isDraft: boolean;
+  enableRedLine: boolean;
+  enableTTS: boolean;
+  adultOnly: boolean;
+  seriesId: number;
+  seriesOrder: number;
+  seriesTitle: string;
+  afterword: string;
+  seriesNextWorkId?: null;
+  genreId: number;
+  firstSubGenreId: number;
+  secondSubGenreId: number;
+  format: string;
+  marks?: null;
+  purchaseTime?: null;
+  likeTime?: null;
+  markTime?: null;
+}
+interface ChaptersEntity {
+  id: number;
+  workId: number;
+  title: string;
+  isDraft: boolean;
+  sortOrder: number;
+  publishTime: string;
+  lastModificationTime: string;
+  textLength: number;
+  isAvailable: boolean;
+}
+
+interface GalleryImagesEntity {
+  id: string;
+  caption?: null;
+  url: string;
+  height: number;
+  width: number;
+}
+interface RecommendationsEntity {
+  title: string;
+  coverUrl: string;
+  authorId: number;
+  authorFIO: string;
+  authorUserName: string;
+  originalAuthor?: null;
+  coAuthorId?: null;
+  coAuthorFIO?: null;
+  coAuthorUserName?: null;
+  coAuthorConfirmed: boolean;
+  secondCoAuthorId?: null;
+  secondCoAuthorFIO?: null;
+  secondCoAuthorUserName?: null;
+  secondCoAuthorConfirmed: boolean;
+  discount?: null;
+  price?: number | null;
+  lastModificationTime: string;
+  finishTime: string;
+  finished: boolean;
+  isExclusive: boolean;
+  format: string;
+  status: string;
+  state: string;
+  removalReason?: null;
+  removalReasonComment?: null;
+  id: number;
+}
+
+interface encryptedСhapter {
+  id: number;
+  title: string;
+  isDraft: boolean;
+  publishTime: string;
+  lastModificationTime: string;
+  text: string;
+  key: string;
+  code?: string;
+  message?: string;
+}

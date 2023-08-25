@@ -11,7 +11,7 @@ export const site = "https://ranobelib.me";
 export const version = "1.0.0";
 export const icon = "src/ru/ranobelib/icon.png";
 
-var ui: string | undefined;
+var ui: string | number | undefined;
 
 export const popularNovels: Plugin.popularNovels = async function (
   page,
@@ -115,20 +115,20 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
     let chapters: Chapter.Item[] = [];
 
-    let chaptersJson: any = body.match(
+    let chaptersRaw: any = body.match(
       /window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm
     );
 
-    chaptersJson = chaptersJson?.[0]
+    chaptersRaw = chaptersRaw?.[0]
       ?.replace("window.__DATA__ = ", "")
       ?.replace("window._SITE_COLOR_", "")
       ?.trim()
       ?.slice(0, -1);
 
-    chaptersJson = JSON.parse(chaptersJson);
+    let chaptersJson: responseBook = JSON.parse(chaptersRaw);
     ui = chaptersJson?.user?.id;
 
-    chaptersJson.chapters.list.forEach((chapter: any) =>
+    chaptersJson.chapters?.list?.forEach((chapter) =>
       chapters.push({
         name: `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`?.trim(),
         releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
@@ -166,19 +166,12 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
   const result = await fetchApi(`${site}/search?q=${searchTerm}&type=manga`);
-  const body = (await result.json()) as {
-    rus_name?: string;
-    name: string;
-    coverImage: string;
-    href?: string;
-    slug?: string;
-  }[];
-
+  const body = (await result.json()) as Manga[];
   let novels: Novel.Item[] = [];
   body.forEach((novel) =>
     novels.push({
       name: novel?.rus_name || novel.name,
-      cover: novel.coverImage,
+      cover: novel?.coverImage,
       url: novel?.href || site + "/" + novel.slug,
     })
   );
@@ -402,3 +395,85 @@ export const filters = [
     inputType: FilterInputs.Checkbox,
   },
 ];
+
+interface responseBook {
+  hasStickyPermission: boolean;
+  bookmark?: null;
+  auth: boolean;
+  comments_version: string;
+  manga: Manga;
+  chapters: Chapters;
+  user?: User;
+}
+interface Manga {
+  id: number;
+  name: string;
+  rusName?: string;
+  rus_name?: string;
+  engName?: string;
+  slug: string;
+  status: number;
+  chapters_count: number;
+  altNames?: string[] | null;
+  coverImage?: string;
+  href?: string;
+}
+interface Chapters {
+  list?: ListEntity[] | null;
+  teams?: TeamsEntity[] | null;
+  branches?: BranchesEntity[] | null;
+  is_paid?: null[] | null;
+}
+interface ListEntity {
+  chapter_id: number;
+  chapter_slug: string;
+  chapter_name: string;
+  chapter_number: string;
+  chapter_volume: number;
+  chapter_moderated: number;
+  chapter_user_id: number;
+  chapter_expired_at: string;
+  chapter_scanlator_id: number;
+  chapter_created_at: string;
+  status?: null;
+  price: number;
+  branch_id: number;
+  username: string;
+}
+interface TeamsEntity {
+  name: string;
+  alt_name: string;
+  cover: string;
+  slug: string;
+  id: number;
+  branch_id: number;
+  sale: number;
+  href: string;
+  pivot: Pivot;
+}
+interface Pivot {
+  manga_id: number;
+  team_id: number;
+}
+interface BranchesEntity {
+  id: number;
+  manga_id: number;
+  name: string;
+  teams?: TeamsEntity1[] | null;
+  is_subscribed: boolean;
+}
+interface TeamsEntity1 {
+  id: number;
+  name: string;
+  slug: string;
+  cover: string;
+  branch_id: number;
+  is_active: number;
+}
+interface User {
+  id: number;
+  avatar: string;
+  access: boolean;
+  isAdmin: boolean;
+  paid: boolean;
+}

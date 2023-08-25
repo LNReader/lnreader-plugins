@@ -15,7 +15,7 @@ export const popularNovels: Plugin.popularNovels = async function (
   { showLatestNovels, filters }
 ) {
   let url = site + "/api/search/catalog/?count=30&ordering=";
-  url += filters?.order ? (filters?.order as string).replace("+", "") : "-";
+  url += filters?.order ? (filters.order as string).replace("+", "") : "-";
   url += showLatestNovels ? "chapter_date" : filters?.sort || "rating";
   if (filters) {
     if (Array.isArray(filters.type) && filters.type.length) {
@@ -38,11 +38,11 @@ export const popularNovels: Plugin.popularNovels = async function (
   url += "&page=" + page;
 
   const result = await fetchApi(url);
-  let body: any = await result.json();
+  let body = (await result.json()) as { content: responseNovels[] };
 
   let novels: Novel.Item[] = [];
 
-  body.content.forEach((novel: any) =>
+  body.content.forEach((novel) =>
     novels.push({
       name: novel.rus_name,
       cover: site + (novel.img?.high || novel.img?.mid || novel.img.low),
@@ -57,7 +57,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
   async function (novelUrl) {
     let novelID = novelUrl.split("/")[4];
     const result = await fetchApi(site + "/api/titles/" + novelID);
-    let body: any = await result.json();
+    let body = (await result.json()) as { content: responseNovel };
 
     let novel: Novel.instance = {
       url: novelUrl,
@@ -74,9 +74,10 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
           : NovelStatus.Completed,
     };
 
-    let tags = []
-      .concat(body.content.genres, body.content.categories, [])
-      .map((item: any) => item.name);
+    let tags = [body.content?.genres, body.content?.categories]
+      .flat()
+      .map((tags) => tags?.name)
+      .filter((tags) => tags);
 
     if (tags.length > 0) {
       novel.genres = tags.join(", ");
@@ -93,9 +94,11 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
           "&count=100&page=" +
           (i + 1)
       );
-      let volumes: any = await chapterResult.json();
+      let volumes = (await chapterResult.json()) as {
+        content: responseСhapters[];
+      };
 
-      volumes.content.forEach((chapter: any) => {
+      volumes.content.forEach((chapter) => {
         if (!chapter.is_paid || chapter.is_bought) {
           chapters.push({
             name: `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`?.trim(),
@@ -113,7 +116,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
   let url = site + "/api/titles/chapters/" + chapterUrl.split("/")[5];
   const result = await fetchApi(url);
-  const body = (await result.json()) as { content: { content: string } };
+  const body = (await result.json()) as { content: responseСhapter };
 
   return body.content.content;
 };
@@ -121,10 +124,10 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
 export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
   const url = `${site}/api/search/?query=${searchTerm}&count=100&field=titles`;
   const result = await fetchApi(url);
-  let body: any = await result.json();
+  let body = (await result.json()) as { content: responseNovels[] };
   let novels: Novel.Item[] = [];
 
-  body.content.forEach((novel: any) =>
+  body.content.forEach((novel) =>
     novels.push({
       name: novel.rus_name,
       cover: site + (novel.img?.high || novel.img?.mid || novel.img.low),
@@ -929,3 +932,131 @@ export const filters = [
     inputType: FilterInputs.Checkbox,
   },
 ];
+
+interface responseNovels {
+  id: number;
+  en_name: string;
+  rus_name: string;
+  dir: string;
+  is_licensed: boolean;
+  issue_year: number | null;
+  avg_rating: string;
+  admin_rating: string;
+  type: string;
+  total_views: number;
+  total_votes: number;
+  cover_high: string;
+  cover_mid: string;
+  cover_low: string;
+  is_yaoi?: boolean;
+  is_erotic?: boolean;
+  bookmark_type: null;
+  genres?: ItemEntity[] | null;
+  img: Img;
+  categories?: ItemEntity[] | null;
+  promo_link?: string;
+  count_chapters?: number;
+  is_promo?: boolean;
+}
+
+interface Img {
+  high?: string;
+  mid?: string;
+  low: string;
+}
+
+interface responseNovel {
+  id: number;
+  img: Img;
+  en_name: string;
+  rus_name: string;
+  another_name: string;
+  dir: string;
+  description: string;
+  issue_year: number;
+  avg_rating: string;
+  admin_rating: string;
+  count_rating: number;
+  age_limit: number;
+  status: ItemEntity;
+  count_bookmarks: number;
+  total_votes: number;
+  total_views: number;
+  type: ItemEntity;
+  genres?: ItemEntity[] | null;
+  categories?: ItemEntity[] | null;
+  publishers?: PublishersEntity[] | null;
+  bookmark_type?: null;
+  branches: BranchesEntity[];
+  count_chapters: number;
+  first_chapter: FirstChapter;
+  continue_reading?: null;
+  is_licensed: boolean;
+  newlate_id?: null;
+  newlate_title?: null;
+  related?: null;
+  uploaded: number;
+  can_post_comments: boolean;
+  adaptation?: null;
+}
+
+interface ItemEntity {
+  id: number;
+  name: string;
+}
+interface PublishersEntity {
+  id: number;
+  name: string;
+  img: string;
+  dir: string;
+  tagline: string;
+  type: string;
+}
+interface BranchesEntity {
+  id: number;
+  img: string;
+  publishers?: PublishersEntity[] | null;
+  subscribed: boolean;
+  total_votes: number;
+  count_chapters: number;
+}
+interface FirstChapter {
+  id: number;
+  tome: number;
+  chapter: string;
+}
+
+interface responseСhapters {
+  id: number;
+  rated?: null;
+  viewed?: null;
+  is_bought?: boolean | null;
+  publishers?: PublishersEntity[] | null;
+  tome: number;
+  index: number;
+  chapter: string;
+  name: string;
+  price?: null | number;
+  score: number;
+  pub_date?: null;
+  upload_date: string;
+  is_paid: boolean;
+}
+
+interface responseСhapter {
+  id: number;
+  chapter: string;
+  name: string;
+  content: string;
+  score: number;
+  upload_date: string;
+  is_paid: boolean;
+  title_id: number;
+  volume_id: number;
+  branch_id: number;
+  price?: null;
+  pub_date?: null;
+  index: number;
+  publishers?: PublishersEntity[] | null;
+  tome: number;
+}

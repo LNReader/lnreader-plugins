@@ -25,7 +25,7 @@ exports.icon = "src/ru/renovels/icon.png";
 const popularNovels = function (page, { showLatestNovels, filters }) {
     return __awaiter(this, void 0, void 0, function* () {
         let url = exports.site + "/api/search/catalog/?count=30&ordering=";
-        url += (filters === null || filters === void 0 ? void 0 : filters.order) ? (filters === null || filters === void 0 ? void 0 : filters.order).replace("+", "") : "-";
+        url += (filters === null || filters === void 0 ? void 0 : filters.order) ? filters.order.replace("+", "") : "-";
         url += showLatestNovels ? "chapter_date" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "rating";
         if (filters) {
             if (Array.isArray(filters.type) && filters.type.length) {
@@ -43,7 +43,7 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         }
         url += "&page=" + page;
         const result = yield (0, fetch_1.fetchApi)(url);
-        let body = yield result.json();
+        let body = (yield result.json());
         let novels = [];
         body.content.forEach((novel) => {
             var _a, _b;
@@ -58,11 +58,11 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         let novelID = novelUrl.split("/")[4];
         const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/titles/" + novelID);
-        let body = yield result.json();
+        let body = (yield result.json());
         let novel = {
             url: novelUrl,
             name: body.content.rus_name,
@@ -75,9 +75,10 @@ const parseNovelAndChapters = function (novelUrl) {
                 ? novelStatus_1.NovelStatus.Ongoing
                 : novelStatus_1.NovelStatus.Completed,
         };
-        let tags = []
-            .concat(body.content.genres, body.content.categories, [])
-            .map((item) => item.name);
+        let tags = [(_c = body.content) === null || _c === void 0 ? void 0 : _c.genres, (_d = body.content) === null || _d === void 0 ? void 0 : _d.categories]
+            .flat()
+            .map((tags) => tags === null || tags === void 0 ? void 0 : tags.name)
+            .filter((tags) => tags);
         if (tags.length > 0) {
             novel.genres = tags.join(", ");
         }
@@ -89,7 +90,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 body.content.branches[0].id +
                 "&count=100&page=" +
                 (i + 1));
-            let volumes = yield chapterResult.json();
+            let volumes = (yield chapterResult.json());
             volumes.content.forEach((chapter) => {
                 var _a;
                 if (!chapter.is_paid || chapter.is_bought) {
@@ -119,7 +120,7 @@ const searchNovels = function (searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${exports.site}/api/search/?query=${searchTerm}&count=100&field=titles`;
         const result = yield (0, fetch_1.fetchApi)(url);
-        let body = yield result.json();
+        let body = (yield result.json());
         let novels = [];
         body.content.forEach((novel) => {
             var _a, _b;
