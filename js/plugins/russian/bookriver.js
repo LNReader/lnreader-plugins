@@ -57,7 +57,7 @@ const parseNovelAndChapters = function (novelUrl) {
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-        const json = JSON.parse(jsonRaw);
+        const json = JSON.parse(jsonRaw || '{}');
         let book = (_a = json.props.pageProps.state.book) === null || _a === void 0 ? void 0 : _a.bookPage;
         let novel = {
             url: novelUrl,

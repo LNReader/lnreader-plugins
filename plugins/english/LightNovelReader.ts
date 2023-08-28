@@ -143,22 +143,17 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
     const url =
         baseUrl + `/search/autocomplete?dataType=json&query=${searchTerm}`;
     const result = await fetchApi(url);
-    const body = await result.json();
-    const data = body?.results || [];
+    const body = await result.json() as { results: ResultsEntity[] };
 
     const novels: Novel.Item[] = [];
 
-    data.forEach((item) => {
-        let novelUrl = item.link;
-        let novelName = item.original_title;
-        let novelCover = item.image;
-
+    body.results.forEach((item) => 
         novels.push({
-            url: novelUrl,
-            name: novelName,
-            cover: novelCover,
-        });
-    });
+            url: item.link,
+            name: item.original_title,
+            cover: item.image,
+        })
+    );
 
     return novels;
 };
@@ -166,3 +161,10 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
 export const fetchImage: Plugin.fetchImage = async function (url) {
     return await fetchFile(url, {});
 };
+
+interface ResultsEntity {
+  overview: string;
+  original_title: string;
+  link: string;
+  image: string;
+}

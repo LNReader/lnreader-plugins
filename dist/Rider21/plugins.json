@@ -237,6 +237,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
+			"id": "LNR.org",
+			"name": "LightNovelReader",
+			"site": "https://lightnovelreader.org",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/english/LightNovelReader.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/lightnovelreader/icon.png"
+		},
+		{
 			"id": "Ltnovel.com",
 			"name": "Ltnovel.com",
 			"site": "https://www.ltnovel.com/",

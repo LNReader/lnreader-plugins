@@ -50,8 +50,8 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-    const jsonRaw: any = loadedCheerio("#__NEXT_DATA__").html();
-    const json: response = JSON.parse(jsonRaw);
+    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+    const json: response = JSON.parse(jsonRaw || '{}');
     let book = json.props.pageProps.state.book?.bookPage;
     let novel: Novel.instance = {
       url: novelUrl,

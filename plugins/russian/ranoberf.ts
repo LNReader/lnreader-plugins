@@ -24,8 +24,8 @@ export const popularNovels: Plugin.popularNovels = async function (
   const body = await result.text();
 
   const loadedCheerio = parseHTML(body);
-  const jsonRaw: any = loadedCheerio("#__NEXT_DATA__").html();
-  let json: response = JSON.parse(jsonRaw);
+  const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+  let json: response = JSON.parse(jsonRaw || '{}');
 
   let novels: Novel.Item[] = [];
   json.props.pageProps?.totalData?.items?.forEach((novel) =>
@@ -47,8 +47,8 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-    const jsonRaw: any = loadedCheerio("#__NEXT_DATA__").html();
-    const book = (JSON.parse(jsonRaw) as response).props.pageProps.book;
+    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+    const book = (JSON.parse(jsonRaw || '{}') as response).props.pageProps.book;
 
     let novel: Novel.instance = {
       url: novelUrl,
@@ -85,8 +85,8 @@ export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
   const body = await result.text();
 
   let loadedCheerio = parseHTML(body);
-  let jsonRaw: any = loadedCheerio("#__NEXT_DATA__").html();
-  let json: response = JSON.parse(jsonRaw);
+  let jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+  let json: response = JSON.parse(jsonRaw || '{}');
 
   loadedCheerio = parseHTML(json.props.pageProps?.chapter?.content?.text || "");
   loadedCheerio("img").each(function () {

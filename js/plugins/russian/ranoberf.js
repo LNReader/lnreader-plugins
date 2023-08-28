@@ -34,7 +34,7 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-        let json = JSON.parse(jsonRaw);
+        let json = JSON.parse(jsonRaw || '{}');
         let novels = [];
         (_c = (_b = (_a = json.props.pageProps) === null || _a === void 0 ? void 0 : _a.totalData) === null || _b === void 0 ? void 0 : _b.items) === null || _c === void 0 ? void 0 : _c.forEach((novel) => {
             var _a;
@@ -57,7 +57,7 @@ const parseNovelAndChapters = function (novelUrl) {
         const body = yield result.text();
         const loadedCheerio = (0, cheerio_1.load)(body);
         const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-        const book = JSON.parse(jsonRaw).props.pageProps.book;
+        const book = JSON.parse(jsonRaw || '{}').props.pageProps.book;
         let novel = {
             url: novelUrl,
             name: book === null || book === void 0 ? void 0 : book.title,
@@ -93,7 +93,7 @@ const parseChapter = function (chapterUrl) {
         const body = yield result.text();
         let loadedCheerio = (0, cheerio_1.load)(body);
         let jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-        let json = JSON.parse(jsonRaw);
+        let json = JSON.parse(jsonRaw || '{}');
         loadedCheerio = (0, cheerio_1.load)(((_c = (_b = (_a = json.props.pageProps) === null || _a === void 0 ? void 0 : _a.chapter) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.text) || "");
         loadedCheerio("img").each(function () {
             var _a;
