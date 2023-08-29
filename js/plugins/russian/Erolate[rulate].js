@@ -35,7 +35,7 @@ const popularNovels = function (page, { filters, showLatestNovels }) {
         url += '&type=' + ((filters === null || filters === void 0 ? void 0 : filters.type) || '0');
         url += '&sort=' + (showLatestNovels ? '4' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || '6'));
         url += '&atmosphere=' + ((filters === null || filters === void 0 ? void 0 : filters.atmosphere) || '0');
-        url += '&adult' + ((filters === null || filters === void 0 ? void 0 : filters.adult) || '0');
+        url += '&adult=' + ((filters === null || filters === void 0 ? void 0 : filters.adult) || '0');
         if ((filters === null || filters === void 0 ? void 0 : filters.genres) instanceof Array) {
             url += filters.genres.map(i => '&genres[]=' + i).join('');
         }
