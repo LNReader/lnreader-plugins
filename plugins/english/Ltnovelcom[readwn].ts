@@ -6,17 +6,16 @@
     // import { parseMadaraDate } from "@libs/parseMadaraDate";
     // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
     // import { showToast } from "@libs/showToast";
-    // import { Filter, FilterInputs } from "@libs/filterInputs";
+    import { FilterInputs } from "@libs/filterInputs";
     // import { NovelStatus } from '@libs/novelStatus';
     // import { defaultCover } from "@libs/defaultCover";
     
     
     export const id = "Ltnovel.com";
     export const name = "Ltnovel.com";
-    export const icon = "multisrc/readwn/icon/ltnovel.png";
+    export const icon = "multisrc/readwn/icons/ltnovel.png";
     export const version = "1.0.0";
     export const site = "https://www.ltnovel.com/";
-    // export const filters: Filter[] = [];
     
     const baseUrl = site;
     
@@ -26,9 +25,13 @@
     ) {
         const novels: Novel.Item[] = [];
         const pageNo = page - 1;
-    
-        const url = baseUrl + 'list/all/all-onclick-' + pageNo +'.html';
-    
+
+        let url = baseUrl + 'list/';
+        url += (filters?.genres || 'all') + '/';
+        url += (filters?.status || 'all') + '-';
+        url += (showLatestNovels ? 'lastdotime' : filters?.sort || 'newstime') + '-';
+        url += pageNo + '.html';
+
         const result = await fetchApi(url);
         const body = await result.text();
     
@@ -193,5 +196,5 @@
     export const fetchImage: Plugin.fetchImage = async (url) => {
         return await fetchFile(url, {});
     };
-    
-    
+
+    export const filters = [{"key":"sort","label":"Sort By","values":[{"label":"New","key":"newstime"},{"label":"Popular","key":"onclick"},{"label":"Updates","key":"lastdotime"}], "inputType":FilterInputs.Picker},{"key":"status","label":"Status","values":[{"label":"All","key":"all"},{"label":"Completed","key":"Completed"},{"label":"Ongoing","key":"Ongoing"}], "inputType":FilterInputs.Picker},{"key":"genres","label":"Genre / Category","values":[{"label":"All","key":"all"},{"label":"Action","key":"action"},{"label":"Adult","key":"adult"},{"label":"Adventure","key":"adventure"},{"label":"Comedy","key":"comedy"},{"label":"Contemporary Romance","key":"contemporary-romance"},{"label":"Drama","key":"drama"},{"label":"Eastern Fantasy","key":"eastern-fantasy"},{"label":"Ecchi","key":"ecchi"},{"label":"Fantasy","key":"fantasy"},{"label":"Fantasy Romance","key":"fantasy-romance"},{"label":"Game","key":"game"},{"label":"Gender Bender","key":"gender-bender"},{"label":"Harem","key":"harem"},{"label":"Historical","key":"historical"},{"label":"Horror","key":"horror"},{"label":"Josei","key":"josei"},{"label":"Lolicon","key":"lolicon"},{"label":"Magical Realism","key":"magical-realism"},{"label":"Martial Arts","key":"martial-arts"},{"label":"Mature","key":"mature"},{"label":"Mecha","key":"mecha"},{"label":"Mystery","key":"mystery"},{"label":"Psychological","key":"psychological"},{"label":"Romance","key":"romance"},{"label":"School Life","key":"school-life"},{"label":"Sci-fi","key":"sci-fi"},{"label":"Seinen","key":"seinen"},{"label":"Shoujo","key":"shoujo"},{"label":"Shounen","key":"shounen"},{"label":"Shounen Ai","key":"shounen-ai"},{"label":"Slice of Life","key":"slice-of-life"},{"label":"Smut","key":"smut"},{"label":"Sports","key":"sports"},{"label":"Supernatural","key":"supernatural"},{"label":"Tragedy","key":"tragedy"},{"label":"Video Games","key":"video-games"},{"label":"Wuxia","key":"wuxia"},{"label":"Xianxia","key":"xianxia"},{"label":"Xuanhuan","key":"xuanhuan"},{"label":"Yaoi","key":"yaoi"}], "inputType":FilterInputs.Picker}];

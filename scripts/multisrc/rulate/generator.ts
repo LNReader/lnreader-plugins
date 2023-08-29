@@ -11,8 +11,8 @@ export const generateAll: ScrpitGeneratorFunction = function () {
 
 const generator = function generator(sourceJson: sourceData) {
     const pluginId = sourceJson.id;
-    const icon = sourceJson.icon;
-    const souceName = sourceJson.sourceName;
+    const sourceName = sourceJson.sourceName;
+    const iconFileName = sourceName.split('.')[0].toLowerCase() + '.png';
     const site = sourceJson.sourceSite;
     const filters = sourceJson.filters;
     const filetersString = JSON.stringify(filters).replace(/(\"inputType\":)\s*\"([^\"]+)\"/g, "$1FilterInputs.$2");
@@ -24,105 +24,54 @@ const generator = function generator(sourceJson: sourceData) {
     // import { parseMadaraDate } from "@libs/parseMadaraDate";
     // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
     // import { showToast } from "@libs/showToast";
-    import { Filter, FilterInputs } from "@libs/filterInputs";
+    import { FilterInputs } from "@libs/filterInputs";
     import { NovelStatus } from '@libs/novelStatus';
     // import { defaultCover } from "@libs/defaultCover";
 
     export const id = "${pluginId}";
-    export const name = "${souceName}";
-    export const icon = "${icon}";
+    export const name = "${sourceName}";
+    export const icon = "multisrc/rulate/icons/${iconFileName}";
     export const version = "1.0.0";
     export const site = "${site}";
 
     const baseUrl = site;
 
-    const customFilters: Filter[] = ${filetersString};
-
-    export const filters = [
-        {
-            key: 'sort',
-            label: 'Сортировка',
-            values: [
-                { label: 'По рейтингу', value: '6' },
-                { label: 'По степени готовности', value: '0' },
-                { label: 'По названию на языке оригинала', value: '1' },
-                { label: 'По названию на языке перевода', value: '2' },
-                { label: 'По дате создания', value: '3' },
-                { label: 'По дате последней активности', value: '4' },
-                { label: 'По просмотрам', value: '5' },
-                { label: 'По кол-ву переведённых глав', value: '7' },
-                { label: 'По кол-ву лайков', value: '8' },
-                { label: 'По кол-ву страниц', value: '10' },
-                { label: 'По кол-ву бесплатных глав', value: '11' },
-                { label: 'По кол-ву рецензий', value: '12' },
-                { label: 'По кол-ву в закладках', value: '13' },
-                { label: 'По кол-ву в избранном', value: '14' },
-            ],
-            inputType: FilterInputs.Picker,
-        },
-        {
-            key: 'type',
-            label: 'Тип',
-            values: [
-                { label: 'Неважно', value: '0' },
-                { label: 'Только переводы', value: '1' },
-                { label: 'Только авторские', value: '2' },
-            ],
-            inputType: FilterInputs.Picker,
-        },
-        {
-            key: 'atmosphere',
-            label: 'Атмосфера',
-            values: [
-                { label: 'Неважно', value: '0' },
-                { label: 'Позитивная', value: '1' },
-                { label: 'Dark', value: '2' },
-            ],
-            inputType: FilterInputs.Picker,
-        },
-        {
-            key: 'trash',
-            label: 'Другое',
-            values: [
-                { label: 'Готовые на 100%', value: 'ready' },
-                { label: 'Доступные для перевода', value: 'tr' },
-                { label: 'Доступные для скачивания', value: 'gen' },
-                { label: 'Завершённые проекты', value: 'wealth' },
-                { label: 'Распродажа', value: 'discount' },
-                { label: 'Только онгоинги', value: 'ongoings' },
-                { label: 'Убрать машинный', value: 'remove_machinelate' },
-            ],
-            inputType: FilterInputs.Checkbox,
-        },
-        ...customFilters,
-        {
-            key: 'adult',
-            label: 'Возрастные ограничения',
-            values: [
-                { label: 'Все', value: '0' },
-                { label: 'Убрать 18+', value: '1' },
-                { label: 'Только 18+', value: '2' },
-            ],
-            inputType: FilterInputs.Picker,
-        },
-    ];
+    export const filters = ${filetersString};
 
     export const popularNovels: Plugin.popularNovels = async function (
         page,
         { filters, showLatestNovels }
     ) {
-        let url = baseUrl + '/search?t=&cat=2';
-        url += '&sort=' + (showLatestNovels ? '4' : (filters?.sort || '6'));
+        let url = baseUrl + '/search?t=';
+        url += '&cat=' + (filters?.cat || '0');
+        url += '&s_lang=' + (filters?.s_lang || '0');
+        url += '&t_lang=' + (filters?.t_lang || '0');
         url += '&type=' + (filters?.type || '0');
+        url += '&sort=' + (showLatestNovels ? '4' : (filters?.sort || '6'));
         url += '&atmosphere=' + (filters?.atmosphere || '0');
-        url += '&adult=' + (filters?.adult || '0');
 
         if (filters?.genres instanceof Array) {
             url += filters.genres.map(i => '&genres[]=' + i).join('');
         }
 
+        if (filters?.genres_ex instanceof Array) {
+            url += filters.genres_ex.map(i => '&genres_ex[]=' + i).join('');
+        }
+
         if (filters?.tags instanceof Array) {
             url += filters.tags.map(i => '&tags[]=' + i).join('');
+        }
+
+        if (filters?.tags_ex instanceof Array) {
+            url += filters.tags_ex.map(i => '&tags_ex[]=' + i).join('');
+        }
+
+        if (filters?.fandoms instanceof Array) {
+            url += filters.fandoms.map(i => '&fandoms[]=' + i).join('');
+        }
+
+        if (filters?.fandoms_ex instanceof Array) {
+            url += filters.fandoms_ex.map(i => '&fandoms_ex[]=' + i).join('');
         }
 
         if (filters?.trash instanceof Array) {
@@ -295,7 +244,7 @@ const generator = function generator(sourceJson: sourceData) {
 
     return {
         lang: "Russian",
-        filename: souceName,
+        filename: sourceName,
         pluginScript,
     };
 };

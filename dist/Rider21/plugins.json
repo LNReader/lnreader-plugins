@@ -252,7 +252,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/english/Ltnovelcom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icon/ltnovel.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/ltnovel.png"
 		},
 		{
 			"id": "lunarletters",
@@ -405,7 +405,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/english/Novelmtcom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icon/novelmt.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/novelmt.png"
 		},
 		{
 			"id": "novelmultiverse",
@@ -495,7 +495,7 @@
 			"lang": "English",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/english/Readwncom[readwn].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icon/readwn.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/readwn.png"
 		},
 		{
 			"id": "sleeptTLS",
@@ -696,7 +696,7 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/Erolate[rulate].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/erolate/icon.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/rulate/icons/erolate.png"
 		},
 		{
 			"id": "jaomix.ru",
@@ -759,7 +759,7 @@
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/Rulate[rulate].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/rulate/icon.png"
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/rulate/icons/rulate.png"
 		}
 	],
 	"español, castellano": [

@@ -14,6 +14,10 @@ const generator = function generator(sourceJson: sourceData) {
     const sourceName = sourceJson.sourceName;
     const site = sourceJson.sourceSite;
     const iconFileName = sourceName.split('.')[0].toLowerCase() + '.png';
+    const filters = sourceJson.filters;
+    const filetersString = JSON.stringify(filters)
+        .replace(/(\"inputType\":)\s*\"([^\"]+)\"/g, " $1FilterInputs.$2");
+
     const pluginScript = `
     import { load as parseHTML } from "cheerio";
     // import dayjs from 'dayjs';
@@ -22,17 +26,16 @@ const generator = function generator(sourceJson: sourceData) {
     // import { parseMadaraDate } from "@libs/parseMadaraDate";
     // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
     // import { showToast } from "@libs/showToast";
-    // import { Filter, FilterInputs } from "@libs/filterInputs";
+    import { FilterInputs } from "@libs/filterInputs";
     // import { NovelStatus } from '@libs/novelStatus';
     // import { defaultCover } from "@libs/defaultCover";
     
     
     export const id = "${pluginId}";
     export const name = "${sourceName}";
-    export const icon = "multisrc/readwn/icon/${iconFileName}";
+    export const icon = "multisrc/readwn/icons/${iconFileName}";
     export const version = "1.0.0";
     export const site = "${site}";
-    // export const filters: Filter[] = [];
     
     const baseUrl = site;
     
@@ -42,9 +45,13 @@ const generator = function generator(sourceJson: sourceData) {
     ) {
         const novels: Novel.Item[] = [];
         const pageNo = page - 1;
-    
-        const url = baseUrl + 'list/all/all-onclick-' + pageNo +'.html';
-    
+
+        let url = baseUrl + 'list/';
+        url += (filters?.genres || 'all') + '/';
+        url += (filters?.status || 'all') + '-';
+        url += (showLatestNovels ? 'lastdotime' : filters?.sort || 'newstime') + '-';
+        url += pageNo + '.html';
+
         const result = await fetchApi(url);
         const body = await result.text();
     
@@ -209,8 +216,8 @@ const generator = function generator(sourceJson: sourceData) {
     export const fetchImage: Plugin.fetchImage = async (url) => {
         return await fetchFile(url, {});
     };
-    
-    `
+
+    export const filters = ${filetersString};`
     return {
         lang: "English",
         filename: sourceName,

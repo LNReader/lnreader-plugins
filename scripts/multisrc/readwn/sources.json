@@ -2,16 +2,817 @@
   {
     "id": "Readwn.com",
     "sourceSite": "https://www.readwn.com/",
-    "sourceName": "Readwn.com"
+    "sourceName": "Readwn.com",
+    "filters": [
+      {
+        "key": "sort",
+        "label": "Sort By",
+        "values": [
+          {
+            "label": "New",
+            "key": "newstime"
+          },
+          {
+            "label": "Popular",
+            "key": "onclick"
+          },
+          {
+            "label": "Updates",
+            "key": "lastdotime"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "status",
+        "label": "Status",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Completed",
+            "key": "Completed"
+          },
+          {
+            "label": "Ongoing",
+            "key": "Ongoing"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "genres",
+        "label": "Genre / Category",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Action",
+            "key": "action"
+          },
+          {
+            "label": "Adventure",
+            "key": "adventure"
+          },
+          {
+            "label": "Chinese",
+            "key": "chinese"
+          },
+          {
+            "label": "Comedy",
+            "key": "comedy"
+          },
+          {
+            "label": "Contemporary Romance",
+            "key": "contemporary-romance"
+          },
+          {
+            "label": "Drama",
+            "key": "drama"
+          },
+          {
+            "label": "Eastern Fantasy",
+            "key": "eastern-fantasy"
+          },
+          {
+            "label": "Ecchi",
+            "key": "ecchi"
+          },
+          {
+            "label": "Erciyuan",
+            "key": "erciyuan"
+          },
+          {
+            "label": "Faloo",
+            "key": "faloo"
+          },
+          {
+            "label": "Fan-Fiction",
+            "key": "fan-fiction"
+          },
+          {
+            "label": "Fantasy",
+            "key": "fantasy"
+          },
+          {
+            "label": "Fantasy Romance",
+            "key": "fantasy-romance"
+          },
+          {
+            "label": "Game",
+            "key": "game"
+          },
+          {
+            "label": "Gender Bender",
+            "key": "gender-bender"
+          },
+          {
+            "label": "Harem",
+            "key": "harem"
+          },
+          {
+            "label": "Hentai",
+            "key": "hentai"
+          },
+          {
+            "label": "Historical",
+            "key": "historical"
+          },
+          {
+            "label": "Horror",
+            "key": "horror"
+          },
+          {
+            "label": "Isekai",
+            "key": "isekai"
+          },
+          {
+            "label": "Japanese",
+            "key": "japanese"
+          },
+          {
+            "label": "Josei",
+            "key": "josei"
+          },
+          {
+            "label": "Korean",
+            "key": "korean"
+          },
+          {
+            "label": "Lolicon",
+            "key": "lolicon"
+          },
+          {
+            "label": "Magic",
+            "key": "magic"
+          },
+          {
+            "label": "Magical Realism",
+            "key": "magical-realism"
+          },
+          {
+            "label": "Martial Arts",
+            "key": "martial-arts"
+          },
+          {
+            "label": "Mecha",
+            "key": "mecha"
+          },
+          {
+            "label": "Military",
+            "key": "military"
+          },
+          {
+            "label": "Mystery",
+            "key": "mystery"
+          },
+          {
+            "label": "Official Circles",
+            "key": "official_circles"
+          },
+          {
+            "label": "Psychological",
+            "key": "psychological"
+          },
+          {
+            "label": "Romance",
+            "key": "romance"
+          },
+          {
+            "label": "School Life",
+            "key": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "key": "sci-fi"
+          },
+          {
+            "label": "Science Fiction",
+            "key": "science_fiction"
+          },
+          {
+            "label": "Seinen",
+            "key": "seinen"
+          },
+          {
+            "label": "Shoujo",
+            "key": "shoujo"
+          },
+          {
+            "label": "Shoujo Ai",
+            "key": "shoujo-ai"
+          },
+          {
+            "label": "Shounen",
+            "key": "shounen"
+          },
+          {
+            "label": "Shounen Ai",
+            "key": "shounen-ai"
+          },
+          {
+            "label": "Slice of Life",
+            "key": "slice-of-life"
+          },
+          {
+            "label": "Sports",
+            "key": "sports"
+          },
+          {
+            "label": "Supernatural",
+            "key": "supernatural"
+          },
+          {
+            "label": "Suspense Thriller",
+            "key": "suspense_thriller"
+          },
+          {
+            "label": "Tragedy",
+            "key": "tragedy"
+          },
+          {
+            "label": "Travel Through Time",
+            "key": "travel_through_time"
+          },
+          {
+            "label": "Two-dimensional",
+            "key": "two-dimensional"
+          },
+          {
+            "label": "Urban",
+            "key": "urban"
+          },
+          {
+            "label": "Urban Life",
+            "key": "urban-life"
+          },
+          {
+            "label": "Video Games",
+            "key": "video-games"
+          },
+          {
+            "label": "Virtual Reality",
+            "key": "virtual-reality"
+          },
+          {
+            "label": "Wuxia",
+            "key": "wuxia"
+          },
+          {
+            "label": "Wuxia Xianxia",
+            "key": "wuxia_xianxia"
+          },
+          {
+            "label": "Xianxia",
+            "key": "xianxia"
+          },
+          {
+            "label": "Xuanhuan",
+            "key": "xuanhuan"
+          },
+          {
+            "label": "Yaoi",
+            "key": "yaoi"
+          },
+          {
+            "label": "Yuri",
+            "key": "yuri"
+          }
+        ],
+        "inputType": "Picker"
+      }
+    ]
   },
   {
     "id": "Novelmt.com",
     "sourceSite": "https://www.novelmt.com/",
-    "sourceName": "Novelmt.com"
+    "sourceName": "Novelmt.com",
+    "filters": [
+      {
+        "key": "sort",
+        "label": "Sort By",
+        "values": [
+          {
+            "label": "New",
+            "key": "newstime"
+          },
+          {
+            "label": "Popular",
+            "key": "onclick"
+          },
+          {
+            "label": "Updates",
+            "key": "lastdotime"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "status",
+        "label": "Status",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Completed",
+            "key": "Completed"
+          },
+          {
+            "label": "Ongoing",
+            "key": "Ongoing"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "genres",
+        "label": "Genre / Category",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Action",
+            "key": "action"
+          },
+          {
+            "label": "Adult",
+            "key": "adult"
+          },
+          {
+            "label": "Adventure",
+            "key": "adventure"
+          },
+          {
+            "label": "Billionaire",
+            "key": "billionaire"
+          },
+          {
+            "label": "CEO",
+            "key": "ceo"
+          },
+          {
+            "label": "Chinese",
+            "key": "chinese"
+          },
+          {
+            "label": "Comedy",
+            "key": "comedy"
+          },
+          {
+            "label": "Contemporary Romance",
+            "key": "contemporary-romance"
+          },
+          {
+            "label": "Drama",
+            "key": "drama"
+          },
+          {
+            "label": "Eastern Fantasy",
+            "key": "eastern-fantasy"
+          },
+          {
+            "label": "Ecchi",
+            "key": "ecchi"
+          },
+          {
+            "label": "Erciyuan",
+            "key": "erciyuan"
+          },
+          {
+            "label": "Faloo",
+            "key": "faloo"
+          },
+          {
+            "label": "Fan-Fiction",
+            "key": "fan-fiction"
+          },
+          {
+            "label": "Fantasy",
+            "key": "fantasy"
+          },
+          {
+            "label": "Fantasy Romance",
+            "key": "fantasy-romance"
+          },
+          {
+            "label": "Farming",
+            "key": "farming"
+          },
+          {
+            "label": "Game",
+            "key": "game"
+          },
+          {
+            "label": "Games",
+            "key": "games"
+          },
+          {
+            "label": "Gay Romance",
+            "key": "gay-romance"
+          },
+          {
+            "label": "Gender Bender",
+            "key": "gender-bender"
+          },
+          {
+            "label": "Harem",
+            "key": "harem"
+          },
+          {
+            "label": "Historical",
+            "key": "historical"
+          },
+          {
+            "label": "Historical Romance",
+            "key": "historical-romance"
+          },
+          {
+            "label": "Horror",
+            "key": "horror"
+          },
+          {
+            "label": "Isekai",
+            "key": "isekai"
+          },
+          {
+            "label": "Japanese",
+            "key": "japanese"
+          },
+          {
+            "label": "Josei",
+            "key": "josei"
+          },
+          {
+            "label": "Korean",
+            "key": "korean"
+          },
+          {
+            "label": "Lolicon",
+            "key": "lolicon"
+          },
+          {
+            "label": "Magic",
+            "key": "magic"
+          },
+          {
+            "label": "Magical Realism",
+            "key": "magical-realism"
+          },
+          {
+            "label": "Martial Arts",
+            "key": "martial-arts"
+          },
+          {
+            "label": "Mature",
+            "key": "mature"
+          },
+          {
+            "label": "Mecha",
+            "key": "mecha"
+          },
+          {
+            "label": "Military",
+            "key": "military"
+          },
+          {
+            "label": "Modern Life",
+            "key": "modern-life"
+          },
+          {
+            "label": "Modern Romance",
+            "key": "modern-romance"
+          },
+          {
+            "label": "Mystery",
+            "key": "mystery"
+          },
+          {
+            "label": "Psychological",
+            "key": "psychological"
+          },
+          {
+            "label": "Romance",
+            "key": "romance"
+          },
+          {
+            "label": "Romantic",
+            "key": "romantic"
+          },
+          {
+            "label": "School Life",
+            "key": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "key": "sci-fi"
+          },
+          {
+            "label": "Seinen",
+            "key": "seinen"
+          },
+          {
+            "label": "Shoujo",
+            "key": "shoujo"
+          },
+          {
+            "label": "Shoujo Ai",
+            "key": "shoujo-ai"
+          },
+          {
+            "label": "Shounen",
+            "key": "shounen"
+          },
+          {
+            "label": "Shounen Ai",
+            "key": "shounen-ai"
+          },
+          {
+            "label": "Slice of Life",
+            "key": "slice-of-life"
+          },
+          {
+            "label": "Smut",
+            "key": "smut"
+          },
+          {
+            "label": "Sports",
+            "key": "sports"
+          },
+          {
+            "label": "Supernatural",
+            "key": "supernatural"
+          },
+          {
+            "label": "Tragedy",
+            "key": "tragedy"
+          },
+          {
+            "label": "Two-dimensional",
+            "key": "two-dimensional"
+          },
+          {
+            "label": "Urban",
+            "key": "urban"
+          },
+          {
+            "label": "Urban Life",
+            "key": "urban-life"
+          },
+          {
+            "label": "Video Games",
+            "key": "video-games"
+          },
+          {
+            "label": "Virtual Reality",
+            "key": "virtual-reality"
+          },
+          {
+            "label": "Wuxia",
+            "key": "wuxia"
+          },
+          {
+            "label": "Xianxia",
+            "key": "xianxia"
+          },
+          {
+            "label": "Xuanhuan",
+            "key": "xuanhuan"
+          },
+          {
+            "label": "Yaoi",
+            "key": "yaoi"
+          },
+          {
+            "label": "Yuri",
+            "key": "yuri"
+          }
+        ],
+        "inputType": "Picker"
+      }
+    ]
   },
   {
     "id": "Ltnovel.com",
     "sourceSite": "https://www.ltnovel.com/",
-    "sourceName": "Ltnovel.com"
+    "sourceName": "Ltnovel.com",
+    "filters": [
+      {
+        "key": "sort",
+        "label": "Sort By",
+        "values": [
+          {
+            "label": "New",
+            "key": "newstime"
+          },
+          {
+            "label": "Popular",
+            "key": "onclick"
+          },
+          {
+            "label": "Updates",
+            "key": "lastdotime"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "status",
+        "label": "Status",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Completed",
+            "key": "Completed"
+          },
+          {
+            "label": "Ongoing",
+            "key": "Ongoing"
+          }
+        ],
+        "inputType": "Picker"
+      },
+      {
+        "key": "genres",
+        "label": "Genre / Category",
+        "values": [
+          {
+            "label": "All",
+            "key": "all"
+          },
+          {
+            "label": "Action",
+            "key": "action"
+          },
+          {
+            "label": "Adult",
+            "key": "adult"
+          },
+          {
+            "label": "Adventure",
+            "key": "adventure"
+          },
+          {
+            "label": "Comedy",
+            "key": "comedy"
+          },
+          {
+            "label": "Contemporary Romance",
+            "key": "contemporary-romance"
+          },
+          {
+            "label": "Drama",
+            "key": "drama"
+          },
+          {
+            "label": "Eastern Fantasy",
+            "key": "eastern-fantasy"
+          },
+          {
+            "label": "Ecchi",
+            "key": "ecchi"
+          },
+          {
+            "label": "Fantasy",
+            "key": "fantasy"
+          },
+          {
+            "label": "Fantasy Romance",
+            "key": "fantasy-romance"
+          },
+          {
+            "label": "Game",
+            "key": "game"
+          },
+          {
+            "label": "Gender Bender",
+            "key": "gender-bender"
+          },
+          {
+            "label": "Harem",
+            "key": "harem"
+          },
+          {
+            "label": "Historical",
+            "key": "historical"
+          },
+          {
+            "label": "Horror",
+            "key": "horror"
+          },
+          {
+            "label": "Josei",
+            "key": "josei"
+          },
+          {
+            "label": "Lolicon",
+            "key": "lolicon"
+          },
+          {
+            "label": "Magical Realism",
+            "key": "magical-realism"
+          },
+          {
+            "label": "Martial Arts",
+            "key": "martial-arts"
+          },
+          {
+            "label": "Mature",
+            "key": "mature"
+          },
+          {
+            "label": "Mecha",
+            "key": "mecha"
+          },
+          {
+            "label": "Mystery",
+            "key": "mystery"
+          },
+          {
+            "label": "Psychological",
+            "key": "psychological"
+          },
+          {
+            "label": "Romance",
+            "key": "romance"
+          },
+          {
+            "label": "School Life",
+            "key": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "key": "sci-fi"
+          },
+          {
+            "label": "Seinen",
+            "key": "seinen"
+          },
+          {
+            "label": "Shoujo",
+            "key": "shoujo"
+          },
+          {
+            "label": "Shounen",
+            "key": "shounen"
+          },
+          {
+            "label": "Shounen Ai",
+            "key": "shounen-ai"
+          },
+          {
+            "label": "Slice of Life",
+            "key": "slice-of-life"
+          },
+          {
+            "label": "Smut",
+            "key": "smut"
+          },
+          {
+            "label": "Sports",
+            "key": "sports"
+          },
+          {
+            "label": "Supernatural",
+            "key": "supernatural"
+          },
+          {
+            "label": "Tragedy",
+            "key": "tragedy"
+          },
+          {
+            "label": "Video Games",
+            "key": "video-games"
+          },
+          {
+            "label": "Wuxia",
+            "key": "wuxia"
+          },
+          {
+            "label": "Xianxia",
+            "key": "xianxia"
+          },
+          {
+            "label": "Xuanhuan",
+            "key": "xuanhuan"
+          },
+          {
+            "label": "Yaoi",
+            "key": "yaoi"
+          }
+        ],
+        "inputType": "Picker"
+      }
+    ]
   }
 ]
