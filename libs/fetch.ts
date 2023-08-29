@@ -17,7 +17,6 @@ export async function fetchApi(
         ...init?.headers,
     };
     if (pluginId) console.log("Enable CloudFlare cookie for", pluginId);
-    console.log(url, { ...init, headers })
     return await fetch(url, { ...init, headers });
 }
 

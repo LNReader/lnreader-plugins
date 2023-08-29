@@ -10,15 +10,15 @@
         "values": [
           {
             "label": "New",
-            "key": "newstime"
+            "value": "newstime"
           },
           {
             "label": "Popular",
-            "key": "onclick"
+            "value": "onclick"
           },
           {
             "label": "Updates",
-            "key": "lastdotime"
+            "value": "lastdotime"
           }
         ],
         "inputType": "Picker"
@@ -29,15 +29,15 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Completed",
-            "key": "Completed"
+            "value": "Completed"
           },
           {
             "label": "Ongoing",
-            "key": "Ongoing"
+            "value": "Ongoing"
           }
         ],
         "inputType": "Picker"
@@ -48,239 +48,239 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Action",
-            "key": "action"
+            "value": "action"
           },
           {
             "label": "Adventure",
-            "key": "adventure"
+            "value": "adventure"
           },
           {
             "label": "Chinese",
-            "key": "chinese"
+            "value": "chinese"
           },
           {
             "label": "Comedy",
-            "key": "comedy"
+            "value": "comedy"
           },
           {
             "label": "Contemporary Romance",
-            "key": "contemporary-romance"
+            "value": "contemporary-romance"
           },
           {
             "label": "Drama",
-            "key": "drama"
+            "value": "drama"
           },
           {
             "label": "Eastern Fantasy",
-            "key": "eastern-fantasy"
+            "value": "eastern-fantasy"
           },
           {
             "label": "Ecchi",
-            "key": "ecchi"
+            "value": "ecchi"
           },
           {
             "label": "Erciyuan",
-            "key": "erciyuan"
+            "value": "erciyuan"
           },
           {
             "label": "Faloo",
-            "key": "faloo"
+            "value": "faloo"
           },
           {
             "label": "Fan-Fiction",
-            "key": "fan-fiction"
+            "value": "fan-fiction"
           },
           {
             "label": "Fantasy",
-            "key": "fantasy"
+            "value": "fantasy"
           },
           {
             "label": "Fantasy Romance",
-            "key": "fantasy-romance"
+            "value": "fantasy-romance"
           },
           {
             "label": "Game",
-            "key": "game"
+            "value": "game"
           },
           {
             "label": "Gender Bender",
-            "key": "gender-bender"
+            "value": "gender-bender"
           },
           {
             "label": "Harem",
-            "key": "harem"
+            "value": "harem"
           },
           {
             "label": "Hentai",
-            "key": "hentai"
+            "value": "hentai"
           },
           {
             "label": "Historical",
-            "key": "historical"
+            "value": "historical"
           },
           {
             "label": "Horror",
-            "key": "horror"
+            "value": "horror"
           },
           {
             "label": "Isekai",
-            "key": "isekai"
+            "value": "isekai"
           },
           {
             "label": "Japanese",
-            "key": "japanese"
+            "value": "japanese"
           },
           {
             "label": "Josei",
-            "key": "josei"
+            "value": "josei"
           },
           {
             "label": "Korean",
-            "key": "korean"
+            "value": "korean"
           },
           {
             "label": "Lolicon",
-            "key": "lolicon"
+            "value": "lolicon"
           },
           {
             "label": "Magic",
-            "key": "magic"
+            "value": "magic"
           },
           {
             "label": "Magical Realism",
-            "key": "magical-realism"
+            "value": "magical-realism"
           },
           {
             "label": "Martial Arts",
-            "key": "martial-arts"
+            "value": "martial-arts"
           },
           {
             "label": "Mecha",
-            "key": "mecha"
+            "value": "mecha"
           },
           {
             "label": "Military",
-            "key": "military"
+            "value": "military"
           },
           {
             "label": "Mystery",
-            "key": "mystery"
+            "value": "mystery"
           },
           {
             "label": "Official Circles",
-            "key": "official_circles"
+            "value": "official_circles"
           },
           {
             "label": "Psychological",
-            "key": "psychological"
+            "value": "psychological"
           },
           {
             "label": "Romance",
-            "key": "romance"
+            "value": "romance"
           },
           {
             "label": "School Life",
-            "key": "school-life"
+            "value": "school-life"
           },
           {
             "label": "Sci-fi",
-            "key": "sci-fi"
+            "value": "sci-fi"
           },
           {
             "label": "Science Fiction",
-            "key": "science_fiction"
+            "value": "science_fiction"
           },
           {
             "label": "Seinen",
-            "key": "seinen"
+            "value": "seinen"
           },
           {
             "label": "Shoujo",
-            "key": "shoujo"
+            "value": "shoujo"
           },
           {
             "label": "Shoujo Ai",
-            "key": "shoujo-ai"
+            "value": "shoujo-ai"
           },
           {
             "label": "Shounen",
-            "key": "shounen"
+            "value": "shounen"
           },
           {
             "label": "Shounen Ai",
-            "key": "shounen-ai"
+            "value": "shounen-ai"
           },
           {
             "label": "Slice of Life",
-            "key": "slice-of-life"
+            "value": "slice-of-life"
           },
           {
             "label": "Sports",
-            "key": "sports"
+            "value": "sports"
           },
           {
             "label": "Supernatural",
-            "key": "supernatural"
+            "value": "supernatural"
           },
           {
             "label": "Suspense Thriller",
-            "key": "suspense_thriller"
+            "value": "suspense_thriller"
           },
           {
             "label": "Tragedy",
-            "key": "tragedy"
+            "value": "tragedy"
           },
           {
             "label": "Travel Through Time",
-            "key": "travel_through_time"
+            "value": "travel_through_time"
           },
           {
             "label": "Two-dimensional",
-            "key": "two-dimensional"
+            "value": "two-dimensional"
           },
           {
             "label": "Urban",
-            "key": "urban"
+            "value": "urban"
           },
           {
             "label": "Urban Life",
-            "key": "urban-life"
+            "value": "urban-life"
           },
           {
             "label": "Video Games",
-            "key": "video-games"
+            "value": "video-games"
           },
           {
             "label": "Virtual Reality",
-            "key": "virtual-reality"
+            "value": "virtual-reality"
           },
           {
             "label": "Wuxia",
-            "key": "wuxia"
+            "value": "wuxia"
           },
           {
             "label": "Wuxia Xianxia",
-            "key": "wuxia_xianxia"
+            "value": "wuxia_xianxia"
           },
           {
             "label": "Xianxia",
-            "key": "xianxia"
+            "value": "xianxia"
           },
           {
             "label": "Xuanhuan",
-            "key": "xuanhuan"
+            "value": "xuanhuan"
           },
           {
             "label": "Yaoi",
-            "key": "yaoi"
+            "value": "yaoi"
           },
           {
             "label": "Yuri",
-            "key": "yuri"
+            "value": "yuri"
           }
         ],
         "inputType": "Picker"
@@ -298,15 +298,15 @@
         "values": [
           {
             "label": "New",
-            "key": "newstime"
+            "value": "newstime"
           },
           {
             "label": "Popular",
-            "key": "onclick"
+            "value": "onclick"
           },
           {
             "label": "Updates",
-            "key": "lastdotime"
+            "value": "lastdotime"
           }
         ],
         "inputType": "Picker"
@@ -317,15 +317,15 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Completed",
-            "key": "Completed"
+            "value": "Completed"
           },
           {
             "label": "Ongoing",
-            "key": "Ongoing"
+            "value": "Ongoing"
           }
         ],
         "inputType": "Picker"
@@ -336,263 +336,263 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Action",
-            "key": "action"
+            "value": "action"
           },
           {
             "label": "Adult",
-            "key": "adult"
+            "value": "adult"
           },
           {
             "label": "Adventure",
-            "key": "adventure"
+            "value": "adventure"
           },
           {
             "label": "Billionaire",
-            "key": "billionaire"
+            "value": "billionaire"
           },
           {
             "label": "CEO",
-            "key": "ceo"
+            "value": "ceo"
           },
           {
             "label": "Chinese",
-            "key": "chinese"
+            "value": "chinese"
           },
           {
             "label": "Comedy",
-            "key": "comedy"
+            "value": "comedy"
           },
           {
             "label": "Contemporary Romance",
-            "key": "contemporary-romance"
+            "value": "contemporary-romance"
           },
           {
             "label": "Drama",
-            "key": "drama"
+            "value": "drama"
           },
           {
             "label": "Eastern Fantasy",
-            "key": "eastern-fantasy"
+            "value": "eastern-fantasy"
           },
           {
             "label": "Ecchi",
-            "key": "ecchi"
+            "value": "ecchi"
           },
           {
             "label": "Erciyuan",
-            "key": "erciyuan"
+            "value": "erciyuan"
           },
           {
             "label": "Faloo",
-            "key": "faloo"
+            "value": "faloo"
           },
           {
             "label": "Fan-Fiction",
-            "key": "fan-fiction"
+            "value": "fan-fiction"
           },
           {
             "label": "Fantasy",
-            "key": "fantasy"
+            "value": "fantasy"
           },
           {
             "label": "Fantasy Romance",
-            "key": "fantasy-romance"
+            "value": "fantasy-romance"
           },
           {
             "label": "Farming",
-            "key": "farming"
+            "value": "farming"
           },
           {
             "label": "Game",
-            "key": "game"
+            "value": "game"
           },
           {
             "label": "Games",
-            "key": "games"
+            "value": "games"
           },
           {
             "label": "Gay Romance",
-            "key": "gay-romance"
+            "value": "gay-romance"
           },
           {
             "label": "Gender Bender",
-            "key": "gender-bender"
+            "value": "gender-bender"
           },
           {
             "label": "Harem",
-            "key": "harem"
+            "value": "harem"
           },
           {
             "label": "Historical",
-            "key": "historical"
+            "value": "historical"
           },
           {
             "label": "Historical Romance",
-            "key": "historical-romance"
+            "value": "historical-romance"
           },
           {
             "label": "Horror",
-            "key": "horror"
+            "value": "horror"
           },
           {
             "label": "Isekai",
-            "key": "isekai"
+            "value": "isekai"
           },
           {
             "label": "Japanese",
-            "key": "japanese"
+            "value": "japanese"
           },
           {
             "label": "Josei",
-            "key": "josei"
+            "value": "josei"
           },
           {
             "label": "Korean",
-            "key": "korean"
+            "value": "korean"
           },
           {
             "label": "Lolicon",
-            "key": "lolicon"
+            "value": "lolicon"
           },
           {
             "label": "Magic",
-            "key": "magic"
+            "value": "magic"
           },
           {
             "label": "Magical Realism",
-            "key": "magical-realism"
+            "value": "magical-realism"
           },
           {
             "label": "Martial Arts",
-            "key": "martial-arts"
+            "value": "martial-arts"
           },
           {
             "label": "Mature",
-            "key": "mature"
+            "value": "mature"
           },
           {
             "label": "Mecha",
-            "key": "mecha"
+            "value": "mecha"
           },
           {
             "label": "Military",
-            "key": "military"
+            "value": "military"
           },
           {
             "label": "Modern Life",
-            "key": "modern-life"
+            "value": "modern-life"
           },
           {
             "label": "Modern Romance",
-            "key": "modern-romance"
+            "value": "modern-romance"
           },
           {
             "label": "Mystery",
-            "key": "mystery"
+            "value": "mystery"
           },
           {
             "label": "Psychological",
-            "key": "psychological"
+            "value": "psychological"
           },
           {
             "label": "Romance",
-            "key": "romance"
+            "value": "romance"
           },
           {
             "label": "Romantic",
-            "key": "romantic"
+            "value": "romantic"
           },
           {
             "label": "School Life",
-            "key": "school-life"
+            "value": "school-life"
           },
           {
             "label": "Sci-fi",
-            "key": "sci-fi"
+            "value": "sci-fi"
           },
           {
             "label": "Seinen",
-            "key": "seinen"
+            "value": "seinen"
           },
           {
             "label": "Shoujo",
-            "key": "shoujo"
+            "value": "shoujo"
           },
           {
             "label": "Shoujo Ai",
-            "key": "shoujo-ai"
+            "value": "shoujo-ai"
           },
           {
             "label": "Shounen",
-            "key": "shounen"
+            "value": "shounen"
           },
           {
             "label": "Shounen Ai",
-            "key": "shounen-ai"
+            "value": "shounen-ai"
           },
           {
             "label": "Slice of Life",
-            "key": "slice-of-life"
+            "value": "slice-of-life"
           },
           {
             "label": "Smut",
-            "key": "smut"
+            "value": "smut"
           },
           {
             "label": "Sports",
-            "key": "sports"
+            "value": "sports"
           },
           {
             "label": "Supernatural",
-            "key": "supernatural"
+            "value": "supernatural"
           },
           {
             "label": "Tragedy",
-            "key": "tragedy"
+            "value": "tragedy"
           },
           {
             "label": "Two-dimensional",
-            "key": "two-dimensional"
+            "value": "two-dimensional"
           },
           {
             "label": "Urban",
-            "key": "urban"
+            "value": "urban"
           },
           {
             "label": "Urban Life",
-            "key": "urban-life"
+            "value": "urban-life"
           },
           {
             "label": "Video Games",
-            "key": "video-games"
+            "value": "video-games"
           },
           {
             "label": "Virtual Reality",
-            "key": "virtual-reality"
+            "value": "virtual-reality"
           },
           {
             "label": "Wuxia",
-            "key": "wuxia"
+            "value": "wuxia"
           },
           {
             "label": "Xianxia",
-            "key": "xianxia"
+            "value": "xianxia"
           },
           {
             "label": "Xuanhuan",
-            "key": "xuanhuan"
+            "value": "xuanhuan"
           },
           {
             "label": "Yaoi",
-            "key": "yaoi"
+            "value": "yaoi"
           },
           {
             "label": "Yuri",
-            "key": "yuri"
+            "value": "yuri"
           }
         ],
         "inputType": "Picker"
@@ -610,15 +610,15 @@
         "values": [
           {
             "label": "New",
-            "key": "newstime"
+            "value": "newstime"
           },
           {
             "label": "Popular",
-            "key": "onclick"
+            "value": "onclick"
           },
           {
             "label": "Updates",
-            "key": "lastdotime"
+            "value": "lastdotime"
           }
         ],
         "inputType": "Picker"
@@ -629,15 +629,15 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Completed",
-            "key": "Completed"
+            "value": "Completed"
           },
           {
             "label": "Ongoing",
-            "key": "Ongoing"
+            "value": "Ongoing"
           }
         ],
         "inputType": "Picker"
@@ -648,167 +648,167 @@
         "values": [
           {
             "label": "All",
-            "key": "all"
+            "value": "all"
           },
           {
             "label": "Action",
-            "key": "action"
+            "value": "action"
           },
           {
             "label": "Adult",
-            "key": "adult"
+            "value": "adult"
           },
           {
             "label": "Adventure",
-            "key": "adventure"
+            "value": "adventure"
           },
           {
             "label": "Comedy",
-            "key": "comedy"
+            "value": "comedy"
           },
           {
             "label": "Contemporary Romance",
-            "key": "contemporary-romance"
+            "value": "contemporary-romance"
           },
           {
             "label": "Drama",
-            "key": "drama"
+            "value": "drama"
           },
           {
             "label": "Eastern Fantasy",
-            "key": "eastern-fantasy"
+            "value": "eastern-fantasy"
           },
           {
             "label": "Ecchi",
-            "key": "ecchi"
+            "value": "ecchi"
           },
           {
             "label": "Fantasy",
-            "key": "fantasy"
+            "value": "fantasy"
           },
           {
             "label": "Fantasy Romance",
-            "key": "fantasy-romance"
+            "value": "fantasy-romance"
           },
           {
             "label": "Game",
-            "key": "game"
+            "value": "game"
           },
           {
             "label": "Gender Bender",
-            "key": "gender-bender"
+            "value": "gender-bender"
           },
           {
             "label": "Harem",
-            "key": "harem"
+            "value": "harem"
           },
           {
             "label": "Historical",
-            "key": "historical"
+            "value": "historical"
           },
           {
             "label": "Horror",
-            "key": "horror"
+            "value": "horror"
           },
           {
             "label": "Josei",
-            "key": "josei"
+            "value": "josei"
           },
           {
             "label": "Lolicon",
-            "key": "lolicon"
+            "value": "lolicon"
           },
           {
             "label": "Magical Realism",
-            "key": "magical-realism"
+            "value": "magical-realism"
           },
           {
             "label": "Martial Arts",
-            "key": "martial-arts"
+            "value": "martial-arts"
           },
           {
             "label": "Mature",
-            "key": "mature"
+            "value": "mature"
           },
           {
             "label": "Mecha",
-            "key": "mecha"
+            "value": "mecha"
           },
           {
             "label": "Mystery",
-            "key": "mystery"
+            "value": "mystery"
           },
           {
             "label": "Psychological",
-            "key": "psychological"
+            "value": "psychological"
           },
           {
             "label": "Romance",
-            "key": "romance"
+            "value": "romance"
           },
           {
             "label": "School Life",
-            "key": "school-life"
+            "value": "school-life"
           },
           {
             "label": "Sci-fi",
-            "key": "sci-fi"
+            "value": "sci-fi"
           },
           {
             "label": "Seinen",
-            "key": "seinen"
+            "value": "seinen"
           },
           {
             "label": "Shoujo",
-            "key": "shoujo"
+            "value": "shoujo"
           },
           {
             "label": "Shounen",
-            "key": "shounen"
+            "value": "shounen"
           },
           {
             "label": "Shounen Ai",
-            "key": "shounen-ai"
+            "value": "shounen-ai"
           },
           {
             "label": "Slice of Life",
-            "key": "slice-of-life"
+            "value": "slice-of-life"
           },
           {
             "label": "Smut",
-            "key": "smut"
+            "value": "smut"
           },
           {
             "label": "Sports",
-            "key": "sports"
+            "value": "sports"
           },
           {
             "label": "Supernatural",
-            "key": "supernatural"
+            "value": "supernatural"
           },
           {
             "label": "Tragedy",
-            "key": "tragedy"
+            "value": "tragedy"
           },
           {
             "label": "Video Games",
-            "key": "video-games"
+            "value": "video-games"
           },
           {
             "label": "Wuxia",
-            "key": "wuxia"
+            "value": "wuxia"
           },
           {
             "label": "Xianxia",
-            "key": "xianxia"
+            "value": "xianxia"
           },
           {
             "label": "Xuanhuan",
-            "key": "xuanhuan"
+            "value": "xuanhuan"
           },
           {
             "label": "Yaoi",
-            "key": "yaoi"
+            "value": "yaoi"
           }
         ],
         "inputType": "Picker"
