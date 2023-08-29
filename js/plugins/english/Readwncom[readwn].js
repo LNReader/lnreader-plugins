@@ -13,7 +13,7 @@ exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapt
 const cheerio_1 = require("cheerio");
 // import dayjs from 'dayjs';
 const fetch_1 = require("@libs/fetch");
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
+const parseMadaraDate_1 = require("@libs/parseMadaraDate");
 // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 // import { showToast } from "@libs/showToast";
 const filterInputs_1 = require("@libs/filterInputs");
@@ -98,7 +98,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 .text()
                 .trim();
             lastChapterNo = parseInt(loadedCheerio(this).find('a .chapter-no').text().trim());
-            const chapter = { name: chapterName, releaseTime: releaseDate, url: chapterUrl };
+            const chapter = { name: chapterName, releaseTime: (0, parseMadaraDate_1.parseMadaraDate)(releaseDate), url: chapterUrl };
             novelChapters.push(chapter);
         });
         // Itterate once more before loop to finish off

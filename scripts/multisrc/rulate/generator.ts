@@ -49,6 +49,7 @@ const generator = function generator(sourceJson: sourceData) {
         url += '&type=' + (filters?.type || '0');
         url += '&sort=' + (showLatestNovels ? '4' : (filters?.sort || '6'));
         url += '&atmosphere=' + (filters?.atmosphere || '0');
+        url += '&adult' + (filters?.adult || '0');
 
         if (filters?.genres instanceof Array) {
             url += filters.genres.map(i => '&genres[]=' + i).join('');
@@ -111,7 +112,7 @@ const generator = function generator(sourceJson: sourceData) {
                 formData.append('path', novelUrl);
                 formData.append('ok', 'Да');
 
-                await fetch(result.url, {
+                await fetchApi(result.url, {
                     method: 'POST',
                     body: formData,
                 });
@@ -121,15 +122,16 @@ const generator = function generator(sourceJson: sourceData) {
             const body = await result.text();
             const loadedCheerio = parseHTML(body);
 
-            novel.name = loadedCheerio('div[class="container"] > div > div > h1')
+            novel.name = loadedCheerio('div[class="container"] > div > div > h1, div.span8:nth-child(1) > h1:nth-child(2)')
                 .text()
                 .trim();
             novel.cover =
                 baseUrl + loadedCheerio('div[class="images"] > div img').attr('src');
-            novel.summary = loadedCheerio('#Info > div:nth-child(3)').text();
+            novel.summary = loadedCheerio('#Info > div:nth-child(3), .book-description').text();
+            novel.author = loadedCheerio('.book-stats-icons_author > span:nth-child(2) > a:nth-child(1)').text()
             let genres: string[] = [];
 
-            loadedCheerio('div[class="span5"] > p').each(function () {
+            loadedCheerio('div.span5 > p, .span5 > div:nth-child(2) > p').each(function () {
                 switch (loadedCheerio(this).find('strong').text()) {
                     case 'Автор:':
                         novel.author = loadedCheerio(this).find('em > a').text().trim();
@@ -193,7 +195,7 @@ const generator = function generator(sourceJson: sourceData) {
           const formData = new FormData();
           formData.append('ok', 'Да');
 
-          await fetch(result.url, {
+          await fetchApi(result.url, {
             method: 'POST',
             body: formData,
           });

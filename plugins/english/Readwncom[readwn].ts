@@ -3,7 +3,7 @@
     // import dayjs from 'dayjs';
     import { fetchFile, fetchApi } from "@libs/fetch";
     import { Novel, Plugin, Chapter } from "@typings/plugin";
-    // import { parseMadaraDate } from "@libs/parseMadaraDate";
+    import { parseMadaraDate } from "@libs/parseMadaraDate";
     // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
     // import { showToast } from "@libs/showToast";
     import { FilterInputs } from "@libs/filterInputs";
@@ -121,7 +121,7 @@
     
                 lastChapterNo = parseInt(loadedCheerio(this).find('a .chapter-no').text().trim());
     
-                const chapter = { name: chapterName, releaseTime: releaseDate, url: chapterUrl };
+                const chapter = { name: chapterName, releaseTime: parseMadaraDate(releaseDate), url: chapterUrl };
     
                 novelChapters.push(chapter);
             });
