@@ -2,6 +2,7 @@
 import { load as parseHTML } from "cheerio";
 import { fetchFile, fetchApi } from "@libs/fetch";
 import { Novel, Plugin, Chapter } from "@typings/plugin";
+import { FilterInputs } from "@libs/filterInputs";
 import { defaultCover } from "@libs/defaultCover";
 import { NovelStatus } from "@libs/novelStatus"
 import { parseMadaraDate } from "@libs/parseMadaraDate";
@@ -14,18 +15,17 @@ export const version = "1.0.0";
 export const site = "https://arnovel.me/";
 const baseUrl = site;
 
-export const popularNovels: Plugin.popularNovels = async (pageNo, {showLatestNovels}) => {
+export const popularNovels: Plugin.popularNovels = async (pageNo, {filters, showLatestNovels}) => {
     const novels: Novel.Item[] = [];
-    const sortOrder = showLatestNovels
-    ? '?m_orderby=latest'
-    : '/?m_orderby=rating';
 
-    let url = site + "novel" + '/page/' + pageNo + sortOrder;
+    let url = site + (filters?.genres ? "home/" : "novel/");
+
+    url += '/page/' + pageNo + '/' + 
+        '?m_orderby=' + (showLatestNovels ? 'latest' : (filters?.sort || 'rating'));
 
     const body = await fetchApi(url).then(res => res.text());
 
     const loadedCheerio = parseHTML(body);
-
 
     loadedCheerio('.manga-title-badges').remove();
 
@@ -203,3 +203,5 @@ export const searchNovels: Plugin.searchNovels = async (searchTerm) => {
 export const fetchImage: Plugin.fetchImage = async (url) => {
     return await fetchFile(url);
 };
+
+export const filters = [{"key":"sort","label":"الترتيب حسب","values":[{"label":"A-Z","value":"alphabet"},{"label":"الآخير","value":"latest"},{"label":"الأكثر مشاهدة","value":"views"},{"label":"التقييم","value":"rating"},{"label":"جديد","value":"new-manga"},{"label":"شائع","value":"trending"}],"inputType":FilterInputs.Picker},{"key":"genres","label":"التصنيفاتالتصنيفات","values":[{"label":"أكشن","value":"novel-genre"},{"label":"أكشن","value":"novel-genre"},{"label":"إتشي","value":"novel-genre"},{"label":"إتشي","value":"novel-genre"},{"label":"بالغ","value":"novel-genre"},{"label":"بالغ","value":"novel-genre"},{"label":"تاريخي","value":"novel-genre"},{"label":"تاريخي","value":"novel-genre"},{"label":"تراجدي","value":"novel-genre"},{"label":"تراجدي","value":"novel-genre"},{"label":"جوسي","value":"novel-genre"},{"label":"جوسي","value":"novel-genre"},{"label":"حريم","value":"novel-genre"},{"label":"حريم","value":"novel-genre"},{"label":"حياة مدرسية","value":"novel-genre"},{"label":"حياة مدرسية","value":"novel-genre"},{"label":"خارق لطبيعية","value":"novel-genre"},{"label":"خارق لطبيعية","value":"novel-genre"},{"label":"خيال","value":"novel-genre"},{"label":"خيال","value":"novel-genre"},{"label":"خيال علمي","value":"novel-genre"},{"label":"خيال علمي","value":"novel-genre"},{"label":"دراما","value":"novel-genre"},{"label":"دراما","value":"novel-genre"},{"label":"راشد","value":"novel-genre"},{"label":"راشد","value":"novel-genre"},{"label":"رعب","value":"novel-genre"},{"label":"رعب","value":"novel-genre"},{"label":"رومنسي","value":"novel-genre"},{"label":"رومنسي","value":"novel-genre"},{"label":"رياضي","value":"novel-genre"},{"label":"رياضي","value":"novel-genre"},{"label":"سينين","value":"novel-genre"},{"label":"سينين","value":"novel-genre"},{"label":"شريحة من الحياة","value":"novel-genre"},{"label":"شريحة من الحياة","value":"novel-genre"},{"label":"شوجو","value":"novel-genre"},{"label":"شوجو","value":"novel-genre"},{"label":"شونين","value":"novel-genre"},{"label":"شونين","value":"novel-genre"},{"label":"غموض","value":"novel-genre"},{"label":"غموض","value":"novel-genre"},{"label":"فنون قتال","value":"novel-genre"},{"label":"فنون قتال","value":"novel-genre"},{"label":"كوميديا","value":"novel-genre"},{"label":"كوميديا","value":"novel-genre"},{"label":"مغامرات","value":"novel-genre"},{"label":"مغامرات","value":"novel-genre"},{"label":"منتهية","value":"novel-genre"},{"label":"منتهية","value":"novel-genre"},{"label":"ميكا","value":"novel-genre"},{"label":"ميكا","value":"novel-genre"},{"label":"نفسي","value":"novel-genre"},{"label":"نفسي","value":"novel-genre"}],"inputType":FilterInputs.Picker}];

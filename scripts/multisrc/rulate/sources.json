@@ -16485,18 +16485,6 @@
         "inputType": "Checkbox"
       },
       {
-        "key": "n_chapters",
-        "label": "Количество глав от:",
-        "values": [],
-        "inputType": "TextInput"
-      },
-      {
-        "key": "n_pages",
-        "label": "Количество страниц от:",
-        "values": [],
-        "inputType": "TextInput"
-      },
-      {
         "key": "atmosphere",
         "label": "Атмосфера:",
         "values": [
@@ -22484,18 +22472,6 @@
           }
         ],
         "inputType": "Checkbox"
-      },
-      {
-        "key": "n_chapters",
-        "label": "Количество глав от:",
-        "values": [],
-        "inputType": "TextInput"
-      },
-      {
-        "key": "n_pages",
-        "label": "Количество страниц от:",
-        "values": [],
-        "inputType": "TextInput"
       },
       {
         "key": "atmosphere",
