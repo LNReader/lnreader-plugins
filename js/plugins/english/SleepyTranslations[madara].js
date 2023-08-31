@@ -28,7 +28,7 @@ exports.site = "https://sleepytranslations.com/";
 const baseUrl = exports.site;
 const popularNovels = (pageNo, { filters, showLatestNovels }) => __awaiter(void 0, void 0, void 0, function* () {
     const novels = [];
-    let url = exports.site + ((filters === null || filters === void 0 ? void 0 : filters.genres) ? "novel-genre/" : "series/");
+    let url = exports.site + ((filters === null || filters === void 0 ? void 0 : filters.genres) ? "novel-genre/" + filters.genres + '/' : "series/");
     url += '/page/' + pageNo + '/' +
         '?m_orderby=' + (showLatestNovels ? 'latest' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || 'rating'));
     const body = yield (0, fetch_1.fetchApi)(url).then(res => res.text());

@@ -18,7 +18,7 @@ const baseUrl = site;
 export const popularNovels: Plugin.popularNovels = async (pageNo, {filters, showLatestNovels}) => {
     const novels: Novel.Item[] = [];
 
-    let url = site + (filters?.genres ? "manga-genre/" : "serie/");
+    let url = site + (filters?.genres ? "manga-genre/" + filters.genres + '/' : "serie/");
 
     url += '/page/' + pageNo + '/' + 
         '?m_orderby=' + (showLatestNovels ? 'latest' : (filters?.sort || 'rating'));
