@@ -27,7 +27,13 @@ exports.site = "https://cratenovel.com/";
 const baseUrl = exports.site;
 const popularNovels = (pageNo, { filters, showLatestNovels }) => __awaiter(void 0, void 0, void 0, function* () {
     const novels = [];
-    let url = exports.site + ((filters === null || filters === void 0 ? void 0 : filters.genres) ? "novel-genre/" + filters.genres + '/' : "novel/");
+    let url = exports.site;
+    if (filters === null || filters === void 0 ? void 0 : filters.genres) {
+        url += "novel-genre/" + filters.genres + '/';
+    }
+    else {
+        url += "novel/";
+    }
     url += '/page/' + pageNo + '/' +
         '?m_orderby=' + (showLatestNovels ? 'latest' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || 'rating'));
     const body = yield (0, fetch_1.fetchApi)(url).then(res => res.text());

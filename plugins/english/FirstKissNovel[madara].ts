@@ -18,7 +18,13 @@ const baseUrl = site;
 export const popularNovels: Plugin.popularNovels = async (pageNo, {filters, showLatestNovels}) => {
     const novels: Novel.Item[] = [];
 
-    let url = site + (filters?.genres ? "novel-genre/" + filters.genres + '/' : "novel/");
+    let url = site;
+
+    if (filters?.genres) {
+        url += "novel-genre/" + filters.genres + '/';
+    } else {
+        url += "novel/";
+    }
 
     url += '/page/' + pageNo + '/' + 
         '?m_orderby=' + (showLatestNovels ? 'latest' : (filters?.sort || 'rating'));
@@ -204,4 +210,4 @@ export const fetchImage: Plugin.fetchImage = async (url) => {
     return await fetchFile(url);
 };
 
-export const filters = [];
+export const filters = [{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":FilterInputs.Picker},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Adventure","value":"adventure"},{"label":"Anime","value":"anime"},{"label":"Apocalypse","value":"apocalypse"},{"label":"Boy's Love","value":"boys-love"},{"label":"Comedy","value":"comedy"},{"label":"Completed","value":"completed"},{"label":"Cooking","value":"cooking"},{"label":"Demons","value":"demons"},{"label":"Detective","value":"detective"},{"label":"Drama","value":"drama"},{"label":"Ecchi","value":"ecchi"},{"label":"Fan-Fiction","value":"fan-fiction"},{"label":"Fantasy","value":"fantasy"},{"label":"Food","value":"food"},{"label":"Game","value":"game"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Girls Love","value":"girls-love"},{"label":"Harem","value":"harem"},{"label":"Historical","value":"historical"},{"label":"Horror","value":"horror"},{"label":"Humor","value":"humor"},{"label":"Isekai","value":"isekai"},{"label":"Josei","value":"josei"},{"label":"Magic","value":"magic"},{"label":"Magical","value":"magical"},{"label":"Manhua","value":"manhua"},{"label":"Manhwa","value":"manhwa"},{"label":"Martial Arts","value":"martial-arts"},{"label":"Mature","value":"mature"},{"label":"Mecha","value":"mecha"},{"label":"Medical","value":"medical"},{"label":"Military","value":"military"},{"label":"Moder","value":"moder"},{"label":"Modern","value":"modern"},{"label":"Murim","value":"murim"},{"label":"Music","value":"music"},{"label":"Mystery","value":"mystery"},{"label":"Psychological","value":"psychological"},{"label":"Reverse","value":"reverse"},{"label":"Reverse harem","value":"reverse-harem"},{"label":"Romance","value":"romance"},{"label":"School Life","value":"school-life"},{"label":"Sci-fi","value":"sci-fi"},{"label":"Seinen","value":"seinen"},{"label":"Shoujo","value":"shoujo"},{"label":"Shoujo Ai","value":"shoujo-ai"},{"label":"Shounen","value":"shounen"},{"label":"Shounen Ai","value":"shounen-ai"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Smut","value":"smut"},{"label":"Sports","value":"sports"},{"label":"Super power","value":"super-power"},{"label":"Superhero","value":"superhero"},{"label":"Supernatural","value":"supernatural"},{"label":"Thriller","value":"thriller"},{"label":"Tragedy","value":"tragedy"},{"label":"Urban Life","value":"urban-life"},{"label":"Vampire","value":"vampire"},{"label":"Webtoons","value":"webtoons"},{"label":"Wuxia","value":"wuxia"},{"label":"Xianxia","value":"xianxia"},{"label":"Xuanhuan","value":"xuanhuan"},{"label":"Yaoi","value":"yaoi"},{"label":"Yuri","value":"yuri"}],"inputType":FilterInputs.Picker}];

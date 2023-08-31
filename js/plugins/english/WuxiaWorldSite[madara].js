@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.version = exports.icon = exports.name = exports.id = void 0;
 const cheerio_1 = require("cheerio");
 const fetch_1 = require("@libs/fetch");
+const filterInputs_1 = require("@libs/filterInputs");
 const defaultCover_1 = require("@libs/defaultCover");
 const novelStatus_1 = require("@libs/novelStatus");
 const parseMadaraDate_1 = require("@libs/parseMadaraDate");
@@ -27,7 +28,13 @@ exports.site = "https://wuxiaworld.site/";
 const baseUrl = exports.site;
 const popularNovels = (pageNo, { filters, showLatestNovels }) => __awaiter(void 0, void 0, void 0, function* () {
     const novels = [];
-    let url = exports.site + ((filters === null || filters === void 0 ? void 0 : filters.genres) ? "novel-genre/" + filters.genres + '/' : "novel/");
+    let url = exports.site;
+    if (filters === null || filters === void 0 ? void 0 : filters.genres) {
+        url += "novel-genre/" + filters.genres + '/';
+    }
+    else {
+        url += "novel/";
+    }
     url += '/page/' + pageNo + '/' +
         '?m_orderby=' + (showLatestNovels ? 'latest' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || 'rating'));
     const body = yield (0, fetch_1.fetchApi)(url).then(res => res.text());
@@ -169,4 +176,4 @@ const fetchImage = (url) => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, fetch_1.fetchFile)(url);
 });
 exports.fetchImage = fetchImage;
-exports.filters = [];
+exports.filters = [{ "key": "sort", "label": "Order by", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": filterInputs_1.FilterInputs.Picker }];

@@ -18,7 +18,13 @@ const baseUrl = site;
 export const popularNovels: Plugin.popularNovels = async (pageNo, {filters, showLatestNovels}) => {
     const novels: Novel.Item[] = [];
 
-    let url = site + (filters?.genres ? "novel-genre/" + filters.genres + '/' : "series/");
+    let url = site;
+
+    if (filters?.genres) {
+        url += "novel-genre/" + filters.genres + '/';
+    } else {
+        url += "series/";
+    }
 
     url += '/page/' + pageNo + '/' + 
         '?m_orderby=' + (showLatestNovels ? 'latest' : (filters?.sort || 'rating'));
@@ -204,4 +210,4 @@ export const fetchImage: Plugin.fetchImage = async (url) => {
     return await fetchFile(url);
 };
 
-export const filters = [];
+export const filters = [{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":FilterInputs.Picker}];
