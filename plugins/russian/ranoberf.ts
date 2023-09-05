@@ -311,7 +311,6 @@ interface InitialReduxState {
   auth: Auth;
   banners?: Banners;
   corrections?: Corrections;
-  comments?: Comments;
   readerSettings?: ReaderSettings;
 }
 
@@ -322,11 +321,6 @@ interface Auth {
 
 interface Banners {
   displaySale: boolean;
-}
-
-interface Comments {
-  items: any[];
-  pagesData: null;
 }
 
 interface Corrections {

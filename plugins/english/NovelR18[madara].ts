@@ -9,7 +9,7 @@ import { parseMadaraDate } from "@libs/parseMadaraDate";
 import dayjs from "dayjs";
 
 export const id = "novelr18";
-export const name = "NovelR18  [madara]";
+export const name = "NovelR18 [madara]";
 export const icon = "multisrc/madara/icons/novelr18.png";
 export const version = "1.0.0";
 export const site = "https://novelr18.com/";

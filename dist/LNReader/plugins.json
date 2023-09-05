@@ -427,7 +427,7 @@
 		},
 		{
 			"id": "novelr18",
-			"name": "NovelR18  [madara]",
+			"name": "NovelR18 [madara]",
 			"site": "https://novelr18.com/",
 			"lang": "English",
 			"version": "1.0.0",
@@ -845,6 +845,17 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/js/plugins/turkish/WebNovelOku[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/madara/icons/webnoveloku.png"
+		}
+	],
+	"Україна": [
+		{
+			"id": "smakolykytl",
+			"name": "Смаколики",
+			"site": "https://smakolykytl.site/",
+			"lang": "Україна",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/js/plugins/ukraine/smakolykytl.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/ua/smakolykytl/icon.png"
 		}
 	],
 	"Tiếng Việt": [

@@ -5278,7 +5278,7 @@
   {
     "id": "novelr18",
     "sourceSite": "https://novelr18.com/",
-    "sourceName": "NovelR18 ",
+    "sourceName": "NovelR18",
     "filters": [
       {
         "key": "sort",
@@ -5314,7 +5314,7 @@
     ],
     "options": {
       "path": {
-        "novels": null,
+        "novels": "novel",
         "novel": "manga",
         "chapter": "manga"
       },
