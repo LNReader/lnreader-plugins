@@ -1,7 +1,6 @@
 import { Chapter, Novel, Plugin } from "@typings/plugin";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
-import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
 export const id = "smakolykytl";
