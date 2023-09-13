@@ -699,6 +699,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/rulate/icons/erolate.png"
 		},
 		{
+			"id": "freedlit.space",
+			"name": "LitSpace",
+			"site": "https://freedlit.space",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/js/plugins/russian/LitSpace.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/ru/freedlit/icon.png"
+		},
+		{
 			"id": "jaomix.ru",
 			"name": "Jaomix",
 			"site": "https://jaomix.ru",

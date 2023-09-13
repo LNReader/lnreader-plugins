@@ -82,11 +82,12 @@ const parseNovelAndChapters = function (novelUrl) {
         });
         const chapters = [];
         loadedCheerio(".download-chapter div.title").each(function () {
-            chapters.push({
-                name: loadedCheerio(this).find("a").attr("title"),
-                releaseTime: loadedCheerio(this).find("time").text(),
-                url: loadedCheerio(this).find("a").attr("href"),
-            });
+            const name = loadedCheerio(this).find("a").attr("title");
+            const releaseTime = loadedCheerio(this).find("time").text();
+            const url = loadedCheerio(this).find("a").attr("href");
+            if (!name || !url)
+                return;
+            chapters.push({ name, releaseTime, url });
         });
         novel.chapters = chapters.reverse();
         return novel;
