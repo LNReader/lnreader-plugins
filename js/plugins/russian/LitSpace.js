@@ -68,7 +68,7 @@ const parseNovelAndChapters = function (novelUrl) {
                 return;
             chapters.push({ name, releaseTime, url });
         });
-        novel.chapters = chapters.reverse();
+        novel.chapters = chapters;
         return novel;
     });
 };
@@ -108,7 +108,7 @@ exports.searchNovels = searchNovels;
 exports.filters = [
     {
         key: "sort",
-        label: "Сортировка",
+        label: "Сортировка:",
         values: [
             { label: "По популярности", value: "popular" },
             { label: "По количеству комментариев", value: "comments" },
@@ -139,10 +139,7 @@ exports.filters = [
             { label: "Документальная проза", value: "biography" },
             { label: "Историческая проза", value: "historical-fiction" },
             { label: "Исторический детектив", value: "historical-mystery" },
-            {
-                label: "Исторический любовный роман",
-                value: "historical-romantic-novel",
-            },
+            { label: "Исторический любовный роман", value: "historical-romantic-novel" },
             { label: "Историческое фэнтези", value: "historical-fantasy" },
             { label: "Киберпанк", value: "cyberpunk" },
             { label: "Космическая фантастика", value: "cosmic-fiction" },

@@ -66,7 +66,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       chapters.push({ name, releaseTime, url });
     });
 
-    novel.chapters = chapters.reverse();
+    novel.chapters = chapters;
     return novel;
   };
 
@@ -104,7 +104,7 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
 export const filters = [
   {
     key: "sort",
-    label: "Сортировка",
+    label: "Сортировка:",
     values: [
       { label: "По популярности", value: "popular" },
       { label: "По количеству комментариев", value: "comments" },
@@ -135,10 +135,7 @@ export const filters = [
       { label: "Документальная проза", value: "biography" },
       { label: "Историческая проза", value: "historical-fiction" },
       { label: "Исторический детектив", value: "historical-mystery" },
-      {
-        label: "Исторический любовный роман",
-        value: "historical-romantic-novel",
-      },
+      { label: "Исторический любовный роман", value: "historical-romantic-novel" },
       { label: "Историческое фэнтези", value: "historical-fantasy" },
       { label: "Киберпанк", value: "cyberpunk" },
       { label: "Космическая фантастика", value: "cosmic-fiction" },
