@@ -27,19 +27,20 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         let url = exports.site + "/api/search/catalog/?count=30&ordering=";
         url += (filters === null || filters === void 0 ? void 0 : filters.order) ? filters.order.replace("+", "") : "-";
         url += showLatestNovels ? "chapter_date" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "rating";
-        if (filters) {
-            if (Array.isArray(filters.type) && filters.type.length) {
-                url += filters.type.map((i) => `&types=${i}`).join("");
-            }
-            if (Array.isArray(filters.statuss) && filters.statuss.length) {
-                url += filters === null || filters === void 0 ? void 0 : filters.statuss.map((i) => `&status=${i}`).join("");
-            }
-            if (Array.isArray(filters.genres) && filters.genres.length) {
-                url += filters.genres.map((i) => `&genres[include][]=${i}`).join("");
-            }
-            if (Array.isArray(filters.categories) && filters.categories.length) {
-                url += filters.categories.map((i) => `&categories=${i}`).join("");
-            }
+        if ((filters === null || filters === void 0 ? void 0 : filters.genres) instanceof Array) {
+            url += filters.genres.map((i) => `&genres=${i}`).join("");
+        }
+        if ((filters === null || filters === void 0 ? void 0 : filters.status) instanceof Array) {
+            url += filters === null || filters === void 0 ? void 0 : filters.status.map((i) => `&status=${i}`).join("");
+        }
+        if ((filters === null || filters === void 0 ? void 0 : filters.types) instanceof Array) {
+            url += filters.types.map((i) => `&types=${i}`).join("");
+        }
+        if ((filters === null || filters === void 0 ? void 0 : filters.categories) instanceof Array) {
+            url += filters.categories.map((i) => `&categories=${i}`).join("");
+        }
+        if ((filters === null || filters === void 0 ? void 0 : filters.age_limit) instanceof Array) {
+            url += filters.age_limit.map((i) => `&age_limit=${i}`).join("");
         }
         url += "&page=" + page;
         const result = yield (0, fetch_1.fetchApi)(url);
@@ -48,7 +49,7 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
         body.content.forEach((novel) => {
             var _a, _b;
             return novels.push({
-                name: novel.rus_name,
+                name: novel.main_name || novel.secondary_name,
                 cover: exports.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
                 url: exports.site + "/novel/" + novel.dir,
             });
@@ -58,14 +59,14 @@ const popularNovels = function (page, { showLatestNovels, filters }) {
 };
 exports.popularNovels = popularNovels;
 const parseNovelAndChapters = function (novelUrl) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function* () {
         let novelID = novelUrl.split("/")[4];
         const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/titles/" + novelID);
         let body = (yield result.json());
         let novel = {
             url: novelUrl,
-            name: body.content.rus_name,
+            name: body.content.main_name || body.content.secondary_name,
             summary: body.content.description,
             cover: exports.site +
                 (((_a = body.content.img) === null || _a === void 0 ? void 0 : _a.high) ||
@@ -80,14 +81,15 @@ const parseNovelAndChapters = function (novelUrl) {
             .map((tags) => tags === null || tags === void 0 ? void 0 : tags.name)
             .filter((tags) => tags);
         if (tags.length > 0) {
-            novel.genres = tags.join(", ");
+            novel.genres = tags.join(",");
         }
-        let all = (body.content.count_chapters / 100 + 1) ^ 0;
+        let all = Math.floor(body.content.count_chapters / 100 + 1);
+        let branch_id = ((_f = (_e = body.content.branches) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.id) || body.content.id;
         let chapters = [];
         for (let i = 0; i < all; i++) {
             let chapterResult = yield (0, fetch_1.fetchApi)(exports.site +
                 "/api/titles/chapters/?branch_id=" +
-                body.content.branches[0].id +
+                branch_id +
                 "&count=100&page=" +
                 (i + 1));
             let volumes = (yield chapterResult.json());
@@ -125,7 +127,7 @@ const searchNovels = function (searchTerm) {
         body.content.forEach((novel) => {
             var _a, _b;
             return novels.push({
-                name: novel.rus_name,
+                name: novel.main_name || novel.secondary_name,
                 cover: exports.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
                 url: exports.site + "/novel/" + novel.dir,
             });
@@ -154,40 +156,13 @@ exports.filters = [
         label: "Порядок",
         values: [
             { label: "По убыванию", value: "-" },
-            { label: "По возрастанию", value: "+" }, // asc
+            { label: "По возрастанию", value: "+" },
         ],
         inputType: filterInputs_1.FilterInputs.Picker,
     },
     {
-        key: "type",
-        label: "Тип",
-        values: [
-            { label: "Авторское", value: "1" },
-            { label: "Другое", value: "7" },
-            { label: "Запад", value: "5" },
-            { label: "Китай", value: "4" },
-            { label: "Корея", value: "3" },
-            { label: "Фанфики", value: "6" },
-            { label: "Япония", value: "2" },
-        ],
-        inputType: filterInputs_1.FilterInputs.Checkbox,
-    },
-    {
-        key: "statuss",
-        label: "Статус тайтла",
-        values: [
-            { label: "Закончен", value: "0" },
-            { label: "Продолжается", value: "1" },
-            { label: "Заморожен", value: "2" },
-            { label: "Нет переводчика", value: "3" },
-            { label: "Анонс", value: "4" },
-            { label: "Лицензировано", value: "5" },
-        ],
-        inputType: filterInputs_1.FilterInputs.Checkbox,
-    },
-    {
         key: "genres",
-        label: "Жанры",
+        label: "Жанры:",
         values: [
             { label: "Боевик", value: "112" },
             { label: "Война", value: "123" },
@@ -224,7 +199,7 @@ exports.filters = [
     },
     {
         key: "categories",
-        label: "Категории",
+        label: "Тэги:",
         values: [
             { label: "[Награжденная работа]", value: "648" },
             { label: "18+", value: "423" },
@@ -923,6 +898,43 @@ exports.filters = [
             { label: "Ярко выраженная романтика", value: "365" },
             { label: "R-15 Японское возрастное огр.", value: "332" },
             { label: "R-18", value: "424" },
+        ],
+        inputType: filterInputs_1.FilterInputs.Checkbox,
+    },
+    {
+        key: "types",
+        label: "Типы:",
+        values: [
+            { label: "Авторское", value: "1" },
+            { label: "Другое", value: "7" },
+            { label: "Запад", value: "5" },
+            { label: "Китай", value: "4" },
+            { label: "Корея", value: "3" },
+            { label: "Фанфики", value: "6" },
+            { label: "Япония", value: "2" },
+        ],
+        inputType: filterInputs_1.FilterInputs.Checkbox,
+    },
+    {
+        key: "status",
+        label: "Статус проекта:",
+        values: [
+            { label: "Анонс", value: "4" },
+            { label: "Закончен", value: "0" },
+            { label: "Заморожен", value: "2" },
+            { label: "Лицензировано", value: "5" },
+            { label: "Нет переводчика", value: "3" },
+            { label: "Продолжается", value: "1" },
+        ],
+        inputType: filterInputs_1.FilterInputs.Checkbox,
+    },
+    {
+        key: "age_limit",
+        label: "Возрастной рейтинг:",
+        values: [
+            { label: "16+", value: "1" },
+            { label: "18+", value: "2" },
+            { label: "Для всех", value: "0" },
         ],
         inputType: filterInputs_1.FilterInputs.Checkbox,
     },
