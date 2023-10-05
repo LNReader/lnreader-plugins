@@ -699,6 +699,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/rulate/icons/erolate.png"
 		},
 		{
+			"id": "ficbook",
+			"name": "ficbook",
+			"site": "https://ficbook.net",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/js/plugins/russian/ficbook.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/ficbook/icon.png"
+		},
+		{
 			"id": "freedlit.space",
 			"name": "LitSpace",
 			"site": "https://freedlit.space",
