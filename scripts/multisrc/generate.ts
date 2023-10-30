@@ -19,7 +19,6 @@ const generate = async (name: string): Promise<boolean> => {
     if (!isScriptGenerator(generateAll)) return false;
 
     const sources = generateAll();
-
     for (let source of sources) {
         const { lang, filename, pluginScript } = source;
         if(!lang || !filename || !pluginScript){

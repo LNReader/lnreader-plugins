@@ -8,7 +8,6 @@ class HakoPLugin implements Plugin.PluginBase {
     name: string;
     icon: string;
     site: string;
-    filter?: Filter | undefined;
     version: string;
     userAgent: string;
     cookieString: string;
