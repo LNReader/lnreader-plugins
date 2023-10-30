@@ -8,185 +8,257 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
-const filterInputs_1 = require("@libs/filterInputs");
-const defaultCover_1 = require("@libs/defaultCover");
-const fetch_1 = require("@libs/fetch");
-const novelStatus_1 = require("@libs/novelStatus");
-const cheerio_1 = require("cheerio");
-const dayjs_1 = __importDefault(require("dayjs"));
+var filterInputs_1 = require("@libs/filterInputs");
+var defaultCover_1 = require("@libs/defaultCover");
+var fetch_1 = require("@libs/fetch");
+var novelStatus_1 = require("@libs/novelStatus");
+var cheerio_1 = require("cheerio");
+var dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "TL";
 exports.name = "NovelTL";
 exports.site = "https://novel.tl";
 exports.version = "1.0.0";
 exports.icon = "src/ru/noveltl/icon.png";
-const popularNovels = (page, { filters }) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
-    const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
-        method: "post",
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-            "Content-Type": "application/json",
-        },
-        referrer: exports.site,
-        body: JSON.stringify({
-            operationName: "Projects",
-            query: "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
-            variables: {
-                filter: {
-                    tags: (filters === null || filters === void 0 ? void 0 : filters.tags) || [],
-                    genres: (filters === null || filters === void 0 ? void 0 : filters.genres) || [],
-                },
-                hostname: "novel.tl",
-                limit: 40,
-                page,
-            },
-        }),
-    });
-    const json = (yield result.json());
-    let novels = [];
-    (_c = (_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.projects) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.forEach((novel) => {
-        var _a, _b;
-        return novels.push({
-            name: novel.title,
-            url: "https://" + novel.fullUrl,
-            cover: ((_b = (_a = novel === null || novel === void 0 ? void 0 : novel.covers) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url)
-                ? exports.site + novel.covers[0].url
-                : defaultCover_1.defaultCover,
+var popularNovels = function (page, _a) {
+    var filters = _a.filters;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var result, json, novels;
+        var _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
+                        method: "post",
+                        headers: {
+                            Accept: "application/json, text/plain, */*",
+                            "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+                            "Content-Type": "application/json",
+                        },
+                        referrer: exports.site,
+                        body: JSON.stringify({
+                            operationName: "Projects",
+                            query: "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
+                            variables: {
+                                filter: {
+                                    tags: (filters === null || filters === void 0 ? void 0 : filters.tags) || [],
+                                    genres: (filters === null || filters === void 0 ? void 0 : filters.genres) || [],
+                                },
+                                hostname: "novel.tl",
+                                limit: 40,
+                                page: page,
+                            },
+                        }),
+                    })];
+                case 1:
+                    result = _e.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_e.sent());
+                    novels = [];
+                    (_d = (_c = (_b = json.data) === null || _b === void 0 ? void 0 : _b.projects) === null || _c === void 0 ? void 0 : _c.content) === null || _d === void 0 ? void 0 : _d.forEach(function (novel) {
+                        var _a, _b;
+                        return novels.push({
+                            name: novel.title,
+                            url: "https://" + novel.fullUrl,
+                            cover: ((_b = (_a = novel === null || novel === void 0 ? void 0 : novel.covers) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url)
+                                ? exports.site + novel.covers[0].url
+                                : defaultCover_1.defaultCover,
+                        });
+                    });
+                    return [2 /*return*/, novels];
+            }
         });
     });
-    return novels;
-});
+};
 exports.popularNovels = popularNovels;
-const parseNovelAndChapters = (novelUrl) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
-    const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
-        method: "post",
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-            "Content-Type": "application/json",
-        },
-        referrer: exports.site,
-        body: JSON.stringify({
-            operationName: "Book",
-            query: 'query Book($url:String){project(project:{fullUrl:$url}){title translationStatus fullUrl covers{url}persons(langs:["ru","en","*"],roles:["author","illustrator"]){role name{firstName lastName}}genres{nameRu nameEng}tags{nameRu nameEng}annotation{text}subprojects{content{title volumes{content{shortName chapters{title publishDate fullUrl published}}}}}}}',
-            variables: {
-                url: novelUrl,
-            },
-        }),
-    });
-    const json = (yield result.json());
-    let novel = {
-        url: novelUrl,
-        name: (_d = json.data.project) === null || _d === void 0 ? void 0 : _d.title,
-        cover: ((_g = (_f = (_e = json.data.project) === null || _e === void 0 ? void 0 : _e.covers) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.url)
-            ? exports.site + json.data.project.covers[0].url
-            : defaultCover_1.defaultCover,
-        summary: (_j = (_h = json.data.project) === null || _h === void 0 ? void 0 : _h.annotation) === null || _j === void 0 ? void 0 : _j.text,
-        status: ((_k = json.data.project) === null || _k === void 0 ? void 0 : _k.translationStatus) === "active"
-            ? novelStatus_1.NovelStatus.Ongoing
-            : novelStatus_1.NovelStatus.Completed,
-    };
-    let genres = [(_l = json.data.project) === null || _l === void 0 ? void 0 : _l.tags, (_m = json.data.project) === null || _m === void 0 ? void 0 : _m.genres]
-        .flat()
-        .map((item) => (item === null || item === void 0 ? void 0 : item.nameRu) || (item === null || item === void 0 ? void 0 : item.nameEng))
-        .filter((item) => item);
-    if (genres === null || genres === void 0 ? void 0 : genres.length) {
-        novel.genres = genres.join(", ");
-    }
-    (_p = (_o = json.data.project) === null || _o === void 0 ? void 0 : _o.persons) === null || _p === void 0 ? void 0 : _p.forEach((person) => {
-        var _a;
-        if (person.role == "author" && person.name.firstName) {
-            novel.author =
-                person.name.firstName + " " + (((_a = person.name) === null || _a === void 0 ? void 0 : _a.lastName) || "");
+var parseNovelAndChapters = function (novelUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, json, novel, genres, novelChapters;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    return __generator(this, function (_q) {
+        switch (_q.label) {
+            case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
+                    method: "post",
+                    headers: {
+                        Accept: "application/json, text/plain, */*",
+                        "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+                        "Content-Type": "application/json",
+                    },
+                    referrer: exports.site,
+                    body: JSON.stringify({
+                        operationName: "Book",
+                        query: 'query Book($url:String){project(project:{fullUrl:$url}){title translationStatus fullUrl covers{url}persons(langs:["ru","en","*"],roles:["author","illustrator"]){role name{firstName lastName}}genres{nameRu nameEng}tags{nameRu nameEng}annotation{text}subprojects{content{title volumes{content{shortName chapters{title publishDate fullUrl published}}}}}}}',
+                        variables: {
+                            url: novelUrl,
+                        },
+                    }),
+                })];
+            case 1:
+                result = _q.sent();
+                return [4 /*yield*/, result.json()];
+            case 2:
+                json = (_q.sent());
+                novel = {
+                    url: novelUrl,
+                    name: (_a = json.data.project) === null || _a === void 0 ? void 0 : _a.title,
+                    cover: ((_d = (_c = (_b = json.data.project) === null || _b === void 0 ? void 0 : _b.covers) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.url)
+                        ? exports.site + json.data.project.covers[0].url
+                        : defaultCover_1.defaultCover,
+                    summary: (_f = (_e = json.data.project) === null || _e === void 0 ? void 0 : _e.annotation) === null || _f === void 0 ? void 0 : _f.text,
+                    status: ((_g = json.data.project) === null || _g === void 0 ? void 0 : _g.translationStatus) === "active"
+                        ? novelStatus_1.NovelStatus.Ongoing
+                        : novelStatus_1.NovelStatus.Completed,
+                };
+                genres = [(_h = json.data.project) === null || _h === void 0 ? void 0 : _h.tags, (_j = json.data.project) === null || _j === void 0 ? void 0 : _j.genres]
+                    .flat()
+                    .map(function (item) { return (item === null || item === void 0 ? void 0 : item.nameRu) || (item === null || item === void 0 ? void 0 : item.nameEng); })
+                    .filter(function (item) { return item; });
+                if (genres === null || genres === void 0 ? void 0 : genres.length) {
+                    novel.genres = genres.join(", ");
+                }
+                (_l = (_k = json.data.project) === null || _k === void 0 ? void 0 : _k.persons) === null || _l === void 0 ? void 0 : _l.forEach(function (person) {
+                    var _a;
+                    if (person.role == "author" && person.name.firstName) {
+                        novel.author =
+                            person.name.firstName + " " + (((_a = person.name) === null || _a === void 0 ? void 0 : _a.lastName) || "");
+                    }
+                });
+                novelChapters = [];
+                (_p = (_o = (_m = json.data.project) === null || _m === void 0 ? void 0 : _m.subprojects) === null || _o === void 0 ? void 0 : _o.content) === null || _p === void 0 ? void 0 : _p.forEach(function (work) {
+                    return work.volumes.content.forEach(function (volume) {
+                        return volume.chapters.forEach(function (chapter) {
+                            return (chapter === null || chapter === void 0 ? void 0 : chapter.published) &&
+                                novelChapters.push({
+                                    name: volume.shortName + " " + chapter.title,
+                                    url: "https://" + chapter.fullUrl,
+                                    releaseTime: (0, dayjs_1.default)(chapter.publishDate).format("LLL"),
+                                });
+                        });
+                    });
+                });
+                novel.chapters = novelChapters;
+                return [2 /*return*/, novel];
         }
     });
-    let novelChapters = [];
-    (_s = (_r = (_q = json.data.project) === null || _q === void 0 ? void 0 : _q.subprojects) === null || _r === void 0 ? void 0 : _r.content) === null || _s === void 0 ? void 0 : _s.forEach((work) => work.volumes.content.forEach((volume) => volume.chapters.forEach((chapter) => (chapter === null || chapter === void 0 ? void 0 : chapter.published) &&
-        novelChapters.push({
-            name: volume.shortName + " " + chapter.title,
-            url: "https://" + chapter.fullUrl,
-            releaseTime: (0, dayjs_1.default)(chapter.publishDate).format("LLL"),
-        }))));
-    novel.chapters = novelChapters;
-    return novel;
-});
+}); };
 exports.parseNovelAndChapters = parseNovelAndChapters;
-const parseChapter = (chapterUrl) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t, _u;
-    const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
-        method: "post",
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-            "Content-Type": "application/json",
-        },
-        referrer: exports.site,
-        body: JSON.stringify({
-            query: "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
-            variables: {
-                url: chapterUrl,
-            },
-        }),
-    });
-    const json = (yield result.json());
-    const loadedCheerio = (0, cheerio_1.load)(((_u = (_t = json.data.chapter) === null || _t === void 0 ? void 0 : _t.text) === null || _u === void 0 ? void 0 : _u.text) || "");
-    loadedCheerio("p > a[href]").each(function () {
-        let url = exports.site + loadedCheerio(this).attr("href");
-        if (!url.startsWith("http")) {
-            url = exports.site + url;
+var parseChapter = function (chapterUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, json, loadedCheerio, chapterText;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
+                    method: "post",
+                    headers: {
+                        Accept: "application/json, text/plain, */*",
+                        "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+                        "Content-Type": "application/json",
+                    },
+                    referrer: exports.site,
+                    body: JSON.stringify({
+                        query: "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
+                        variables: {
+                            url: chapterUrl,
+                        },
+                    }),
+                })];
+            case 1:
+                result = _c.sent();
+                return [4 /*yield*/, result.json()];
+            case 2:
+                json = (_c.sent());
+                loadedCheerio = (0, cheerio_1.load)(((_b = (_a = json.data.chapter) === null || _a === void 0 ? void 0 : _a.text) === null || _b === void 0 ? void 0 : _b.text) || "");
+                loadedCheerio("p > a[href]").each(function () {
+                    var url = exports.site + loadedCheerio(this).attr("href");
+                    if (!url.startsWith("http")) {
+                        url = exports.site + url;
+                    }
+                    loadedCheerio(this).find("picture").remove();
+                    loadedCheerio(this).removeAttr("href");
+                    loadedCheerio("<img src=\"".concat(url, "\">")).appendTo(this);
+                });
+                chapterText = loadedCheerio.html();
+                return [2 /*return*/, chapterText];
         }
-        loadedCheerio(this).find("picture").remove();
-        loadedCheerio(this).removeAttr("href");
-        loadedCheerio(`<img src="${url}">`).appendTo(this);
     });
-    const chapterText = loadedCheerio.html();
-    return chapterText;
-});
+}); };
 exports.parseChapter = parseChapter;
-const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    var _v, _w, _x;
-    const result = yield (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
-        method: "post",
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-            "Content-Type": "application/json",
-        },
-        referrer: exports.site,
-        body: JSON.stringify({
-            operationName: "Projects",
-            query: "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
-            variables: {
-                filter: {
-                    query: searchTerm,
-                },
-                hostname: "novel.tl",
-                limit: 40,
-                page: 1,
-            },
-        }),
+var searchNovels = function (searchTerm) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, json, novels;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(exports.site + "/api/site/v2/graphql", {
+                    method: "post",
+                    headers: {
+                        Accept: "application/json, text/plain, */*",
+                        "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+                        "Content-Type": "application/json",
+                    },
+                    referrer: exports.site,
+                    body: JSON.stringify({
+                        operationName: "Projects",
+                        query: "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
+                        variables: {
+                            filter: {
+                                query: searchTerm,
+                            },
+                            hostname: "novel.tl",
+                            limit: 40,
+                            page: 1,
+                        },
+                    }),
+                })];
+            case 1:
+                result = _d.sent();
+                return [4 /*yield*/, result.json()];
+            case 2:
+                json = (_d.sent());
+                novels = [];
+                (_c = (_b = (_a = json === null || json === void 0 ? void 0 : json.data) === null || _a === void 0 ? void 0 : _a.projects) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.forEach(function (novel) {
+                    var _a, _b;
+                    return novels.push({
+                        name: novel.title,
+                        url: "https://" + novel.fullUrl,
+                        cover: ((_b = (_a = novel === null || novel === void 0 ? void 0 : novel.covers) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url)
+                            ? exports.site + novel.covers[0].url
+                            : defaultCover_1.defaultCover,
+                    });
+                });
+                return [2 /*return*/, novels];
+        }
     });
-    const json = (yield result.json());
-    let novels = [];
-    (_x = (_w = (_v = json === null || json === void 0 ? void 0 : json.data) === null || _v === void 0 ? void 0 : _v.projects) === null || _w === void 0 ? void 0 : _w.content) === null || _x === void 0 ? void 0 : _x.forEach((novel) => {
-        var _a, _b;
-        return novels.push({
-            name: novel.title,
-            url: "https://" + novel.fullUrl,
-            cover: ((_b = (_a = novel === null || novel === void 0 ? void 0 : novel.covers) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url)
-                ? exports.site + novel.covers[0].url
-                : defaultCover_1.defaultCover,
-        });
-    });
-    return novels;
-});
+}); };
 exports.searchNovels = searchNovels;
 exports.fetchImage = fetch_1.fetchFile;
 exports.filters = [

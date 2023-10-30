@@ -8,106 +8,186 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
-const fetch_1 = require("@libs/fetch");
-const novelStatus_1 = require("@libs/novelStatus");
-const dayjs_1 = __importDefault(require("dayjs"));
+var fetch_1 = require("@libs/fetch");
+var novelStatus_1 = require("@libs/novelStatus");
+var dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "smakolykytl";
 exports.name = "Смаколики";
 exports.site = "https://smakolykytl.site/";
 exports.version = "1.0.0";
 exports.icon = "src/ua/smakolykytl/icon.png";
-const popularNovels = function (page, { showLatestNovels }) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = showLatestNovels
-            ? "https://api.smakolykytl.site/api/user/updates"
-            : "https://api.smakolykytl.site/api/user/projects";
-        const result = yield (0, fetch_1.fetchApi)(url);
-        const json = (yield result.json());
-        let novels = [];
-        (_a = ((json === null || json === void 0 ? void 0 : json.projects) || (json === null || json === void 0 ? void 0 : json.updates))) === null || _a === void 0 ? void 0 : _a.forEach((novel) => novels.push({
-            name: novel.title,
-            cover: novel.image.url,
-            url: exports.site + "titles/" + novel.id,
-        }));
-        return novels;
+var popularNovels = function (page, _a) {
+    var _b;
+    var showLatestNovels = _a.showLatestNovels;
+    return __awaiter(this, void 0, void 0, function () {
+        var url, result, json, novels;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    url = showLatestNovels
+                        ? "https://api.smakolykytl.site/api/user/updates"
+                        : "https://api.smakolykytl.site/api/user/projects";
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                case 1:
+                    result = _c.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_c.sent());
+                    novels = [];
+                    (_b = ((json === null || json === void 0 ? void 0 : json.projects) || (json === null || json === void 0 ? void 0 : json.updates))) === null || _b === void 0 ? void 0 : _b.forEach(function (novel) {
+                        return novels.push({
+                            name: novel.title,
+                            cover: novel.image.url,
+                            url: exports.site + "titles/" + novel.id,
+                        });
+                    });
+                    return [2 /*return*/, novels];
+            }
+        });
     });
 };
 exports.popularNovels = popularNovels;
-const parseNovelAndChapters = function (novelUrl) {
+var parseNovelAndChapters = function (novelUrl) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-    return __awaiter(this, void 0, void 0, function* () {
-        const id = novelUrl.split("/").pop();
-        const result = yield (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects/" + id);
-        const book = (yield result.json());
-        let novel = {
-            url: novelUrl,
-            name: (_a = book === null || book === void 0 ? void 0 : book.project) === null || _a === void 0 ? void 0 : _a.title,
-            cover: (_c = (_b = book === null || book === void 0 ? void 0 : book.project) === null || _b === void 0 ? void 0 : _b.image) === null || _c === void 0 ? void 0 : _c.url,
-            summary: (_d = book === null || book === void 0 ? void 0 : book.project) === null || _d === void 0 ? void 0 : _d.description,
-            author: (_e = book === null || book === void 0 ? void 0 : book.project) === null || _e === void 0 ? void 0 : _e.author,
-            status: ((_f = book === null || book === void 0 ? void 0 : book.project) === null || _f === void 0 ? void 0 : _f.status_translate.includes("Триває"))
-                ? novelStatus_1.NovelStatus.Ongoing
-                : novelStatus_1.NovelStatus.Completed,
-        };
-        let tags = [(_g = book === null || book === void 0 ? void 0 : book.project) === null || _g === void 0 ? void 0 : _g.genres, (_h = book === null || book === void 0 ? void 0 : book.project) === null || _h === void 0 ? void 0 : _h.tags]
-            .flat()
-            .map((tags) => tags === null || tags === void 0 ? void 0 : tags.title)
-            .filter((tags) => tags);
-        if (tags.length > 0) {
-            novel.genres = tags.join(", ");
-        }
-        let chapters = [];
-        const res = yield (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects/" + id + "/books");
-        const data = (yield res.json());
-        (_j = data === null || data === void 0 ? void 0 : data.books) === null || _j === void 0 ? void 0 : _j.forEach((volume) => {
-            var _a;
-            return (_a = volume === null || volume === void 0 ? void 0 : volume.chapters) === null || _a === void 0 ? void 0 : _a.map((chapter) => chapters.push({
-                name: volume.title + " " + chapter.title,
-                releaseTime: (0, dayjs_1.default)(chapter.modifiedAt).format("LLL"),
-                url: exports.site + "read/" + chapter.id,
-            }));
+    return __awaiter(this, void 0, void 0, function () {
+        var id, result, book, novel, tags, chapters, res, data;
+        return __generator(this, function (_k) {
+            switch (_k.label) {
+                case 0:
+                    id = novelUrl.split("/").pop();
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects/" + id)];
+                case 1:
+                    result = _k.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    book = (_k.sent());
+                    novel = {
+                        url: novelUrl,
+                        name: (_a = book === null || book === void 0 ? void 0 : book.project) === null || _a === void 0 ? void 0 : _a.title,
+                        cover: (_c = (_b = book === null || book === void 0 ? void 0 : book.project) === null || _b === void 0 ? void 0 : _b.image) === null || _c === void 0 ? void 0 : _c.url,
+                        summary: (_d = book === null || book === void 0 ? void 0 : book.project) === null || _d === void 0 ? void 0 : _d.description,
+                        author: (_e = book === null || book === void 0 ? void 0 : book.project) === null || _e === void 0 ? void 0 : _e.author,
+                        status: ((_f = book === null || book === void 0 ? void 0 : book.project) === null || _f === void 0 ? void 0 : _f.status_translate.includes("Триває"))
+                            ? novelStatus_1.NovelStatus.Ongoing
+                            : novelStatus_1.NovelStatus.Completed,
+                    };
+                    tags = [(_g = book === null || book === void 0 ? void 0 : book.project) === null || _g === void 0 ? void 0 : _g.genres, (_h = book === null || book === void 0 ? void 0 : book.project) === null || _h === void 0 ? void 0 : _h.tags]
+                        .flat()
+                        .map(function (tags) { return tags === null || tags === void 0 ? void 0 : tags.title; })
+                        .filter(function (tags) { return tags; });
+                    if (tags.length > 0) {
+                        novel.genres = tags.join(", ");
+                    }
+                    chapters = [];
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects/" + id + "/books")];
+                case 3:
+                    res = _k.sent();
+                    return [4 /*yield*/, res.json()];
+                case 4:
+                    data = (_k.sent());
+                    (_j = data === null || data === void 0 ? void 0 : data.books) === null || _j === void 0 ? void 0 : _j.forEach(function (volume) {
+                        var _a;
+                        return (_a = volume === null || volume === void 0 ? void 0 : volume.chapters) === null || _a === void 0 ? void 0 : _a.map(function (chapter) {
+                            return chapters.push({
+                                name: volume.title + " " + chapter.title,
+                                releaseTime: (0, dayjs_1.default)(chapter.modifiedAt).format("LLL"),
+                                url: exports.site + "read/" + chapter.id,
+                            });
+                        });
+                    });
+                    novel.chapters = chapters;
+                    return [2 /*return*/, novel];
+            }
         });
-        novel.chapters = chapters;
-        return novel;
     });
 };
 exports.parseNovelAndChapters = parseNovelAndChapters;
-const parseChapter = function (chapterUrl) {
+var parseChapter = function (chapterUrl) {
     var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const id = chapterUrl.split("/").pop();
-        const result = yield (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/chapters/" + id);
-        const json = (yield result.json());
-        const chapterRaw = JSON.parse(((_a = json === null || json === void 0 ? void 0 : json.chapter) === null || _a === void 0 ? void 0 : _a.content) || "{}");
-        const chapterText = jsonToHtml(chapterRaw);
-        return chapterText;
+    return __awaiter(this, void 0, void 0, function () {
+        var id, result, json, chapterRaw, chapterText;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    id = chapterUrl.split("/").pop();
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/chapters/" + id)];
+                case 1:
+                    result = _b.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_b.sent());
+                    chapterRaw = JSON.parse(((_a = json === null || json === void 0 ? void 0 : json.chapter) === null || _a === void 0 ? void 0 : _a.content) || "{}");
+                    chapterText = jsonToHtml(chapterRaw);
+                    return [2 /*return*/, chapterText];
+            }
+        });
     });
 };
 exports.parseChapter = parseChapter;
-const searchNovels = function (searchTerm) {
+var searchNovels = function (searchTerm) {
     var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
-        const result = yield (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects");
-        const json = (yield result.json());
-        let novels = [];
-        (_b = (_a = json === null || json === void 0 ? void 0 : json.projects) === null || _a === void 0 ? void 0 : _a.filter((novel) => novel.title.includes(searchTerm) || String(novel.id) === searchTerm)) === null || _b === void 0 ? void 0 : _b.forEach((novel) => novels.push({
-            name: novel.title,
-            cover: novel.image.url,
-            url: exports.site + "titles/" + novel.id,
-        }));
-        return novels;
+    return __awaiter(this, void 0, void 0, function () {
+        var result, json, novels;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)("https://api.smakolykytl.site/api/user/projects")];
+                case 1:
+                    result = _c.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_c.sent());
+                    novels = [];
+                    (_b = (_a = json === null || json === void 0 ? void 0 : json.projects) === null || _a === void 0 ? void 0 : _a.filter(function (novel) {
+                        return novel.title.includes(searchTerm) || String(novel.id) === searchTerm;
+                    })) === null || _b === void 0 ? void 0 : _b.forEach(function (novel) {
+                        return novels.push({
+                            name: novel.title,
+                            cover: novel.image.url,
+                            url: exports.site + "titles/" + novel.id,
+                        });
+                    });
+                    return [2 /*return*/, novels];
+            }
+        });
     });
 };
 exports.searchNovels = searchNovels;
 exports.fetchImage = fetch_1.fetchFile;
-function jsonToHtml(json, html = "") {
-    json.forEach((element) => {
+function jsonToHtml(json, html) {
+    if (html === void 0) { html = ""; }
+    json.forEach(function (element) {
         switch (element.type) {
             case "hardBreak":
                 html += "<br>";
@@ -117,9 +197,9 @@ function jsonToHtml(json, html = "") {
                 break;
             case "image":
                 if (element.attrs) {
-                    const attrs = Object.entries(element.attrs)
-                        .filter((attr) => attr === null || attr === void 0 ? void 0 : attr[1])
-                        .map((attr) => `${attr[0]}="${attr[1]}"`);
+                    var attrs = Object.entries(element.attrs)
+                        .filter(function (attr) { return attr === null || attr === void 0 ? void 0 : attr[1]; })
+                        .map(function (attr) { return "".concat(attr[0], "=\"").concat(attr[1], "\""); });
                     html += "<img " + attrs.join("; ") + ">";
                 }
                 break;

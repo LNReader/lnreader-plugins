@@ -8,166 +8,238 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
-const filterInputs_1 = require("@libs/filterInputs");
-const defaultCover_1 = require("@libs/defaultCover");
-const fetch_1 = require("@libs/fetch");
-const novelStatus_1 = require("@libs/novelStatus");
-const cheerio_1 = require("cheerio");
-const dayjs_1 = __importDefault(require("dayjs"));
+var filterInputs_1 = require("@libs/filterInputs");
+var defaultCover_1 = require("@libs/defaultCover");
+var fetch_1 = require("@libs/fetch");
+var novelStatus_1 = require("@libs/novelStatus");
+var cheerio_1 = require("cheerio");
+var dayjs_1 = __importDefault(require("dayjs"));
 exports.id = "AT";
 exports.name = "Автор Тудей";
 exports.site = "https://author.today";
 exports.version = "1.0.0";
 exports.icon = "src/ru/authortoday/icon.png";
-const apiUrl = "https://api.author.today/";
-const token = "Bearer guest";
-const popularNovels = function (page, { showLatestNovels, filters }) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        let url = apiUrl + "v1/catalog/search?page=" + page;
-        if (filters === null || filters === void 0 ? void 0 : filters.genre) {
-            url += "&genre=" + filters.genre;
-        }
-        url +=
-            "&sorting=" + (showLatestNovels ? "recent" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "popular");
-        url += "&form=" + ((filters === null || filters === void 0 ? void 0 : filters.form) || "any");
-        url += "&state=" + ((filters === null || filters === void 0 ? void 0 : filters.state) || "any");
-        url += "&series=" + ((filters === null || filters === void 0 ? void 0 : filters.series) || "any");
-        url += "&access=" + ((filters === null || filters === void 0 ? void 0 : filters.access) || "any");
-        url += "&promo=" + ((filters === null || filters === void 0 ? void 0 : filters.promo) || "hide");
-        const result = yield (0, fetch_1.fetchApi)(url, {
-            headers: {
-                Authorization: token,
-            },
+var apiUrl = "https://api.author.today/";
+var token = "Bearer guest";
+var popularNovels = function (page, _a) {
+    var _b;
+    var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
+    return __awaiter(this, void 0, void 0, function () {
+        var url, result, json, novels;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    url = apiUrl + "v1/catalog/search?page=" + page;
+                    if (filters === null || filters === void 0 ? void 0 : filters.genre) {
+                        url += "&genre=" + filters.genre;
+                    }
+                    url +=
+                        "&sorting=" + (showLatestNovels ? "recent" : (filters === null || filters === void 0 ? void 0 : filters.sort) || "popular");
+                    url += "&form=" + ((filters === null || filters === void 0 ? void 0 : filters.form) || "any");
+                    url += "&state=" + ((filters === null || filters === void 0 ? void 0 : filters.state) || "any");
+                    url += "&series=" + ((filters === null || filters === void 0 ? void 0 : filters.series) || "any");
+                    url += "&access=" + ((filters === null || filters === void 0 ? void 0 : filters.access) || "any");
+                    url += "&promo=" + ((filters === null || filters === void 0 ? void 0 : filters.promo) || "hide");
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(url, {
+                            headers: {
+                                Authorization: token,
+                            },
+                        })];
+                case 1:
+                    result = _c.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_c.sent());
+                    if ((json === null || json === void 0 ? void 0 : json.code) === "NotFound") {
+                        return [2 /*return*/, []];
+                    }
+                    novels = [];
+                    (_b = json === null || json === void 0 ? void 0 : json.searchResults) === null || _b === void 0 ? void 0 : _b.forEach(function (novel) {
+                        return novels.push({
+                            name: novel.title,
+                            cover: (novel === null || novel === void 0 ? void 0 : novel.coverUrl)
+                                ? "https://cm.author.today/content/" + novel.coverUrl
+                                : defaultCover_1.defaultCover,
+                            url: exports.site + "/work/" + novel.id,
+                        });
+                    });
+                    return [2 /*return*/, novels];
+            }
         });
-        const json = (yield result.json());
-        if ((json === null || json === void 0 ? void 0 : json.code) === "NotFound") {
-            return [];
-        }
-        let novels = [];
-        (_a = json === null || json === void 0 ? void 0 : json.searchResults) === null || _a === void 0 ? void 0 : _a.forEach((novel) => novels.push({
-            name: novel.title,
-            cover: (novel === null || novel === void 0 ? void 0 : novel.coverUrl)
-                ? "https://cm.author.today/content/" + novel.coverUrl
-                : defaultCover_1.defaultCover,
-            url: exports.site + "/work/" + novel.id,
-        }));
-        return novels;
     });
 };
 exports.popularNovels = popularNovels;
-const parseNovelAndChapters = function (novelUrl) {
+var parseNovelAndChapters = function (novelUrl) {
     var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const workID = novelUrl.split("/")[4];
-        let result = yield (0, fetch_1.fetchApi)(`${apiUrl}v1/work/${workID}/details`, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        let json = (yield result.json());
-        let novel = {
-            url: novelUrl,
-            name: json.title,
-            cover: (json === null || json === void 0 ? void 0 : json.coverUrl) ? json.coverUrl.split("?")[0] : defaultCover_1.defaultCover,
-            author: (json === null || json === void 0 ? void 0 : json.originalAuthor) ||
-                (json === null || json === void 0 ? void 0 : json.authorFIO) ||
-                (json === null || json === void 0 ? void 0 : json.coAuthorFIO) ||
-                (json === null || json === void 0 ? void 0 : json.secondCoAuthorFIO) ||
-                (json === null || json === void 0 ? void 0 : json.translator) ||
-                "",
-            genres: (_a = json === null || json === void 0 ? void 0 : json.tags) === null || _a === void 0 ? void 0 : _a.join(", "),
-            status: (json === null || json === void 0 ? void 0 : json.isFinished) ? novelStatus_1.NovelStatus.Completed : novelStatus_1.NovelStatus.Ongoing,
-        };
-        novel.summary = "";
-        novel.summary += (json === null || json === void 0 ? void 0 : json.annotation) ? json.annotation + "\n" : "";
-        novel.summary += (json === null || json === void 0 ? void 0 : json.authorNotes)
-            ? "Примечания автора:\n" + json.authorNotes
-            : "";
-        // all chapters
-        let chaptersRaw = yield (0, fetch_1.fetchApi)(`${apiUrl}v1/work/${workID}/content`, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        let chaptersJSON = (yield chaptersRaw.json());
-        let chapters = [];
-        chaptersJSON === null || chaptersJSON === void 0 ? void 0 : chaptersJSON.forEach((chapter, index) => {
-            if ((chapter === null || chapter === void 0 ? void 0 : chapter.isAvailable) && !(chapter === null || chapter === void 0 ? void 0 : chapter.isDraft)) {
-                chapters.push({
-                    name: (chapter === null || chapter === void 0 ? void 0 : chapter.title) || `Глава ${index + 1}`,
-                    releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.publishTime) || chapter.lastModificationTime).format("LLL"),
-                    url: `${apiUrl}v1/work/${workID}/chapter/${chapter.id}/text`,
-                });
+    return __awaiter(this, void 0, void 0, function () {
+        var workID, result, json, novel, chaptersRaw, chaptersJSON, chapters;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    workID = novelUrl.split("/")[4];
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(apiUrl, "v1/work/").concat(workID, "/details"), {
+                            headers: {
+                                Authorization: token,
+                            },
+                        })];
+                case 1:
+                    result = _b.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_b.sent());
+                    novel = {
+                        url: novelUrl,
+                        name: json.title,
+                        cover: (json === null || json === void 0 ? void 0 : json.coverUrl) ? json.coverUrl.split("?")[0] : defaultCover_1.defaultCover,
+                        author: (json === null || json === void 0 ? void 0 : json.originalAuthor) ||
+                            (json === null || json === void 0 ? void 0 : json.authorFIO) ||
+                            (json === null || json === void 0 ? void 0 : json.coAuthorFIO) ||
+                            (json === null || json === void 0 ? void 0 : json.secondCoAuthorFIO) ||
+                            (json === null || json === void 0 ? void 0 : json.translator) ||
+                            "",
+                        genres: (_a = json === null || json === void 0 ? void 0 : json.tags) === null || _a === void 0 ? void 0 : _a.join(", "),
+                        status: (json === null || json === void 0 ? void 0 : json.isFinished) ? novelStatus_1.NovelStatus.Completed : novelStatus_1.NovelStatus.Ongoing,
+                    };
+                    novel.summary = "";
+                    novel.summary += (json === null || json === void 0 ? void 0 : json.annotation) ? json.annotation + "\n" : "";
+                    novel.summary += (json === null || json === void 0 ? void 0 : json.authorNotes)
+                        ? "Примечания автора:\n" + json.authorNotes
+                        : "";
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(apiUrl, "v1/work/").concat(workID, "/content"), {
+                            headers: {
+                                Authorization: token,
+                            },
+                        })];
+                case 3:
+                    chaptersRaw = _b.sent();
+                    return [4 /*yield*/, chaptersRaw.json()];
+                case 4:
+                    chaptersJSON = (_b.sent());
+                    chapters = [];
+                    chaptersJSON === null || chaptersJSON === void 0 ? void 0 : chaptersJSON.forEach(function (chapter, index) {
+                        if ((chapter === null || chapter === void 0 ? void 0 : chapter.isAvailable) && !(chapter === null || chapter === void 0 ? void 0 : chapter.isDraft)) {
+                            chapters.push({
+                                name: (chapter === null || chapter === void 0 ? void 0 : chapter.title) || "\u0413\u043B\u0430\u0432\u0430 ".concat(index + 1),
+                                releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.publishTime) || chapter.lastModificationTime).format("LLL"),
+                                url: "".concat(apiUrl, "v1/work/").concat(workID, "/chapter/").concat(chapter.id, "/text"),
+                            });
+                        }
+                    });
+                    novel.chapters = chapters;
+                    return [2 /*return*/, novel];
             }
         });
-        novel.chapters = chapters;
-        return novel;
     });
 };
 exports.parseNovelAndChapters = parseNovelAndChapters;
-const parseChapter = function (chapterUrl) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const result = yield (0, fetch_1.fetchApi)(chapterUrl, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        const json = (yield result.json());
-        if (json === null || json === void 0 ? void 0 : json.code) {
-            return json.code + "\n" + (json === null || json === void 0 ? void 0 : json.message);
-        }
-        let key = json.key.split("").reverse().join("") + "@_@";
-        let text = "";
-        for (let i = 0; i < json.text.length; i++) {
-            text += String.fromCharCode(json.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)));
-        }
-        const loadedCheerio = (0, cheerio_1.load)(text);
-        loadedCheerio("img").each(function () {
-            var _a;
-            if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
-                const src = loadedCheerio(this).attr("src");
-                loadedCheerio(this).attr("src", exports.site + src);
+var parseChapter = function (chapterUrl) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, json, key, text, i, loadedCheerio, chapterText;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl, {
+                        headers: {
+                            Authorization: token,
+                        },
+                    })];
+                case 1:
+                    result = _a.sent();
+                    return [4 /*yield*/, result.json()];
+                case 2:
+                    json = (_a.sent());
+                    if (json === null || json === void 0 ? void 0 : json.code) {
+                        return [2 /*return*/, json.code + "\n" + (json === null || json === void 0 ? void 0 : json.message)];
+                    }
+                    key = json.key.split("").reverse().join("") + "@_@";
+                    text = "";
+                    for (i = 0; i < json.text.length; i++) {
+                        text += String.fromCharCode(json.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)));
+                    }
+                    loadedCheerio = (0, cheerio_1.load)(text);
+                    loadedCheerio("img").each(function () {
+                        var _a;
+                        if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
+                            var src = loadedCheerio(this).attr("src");
+                            loadedCheerio(this).attr("src", exports.site + src);
+                        }
+                    });
+                    chapterText = loadedCheerio.html();
+                    return [2 /*return*/, chapterText];
             }
         });
-        const chapterText = loadedCheerio.html();
-        return chapterText;
     });
 };
 exports.parseChapter = parseChapter;
-const searchNovels = function (searchTerm) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = `${exports.site}/search?category=works&q=${searchTerm}`;
-        const result = yield (0, fetch_1.fetchApi)(url);
-        const body = yield result.text();
-        const loadedCheerio = (0, cheerio_1.load)(body);
-        let novels = [];
-        loadedCheerio("div.book-row").each(function () {
-            var _a;
-            const name = loadedCheerio(this)
-                .find('div[class="book-title"] a')
-                .text()
-                .trim();
-            let cover = loadedCheerio(this).find("img").attr("src");
-            const url = exports.site +
-                "/work/" +
-                ((_a = loadedCheerio(this)
-                    .find('div[class="book-title"] a')
-                    .attr("href")) === null || _a === void 0 ? void 0 : _a.split("/")[2]);
-            if (cover) {
-                cover = cover.split("?")[0];
+var searchNovels = function (searchTerm) {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, result, body, loadedCheerio, novels;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = "".concat(exports.site, "/search?category=works&q=").concat(searchTerm);
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                case 1:
+                    result = _a.sent();
+                    return [4 /*yield*/, result.text()];
+                case 2:
+                    body = _a.sent();
+                    loadedCheerio = (0, cheerio_1.load)(body);
+                    novels = [];
+                    loadedCheerio("div.book-row").each(function () {
+                        var _a;
+                        var name = loadedCheerio(this)
+                            .find('div[class="book-title"] a')
+                            .text()
+                            .trim();
+                        var cover = loadedCheerio(this).find("img").attr("src");
+                        var url = exports.site +
+                            "/work/" +
+                            ((_a = loadedCheerio(this)
+                                .find('div[class="book-title"] a')
+                                .attr("href")) === null || _a === void 0 ? void 0 : _a.split("/")[2]);
+                        if (cover) {
+                            cover = cover.split("?")[0];
+                        }
+                        else {
+                            cover = defaultCover_1.defaultCover;
+                        }
+                        novels.push({ name: name, cover: cover, url: url });
+                    });
+                    return [2 /*return*/, novels];
             }
-            else {
-                cover = defaultCover_1.defaultCover;
-            }
-            novels.push({ name, cover, url });
         });
-        return novels;
     });
 };
 exports.searchNovels = searchNovels;

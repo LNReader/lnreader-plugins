@@ -8,187 +8,262 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filters = exports.fetchImage = exports.searchNovels = exports.parseChapter = exports.parseNovelAndChapters = exports.popularNovels = exports.site = exports.version = exports.icon = exports.name = exports.id = void 0;
-const cheerio_1 = require("cheerio");
+var cheerio_1 = require("cheerio");
 // import dayjs from 'dayjs';
-const fetch_1 = require("@libs/fetch");
+var fetch_1 = require("@libs/fetch");
 // import { parseMadaraDate } from "@libs/parseMadaraDate";
 // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 // import { showToast } from "@libs/showToast";
-const filterInputs_1 = require("@libs/filterInputs");
-const novelStatus_1 = require("@libs/novelStatus");
+var filterInputs_1 = require("@libs/filterInputs");
+var novelStatus_1 = require("@libs/novelStatus");
 // import { defaultCover } from "@libs/defaultCover";
 exports.id = "erolate";
 exports.name = "Erolate";
 exports.icon = "multisrc/rulate/icons/erolate.png";
 exports.version = "1.0.0";
 exports.site = "https://erolate.com";
-const popularNovels = function (page, { filters, showLatestNovels }) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let url = exports.site + '/search?t=';
-        url += '&cat=' + ((filters === null || filters === void 0 ? void 0 : filters.cat) || '0');
-        url += '&s_lang=' + ((filters === null || filters === void 0 ? void 0 : filters.s_lang) || '0');
-        url += '&t_lang=' + ((filters === null || filters === void 0 ? void 0 : filters.t_lang) || '0');
-        url += '&type=' + ((filters === null || filters === void 0 ? void 0 : filters.type) || '0');
-        url += '&sort=' + (showLatestNovels ? '4' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || '6'));
-        url += '&atmosphere=' + ((filters === null || filters === void 0 ? void 0 : filters.atmosphere) || '0');
-        url += '&adult=' + ((filters === null || filters === void 0 ? void 0 : filters.adult) || '0');
-        if ((filters === null || filters === void 0 ? void 0 : filters.genres) instanceof Array) {
-            url += filters.genres.map(i => '&genres[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.genres_ex) instanceof Array) {
-            url += filters.genres_ex.map(i => '&genres_ex[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.tags) instanceof Array) {
-            url += filters.tags.map(i => '&tags[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.tags_ex) instanceof Array) {
-            url += filters.tags_ex.map(i => '&tags_ex[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.fandoms) instanceof Array) {
-            url += filters.fandoms.map(i => '&fandoms[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.fandoms_ex) instanceof Array) {
-            url += filters.fandoms_ex.map(i => '&fandoms_ex[]=' + i).join('');
-        }
-        if ((filters === null || filters === void 0 ? void 0 : filters.trash) instanceof Array) {
-            url += filters.trash.map(i => '&' + i + '=1').join('');
-        }
-        url += '&Book_page=' + page;
-        const result = yield (0, fetch_1.fetchApi)(url);
-        const body = yield result.text();
-        const loadedCheerio = (0, cheerio_1.load)(body);
-        const novels = [];
-        loadedCheerio('ul[class="search-results"] > li:not([class="ad_type_catalog"])').each(function () {
-            novels.push({
-                name: loadedCheerio(this).find('p > a').text(),
-                cover: exports.site + loadedCheerio(this).find('img').attr('src'),
-                url: exports.site + loadedCheerio(this).find('p > a').attr('href') || '',
-            });
+var popularNovels = function (page, _a) {
+    var filters = _a.filters, showLatestNovels = _a.showLatestNovels;
+    return __awaiter(this, void 0, void 0, function () {
+        var url, result, body, loadedCheerio, novels;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    url = exports.site + '/search?t=';
+                    url += '&cat=' + ((filters === null || filters === void 0 ? void 0 : filters.cat) || '0');
+                    url += '&s_lang=' + ((filters === null || filters === void 0 ? void 0 : filters.s_lang) || '0');
+                    url += '&t_lang=' + ((filters === null || filters === void 0 ? void 0 : filters.t_lang) || '0');
+                    url += '&type=' + ((filters === null || filters === void 0 ? void 0 : filters.type) || '0');
+                    url += '&sort=' + (showLatestNovels ? '4' : ((filters === null || filters === void 0 ? void 0 : filters.sort) || '6'));
+                    url += '&atmosphere=' + ((filters === null || filters === void 0 ? void 0 : filters.atmosphere) || '0');
+                    url += '&adult=' + ((filters === null || filters === void 0 ? void 0 : filters.adult) || '0');
+                    if ((filters === null || filters === void 0 ? void 0 : filters.genres) instanceof Array) {
+                        url += filters.genres.map(function (i) { return '&genres[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.genres_ex) instanceof Array) {
+                        url += filters.genres_ex.map(function (i) { return '&genres_ex[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.tags) instanceof Array) {
+                        url += filters.tags.map(function (i) { return '&tags[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.tags_ex) instanceof Array) {
+                        url += filters.tags_ex.map(function (i) { return '&tags_ex[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.fandoms) instanceof Array) {
+                        url += filters.fandoms.map(function (i) { return '&fandoms[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.fandoms_ex) instanceof Array) {
+                        url += filters.fandoms_ex.map(function (i) { return '&fandoms_ex[]=' + i; }).join('');
+                    }
+                    if ((filters === null || filters === void 0 ? void 0 : filters.trash) instanceof Array) {
+                        url += filters.trash.map(function (i) { return '&' + i + '=1'; }).join('');
+                    }
+                    url += '&Book_page=' + page;
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                case 1:
+                    result = _b.sent();
+                    return [4 /*yield*/, result.text()];
+                case 2:
+                    body = _b.sent();
+                    loadedCheerio = (0, cheerio_1.load)(body);
+                    novels = [];
+                    loadedCheerio('ul[class="search-results"] > li:not([class="ad_type_catalog"])').each(function () {
+                        novels.push({
+                            name: loadedCheerio(this).find('p > a').text(),
+                            cover: exports.site + loadedCheerio(this).find('img').attr('src'),
+                            url: exports.site + loadedCheerio(this).find('p > a').attr('href') || '',
+                        });
+                    });
+                    return [2 /*return*/, novels];
+            }
         });
-        return novels;
     });
 };
 exports.popularNovels = popularNovels;
-const parseNovelAndChapters = function (novelUrl) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const novel = {
-            url: novelUrl,
-            chapters: [],
-        };
-        let result = yield (0, fetch_1.fetchApi)(novelUrl);
-        if (result.url.includes('mature?path=')) {
-            const formData = new FormData();
-            formData.append('path', novelUrl);
-            formData.append('ok', 'Да');
-            yield (0, fetch_1.fetchApi)(result.url, {
-                method: 'POST',
-                body: formData,
-            });
-            result = yield (0, fetch_1.fetchApi)(novelUrl);
-        }
-        const body = yield result.text();
-        const loadedCheerio = (0, cheerio_1.load)(body);
-        novel.name = loadedCheerio('div[class="container"] > div > div > h1, div.span8:nth-child(1) > h1:nth-child(2)')
-            .text()
-            .trim();
-        novel.cover =
-            exports.site + loadedCheerio('div[class="images"] > div img').attr('src');
-        novel.summary = loadedCheerio('#Info > div:nth-child(3), .book-description').text();
-        novel.author = loadedCheerio('.book-stats-icons_author > span:nth-child(2) > a:nth-child(1)').text();
-        let genres = [];
-        loadedCheerio('div.span5 > p, .span5 > div:nth-child(2) > p').each(function () {
-            switch (loadedCheerio(this).find('strong').text()) {
-                case 'Автор:':
-                    novel.author = loadedCheerio(this).find('em > a').text().trim();
-                    break;
-                case 'Выпуск:':
-                    novel.status =
-                        loadedCheerio(this).find('em').text().trim() === 'продолжается'
-                            ? novelStatus_1.NovelStatus.Ongoing
-                            : novelStatus_1.NovelStatus.Completed;
-                    break;
-                case 'Тэги:':
-                    loadedCheerio(this)
-                        .find('em > a')
-                        .each(function () {
-                        genres.push(loadedCheerio(this).text());
+var parseNovelAndChapters = function (novelUrl) {
+    return __awaiter(this, void 0, void 0, function () {
+        var novel, result, formData, body, loadedCheerio, genres, chapters;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    novel = {
+                        url: novelUrl,
+                        chapters: [],
+                    };
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                case 1:
+                    result = _a.sent();
+                    if (!result.url.includes('mature?path=')) return [3 /*break*/, 4];
+                    formData = new FormData();
+                    formData.append('path', novelUrl);
+                    formData.append('ok', 'Да');
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(result.url, {
+                            method: 'POST',
+                            body: formData,
+                        })];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                case 3:
+                    result = _a.sent();
+                    _a.label = 4;
+                case 4: return [4 /*yield*/, result.text()];
+                case 5:
+                    body = _a.sent();
+                    loadedCheerio = (0, cheerio_1.load)(body);
+                    novel.name = loadedCheerio('div[class="container"] > div > div > h1, div.span8:nth-child(1) > h1:nth-child(2)')
+                        .text()
+                        .trim();
+                    novel.cover =
+                        exports.site + loadedCheerio('div[class="images"] > div img').attr('src');
+                    novel.summary = loadedCheerio('#Info > div:nth-child(3), .book-description').text();
+                    novel.author = loadedCheerio('.book-stats-icons_author > span:nth-child(2) > a:nth-child(1)').text();
+                    genres = [];
+                    loadedCheerio('div.span5 > p, .span5 > div:nth-child(2) > p').each(function () {
+                        switch (loadedCheerio(this).find('strong').text()) {
+                            case 'Автор:':
+                                novel.author = loadedCheerio(this).find('em > a').text().trim();
+                                break;
+                            case 'Выпуск:':
+                                novel.status =
+                                    loadedCheerio(this).find('em').text().trim() === 'продолжается'
+                                        ? novelStatus_1.NovelStatus.Ongoing
+                                        : novelStatus_1.NovelStatus.Completed;
+                                break;
+                            case 'Тэги:':
+                                loadedCheerio(this)
+                                    .find('em > a')
+                                    .each(function () {
+                                    genres.push(loadedCheerio(this).text());
+                                });
+                                break;
+                            case 'Жанры:':
+                                loadedCheerio(this)
+                                    .find('em > a')
+                                    .each(function () {
+                                    genres.push(loadedCheerio(this).text());
+                                });
+                                break;
+                        }
                     });
-                    break;
-                case 'Жанры:':
-                    loadedCheerio(this)
-                        .find('em > a')
-                        .each(function () {
-                        genres.push(loadedCheerio(this).text());
+                    if (genres.length > 0) {
+                        novel.genres = genres.reverse().join(',');
+                    }
+                    chapters = [];
+                    loadedCheerio('table > tbody > tr.chapter_row').each(function () {
+                        var _a;
+                        var chapterName = loadedCheerio(this)
+                            .find('td[class="t"] > a')
+                            .text()
+                            .trim();
+                        var releaseDate = (_a = loadedCheerio(this)
+                            .find('td > span')
+                            .attr('title')) === null || _a === void 0 ? void 0 : _a.trim();
+                        var chapterUrl = exports.site + loadedCheerio(this)
+                            .find('td[class="t"] > a')
+                            .attr('href');
+                        if (loadedCheerio(this).find('td > span[class="disabled"]').length < 1 &&
+                            releaseDate) {
+                            chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
+                        }
                     });
-                    break;
+                    novel.chapters = chapters;
+                    return [2 /*return*/, novel];
             }
         });
-        if (genres.length > 0) {
-            novel.genres = genres.reverse().join(',');
-        }
-        const chapters = [];
-        loadedCheerio('table > tbody > tr.chapter_row').each(function () {
-            var _a;
-            const chapterName = loadedCheerio(this)
-                .find('td[class="t"] > a')
-                .text()
-                .trim();
-            const releaseDate = (_a = loadedCheerio(this)
-                .find('td > span')
-                .attr('title')) === null || _a === void 0 ? void 0 : _a.trim();
-            const chapterUrl = exports.site + loadedCheerio(this)
-                .find('td[class="t"] > a')
-                .attr('href');
-            if (loadedCheerio(this).find('td > span[class="disabled"]').length < 1 &&
-                releaseDate) {
-                chapters.push({ name: chapterName, releaseTime: releaseDate, url: chapterUrl });
-            }
-        });
-        novel.chapters = chapters;
-        return novel;
     });
 };
 exports.parseNovelAndChapters = parseNovelAndChapters;
-const parseChapter = function (chapterUrl) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let result = yield (0, fetch_1.fetchApi)(chapterUrl);
-        if (result.url.includes('mature?path=')) {
-            const formData = new FormData();
-            formData.append('ok', 'Да');
-            yield (0, fetch_1.fetchApi)(result.url, {
-                method: 'POST',
-                body: formData,
-            });
-            result = yield (0, fetch_1.fetchApi)(chapterUrl);
-        }
-        const body = yield result.text();
-        const loadedCheerio = (0, cheerio_1.load)(body);
-        loadedCheerio('.content-text img').each(function () {
-            var _a;
-            if (!((_a = loadedCheerio(this).attr('src')) === null || _a === void 0 ? void 0 : _a.startsWith('http'))) {
-                const src = loadedCheerio(this).attr('src');
-                loadedCheerio(this).attr('src', exports.site + src);
+var parseChapter = function (chapterUrl) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, formData, body, loadedCheerio, chapterText;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                case 1:
+                    result = _a.sent();
+                    if (!result.url.includes('mature?path=')) return [3 /*break*/, 4];
+                    formData = new FormData();
+                    formData.append('ok', 'Да');
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(result.url, {
+                            method: 'POST',
+                            body: formData,
+                        })];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                case 3:
+                    result = _a.sent();
+                    _a.label = 4;
+                case 4: return [4 /*yield*/, result.text()];
+                case 5:
+                    body = _a.sent();
+                    loadedCheerio = (0, cheerio_1.load)(body);
+                    loadedCheerio('.content-text img').each(function () {
+                        var _a;
+                        if (!((_a = loadedCheerio(this).attr('src')) === null || _a === void 0 ? void 0 : _a.startsWith('http'))) {
+                            var src = loadedCheerio(this).attr('src');
+                            loadedCheerio(this).attr('src', exports.site + src);
+                        }
+                    });
+                    chapterText = loadedCheerio('.content-text').html();
+                    return [2 /*return*/, chapterText];
             }
         });
-        const chapterText = loadedCheerio('.content-text').html();
-        return chapterText;
     });
 };
 exports.parseChapter = parseChapter;
-const searchNovels = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    const novels = [];
-    const result = yield (0, fetch_1.fetchApi)(exports.site + '/search/autocomplete?query=' + searchTerm);
-    let json = yield result.json();
-    json.forEach((item) => {
-        const novelName = item.title_one + ' / ' + item.title_two;
-        const novelCover = exports.site + item.img;
-        const novelUrl = exports.site + item.url;
-        novels.push({ name: novelName, cover: novelCover, url: novelUrl });
+var searchNovels = function (searchTerm) { return __awaiter(void 0, void 0, void 0, function () {
+    var novels, result, json;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                novels = [];
+                return [4 /*yield*/, (0, fetch_1.fetchApi)(exports.site + '/search/autocomplete?query=' + searchTerm)];
+            case 1:
+                result = _a.sent();
+                return [4 /*yield*/, result.json()];
+            case 2:
+                json = _a.sent();
+                json.forEach(function (item) {
+                    var novelName = item.title_one + ' / ' + item.title_two;
+                    var novelCover = exports.site + item.img;
+                    var novelUrl = exports.site + item.url;
+                    novels.push({ name: novelName, cover: novelCover, url: novelUrl });
+                });
+                return [2 /*return*/, novels];
+        }
     });
-    return novels;
-});
+}); };
 exports.searchNovels = searchNovels;
 ;
 exports.fetchImage = fetch_1.fetchFile;
