@@ -1,29 +1,17 @@
 import { Filter } from "@libs/filterInputs";
 import { languages } from "@libs/languages";
-import { NodeFetchParams } from "@libs/nodeFetch";
-
-export namespace Chapter {
-    export interface Item {
+export namespace Plugin {
+    export interface ChapterItem {
         name: string;
         url: string;
         releaseTime?: string | null;
     }
-    export interface instance {
-        sourceId: number;
-        novelUrl: string;
-        chapterUrl: string;
-        name?: string;
-        chapterText?: string;
-    }
-}
-
-export namespace Novel {
-    export interface Item {
+    export interface NovelItem {
         name: string;
         url: string;
         cover?: string;
     }
-    export interface instance {
+    export interface SourceNovel {
         url: string;
         name?: string;
         cover?: string;
@@ -31,16 +19,13 @@ export namespace Novel {
         summary?: string;
         author?: string;
         status?: string;
-        chapters?: Chapter.Item[];
+        chapters?: ChapterItem[];
     }
-}
-
-export namespace Plugin {
-    export interface Options {
+    export interface PopularNovelsOptions {
         showLatestNovels?: boolean;
         filters?: Record<string, string | string[]>;
     }
-    export interface Info {
+    export interface PluginItem {
         id: string;
         name: string;
         lang: (typeof languages)[keyof typeof languages];
@@ -48,43 +33,33 @@ export namespace Plugin {
         requirePath: string;
         icon: string;
     }
-    export interface instance {
-        id: string;
-        name: string;
-        version: string;
+
+    export interface PluginBase {
+        id: string,
+        name: string,
         icon: string;
         site: string;
-        popularNovels: popularNovels;
-        parseNovelAndChapters: parseNovelAndChapters;
-        parseChapter: parseChapter;
-        searchNovels: searchNovels;
-        fetchImage: fetchImage;
-        filters?: Filter[];
+        filter?: Filter;
+        version: string;
+        userAgent: string;
+        cookies: string;
+        popularNovels(pageNo: number, options: PopularNovelsOptions): Promise<NovelItem[]>;
+        parseNovelAndChapters(novelUrl: string): Promise<SourceNovel>;
+        parseChapter(chapterUrl: string): Promise<string>;
+        searchNovels(searchTerm: string, pageNo?: number): Promise<NovelItem[]>; 
+        fetchImage(url: string): Promise<string | undefined>;
     }
-    export type popularNovels = (
-        page: number,
-        options: Plugin.Options
-    ) => Promise<PopularNovelsResponse>;
-    export type PopularNovelsResponse = Novel.Item[];
-    export type parseNovelAndChapters = (
-        novelUrl: string
-    ) => Promise<Novel.instance>;
-    export type parseChapter = (chapterUrl: string) => Promise<string | null>;
-    export type searchNovels = (searchTerm: string) => Promise<Novel.Item[]>;
-    export type fetchImage = (
-        ...params: NodeFetchParams
-    ) => Promise<string | undefined>;
 }
 
-export const isPlugin = (p: any): p is Plugin.instance => {
-    const pl = p as Plugin.instance;
+export const isPlugin = (p: any): p is Plugin.PluginBase => {
+    const pl = p as Plugin.PluginBase;
 
     const errorOut = (key: string) => {
         console.error(`Plugin ${pl.name} doesn't have ${key}!`);
         return false;
     };
 
-    const required_funcs: (keyof Plugin.instance)[] = [
+    const required_funcs: (keyof Plugin.PluginBase)[] = [
         "popularNovels",
         "parseNovelAndChapters",
         "parseChapter",
@@ -95,12 +70,14 @@ export const isPlugin = (p: any): p is Plugin.instance => {
         const key = required_funcs[i];
         if (!pl[key] || typeof pl[key] !== "function") return errorOut(key);
     }
-    const requireds_fields: (keyof Plugin.instance)[] = [
+    const requireds_fields: (keyof Plugin.PluginBase)[] = [
         "id",
         "name",
         "version",
         "icon",
         "site",
+        "userAgent",
+        "cookies",
     ];
     for (let i = 0; i < requireds_fields.length; i++) {
         const key = requireds_fields[i];

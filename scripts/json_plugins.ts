@@ -47,7 +47,7 @@ for (let language in languages) {
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
         const instance:
-            | Plugin.instance
+            | Plugin.PluginBase
             | unknown = require(`../plugins/${language.toLowerCase()}/${
             plugin.split(".")[0]
         }`);

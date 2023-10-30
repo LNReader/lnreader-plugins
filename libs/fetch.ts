@@ -1,4 +1,3 @@
-import { Plugin } from "@typings/plugin";
 import { NodeFetchParams, getNodeFetch } from "./nodeFetch";
 
 const fetch = async (...args: NodeFetchParams) =>
@@ -20,7 +19,7 @@ export async function fetchApi(
     return await fetch(url, { ...init, headers });
 }
 
-export const fetchFile: Plugin.fetchImage = async function (url, init) {
+export const fetchFile = async function (url: string, init: NodeFetchParams[1]) {
     if (!init) init = {};
     try {
         const res = await fetch(url, init);

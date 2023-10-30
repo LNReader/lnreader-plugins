@@ -26,7 +26,7 @@ export const all_plugins = (): PluginList => {
             }`;
             const instance = require(requirePath);
             const { id, name, version, icon } = instance;
-            const info: Plugin.Info = {
+            const info: Plugin.PluginItem = {
                 id,
                 name,
                 lang: languageNative,
@@ -42,7 +42,7 @@ export const all_plugins = (): PluginList => {
 
 const getPlugin = async (
     requirePath: string
-): Promise<Plugin.instance | null> => {
+): Promise<Plugin.PluginBase | null> => {
     const plugin = await require(requirePath);
     if (isPlugin(plugin)) return plugin;
     return null;
@@ -50,7 +50,7 @@ const getPlugin = async (
 
 export const popularNovels = async (
     pluginRequirePath: string,
-    options: Plugin.Options
+    options: Plugin.PopularNovelsOptions
 ) => {
     const plugin = await getPlugin(pluginRequirePath);
     if (!plugin) return null;
