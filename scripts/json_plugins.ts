@@ -50,7 +50,7 @@ for (let language in languages) {
             | Plugin.PluginBase
             | unknown = require(`../plugins/${language.toLowerCase()}/${
             plugin.split(".")[0]
-        }`);
+        }`).default;
 
         if (!isPlugin(instance)) {
             console.log(plugin);

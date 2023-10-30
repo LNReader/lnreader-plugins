@@ -24,7 +24,7 @@ export const all_plugins = (): PluginList => {
             const requirePath = `@plugins/${languageEnglish.toLowerCase()}/${
                 plugin.split(".")[0]
             }`;
-            const instance = require(requirePath);
+            const instance = require(requirePath).default;
             const { id, name, version, icon } = instance;
             const info: Plugin.PluginItem = {
                 id,
@@ -43,7 +43,7 @@ export const all_plugins = (): PluginList => {
 const getPlugin = async (
     requirePath: string
 ): Promise<Plugin.PluginBase | null> => {
-    const plugin = await require(requirePath);
+    const plugin = await require(requirePath).default;
     if (isPlugin(plugin)) return plugin;
     return null;
 };

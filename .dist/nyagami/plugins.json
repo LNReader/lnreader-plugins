@@ -1,1 +1,13 @@
-{}
+{
+	"Tiếng Việt": [
+		{
+			"id": "ln.hako",
+			"name": "Hako",
+			"site": "https://ln.hako.vn",
+			"lang": "Tiếng Việt",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/plugin-class/js/plugins/vietnamese/LNHako.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/plugin-class/icons/src/vi/hakolightnovel/icon.png"
+		}
+	]
+}
