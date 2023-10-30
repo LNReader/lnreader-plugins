@@ -20,7 +20,7 @@ if (!fs.existsSync(path.join(outRoot, ".dist", username))) {
     fs.mkdirSync(path.join(outRoot, ".dist", username));
 }
 const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
-const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/js/plugins`;
+const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/.js/plugins`;
 
 const json: {
     [key: string]: {
