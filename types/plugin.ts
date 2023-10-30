@@ -37,16 +37,34 @@ export namespace Plugin {
     export interface PluginBase {
         id: string,
         name: string,
+        /** 
+         * Relative path without icon. E.g: 
+         * ```js
+         * "src/vi/hakolightnovel/icon.png"
+         * ```
+         */
         icon: string;
         site: string;
         filter?: Filter;
         version: string;
         userAgent: string;
-        cookies: string;
+        cookieString: string;
         popularNovels(pageNo: number, options: PopularNovelsOptions): Promise<NovelItem[]>;
         parseNovelAndChapters(novelUrl: string): Promise<SourceNovel>;
         parseChapter(chapterUrl: string): Promise<string>;
-        searchNovels(searchTerm: string, pageNo?: number): Promise<NovelItem[]>; 
+        searchNovels(searchTerm: string, pageNo?: number): Promise<NovelItem[]>;
+        /**
+         * 
+         * @param url Image url
+         * @returns {string} Base64 of image
+         * @example
+         * ```ts
+         *  const headers = {
+         *      Referer: "https://ln.hako.vn",
+         *   };
+         *  return await fetchFile(url, { headers: headers });
+         * ```
+         */
         fetchImage(url: string): Promise<string | undefined>;
     }
 }
@@ -77,7 +95,7 @@ export const isPlugin = (p: any): p is Plugin.PluginBase => {
         "icon",
         "site",
         "userAgent",
-        "cookies",
+        "cookieString",
     ];
     for (let i = 0; i < requireds_fields.length; i++) {
         const key = requireds_fields[i];

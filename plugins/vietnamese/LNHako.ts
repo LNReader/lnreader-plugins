@@ -11,7 +11,7 @@ class HakoPLugin implements Plugin.PluginBase {
     filter?: Filter | undefined;
     version: string;
     userAgent: string;
-    cookies: string;
+    cookieString: string;
     constructor(){
         this.id = "ln.hako";
         this.name = "Hako";
@@ -19,7 +19,7 @@ class HakoPLugin implements Plugin.PluginBase {
         this.site = "https://ln.hako.vn";
         this.version = "1.0.0";
         this.userAgent = "";
-        this.cookies = "";
+        this.cookieString = "";
     }
     async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];

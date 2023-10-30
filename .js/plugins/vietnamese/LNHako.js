@@ -47,7 +47,7 @@ var HakoPLugin = /** @class */ (function () {
         this.site = "https://ln.hako.vn";
         this.version = "1.0.0";
         this.userAgent = "";
-        this.cookies = "";
+        this.cookieString = "";
     }
     HakoPLugin.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {
