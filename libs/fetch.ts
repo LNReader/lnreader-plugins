@@ -9,13 +9,11 @@ const defaultUserAgentString =
 export async function fetchApi(
     url: string,
     init?: NodeFetchParams[1],
-    pluginId?: string
 ) {
     const headers = {
         "User-Agent": defaultUserAgentString,
         ...init?.headers,
     };
-    if (pluginId) console.log("Enable CloudFlare cookie for", pluginId);
     return await fetch(url, { ...init, headers });
 }
 
