@@ -39,8 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
-var HakoPLugin = /** @class */ (function () {
-    function HakoPLugin() {
+var HakoPlugin = /** @class */ (function () {
+    function HakoPlugin() {
         this.id = "ln.hako";
         this.name = "Hako";
         this.icon = "src/vi/hakolightnovel/icon.png";
@@ -49,14 +49,40 @@ var HakoPLugin = /** @class */ (function () {
         this.userAgent = "";
         this.cookieString = "";
     }
-    HakoPLugin.prototype.popularNovels = function (pageNo, options) {
+    HakoPlugin.prototype.parseNovels = function (loadedCheerio) {
+        var _this = this;
+        var novels = [];
+        loadedCheerio(".row > .thumb-item-flow").each(function (index, ele) {
+            var url = loadedCheerio(ele)
+                .find("div.thumb_attr.series-title > a")
+                .attr("href");
+            if (url && !(0, isAbsoluteUrl_1.isUrlAbsolute)(url)) {
+                url = _this.site + url;
+            }
+            if (url) {
+                var name_1 = loadedCheerio(ele)
+                    .find(".series-title")
+                    .text()
+                    .trim();
+                var cover = loadedCheerio(ele)
+                    .find(".img-in-ratio")
+                    .attr("data-bg");
+                if (cover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(cover)) {
+                    cover = _this.site + cover;
+                }
+                var novel = { name: name_1, url: url, cover: cover };
+                novels.push(novel);
+            }
+        });
+        console.log(novels);
+        return novels;
+    };
+    HakoPlugin.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var novels, link, result, body, loadedCheerio;
-            var _this = this;
+            var link, result, body, loadedCheerio;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        novels = [];
                         link = this.site + "/danh-sach?truyendich=1&sapxep=topthang&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(link)];
                     case 1:
@@ -65,34 +91,12 @@ var HakoPLugin = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio("main.row > .thumb-item-flow").each(function (index, ele) {
-                            var url = loadedCheerio(ele)
-                                .find("div.thumb_attr.series-title > a")
-                                .attr("href");
-                            if (url && !(0, isAbsoluteUrl_1.isUrlAbsolute)(url)) {
-                                url = _this.site + url;
-                            }
-                            if (url) {
-                                var name_1 = loadedCheerio(ele)
-                                    .find(".series-title")
-                                    .text()
-                                    .trim();
-                                var cover = loadedCheerio(ele)
-                                    .find(".img-in-ratio")
-                                    .attr("data-bg");
-                                if (cover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(cover)) {
-                                    cover = _this.site + cover;
-                                }
-                                var novel = { name: name_1, url: url, cover: cover };
-                                novels.push(novel);
-                            }
-                        });
-                        return [2 /*return*/, novels];
+                        return [2 /*return*/, this.parseNovels(loadedCheerio)];
                 }
             });
         });
     };
-    HakoPLugin.prototype.parseNovelAndChapters = function (novelUrl) {
+    HakoPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
             var novel, result, body, loadedCheerio, background, novelCover, chapters;
             var _this = this;
@@ -159,7 +163,7 @@ var HakoPLugin = /** @class */ (function () {
             });
         });
     };
-    HakoPLugin.prototype.parseChapter = function (chapterUrl) {
+    HakoPlugin.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
             var result, body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
@@ -177,14 +181,12 @@ var HakoPLugin = /** @class */ (function () {
             });
         });
     };
-    HakoPLugin.prototype.searchNovels = function (searchTerm, pageNo) {
+    HakoPlugin.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
-            var novels, url, result, body, loadedCheerio;
-            var _this = this;
+            var url, result, body, loadedCheerio;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        novels = [];
                         url = this.site + "/tim-kiem?keywords=" + searchTerm;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
@@ -193,34 +195,12 @@ var HakoPLugin = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio("div.row > .thumb-item-flow").each(function (index, ele) {
-                            var novelUrl = loadedCheerio(ele)
-                                .find("div.thumb_attr.series-title > a")
-                                .attr("href");
-                            if (novelUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelUrl)) {
-                                novelUrl = _this.site + novelUrl;
-                            }
-                            if (novelUrl) {
-                                var novelName = loadedCheerio(ele).find(".series-title").text();
-                                var novelCover = loadedCheerio(ele)
-                                    .find(".img-in-ratio")
-                                    .attr("data-bg");
-                                if (novelCover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)) {
-                                    novelCover = _this.site + novelCover;
-                                }
-                                novels.push({
-                                    name: novelName,
-                                    url: novelUrl,
-                                    cover: novelCover,
-                                });
-                            }
-                        });
-                        return [2 /*return*/, novels];
+                        return [2 /*return*/, this.parseNovels(loadedCheerio)];
                 }
             });
         });
     };
-    HakoPLugin.prototype.fetchImage = function (url) {
+    HakoPlugin.prototype.fetchImage = function (url) {
         return __awaiter(this, void 0, void 0, function () {
             var headers;
             return __generator(this, function (_a) {
@@ -235,6 +215,6 @@ var HakoPLugin = /** @class */ (function () {
             });
         });
     };
-    return HakoPLugin;
+    return HakoPlugin;
 }());
-exports.default = new HakoPLugin();
+exports.default = new HakoPlugin();

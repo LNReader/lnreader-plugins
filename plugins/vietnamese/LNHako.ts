@@ -1,9 +1,9 @@
-import { load as parseHTML } from "cheerio";
+import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 import { Filter } from "@libs/filterInputs";
-class HakoPLugin implements Plugin.PluginBase {
+class HakoPlugin implements Plugin.PluginBase {
     id: string;
     name: string;
     icon: string;
@@ -20,14 +20,9 @@ class HakoPLugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
     }
-    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
+    parseNovels(loadedCheerio: CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
-        const link = this.site + "/danh-sach?truyendich=1&sapxep=topthang&page=" + pageNo;
-        const result = await fetchApi(link);
-        const body = await result.text();
-        const loadedCheerio = parseHTML(body);
-
-        loadedCheerio("main.row > .thumb-item-flow").each((index, ele) => {
+        loadedCheerio(".row > .thumb-item-flow").each((index, ele) => {
             let url = loadedCheerio(ele)
                 .find("div.thumb_attr.series-title > a")
                 .attr("href");
@@ -54,8 +49,15 @@ class HakoPLugin implements Plugin.PluginBase {
                 novels.push(novel);
             }
         });
-
+        console.log(novels);
         return novels;
+    }
+    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
+        const link = this.site + "/danh-sach?truyendich=1&sapxep=topthang&page=" + pageNo;
+        const result = await fetchApi(link);
+        const body = await result.text();
+        const loadedCheerio = parseHTML(body);
+        return this.parseNovels(loadedCheerio);
     }
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const novel: Plugin.SourceNovel = {
@@ -143,42 +145,11 @@ class HakoPLugin implements Plugin.PluginBase {
         return chapterText;
     }
     async searchNovels(searchTerm: string, pageNo?: number | undefined): Promise<Plugin.NovelItem[]> {
-        const novels: Plugin.NovelItem[] = [];
-
         const url = this.site + "/tim-kiem?keywords=" + searchTerm;
         const result = await fetchApi(url);
         const body = await result.text();
-    
         const loadedCheerio = parseHTML(body);
-    
-        loadedCheerio("div.row > .thumb-item-flow").each((index, ele) => {
-            let novelUrl = loadedCheerio(ele)
-                .find("div.thumb_attr.series-title > a")
-                .attr("href");
-    
-            if (novelUrl && !isUrlAbsolute(novelUrl)) {
-                novelUrl = this.site + novelUrl;
-            }
-    
-            if (novelUrl) {
-                const novelName = loadedCheerio(ele).find(".series-title").text();
-                let novelCover = loadedCheerio(ele)
-                    .find(".img-in-ratio")
-                    .attr("data-bg");
-    
-                if (novelCover && !isUrlAbsolute(novelCover)) {
-                    novelCover = this.site + novelCover;
-                }
-    
-                novels.push({
-                    name: novelName,
-                    url: novelUrl,
-                    cover: novelCover,
-                });
-            }
-        });
-    
-        return novels;
+        return this.parseNovels(loadedCheerio);
     }
     async fetchImage(url: string): Promise<string | undefined> {
         const headers = {
@@ -188,4 +159,4 @@ class HakoPLugin implements Plugin.PluginBase {
     }
 }
 
-export default new HakoPLugin();
+export default new HakoPlugin();
