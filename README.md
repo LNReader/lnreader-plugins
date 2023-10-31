@@ -11,7 +11,8 @@
 </p>
 
 Repository to host plugins and related issues, and requests for [LNReader](https://github.com/LNReader/lnreader).
-
+## Prerequisites
+- Nodejs >= 18
 ## Contributing 
 
 1. Choose your language in [plugins/](./plugins)

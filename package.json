@@ -19,7 +19,6 @@
         "dayjs": "^1.11.4",
         "express": "^4.18.2",
         "module-alias": "^2.2.2",
-        "node-fetch": "^3",
         "ts-node": "^10.9.1",
         "tsc-alias": "^1.8.6",
         "typescript": "^5.1.3"

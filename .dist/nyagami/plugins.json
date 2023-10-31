@@ -28,6 +28,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/hizomanga.png"
 		},
 		{
+			"id": "kolnovel",
+			"name": "KolNovel",
+			"site": "https://kolnovel.com/",
+			"lang": "العربية",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/arabic/kolnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/wpmangastream/icons/kolnovel.png"
+		},
+		{
 			"id": "novel4up",
 			"name": "Novel4Up[madara]",
 			"site": "https://novel4up.com/",

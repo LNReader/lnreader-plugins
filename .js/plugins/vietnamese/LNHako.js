@@ -74,7 +74,6 @@ var HakoPlugin = /** @class */ (function () {
                 novels.push(novel);
             }
         });
-        console.log(novels);
         return novels;
     };
     HakoPlugin.prototype.popularNovels = function (pageNo, options) {
@@ -84,7 +83,7 @@ var HakoPlugin = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         link = this.site + "/danh-sach?truyendich=1&sapxep=topthang&page=" + pageNo;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link)];
+                        return [4 /*yield*/, fetch(link)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -106,7 +105,7 @@ var HakoPlugin = /** @class */ (function () {
                         novel = {
                             url: novelUrl,
                         };
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                        return [4 /*yield*/, fetch(novelUrl)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -168,7 +167,7 @@ var HakoPlugin = /** @class */ (function () {
             var result, body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, fetch(chapterUrl)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -188,7 +187,7 @@ var HakoPlugin = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         url = this.site + "/tim-kiem?keywords=" + searchTerm;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, fetch(url)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];

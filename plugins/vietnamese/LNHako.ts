@@ -49,12 +49,11 @@ class HakoPlugin implements Plugin.PluginBase {
                 novels.push(novel);
             }
         });
-        console.log(novels);
         return novels;
     }
     async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const link = this.site + "/danh-sach?truyendich=1&sapxep=topthang&page=" + pageNo;
-        const result = await fetchApi(link);
+        const result = await fetch(link);
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
@@ -63,7 +62,7 @@ class HakoPlugin implements Plugin.PluginBase {
         const novel: Plugin.SourceNovel = {
             url: novelUrl,
         };
-        const result = await fetchApi(novelUrl);
+        const result = await fetch(novelUrl);
         const body = await result.text();
     
         let loadedCheerio = parseHTML(body);
@@ -135,7 +134,7 @@ class HakoPlugin implements Plugin.PluginBase {
         return novel;
     }
     async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetchApi(chapterUrl);
+        const result = await fetch(chapterUrl);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -146,7 +145,7 @@ class HakoPlugin implements Plugin.PluginBase {
     }
     async searchNovels(searchTerm: string, pageNo?: number | undefined): Promise<Plugin.NovelItem[]> {
         const url = this.site + "/tim-kiem?keywords=" + searchTerm;
-        const result = await fetchApi(url);
+        const result = await fetch(url);
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
