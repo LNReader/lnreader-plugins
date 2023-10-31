@@ -2,10 +2,15 @@ export interface FilterValue {
     label: string;
     value: string | number;
 }
-export type FilterInputs = string | "TextInput" | "Picker" | "CheckBox";
+
+export enum FilterInputs {
+    TextInput,
+    Picker,
+    Checkbox,
+}
 export interface Filter {
     key: string;
     label: string;
     values: FilterValue[];
-    inputType: FilterInputs;
+    inputType: FilterInputs | string;
 }

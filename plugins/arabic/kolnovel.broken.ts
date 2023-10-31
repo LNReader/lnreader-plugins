@@ -1,17 +1,166 @@
 import { load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { FilterInputs } from "@libs/filterInputs";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Filter, FilterInputs } from "@libs/filterInputs";
+import { Plugin } from "@typings/plugin";
 
-export const id = "kolnovel";
-export const name = "KolNovel";
-export const version = "1.0.0";
-export const icon = "multisrc/wpmangastream/icons/kolnovel.png";
-export const site = "https://kolnovel.com/";
-
-
-const pluginId = id;
-const baseUrl = site;
+class KolNovel implements Plugin.PluginBase {
+    id = "kolnovel";
+    name = "KolNovel";
+    icon = "multisrc/wpmangastream/icons/kolnovel.png"
+    site = "https://kolnovel.com/";
+    version = "1.0.0";
+    userAgent = "";
+    cookieString = "";
+    popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
+        throw new Error("Method not implemented.");
+    }
+    parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+        throw new Error("Method not implemented.");
+    }
+    parseChapter(chapterUrl: string): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
+    searchNovels(searchTerm: string, pageNo?: number | undefined): Promise<Plugin.NovelItem[]> {
+        throw new Error("Method not implemented.");
+    }
+    fetchImage(url: string): Promise<string | undefined> {
+        throw new Error("Method not implemented.");
+    }
+    filters = [
+        {
+            key: "order",
+            label: "ترتيب حسب",
+            values: [
+                { label: "الإعداد الأولي", value: "" },
+    
+                { label: "A-Z", value: "title" },
+    
+                { label: "Z-A", value: "titlereverse" },
+    
+                { label: "أخر التحديثات", value: "update" },
+    
+                { label: "أخر ما تم إضافته", value: "latest" },
+    
+                { label: "الرائجة", value: "popular" },
+            ],
+            inputType: FilterInputs.Picker,
+        },
+        {
+            key: "status",
+            label: "الحالة",
+            values: [
+                { label: "All", value: "" },
+    
+                { label: "Ongoing", value: "ongoing" },
+    
+                { label: "Hiatus", value: "hiatus" },
+    
+                { label: "Completed", value: "completed" },
+            ],
+            inputType: FilterInputs.Picker,
+        },
+        {
+            key: "type",
+            label: "النوع",
+            values: [
+                { label: "إنجليزية", value: "english" },
+    
+                { label: "روايةلايت", value: "light-novel" },
+    
+                { label: "روايةويب", value: "web-novel" },
+    
+                { label: "صينية", value: "chinese" },
+    
+                { label: "عربية", value: "arabic" },
+    
+                { label: "كورية", value: "korean" },
+    
+                { label: "يابانية", value: "japanese" },
+            ],
+            inputType: FilterInputs.Checkbox,
+        },
+        {
+            key: "genres",
+            label: "تصنيف",
+            values: [
+                { label: "Wuxia", value: "wuxia" },
+    
+                { label: "Xianxia", value: "xianxia" },
+    
+                { label: "XUANHUAN", value: "xuanhuan" },
+    
+                { label: "أكشن", value: "action" },
+    
+                { label: "إثارة", value: "excitement" },
+    
+                { label: "إنتقالالىعالمأخر", value: "isekai" },
+    
+                { label: "إيتشي", value: "etchi" },
+    
+                { label: "الخيالالعلمي", value: "sci-fi" },
+    
+                { label: "بوليسي", value: "policy" },
+    
+                { label: "تاريخي", value: "historical" },
+    
+                { label: "تحقيقات", value: "%d8%aa%d8%ad%d9%82%d9%8a%d9%82" },
+    
+                { label: "تقمصشخصيات", value: "rpg" },
+    
+                { label: "جريمة", value: "crime" },
+    
+                { label: "جوسى", value: "josei" },
+    
+                { label: "حريم", value: "harem" },
+    
+                { label: "حياةمدرسية", value: "school-life" },
+    
+                { label: "خيالي(فانتازيا)", value: "fantasy" },
+    
+                { label: "دراما", value: "drama" },
+    
+                { label: "رعب", value: "horror" },
+    
+                { label: "رومانسي", value: "romantic" },
+    
+                { label: "سحر", value: "magic" },
+    
+                { label: "سينن", value: "senen" },
+    
+                { label: "شريحةمنالحياة", value: "slice-of-life" },
+    
+                { label: "شوجو", value: "shojo" },
+    
+                { label: "شونين", value: "shonen" },
+    
+                { label: "طبي", value: "medical" },
+    
+                { label: "ظواهرخارقةللطبيعة", value: "supernatural" },
+    
+                { label: "غموض", value: "mysteries" },
+    
+                { label: "فنونالقتال", value: "martial-arts" },
+    
+                { label: "قوىخارقة", value: "superpower" },
+    
+                { label: "كوميدي", value: "comedy" },
+    
+                { label: "مأساوي", value: "tragedy" },
+    
+                { label: "مابعدالكارثة", value: "after-the-disaster" },
+    
+                { label: "مغامرة", value: "adventure" },
+    
+                { label: "ميكا", value: "mechanical" },
+    
+                { label: "ناضج", value: "mature" },
+    
+                { label: "نفسي", value: "psychological" },
+            ],
+            inputType: FilterInputs.Checkbox,
+        },
+    ];
+}
 
 export const popularNovels: Plugin.popularNovels = async function (
     page,
@@ -186,138 +335,3 @@ export const fetchImage: Plugin.fetchImage = async function fetchImage(url) {
     };
     return await fetchFile(url, { headers: headers });
 };
-
-export const filters = [
-    {
-        key: "order",
-        label: "ترتيب حسب",
-        values: [
-            { label: "الإعداد الأولي", value: "" },
-
-            { label: "A-Z", value: "title" },
-
-            { label: "Z-A", value: "titlereverse" },
-
-            { label: "أخر التحديثات", value: "update" },
-
-            { label: "أخر ما تم إضافته", value: "latest" },
-
-            { label: "الرائجة", value: "popular" },
-        ],
-        inputType: FilterInputs.Picker,
-    },
-    {
-        key: "status",
-        label: "الحالة",
-        values: [
-            { label: "All", value: "" },
-
-            { label: "Ongoing", value: "ongoing" },
-
-            { label: "Hiatus", value: "hiatus" },
-
-            { label: "Completed", value: "completed" },
-        ],
-        inputType: FilterInputs.Picker,
-    },
-    {
-        key: "type",
-        label: "النوع",
-        values: [
-            { label: "إنجليزية", value: "english" },
-
-            { label: "روايةلايت", value: "light-novel" },
-
-            { label: "روايةويب", value: "web-novel" },
-
-            { label: "صينية", value: "chinese" },
-
-            { label: "عربية", value: "arabic" },
-
-            { label: "كورية", value: "korean" },
-
-            { label: "يابانية", value: "japanese" },
-        ],
-        inputType: FilterInputs.Checkbox,
-    },
-    {
-        key: "genres",
-        label: "تصنيف",
-        values: [
-            { label: "Wuxia", value: "wuxia" },
-
-            { label: "Xianxia", value: "xianxia" },
-
-            { label: "XUANHUAN", value: "xuanhuan" },
-
-            { label: "أكشن", value: "action" },
-
-            { label: "إثارة", value: "excitement" },
-
-            { label: "إنتقالالىعالمأخر", value: "isekai" },
-
-            { label: "إيتشي", value: "etchi" },
-
-            { label: "الخيالالعلمي", value: "sci-fi" },
-
-            { label: "بوليسي", value: "policy" },
-
-            { label: "تاريخي", value: "historical" },
-
-            { label: "تحقيقات", value: "%d8%aa%d8%ad%d9%82%d9%8a%d9%82" },
-
-            { label: "تقمصشخصيات", value: "rpg" },
-
-            { label: "جريمة", value: "crime" },
-
-            { label: "جوسى", value: "josei" },
-
-            { label: "حريم", value: "harem" },
-
-            { label: "حياةمدرسية", value: "school-life" },
-
-            { label: "خيالي(فانتازيا)", value: "fantasy" },
-
-            { label: "دراما", value: "drama" },
-
-            { label: "رعب", value: "horror" },
-
-            { label: "رومانسي", value: "romantic" },
-
-            { label: "سحر", value: "magic" },
-
-            { label: "سينن", value: "senen" },
-
-            { label: "شريحةمنالحياة", value: "slice-of-life" },
-
-            { label: "شوجو", value: "shojo" },
-
-            { label: "شونين", value: "shonen" },
-
-            { label: "طبي", value: "medical" },
-
-            { label: "ظواهرخارقةللطبيعة", value: "supernatural" },
-
-            { label: "غموض", value: "mysteries" },
-
-            { label: "فنونالقتال", value: "martial-arts" },
-
-            { label: "قوىخارقة", value: "superpower" },
-
-            { label: "كوميدي", value: "comedy" },
-
-            { label: "مأساوي", value: "tragedy" },
-
-            { label: "مابعدالكارثة", value: "after-the-disaster" },
-
-            { label: "مغامرة", value: "adventure" },
-
-            { label: "ميكا", value: "mechanical" },
-
-            { label: "ناضج", value: "mature" },
-
-            { label: "نفسي", value: "psychological" },
-        ],
-        inputType: FilterInputs.Checkbox,
-    },
-];
