@@ -75,6 +75,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/firstkissnovel.png"
 		},
 		{
+			"id": "BLN.com",
+			"name": "BestLightNovel",
+			"site": "https://bestlightnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/english/bestlightnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/src/en/bestlightnovel/icon.png"
+		},
+		{
 			"id": "boxnovel",
 			"name": "BoxNovel[madara]",
 			"site": "https://boxnovel.com/",
