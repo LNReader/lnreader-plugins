@@ -30,9 +30,9 @@
 		{
 			"id": "kolnovel",
 			"name": "KolNovel",
-			"site": "https://kolnovel.com/",
+			"site": "https://kolnovel.lol/",
 			"lang": "العربية",
-			"version": "1.1.0",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/arabic/kolnovel.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/wpmangastream/icons/kolnovel.png"
 		},
@@ -210,6 +210,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
+			"id": "noblemtl",
+			"name": "NobleMTL",
+			"site": "https://noblemtl.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/english/nobleMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/src/en/noblemtl/icon.png"
+		},
+		{
 			"id": "nocturneTLS",
 			"name": "Nocturne Translations[madara]",
 			"site": "https://nocturnetls.net/",
@@ -282,11 +291,11 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/onlymtl.png"
 		},
 		{
-			"id": "PandaMTL",
+			"id": "pandamtl",
 			"name": "PandaMTL",
-			"site": "https://www.pandamtl.com/",
+			"site": "https://pandamtl.com/",
 			"lang": "English",
-			"version": "1.1.0",
+			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/english/pandaMTL.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/src/en/wordpress/icon.png"
 		},
@@ -401,7 +410,27 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/wbnovel.png"
 		}
 	],
+	"Português": [
+		{
+			"id": "lightnovelbrasil",
+			"name": "Light Novel Brasil",
+			"site": "https://lightnovelbrasil.com/",
+			"lang": "Português",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/portuguese/lightnovelbrasil.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/wpmangastream/icons/lightnovelbrasil.png"
+		}
+	],
 	"Türkçe": [
+		{
+			"id": "lshnovel",
+			"name": "Liebe Schnee Hiver Novel",
+			"site": "https://lshnovel.com/",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/turkish/lshnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/wpmangastream/icons/lshnovel.png"
+		},
 		{
 			"id": "turkcelightnovels",
 			"name": "TurkceLightNovels[madara]",

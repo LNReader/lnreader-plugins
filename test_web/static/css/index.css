@@ -1,3 +1,8 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 .navbar{
     width: 1080px;
     align-items: center;
@@ -118,4 +123,8 @@
     overflow-x: scroll;
     grid-template-columns: 15rem 15rem 15rem 15rem;
     grid-gap: 0, 0;
+}
+
+.select-option-text{
+    padding-left: 1rem;
 }

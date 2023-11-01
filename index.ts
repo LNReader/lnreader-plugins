@@ -20,6 +20,10 @@ app.get("/all_plugins", (req, res) => {
     const allPlugins = pluginApi.all_plugins();
     res.json(allPlugins);
 });
+app.post("/filters", async (req, res) => {
+    const filters = await pluginApi.getFilter(req.body['pluginRequirePath']);
+    res.json(filters);
+})
 app.post("/popularNovels/", async (req, res) => {
     const filters = req.body["filters"] || {};
     const showLatestNovels = req.body["showLatestNovels"] || false;

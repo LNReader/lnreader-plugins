@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" sizes="128x128" type="image/png" href="/static/ico.png" defer />
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/mdb5.css">
     <link rel="stylesheet" href="/static/css/index.css">
     <title>Testing plugin</title>
 </head>
@@ -30,9 +31,31 @@
     </nav>
     <div id="test-container">
         <div class="test-wrapper" id="popularNovels">
+            <div class="modal-container">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtersModal">
+                    Filters
+                </button>
+                <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog" aria-labelledby="filtersModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
             <div class="title">
                 popularNovels
-                <button type="button" class="btn btn-primary" onclick="popularNovels()">fetch</button>
+                <button type="button" class="btn btn-primary popularNovels-btn">fetch</button>
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
@@ -46,7 +69,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="searchTerm">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="searchNovels()">search</button>
+                        <button class="btn btn-primary searchNovels-btn" type="button">search</button>
                     </div>
                 </div>
                 <div class="spinner-border" role="status">
@@ -62,7 +85,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="novel url">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="parseNovelAndChapters()">fetch</button>
+                        <button class="btn btn-primary parseNovelAndChapters-btn" type="button">fetch</button>
                     </div>
                 </div>
                 <div class="spinner-border" role="status">
@@ -82,7 +105,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="chapter url">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="parseChapter()">fetch</button>
+                        <button class="btn btn-primary parseChapter-btn" type="button">fetch</button>
                     </div>
                 </div>
                 <div class="spinner-border" role="status">
@@ -100,7 +123,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="image url (shoule be in chapterText)">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="fetchImage()">fetch</button>
+                        <button class="btn btn-primary fetchImage-btn" type="button">fetch</button>
                     </div>
                 </div>
                 <div class="spinner-border" role="status">
@@ -111,7 +134,9 @@
         </div>
     </div>
 </body>
-<script src="/static/js/jquery-3.6.4.min.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/mdb5.js"></script>
 <script src="/static/js/index.js"></script>
 
 </html>

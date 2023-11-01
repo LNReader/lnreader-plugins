@@ -45,7 +45,7 @@ export namespace Plugin {
          */
         icon: string;
         site: string;
-        filter?: Filter[];
+        filters?: Filter[];
         version: string;
         userAgent: string;
         cookieString: string;

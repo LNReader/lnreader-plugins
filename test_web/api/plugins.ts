@@ -48,15 +48,14 @@ const getPlugin = async (
     return null;
 };
 
+export const getFilter = async (
+    pluginRequirePath: string
+) => (await getPlugin(pluginRequirePath))?.filters;
+
 export const popularNovels = async (
     pluginRequirePath: string,
     options: Plugin.PopularNovelsOptions
-) => {
-    const plugin = await getPlugin(pluginRequirePath);
-    if (!plugin) return null;
-    const popularNovels = await plugin.popularNovels(1, options);
-    return popularNovels;
-};
+) => (await getPlugin(pluginRequirePath))?.popularNovels(1, options);
 
 export const searchNovels = async (
     pluginRequirePath: string,
