@@ -22,7 +22,7 @@ app.get("/all_plugins", (req, res) => {
 });
 app.post("/filters", async (req, res) => {
     const filters = await pluginApi.getFilter(req.body['pluginRequirePath']);
-    res.json(filters);
+    res.json(filters || []);
 })
 app.post("/popularNovels/", async (req, res) => {
     const filters = req.body["filters"] || {};
