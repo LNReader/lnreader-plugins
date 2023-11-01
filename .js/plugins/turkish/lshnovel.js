@@ -39,34 +39,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var filterInputs_1 = require("@libs/filterInputs");
-var KolNovel = /** @class */ (function () {
-    function KolNovel() {
-        this.id = "kolnovel";
-        this.name = "KolNovel";
-        this.icon = "multisrc/wpmangastream/icons/kolnovel.png";
-        this.site = "https://kolnovel.lol/";
+var LSHNovel = /** @class */ (function () {
+    function LSHNovel() {
+        this.id = "lshnovel";
+        this.name = "Liebe Schnee Hiver Novel";
+        this.icon = "multisrc/wpmangastream/icons/lshnovel.png";
+        this.site = "https://lshnovel.com/";
         this.version = "1.0.0";
         this.userAgent = "";
         this.cookieString = "";
         this.filters = [
             {
                 key: "order",
-                label: "ترتيب حسب",
+                label: "Önerilen",
                 values: [
-                    { label: "الإعداد الأولي", value: "" },
+                    { label: "Varsayılan", value: "" },
                     { label: "A-Z", value: "title" },
                     { label: "Z-A", value: "titlereverse" },
-                    { label: "أخر التحديثات", value: "update" },
-                    { label: "أخر ما تم إضافته", value: "latest" },
-                    { label: "الرائجة", value: "popular" },
+                    { label: "Son Yüklemeler", value: "update" },
+                    { label: "Son Eklenenler", value: "latest" },
+                    { label: "Bestimiz", value: "popular" },
                 ],
                 inputType: filterInputs_1.FilterInputs.Picker,
             },
             {
                 key: "status",
-                label: "الحالة",
+                label: "Statü",
                 values: [
-                    { label: "All", value: "" },
+                    { label: "Tümü", value: "" },
                     { label: "Ongoing", value: "ongoing" },
                     { label: "Hiatus", value: "hiatus" },
                     { label: "Completed", value: "completed" },
@@ -75,65 +75,60 @@ var KolNovel = /** @class */ (function () {
             },
             {
                 key: "type",
-                label: "النوع",
+                label: "Tür",
                 values: [
-                    { label: "إنجليزية", value: "english" },
-                    { label: "روايةلايت", value: "light-novel" },
-                    { label: "روايةويب", value: "web-novel" },
-                    { label: "صينية", value: "chinese" },
-                    { label: "عربية", value: "arabic" },
-                    { label: "كورية", value: "korean" },
-                    { label: "يابانية", value: "japanese" },
+                    { label: "Çeviri Novel", value: "ceviri-novel" },
+                    { label: "Liz-Chan", value: "liz-chan" },
+                    { label: "Manhwa", value: "manhwa" },
+                    { label: "Orijinal Novel", value: "orijinal-novel" },
+                    { label: "Web Novel", value: "web-novel" },
                 ],
                 inputType: filterInputs_1.FilterInputs.Checkbox,
             },
             {
                 key: "genres",
-                label: "تصنيف",
+                label: "Kategori",
                 values: [
-                    { label: "Wuxia", value: "wuxia" },
-                    { label: "Xianxia", value: "xianxia" },
-                    { label: "XUANHUAN", value: "xuanhuan" },
-                    { label: "أكشن", value: "action" },
-                    { label: "إثارة", value: "excitement" },
-                    { label: "إنتقالالىعالمأخر", value: "isekai" },
-                    { label: "إيتشي", value: "etchi" },
-                    { label: "الخيالالعلمي", value: "sci-fi" },
-                    { label: "بوليسي", value: "policy" },
-                    { label: "تاريخي", value: "historical" },
-                    { label: "تحقيقات", value: "%d8%aa%d8%ad%d9%82%d9%8a%d9%82" },
-                    { label: "تقمصشخصيات", value: "rpg" },
-                    { label: "جريمة", value: "crime" },
-                    { label: "جوسى", value: "josei" },
-                    { label: "حريم", value: "harem" },
-                    { label: "حياةمدرسية", value: "school-life" },
-                    { label: "خيالي(فانتازيا)", value: "fantasy" },
-                    { label: "دراما", value: "drama" },
-                    { label: "رعب", value: "horror" },
-                    { label: "رومانسي", value: "romantic" },
-                    { label: "سحر", value: "magic" },
-                    { label: "سينن", value: "senen" },
-                    { label: "شريحةمنالحياة", value: "slice-of-life" },
-                    { label: "شوجو", value: "shojo" },
-                    { label: "شونين", value: "shonen" },
-                    { label: "طبي", value: "medical" },
-                    { label: "ظواهرخارقةللطبيعة", value: "supernatural" },
-                    { label: "غموض", value: "mysteries" },
-                    { label: "فنونالقتال", value: "martial-arts" },
-                    { label: "قوىخارقة", value: "superpower" },
-                    { label: "كوميدي", value: "comedy" },
-                    { label: "مأساوي", value: "tragedy" },
-                    { label: "مابعدالكارثة", value: "after-the-disaster" },
-                    { label: "مغامرة", value: "adventure" },
-                    { label: "ميكا", value: "mechanical" },
-                    { label: "ناضج", value: "mature" },
-                    { label: "نفسي", value: "psychological" },
+                    { label: "+18", value: "18" },
+                    { label: "Action", value: "action" },
+                    { label: "Adult", value: "adult" },
+                    { label: "Aksiyon", value: "aksiyon" },
+                    { label: "BL", value: "bl" },
+                    { label: "Comedy", value: "comedy" },
+                    { label: "Doğaüstü", value: "dogaustu" },
+                    { label: "Dram", value: "dram" },
+                    { label: "Drama", value: "drama" },
+                    { label: "Ecchi", value: "ecchi" },
+                    { label: "Fantastik", value: "fantastik" },
+                    { label: "Fantasy", value: "fantasy" },
+                    { label: "Gizem", value: "gizem" },
+                    { label: "Harem", value: "harem" },
+                    { label: "Historical", value: "historical" },
+                    { label: "Josei", value: "josei" },
+                    { label: "Macera", value: "macera" },
+                    { label: "Manhwa", value: "manhwa" },
+                    { label: "Martial Arts", value: "martial-arts" },
+                    { label: "Mature", value: "mature" },
+                    { label: "Novel", value: "novel" },
+                    { label: "Okul", value: "okul" },
+                    { label: "Psikolojik", value: "psikolojik" },
+                    { label: "Psychological", value: "psychological" },
+                    { label: "Reverse Harem", value: "reverse-harem" },
+                    { label: "Romance", value: "romance" },
+                    { label: "Romantik", value: "romantik" },
+                    { label: "Shoujo", value: "shoujo" },
+                    { label: "Slice Of Life", value: "slice-of-life" },
+                    { label: "Smut", value: "smut" },
+                    { label: "Supernatural", value: "supernatural" },
+                    { label: "Tarihi", value: "tarihi" },
+                    { label: "Tragedy", value: "tragedy" },
+                    { label: "Yaoi", value: "yaoi" },
                 ],
                 inputType: filterInputs_1.FilterInputs.Checkbox,
             },
         ];
     }
-    KolNovel.prototype.popularNovels = function (pageNo, _a) {
+    LSHNovel.prototype.popularNovels = function (pageNo, _a) {
         var filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var link, headers, body, loadedCheerio, novels;
@@ -161,11 +156,11 @@ var KolNovel = /** @class */ (function () {
                         body = _b.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio("article.maindet").each(function () {
-                            var novelName = loadedCheerio(this).find("h2").text();
+                        loadedCheerio("article.bs").each(function () {
+                            var novelName = loadedCheerio(this).find(".ntitle").text().trim();
                             var image = loadedCheerio(this).find("img");
                             var novelCover = image.attr("data-src") || image.attr("src");
-                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
+                            var novelUrl = loadedCheerio(this).find("a").attr("href");
                             if (!novelUrl)
                                 return;
                             var novel = {
@@ -180,7 +175,8 @@ var KolNovel = /** @class */ (function () {
             });
         });
     };
-    KolNovel.prototype.parseNovelAndChapters = function (novelUrl) {
+    ;
+    LSHNovel.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
             var url, headers, result, body, loadedCheerio, novel, chapter;
             return __generator(this, function (_a) {
@@ -191,7 +187,7 @@ var KolNovel = /** @class */ (function () {
                         if (this.cookieString) {
                             headers.append("cookie", this.cookieString);
                         }
-                        return [4 /*yield*/, fetch(url, { headers: headers })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -202,27 +198,28 @@ var KolNovel = /** @class */ (function () {
                             url: url,
                             chapters: [],
                         };
-                        novel.name = loadedCheerio("h1.entry-title").text();
+                        novel.name = loadedCheerio(".entry-title").text();
                         novel.cover =
                             loadedCheerio("img.wp-post-image").attr("data-src") ||
                                 loadedCheerio("img.wp-post-image").attr("src");
-                        loadedCheerio("div.serl:nth-child(3) > span").each(function () {
-                            var detailName = loadedCheerio(this).text().trim();
-                            var detail = loadedCheerio(this).next().text().trim();
+                        loadedCheerio("div.spe > span").each(function () {
+                            var detailName = loadedCheerio(this).find("b").text().trim();
+                            var detail = loadedCheerio(this).find('b').remove().end().text().trim();
                             switch (detailName) {
-                                case "الكاتب":
-                                case "Author":
+                                case "Yazar:":
                                     novel.author = detail;
+                                    break;
+                                case "Seviye:":
+                                    novel.status = detail;
                                     break;
                             }
                         });
-                        novel.status = loadedCheerio("div.sertostat > span").attr("class");
-                        novel.genres = loadedCheerio(".sertogenre")
-                            .children("a")
-                            .map(function (i, el) { return loadedCheerio(el).text(); })
-                            .toArray()
-                            .join(",");
-                        novel.summary = loadedCheerio(".sersys")
+                        novel.genres = loadedCheerio(".genxed")
+                            .text()
+                            .trim()
+                            .replace(/\s/g, ",");
+                        loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
+                        novel.summary = loadedCheerio('div[itemprop="description"]')
                             .find("br")
                             .replaceWith("\n")
                             .end()
@@ -253,35 +250,30 @@ var KolNovel = /** @class */ (function () {
             });
         });
     };
-    KolNovel.prototype.parseChapter = function (chapterUrl) {
-        var _a;
+    LSHNovel.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var headers, result, body, loadedCheerio, ignore, chapterText;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var headers, result, body, loadedCheerio, chapterText;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         headers = new Headers();
                         if (this.cookieString) {
                             headers.append("cookie", this.cookieString);
                         }
-                        return [4 /*yield*/, fetch(chapterUrl, { headers: headers })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl, { headers: headers })];
                     case 1:
-                        result = _b.sent();
+                        result = _a.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _b.sent();
+                        body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio('.epcontent > div, i').remove();
-                        ignore = loadedCheerio('article > style').text().trim().split(',');
-                        ignore.push.apply(ignore, (((_a = ignore.pop()) === null || _a === void 0 ? void 0 : _a.match(/^\.\w+/)) || []));
-                        ignore.map(function (tag) { return loadedCheerio("p".concat(tag)).remove(); });
-                        chapterText = loadedCheerio('.epcontent').html() || "";
+                        chapterText = loadedCheerio(".epcontent").html() || "";
                         return [2 /*return*/, chapterText];
                 }
             });
         });
     };
-    KolNovel.prototype.searchNovels = function (searchTerm, pageNo) {
+    LSHNovel.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
             var url, headers, result, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
@@ -300,11 +292,10 @@ var KolNovel = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio("article.maindet").each(function () {
-                            var novelName = loadedCheerio(this).find("h2").text();
-                            var image = loadedCheerio(this).find("img");
-                            var novelCover = image.attr("data-src") || image.attr("src");
-                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
+                        loadedCheerio("article.bs").each(function () {
+                            var novelName = loadedCheerio(this).find(".ntitle").text().trim();
+                            var novelCover = loadedCheerio(this).find("img").attr("src");
+                            var novelUrl = loadedCheerio(this).find("a").attr("href");
                             if (!novelUrl)
                                 return;
                             novels.push({
@@ -318,7 +309,7 @@ var KolNovel = /** @class */ (function () {
             });
         });
     };
-    KolNovel.prototype.fetchImage = function (url) {
+    LSHNovel.prototype.fetchImage = function (url) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -328,6 +319,6 @@ var KolNovel = /** @class */ (function () {
             });
         });
     };
-    return KolNovel;
+    return LSHNovel;
 }());
-exports.default = new KolNovel();
+exports.default = new LSHNovel();

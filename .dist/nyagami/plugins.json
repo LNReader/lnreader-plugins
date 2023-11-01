@@ -32,7 +32,7 @@
 			"name": "KolNovel",
 			"site": "https://kolnovel.com/",
 			"lang": "العربية",
-			"version": "1.0.0",
+			"version": "1.1.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/arabic/kolnovel.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/wpmangastream/icons/kolnovel.png"
 		},
@@ -280,6 +280,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/english/OnlyMTL[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/multisrc/madara/icons/onlymtl.png"
+		},
+		{
+			"id": "PandaMTL",
+			"name": "PandaMTL",
+			"site": "https://www.pandamtl.com/",
+			"lang": "English",
+			"version": "1.1.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/classes/.js/plugins/english/pandaMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/classes/icons/src/en/wordpress/icon.png"
 		},
 		{
 			"id": "readwebnovels",
