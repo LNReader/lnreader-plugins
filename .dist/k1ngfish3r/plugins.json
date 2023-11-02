@@ -64,6 +64,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/icons/multisrc/madara/icons/teamxnovel.png"
 		}
 	],
+	"中文, 汉语, 漢語": [
+		{
+			"id": "linovelib",
+			"name": "Linovelib",
+			"site": "https://w.linovelib.com",
+			"lang": "中文, 汉语, 漢語",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/.js/plugins/chinese/linovelib.js",
+			"iconUrl": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/icons/src/cn/linovelib/icon.png"
+		}
+	],
 	"English": [
 		{
 			"id": "1stkissnovel",
