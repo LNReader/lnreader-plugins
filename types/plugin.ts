@@ -18,6 +18,7 @@ export namespace Plugin {
         genres?: string;
         summary?: string;
         author?: string;
+        artist?: string;
         status?: string;
         chapters?: ChapterItem[];
     }
