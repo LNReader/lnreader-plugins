@@ -119,8 +119,10 @@ var MadaraPlugin = /** @class */ (function () {
                     case 1:
                         body = _b.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio('.manga-title-badges').remove();
-                        novel.name = loadedCheerio('.post-title h1').text().trim();
+                        loadedCheerio('.manga-title-badges, #manga-title span').remove();
+                        novel.name =
+                            loadedCheerio('.post-title h1').text().trim() ||
+                                loadedCheerio('#manga-title h1').text();
                         novel.cover =
                             loadedCheerio('.summary_image > a > img').attr('data-lazy-src') ||
                                 loadedCheerio('.summary_image > a > img').attr('data-src') ||
@@ -149,8 +151,11 @@ var MadaraPlugin = /** @class */ (function () {
                             }
                         });
                         loadedCheerio('div.summary__content .code-block,script').remove();
-                        novel.summary = loadedCheerio('div.summary__content').text().trim();
-                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        novel.summary =
+                            loadedCheerio('div.summary__content').text().trim() ||
+                                loadedCheerio('#tab-manga-about').text().trim() ||
+                                loadedCheerio('.post-content_item h5:contains("Summary")').next().text().trim();
+                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
                         novelId = loadedCheerio('.rating-post-id').attr('value') ||
                             loadedCheerio('#manga-chapters-holder').attr('data-id') || '';
                         formData = new FormData();
@@ -164,7 +169,7 @@ var MadaraPlugin = /** @class */ (function () {
                     case 2:
                         html = _b.sent();
                         return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + 'ajax/chapters/', { method: 'POST' })
+                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + 'ajax/chapters/', { method: 'POST' })
                             .then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
