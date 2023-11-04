@@ -16,11 +16,11 @@ if (!username || !repo || !branch) {
     console.error("config.json not provided!");
     process.exit(1);
 }
-if (!fs.existsSync(path.join(outRoot, "dist", username))) {
-    fs.mkdirSync(path.join(outRoot, "dist", username));
+if (!fs.existsSync(path.join(outRoot, ".dist", username))) {
+    fs.mkdirSync(path.join(outRoot, ".dist", username));
 }
 const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
-const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/js/plugins`;
+const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/.js/plugins`;
 
 const json: {
     [key: string]: {
@@ -33,8 +33,8 @@ const json: {
         iconUrl: string;
     }[];
 } = {};
-const jsonPath = path.join(outRoot, "dist", username, "plugins.json");
-const jsonMinPath = path.join(outRoot, "dist", username, "plugins.min.json");
+const jsonPath = path.join(outRoot, ".dist", username, "plugins.json");
+const jsonMinPath = path.join(outRoot, ".dist", username, "plugins.min.json");
 const pluginSet = new Set();
 
 for (let language in languages) {
@@ -47,10 +47,10 @@ for (let language in languages) {
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
         const instance:
-            | Plugin.instance
+            | Plugin.PluginBase
             | unknown = require(`../plugins/${language.toLowerCase()}/${
             plugin.split(".")[0]
-        }`);
+        }`).default;
 
         if (!isPlugin(instance)) {
             console.log(plugin);

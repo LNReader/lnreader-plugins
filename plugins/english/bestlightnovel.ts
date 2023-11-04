@@ -1,59 +1,60 @@
 import { load as cheerioload } from "cheerio";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
 import { defaultCover } from "@libs/defaultCover";
-import { fetchApi, fetchFile } from "@libs/fetch";
+import { fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
+import { Filter } from "@libs/filterInputs";
 
-export const id = "BLN.com";
-export const name = "BestLightNovel";
-export const site = "https://bestlightnovel.com/";
-export const version = "1.0.0";
-export const icon = "src/en/bestlightnovel/icon.png";
+class BLN implements Plugin.PluginBase {
+    id = "BLN.com";
+    name = "BestLightNovel";
+    icon = "src/en/bestlightnovel/icon.png";
+    site = "https://bestlightnovel.com/";
+    filter?: Filter[] | undefined;
+    version = "1.0.0";
+    userAgent = "";
+    cookieString = "";
+    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
+        const url = this.site + "novel_list?type=topview&category=all&state=all&page=1" + pageNo;
 
-export const popularNovels: Plugin.popularNovels = async function (page) {
-    const url =
-        site + "novel_list?type=topview&category=all&state=all&page=1" + page;
-
-    const result = await fetchApi(url);
-    if (!result.ok) {
-        console.error(await result.text());
-        // TODO: Cloudflare protection or other error
-        return [];
-    }
-    const body = await result.text();
-
-    const loadedCheerio = cheerioload(body);
-
-    let novels: Novel.Item[] = [];
-
-    loadedCheerio(".update_item.list_category").each(function () {
-        const novelName = loadedCheerio(this).find("h3 > a").text();
-        const novelCover = loadedCheerio(this).find("img").attr("src");
-        const novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
-
-        if (!novelUrl) {
-            // TODO: Handle error
-            console.error("No novel url!");
-            return;
+        const result = await fetch(url);
+        if (!result.ok) {
+            console.error(await result.text());
+            // TODO: Cloudflare protection or other error
+            return [];
         }
+        const body = await result.text();
 
-        const novel = {
-            name: novelName,
-            url: novelUrl,
-            cover: novelCover,
-        };
+        const loadedCheerio = cheerioload(body);
 
-        novels.push(novel);
-    });
+        let novels: Plugin.NovelItem[] = [];
 
-    return novels;
-};
+        loadedCheerio(".update_item.list_category").each(function () {
+            const novelName = loadedCheerio(this).find("h3 > a").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
+            const novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
 
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+            if (!novelUrl) {
+                // TODO: Handle error
+                console.error("No novel url!");
+                return;
+            }
+
+            const novel = {
+                name: novelName,
+                url: novelUrl,
+                cover: novelCover,
+            };
+
+            novels.push(novel);
+        });
+
+        return novels;
+    }
+    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
 
-        const result = await fetchApi(url);
+        const result = await fetch(url);
         if (!result.ok) {
             console.error(await result.text());
             // TODO: Cloudflare protection
@@ -63,7 +64,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
         let loadedCheerio = cheerioload(body);
 
-        let novel: Novel.instance = {
+        let novel: Plugin.SourceNovel = {
             url,
             name: "",
             cover: "",
@@ -97,7 +98,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
                 ? NovelStatus.Completed
                 : NovelStatus.Unknown;
 
-        let novelChapters: Chapter.Item[] = [];
+        let novelChapters: Plugin.ChapterItem[] = [];
 
         loadedCheerio(".chapter-list div.row").each(function () {
             const chapterName = loadedCheerio(this).find("a").text().trim();
@@ -123,50 +124,51 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.chapters = novelChapters.reverse();
 
         return novel;
-    };
+    }
+    async parseChapter(chapterUrl: string): Promise<string> {
+        const url = chapterUrl;
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const url = chapterUrl;
+        const result = await fetch(url);
+        const body = await result.text();
 
-    const result = await fetchApi(url);
-    const body = await result.text();
+        let loadedCheerio = cheerioload(body);
 
-    let loadedCheerio = cheerioload(body);
+        const chapterText = loadedCheerio("#vung_doc").html() || "";
 
-    const chapterText = loadedCheerio("#vung_doc").html();
+        return chapterText;
+    }
+    async searchNovels(searchTerm: string, pageNo?: number | undefined): Promise<Plugin.NovelItem[]> {
+        const url = `${this.site}search_novels/${searchTerm}`;
 
-    return chapterText;
-};
+        const result = await fetch(url);
+        const body = await result.text();
+    
+        let loadedCheerio = cheerioload(body);
+    
+        let novels: Plugin.NovelItem[] = [];
+    
+        loadedCheerio(".update_item.list_category").each(function () {
+            const novelName = loadedCheerio(this).find("h3 > a").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
+            const novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
+    
+            if (!novelUrl) {
+                // TODO: Handle error
+                console.error("No novel url!");
+                return;
+            }
+    
+            const novel = { name: novelName, cover: novelCover, url: novelUrl };
+    
+            novels.push(novel);
+        });
+    
+        return novels;
+    }
+    async fetchImage(url: string): Promise<string | undefined> {
+        return await fetchFile(url);
+    }
+}
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const url = `${site}search_novels/${searchTerm}`;
-
-    const result = await fetchApi(url);
-    const body = await result.text();
-
-    let loadedCheerio = cheerioload(body);
-
-    let novels: Novel.Item[] = [];
-
-    loadedCheerio(".update_item.list_category").each(function () {
-        const novelName = loadedCheerio(this).find("h3 > a").text();
-        const novelCover = loadedCheerio(this).find("img").attr("src");
-        const novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
-
-        if (!novelUrl) {
-            // TODO: Handle error
-            console.error("No novel url!");
-            return;
-        }
-
-        const novel = { name: novelName, cover: novelCover, url: novelUrl };
-
-        novels.push(novel);
-    });
-
-    return novels;
-};
-
-export const fetchImage: Plugin.fetchImage = (...args) => fetchFile(...args);
-
+export default new BLN();
 

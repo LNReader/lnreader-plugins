@@ -1,76 +1,74 @@
 import { load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { FilterInputs } from "@libs/filterInputs";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Filter, FilterInputs } from "@libs/filterInputs";
+import { Plugin } from "@typings/plugin";
 
-export const id = "PandaMTL";
-export const name = "PandaMTL";
-export const version = "1.0.0";
-export const icon = "src/en/wordpress/icon.png";
-export const site = "https://www.pandamtl.com/";
+class PandaMTL implements Plugin.PluginBase {
+    id = "pandamtl";
+    name = "PandaMTL";
+    icon = "src/en/wordpress/icon.png";
+    site = "https://pandamtl.com/";
+    version = "1.0.0";
+    userAgent = "";
+    cookieString = "";
+    async popularNovels(pageNo: number, {filters}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
+        let link = `${this.site}series/?page=${pageNo}`;
 
+        if (filters) {
+            if (Array.isArray(filters.genres) && filters.genres.length) {
+                link += filters.genres.map((i) => `&genre[]=${i}`).join("");
+            }
 
-const pluginId = id;
-const baseUrl = site;
-
-export const popularNovels: Plugin.popularNovels = async function (
-    page,
-    { filters }
-) {
-    let link = `${baseUrl}series/?page=${page}`;
-
-    if (filters) {
-        if (Array.isArray(filters.genres) && filters.genres.length) {
-            link += filters.genres.map((i) => `&genre[]=${i}`).join("");
+            if (Array.isArray(filters.type) && filters.type.length)
+                link += filters.type.map((i) => `&lang[]=${i}`).join("");
         }
+        link += "&status=" + (filters?.status ? filters.status : "");
 
-        if (Array.isArray(filters.type) && filters.type.length) {
-            link += filters.type.map((i) => `&lang[]=${i}`).join("");
+        link += "&order=" + (filters?.order ? filters.order : "popular");
+
+        const headers = new Headers();
+        if(this.cookieString){
+            headers.append("cookie", this.cookieString);
         }
+        const body = await fetchApi(link, {headers}).then((result) =>
+            result.text()
+        );
+
+        const loadedCheerio = parseHTML(body);
+
+        const novels: Plugin.NovelItem[] = [];
+
+        loadedCheerio("article.maindet").each(function () {
+            const novelName = loadedCheerio(this).find("h2").text();
+            let image = loadedCheerio(this).find("img");
+            const novelCover = image.attr("data-src") || image.attr("src");
+            const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
+
+            if (!novelUrl) return;
+
+            const novel = {
+                name: novelName,
+                cover: novelCover,
+                url: novelUrl,
+            };
+
+            novels.push(novel);
+        });
+
+        return novels;
     }
-
-    link += "&status=" + (filters?.status ? filters?.status : "");
-
-    link += "&order=" + (filters?.order ? filters?.order : "popular");
-
-    const body = await fetchApi(link, {}, pluginId).then((result) =>
-        result.text()
-    );
-
-    const loadedCheerio = parseHTML(body);
-
-    const novels: Novel.Item[] = [];
-
-    loadedCheerio("article.maindet").each(function () {
-        const novelName = loadedCheerio(this).find("h2").text();
-        let image = loadedCheerio(this).find("img");
-        const novelCover = image.attr("data-src") || image.attr("src");
-        const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
-
-        if (!novelUrl) return;
-
-        const novel = {
-            name: novelName,
-            cover: novelCover,
-            url: novelUrl,
-        };
-
-        novels.push(novel);
-    });
-
-    return novels;
-};
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-
-        const result = await fetchApi(url, {}, pluginId);
+        const headers = new Headers();
+        if(this.cookieString){
+            headers.append("cookie", this.cookieString);
+        }
+        const result = await fetchApi(url, {headers});
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
 
-        const novel: Novel.instance = {
+        const novel: Plugin.SourceNovel = {
             url,
             chapters: [],
         };
@@ -81,19 +79,18 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
             loadedCheerio("img.wp-post-image").attr("data-src") ||
             loadedCheerio("img.wp-post-image").attr("src");
 
-        loadedCheerio("div.serl:nth-child(3) > span").each(function () {
+        loadedCheerio(".serl:nth-child(3) > span").each(function () {
             const detailName = loadedCheerio(this).text().trim();
             const detail = loadedCheerio(this).next().text().trim();
 
             switch (detailName) {
-                case "الكاتب":
                 case "Author":
                     novel.author = detail;
                     break;
             }
         });
 
-        novel.status = loadedCheerio("div.sertostat > span").attr("class");
+        novel.status = loadedCheerio(".sertostat > span").attr("class");
 
         novel.genres = loadedCheerio(".sertogenre")
             .children("a")
@@ -107,7 +104,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
             .end()
             .text();
 
-        let chapter: Chapter.Item[] = [];
+        let chapter: Plugin.ChapterItem[] = [];
 
         loadedCheerio(".eplister")
             .find("li")
@@ -136,139 +133,144 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.chapters = chapter.reverse();
 
         return novel;
-    };
+    }
+    async parseChapter(chapterUrl: string): Promise<string> {
+        const headers = new Headers();
+        if(this.cookieString){
+            headers.append("cookie", this.cookieString);
+        }
+        const result = await fetchApi(chapterUrl, {headers});
+        const body = await result.text();
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const result = await fetchApi(chapterUrl, {}, pluginId);
-    const body = await result.text();
+        const loadedCheerio = parseHTML(body);
 
-    const loadedCheerio = parseHTML(body);
+        let chapterText = loadedCheerio(".epcontent").html() || "";
 
-    let chapterText = loadedCheerio(".epcontent").html();
+        return chapterText;
+    }
+    async searchNovels(searchTerm: string, pageNo?: number | undefined): Promise<Plugin.NovelItem[]> {
+        const url = `${this.site}?s=${searchTerm}`;
+        const headers = new Headers();
+        if(this.cookieString){
+            headers.append("cookie", this.cookieString);
+        }
+        const result = await fetchApi(url, {headers});
+        const body = await result.text();
 
-    return chapterText;
-};
+        const loadedCheerio = parseHTML(body);
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const url = `${baseUrl}?s=${searchTerm}`;
+        const novels: Plugin.NovelItem[] = [];
 
-    const result = await fetchApi(url, {}, pluginId);
-    const body = await result.text();
+        loadedCheerio("article.maindet").each(function () {
+            const novelName = loadedCheerio(this).find("h2").text();
+            let image = loadedCheerio(this).find("img");
+            const novelCover = image.attr("data-src") || image.attr("src");
+            const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
 
-    const loadedCheerio = parseHTML(body);
+            if (!novelUrl) return;
 
-    const novels: Novel.Item[] = [];
-
-    loadedCheerio("article.maindet").each(function () {
-        const novelName = loadedCheerio(this).find("h2").text();
-        let image = loadedCheerio(this).find("img");
-        const novelCover = image.attr("data-src") || image.attr("src");
-        const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
-
-        if (!novelUrl) return;
-
-        novels.push({
-            name: novelName,
-            url: novelUrl,
-            cover: novelCover,
+            novels.push({
+                name: novelName,
+                url: novelUrl,
+                cover: novelCover,
+            });
         });
-    });
 
-    return novels;
-};
+        return novels;
+    }
+    async fetchImage(url: string): Promise<string | undefined> {
+        return await fetchFile(url);
+    }
 
-export const fetchImage: Plugin.fetchImage = async function (url) {
-    const headers = {
-        Referer: baseUrl,
-    };
-    return await fetchFile(url, { headers: headers });
-};
 
-export const filters = [
-    {
-        key: "order",
-        label: "Sort By",
-        values: [
-            { label: "Default", value: "" },
+    filters = [
+        {
+            key: "order",
+            label: "Sort By",
+            values: [
+                { label: "Default", value: "" },
 
-            { label: "A-Z", value: "title" },
+                { label: "A-Z", value: "title" },
 
-            { label: "Z-A", value: "titlereverse" },
+                { label: "Z-A", value: "titlereverse" },
 
-            { label: "Latest Update", value: "update" },
+                { label: "Latest Update", value: "update" },
 
-            { label: "Latest Added", value: "latest" },
+                { label: "Latest Added", value: "latest" },
 
-            { label: "Popular", value: "popular" },
-        ],
-        inputType: FilterInputs.Picker,
-    },
-    {
-        key: "status",
-        label: "Status",
-        values: [
-            { label: "All", value: "" },
+                { label: "Popular", value: "popular" },
+            ],
+            inputType: FilterInputs.Picker,
+        },
+        {
+            key: "status",
+            label: "Status",
+            values: [
+                { label: "All", value: "" },
 
-            { label: "Ongoing", value: "ongoing" },
+                { label: "Ongoing", value: "ongoing" },
 
-            { label: "Hiatus", value: "hiatus" },
+                { label: "Hiatus", value: "hiatus" },
 
-            { label: "Completed", value: "completed" },
-        ],
-        inputType: FilterInputs.Picker,
-    },
-    {
-        key: "type",
-        label: "Type",
-        values: [
-            { label: "Light Novel (KR)", value: "light-novel-kr" },
+                { label: "Completed", value: "completed" },
+            ],
+            inputType: FilterInputs.Picker,
+        },
+        {
+            key: "type",
+            label: "Type",
+            values: [
+                { label: "Light Novel (KR)", value: "light-novel-kr" },
 
-            { label: "Web Novel", value: "web-novel" },
-        ],
-        inputType: FilterInputs.Checkbox,
-    },
-    {
-        key: "genres",
-        label: "Genres",
-        values: [
-            { label: "Action", value: "action" },
+                { label: "Web Novel", value: "web-novel" },
+            ],
+            inputType: FilterInputs.Checkbox,
+        },
+        {
+            key: "genres",
+            label: "Genres",
+            values: [
+                { label: "Action", value: "action" },
 
-            { label: "Adult", value: "adult" },
+                { label: "Adult", value: "adult" },
 
-            { label: "Adventure", value: "adventure" },
+                { label: "Adventure", value: "adventure" },
 
-            { label: "Comedy", value: "comedy" },
+                { label: "Comedy", value: "comedy" },
 
-            { label: "Ecchi", value: "ecchi" },
+                { label: "Ecchi", value: "ecchi" },
 
-            { label: "Fantasy", value: "fantasy" },
+                { label: "Fantasy", value: "fantasy" },
 
-            { label: "Harem", value: "harem" },
+                { label: "Harem", value: "harem" },
 
-            { label: "Josei", value: "josei" },
+                { label: "Josei", value: "josei" },
 
-            { label: "Martial Arts", value: "martial-arts" },
+                { label: "Martial Arts", value: "martial-arts" },
 
-            { label: "Mature", value: "mature" },
+                { label: "Mature", value: "mature" },
 
-            { label: "Romance", value: "romance" },
+                { label: "Romance", value: "romance" },
 
-            { label: "School Life", value: "school-life" },
+                { label: "School Life", value: "school-life" },
 
-            { label: "Sci-fi", value: "sci-fi" },
+                { label: "Sci-fi", value: "sci-fi" },
 
-            { label: "Seinen", value: "seinen" },
+                { label: "Seinen", value: "seinen" },
 
-            { label: "Slice of Life", value: "slice-of-life" },
+                { label: "Slice of Life", value: "slice-of-life" },
 
-            { label: "Smut", value: "smut" },
+                { label: "Smut", value: "smut" },
 
-            { label: "Sports", value: "sports" },
+                { label: "Sports", value: "sports" },
 
-            { label: "Supernatural", value: "supernatural" },
+                { label: "Supernatural", value: "supernatural" },
 
-            { label: "Tragedy", value: "tragedy" },
-        ],
-        inputType: FilterInputs.Checkbox,
-    },
-];
+                { label: "Tragedy", value: "tragedy" },
+            ],
+            inputType: FilterInputs.Checkbox,
+        },
+    ];
+}
+
+export default new PandaMTL();

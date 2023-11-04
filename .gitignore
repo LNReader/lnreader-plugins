@@ -1,8 +1,8 @@
-node_modules/**/*
+node_modules
 .vscode
 .env
 config.json
 
 # ignore TS translation folder but keep plugins folder
-js/*
-!js/plugins
+.js/*
+!.js/plugins

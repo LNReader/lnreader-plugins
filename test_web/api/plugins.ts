@@ -24,9 +24,9 @@ export const all_plugins = (): PluginList => {
             const requirePath = `@plugins/${languageEnglish.toLowerCase()}/${
                 plugin.split(".")[0]
             }`;
-            const instance = require(requirePath);
+            const instance = require(requirePath).default;
             const { id, name, version, icon } = instance;
-            const info: Plugin.Info = {
+            const info: Plugin.PluginItem = {
                 id,
                 name,
                 lang: languageNative,
@@ -42,21 +42,20 @@ export const all_plugins = (): PluginList => {
 
 const getPlugin = async (
     requirePath: string
-): Promise<Plugin.instance | null> => {
-    const plugin = await require(requirePath);
+): Promise<Plugin.PluginBase | null> => {
+    const plugin = await require(requirePath).default;
     if (isPlugin(plugin)) return plugin;
     return null;
 };
 
+export const getFilter = async (
+    pluginRequirePath: string
+) => (await getPlugin(pluginRequirePath))?.filters;
+
 export const popularNovels = async (
     pluginRequirePath: string,
-    options: Plugin.Options
-) => {
-    const plugin = await getPlugin(pluginRequirePath);
-    if (!plugin) return null;
-    const popularNovels = await plugin.popularNovels(1, options);
-    return popularNovels;
-};
+    options: Plugin.PopularNovelsOptions
+) => (await getPlugin(pluginRequirePath))?.popularNovels(1, options);
 
 export const searchNovels = async (
     pluginRequirePath: string,
