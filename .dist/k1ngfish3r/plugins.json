@@ -432,6 +432,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/icons/multisrc/wpmangastream/icons/lightnovelbrasil.png"
 		}
 	],
+	"español, castellano": [
+		{
+			"id": "tunovelaligera",
+			"name": "TuNovelaLigera",
+			"site": "https://tunovelaligera.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/.js/plugins/spanish/tunovelaligera.js",
+			"iconUrl": "https://raw.githubusercontent.com/k1ngfish3r/plugins/classes/icons/src/es/tunovelaligera/icon.png"
+		}
+	],
 	"Türkçe": [
 		{
 			"id": "lshnovel",

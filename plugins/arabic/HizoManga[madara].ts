@@ -12,7 +12,13 @@ interface MadaraOptionPath{
     genres?: string,
     novels?: string,
     novel?: string,
-    chapter?: string
+    chapter?: string,
+}
+
+const MadaraDefaultPath: MadaraOptionPath = {
+    novels: 'novel',
+    novel: 'novel',
+    chapter: 'novel'
 }
 
 interface MadaraOptions {
@@ -59,7 +65,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         if (filters?.genres &&  this.options?.path?.genres) {
             url += this.options?.path?.genres + filters.genres + '/';
         } else {
-            url += this.options?.path?.novels;
+            url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
     
         url += '/page/' + pageNo + '/' + 
@@ -144,15 +150,15 @@ class MadaraPlugin implements Plugin.PluginBase {
                 loadedCheerio('.rating-post-id').attr('value') ||
                 loadedCheerio('#manga-chapters-holder').attr('data-id') || '';
     
-            const body = {
-                action: "manga_get_chapters",
-                manga: novelId,
-            }
+            const formData = new FormData()
+            formData.append("action", "manga_get_chapters");
+            formData.append("manga", novelId);
+
             html = await fetchApi(
                 this.site + 'wp-admin/admin-ajax.php',
                 {
                 method: 'POST',
-                body: JSON.stringify(body),
+                body: formData,
                 })
                 .then(res => res.text());
         } else {
