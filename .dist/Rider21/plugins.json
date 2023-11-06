@@ -104,24 +104,6 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/boxnovel.png"
 		},
 		{
-			"id": "clicknovel",
-			"name": "ClickNovel[madara]",
-			"site": "https://clicknovel.net/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/ClickNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/clicknovel.png"
-		},
-		{
-			"id": "cratenovel",
-			"name": "CrateNovel[madara]",
-			"site": "https://cratenovel.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/CrateNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/cratenovel.png"
-		},
-		{
 			"id": "daonovel",
 			"name": "DaoNovel[madara]",
 			"site": "https://daonovel.com/",
@@ -194,15 +176,6 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/mtl-novel.png"
 		},
 		{
-			"id": "mtlnovel.club",
-			"name": "MTLNovel.Club[madara]",
-			"site": "https://mtlnovel.club/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/MTLNovelClub[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/mtlnovel.club.png"
-		},
-		{
 			"id": "mysticalmerries",
 			"name": "MysticalSeries[madara]",
 			"site": "https://mysticalmerries.com/",
@@ -237,15 +210,6 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NocturneTranslations[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/nocturnetranslations.png"
-		},
-		{
-			"id": "noobchanTL",
-			"name": "Noobchan Translation[madara]",
-			"site": "https://noobchan.xyz/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NoobchanTranslation[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/noobchantranslation.png"
 		},
 		{
 			"id": "novelmultiverse",
@@ -291,15 +255,6 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NovelTranslate[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/noveltranslate.png"
-		},
-		{
-			"id": "onlymtl",
-			"name": "OnlyMTL[madara]",
-			"site": "https://www.onlymtl.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/OnlyMTL[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/onlymtl.png"
 		},
 		{
 			"id": "pandamtl",
