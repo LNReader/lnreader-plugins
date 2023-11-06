@@ -5314,7 +5314,6 @@
     ],
     "options": {
       "path": {
-        "novels": "novel",
         "novel": "manga",
         "chapter": "manga"
       },

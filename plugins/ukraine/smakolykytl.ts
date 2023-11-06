@@ -1,46 +1,48 @@
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
-export const id = "smakolykytl";
-export const name = "Смаколики";
-export const site = "https://smakolykytl.site/";
-export const version = "1.0.0";
-export const icon = "src/ua/smakolykytl/icon.png";
+class Smakolykytl implements Plugin.PluginBase {
+  id = "smakolykytl";
+  name = "Смаколики";
+  site = "https://smakolykytl.site/";
+  version = "1.0.0";
+  icon = "src/ua/smakolykytl/icon.png";
+  userAgent = "";
+  cookieString = "";
 
-export const popularNovels: Plugin.popularNovels = async function (
-  page,
-  { showLatestNovels },
-) {
-  const url = showLatestNovels
-    ? "https://api.smakolykytl.site/api/user/updates"
-    : "https://api.smakolykytl.site/api/user/projects";
+  async popularNovels(
+    pageNo: number,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+  ): Promise<Plugin.NovelItem[]> {
+    const url = showLatestNovels
+      ? "https://api.smakolykytl.site/api/user/updates"
+      : "https://api.smakolykytl.site/api/user/projects";
 
-  const result = await fetchApi(url);
-  const json = (await result.json()) as response;
+    const result = await fetchApi(url);
+    const json = (await result.json()) as response;
 
-  let novels: Novel.Item[] = [];
-  (json?.projects || json?.updates)?.forEach((novel) =>
-    novels.push({
-      name: novel.title,
-      cover: novel.image.url,
-      url: site + "titles/" + novel.id,
-    }),
-  );
+    const novels: Plugin.NovelItem[] = [];
+    (json?.projects || json?.updates)?.forEach((novel) =>
+      novels.push({
+        name: novel.title,
+        cover: novel.image.url,
+        url: this.site + "titles/" + novel.id,
+      }),
+    );
 
-  return novels;
-};
+    return novels;
+  }
 
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-  async function (novelUrl) {
+  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
     const id = novelUrl.split("/").pop();
     const result = await fetchApi(
       "https://api.smakolykytl.site/api/user/projects/" + id,
     );
     const book = (await result.json()) as response;
 
-    let novel: Novel.instance = {
+    const novel: Plugin.SourceNovel = {
       url: novelUrl,
       name: book?.project?.title,
       cover: book?.project?.image?.url,
@@ -50,7 +52,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
     };
-    let tags = [book?.project?.genres, book?.project?.tags]
+    const tags = [book?.project?.genres, book?.project?.tags]
       .flat()
       .map((tags) => tags?.title)
       .filter((tags) => tags);
@@ -59,60 +61,67 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
       novel.genres = tags.join(", ");
     }
 
-    let chapters: Chapter.Item[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     const res = await fetchApi(
       "https://api.smakolykytl.site/api/user/projects/" + id + "/books",
     );
     const data = (await res.json()) as response;
-    data?.books?.forEach((volume) =>
-      volume?.chapters?.map((chapter) =>
-        chapters.push({
-          name: volume.title + " " + chapter.title,
-          releaseTime: dayjs(chapter.modifiedAt).format("LLL"),
-          url: site + "read/" + chapter.id,
-        }),
-      ),
+    data?.books?.forEach(
+      (volume) =>
+        volume?.chapters?.map((chapter) =>
+          chapters.push({
+            name: volume.title + " " + chapter.title,
+            releaseTime: dayjs(chapter.modifiedAt).format("LLL"),
+            url: this.site + "read/" + chapter.id,
+          }),
+        ),
     );
 
     novel.chapters = chapters;
     return novel;
-  };
+  }
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-  const id = chapterUrl.split("/").pop();
-  const result = await fetchApi(
-    "https://api.smakolykytl.site/api/user/chapters/" + id,
-  );
-  const json = (await result.json()) as response;
-  const chapterRaw: HTML[] = JSON.parse(json?.chapter?.content || "{}");
-
-  const chapterText = jsonToHtml(chapterRaw);
-  return chapterText;
-};
-
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const result = await fetchApi(
-    "https://api.smakolykytl.site/api/user/projects",
-  );
-  const json = (await result.json()) as response;
-  let novels: Novel.Item[] = [];
-
-  json?.projects
-    ?.filter(
-      (novel) =>
-        novel.title.includes(searchTerm) || String(novel.id) === searchTerm,
-    )
-    ?.forEach((novel) =>
-      novels.push({
-        name: novel.title,
-        cover: novel.image.url,
-        url: site + "titles/" + novel.id,
-      }),
+  async parseChapter(chapterUrl: string): Promise<string> {
+    const id = chapterUrl.split("/").pop();
+    const result = await fetchApi(
+      "https://api.smakolykytl.site/api/user/chapters/" + id,
     );
-  return novels;
-};
+    const json = (await result.json()) as response;
+    const chapterRaw: HTML[] = JSON.parse(json?.chapter?.content || "[]");
 
-export const fetchImage: Plugin.fetchImage = fetchFile;
+    const chapterText = jsonToHtml(chapterRaw);
+    return chapterText;
+  }
+
+  async searchNovels(
+    searchTerm: string,
+    //pageNo: number | undefined = 1,
+  ): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(
+      "https://api.smakolykytl.site/api/user/projects",
+    );
+    const json = (await result.json()) as response;
+    const novels: Plugin.NovelItem[] = [];
+
+    json?.projects
+      ?.filter(
+        (novel) =>
+          novel.title.includes(searchTerm) || String(novel.id) === searchTerm,
+      )
+      ?.forEach((novel) =>
+        novels.push({
+          name: novel.title,
+          cover: novel.image.url,
+          url: this.site + "titles/" + novel.id,
+        }),
+      );
+    return novels;
+  }
+
+  fetchImage = fetchFile;
+}
+
+export default new Smakolykytl();
 
 function jsonToHtml(json: HTML[], html: string = "") {
   json.forEach((element) => {
@@ -133,7 +142,9 @@ function jsonToHtml(json: HTML[], html: string = "") {
         break;
       case "paragraph":
         html +=
-          "<p>" + (element.content ? jsonToHtml(element.content) : "<br>") + "</p>";
+          "<p>" +
+          (element.content ? jsonToHtml(element.content) : "<br>") +
+          "</p>";
         break;
       case "text":
         html += element.text;
