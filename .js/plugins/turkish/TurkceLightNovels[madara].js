@@ -265,5 +265,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "turkcelightnovels", "sourceSite": "https://turkcelightnovels.com/", "sourceName": "TurkceLightNovels", "filters": [{ "key": "sort", "label": "Order by", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": "Picker" }], "options": { "path": { "novels": "light-novel", "novel": "light-novel", "chapter": "light-novel" }, "lang": "Turkish" } });
+var plugin = new MadaraPlugin({ "id": "turkcelightnovels", "sourceSite": "https://turkcelightnovels.com/", "sourceName": "TurkceLightNovels", "filters": [{ "key": "sort", "label": "Order by", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": 1 }], "options": { "path": { "novels": "light-novel", "novel": "light-novel", "chapter": "light-novel" }, "lang": "Turkish" } });
 exports.default = plugin;

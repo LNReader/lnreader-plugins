@@ -265,5 +265,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "webnoveloku", "sourceSite": "https://www.webnoveloku.com/", "sourceName": "WebNovelOku ", "filters": [{ "key": "sort", "label": "Sırala", "values": [{ "label": "A-Z", "value": "alphabet" }, { "label": "En Son", "value": "latest" }, { "label": "Görüntülenme", "value": "views" }, { "label": "Popülarite", "value": "trending" }, { "label": "Reyting", "value": "rating" }, { "label": "Yeni", "value": "new-manga" }], "inputType": "Picker" }], "options": { "lang": "Turkish" } });
+var plugin = new MadaraPlugin({ "id": "webnoveloku", "sourceSite": "https://www.webnoveloku.com/", "sourceName": "WebNovelOku ", "filters": [{ "key": "sort", "label": "Sırala", "values": [{ "label": "A-Z", "value": "alphabet" }, { "label": "En Son", "value": "latest" }, { "label": "Görüntülenme", "value": "views" }, { "label": "Popülarite", "value": "trending" }, { "label": "Reyting", "value": "rating" }, { "label": "Yeni", "value": "new-manga" }], "inputType": 1 }], "options": { "lang": "Turkish" } });
 exports.default = plugin;

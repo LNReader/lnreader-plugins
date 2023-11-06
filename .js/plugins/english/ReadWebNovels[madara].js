@@ -265,5 +265,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "readwebnovels", "sourceSite": "https://readwebnovels.net/", "sourceName": "ReadWebNovels", "filters": [{ "key": "sort", "label": "Order by", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": "Picker" }], "options": { "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "readwebnovels", "sourceSite": "https://readwebnovels.net/", "sourceName": "ReadWebNovels", "filters": [{ "key": "sort", "label": "Order by", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": 1 }], "options": { "lang": "English" } });
 exports.default = plugin;

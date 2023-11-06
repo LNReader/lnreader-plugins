@@ -452,6 +452,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/ru/bookriver/icon.png"
 		},
 		{
+			"id": "erolate",
+			"name": "Erolate",
+			"site": "https://erolate.com",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/russian/Erolate[rulate].js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/rulate/icons/erolate.png"
+		},
+		{
 			"id": "ficbook",
 			"name": "ficbook",
 			"site": "https://ficbook.net",
@@ -522,6 +531,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/russian/novelTL.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/ru/noveltl/icon.png"
+		},
+		{
+			"id": "tl.rulate",
+			"name": "Rulate",
+			"site": "https://tl.rulate.ru",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/russian/Rulate[rulate].js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/rulate/icons/rulate.png"
 		}
 	],
 	"español, castellano": [

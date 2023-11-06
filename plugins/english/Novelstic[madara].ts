@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"novelstic","sourceSite":"https://novelstic.com/","sourceName":"Novelstic","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"}],"options":{"useNewChapterEndpoint":true,"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"novelstic","sourceSite":"https://novelstic.com/","sourceName":"Novelstic","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1}],"options":{"useNewChapterEndpoint":true,"lang":"English"}});
 export default plugin;
     

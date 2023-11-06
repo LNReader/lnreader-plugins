@@ -265,5 +265,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "novelr18", "sourceSite": "https://novelr18.com/", "sourceName": "NovelR18", "filters": [{ "key": "sort", "label": "Sort by :", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest Update", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "Newly Added Novels", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": "Picker" }], "options": { "path": { "novel": "manga", "chapter": "manga" }, "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "novelr18", "sourceSite": "https://novelr18.com/", "sourceName": "NovelR18", "filters": [{ "key": "sort", "label": "Sort by :", "values": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest Update", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "Newly Added Novels", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "inputType": 1 }], "options": { "path": { "novel": "manga", "chapter": "manga" }, "useNewChapterEndpoint": true, "lang": "English" } });
 exports.default = plugin;
