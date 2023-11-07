@@ -105,7 +105,6 @@ class RNRF implements Plugin.PluginBase {
     });
 
     const chapterText = loadedCheerio.html();
-
     return chapterText;
   }
 

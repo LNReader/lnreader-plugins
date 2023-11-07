@@ -43,7 +43,7 @@ var RulatePlugin = /** @class */ (function () {
     function RulatePlugin(metadata) {
         this.fetchImage = fetch_1.fetchFile;
         this.id = metadata.id;
-        this.name = metadata.sourceName;
+        this.name = metadata.sourceName + "[rulate]";
         var iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
         this.icon = "multisrc/rulate/icons/".concat(iconFileName, ".png");
         this.site = metadata.sourceSite;
@@ -121,7 +121,6 @@ var RulatePlugin = /** @class */ (function () {
                         baseUrl = this.site;
                         novel = {
                             url: novelUrl,
-                            chapters: [],
                         };
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
                     case 1:
@@ -264,13 +263,15 @@ var RulatePlugin = /** @class */ (function () {
                         return [4 /*yield*/, result.json()];
                     case 2:
                         json = (_a.sent());
-                        json.forEach(function (item) {
-                            var name = item.title_one + " / " + item.title_two;
-                            var cover = _this.site + item.img;
-                            var url = _this.site + item.url;
-                            if (!url)
+                        json.forEach(function (novel) {
+                            var name = novel.title_one + " / " + novel.title_two;
+                            if (!novel.url)
                                 return;
-                            novels.push({ name: name, cover: cover, url: url });
+                            novels.push({
+                                name: name,
+                                cover: _this.site + novel.img,
+                                url: _this.site + novel.url,
+                            });
                         });
                         return [2 /*return*/, novels];
                 }

@@ -149,6 +149,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
+			"id": "Ltnovel.com",
+			"name": "Ltnovel[readwn]",
+			"site": "https://www.ltnovel.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/Ltnovel[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/ltnovel.png"
+		},
+		{
 			"id": "lunarletters",
 			"name": "LunarLetters[madara]",
 			"site": "https://www.lunarletters.com/",
@@ -320,6 +329,24 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/webnovellover.png"
 		},
 		{
+			"id": "wuxiacity",
+			"name": "Wuxiacity[readwn]",
+			"site": "https://www.wuxiacity.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/Wuxiacity[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/wuxiacity.png"
+		},
+		{
+			"id": "wuxiap",
+			"name": "Wuxiap[readwn]",
+			"site": "https://www.wuxiap.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/Wuxiap[readwn].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/wuxiap.png"
+		},
+		{
 			"id": "wuxiaworld.site",
 			"name": "WuxiaWorld.Site[madara]",
 			"site": "https://wuxiaworld.site/",
@@ -408,7 +435,7 @@
 		},
 		{
 			"id": "erolate",
-			"name": "Erolate",
+			"name": "Erolate[rulate]",
 			"site": "https://erolate.com",
 			"lang": "русский язык",
 			"version": "1.0.0",
@@ -489,7 +516,7 @@
 		},
 		{
 			"id": "tl.rulate",
-			"name": "Rulate",
+			"name": "Rulate[rulate]",
 			"site": "https://tl.rulate.ru",
 			"lang": "русский язык",
 			"version": "1.0.0",

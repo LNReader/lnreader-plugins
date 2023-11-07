@@ -84,8 +84,8 @@ class freedlit implements Plugin.PluginBase {
 
     loadedCheerio('div[class="standart-block"]').remove();
     loadedCheerio('div[class="mobile-block"]').remove();
-
     const chapterText = loadedCheerio('div[class="chapter"]').html();
+
     return chapterText || "";
   }
 

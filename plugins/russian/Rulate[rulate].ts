@@ -24,7 +24,7 @@ class RulatePlugin implements Plugin.PluginBase {
 
   constructor(metadata: RulateMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName;
+    this.name = metadata.sourceName + "[rulate]";
     const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
     this.icon = `multisrc/rulate/icons/${iconFileName}.png`;
     this.site = metadata.sourceSite;
@@ -92,6 +92,7 @@ class RulatePlugin implements Plugin.PluginBase {
       const cover = loadedCheerio(this).find("img").attr("src");
       const url = loadedCheerio(this).find("p > a").attr("href");
       if (!name || !url) return;
+
       novels.push({ name, cover: baseUrl + cover, url: baseUrl + url });
     });
 
@@ -102,7 +103,6 @@ class RulatePlugin implements Plugin.PluginBase {
     const baseUrl = this.site;
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      chapters: [],
     };
     let result = await fetchApi(novelUrl);
     if (result.url.includes("mature?path=")) {
@@ -236,13 +236,15 @@ class RulatePlugin implements Plugin.PluginBase {
     );
     const json = (await result.json()) as response[];
 
-    json.forEach((item) => {
-      const name = item.title_one + " / " + item.title_two;
-      const cover = this.site + item.img;
-      const url = this.site + item.url;
-      if (!url) return;
+    json.forEach((novel) => {
+      const name = novel.title_one + " / " + novel.title_two;
+      if (!novel.url) return;
 
-      novels.push({ name, cover, url });
+      novels.push({
+        name,
+        cover: this.site + novel.img,
+        url: this.site + novel.url,
+      });
     });
 
     return novels;
