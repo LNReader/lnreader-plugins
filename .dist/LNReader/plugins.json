@@ -419,6 +419,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/french/LighNovelFR[wpmangastream].js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/wpmangastream/icons/lightnovelfr.png"
+		},
+		{
+			"id": "NDG.com",
+			"name": "NovelDeGlace",
+			"site": "https://noveldeglace.com/",
+			"lang": "français, française",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/french/noveldeglace.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/fr/noveldeglace/icon.png"
 		}
 	],
 	"Bahasa Indonesia": [
