@@ -403,6 +403,15 @@
 	],
 	"français, française": [
 		{
+			"id": "chireads.com",
+			"name": "Chireads",
+			"site": "https://chireads.com",
+			"lang": "français, française",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/french/chireads.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/fr/chireads/icon.png"
+		},
+		{
 			"id": "lightnovelfr",
 			"name": "Ligh Novel FR[wpmangastream]",
 			"site": "https://lightnovelfr.com/",
