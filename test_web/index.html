@@ -18,15 +18,16 @@
             <input id="plugin" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="clear-search">Clear</button>
             <div id="search-results">
+                <div id="turnoff-catch"></div>
             </div>
         </form>
         <div class="input-group">
-            <select class="custom-select" id="language">
-                <option value=""></option>
-            </select>
             <div class="input-group-append">
                 <label class="input-group-text" for="language">Language</label>
             </div>
+            <select class="custom-select" id="language">
+                <option value="">Any</option>
+            </select>
         </div>
     </nav>
     <div id="test-container">
@@ -35,21 +36,22 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtersModal">
                     Filters
                 </button>
-                <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog" aria-labelledby="filtersModalLabel" aria-hidden="true">
+                <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog"
+                    aria-labelledby="filtersModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="filterModalLabel">Filters</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
                     </div>
                 </div>
             </div>

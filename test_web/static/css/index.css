@@ -1,47 +1,218 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-.navbar{
+.navbar {
     width: 1080px;
     align-items: center;
     padding-left: 5%;
     justify-content: space-between;
 }
 
-.input-group{
+.input-group {
     width: 20rem;
 }
 
-#search-results{
+#search-results {
     position: absolute;
     top: calc(100% - 0.5rem);
-    width: 15rem;
+    width: fit-content;
+    max-height: 500%;
+    overflow-y: scroll;
+    overflow-x: hidden;
     padding: 0.375rem 0;
     border-radius: 5px;
     background-color: white;
     z-index: 3;
 }
 
-.btn.disabled, .btn:disabled{
+#turnoff-catch {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.checkbox-groupbox {
+    border: 1px solid rgb(182, 176, 166);
+    padding: 5px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+}
+
+.xcheckbox-groupbox {
+    border: 1px solid rgb(182, 176, 166);
+    padding: 5px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+}
+
+.xcheckbox {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.xcheckbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.xcheckbox span {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border: 1px solid white;
+}
+
+.xcheckbox:hover input ~ span {
+    background-color: #ccc;
+}
+
+.xcheckbox[data-state="i"] span {
+    background-color: #2196f3;
+}
+
+.xcheckbox[data-state="i"]:hover span {
+    background-color: #56a3ff;
+}
+
+.xcheckbox[data-state="x"] span {
+    background-color: #f32196;
+}
+
+.xcheckbox[data-state="x"]:hover span {
+    background-color: #ff56a3;
+}
+
+.xcheckbox span::after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.xcheckbox input:checked ~ span::after {
+    display: block;
+}
+
+.xcheckbox[data-state="i"] span::after {
+    left: 6px;
+    top: 3px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.xcheckbox[data-state="x"] span {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: red;
+}
+
+.xcheckbox[data-state="x"] span::after,
+.xcheckbox[data-state="x"] span::before {
+    position: absolute;
+    content: "";
+    width: 80%;
+    left: 10%;
+    height: 2px;
+    background-color: white;
+}
+
+.xcheckbox[data-state="x"] span::before {
+    transform: rotate(45deg);
+}
+
+.xcheckbox[data-state="x"] span::after {
+    transform: rotate(-45deg);
+}
+
+.modal-body {
+    padding: 16px 50px 0 50px;
+}
+
+.checkbox-groupbox input {
+    margin-right: 5px;
+}
+
+.SwitchFilter {
+    display: flex;
+    justify-content: center;
+}
+
+.SwitchFilter input {
+    margin-left: 10px;
+}
+
+.PickerFilter select {
+    text-align: center;
+}
+
+.filter-label {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
+#filtersModal .modal-body div {
+    display: grid;
+    align-content: center;
+}
+
+#filtersModal hr {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    /* visibility: hidden; */
+}
+
+.btn.disabled,
+.btn:disabled {
     opacity: 1;
 }
 
-#test-container{
+#test-container {
     align-items: center;
     height: max-content;
     margin-bottom: 100px;
 }
 
-
-.test-wrapper{
+.test-wrapper {
     margin: 1rem;
     padding: 0.5rem;
     background-color: aliceblue;
 }
 
-#popularNovels, #searchNovels{
+#popularNovels,
+#searchNovels {
     height: 350px;
     min-width: 95%;
     max-width: 95%;
@@ -49,13 +220,13 @@
     overflow-x: scroll;
 }
 
-#parseNovelAndChapters{
+#parseNovelAndChapters {
     height: 380px;
     min-width: 95%;
     max-width: 95%;
 }
 
-.title{
+.title {
     font-weight: bold;
 }
 
@@ -67,25 +238,25 @@
     border: 0.25em solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
-    -webkit-animation: spinner-border .75s linear infinite;
-    animation: spinner-border .75s linear infinite;
+    -webkit-animation: spinner-border 0.75s linear infinite;
+    animation: spinner-border 0.75s linear infinite;
 }
 
-@keyframes spinner-border{
+@keyframes spinner-border {
     100% {
         -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
 
-.novel-list{
+.novel-list {
     display: flex;
     margin-top: 0.5rem;
     height: 300px;
     width: 100%;
 }
 
-.novel-item{
+.novel-item {
     display: flex;
     padding: 0.5rem;
 }
@@ -94,28 +265,28 @@
     max-height: 90%;
 }
 
-.novel-info{
+.novel-info {
     width: 16rem;
 }
 
-.info-item{
+.info-item {
     display: flex;
     margin-top: 5px;
 }
 
-.info-value{
+.info-value {
     width: 10rem;
     padding-left: 0.25rem;
     font-size: 0.65rem;
-    word-wrap:break-word;
+    word-wrap: break-word;
 }
 
-.btn{
+.btn {
     font-size: 0.75rem;
     padding: 0.25rem 0.25rem;
 }
 
-.chapter-list{
+.chapter-list {
     position: relative;
     display: grid;
     min-width: 50%;
@@ -125,6 +296,6 @@
     grid-gap: 0, 0;
 }
 
-.select-option-text{
+.select-option-text {
     padding-left: 1rem;
 }
