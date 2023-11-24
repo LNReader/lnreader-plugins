@@ -6,8 +6,8 @@
 			"site": "https://ar-mtl.club/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/ArMTL[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/armtl.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/ArMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/armtl.png"
 		},
 		{
 			"id": "arnovel",
@@ -15,8 +15,8 @@
 			"site": "https://arnovel.me/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/ArNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/arnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/ArNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/arnovel.png"
 		},
 		{
 			"id": "hizomanga",
@@ -24,8 +24,8 @@
 			"site": "https://hizomanga.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/HizoManga[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/hizomanga.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/HizoManga[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/hizomanga.png"
 		},
 		{
 			"id": "kol-novel",
@@ -33,8 +33,8 @@
 			"site": "https://kolnovel.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/KolNovel[wpmangastream].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/wpmangastream/icons/kol-novel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/KolNovel[wpmangastream].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/wpmangastream/icons/kol-novel.png"
 		},
 		{
 			"id": "kolnovel",
@@ -42,8 +42,8 @@
 			"site": "https://kolnovel.lol/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/kolnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/wpmangastream/icons/kolnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/kolnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/wpmangastream/icons/kolnovel.png"
 		},
 		{
 			"id": "novel4up",
@@ -51,8 +51,8 @@
 			"site": "https://novel4up.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/Novel4Up[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/novel4up.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/Novel4Up[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/novel4up.png"
 		},
 		{
 			"id": "riwyat",
@@ -60,8 +60,8 @@
 			"site": "https://riwyat.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/Riwyat[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/riwyat.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/Riwyat[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/riwyat.png"
 		},
 		{
 			"id": "teamxnovel",
@@ -69,8 +69,8 @@
 			"site": "https://teamxnovel.com/",
 			"lang": "العربية",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/arabic/TeamXNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/teamxnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/arabic/TeamXNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/teamxnovel.png"
 		}
 	],
 	"中文, 汉语, 漢語": [
@@ -80,8 +80,8 @@
 			"site": "https://w.linovelib.com",
 			"lang": "中文, 汉语, 漢語",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/chinese/linovelib.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/cn/linovelib/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/chinese/linovelib.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/cn/linovelib/icon.png"
 		}
 	],
 	"English": [
@@ -91,8 +91,8 @@
 			"site": "https://1stkissnovel.org/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/FirstKissNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/firstkissnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/FirstKissNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/firstkissnovel.png"
 		},
 		{
 			"id": "BLN.com",
@@ -100,8 +100,8 @@
 			"site": "https://bestlightnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/bestlightnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/en/bestlightnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/bestlightnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/en/bestlightnovel/icon.png"
 		},
 		{
 			"id": "boxnovel",
@@ -109,8 +109,8 @@
 			"site": "https://boxnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/BoxNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/boxnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/BoxNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/boxnovel.png"
 		},
 		{
 			"id": "clicknovel",
@@ -118,8 +118,8 @@
 			"site": "https://clicknovel.net/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/ClickNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/clicknovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/ClickNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/clicknovel.png"
 		},
 		{
 			"id": "cratenovel",
@@ -127,8 +127,8 @@
 			"site": "https://cratenovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/CrateNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/cratenovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/CrateNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/cratenovel.png"
 		},
 		{
 			"id": "daonovel",
@@ -136,8 +136,8 @@
 			"site": "https://daonovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/DaoNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/daonovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/DaoNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/daonovel.png"
 		},
 		{
 			"id": "fanTLS",
@@ -145,8 +145,8 @@
 			"site": "https://fanstranslations.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/FansTranslations[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/fanstranslations.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/FansTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/fanstranslations.png"
 		},
 		{
 			"id": "freenovel.me",
@@ -154,8 +154,8 @@
 			"site": "https://freenovel.me/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/FreeNovelMe[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/freenovelme.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/FreeNovelMe[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/freenovelme.png"
 		},
 		{
 			"id": "ftest",
@@ -163,8 +163,8 @@
 			"site": "https://noblemtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/filterTests.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/en/noblemtl/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/filterTests.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/en/noblemtl/icon.png"
 		},
 		{
 			"id": "guavaread",
@@ -172,8 +172,8 @@
 			"site": "https://guavaread.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/Guavaread[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/guavaread.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/Guavaread[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/guavaread.png"
 		},
 		{
 			"id": "lnheaven",
@@ -181,8 +181,8 @@
 			"site": "https://lightnovelheaven.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/LightNovelHeaven[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/lightnovelheaven.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/LightNovelHeaven[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
 			"id": "lunarletters",
@@ -190,8 +190,8 @@
 			"site": "https://www.lunarletters.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/LunarLetters[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/lunarletters.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/LunarLetters[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/lunarletters.png"
 		},
 		{
 			"id": "mostnovel",
@@ -199,8 +199,8 @@
 			"site": "https://mostnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/MostNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/mostnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/MostNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/mostnovel.png"
 		},
 		{
 			"id": "mtl-novel",
@@ -208,8 +208,8 @@
 			"site": "https://mtl-novel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/MTLNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/mtl-novel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/MTLNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/mtl-novel.png"
 		},
 		{
 			"id": "mtlnovel.club",
@@ -217,8 +217,8 @@
 			"site": "https://mtlnovel.club/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/MTLNovelClub[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/mtlnovel.club.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/MTLNovelClub[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/mtlnovel.club.png"
 		},
 		{
 			"id": "mysticalmerries",
@@ -226,8 +226,8 @@
 			"site": "https://mysticalmerries.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/MysticalSeries[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/mysticalseries.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/MysticalSeries[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/mysticalseries.png"
 		},
 		{
 			"id": "neosekaiTLS",
@@ -235,8 +235,8 @@
 			"site": "https://www.neosekaitranslations.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NeoSekaiTranslations[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/neosekaitranslations.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NeoSekaiTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
 			"id": "noblemtl",
@@ -244,8 +244,8 @@
 			"site": "https://noblemtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/nobleMTL.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/en/noblemtl/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/nobleMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/en/noblemtl/icon.png"
 		},
 		{
 			"id": "nocturneTLS",
@@ -253,8 +253,8 @@
 			"site": "https://nocturnetls.net/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NocturneTranslations[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/nocturnetranslations.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NocturneTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/nocturnetranslations.png"
 		},
 		{
 			"id": "noobchanTL",
@@ -262,8 +262,8 @@
 			"site": "https://noobchan.xyz/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NoobchanTranslation[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/noobchantranslation.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NoobchanTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/noobchantranslation.png"
 		},
 		{
 			"id": "novelmultiverse",
@@ -271,8 +271,8 @@
 			"site": "https://www.novelmultiverse.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NovelMultiverse[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/novelmultiverse.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NovelMultiverse[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/novelmultiverse.png"
 		},
 		{
 			"id": "novelr18",
@@ -280,8 +280,8 @@
 			"site": "https://novelr18.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NovelR18[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/novelr18.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NovelR18[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/novelr18.png"
 		},
 		{
 			"id": "novelroom",
@@ -289,8 +289,8 @@
 			"site": "https://novelroom.net/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/Novelroomnet[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/novelroom.net.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/Novelroomnet[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/novelroom.net.png"
 		},
 		{
 			"id": "novelstic",
@@ -298,8 +298,8 @@
 			"site": "https://novelstic.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/Novelstic[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/novelstic.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/Novelstic[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/novelstic.png"
 		},
 		{
 			"id": "novelTL",
@@ -307,8 +307,8 @@
 			"site": "https://noveltranslate.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/NovelTranslate[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/noveltranslate.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/NovelTranslate[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/noveltranslate.png"
 		},
 		{
 			"id": "onlymtl",
@@ -316,8 +316,8 @@
 			"site": "https://www.onlymtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/OnlyMTL[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/onlymtl.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/OnlyMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/onlymtl.png"
 		},
 		{
 			"id": "pandamtl",
@@ -325,8 +325,8 @@
 			"site": "https://pandamtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/pandaMTL.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/en/wordpress/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/pandaMTL.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/en/wordpress/icon.png"
 		},
 		{
 			"id": "readwebnovels",
@@ -334,8 +334,8 @@
 			"site": "https://readwebnovels.net/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/ReadWebNovels[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/readwebnovels.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/ReadWebNovels[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/readwebnovels.png"
 		},
 		{
 			"id": "sleeptTLS",
@@ -343,8 +343,8 @@
 			"site": "https://sleepytranslations.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/SleepyTranslations[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/sleepytranslations.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/SleepyTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/sleepytranslations.png"
 		},
 		{
 			"id": "sonicmtl",
@@ -352,8 +352,8 @@
 			"site": "https://www.sonicmtl.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/SonicMTL[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/sonicmtl.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/SonicMTL[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/sonicmtl.png"
 		},
 		{
 			"id": "sugarbbscan",
@@ -361,8 +361,8 @@
 			"site": "https://sugarbbscan.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/SugarBabies[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/sugarbabies.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/SugarBabies[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/sugarbabies.png"
 		},
 		{
 			"id": "sweetEscapeTL",
@@ -370,8 +370,8 @@
 			"site": "https://sweetescapetranslations.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/SweetEscapeTranslations[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/sweetescapetranslations.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/SweetEscapeTranslations[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/sweetescapetranslations.png"
 		},
 		{
 			"id": "webnovelover",
@@ -379,8 +379,8 @@
 			"site": "https://www.webnovelover.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/WebNovelLover[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/webnovellover.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/WebNovelLover[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/webnovellover.png"
 		},
 		{
 			"id": "wuxiaworld.site",
@@ -388,8 +388,8 @@
 			"site": "https://wuxiaworld.site/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/WuxiaWorldSite[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/wuxiaworld.site.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/WuxiaWorldSite[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/wuxiaworld.site.png"
 		},
 		{
 			"id": "zetroTL",
@@ -397,8 +397,8 @@
 			"site": "https://zetrotranslation.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/ZetroTranslation[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/zetrotranslation.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/ZetroTranslation[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/zetrotranslation.png"
 		},
 		{
 			"id": "zinnovel",
@@ -406,8 +406,8 @@
 			"site": "https://zinnovel.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/english/ZinnNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/zinnnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/english/ZinnNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/zinnnovel.png"
 		}
 	],
 	"français, française": [
@@ -417,8 +417,8 @@
 			"site": "https://chireads.com",
 			"lang": "français, française",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/french/chireads.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/fr/chireads/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/french/chireads.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/fr/chireads/icon.png"
 		},
 		{
 			"id": "lightnovelfr",
@@ -426,8 +426,8 @@
 			"site": "https://lightnovelfr.com/",
 			"lang": "français, française",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/french/LighNovelFR[wpmangastream].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/wpmangastream/icons/lightnovelfr.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/french/LighNovelFR[wpmangastream].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/wpmangastream/icons/lightnovelfr.png"
 		},
 		{
 			"id": "NDG.com",
@@ -435,8 +435,8 @@
 			"site": "https://noveldeglace.com/",
 			"lang": "français, française",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/french/noveldeglace.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/fr/noveldeglace/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/french/noveldeglace.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/fr/noveldeglace/icon.png"
 		}
 	],
 	"Bahasa Indonesia": [
@@ -446,8 +446,8 @@
 			"site": "https://meionovel.id/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/indonesian/MeioNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/meionovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/indonesian/MeioNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/meionovel.png"
 		},
 		{
 			"id": "morenovel",
@@ -455,8 +455,8 @@
 			"site": "https://morenovel.net/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/indonesian/MoreNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/morenovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/indonesian/MoreNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/morenovel.png"
 		},
 		{
 			"id": "wbnovel",
@@ -464,8 +464,8 @@
 			"site": "https://wbnovel.com/",
 			"lang": "Bahasa Indonesia",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/indonesian/WBNovel[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/wbnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/indonesian/WBNovel[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/wbnovel.png"
 		}
 	],
 	"Português": [
@@ -475,8 +475,8 @@
 			"site": "https://lightnovelbrasil.com/",
 			"lang": "Português",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/portuguese/lightnovelbrasil.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/wpmangastream/icons/lightnovelbrasil.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/portuguese/lightnovelbrasil.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/wpmangastream/icons/lightnovelbrasil.png"
 		}
 	],
 	"español, castellano": [
@@ -486,8 +486,8 @@
 			"site": "https://tunovelaligera.com/",
 			"lang": "español, castellano",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/spanish/tunovelaligera.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/es/tunovelaligera/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/spanish/tunovelaligera.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/es/tunovelaligera/icon.png"
 		}
 	],
 	"Türkçe": [
@@ -497,8 +497,8 @@
 			"site": "https://lshnovel.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/turkish/lshnovel.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/wpmangastream/icons/lshnovel.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/turkish/lshnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/wpmangastream/icons/lshnovel.png"
 		},
 		{
 			"id": "turkcelightnovels",
@@ -506,8 +506,8 @@
 			"site": "https://turkcelightnovels.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/turkish/TurkceLightNovels[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/turkcelightnovels.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/turkish/TurkceLightNovels[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/turkcelightnovels.png"
 		},
 		{
 			"id": "webnoveloku",
@@ -515,8 +515,8 @@
 			"site": "https://www.webnoveloku.com/",
 			"lang": "Türkçe",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/turkish/WebNovelOku[madara].js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/multisrc/madara/icons/webnoveloku.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/turkish/WebNovelOku[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/webnoveloku.png"
 		}
 	],
 	"Tiếng Việt": [
@@ -526,8 +526,8 @@
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/.js/plugins/vietnamese/LNHako.js",
-			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/plugins/icons/src/vi/hakolightnovel/icon.png"
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/vietnamese/LNHako.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/vi/hakolightnovel/icon.png"
 		}
 	]
 }
