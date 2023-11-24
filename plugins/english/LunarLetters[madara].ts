@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filters | undefined;
+    filters?: Filters | undefined;
 
     constructor(metadata: MadaraMetadata) {
         this.id = metadata.id;
@@ -58,7 +58,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(
         pageNo: number,

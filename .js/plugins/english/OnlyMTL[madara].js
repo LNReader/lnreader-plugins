@@ -63,7 +63,7 @@ var MadaraPlugin = /** @class */ (function () {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     MadaraPlugin.prototype.popularNovels = function (pageNo, _a) {
         var _b, _c, _d, _e, _f, _g;
