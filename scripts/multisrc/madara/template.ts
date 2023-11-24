@@ -61,7 +61,10 @@ class MadaraPlugin implements Plugin.PluginBase {
     }
     async popularNovels(
         pageNo: number,
-        { filters, showLatestNovels }: Plugin.PopularNovelsOptions
+        {
+            filters,
+            showLatestNovels,
+        }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
