@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"zinnovel","sourceSite":"https://zinnovel.com/","sourceName":"ZinnNovel","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Adventure","value":"adventure"},{"label":"Anime","value":"anime"},{"label":"Cartoon","value":"cartoon"},{"label":"Comedy","value":"comedy"},{"label":"Comic","value":"comic"},{"label":"Cooking","value":"cooking"},{"label":"Detective","value":"detective"},{"label":"Doujinshi","value":"doujinshi"},{"label":"Drama","value":"drama"},{"label":"Ecchi","value":"ecchi"},{"label":"Fantasy","value":"fantasy"},{"label":"Game","value":"game"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Harem","value":"harem"},{"label":"Historical","value":"historical"},{"label":"Horror","value":"horror"},{"label":"Isekai","value":"isekai"},{"label":"Josei","value":"josei"},{"label":"Live action","value":"live-action"},{"label":"Lolicon","value":"lolicon"},{"label":"Magical Realism","value":"magical-realism"},{"label":"Manga","value":"manga"},{"label":"Manhua","value":"manhua"},{"label":"Manhwa","value":"manhwa"},{"label":"Martial Arts","value":"martial-arts"},{"label":"Mature","value":"mature"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"One shot","value":"one-shot"},{"label":"Psychological","value":"psychological"},{"label":"Reincarnation","value":"reincarnation"},{"label":"Romance","value":"romance"},{"label":"School Life","value":"school-life"},{"label":"Sci-fi","value":"sci-fi"},{"label":"Seinen","value":"seinen"},{"label":"Shoujo","value":"shoujo"},{"label":"Shoujo Ai","value":"shoujo-ai"},{"label":"Shounen","value":"shounen"},{"label":"Shounen Ai","value":"shounen-ai"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Smut","value":"smut"},{"label":"Soft Yaoi","value":"soft-yaoi"},{"label":"Soft Yuri","value":"soft-yuri"},{"label":"Sports","value":"sports"},{"label":"Supernatural","value":"supernatural"},{"label":"Tragedy","value":"tragedy"},{"label":"Video Games","value":"video-games"},{"label":"Webtoon","value":"webtoon"},{"label":"Wuxia","value":"wuxia"},{"label":"Xianxia","value":"xianxia"},{"label":"Xuanhuan","value":"xuanhuan"},{"label":"Yaoi","value":"yaoi"},{"label":"Yuri","value":"yuri"}],"inputType":"Picker"}],"options":{"path":{"novels":"manga","novel":"manga","chapter":"manga","genres":"manga-genre"},"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"zinnovel","sourceSite":"https://zinnovel.com/","sourceName":"ZinnNovel","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Adventure","value":"adventure"},{"label":"Anime","value":"anime"},{"label":"Cartoon","value":"cartoon"},{"label":"Comedy","value":"comedy"},{"label":"Comic","value":"comic"},{"label":"Cooking","value":"cooking"},{"label":"Detective","value":"detective"},{"label":"Doujinshi","value":"doujinshi"},{"label":"Drama","value":"drama"},{"label":"Ecchi","value":"ecchi"},{"label":"Fantasy","value":"fantasy"},{"label":"Game","value":"game"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Harem","value":"harem"},{"label":"Historical","value":"historical"},{"label":"Horror","value":"horror"},{"label":"Isekai","value":"isekai"},{"label":"Josei","value":"josei"},{"label":"Live action","value":"live-action"},{"label":"Lolicon","value":"lolicon"},{"label":"Magical Realism","value":"magical-realism"},{"label":"Manga","value":"manga"},{"label":"Manhua","value":"manhua"},{"label":"Manhwa","value":"manhwa"},{"label":"Martial Arts","value":"martial-arts"},{"label":"Mature","value":"mature"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"One shot","value":"one-shot"},{"label":"Psychological","value":"psychological"},{"label":"Reincarnation","value":"reincarnation"},{"label":"Romance","value":"romance"},{"label":"School Life","value":"school-life"},{"label":"Sci-fi","value":"sci-fi"},{"label":"Seinen","value":"seinen"},{"label":"Shoujo","value":"shoujo"},{"label":"Shoujo Ai","value":"shoujo-ai"},{"label":"Shounen","value":"shounen"},{"label":"Shounen Ai","value":"shounen-ai"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Smut","value":"smut"},{"label":"Soft Yaoi","value":"soft-yaoi"},{"label":"Soft Yuri","value":"soft-yuri"},{"label":"Sports","value":"sports"},{"label":"Supernatural","value":"supernatural"},{"label":"Tragedy","value":"tragedy"},{"label":"Video Games","value":"video-games"},{"label":"Webtoon","value":"webtoon"},{"label":"Wuxia","value":"wuxia"},{"label":"Xianxia","value":"xianxia"},{"label":"Xuanhuan","value":"xuanhuan"},{"label":"Yaoi","value":"yaoi"},{"label":"Yuri","value":"yuri"}],"inputType":1}],"options":{"path":{"novels":"manga","novel":"manga","chapter":"manga","genres":"manga-genre"},"lang":"English"}});
 export default plugin;
     

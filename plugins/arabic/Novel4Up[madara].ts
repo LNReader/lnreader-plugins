@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"novel4up","sourceSite":"https://novel4up.com/","sourceName":"Novel4Up","filters":[{"key":"sort","label":"ترتيب حسب:","values":[{"label":"أ-ي","value":"alphabet"},{"label":"الأحدث","value":"latest"},{"label":"الأكثر مشاهدة","value":"views"},{"label":"التقييم","value":"rating"},{"label":"الجديد","value":"new-manga"},{"label":"الشائع","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"التصنيفات","values":[{"label":"أكشن","value":"action"},{"label":"الخارق للطبيعة","value":"supernatural"},{"label":"تاريخي","value":"historical"},{"label":"تحقيق","value":"detective"},{"label":"تراجيديا","value":"tragedy"},{"label":"حريم","value":"harem"},{"label":"حياة مدرسية","value":"school-life"},{"label":"خيال علمي","value":"sci-fi"},{"label":"دراما","value":"drama"},{"label":"رعب","value":"horror"},{"label":"رومانسي","value":"romance"},{"label":"رياضة","value":"sports"},{"label":"سحر","value":"magic"},{"label":"شريحة من الحياة","value":"slice-of-life"},{"label":"شوانهوا","value":"xuanhuan"},{"label":"شوجو","value":"shoujo"},{"label":"شونين","value":"shounen"},{"label":"غموض","value":"mystery"},{"label":"فانتازيا","value":"fantasy"},{"label":"فنون قتال","value":"martial-arts"},{"label":"كوميديا","value":"comedy"},{"label":"مغامرة","value":"adventure"},{"label":"ميكا","value":"mecha"},{"label":"نفسي","value":"psychological"},{"label":"ون شوت","value":"one-shot"},{"label":"ووشيا","value":"wuxia"}],"inputType":"Picker"}],"options":{"lang":"Arabic"}});
+const plugin = new MadaraPlugin({"id":"novel4up","sourceSite":"https://novel4up.com/","sourceName":"Novel4Up","filters":[{"key":"sort","label":"ترتيب حسب:","values":[{"label":"أ-ي","value":"alphabet"},{"label":"الأحدث","value":"latest"},{"label":"الأكثر مشاهدة","value":"views"},{"label":"التقييم","value":"rating"},{"label":"الجديد","value":"new-manga"},{"label":"الشائع","value":"trending"}],"inputType":1},{"key":"genres","label":"التصنيفات","values":[{"label":"أكشن","value":"action"},{"label":"الخارق للطبيعة","value":"supernatural"},{"label":"تاريخي","value":"historical"},{"label":"تحقيق","value":"detective"},{"label":"تراجيديا","value":"tragedy"},{"label":"حريم","value":"harem"},{"label":"حياة مدرسية","value":"school-life"},{"label":"خيال علمي","value":"sci-fi"},{"label":"دراما","value":"drama"},{"label":"رعب","value":"horror"},{"label":"رومانسي","value":"romance"},{"label":"رياضة","value":"sports"},{"label":"سحر","value":"magic"},{"label":"شريحة من الحياة","value":"slice-of-life"},{"label":"شوانهوا","value":"xuanhuan"},{"label":"شوجو","value":"shoujo"},{"label":"شونين","value":"shounen"},{"label":"غموض","value":"mystery"},{"label":"فانتازيا","value":"fantasy"},{"label":"فنون قتال","value":"martial-arts"},{"label":"كوميديا","value":"comedy"},{"label":"مغامرة","value":"adventure"},{"label":"ميكا","value":"mecha"},{"label":"نفسي","value":"psychological"},{"label":"ون شوت","value":"one-shot"},{"label":"ووشيا","value":"wuxia"}],"inputType":1}],"options":{"lang":"Arabic"}});
 export default plugin;
     

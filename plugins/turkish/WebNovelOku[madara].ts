@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"webnoveloku","sourceSite":"https://www.webnoveloku.com/","sourceName":"WebNovelOku ","filters":[{"key":"sort","label":"Sırala","values":[{"label":"A-Z","value":"alphabet"},{"label":"En Son","value":"latest"},{"label":"Görüntülenme","value":"views"},{"label":"Popülarite","value":"trending"},{"label":"Reyting","value":"rating"},{"label":"Yeni","value":"new-manga"}],"inputType":"Picker"}],"options":{"lang":"Turkish"}});
+const plugin = new MadaraPlugin({"id":"webnoveloku","sourceSite":"https://www.webnoveloku.com/","sourceName":"WebNovelOku ","filters":[{"key":"sort","label":"Sırala","values":[{"label":"A-Z","value":"alphabet"},{"label":"En Son","value":"latest"},{"label":"Görüntülenme","value":"views"},{"label":"Popülarite","value":"trending"},{"label":"Reyting","value":"rating"},{"label":"Yeni","value":"new-manga"}],"inputType":1}],"options":{"lang":"Turkish"}});
 export default plugin;
     

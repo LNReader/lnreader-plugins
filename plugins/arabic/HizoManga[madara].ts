@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"hizomanga","sourceSite":"https://hizomanga.com/","sourceName":"HizoManga","filters":[{"key":"sort","label":"ترتيب حسب","values":[{"label":"A-Z","value":"alphabet"},{"label":"New","value":"new-manga"},{"label":"الأحدث","value":"latest"},{"label":"الأكثر مشاهدة","value":"views"},{"label":"التقييم","value":"rating"},{"label":"الرائج","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"التصنيفات","values":[{"label":"آلات","value":"mechanisms"},{"label":"أكشن","value":"action"},{"label":"إثارة","value":"excitement"},{"label":"إيسكاي","value":"%d8%a5%d9%8a%d8%b3%d9%83%d8%a7%d9%8a"},{"label":"الحياة اليومية","value":"slice-of-life"},{"label":"الحياة مدرسية","value":"school-life"},{"label":"تاريخي","value":"historical"},{"label":"تراجيدي","value":"tragic"},{"label":"جريمة","value":"%d8%ac%d8%b1%d9%8a%d9%85%d8%a9"},{"label":"جندر بندر","value":"%d8%ac%d9%86%d8%af%d8%b1-%d8%a8%d9%86%d8%af%d8%b1"},{"label":"جوسي","value":"josei"},{"label":"حريم","value":"harem"},{"label":"خارق للطبيعة","value":"supernatural"},{"label":"خيال","value":"fantasy"},{"label":"خيال علمي","value":"sci-fi"},{"label":"دراما","value":"drama"},{"label":"دموي","value":"%d8%af%d9%85%d9%88%d9%8a"},{"label":"راشد","value":"mature"},{"label":"رعب","value":"horror"},{"label":"رومانسي","value":"romance"},{"label":"رياضة","value":"sports"},{"label":"زمنكاني","value":"my-time"},{"label":"زومبي","value":"%d8%b2%d9%88%d9%85%d8%a8%d9%8a"},{"label":"سينين","value":"seinen"},{"label":"شريحة من الحياة","value":"%d8%b4%d8%b1%d9%8a%d8%ad%d8%a9-%d9%85%d9%86-%d8%a7%d9%84%d8%ad%d9%8a%d8%a7%d8%a9"},{"label":"شوجو","value":"shoujo"},{"label":"شونين","value":"shounen"},{"label":"طبي","value":"%d8%b7%d8%a8%d9%8a"},{"label":"غموض","value":"ambiguity"},{"label":"فنون قتالية","value":"martial-arts"},{"label":"قوة خارقة","value":"superpower"},{"label":"كوميدي","value":"comedy"},{"label":"مغامرات","value":"adventure"},{"label":"نفسي","value":"psychological"}],"inputType":"Picker"}],"options":{"path":{"novels":"serie","novel":"serie","chapter":"serie","genres":"manga-genre"},"useNewChapterEndpoint":true,"lang":"Arabic"}});
+const plugin = new MadaraPlugin({"id":"hizomanga","sourceSite":"https://hizomanga.com/","sourceName":"HizoManga","filters":[{"key":"sort","label":"ترتيب حسب","values":[{"label":"A-Z","value":"alphabet"},{"label":"New","value":"new-manga"},{"label":"الأحدث","value":"latest"},{"label":"الأكثر مشاهدة","value":"views"},{"label":"التقييم","value":"rating"},{"label":"الرائج","value":"trending"}],"inputType":1},{"key":"genres","label":"التصنيفات","values":[{"label":"آلات","value":"mechanisms"},{"label":"أكشن","value":"action"},{"label":"إثارة","value":"excitement"},{"label":"إيسكاي","value":"%d8%a5%d9%8a%d8%b3%d9%83%d8%a7%d9%8a"},{"label":"الحياة اليومية","value":"slice-of-life"},{"label":"الحياة مدرسية","value":"school-life"},{"label":"تاريخي","value":"historical"},{"label":"تراجيدي","value":"tragic"},{"label":"جريمة","value":"%d8%ac%d8%b1%d9%8a%d9%85%d8%a9"},{"label":"جندر بندر","value":"%d8%ac%d9%86%d8%af%d8%b1-%d8%a8%d9%86%d8%af%d8%b1"},{"label":"جوسي","value":"josei"},{"label":"حريم","value":"harem"},{"label":"خارق للطبيعة","value":"supernatural"},{"label":"خيال","value":"fantasy"},{"label":"خيال علمي","value":"sci-fi"},{"label":"دراما","value":"drama"},{"label":"دموي","value":"%d8%af%d9%85%d9%88%d9%8a"},{"label":"راشد","value":"mature"},{"label":"رعب","value":"horror"},{"label":"رومانسي","value":"romance"},{"label":"رياضة","value":"sports"},{"label":"زمنكاني","value":"my-time"},{"label":"زومبي","value":"%d8%b2%d9%88%d9%85%d8%a8%d9%8a"},{"label":"سينين","value":"seinen"},{"label":"شريحة من الحياة","value":"%d8%b4%d8%b1%d9%8a%d8%ad%d8%a9-%d9%85%d9%86-%d8%a7%d9%84%d8%ad%d9%8a%d8%a7%d8%a9"},{"label":"شوجو","value":"shoujo"},{"label":"شونين","value":"shounen"},{"label":"طبي","value":"%d8%b7%d8%a8%d9%8a"},{"label":"غموض","value":"ambiguity"},{"label":"فنون قتالية","value":"martial-arts"},{"label":"قوة خارقة","value":"superpower"},{"label":"كوميدي","value":"comedy"},{"label":"مغامرات","value":"adventure"},{"label":"نفسي","value":"psychological"}],"inputType":1}],"options":{"path":{"novels":"serie","novel":"serie","chapter":"serie","genres":"manga-genre"},"useNewChapterEndpoint":true,"lang":"Arabic"}});
 export default plugin;
     

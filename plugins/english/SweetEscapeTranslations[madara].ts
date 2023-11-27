@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"sweetEscapeTL","sourceSite":"https://sweetescapetranslations.com/","sourceName":"Sweet Escape Translations","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Comedy","value":"comedy"},{"label":"Drama","value":"drama"},{"label":"Fantasy","value":"fantasy"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Mature","value":"mature"},{"label":"Modern","value":"modern"},{"label":"Mystery","value":"mystery"},{"label":"R-15","value":"r-15"},{"label":"Romance","value":"romance"},{"label":"Slice of Life","value":"slice-of-life"}],"inputType":"Picker"}],"options":{"path":{"novels":"manga","novel":"manga","chapter":"manga","genres":"manga-genre"},"useNewChapterEndpoint":false,"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"sweetEscapeTL","sourceSite":"https://sweetescapetranslations.com/","sourceName":"Sweet Escape Translations","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Comedy","value":"comedy"},{"label":"Drama","value":"drama"},{"label":"Fantasy","value":"fantasy"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Mature","value":"mature"},{"label":"Modern","value":"modern"},{"label":"Mystery","value":"mystery"},{"label":"R-15","value":"r-15"},{"label":"Romance","value":"romance"},{"label":"Slice of Life","value":"slice-of-life"}],"inputType":1}],"options":{"path":{"novels":"manga","novel":"manga","chapter":"manga","genres":"manga-genre"},"useNewChapterEndpoint":false,"lang":"English"}});
 export default plugin;
     

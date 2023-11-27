@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"novelr18","sourceSite":"https://novelr18.com/","sourceName":"NovelR18","filters":[{"key":"sort","label":"Sort by :","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest Update","value":"latest"},{"label":"Most Views","value":"views"},{"label":"Newly Added Novels","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"}],"options":{"path":{"novels":"novel","novel":"manga","chapter":"manga"},"useNewChapterEndpoint":true,"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"novelr18","sourceSite":"https://novelr18.com/","sourceName":"NovelR18","filters":[{"key":"sort","label":"Sort by :","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest Update","value":"latest"},{"label":"Most Views","value":"views"},{"label":"Newly Added Novels","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1}],"options":{"path":{"novel":"manga","chapter":"manga"},"useNewChapterEndpoint":true,"lang":"English"}});
 export default plugin;
     

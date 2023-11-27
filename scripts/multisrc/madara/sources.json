@@ -2556,25 +2556,6 @@
     }
   },
   {
-    "id": "cratenovel",
-    "sourceSite": "https://cratenovel.com/",
-    "sourceName": "CrateNovel",
-    "filters": [],
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
-    "id": "clicknovel",
-    "sourceSite": "https://clicknovel.net/",
-    "sourceName": "ClickNovel",
-    "filters": [],
-    "options": {
-      "lang": "English"
-    }
-  },
-  {
     "id": "readwebnovels",
     "sourceSite": "https://readwebnovels.net/",
     "sourceName": "ReadWebNovels",
@@ -3234,16 +3215,6 @@
     }
   },
   {
-    "id": "onlymtl",
-    "sourceSite": "https://www.onlymtl.com/",
-    "sourceName": "OnlyMTL",
-    "filters": [],
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
     "id": "hizomanga",
     "sourceSite": "https://hizomanga.com/",
     "sourceName": "HizoManga",
@@ -3884,26 +3855,6 @@
         "inputType": "Picker"
       }
     ],
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
-    "id": "mtlnovel.club",
-    "sourceSite": "https://mtlnovel.club/",
-    "sourceName": "MTLNovel.Club",
-    "filters": [],
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
-    "id": "noobchanTL",
-    "sourceSite": "https://noobchan.xyz/",
-    "sourceName": "Noobchan Translation",
-    "filters": [],
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "English"
@@ -5314,7 +5265,6 @@
     ],
     "options": {
       "path": {
-        "novels": "novel",
         "novel": "manga",
         "chapter": "manga"
       },

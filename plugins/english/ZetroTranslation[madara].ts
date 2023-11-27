@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"zetroTL","sourceSite":"https://zetrotranslation.com/","sourceName":"Zetro Translation","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adventure","value":"adventure"},{"label":"Comedy","value":"comedy"},{"label":"Dark Elf","value":"dark-elf"},{"label":"Drama","value":"drama"},{"label":"Ecchi","value":"ecchi"},{"label":"Fantasy","value":"fantasy"},{"label":"Harem","value":"harem"},{"label":"Horror","value":"horror"},{"label":"Isekai","value":"isekai"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"NTR","value":"ntr"},{"label":"Original Works","value":"original-works"},{"label":"Rom-Com","value":"rom-com"},{"label":"Romance","value":"romance"},{"label":"School","value":"school"},{"label":"Shoujo","value":"shoujo"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Villain","value":"villain"},{"label":"Yuri","value":"yuri"}],"inputType":"Picker"}],"options":{"path":{"genres":"genre"},"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"zetroTL","sourceSite":"https://zetrotranslation.com/","sourceName":"Zetro Translation","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adventure","value":"adventure"},{"label":"Comedy","value":"comedy"},{"label":"Dark Elf","value":"dark-elf"},{"label":"Drama","value":"drama"},{"label":"Ecchi","value":"ecchi"},{"label":"Fantasy","value":"fantasy"},{"label":"Harem","value":"harem"},{"label":"Horror","value":"horror"},{"label":"Isekai","value":"isekai"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"NTR","value":"ntr"},{"label":"Original Works","value":"original-works"},{"label":"Rom-Com","value":"rom-com"},{"label":"Romance","value":"romance"},{"label":"School","value":"school"},{"label":"Shoujo","value":"shoujo"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Villain","value":"villain"},{"label":"Yuri","value":"yuri"}],"inputType":1}],"options":{"path":{"genres":"genre"},"lang":"English"}});
 export default plugin;
     

@@ -44,7 +44,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     userAgent: string;
     cookieString: string;
     options?: MadaraOptions;
-    filter?: Filter[] | undefined;
+    filters?: Filter[] | undefined;
     
     constructor(metadata: MadaraMetadata){
         this.id = metadata.id;
@@ -56,14 +56,14 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.userAgent = "";
         this.cookieString = "";
         this.options = metadata.options;
-        this.filter = metadata.filters;
+        this.filters = metadata.filters;
     }
     async popularNovels(pageNo: number, {filters, showLatestNovels}: Plugin.PopularNovelsOptions): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres &&  this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + '/';
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels ? this.options.path.novels : MadaraDefaultPath.novels;
         }
@@ -247,6 +247,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         return await fetchFile(url, {});
     }
 }
-const plugin = new MadaraPlugin({"id":"freenovel.me","sourceSite":"https://freenovel.me/","sourceName":"FreeNovelMe","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":"Picker"},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Adventure","value":"adventure"},{"label":"Cartoon","value":"cartoon"},{"label":"Comedy","value":"comedy"},{"label":"Cooking","value":"cooking"},{"label":"Detective","value":"detective"},{"label":"Drama","value":"drama"},{"label":"Fantasy","value":"fantasy"},{"label":"Game","value":"game"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Historical","value":"historical"},{"label":"History","value":"history"},{"label":"Horror","value":"horror"},{"label":"Josei","value":"josei"},{"label":"Live action","value":"live-action"},{"label":"Martial","value":"martial"},{"label":"Martial Arts","value":"martial-arts"},{"label":"Mature","value":"mature"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"One shot","value":"one-shot"},{"label":"Premium","value":"premium"},{"label":"Psychological","value":"psychological"},{"label":"Reincarnation","value":"reincarnation"},{"label":"Romance","value":"romance"},{"label":"School Life","value":"school-life"},{"label":"Sci-fi","value":"sci-fi"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Smut","value":"smut"},{"label":"Sports","value":"sports"},{"label":"Supernatural","value":"supernatural"},{"label":"Tragedy","value":"tragedy"},{"label":"Wuxia","value":"wuxia"},{"label":"Xianxia","value":"xianxia"},{"label":"Xuanhuan","value":"xuanhuan"}],"inputType":"Picker"}],"options":{"lang":"English"}});
+const plugin = new MadaraPlugin({"id":"freenovel.me","sourceSite":"https://freenovel.me/","sourceName":"FreeNovelMe","filters":[{"key":"sort","label":"Order by","values":[{"label":"Rating","value":"rating"},{"label":"A-Z","value":"alphabet"},{"label":"Latest","value":"latest"},{"label":"Most Views","value":"views"},{"label":"New","value":"new-manga"},{"label":"Trending","value":"trending"}],"inputType":1},{"key":"genres","label":"GENRES","values":[{"label":"Action","value":"action"},{"label":"Adult","value":"adult"},{"label":"Adventure","value":"adventure"},{"label":"Cartoon","value":"cartoon"},{"label":"Comedy","value":"comedy"},{"label":"Cooking","value":"cooking"},{"label":"Detective","value":"detective"},{"label":"Drama","value":"drama"},{"label":"Fantasy","value":"fantasy"},{"label":"Game","value":"game"},{"label":"Gender Bender","value":"gender-bender"},{"label":"Historical","value":"historical"},{"label":"History","value":"history"},{"label":"Horror","value":"horror"},{"label":"Josei","value":"josei"},{"label":"Live action","value":"live-action"},{"label":"Martial","value":"martial"},{"label":"Martial Arts","value":"martial-arts"},{"label":"Mature","value":"mature"},{"label":"Mecha","value":"mecha"},{"label":"Mystery","value":"mystery"},{"label":"One shot","value":"one-shot"},{"label":"Premium","value":"premium"},{"label":"Psychological","value":"psychological"},{"label":"Reincarnation","value":"reincarnation"},{"label":"Romance","value":"romance"},{"label":"School Life","value":"school-life"},{"label":"Sci-fi","value":"sci-fi"},{"label":"Slice of Life","value":"slice-of-life"},{"label":"Smut","value":"smut"},{"label":"Sports","value":"sports"},{"label":"Supernatural","value":"supernatural"},{"label":"Tragedy","value":"tragedy"},{"label":"Wuxia","value":"wuxia"},{"label":"Xianxia","value":"xianxia"},{"label":"Xuanhuan","value":"xuanhuan"}],"inputType":1}],"options":{"lang":"English"}});
 export default plugin;
     
