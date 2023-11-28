@@ -1,8 +1,4 @@
-import {
-    FilterToValues,
-    FilterTypes,
-    Filters,
-} from "../../../libs/filterInputs";
+import { FilterTypes, Filters } from "../../../libs/filterInputs";
 import { ScrpitGeneratorFunction } from "../generate";
 import list from "./sources.json";
 import { MadaraMetadata } from "./template";
@@ -40,6 +36,7 @@ const generator = function generator(metadata: MadaraMetadata) {
     const madaraTemplate = readFileSync(path.join(__dirname, "template.ts"), {
         encoding: "utf-8",
     });
+
     const pluginScript = `
 ${madaraTemplate}
 const plugin = new MadaraPlugin(${JSON.stringify(metadata).replace(

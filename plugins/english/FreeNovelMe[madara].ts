@@ -62,13 +62,16 @@ class MadaraPlugin implements Plugin.PluginBase {
     }
     async popularNovels(
         pageNo: number,
-        { filters, showLatestNovels }: Plugin.PopularNovelsOptions
+        {
+            filters,
+            showLatestNovels,
+        }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
         const novels: Plugin.NovelItem[] = [];
 
         let url = this.site;
         if (filters?.genres && this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + "/";
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels
                 ? this.options.path.novels

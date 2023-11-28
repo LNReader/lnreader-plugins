@@ -1,59 +1,61 @@
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
 import { FilterInputs } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
-export const id = "bookriver";
-export const name = "Bookriver";
-export const site = "https://bookriver.ru";
-export const version = "1.0.0";
-export const icon = "src/ru/bookriver/icon.png";
+class Bookriver implements Plugin.PluginBase {
+  id = "bookriver";
+  name = "Bookriver";
+  site = "https://bookriver.ru";
+  version = "1.0.0";
+  icon = "src/ru/bookriver/icon.png";
+  userAgent = "";
+  cookieString = "";
 
-export const popularNovels: Plugin.popularNovels = async function (
-  page,
-  { showLatestNovels, filters }
-) {
-  let url = site + `/genre?page=${page}&perPage=24&sortingType=`;
-  url += showLatestNovels ? "last-update" : filters?.sort || "bestseller";
+  async popularNovels(
+    pageNo: number,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+  ): Promise<Plugin.NovelItem[]> {
+    let url = this.site + `/genre?page=${pageNo}&perPage=24&sortingType=`;
+    url += showLatestNovels ? "last-update" : filters?.sort || "bestseller";
 
-  if (filters) {
-    if (Array.isArray(filters.genres) && filters.genres.length) {
-      url += "&g=" + filters.genres.join(",");
+    if (filters) {
+      if (Array.isArray(filters.genres) && filters.genres.length) {
+        url += "&g=" + filters.genres.join(",");
+      }
     }
+
+    const result = await fetchApi(url);
+    const body = await result.text();
+
+    const loadedCheerio = parseHTML(body);
+    const novels: Plugin.NovelItem[] = [];
+
+    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
+    if (jsonRaw) {
+      const json: response = JSON.parse(jsonRaw);
+      json.props.pageProps.state.pagesFilter?.genre?.books?.forEach((novel) =>
+        novels.push({
+          name: novel.name,
+          cover: novel.coverImages[0].url,
+          url: this.site + "/book/" + novel.slug,
+        }),
+      );
+    }
+    return novels;
   }
 
-  const result = await fetchApi(url);
-  const body = await result.text();
-
-  const loadedCheerio = parseHTML(body);
-  let novels: Novel.Item[] = [];
-
-  const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-  if (jsonRaw) {
-    let json: response = JSON.parse(jsonRaw);
-    json.props.pageProps.state.pagesFilter?.genre?.books?.forEach((novel) =>
-      novels.push({
-        name: novel.name,
-        cover: novel.coverImages[0].url,
-        url: site + "/book/" + novel.slug,
-      })
-    );
-  }
-  return novels;
-};
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-  async function (novelUrl) {
+  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(novelUrl);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-    const json: response = JSON.parse(jsonRaw || '{}');
-    let book = json.props.pageProps.state.book?.bookPage;
-    let novel: Novel.instance = {
+    const json: response = JSON.parse(jsonRaw || "{}");
+    const book = json.props.pageProps.state.book?.bookPage;
+    const novel: Plugin.SourceNovel = {
       url: novelUrl,
       name: book?.name,
       cover: book?.coverImages[0].url,
@@ -66,159 +68,162 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
           : NovelStatus.Completed,
     };
 
-    let chapters: Chapter.Item[] = [];
-
+    const chapters: Plugin.ChapterItem[] = [];
     book?.ebook?.chapters?.forEach((chapter) => {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
           releaseTime: dayjs(
-            chapter?.firstPublishedAt || chapter.createdAt
+            chapter?.firstPublishedAt || chapter.createdAt,
           ).format("LLL"),
-          url: site + "/reader/" + book?.slug + "/" + chapter.chapterId,
+          url: this.site + "/reader/" + book?.slug + "/" + chapter.chapterId,
         });
       }
     });
     novel.chapters = chapters;
     return novel;
-  };
-
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-  const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
-  const result = await fetchApi(url + chapterUrl.split("/").pop());
-  const json = (await result.json()) as responseChapter;
-
-  let chapterText = json.data.content || "Конец произведения";
-  if (json.data?.audio?.available) {
-    chapterText += "\n" + json.data.audio.url;
   }
 
-  return chapterText;
-};
+  async parseChapter(chapterUrl: string): Promise<string> {
+    const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
+    const result = await fetchApi(url + chapterUrl.split("/").pop());
+    const json = (await result.json()) as responseChapter;
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-  const url = `https://api.bookriver.ru/api/v1/search/autocomplete?keyword=${searchTerm}&page=1&perPage=10`;
-  const result = await fetchApi(url);
-  const json = (await result.json()) as responseSearch;
+    let chapterText = json.data.content || "Конец произведения";
+    if (json.data?.audio?.available) {
+      chapterText += "\n" + json.data.audio.url;
+    }
 
-  let novels: Novel.Item[] = [];
-  json?.data?.books?.forEach((novel) =>
-    novels.push({
-      name: novel.name,
-      cover: novel.coverImages[0].url,
-      url: site + "/book/" + novel.slug,
-    })
-  );
+    return chapterText;
+  }
 
-  return novels;
-};
+  async searchNovels(
+    searchTerm: string,
+    pageNo: number | undefined = 1,
+  ): Promise<Plugin.NovelItem[]> {
+    const url = `https://api.bookriver.ru/api/v1/search/autocomplete?keyword=${searchTerm}&page=${pageNo}&perPage=10`;
+    const result = await fetchApi(url);
+    const json = (await result.json()) as responseSearch;
 
-export const fetchImage: Plugin.fetchImage = fetchFile;
+    const novels: Plugin.NovelItem[] = [];
+    json?.data?.books?.forEach((novel) =>
+      novels.push({
+        name: novel.name,
+        cover: novel.coverImages[0].url,
+        url: this.site + "/book/" + novel.slug,
+      }),
+    );
 
-export const filters = [
-  {
-    key: "sort",
-    label: "Сортировка",
-    values: [
-      { label: "Бестселлеры", value: "bestseller" },
-      { label: "Дате добавления", value: "newest" },
-      { label: "Дате обновления", value: "last-update" },
-    ],
-    inputType: FilterInputs.Picker,
-  },
-  {
-    key: "genres",
-    label: "жанры",
-    values: [
-      {
-        label: "Альтернативная история",
-        value: "alternativnaya-istoriya",
-      },
-      { label: "Боевая фантастика", value: "boevaya-fantastika" },
-      { label: "Боевое фэнтези", value: "boevoe-fentezi" },
-      { label: "Бытовое фэнтези", value: "bytovoe-fentezi" },
-      {
-        label: "Героическая фантастика",
-        value: "geroicheskaya-fantastika",
-      },
-      { label: "Героическое фэнтези", value: "geroicheskoe-fentezi" },
-      { label: "Городское фэнтези", value: "gorodskoe-fentezi" },
-      { label: "Детектив", value: "detektiv" },
-      {
-        label: "Детективная фантастика",
-        value: "detektivnaya-fantastika",
-      },
-      { label: "Жёсткая эротика", value: "zhyostkaya-erotika" },
-      { label: "Исторический детектив", value: "istoricheskii-detektiv" },
-      {
-        label: "Исторический любовный роман",
-        value: "istoricheskii-lyubovnyi-roman",
-      },
-      { label: "Историческое фэнтези", value: "istoricheskoe-fentezi" },
-      { label: "Киберпанк", value: "kiberpank" },
-      { label: "Классический детектив", value: "klassicheskii-detektiv" },
-      {
-        label: "Короткий любовный роман",
-        value: "korotkii-lyubovnyi-roman",
-      },
-      {
-        label: "Космическая фантастика",
-        value: "kosmicheskaya-fantastika",
-      },
-      { label: "Криминальный детектив", value: "kriminalnyi-detektiv" },
-      { label: "ЛитРПГ", value: "litrpg" },
-      { label: "Любовная фантастика", value: "lyubovnaya-fantastika" },
-      { label: "Любовное фэнтези", value: "lyubovnoe-fentezi" },
-      { label: "Любовный роман", value: "lyubovnyi-roman" },
-      { label: "Мистика", value: "mistika" },
-      { label: "Молодежная проза", value: "molodezhnaya-proza" },
-      { label: "Научная фантастика", value: "nauchnaya-fantastika" },
-      {
-        label: "Остросюжетный любовный роман",
-        value: "ostrosyuzhetnyi-lyubovnyi-roman",
-      },
-      { label: "Политический детектив", value: "politicheskii-detektiv" },
-      { label: "Попаданцы", value: "popadantsy" },
-      { label: "Постапокалипсис", value: "postapokalipsis" },
-      {
-        label: "Приключенческое фэнтези",
-        value: "priklyuchencheskoe-fentezi",
-      },
-      {
-        label: "Романтическая эротика",
-        value: "romanticheskaya-erotika",
-      },
-      { label: "С элементами эротики", value: "s-elementami-erotiki" },
-      { label: "Славянское фэнтези", value: "slavyanskoe-fentezi" },
-      {
-        label: "Современный любовный роман",
-        value: "sovremennyi-lyubovnyi-roman",
-      },
-      { label: "Социальная фантастика", value: "sotsialnaya-fantastika" },
-      { label: "Тёмное фэнтези", value: "temnoe-fentezi" },
-      { label: "Фантастика", value: "fantastika" },
-      { label: "Фэнтези", value: "fentezi" },
-      { label: "Шпионский детектив", value: "shpionskii-detektiv" },
-      { label: "Эпическое фэнтези", value: "epicheskoe-fentezi" },
-      { label: "Эротика", value: "erotika" },
-      {
-        label: "Эротическая фантастика",
-        value: "eroticheskaya-fantastika",
-      },
-      { label: "Эротический фанфик", value: "eroticheskii-fanfik" },
-      { label: "Эротическое фэнтези", value: "eroticheskoe-fentezi" },
-      {
-        label: "Юмористический детектив",
-        value: "yumoristicheskii-detektiv",
-      },
-      {
-        label: "Юмористическое фэнтези",
-        value: "yumoristicheskoe-fentezi",
-      },
-    ],
-    inputType: FilterInputs.Checkbox,
-  },
-];
+    return novels;
+  }
+  fetchImage = fetchFile;
+
+  filters = [
+    {
+      key: "sort",
+      label: "Сортировка",
+      values: [
+        { label: "Бестселлеры", value: "bestseller" },
+        { label: "Дате добавления", value: "newest" },
+        { label: "Дате обновления", value: "last-update" },
+      ],
+      inputType: FilterInputs.Picker,
+    },
+    {
+      key: "genres",
+      label: "жанры",
+      values: [
+        {
+          label: "Альтернативная история",
+          value: "alternativnaya-istoriya",
+        },
+        { label: "Боевая фантастика", value: "boevaya-fantastika" },
+        { label: "Боевое фэнтези", value: "boevoe-fentezi" },
+        { label: "Бытовое фэнтези", value: "bytovoe-fentezi" },
+        {
+          label: "Героическая фантастика",
+          value: "geroicheskaya-fantastika",
+        },
+        { label: "Героическое фэнтези", value: "geroicheskoe-fentezi" },
+        { label: "Городское фэнтези", value: "gorodskoe-fentezi" },
+        { label: "Детектив", value: "detektiv" },
+        {
+          label: "Детективная фантастика",
+          value: "detektivnaya-fantastika",
+        },
+        { label: "Жёсткая эротика", value: "zhyostkaya-erotika" },
+        { label: "Исторический детектив", value: "istoricheskii-detektiv" },
+        {
+          label: "Исторический любовный роман",
+          value: "istoricheskii-lyubovnyi-roman",
+        },
+        { label: "Историческое фэнтези", value: "istoricheskoe-fentezi" },
+        { label: "Киберпанк", value: "kiberpank" },
+        { label: "Классический детектив", value: "klassicheskii-detektiv" },
+        {
+          label: "Короткий любовный роман",
+          value: "korotkii-lyubovnyi-roman",
+        },
+        {
+          label: "Космическая фантастика",
+          value: "kosmicheskaya-fantastika",
+        },
+        { label: "Криминальный детектив", value: "kriminalnyi-detektiv" },
+        { label: "ЛитРПГ", value: "litrpg" },
+        { label: "Любовная фантастика", value: "lyubovnaya-fantastika" },
+        { label: "Любовное фэнтези", value: "lyubovnoe-fentezi" },
+        { label: "Любовный роман", value: "lyubovnyi-roman" },
+        { label: "Мистика", value: "mistika" },
+        { label: "Молодежная проза", value: "molodezhnaya-proza" },
+        { label: "Научная фантастика", value: "nauchnaya-fantastika" },
+        {
+          label: "Остросюжетный любовный роман",
+          value: "ostrosyuzhetnyi-lyubovnyi-roman",
+        },
+        { label: "Политический детектив", value: "politicheskii-detektiv" },
+        { label: "Попаданцы", value: "popadantsy" },
+        { label: "Постапокалипсис", value: "postapokalipsis" },
+        {
+          label: "Приключенческое фэнтези",
+          value: "priklyuchencheskoe-fentezi",
+        },
+        {
+          label: "Романтическая эротика",
+          value: "romanticheskaya-erotika",
+        },
+        { label: "С элементами эротики", value: "s-elementami-erotiki" },
+        { label: "Славянское фэнтези", value: "slavyanskoe-fentezi" },
+        {
+          label: "Современный любовный роман",
+          value: "sovremennyi-lyubovnyi-roman",
+        },
+        { label: "Социальная фантастика", value: "sotsialnaya-fantastika" },
+        { label: "Тёмное фэнтези", value: "temnoe-fentezi" },
+        { label: "Фантастика", value: "fantastika" },
+        { label: "Фэнтези", value: "fentezi" },
+        { label: "Шпионский детектив", value: "shpionskii-detektiv" },
+        { label: "Эпическое фэнтези", value: "epicheskoe-fentezi" },
+        { label: "Эротика", value: "erotika" },
+        {
+          label: "Эротическая фантастика",
+          value: "eroticheskaya-fantastika",
+        },
+        { label: "Эротический фанфик", value: "eroticheskii-fanfik" },
+        { label: "Эротическое фэнтези", value: "eroticheskoe-fentezi" },
+        {
+          label: "Юмористический детектив",
+          value: "yumoristicheskii-detektiv",
+        },
+        {
+          label: "Юмористическое фэнтези",
+          value: "yumoristicheskoe-fentezi",
+        },
+      ],
+      inputType: FilterInputs.Checkbox,
+    },
+  ];
+}
+export default new Bookriver();
 
 interface response {
   props: {

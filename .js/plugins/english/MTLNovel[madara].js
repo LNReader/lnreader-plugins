@@ -77,7 +77,7 @@ var MadaraPlugin = /** @class */ (function () {
                         novels = [];
                         url = this.site;
                         if ((filters === null || filters === void 0 ? void 0 : filters.genres) && ((_c = (_b = this.options) === null || _b === void 0 ? void 0 : _b.path) === null || _c === void 0 ? void 0 : _c.genres)) {
-                            url += ((_e = (_d = this.options) === null || _d === void 0 ? void 0 : _d.path) === null || _e === void 0 ? void 0 : _e.genres) + filters.genres + "/";
+                            url += ((_e = (_d = this.options) === null || _d === void 0 ? void 0 : _d.path) === null || _e === void 0 ? void 0 : _e.genres) + filters.genres;
                         }
                         else {
                             url += ((_g = (_f = this.options) === null || _f === void 0 ? void 0 : _f.path) === null || _g === void 0 ? void 0 : _g.novels)

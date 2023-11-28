@@ -519,6 +519,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/multisrc/madara/icons/webnoveloku.png"
 		}
 	],
+	"Україна": [
+		{
+			"id": "smakolykytl",
+			"name": "Смаколики",
+			"site": "https://smakolykytl.site/",
+			"lang": "Україна",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/.js/plugins/ukraine/smakolykytl.js",
+			"iconUrl": "https://raw.githubusercontent.com/skillgg/lnplugins/filters_redesign/icons/src/ua/smakolykytl/icon.png"
+		}
+	],
 	"Tiếng Việt": [
 		{
 			"id": "ln.hako",

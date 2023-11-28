@@ -70,7 +70,7 @@ class MadaraPlugin implements Plugin.PluginBase {
 
         let url = this.site;
         if (filters?.genres && this.options?.path?.genres) {
-            url += this.options?.path?.genres + filters.genres + "/";
+            url += this.options?.path?.genres + filters.genres;
         } else {
             url += this.options?.path?.novels
                 ? this.options.path.novels
