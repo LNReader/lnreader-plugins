@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/mdb5.css">
     <link rel="stylesheet" href="/static/css/index.css">
+    <script src="static/md5Themes/themes.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js" defer></script>
+    <script src="/static/js/mdb5.js" defer></script>
+    <script src="/static/js/index.js" defer></script>
     <title>Testing plugin</title>
 </head>
 
@@ -110,13 +115,84 @@
                         <button class="btn btn-primary parseChapter-btn" type="button">fetch</button>
                     </div>
                 </div>
+                <div id="preview-toggler">
+                    <div class="slider-checkbox">
+                        <label>
+                            <input type="checkbox" id="raw-preview-switch" />
+                            <span>Raw</span>
+                        </label>
+                    </div>
+                    <div class="modal-container">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#settingsModal">
+                            Settings
+                        </button>
+                        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog"
+                            aria-labelledby="settingsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label class="filter-label">Theme</label>
+                                            <div id="theme-picker">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="filter-label">Background Color</label>
+                                            <input type="text" id="bgc-input" />
+                                        </div>
+                                        <div>
+                                            <label class="filter-label">Text Color</label>
+                                            <input type="text" id="txt-input" />
+                                        </div>
+                                        <div>
+                                            <label class="filter-label">Text Align</label>
+                                            <select id="ta-input" class="custom-select">
+                                                <option value="left" selected>Left</option>
+                                                <option value="right">Right</option>
+                                                <option value="center">Center</option>
+                                                <option value="justify">Justify</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="filter-label">Font Size</label>
+                                            <input type="number" id="fs-input" />
+                                        </div>
+                                        <div>
+                                            <label class="filter-label">Line Height</label>
+                                            <input step="0.1" type="number" id="lh-input" />
+                                        </div>
+                                        <hr />
+                                        <div>
+                                            <label class="filter-label">Custom CSS</label>
+                                            <textarea rows="5" id="css-ta"></textarea>
+                                        </div>
+                                        <hr />
+                                        <div>
+                                            <label class="filter-label">Custom JS</label>
+                                            <textarea rows="5" id="js-ta"></textarea>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
-            <div class="form-group">
-                <textarea maxlength="10000000" class="form-control" rows="10">
-                </textarea>
+            <div class="form-group" id="chapter-viewer">
             </div>
         </div>
         <div class="test-wrapper" id="fetchImage">
@@ -136,9 +212,5 @@
         </div>
     </div>
 </body>
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/mdb5.js"></script>
-<script src="/static/js/index.js"></script>
 
 </html>
