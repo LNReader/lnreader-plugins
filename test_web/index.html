@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/css/index.css">
     <script src="static/md5Themes/themes.js"></script>
     <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/html-sanitize.js" defer></script>
     <script src="/static/js/bootstrap.min.js" defer></script>
     <script src="/static/js/mdb5.js" defer></script>
     <script src="/static/js/index.js" defer></script>
@@ -90,9 +91,10 @@
             <div class="title">
                 parseNovelAndChapters
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="novel url">
+                    <input type="text" class="form-control" placeholder="novel url" id="parse-novel-url">
                     <div class="input-group-append">
-                        <button class="btn btn-primary parseNovelAndChapters-btn" type="button">fetch</button>
+                        <button class="btn btn-primary parseNovelAndChapters-btn" type="button"
+                            id="parse-novel-btn">fetch</button>
                     </div>
                 </div>
                 <div class="spinner-border" role="status">
@@ -102,7 +104,9 @@
             <div class="novel-list">
                 <div class="novel-item">
                 </div>
-                <div class="chapter-list">
+                <div class="chapter-list-container">
+                    <div class="chapter-list">
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,9 +114,10 @@
             <div class="title">
                 parseChapter
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="chapter url">
+                    <input type="text" class="form-control" placeholder="chapter url" id="chapter-parse-url">
                     <div class="input-group-append">
-                        <button class="btn btn-primary parseChapter-btn" type="button">fetch</button>
+                        <button class="btn btn-primary parseChapter-btn" type="button"
+                            id="chapter-parse-btn">fetch</button>
                     </div>
                 </div>
                 <div id="preview-toggler">
@@ -122,9 +127,16 @@
                             <span>Raw</span>
                         </label>
                     </div>
+                    <div class="slider-checkbox">
+                        <label>
+                            <input type="checkbox" id="sanitize-preview-html" />
+                            <span>Sanitized HTML</span>
+                        </label>
+                    </div>
+                    <div id="scaled-info"></div>
                     <div class="modal-container">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#settingsModal">
-                            Settings
+                            Preview settings
                         </button>
                         <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog"
                             aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -137,6 +149,39 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
+                                        <div>
+                                            <label class="filter-label">Preview Size</label>
+                                            <div id="size-input">
+                                                <div>
+                                                    <select id="size-preset">
+                                                        <option value="800,1200">Default</option>
+                                                        <option value="2200,2480">8" Fold</option>
+                                                        <option value="1536,2048">Nexus 9 (Tablet)</option>
+                                                        <option value="1440,2560">Pixel XL</option>
+                                                        <option value="1440,3120">Pixel 6 Pro</option>
+                                                        <option value="1080,2400">Pixel 6</option>
+                                                        <option value="1080,2340">Pixel 5</option>
+                                                        <option value="1440,3040">Pixel 4 XL</option>
+                                                        <option value="1080,2280">Pixel 4</option>
+                                                        <option value="1080,2160">Pixel 3</option>
+                                                        <option value="1080,1920">Pixel 2</option>
+                                                        <option value="768,1280">Nexus 4</option>
+                                                        <option value="720,1280">720p</option>
+                                                        <option value="480,854">480p</option>
+                                                        <option value="480,800">Nexus One</option>
+                                                        <option value="320,480">320p</option>
+                                                    </select>
+                                                    <div class="btn btn-primary" id="load-preset-size">Load preset</div>
+                                                </div>
+                                                <div>
+                                                    <input type="number" id="width-input"
+                                                        style="display:inline-block" />
+                                                    <input type="number" id="height-input"
+                                                        style="display:inline-block" />
+                                                    <div class="btn btn-primary" id="swap-iframe-size">Rotate</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div>
                                             <label class="filter-label">Theme</label>
                                             <div id="theme-picker">

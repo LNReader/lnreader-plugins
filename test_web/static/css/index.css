@@ -188,7 +188,7 @@
     align-content: center;
 }
 
-#settingsModal .modal-body div {
+#settingsModal .modal-body > div {
     display: grid;
     align-content: center;
 }
@@ -231,6 +231,18 @@
     height: 350px;
     overflow-y: hidden;
     overflow-x: scroll;
+}
+
+.novel_info {
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: min-content;
+}
+
+.parse-novel-btn {
+    width: 85%;
+    margin-inline: auto;
+    margin-top: 5px;
 }
 
 #parseNovelAndChapters {
@@ -281,15 +293,22 @@
 }
 
 .info-item {
-    display: flex;
+    display: grid;
+    grid-auto-columns: min-content auto 50px;
     margin-top: 5px;
+    grid-auto-flow: column;
 }
 
 .info-value {
     width: 10rem;
-    padding-left: 0.25rem;
+    padding-inline: 0.25rem;
     font-size: 0.65rem;
     word-wrap: break-word;
+}
+
+.info-copy {
+    display: grid;
+    align-content: center;
 }
 
 .btn {
@@ -297,14 +316,34 @@
     padding: 0.25rem 0.25rem;
 }
 
-.chapter-list {
-    position: relative;
-    display: grid;
-    min-width: 50%;
+.chapter-list-container {
+    max-height: 95%;
     overflow-y: scroll;
-    overflow-x: scroll;
-    grid-template-columns: 15rem 15rem 15rem 15rem;
-    grid-gap: 0, 0;
+}
+
+.chapter-list {
+    column-count: 2;
+}
+
+.chapter-item {
+    display: grid;
+    grid-template-areas: "name btn1 btn2" "date btn1 btn2";
+}
+
+.ci-topleft {
+    grid-area: name;
+}
+
+.ci-bottomleft {
+    grid-area: date;
+}
+
+.ci-btn1 {
+    grid-area: btn1;
+}
+
+.ci-btn2 {
+    grid-area: btn2;
 }
 
 .select-option-text {
@@ -327,6 +366,7 @@
 .slider-checkbox label span {
     position: relative;
     left: calc(var(--box-margin) + var(--box-width));
+    user-select: none;
 }
 .slider-checkbox label span::after {
     transition: 0.2s ease-out;
@@ -403,4 +443,10 @@ iframe {
     border: 1px solid blue;
     cursor: pointer;
     transform: translateY(-5px);
+}
+#size-input > div:first-child {
+    margin-bottom: 5px;
+}
+iframe {
+    overflow: scroll;
 }
