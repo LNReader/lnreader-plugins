@@ -1,0 +1,302 @@
+@import url("./darkmode.css");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.modal-body {
+    padding: 16px 50px 0 50px;
+}
+
+.checkbox-groupbox input {
+    margin-right: 5px;
+}
+
+.SwitchFilter {
+    display: flex;
+    justify-content: center;
+}
+
+.SwitchFilter input {
+    margin-left: 10px;
+}
+
+.PickerFilter select {
+    text-align: center;
+}
+
+.filter-label {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
+#filtersModal .modal-body div {
+    display: grid;
+    align-content: center;
+}
+
+#settingsModal .modal-body > div {
+    display: grid;
+    align-content: center;
+}
+
+#filtersModal hr {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    /* visibility: hidden; */
+}
+
+.btn.disabled,
+.btn:disabled {
+    opacity: 1;
+}
+
+#test-container {
+    align-items: center;
+    height: max-content;
+    margin-bottom: 100px;
+}
+
+.test-wrapper {
+    margin: 1rem;
+    padding: 0.5rem;
+    background-color: aliceblue;
+}
+
+#popularNovels,
+#searchNovels,
+#parseNovelAndChapters,
+#parseChapter,
+#fetchImage {
+    min-width: 95%;
+    max-width: 95%;
+    margin-inline: auto;
+}
+
+#popularNovels,
+#searchNovels {
+    height: 350px;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+.novel_info {
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: min-content;
+}
+
+.parse-novel-btn {
+    width: 85%;
+    margin-inline: auto;
+    margin-top: 5px;
+}
+
+#parseNovelAndChapters {
+    height: 380px;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.spinner-border {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border 0.75s linear infinite;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.novel-list {
+    display: flex;
+    margin-top: 0.5rem;
+    height: 300px;
+    width: 100%;
+}
+
+.novel-item {
+    display: flex;
+    padding: 0.5rem;
+}
+
+.novel-item img {
+    max-height: 90%;
+}
+
+.novel-info {
+    width: 16rem;
+}
+
+.info-item {
+    display: grid;
+    grid-auto-columns: min-content auto 50px;
+    margin-top: 5px;
+    grid-auto-flow: column;
+}
+
+.info-value {
+    width: 10rem;
+    padding-inline: 0.25rem;
+    font-size: 0.65rem;
+    word-wrap: break-word;
+}
+
+.info-copy {
+    display: grid;
+    align-content: center;
+}
+
+.btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.25rem;
+}
+
+.chapter-list-container {
+    max-height: 95%;
+    overflow-y: scroll;
+}
+
+.chapter-list {
+    column-count: 2;
+}
+
+.chapter-item {
+    display: grid;
+    grid-template-areas: "name btn1 btn2" "date btn1 btn2";
+}
+
+.ci-topleft {
+    grid-area: name;
+}
+
+.ci-bottomleft {
+    grid-area: date;
+}
+
+.ci-btn1 {
+    grid-area: btn1;
+}
+
+.ci-btn2 {
+    grid-area: btn2;
+}
+
+.select-option-text {
+    padding-left: 1rem;
+}
+
+/* Slider checkbox */
+.slider-checkbox {
+    --ball-width: 15px;
+    --box-margin: 5px;
+    --box-width: calc(2 * var(--ball-width) + var(--box-margin));
+}
+.slider-checkbox input {
+    display: none;
+}
+.slider-checkbox label {
+    height: fit-content;
+    width: fit-content;
+}
+.slider-checkbox label span {
+    position: relative;
+    left: calc(var(--box-margin) + var(--box-width));
+    user-select: none;
+}
+.slider-checkbox label span::after {
+    transition: 0.2s ease-out;
+    position: absolute;
+    content: "";
+    top: calc((100% - var(--ball-width)) / 2);
+    width: var(--ball-width);
+    height: var(--ball-width);
+    left: calc(-1 * (var(--box-width) + var(--box-margin)) + 2px);
+    border-radius: 50%;
+    display: inline-block;
+    background-color: rgb(0, 60, 255);
+}
+.slider-checkbox label input:checked ~ span::after {
+    left: calc(-1 * (var(--box-margin) + var(--ball-width) + 3px));
+    background-color: rgb(0, 60, 255);
+}
+.slider-checkbox label input:checked ~ span::before {
+    background-color: rgb(0, 255, 0);
+}
+.slider-checkbox label span::before {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * var(--box-width) - var(--box-margin));
+    content: "";
+    width: var(--box-width);
+    height: 100%;
+    border-radius: 10px;
+    background-color: red;
+    display: inline-block;
+}
+
+iframe {
+    margin: 0 auto;
+    border: 1px solid black;
+    background-color: white;
+    display: block;
+}
+#preview-toggler {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+#settingsModal input {
+    text-align: center;
+}
+#settingsModal textarea {
+    display: block;
+    width: 100%;
+    margin-inline: auto;
+}
+#theme-picker {
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+    gap: 10px;
+    justify-content: center;
+}
+
+#theme-picker .theme {
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    word-wrap: break-word;
+    word-break: break-all;
+    border-radius: 50%;
+    border: 1px solid gray;
+    transition-duration: 0.2s;
+    display: grid;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+#theme-picker .theme:hover {
+    border: 1px solid blue;
+    cursor: pointer;
+    transform: translateY(-5px);
+}
+#size-input > div:first-child {
+    margin-bottom: 5px;
+}
+iframe {
+    overflow: scroll;
+}

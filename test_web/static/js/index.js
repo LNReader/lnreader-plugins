@@ -563,6 +563,9 @@ class PluginWrapper {
             novel_list.html("");
 
             if ("error" in novels) throw `There was an error! ${novels.error}`;
+            if (novels.length === 0) {
+                novel_list.text("Couldn't find anything!");
+            }
             novel_list.append(
                 ...novels.map((novel) =>
                     PluginWrapper.createNovelItem(novel, true)
