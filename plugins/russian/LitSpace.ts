@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
@@ -18,11 +18,11 @@ class freedlit implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/books/";
-    url += (filters?.genre || "all") + "?sort=";
-    url += showLatestNovels ? "recent" : filters?.sort || "popular";
-    url += "&status=" + (filters?.status || "all");
-    url += "&access=" + (filters?.access || "all");
-    url += "&adult=" + (filters?.adult || "hide");
+    url += (filters?.genre?.value || "all") + "?sort=";
+    url += showLatestNovels ? "recent" : filters?.sort?.value || "popular";
+    url += "&status=" + (filters?.status?.value || "all");
+    url += "&access=" + (filters?.access?.value || "all");
+    url += "&adult=" + (filters?.adult?.value || "hide");
     url += "&page=" + pageNo;
 
     const result = await fetchApi(url);
@@ -112,23 +112,23 @@ class freedlit implements Plugin.PluginBase {
   }
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка:",
-      values: [
+      value: "",
+      options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству комментариев", value: "comments" },
         { label: "По количеству лайков", value: "likes" },
         { label: "По новизне", value: "recent" },
         { label: "По просмотрам", value: "views" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "genre",
+    genre: {
       label: "Жанры:",
-      values: [
+      value: "",
+      options: [
         { label: "Любой жанр", value: "all" },
         { label: "Альтернативная история", value: "alternative-history" },
         { label: "Антиутопия", value: "dystopia" },
@@ -207,38 +207,38 @@ class freedlit implements Plugin.PluginBase {
         { label: "Юмористическое фэнтези", value: "humor-fantasy" },
         { label: "RPS", value: "rps" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "status",
+    status: {
       label: "Статус:",
-      values: [
+      value: "",
+      options: [
         { label: "Любой статус", value: "all" },
         { label: "В процессе", value: "in-process" },
         { label: "Завершено", value: "finished" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "access",
+    access: {
       label: "Доступ:",
-      values: [
+      value: "",
+      options: [
         { label: "Любой доступ", value: "all" },
         { label: "Бесплатные", value: "free" },
         { label: "Платные", value: "paid" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "adult",
+    adult: {
       label: "Возрастные ограничения:",
-      values: [
+      value: "",
+      options: [
         { label: "Скрыть 18+", value: "hide" },
         { label: "Показать +18", value: "show" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-  ];
+  } satisfies Filters;
 }
 
 export default new freedlit();

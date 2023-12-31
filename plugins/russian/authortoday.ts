@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { defaultCover } from "@libs/defaultCover";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
@@ -23,18 +23,18 @@ class AuthorToday implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = apiUrl + "v1/catalog/search?page=" + pageNo;
-    if (filters?.genre) {
-      url += "&genre=" + filters.genre;
+    if (filters?.genre?.value) {
+      url += "&genre=" + filters.genre.value;
     }
 
     url +=
-      "&sorting=" + (showLatestNovels ? "recent" : filters?.sort || "popular");
-
-    url += "&form=" + (filters?.form || "any");
-    url += "&state=" + (filters?.state || "any");
-    url += "&series=" + (filters?.series || "any");
-    url += "&access=" + (filters?.access || "any");
-    url += "&promo=" + (filters?.promo || "hide");
+      "&sorting=" +
+      (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
+    url += "&form=" + (filters?.form?.value || "any");
+    url += "&state=" + (filters?.state?.value || "any");
+    url += "&series=" + (filters?.series?.value || "any");
+    url += "&access=" + (filters?.access?.value || "any");
+    url += "&promo=" + (filters?.promo?.value || "hide");
 
     const result = await fetchApi(url, {
       headers: {
@@ -183,13 +183,14 @@ class AuthorToday implements Plugin.PluginBase {
 
     return novels;
   }
+
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка",
-      values: [
+      value: "",
+      options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству лайков", value: "likes" },
         { label: "По комментариям", value: "comments" },
@@ -197,12 +198,12 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "По просмотрам", value: "views" },
         { label: "Набирающие популярность", value: "trending" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "genre",
+    genre: {
       label: "Жанры",
-      values: [
+      value: "",
+      options: [
         { label: "Альтернативная история", value: "sf-history" },
         { label: "Антиутопия", value: "dystopia" },
         { label: "Бизнес-литература", value: "biznes-literatura" },
@@ -281,12 +282,12 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "Юмористическая фантастика", value: "sf-humor" },
         { label: "Юмористическое фэнтези", value: "ironical-fantasy" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "form",
+    form: {
       label: "Форма произведения",
-      values: [
+      value: "",
+      options: [
         { label: "Любой", value: "any" },
         { label: "Перевод", value: "translation" },
         { label: "Повесть", value: "tale" },
@@ -295,50 +296,51 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "Сборник поэзии", value: "poetry" },
         { label: "Сборник рассказов", value: "story-book" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "state",
+    state: {
       label: "Статус произведения",
-      values: [
+      value: "",
+      options: [
         { label: "Любой статус", value: "any" },
         { label: "В процессе", value: "in-progress" },
         { label: "Завершено", value: "finished" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "series",
+    series: {
       label: "Статус цикла",
-      values: [
+      value: "",
+      options: [
         { label: "Не важно", value: "any" },
         { label: "Вне цикла", value: "out" },
         { label: "Цикл завершен", value: "finished" },
         { label: "Цикл не завершен", value: "unfinished" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "access",
+    access: {
       label: "Тип доступа",
-      values: [
+      value: "",
+      options: [
         { label: "Любой", value: "any" },
         { label: "Платный", value: "paid" },
         { label: "Бесплатный", value: "free" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "promo",
+    promo: {
       label: "Промо-фрагмент",
-      values: [
+      value: "",
+      options: [
         { label: "Скрывать", value: "hide" },
         { label: "Показывать", value: "show" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-  ];
+  } satisfies Filters;
 }
+
 export default new AuthorToday();
 
 interface response {

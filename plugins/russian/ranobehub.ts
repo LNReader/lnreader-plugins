@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
@@ -22,13 +22,18 @@ class RNBH implements Plugin.PluginBase {
     url += showLatestNovels
       ? "last_chapter_at"
       : filters?.sort || "computed_rating";
-    url += "&status=" + (filters?.status ? filters?.status : "0");
+    url += "&status=" + (filters?.status?.value ? filters?.status?.value : "0");
 
     if (filters) {
-      if (Array.isArray(filters.country) && filters.country.length) {
-        url += "&country=" + filters.country.join(",");
+      if (
+        Array.isArray(filters.country?.value) &&
+        filters.country?.value.length
+      ) {
+        url += "&country=" + filters.country.value.join(",");
       }
-      let tags = [filters?.tags, filters?.events].flat().filter((t) => t);
+      let tags = [filters?.tags?.value, filters?.events?.value]
+        .flat()
+        .filter((t) => t);
       if (tags.length) {
         url += "&tags:positive=" + tags.join(",");
       }
@@ -158,11 +163,11 @@ class RNBH implements Plugin.PluginBase {
 
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка",
-      values: [
+      value: "",
+      options: [
         { label: "по рейтингу", value: "computed_rating" },
         { label: "по дате обновления", value: "last_chapter_at" },
         { label: "по дате добавления", value: "created_at" },
@@ -171,35 +176,35 @@ class RNBH implements Plugin.PluginBase {
         { label: "по количеству глав", value: "count_chapters" },
         { label: "по объему перевода", value: "count_of_symbols" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "status",
+    status: {
       label: "Статус перевода",
-      values: [
+      value: "",
+      options: [
         { label: "Любой", value: "" },
         { label: "В процессе", value: "1" },
         { label: "Завершено", value: "2" },
         { label: "Заморожено", value: "3" },
         { label: "Неизвестно", value: "4" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "country",
+    country: {
       label: "Тип",
-      values: [
+      value: [],
+      options: [
         { label: "Китай", value: "2" },
         { label: "Корея", value: "3" },
         { label: "США", value: "4" },
         { label: "Япония", value: "1" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "events",
+    events: {
       label: "События",
-      values: [
+      value: [],
+      options: [
         { label: "[Награжденная работа]", value: "611" },
         { label: "18+", value: "338" },
         { label: "Авантюристы", value: "353" },
@@ -1095,12 +1100,12 @@ class RNBH implements Plugin.PluginBase {
         { label: "Weak-lead", value: "885" },
         { label: "Web-novel", value: "1024" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "tags",
+    tags: {
       label: "Жанры",
-      values: [
+      value: [],
+      options: [
         { label: "Боевые искусства", value: "22" },
         { label: "Гарем", value: "114" },
         { label: "Гендер бендер", value: "246" },
@@ -1144,9 +1149,9 @@ class RNBH implements Plugin.PluginBase {
         { label: "Isekai", value: "999" },
         { label: "Video games", value: "993" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-  ];
+  } satisfies Filters;
 }
 
 export default new RNBH();

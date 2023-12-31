@@ -2,7 +2,7 @@
   "filters": {
     "sort": {
       "label": "Сортировка:",
-      "value": "",
+      "value": "6",
       "options": [
         {
           "label": "По рейтингу",
@@ -97,7 +97,7 @@
     },
     "s_lang": {
       "label": "Язык оригинала:",
-      "value": "",
+      "value": "0",
       "options": [
         {
           "label": "Неважно",
@@ -816,7 +816,7 @@
     },
     "t_lang": {
       "label": "Язык перевода:",
-      "value": "",
+      "value": "0",
       "options": [
         {
           "label": "Неважно",
@@ -1535,7 +1535,7 @@
     },
     "type": {
       "label": "Тип:",
-      "value": "",
+      "value": "0",
       "options": [
         {
           "label": "Неважно",
@@ -1593,7 +1593,7 @@
     },
     "atmosphere": {
       "label": "Атмосфера:",
-      "value": "",
+      "value": "0",
       "options": [
         {
           "label": "Неважно",
@@ -1612,7 +1612,7 @@
     },
     "adult": {
       "label": "Возрастные ограничения:",
-      "value": "1",
+      "value": "0",
       "options": [
         {
           "label": "Все",

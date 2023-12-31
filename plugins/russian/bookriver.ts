@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
@@ -19,11 +19,16 @@ class Bookriver implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + `/genre?page=${pageNo}&perPage=24&sortingType=`;
-    url += showLatestNovels ? "last-update" : filters?.sort || "bestseller";
+    url += showLatestNovels
+      ? "last-update"
+      : filters?.sort?.value || "bestseller";
 
     if (filters) {
-      if (Array.isArray(filters.genres) && filters.genres.length) {
-        url += "&g=" + filters.genres.join(",");
+      if (
+        Array.isArray(filters?.genres?.value) &&
+        filters?.genres?.value?.length
+      ) {
+        url += "&g=" + filters.genres.value.join(",");
       }
     }
 
@@ -118,21 +123,21 @@ class Bookriver implements Plugin.PluginBase {
   }
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка",
-      values: [
+      value: "",
+      options: [
         { label: "Бестселлеры", value: "bestseller" },
         { label: "Дате добавления", value: "newest" },
         { label: "Дате обновления", value: "last-update" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "genres",
+    genres: {
       label: "жанры",
-      values: [
+      value: [],
+      options: [
         {
           label: "Альтернативная история",
           value: "alternativnaya-istoriya",
@@ -219,9 +224,9 @@ class Bookriver implements Plugin.PluginBase {
           value: "yumoristicheskoe-fentezi",
         },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-  ];
+  } satisfies Filters;
 }
 export default new Bookriver();
 

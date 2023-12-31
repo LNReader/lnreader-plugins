@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
@@ -18,27 +18,29 @@ class ReN implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search/catalog/?count=30&ordering=";
-    url += filters?.order ? (filters.order as string).replace("+", "") : "-";
-    url += showLatestNovels ? "chapter_date" : filters?.sort || "rating";
+    url += filters?.order?.value
+      ? (filters.order.value as string).replace("+", "")
+      : "-";
+    url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
-    if (filters?.genres instanceof Array) {
-      url += filters.genres.map((i) => `&genres=${i}`).join("");
+    if (filters?.genres?.value instanceof Array) {
+      url += filters.genres.value.map((i) => `&genres=${i}`).join("");
     }
 
-    if (filters?.status instanceof Array) {
-      url += filters?.status.map((i) => `&status=${i}`).join("");
+    if (filters?.status?.value instanceof Array) {
+      url += filters?.status.value.map((i) => `&status=${i}`).join("");
     }
 
-    if (filters?.types instanceof Array) {
-      url += filters.types.map((i) => `&types=${i}`).join("");
+    if (filters?.types?.value instanceof Array) {
+      url += filters.types.value.map((i) => `&types=${i}`).join("");
     }
 
-    if (filters?.categories instanceof Array) {
-      url += filters.categories.map((i) => `&categories=${i}`).join("");
+    if (filters?.categories?.value instanceof Array) {
+      url += filters.categories.value.map((i) => `&categories=${i}`).join("");
     }
 
-    if (filters?.age_limit instanceof Array) {
-      url += filters.age_limit.map((i) => `&age_limit=${i}`).join("");
+    if (filters?.age_limit?.value instanceof Array) {
+      url += filters.age_limit.value.map((i) => `&age_limit=${i}`).join("");
     }
 
     url += "&page=" + pageNo;
@@ -149,11 +151,11 @@ class ReN implements Plugin.PluginBase {
 
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка",
-      values: [
+      value: "",
+      options: [
         { label: "Рейтинг", value: "rating" },
         { label: "Просмотры", value: "views" },
         { label: "Лайкам", value: "votes" },
@@ -161,21 +163,21 @@ class ReN implements Plugin.PluginBase {
         { label: "Дате обновления", value: "chapter_date" },
         { label: "Количество глав", value: "count_chapters" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "order",
+    order: {
       label: "Порядок",
-      values: [
+      value: "",
+      options: [
         { label: "По убыванию", value: "-" },
         { label: "По возрастанию", value: "+" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "genres",
+    genres: {
       label: "Жанры:",
-      values: [
+      value: [],
+      options: [
         { label: "Боевик", value: "112" },
         { label: "Война", value: "123" },
         { label: "Детектив", value: "114" },
@@ -207,12 +209,12 @@ class ReN implements Plugin.PluginBase {
         { label: "Эротика", value: "118" },
         { label: "Юмор", value: "104" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "categories",
+    categories: {
       label: "Тэги:",
-      values: [
+      value: [],
+      options: [
         { label: "[Награжденная работа]", value: "648" },
         { label: "18+", value: "423" },
         { label: "Абьюзеры", value: "663" },
@@ -911,12 +913,12 @@ class ReN implements Plugin.PluginBase {
         { label: "R-15 Японское возрастное огр.", value: "332" },
         { label: "R-18", value: "424" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "types",
+    types: {
       label: "Типы:",
-      values: [
+      value: [],
+      options: [
         { label: "Авторское", value: "1" },
         { label: "Другое", value: "7" },
         { label: "Запад", value: "5" },
@@ -925,12 +927,12 @@ class ReN implements Plugin.PluginBase {
         { label: "Фанфики", value: "6" },
         { label: "Япония", value: "2" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "status",
+    status: {
       label: "Статус проекта:",
-      values: [
+      value: [],
+      options: [
         { label: "Анонс", value: "4" },
         { label: "Закончен", value: "0" },
         { label: "Заморожен", value: "2" },
@@ -938,19 +940,19 @@ class ReN implements Plugin.PluginBase {
         { label: "Нет переводчика", value: "3" },
         { label: "Продолжается", value: "1" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "age_limit",
+    age_limit: {
       label: "Возрастной рейтинг:",
-      values: [
+      value: [],
+      options: [
         { label: "16+", value: "1" },
         { label: "18+", value: "2" },
         { label: "Для всех", value: "0" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-  ];
+  } satisfies Filters;
 }
 
 export default new ReN();

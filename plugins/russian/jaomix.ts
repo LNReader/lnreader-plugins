@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
@@ -19,24 +19,27 @@ class Jaomix implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/?searchrn";
 
-    if (filters?.lang instanceof Array) {
-      url += filters.lang.map((lang, idx) => `&lang[${idx}]=${lang}`).join("");
+    if (filters?.lang?.value instanceof Array) {
+      url += filters.lang.value
+        .map((lang, idx) => `&lang[${idx}]=${lang}`)
+        .join("");
     }
-    if (filters?.genre instanceof Array) {
-      url += filters.genre
+    if (filters?.genre?.value instanceof Array) {
+      url += filters.genre.value
         .map((genre, idx) => `&genre[${idx}]=${genre}`)
         .join("");
     }
-    if (filters?.delgenre instanceof Array) {
-      url += filters.delgenre
-        .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`)
-        .join("");
-    }
+    //if (filters?.delgenre?.value instanceof Array) {
+    //  url += filters.delgenre.value
+    //    .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`)
+    //    .join("");
+    //}
 
-    url += "&sortcountchapt=" + (filters?.sortcountchapt || "1");
-    url += "&sortdaycreate=" + (filters?.sortdaycreate || "1");
+    url += "&sortcountchapt=" + (filters?.sortcountchapt?.value || "1");
+    url += "&sortdaycreate=" + (filters?.sortdaycreate?.value || "1");
     url +=
-      "&sortby=" + (showLatestNovels ? "upd" : filters?.sortby || "topweek");
+      "&sortby=" +
+      (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
     url += "&gpage=" + pageNo;
 
     const result = await fetchApi(url);
@@ -152,11 +155,11 @@ class Jaomix implements Plugin.PluginBase {
   }
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sortby",
+  filters = {
+    sortby: {
       label: "Сортировка:",
-      values: [
+      value: "",
+      options: [
         { label: "Топ недели", value: "topweek" },
         { label: "По алфавиту", value: "alphabet" },
         { label: "По дате обновления", value: "upd" },
@@ -167,12 +170,12 @@ class Jaomix implements Plugin.PluginBase {
         { label: "Топ за все время", value: "alltime" },
         { label: "Топ месяца", value: "topmonth" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "sortdaycreate",
+    sortdaycreate: {
       label: "Дата добавления:",
-      values: [
+      value: "",
+      options: [
         { label: "Любое", value: "1" },
         { label: "От 120 до 180 дней", value: "1218" },
         { label: "От 180 до 365 дней", value: "1836" },
@@ -182,12 +185,12 @@ class Jaomix implements Plugin.PluginBase {
         { label: "От 90 до 120 дней", value: "9012" },
         { label: "Послед. 30 дней", value: "30" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "sortcountchapt",
+    sortcountchapt: {
       label: "Количество глав:",
-      values: [
+      value: "",
+      options: [
         { label: "Любое кол-во глав", value: "1" },
         { label: "До 500", value: "500" },
         { label: "От 1000 до 2000", value: "1020" },
@@ -196,12 +199,12 @@ class Jaomix implements Plugin.PluginBase {
         { label: "От 4000", value: "400" },
         { label: "От 500 до 1000", value: "510" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "genre",
+    genre: {
       label: "Жанры:",
-      values: [
+      value: [],
+      options: [
         { label: "Боевые Искусства", value: "Боевые Искусства" },
         { label: "Виртуальный Мир", value: "Виртуальный Мир" },
         { label: "Гарем", value: "Гарем" },
@@ -248,72 +251,20 @@ class Jaomix implements Plugin.PluginBase {
         { label: "Xuanhuan", value: "Xuanhuan" },
         { label: "Yaoi", value: "Yaoi" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-    {
-      key: "delgenre",
-      label: "Исключить жанры:",
-      values: [
-        { label: "Боевые Искусства", value: "Боевые Искусства" },
-        { label: "Виртуальный Мир", value: "Виртуальный Мир" },
-        { label: "Гарем", value: "Гарем" },
-        { label: "Детектив", value: "Детектив" },
-        { label: "Драма", value: "Драма" },
-        { label: "Игра", value: "Игра" },
-        { label: "Истории из жизни", value: "Истории из жизни" },
-        { label: "Исторический", value: "Исторический" },
-        { label: "История", value: "История" },
-        { label: "Исэкай", value: "Исэкай" },
-        { label: "Комедия", value: "Комедия" },
-        { label: "Меха", value: "Меха" },
-        { label: "Мистика", value: "Мистика" },
-        { label: "Научная Фантастика", value: "Научная Фантастика" },
-        { label: "Повседневность", value: "Повседневность" },
-        { label: "Постапокалипсис", value: "Постапокалипсис" },
-        { label: "Приключения", value: "Приключения" },
-        { label: "Психология", value: "Психология" },
-        { label: "Романтика", value: "Романтика" },
-        { label: "Сверхъестественное", value: "Сверхъестественное" },
-        { label: "Сёнэн", value: "Сёнэн" },
-        { label: "Сёнэн-ай", value: "Сёнэн-ай" },
-        { label: "Спорт", value: "Спорт" },
-        { label: "Сэйнэн", value: "Сэйнэн" },
-        { label: "Сюаньхуа", value: "Сюаньхуа" },
-        { label: "Трагедия", value: "Трагедия" },
-        { label: "Триллер", value: "Триллер" },
-        { label: "Фантастика", value: "Фантастика" },
-        { label: "Фэнтези", value: "Фэнтези" },
-        { label: "Хоррор", value: "Хоррор" },
-        { label: "Школьная жизнь", value: "Школьная жизнь" },
-        { label: "Шоунен", value: "Шоунен" },
-        { label: "Экшн", value: "Экшн" },
-        { label: "Этти", value: "Этти" },
-        { label: "Юри", value: "Юри" },
-        { label: "Adult", value: "Adult" },
-        { label: "Ecchi", value: "Ecchi" },
-        { label: "Josei", value: "Josei" },
-        { label: "Lolicon", value: "Lolicon" },
-        { label: "Mature", value: "Mature" },
-        { label: "Shoujo", value: "Shoujo" },
-        { label: "Wuxia", value: "Wuxia" },
-        { label: "Xianxia", value: "Xianxia" },
-        { label: "Xuanhuan", value: "Xuanhuan" },
-        { label: "Yaoi", value: "Yaoi" },
-      ],
-      inputType: FilterInputs.Checkbox,
-    },
-    {
-      key: "lang",
+    lang: {
       label: "Выбрать языки:",
-      values: [
+      value: [],
+      options: [
         { label: "Английский", value: "Английский" },
         { label: "Китайский", value: "Китайский" },
         { label: "Корейский", value: "Корейский" },
         { label: "Японский", value: "Японский" },
       ],
-      inputType: FilterInputs.Checkbox,
+      type: FilterTypes.CheckboxGroup,
     },
-  ];
+  } satisfies Filters;
 }
 
 export default new Jaomix();

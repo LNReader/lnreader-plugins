@@ -1,5 +1,5 @@
 import { Plugin } from "@typings/plugin";
-import { FilterInputs } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
@@ -21,12 +21,12 @@ class ficbook implements Plugin.PluginBase {
     const baseUrl = this.site;
     let url = baseUrl;
 
-    if (filters?.directions) {
-      url += "/popular-fanfics/" + filters.directions;
-    } else if (filters?.tags) {
-      url += "/tags/" + filters.tags + "?p=" + pageNo;
+    if (filters?.directions?.value) {
+      url += "/popular-fanfics/" + filters.directions.value;
+    } else if (filters?.tags?.value) {
+      url += "/tags/" + filters.tags.value + "?p=" + pageNo;
     } else {
-      url += "/" + (filters?.sort || "fanfiction") + "?p=" + pageNo;
+      url += "/" + (filters?.sort?.value || "fanfiction") + "?p=" + pageNo;
     }
 
     const result = await fetchApi(url);
@@ -170,20 +170,20 @@ class ficbook implements Plugin.PluginBase {
   }
   fetchImage = fetchFile;
 
-  filters = [
-    {
-      key: "sort",
+  filters = {
+    sort: {
       label: "Сортировка:",
-      values: [
+      value: "",
+      options: [
         { label: "Горячие работы", value: "fanfiction" },
         { label: "Популярные ", value: "popular-fanfics" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "directions",
+    directions: {
       label: "Направление:",
-      values: [
+      value: "",
+      options: [
         { label: "Джен", value: "gen" },
         { label: "Гет", value: "het" },
         { label: "Слэш", value: "slash-fics-3712917" },
@@ -192,12 +192,12 @@ class ficbook implements Plugin.PluginBase {
         { label: "Смешанный", value: "mixed" },
         { label: "Другой", value: "other" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-    {
-      key: "tags",
+    tags: {
       label: "Тэги:",
-      values: [
+      value: "",
+      options: [
         { label: "#1fic1week", value: "884" },
         { label: "#7daystowrite", value: "2961" },
         { label: "#Бинго_ТФ", value: "1458" },
@@ -2615,9 +2615,9 @@ class ficbook implements Plugin.PluginBase {
         { label: "XVIII век", value: "248" },
         { label: "XX век", value: "1004" },
       ],
-      inputType: FilterInputs.Picker,
+      type: FilterTypes.Picker,
     },
-  ];
+  } satisfies Filters;
 }
 
 export default new ficbook();

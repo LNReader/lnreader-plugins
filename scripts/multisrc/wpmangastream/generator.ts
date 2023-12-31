@@ -11,7 +11,7 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
   });
 };
 
-const generator = function generator(metadata: WPmangaStreamMetadata) {
+const generator = function generator(source: WPmangaStreamMetadata) {
   const WPmangaStreamTemplate = readFileSync(
     path.join(__dirname, "template.ts"),
     {
@@ -21,13 +21,13 @@ const generator = function generator(metadata: WPmangaStreamMetadata) {
 
   const pluginScript = `
   ${WPmangaStreamTemplate}
-const plugin = new WPmangaStreamPlugin(${JSON.stringify(metadata)});
+const plugin = new WPmangaStreamPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();
 
   return {
-    lang: metadata.options?.lang || "English",
-    filename: metadata.sourceName,
+    lang: source.options?.lang || "English",
+    filename: source.sourceName,
     pluginScript,
   };
 };
