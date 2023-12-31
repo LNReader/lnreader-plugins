@@ -38,34 +38,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
-var LightNovelFRPlugin = /** @class */ (function () {
-    function LightNovelFRPlugin() {
-        this.id = "lightnovelfr";
-        this.name = "Ligh Novel FR[wpmangastream]";
-        this.icon = "multisrc/wpmangastream/icons/lightnovelfr.png";
-        this.site = "https://lightnovelfr.com/";
+var WPmangaStreamPlugin = /** @class */ (function () {
+    function WPmangaStreamPlugin(metadata) {
+        this.fetchImage = fetch_1.fetchFile;
+        this.id = metadata.id;
+        this.name = metadata.sourceName + "[wpmangastream]";
+        this.icon = "multisrc/wpmangastream/icons/".concat(metadata.id, ".png");
+        this.site = metadata.sourceSite;
         this.version = "1.0.0";
-        this.userAgent = "''";
-        this.cookieString = "''";
+        this.userAgent = "";
+        this.cookieString = "";
+        this.options = metadata.options;
     }
-    LightNovelFRPlugin.prototype.popularNovels = function (page) {
+    WPmangaStreamPlugin.prototype.popularNovels = function (page) {
         return __awaiter(this, void 0, void 0, function () {
             var url, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = this.site + 'series/?page=' + page + '&status=&order=popular';
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, {})];
-                    case 1: return [4 /*yield*/, (_a.sent()).text()];
-                    case 2:
+                        url = this.site + "series/?page=" + page + "&status=&order=popular";
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
+                    case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio('article.maindet').each(function () {
-                            var novelName = loadedCheerio(this).find('h2').text();
-                            var image = loadedCheerio(this).find('img');
-                            var novelCover = image.attr('data-src') || image.attr('src');
-                            var novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+                        loadedCheerio("article.maindet").each(function () {
+                            var novelName = loadedCheerio(this).find("h2").text();
+                            var image = loadedCheerio(this).find("img");
+                            var novelCover = image.attr("data-src") || image.attr("src");
+                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
                             if (!novelUrl)
                                 return;
                             var novel = {
@@ -80,56 +81,54 @@ var LightNovelFRPlugin = /** @class */ (function () {
             });
         });
     };
-    LightNovelFRPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
+    WPmangaStreamPlugin.prototype.parseNovelAndChapters = function (url) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var url, body, loadedCheerio, novel, summary, i, p, novelChapters;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        url = novelUrl;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, {})];
-                    case 1: return [4 /*yield*/, (_a.sent()).text()];
-                    case 2:
-                        body = _a.sent();
+            var body, loadedCheerio, novel, summary, i, p, novelChapters;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
+                    case 1:
+                        body = _b.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = { url: url };
                         // novel.url = url;
-                        novel.name = loadedCheerio('h1.entry-title').text();
+                        novel.name = loadedCheerio("h1.entry-title").text();
                         novel.cover =
-                            loadedCheerio('img.wp-post-image').attr('data-src') ||
-                                loadedCheerio('img.wp-post-image').attr('src');
-                        novel.status = loadedCheerio('div.sertostat > span').attr('class');
-                        loadedCheerio('div.serl > span').each(function () {
+                            loadedCheerio("img.wp-post-image").attr("data-src") ||
+                                loadedCheerio("img.wp-post-image").attr("src");
+                        novel.status = loadedCheerio("div.sertostat > span").attr("class");
+                        loadedCheerio("div.serl > span").each(function () {
                             var detailName = loadedCheerio(this).text().trim();
                             var detail = loadedCheerio(this).next().text().trim();
                             switch (detailName) {
-                                case 'الكاتب':
-                                case 'Author':
-                                case 'Auteur':
+                                case "الكاتب":
+                                case "Author":
+                                case "Auteur":
                                     novel.author = detail;
                                     break;
                             }
                         });
-                        novel.genres = loadedCheerio('.sertogenre')
-                            .children('a')
+                        novel.genres = loadedCheerio(".sertogenre")
+                            .children("a")
                             .map(function (i, el) { return loadedCheerio(el).text(); })
                             .toArray()
-                            .join(',');
-                        summary = loadedCheerio('.sersys > p').siblings().remove("div").end();
+                            .join(",");
+                        summary = loadedCheerio(".sersys > p").siblings().remove("div").end();
                         novel.summary = "";
                         for (i = 0; i < summary.length; i++) {
                             p = summary[i];
-                            novel.summary += loadedCheerio(p).text().trim() + "\n\n";
+                            novel.summary += loadedCheerio(p).text().trim() + "\\n\\n";
                         }
                         novelChapters = [];
-                        loadedCheerio('.eplister')
-                            .find('li')
+                        loadedCheerio(".eplister")
+                            .find("li")
                             .each(function () {
-                            var chapterName = loadedCheerio(this).find('.epl-num').text() +
-                                ' - ' +
-                                loadedCheerio(this).find('.epl-title').text();
-                            var releaseDate = loadedCheerio(this).find('.epl-date').text().trim();
-                            var chapterUrl = loadedCheerio(this).find('a').attr('href');
+                            var chapterName = loadedCheerio(this).find(".epl-num").text() +
+                                " - " +
+                                loadedCheerio(this).find(".epl-title").text();
+                            var releaseDate = loadedCheerio(this).find(".epl-date").text().trim();
+                            var chapterUrl = loadedCheerio(this).find("a").attr("href");
                             if (!chapterUrl)
                                 return;
                             var chapter = {
@@ -140,50 +139,45 @@ var LightNovelFRPlugin = /** @class */ (function () {
                             novelChapters.push(chapter);
                         });
                         novel.chapters = novelChapters;
-                        if (novel.chapters)
+                        if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.reverseChapters) && novel.chapters)
                             novel.chapters.reverse();
                         return [2 /*return*/, novel];
                 }
             });
         });
     };
-    LightNovelFRPlugin.prototype.parseChapter = function (chapterUrl) {
+    WPmangaStreamPlugin.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, body, loadedCheerio, chapterText;
+            var body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        url = chapterUrl;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, {})];
-                    case 1: return [4 /*yield*/, (_a.sent()).text()];
-                    case 2:
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl).then(function (res) { return res.text(); })];
+                    case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        chapterText = loadedCheerio('.epcontent').html() || '';
+                        chapterText = loadedCheerio(".epcontent").html() || "";
                         return [2 /*return*/, chapterText];
                 }
             });
         });
     };
-    ;
-    LightNovelFRPlugin.prototype.searchNovels = function (searchTerm) {
+    WPmangaStreamPlugin.prototype.searchNovels = function (searchTerm) {
         return __awaiter(this, void 0, void 0, function () {
             var url, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = this.site + "?s=" + searchTerm;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, {})];
-                    case 1: return [4 /*yield*/, (_a.sent()).text()];
-                    case 2:
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
+                    case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio('article.maindet').each(function () {
-                            var novelName = loadedCheerio(this).find('h2').text();
-                            var image = loadedCheerio(this).find('img');
-                            var novelCover = image.attr('data-src') || image.attr('src');
-                            var novelUrl = loadedCheerio(this).find('h2 a').attr('href');
+                        loadedCheerio("article.maindet").each(function () {
+                            var novelName = loadedCheerio(this).find("h2").text();
+                            var image = loadedCheerio(this).find("img");
+                            var novelCover = image.attr("data-src") || image.attr("src");
+                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
                             if (!novelUrl)
                                 return;
                             var novel = {
@@ -198,17 +192,7 @@ var LightNovelFRPlugin = /** @class */ (function () {
             });
         });
     };
-    ;
-    LightNovelFRPlugin.prototype.fetchImage = function (url) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchFile)(url)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    return LightNovelFRPlugin;
+    return WPmangaStreamPlugin;
 }());
-exports.default = new LightNovelFRPlugin();
+var plugin = new WPmangaStreamPlugin({ "id": "lightnovelfr", "sourceSite": "https://lightnovelfr.com/", "sourceName": "Ligh Novel FR", "options": { "lang": "French", "reverseChapters": true } });
+exports.default = plugin;

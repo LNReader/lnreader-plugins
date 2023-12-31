@@ -84,7 +84,7 @@ class ReN implements Plugin.PluginBase {
       .map((tags) => tags?.name)
       .filter((tags) => tags);
 
-    if (tags.length > 0) {
+    if (tags.length) {
       novel.genres = tags.join(",");
     }
 

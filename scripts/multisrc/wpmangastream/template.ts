@@ -170,6 +170,3 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
 
   fetchImage = fetchFile;
 }
-
-const plugin = new WPmangaStreamPlugin({"id":"lightnovelfr","sourceSite":"https://lightnovelfr.com/","sourceName":"Ligh Novel FR","options":{"lang":"French","reverseChapters":true}});
-export default plugin;
