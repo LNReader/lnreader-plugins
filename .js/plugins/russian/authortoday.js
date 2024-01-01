@@ -89,15 +89,9 @@ var AuthorToday = /** @class */ (function () {
                     { label: "Детская литература", value: "detskaya-literatura" },
                     { label: "Документальная проза", value: "non-fiction" },
                     { label: "Историческая проза", value: "historical-fiction" },
-                    {
-                        label: "Исторические приключения",
-                        value: "historical-adventure",
-                    },
+                    { label: "Исторические приключения", value: "historical-adventure" },
                     { label: "Исторический детектив", value: "historical-mystery" },
-                    {
-                        label: "Исторический любовный роман",
-                        value: "historical-romance",
-                    },
+                    { label: "Исторический любовный роман", value: "historical-romance" },
                     { label: "Историческое фэнтези", value: "historical-fantasy" },
                     { label: "Киберпанк", value: "cyberpunk" },
                     { label: "Короткий любовный роман", value: "short-romance" },
@@ -112,10 +106,7 @@ var AuthorToday = /** @class */ (function () {
                     { label: "Политический роман", value: "political-fiction" },
                     { label: "Попаданцы", value: "popadantsy" },
                     { label: "Попаданцы в космос", value: "popadantsy-v-kosmos" },
-                    {
-                        label: "Попаданцы в магические миры",
-                        value: "popadantsy-v-magicheskie-miry",
-                    },
+                    { label: "Попаданцы в магические миры", value: "popadantsy-v-magicheskie-miry" },
                     { label: "Попаданцы во времени", value: "popadantsy-vo-vremeni" },
                     { label: "Постапокалипсис", value: "postapocalyptic" },
                     { label: "Поэзия", value: "poetry" },
@@ -127,20 +118,14 @@ var AuthorToday = /** @class */ (function () {
                     { label: "Романтическая эротика", value: "romantic-erotika" },
                     { label: "Сказка", value: "fairy-tale" },
                     { label: "Современная проза", value: "modern-prose" },
-                    {
-                        label: "Современный любовный роман",
-                        value: "contemporary-romance",
-                    },
+                    { label: "Современный любовный роман", value: "contemporary-romance" },
                     { label: "Социальная фантастика", value: "sf-social" },
                     { label: "Стимпанк", value: "steampunk" },
                     { label: "Темное фэнтези", value: "dark-fantasy" },
                     { label: "Триллер", value: "thriller" },
                     { label: "Ужасы", value: "horror" },
                     { label: "Фантастика", value: "sci-fi" },
-                    {
-                        label: "Фантастический детектив",
-                        value: "detective-science-fiction",
-                    },
+                    { label: "Фантастический детектив", value: "detective-science-fiction" },
                     { label: "Фанфик", value: "fanfiction" },
                     { label: "Фэнтези", value: "fantasy" },
                     { label: "Шпионский детектив", value: "spy-mystery" },
@@ -225,8 +210,7 @@ var AuthorToday = /** @class */ (function () {
                             url += "&genre=" + filters.genre.value;
                         }
                         url +=
-                            "&sorting=" +
-                                (showLatestNovels ? "recent" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "popular");
+                            "&sorting=" + (showLatestNovels ? "recent" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "popular");
                         url += "&form=" + (((_d = filters === null || filters === void 0 ? void 0 : filters.form) === null || _d === void 0 ? void 0 : _d.value) || "any");
                         url += "&state=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.state) === null || _e === void 0 ? void 0 : _e.value) || "any");
                         url += "&series=" + (((_f = filters === null || filters === void 0 ? void 0 : filters.series) === null || _f === void 0 ? void 0 : _f.value) || "any");

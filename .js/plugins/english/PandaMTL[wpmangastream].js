@@ -185,5 +185,5 @@ var WPmangaStreamPlugin = /** @class */ (function () {
     };
     return WPmangaStreamPlugin;
 }());
-var plugin = new WPmangaStreamPlugin({ "id": "kol-novel", "sourceSite": "https://kolnovel.com/", "sourceName": "Kol Novel", "options": { "lang": "arabic", "reverseChapters": true } });
+var plugin = new WPmangaStreamPlugin({ "id": "pandamtl.com", "sourceSite": "https://pandamtl.com/", "sourceName": "PandaMTL", "options": { "lang": "english", "reverseChapters": true } });
 exports.default = plugin;

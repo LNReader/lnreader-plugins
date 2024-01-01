@@ -94,7 +94,7 @@ var RNBH = /** @class */ (function () {
             },
             events: {
                 label: "События",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "[Награжденная работа]", value: "611" },
                     { label: "18+", value: "338" },
@@ -148,10 +148,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Боевые соревнования", value: "422" },
                     { label: "Божественная защита", value: "336" },
                     { label: "Божественные силы", value: "224" },
-                    {
-                        label: "Большая разница в возрасте между героем и его любовным интересом",
-                        value: "348",
-                    },
+                    { label: "Большая разница в возрасте между героем и его любовным интересом", value: "348" },
                     { label: "Борьба за власть", value: "544" },
                     { label: "Брак", value: "363" },
                     { label: "Брак по расчету", value: "65" },
@@ -173,10 +170,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Владелец магазина", value: "653" },
                     { label: "Внезапная сила", value: "376" },
                     { label: "Внезапное богатство", value: "802" },
-                    {
-                        label: "Внешний вид отличается от фактического возраста",
-                        value: "334",
-                    },
+                    { label: "Внешний вид отличается от фактического возраста", value: "334" },
                     { label: "Военные Летописи", value: "740" },
                     { label: "Возвращение из другого мира", value: "673" },
                     { label: "Войны", value: "58" },
@@ -250,10 +244,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Депрессия", value: "494" },
                     { label: "Детективы", value: "561" },
                     { label: "Дискриминация", value: "34" },
-                    {
-                        label: "Добыча денег одно из основных стремлений главного героя",
-                        value: "307",
-                    },
+                    { label: "Добыча денег одно из основных стремлений главного героя", value: "307" },
                     { label: "Долгая разлука", value: "200" },
                     { label: "Домашние дела", value: "178" },
                     { label: "Домогательство", value: "394" },
@@ -280,10 +271,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Есть сериал-адаптация", value: "421" },
                     { label: "Есть фильм по мотивам", value: "47" },
                     { label: "Женища-наставник", value: "438" },
-                    {
-                        label: "Жертва изнасилования влюбляется в насильника",
-                        value: "414",
-                    },
+                    { label: "Жертва изнасилования влюбляется в насильника", value: "414" },
                     { label: "Жесткая, двуличная личность", value: "249" },
                     { label: "Жестокие персонажи", value: "436" },
                     { label: "Жестокое обращение с ребенком", value: "617" },
@@ -339,10 +327,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Карточные игры", value: "654" },
                     { label: "Киберспорт", value: "658" },
                     { label: "Кланы", value: "950" },
-                    {
-                        label: "Класс безработного [Игровой класс в игре]",
-                        value: "727",
-                    },
+                    { label: "Класс безработного [Игровой класс в игре]", value: "727" },
                     { label: "Клоны", value: "365" },
                     { label: "Клубы", value: "96" },
                     { label: "Книги", value: "341" },
@@ -383,20 +368,14 @@ var RNBH = /** @class */ (function () {
                     { label: "Лоли", value: "92" },
                     { label: "Лотерея", value: "401" },
                     { label: "Любовный интерес влюбляется первым", value: "647" },
-                    {
-                        label: "Любовный интерес главного героя носит очки",
-                        value: "576",
-                    },
+                    { label: "Любовный интерес главного героя носит очки", value: "576" },
                     { label: "Любовный треугольник", value: "98" },
                     { label: "Любовь детства", value: "500" },
                     { label: "Любовь с первого взгляда", value: "730" },
                     { label: "Магические надписи", value: "373" },
                     { label: "Магические печати", value: "277" },
                     { label: "Магические технологии", value: "357" },
-                    {
-                        label: "Магическое пространство/измерение, доступное не всем персонажам",
-                        value: "244",
-                    },
+                    { label: "Магическое пространство/измерение, доступное не всем персонажам", value: "244" },
                     { label: "Магия", value: "38" },
                     { label: "Магия призыва", value: "333" },
                     { label: "Мазохистские персонажи", value: "660" },
@@ -529,10 +508,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Первая любовь", value: "716" },
                     { label: "Первоисточник новеллы — манга", value: "560" },
                     { label: "Первый раз", value: "845" },
-                    {
-                        label: "Перемещение в другой мир, имея при себе современные достижения",
-                        value: "732",
-                    },
+                    { label: "Перемещение в другой мир, имея при себе современные достижения", value: "732" },
                     { label: "Перемещение в игровой мир", value: "532" },
                     { label: "Перемещение в иной мир", value: "754" },
                     { label: "Перерождение в ином мире", value: "755" },
@@ -544,10 +520,7 @@ var RNBH = /** @class */ (function () {
                     { label: "Питомцы", value: "253" },
                     { label: "Племенное общество", value: "291" },
                     { label: "Повелитель демонов", value: "171" },
-                    {
-                        label: "Повествование от нескольких лиц/Несколько точек зрения",
-                        value: "156",
-                    },
+                    { label: "Повествование от нескольких лиц/Несколько точек зрения", value: "156" },
                     { label: "Подземелья", value: "219" },
                     { label: "Пожелания", value: "166" },
                     { label: "Познание Дао", value: "360" },
@@ -988,11 +961,11 @@ var RNBH = /** @class */ (function () {
                     { label: "Weak-lead", value: "885" },
                     { label: "Web-novel", value: "1024" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             tags: {
                 label: "Жанры",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Боевые искусства", value: "22" },
                     { label: "Гарем", value: "114" },
@@ -1037,17 +1010,17 @@ var RNBH = /** @class */ (function () {
                     { label: "Isekai", value: "999" },
                     { label: "Video games", value: "993" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
         };
     }
     RNBH.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, tags, result, body, novels;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            var url, tagsPositive, tagsNegative, result, body, novels;
+            return __generator(this, function (_x) {
+                switch (_x.label) {
                     case 0:
                         url = this.site + "api/search?page=".concat(pageNo, "&sort=");
                         url += showLatestNovels
@@ -1055,24 +1028,37 @@ var RNBH = /** @class */ (function () {
                             : (filters === null || filters === void 0 ? void 0 : filters.sort) || "computed_rating";
                         url += "&status=" + (((_b = filters === null || filters === void 0 ? void 0 : filters.status) === null || _b === void 0 ? void 0 : _b.value) ? (_c = filters === null || filters === void 0 ? void 0 : filters.status) === null || _c === void 0 ? void 0 : _c.value : "0");
                         if (filters) {
-                            if (Array.isArray((_d = filters.country) === null || _d === void 0 ? void 0 : _d.value) &&
-                                ((_e = filters.country) === null || _e === void 0 ? void 0 : _e.value.length)) {
+                            if ((_e = (_d = filters.country) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
                                 url += "&country=" + filters.country.value.join(",");
                             }
-                            tags = [(_f = filters === null || filters === void 0 ? void 0 : filters.tags) === null || _f === void 0 ? void 0 : _f.value, (_g = filters === null || filters === void 0 ? void 0 : filters.events) === null || _g === void 0 ? void 0 : _g.value]
-                                .flat()
-                                .filter(function (t) { return t; });
-                            if (tags.length) {
-                                url += "&tags:positive=" + tags.join(",");
+                            if (((_h = (_g = (_f = filters.tags) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) ||
+                                ((_l = (_k = (_j = filters.events) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.include) === null || _l === void 0 ? void 0 : _l.length)) {
+                                tagsPositive = [
+                                    (_m = filters.tags.value) === null || _m === void 0 ? void 0 : _m.include,
+                                    (_o = filters.events.value) === null || _o === void 0 ? void 0 : _o.include,
+                                ]
+                                    .flat()
+                                    .filter(function (t) { return t; });
+                                url += "&tags:positive=" + tagsPositive.join(",");
+                            }
+                            if (((_r = (_q = (_p = filters === null || filters === void 0 ? void 0 : filters.tags) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.exclude) === null || _r === void 0 ? void 0 : _r.length) ||
+                                ((_u = (_t = (_s = filters === null || filters === void 0 ? void 0 : filters.events) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.exclude) === null || _u === void 0 ? void 0 : _u.length)) {
+                                tagsNegative = [
+                                    (_v = filters.tags.value) === null || _v === void 0 ? void 0 : _v.exclude,
+                                    (_w = filters.events.value) === null || _w === void 0 ? void 0 : _w.exclude,
+                                ]
+                                    .flat()
+                                    .filter(function (t) { return t; });
+                                url += "&tags:negative=" + tagsNegative.join(",");
                             }
                         }
                         url += "&take=40";
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _h.sent();
+                        result = _x.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        body = (_h.sent());
+                        body = (_x.sent());
                         novels = [];
                         body.resource.forEach(function (novel) {
                             var _a;

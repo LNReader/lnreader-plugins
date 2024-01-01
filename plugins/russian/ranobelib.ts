@@ -17,7 +17,10 @@ class RLIB implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = `${this.site}/manga-list?sort=`;
     url += showLatestNovels
@@ -25,48 +28,47 @@ class RLIB implements Plugin.PluginBase {
       : filters?.sort?.value || "rate";
     url += "&dir=" + (filters?.order?.value || "desc");
 
-    if (filters) {
-      if (Array.isArray(filters.type?.value) && filters.type?.value?.length) {
-        url += filters.type.value.map((i) => `&types[]=${i}`).join("");
-      }
+    if (filters.type?.value?.length) {
+      url += filters.type.value.map((i) => "&types[]=" + i).join("");
+    }
 
-      if (
-        Array.isArray(filters.format?.value) &&
-        filters.format?.value?.length
-      ) {
-        url += filters.format.value
-          .map((i) => `&format[include][]=${i}`)
-          .join("");
-      }
+    if (filters.format?.value?.include?.length) {
+      url += filters.format.value.include
+        .map((i) => "&format[include][]=" + i).join("");
+    }
 
-      if (
-        Array.isArray(filters.status?.value) &&
-        filters.status?.value?.length
-      ) {
-        url += filters.status.value.map((i) => `&status[]=${i}`).join("");
-      }
+    if (filters.format?.value?.exclude?.length) {
+      url += filters.format.value.exclude
+        .map((i) => "&format[exclude][]=" + i).join("");
+    }
 
-      if (
-        Array.isArray(filters.statuss?.value) &&
-        filters.statuss?.value?.length
-      ) {
-        url += filters.statuss.value
-          .map((i) => `&manga_status[]=${i}`)
-          .join("");
-      }
+    if (filters.status?.value?.length) {
+      url += filters.status.value.map((i) => "&status[]=" + i).join("");
+    }
 
-      if (
-        Array.isArray(filters.genres?.value) &&
-        filters.genres?.value?.length
-      ) {
-        url += filters.genres.value
-          .map((i) => `&genres[include][]=${i}`)
-          .join("");
-      }
+    if (filters.statuss?.value?.length) {
+      url += filters.statuss.value
+        .map((i) => "&manga_status[]=" + i).join("");
+    }
 
-      if (Array.isArray(filters.tags?.value) && filters.tags?.value?.length) {
-        url += filters.tags.value.map((i) => `&tags[include][]=${i}`).join("");
-      }
+    if (filters.genres?.value?.include?.length) {
+      url += filters.genres.value.include
+        .map((i) => "&genres[include][]=" + i).join("");
+    }
+
+    if (filters.genres?.value?.exclude?.length) {
+      url += filters.genres.value.exclude
+        .map((i) => "&genres[exclude][]=" + i).join("");
+    }
+
+    if (filters.tags?.value?.include?.length) {
+      url += filters.tags.value.include
+        ?.map((i) => "&tags[include][]=" + i).join("");
+    }
+
+    if (filters.tags?.value?.exclude?.length) {
+      url += filters.tags.value.exclude
+        .map((i) => "&tags[exclude][]=" + i).join("");
     }
 
     url += "&page=" + pageNo;
@@ -249,7 +251,7 @@ class RLIB implements Plugin.PluginBase {
     },
     format: {
       label: "Формат выпуска",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "4-кома (Ёнкома)", value: "1" },
         { label: "В цвете", value: "4" },
@@ -259,7 +261,7 @@ class RLIB implements Plugin.PluginBase {
         { label: "Сборник", value: "2" },
         { label: "Сингл", value: "5" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     status: {
       label: "Статус перевода",
@@ -286,7 +288,7 @@ class RLIB implements Plugin.PluginBase {
     },
     genres: {
       label: "Жанры",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "Арт", value: "32" },
         { label: "Безумие", value: "91" },
@@ -344,11 +346,11 @@ class RLIB implements Plugin.PluginBase {
         { label: "Юри", value: "73" },
         { label: "Яой", value: "74" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     tags: {
       label: "Теги",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "Авантюристы", value: "328" },
         { label: "Антигерой", value: "176" },
@@ -422,7 +424,7 @@ class RLIB implements Plugin.PluginBase {
         { label: "Эльфы", value: "217" },
         { label: "Якудза", value: "165" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
   } satisfies Filters;
 }

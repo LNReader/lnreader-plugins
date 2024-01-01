@@ -93,7 +93,7 @@ var RLIB = /** @class */ (function () {
             },
             format: {
                 label: "Формат выпуска",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "4-кома (Ёнкома)", value: "1" },
                     { label: "В цвете", value: "4" },
@@ -103,7 +103,7 @@ var RLIB = /** @class */ (function () {
                     { label: "Сборник", value: "2" },
                     { label: "Сингл", value: "5" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             status: {
                 label: "Статус перевода",
@@ -130,7 +130,7 @@ var RLIB = /** @class */ (function () {
             },
             genres: {
                 label: "Жанры",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Арт", value: "32" },
                     { label: "Безумие", value: "91" },
@@ -188,11 +188,11 @@ var RLIB = /** @class */ (function () {
                     { label: "Юри", value: "73" },
                     { label: "Яой", value: "74" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             tags: {
                 label: "Теги",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Авантюристы", value: "328" },
                     { label: "Антигерой", value: "176" },
@@ -266,63 +266,66 @@ var RLIB = /** @class */ (function () {
                     { label: "Эльфы", value: "217" },
                     { label: "Якудза", value: "165" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
         };
     }
     RLIB.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
-            return __generator(this, function (_z) {
-                switch (_z.label) {
+            return __generator(this, function (_6) {
+                switch (_6.label) {
                     case 0:
                         url = "".concat(this.site, "/manga-list?sort=");
                         url += showLatestNovels
                             ? "last_chapter_at"
                             : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "rate";
                         url += "&dir=" + (((_c = filters === null || filters === void 0 ? void 0 : filters.order) === null || _c === void 0 ? void 0 : _c.value) || "desc");
-                        if (filters) {
-                            if (Array.isArray((_d = filters.type) === null || _d === void 0 ? void 0 : _d.value) && ((_f = (_e = filters.type) === null || _e === void 0 ? void 0 : _e.value) === null || _f === void 0 ? void 0 : _f.length)) {
-                                url += filters.type.value.map(function (i) { return "&types[]=".concat(i); }).join("");
-                            }
-                            if (Array.isArray((_g = filters.format) === null || _g === void 0 ? void 0 : _g.value) &&
-                                ((_j = (_h = filters.format) === null || _h === void 0 ? void 0 : _h.value) === null || _j === void 0 ? void 0 : _j.length)) {
-                                url += filters.format.value
-                                    .map(function (i) { return "&format[include][]=".concat(i); })
-                                    .join("");
-                            }
-                            if (Array.isArray((_k = filters.status) === null || _k === void 0 ? void 0 : _k.value) &&
-                                ((_m = (_l = filters.status) === null || _l === void 0 ? void 0 : _l.value) === null || _m === void 0 ? void 0 : _m.length)) {
-                                url += filters.status.value.map(function (i) { return "&status[]=".concat(i); }).join("");
-                            }
-                            if (Array.isArray((_o = filters.statuss) === null || _o === void 0 ? void 0 : _o.value) &&
-                                ((_q = (_p = filters.statuss) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.length)) {
-                                url += filters.statuss.value
-                                    .map(function (i) { return "&manga_status[]=".concat(i); })
-                                    .join("");
-                            }
-                            if (Array.isArray((_r = filters.genres) === null || _r === void 0 ? void 0 : _r.value) &&
-                                ((_t = (_s = filters.genres) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.length)) {
-                                url += filters.genres.value
-                                    .map(function (i) { return "&genres[include][]=".concat(i); })
-                                    .join("");
-                            }
-                            if (Array.isArray((_u = filters.tags) === null || _u === void 0 ? void 0 : _u.value) && ((_w = (_v = filters.tags) === null || _v === void 0 ? void 0 : _v.value) === null || _w === void 0 ? void 0 : _w.length)) {
-                                url += filters.tags.value.map(function (i) { return "&tags[include][]=".concat(i); }).join("");
-                            }
+                        if ((_e = (_d = filters.type) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
+                            url += filters.type.value.map(function (i) { return "&types[]=" + i; }).join("");
+                        }
+                        if ((_h = (_g = (_f = filters.format) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) {
+                            url += filters.format.value.include
+                                .map(function (i) { return "&format[include][]=" + i; }).join("");
+                        }
+                        if ((_l = (_k = (_j = filters.format) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.exclude) === null || _l === void 0 ? void 0 : _l.length) {
+                            url += filters.format.value.exclude
+                                .map(function (i) { return "&format[exclude][]=" + i; }).join("");
+                        }
+                        if ((_o = (_m = filters.status) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.length) {
+                            url += filters.status.value.map(function (i) { return "&status[]=" + i; }).join("");
+                        }
+                        if ((_q = (_p = filters.statuss) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.length) {
+                            url += filters.statuss.value
+                                .map(function (i) { return "&manga_status[]=" + i; }).join("");
+                        }
+                        if ((_t = (_s = (_r = filters.genres) === null || _r === void 0 ? void 0 : _r.value) === null || _s === void 0 ? void 0 : _s.include) === null || _t === void 0 ? void 0 : _t.length) {
+                            url += filters.genres.value.include
+                                .map(function (i) { return "&genres[include][]=" + i; }).join("");
+                        }
+                        if ((_w = (_v = (_u = filters.genres) === null || _u === void 0 ? void 0 : _u.value) === null || _v === void 0 ? void 0 : _v.exclude) === null || _w === void 0 ? void 0 : _w.length) {
+                            url += filters.genres.value.exclude
+                                .map(function (i) { return "&genres[exclude][]=" + i; }).join("");
+                        }
+                        if ((_z = (_y = (_x = filters.tags) === null || _x === void 0 ? void 0 : _x.value) === null || _y === void 0 ? void 0 : _y.include) === null || _z === void 0 ? void 0 : _z.length) {
+                            url += (_0 = filters.tags.value.include) === null || _0 === void 0 ? void 0 : _0.map(function (i) { return "&tags[include][]=" + i; }).join("");
+                        }
+                        if ((_3 = (_2 = (_1 = filters.tags) === null || _1 === void 0 ? void 0 : _1.value) === null || _2 === void 0 ? void 0 : _2.exclude) === null || _3 === void 0 ? void 0 : _3.length) {
+                            url += filters.tags.value.exclude
+                                .map(function (i) { return "&tags[exclude][]=" + i; }).join("");
                         }
                         url += "&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _z.sent();
+                        result = _6.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _z.sent();
+                        body = _6.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        this.ui = (_y = (_x = loadedCheerio("a.header-right-menu__item")
-                            .attr("href")) === null || _x === void 0 ? void 0 : _x.replace) === null || _y === void 0 ? void 0 : _y.call(_x, /[^0-9]/g, "");
+                        this.ui = (_5 = (_4 = loadedCheerio("a.header-right-menu__item")
+                            .attr("href")) === null || _4 === void 0 ? void 0 : _4.replace) === null || _5 === void 0 ? void 0 : _5.call(_4, /[^0-9]/g, "");
                         novels = [];
                         loadedCheerio(".media-card-wrap").each(function () {
                             var name = loadedCheerio(this).find(".media-card__title").text();

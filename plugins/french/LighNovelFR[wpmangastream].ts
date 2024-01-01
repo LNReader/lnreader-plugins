@@ -40,24 +40,19 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
     const url = this.site + "series/?page=" + page + "&status=&order=popular";
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = load(body);
-
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio("article.maindet").each(function () {
-      const novelName = loadedCheerio(this).find("h2").text();
-      let image = loadedCheerio(this).find("img");
-      const novelCover = image.attr("data-src") || image.attr("src");
-      const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
+      const name = loadedCheerio(this).find("h2").text();
+      const image = loadedCheerio(this).find("img");
+      const url = loadedCheerio(this).find("h2 a").attr("href");
 
-      if (!novelUrl) return;
-
-      const novel = {
-        name: novelName,
-        cover: novelCover,
-        url: novelUrl,
-      };
-
-      novels.push(novel);
+      if (!url) return;
+      novels.push({
+        name,
+        cover: image.attr("data-src") || image.attr("src"),
+        url,
+      });
     });
 
     return novels;
@@ -65,7 +60,7 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
 
   async parseNovelAndChapters(url: string): Promise<Plugin.SourceNovel> {
     const body = await fetchApi(url).then((res) => res.text());
-    let loadedCheerio = load(body);
+    const loadedCheerio = load(body);
 
     const novel: Plugin.SourceNovel = { url };
 
@@ -102,33 +97,27 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
       novel.summary += loadedCheerio(p).text().trim() + "\\n\\n";
     }
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio(".eplister")
       .find("li")
       .each(function () {
-        const chapterName =
+        const name =
           loadedCheerio(this).find(".epl-num").text() +
           " - " +
           loadedCheerio(this).find(".epl-title").text();
 
-        const releaseDate = loadedCheerio(this).find(".epl-date").text().trim();
+        const releaseTime = loadedCheerio(this).find(".epl-date").text().trim();
+        const url = loadedCheerio(this).find("a").attr("href");
 
-        const chapterUrl = loadedCheerio(this).find("a").attr("href");
-
-        if (!chapterUrl) return;
-
-        const chapter = {
-          name: chapterName,
-          url: chapterUrl,
-          releaseDate,
-        };
-
-        novelChapters.push(chapter);
+        if (!url) return;
+        novelChapters.push({ name, url, releaseTime });
       });
 
     novel.chapters = novelChapters;
-    if (this.options?.reverseChapters && novel.chapters) novel.chapters.reverse();
+    if (this.options?.reverseChapters && novel.chapters.length)
+      novel.chapters.reverse();
+
     return novel;
   }
 
@@ -136,8 +125,7 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = load(body);
 
-    let chapterText = loadedCheerio(".epcontent").html() || "";
-
+    const chapterText = loadedCheerio(".epcontent").html() || "";
     return chapterText;
   }
 
@@ -146,23 +134,19 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = load(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio("article.maindet").each(function () {
-      const novelName = loadedCheerio(this).find("h2").text();
-      let image = loadedCheerio(this).find("img");
-      const novelCover = image.attr("data-src") || image.attr("src");
-      const novelUrl = loadedCheerio(this).find("h2 a").attr("href");
+      const name = loadedCheerio(this).find("h2").text();
+      const image = loadedCheerio(this).find("img");
+      const url = loadedCheerio(this).find("h2 a").attr("href");
 
-      if (!novelUrl) return;
-
-      const novel = {
-        name: novelName,
-        cover: novelCover,
-        url: novelUrl,
-      };
-
-      novels.push(novel);
+      if (!url) return;
+      novels.push({
+        name,
+        cover: image.attr("data-src") || image.attr("src"),
+        url,
+      });
     });
 
     return novels;

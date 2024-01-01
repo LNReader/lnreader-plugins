@@ -15,31 +15,32 @@ class Jaomix implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/?searchrn";
 
-    if (filters?.lang?.value instanceof Array) {
+    if (filters?.lang?.value?.length) {
       url += filters.lang.value
-        .map((lang, idx) => `&lang[${idx}]=${lang}`)
-        .join("");
+        .map((lang, idx) => `&lang[${idx}]=${lang}`).join("");
     }
-    if (filters?.genre?.value instanceof Array) {
-      url += filters.genre.value
-        .map((genre, idx) => `&genre[${idx}]=${genre}`)
-        .join("");
+
+    if (filters?.genre?.value?.include?.length) {
+      url += filters.genre.value.include
+        .map((genre, idx) => `&genre[${idx}]=${genre}`).join("");
     }
-    //if (filters?.delgenre?.value instanceof Array) {
-    //  url += filters.delgenre.value
-    //    .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`)
-    //    .join("");
-    //}
+
+    if (filters?.genre?.value?.exclude?.length) {
+      url += filters.genre.value.exclude
+        .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`).join("");
+    }
 
     url += "&sortcountchapt=" + (filters?.sortcountchapt?.value || "1");
     url += "&sortdaycreate=" + (filters?.sortdaycreate?.value || "1");
     url +=
-      "&sortby=" +
-      (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
+      "&sortby=" + (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
     url += "&gpage=" + pageNo;
 
     const result = await fetchApi(url);
@@ -158,7 +159,7 @@ class Jaomix implements Plugin.PluginBase {
   filters = {
     sortby: {
       label: "Сортировка:",
-      value: "",
+      value: "topweek",
       options: [
         { label: "Топ недели", value: "topweek" },
         { label: "По алфавиту", value: "alphabet" },
@@ -174,7 +175,7 @@ class Jaomix implements Plugin.PluginBase {
     },
     sortdaycreate: {
       label: "Дата добавления:",
-      value: "",
+      value: "1",
       options: [
         { label: "Любое", value: "1" },
         { label: "От 120 до 180 дней", value: "1218" },
@@ -189,7 +190,7 @@ class Jaomix implements Plugin.PluginBase {
     },
     sortcountchapt: {
       label: "Количество глав:",
-      value: "",
+      value: "1",
       options: [
         { label: "Любое кол-во глав", value: "1" },
         { label: "До 500", value: "500" },
@@ -203,7 +204,7 @@ class Jaomix implements Plugin.PluginBase {
     },
     genre: {
       label: "Жанры:",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "Боевые Искусства", value: "Боевые Искусства" },
         { label: "Виртуальный Мир", value: "Виртуальный Мир" },
@@ -251,7 +252,7 @@ class Jaomix implements Plugin.PluginBase {
         { label: "Xuanhuan", value: "Xuanhuan" },
         { label: "Yaoi", value: "Yaoi" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     lang: {
       label: "Выбрать языки:",

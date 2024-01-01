@@ -53,7 +53,7 @@ var Jaomix = /** @class */ (function () {
         this.filters = {
             sortby: {
                 label: "Сортировка:",
-                value: "",
+                value: "topweek",
                 options: [
                     { label: "Топ недели", value: "topweek" },
                     { label: "По алфавиту", value: "alphabet" },
@@ -69,7 +69,7 @@ var Jaomix = /** @class */ (function () {
             },
             sortdaycreate: {
                 label: "Дата добавления:",
-                value: "",
+                value: "1",
                 options: [
                     { label: "Любое", value: "1" },
                     { label: "От 120 до 180 дней", value: "1218" },
@@ -84,7 +84,7 @@ var Jaomix = /** @class */ (function () {
             },
             sortcountchapt: {
                 label: "Количество глав:",
-                value: "",
+                value: "1",
                 options: [
                     { label: "Любое кол-во глав", value: "1" },
                     { label: "До 500", value: "500" },
@@ -98,7 +98,7 @@ var Jaomix = /** @class */ (function () {
             },
             genre: {
                 label: "Жанры:",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Боевые Искусства", value: "Боевые Искусства" },
                     { label: "Виртуальный Мир", value: "Виртуальный Мир" },
@@ -146,7 +146,7 @@ var Jaomix = /** @class */ (function () {
                     { label: "Xuanhuan", value: "Xuanhuan" },
                     { label: "Yaoi", value: "Yaoi" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             lang: {
                 label: "Выбрать языки:",
@@ -162,41 +162,37 @@ var Jaomix = /** @class */ (function () {
         };
     }
     Jaomix.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            return __generator(this, function (_o) {
+                switch (_o.label) {
                     case 0:
                         url = this.site + "/?searchrn";
-                        if (((_b = filters === null || filters === void 0 ? void 0 : filters.lang) === null || _b === void 0 ? void 0 : _b.value) instanceof Array) {
+                        if ((_c = (_b = filters === null || filters === void 0 ? void 0 : filters.lang) === null || _b === void 0 ? void 0 : _b.value) === null || _c === void 0 ? void 0 : _c.length) {
                             url += filters.lang.value
-                                .map(function (lang, idx) { return "&lang[".concat(idx, "]=").concat(lang); })
-                                .join("");
+                                .map(function (lang, idx) { return "&lang[".concat(idx, "]=").concat(lang); }).join("");
                         }
-                        if (((_c = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _c === void 0 ? void 0 : _c.value) instanceof Array) {
-                            url += filters.genre.value
-                                .map(function (genre, idx) { return "&genre[".concat(idx, "]=").concat(genre); })
-                                .join("");
+                        if ((_f = (_e = (_d = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.include) === null || _f === void 0 ? void 0 : _f.length) {
+                            url += filters.genre.value.include
+                                .map(function (genre, idx) { return "&genre[".concat(idx, "]=").concat(genre); }).join("");
                         }
-                        //if (filters?.delgenre?.value instanceof Array) {
-                        //  url += filters.delgenre.value
-                        //    .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`)
-                        //    .join("");
-                        //}
-                        url += "&sortcountchapt=" + (((_d = filters === null || filters === void 0 ? void 0 : filters.sortcountchapt) === null || _d === void 0 ? void 0 : _d.value) || "1");
-                        url += "&sortdaycreate=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.sortdaycreate) === null || _e === void 0 ? void 0 : _e.value) || "1");
+                        if ((_j = (_h = (_g = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _g === void 0 ? void 0 : _g.value) === null || _h === void 0 ? void 0 : _h.exclude) === null || _j === void 0 ? void 0 : _j.length) {
+                            url += filters.genre.value.exclude
+                                .map(function (genre, idx) { return "&delgenre[".concat(idx, "]=del ").concat(genre); }).join("");
+                        }
+                        url += "&sortcountchapt=" + (((_k = filters === null || filters === void 0 ? void 0 : filters.sortcountchapt) === null || _k === void 0 ? void 0 : _k.value) || "1");
+                        url += "&sortdaycreate=" + (((_l = filters === null || filters === void 0 ? void 0 : filters.sortdaycreate) === null || _l === void 0 ? void 0 : _l.value) || "1");
                         url +=
-                            "&sortby=" +
-                                (showLatestNovels ? "upd" : ((_f = filters === null || filters === void 0 ? void 0 : filters.sortby) === null || _f === void 0 ? void 0 : _f.value) || "topweek");
+                            "&sortby=" + (showLatestNovels ? "upd" : ((_m = filters === null || filters === void 0 ? void 0 : filters.sortby) === null || _m === void 0 ? void 0 : _m.value) || "topweek");
                         url += "&gpage=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _g.sent();
+                        result = _o.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _g.sent();
+                        body = _o.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
                         loadedCheerio('div[class="block-home"] > div[class="one"]').each(function () {

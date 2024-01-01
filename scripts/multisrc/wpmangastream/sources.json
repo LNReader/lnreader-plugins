@@ -3,9 +3,9 @@
     "id": "lightnovelfr",
     "sourceSite": "https://lightnovelfr.com/",
     "sourceName": "Ligh Novel FR",
-    "options": { 
-      "lang": "French", 
-      "reverseChapters": true 
+    "options": {
+      "lang": "French",
+      "reverseChapters": true
     }
   },
   {
@@ -14,6 +14,24 @@
     "sourceName": "Kol Novel",
     "options": {
       "lang": "arabic",
+      "reverseChapters": true
+    }
+  },
+  {
+    "id": "pandamtl.com",
+    "sourceSite": "https://pandamtl.com/",
+    "sourceName": "PandaMTL",
+    "options": {
+      "lang": "english",
+      "reverseChapters": true
+    }
+  },
+  {
+    "id": "noblemtl.com",
+    "sourceSite": "https://noblemtl.com/",
+    "sourceName": "Noble Machine translations",
+    "options": {
+      "lang": "english",
       "reverseChapters": true
     }
   }

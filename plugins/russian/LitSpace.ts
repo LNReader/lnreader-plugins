@@ -146,10 +146,7 @@ class freedlit implements Plugin.PluginBase {
         { label: "Документальная проза", value: "biography" },
         { label: "Историческая проза", value: "historical-fiction" },
         { label: "Исторический детектив", value: "historical-mystery" },
-        {
-          label: "Исторический любовный роман",
-          value: "historical-romantic-novel",
-        },
+        { label: "Исторический любовный роман", value: "historical-romantic-novel" },
         { label: "Историческое фэнтези", value: "historical-fantasy" },
         { label: "Киберпанк", value: "cyberpunk" },
         { label: "Космическая фантастика", value: "cosmic-fiction" },

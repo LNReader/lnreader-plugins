@@ -16,7 +16,10 @@ class RNBH implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + `api/search?page=${pageNo}&sort=`;
     url += showLatestNovels
@@ -25,17 +28,32 @@ class RNBH implements Plugin.PluginBase {
     url += "&status=" + (filters?.status?.value ? filters?.status?.value : "0");
 
     if (filters) {
-      if (
-        Array.isArray(filters.country?.value) &&
-        filters.country?.value.length
-      ) {
+      if (filters.country?.value?.length) {
         url += "&country=" + filters.country.value.join(",");
       }
-      let tags = [filters?.tags?.value, filters?.events?.value]
-        .flat()
-        .filter((t) => t);
-      if (tags.length) {
-        url += "&tags:positive=" + tags.join(",");
+      if (
+        filters.tags?.value?.include?.length ||
+        filters.events?.value?.include?.length
+      ) {
+        const tagsPositive = [
+          filters.tags.value?.include,
+          filters.events.value?.include,
+        ]
+          .flat()
+          .filter((t) => t);
+        url += "&tags:positive=" + tagsPositive.join(",");
+      }
+      if (
+        filters?.tags?.value?.exclude?.length ||
+        filters?.events?.value?.exclude?.length
+      ) {
+        const tagsNegative = [
+          filters.tags.value?.exclude,
+          filters.events.value?.exclude,
+        ]
+          .flat()
+          .filter((t) => t);
+        url += "&tags:negative=" + tagsNegative.join(",");
       }
     }
 
@@ -203,7 +221,7 @@ class RNBH implements Plugin.PluginBase {
     },
     events: {
       label: "События",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "[Награжденная работа]", value: "611" },
         { label: "18+", value: "338" },
@@ -257,11 +275,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Боевые соревнования", value: "422" },
         { label: "Божественная защита", value: "336" },
         { label: "Божественные силы", value: "224" },
-        {
-          label:
-            "Большая разница в возрасте между героем и его любовным интересом",
-          value: "348",
-        },
+        { label: "Большая разница в возрасте между героем и его любовным интересом", value: "348" },
         { label: "Борьба за власть", value: "544" },
         { label: "Брак", value: "363" },
         { label: "Брак по расчету", value: "65" },
@@ -283,10 +297,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Владелец магазина", value: "653" },
         { label: "Внезапная сила", value: "376" },
         { label: "Внезапное богатство", value: "802" },
-        {
-          label: "Внешний вид отличается от фактического возраста",
-          value: "334",
-        },
+        { label: "Внешний вид отличается от фактического возраста", value: "334" },
         { label: "Военные Летописи", value: "740" },
         { label: "Возвращение из другого мира", value: "673" },
         { label: "Войны", value: "58" },
@@ -360,10 +371,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Депрессия", value: "494" },
         { label: "Детективы", value: "561" },
         { label: "Дискриминация", value: "34" },
-        {
-          label: "Добыча денег одно из основных стремлений главного героя",
-          value: "307",
-        },
+        { label: "Добыча денег одно из основных стремлений главного героя", value: "307" },
         { label: "Долгая разлука", value: "200" },
         { label: "Домашние дела", value: "178" },
         { label: "Домогательство", value: "394" },
@@ -390,10 +398,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Есть сериал-адаптация", value: "421" },
         { label: "Есть фильм по мотивам", value: "47" },
         { label: "Женища-наставник", value: "438" },
-        {
-          label: "Жертва изнасилования влюбляется в насильника",
-          value: "414",
-        },
+        { label: "Жертва изнасилования влюбляется в насильника", value: "414" },
         { label: "Жесткая, двуличная личность", value: "249" },
         { label: "Жестокие персонажи", value: "436" },
         { label: "Жестокое обращение с ребенком", value: "617" },
@@ -449,10 +454,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Карточные игры", value: "654" },
         { label: "Киберспорт", value: "658" },
         { label: "Кланы", value: "950" },
-        {
-          label: "Класс безработного [Игровой класс в игре]",
-          value: "727",
-        },
+        { label: "Класс безработного [Игровой класс в игре]", value: "727" },
         { label: "Клоны", value: "365" },
         { label: "Клубы", value: "96" },
         { label: "Книги", value: "341" },
@@ -493,21 +495,14 @@ class RNBH implements Plugin.PluginBase {
         { label: "Лоли", value: "92" },
         { label: "Лотерея", value: "401" },
         { label: "Любовный интерес влюбляется первым", value: "647" },
-        {
-          label: "Любовный интерес главного героя носит очки",
-          value: "576",
-        },
+        { label: "Любовный интерес главного героя носит очки", value: "576" },
         { label: "Любовный треугольник", value: "98" },
         { label: "Любовь детства", value: "500" },
         { label: "Любовь с первого взгляда", value: "730" },
         { label: "Магические надписи", value: "373" },
         { label: "Магические печати", value: "277" },
         { label: "Магические технологии", value: "357" },
-        {
-          label:
-            "Магическое пространство/измерение, доступное не всем персонажам",
-          value: "244",
-        },
+        { label: "Магическое пространство/измерение, доступное не всем персонажам", value: "244" },
         { label: "Магия", value: "38" },
         { label: "Магия призыва", value: "333" },
         { label: "Мазохистские персонажи", value: "660" },
@@ -640,11 +635,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Первая любовь", value: "716" },
         { label: "Первоисточник новеллы — манга", value: "560" },
         { label: "Первый раз", value: "845" },
-        {
-          label:
-            "Перемещение в другой мир, имея при себе современные достижения",
-          value: "732",
-        },
+        { label: "Перемещение в другой мир, имея при себе современные достижения", value: "732" },
         { label: "Перемещение в игровой мир", value: "532" },
         { label: "Перемещение в иной мир", value: "754" },
         { label: "Перерождение в ином мире", value: "755" },
@@ -656,10 +647,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Питомцы", value: "253" },
         { label: "Племенное общество", value: "291" },
         { label: "Повелитель демонов", value: "171" },
-        {
-          label: "Повествование от нескольких лиц/Несколько точек зрения",
-          value: "156",
-        },
+        { label: "Повествование от нескольких лиц/Несколько точек зрения", value: "156" },
         { label: "Подземелья", value: "219" },
         { label: "Пожелания", value: "166" },
         { label: "Познание Дао", value: "360" },
@@ -1100,11 +1088,11 @@ class RNBH implements Plugin.PluginBase {
         { label: "Weak-lead", value: "885" },
         { label: "Web-novel", value: "1024" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     tags: {
       label: "Жанры",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "Боевые искусства", value: "22" },
         { label: "Гарем", value: "114" },
@@ -1149,7 +1137,7 @@ class RNBH implements Plugin.PluginBase {
         { label: "Isekai", value: "999" },
         { label: "Video games", value: "993" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
   } satisfies Filters;
 }

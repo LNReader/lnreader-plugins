@@ -28,8 +28,8 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     url +=
-      "&sorting=" +
-      (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
+      "&sorting=" + (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
+
     url += "&form=" + (filters?.form?.value || "any");
     url += "&state=" + (filters?.state?.value || "any");
     url += "&series=" + (filters?.series?.value || "any");
@@ -218,15 +218,9 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "Детская литература", value: "detskaya-literatura" },
         { label: "Документальная проза", value: "non-fiction" },
         { label: "Историческая проза", value: "historical-fiction" },
-        {
-          label: "Исторические приключения",
-          value: "historical-adventure",
-        },
+        { label: "Исторические приключения", value: "historical-adventure" },
         { label: "Исторический детектив", value: "historical-mystery" },
-        {
-          label: "Исторический любовный роман",
-          value: "historical-romance",
-        },
+        { label: "Исторический любовный роман", value: "historical-romance" },
         { label: "Историческое фэнтези", value: "historical-fantasy" },
         { label: "Киберпанк", value: "cyberpunk" },
         { label: "Короткий любовный роман", value: "short-romance" },
@@ -241,10 +235,7 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "Политический роман", value: "political-fiction" },
         { label: "Попаданцы", value: "popadantsy" },
         { label: "Попаданцы в космос", value: "popadantsy-v-kosmos" },
-        {
-          label: "Попаданцы в магические миры",
-          value: "popadantsy-v-magicheskie-miry",
-        },
+        { label: "Попаданцы в магические миры", value: "popadantsy-v-magicheskie-miry" },
         { label: "Попаданцы во времени", value: "popadantsy-vo-vremeni" },
         { label: "Постапокалипсис", value: "postapocalyptic" },
         { label: "Поэзия", value: "poetry" },
@@ -256,20 +247,14 @@ class AuthorToday implements Plugin.PluginBase {
         { label: "Романтическая эротика", value: "romantic-erotika" },
         { label: "Сказка", value: "fairy-tale" },
         { label: "Современная проза", value: "modern-prose" },
-        {
-          label: "Современный любовный роман",
-          value: "contemporary-romance",
-        },
+        { label: "Современный любовный роман", value: "contemporary-romance" },
         { label: "Социальная фантастика", value: "sf-social" },
         { label: "Стимпанк", value: "steampunk" },
         { label: "Темное фэнтези", value: "dark-fantasy" },
         { label: "Триллер", value: "thriller" },
         { label: "Ужасы", value: "horror" },
         { label: "Фантастика", value: "sci-fi" },
-        {
-          label: "Фантастический детектив",
-          value: "detective-science-fiction",
-        },
+        { label: "Фантастический детектив", value: "detective-science-fiction" },
         { label: "Фанфик", value: "fanfiction" },
         { label: "Фэнтези", value: "fantasy" },
         { label: "Шпионский детектив", value: "spy-mystery" },

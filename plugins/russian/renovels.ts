@@ -15,7 +15,10 @@ class ReN implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search/catalog/?count=30&ordering=";
     url += filters?.order?.value
@@ -23,24 +26,35 @@ class ReN implements Plugin.PluginBase {
       : "-";
     url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
-    if (filters?.genres?.value instanceof Array) {
-      url += filters.genres.value.map((i) => `&genres=${i}`).join("");
+    if (filters?.genres?.value?.include?.length) {
+      url += filters.genres.value.include.map((i) => "&genres=" + i).join("");
     }
 
-    if (filters?.status?.value instanceof Array) {
-      url += filters?.status.value.map((i) => `&status=${i}`).join("");
+    if (filters?.genres?.value?.exclude?.length) {
+      url += filters.genres.value.exclude
+        .map((i) => "&exclude_genres=" + i).join("");
     }
 
-    if (filters?.types?.value instanceof Array) {
-      url += filters.types.value.map((i) => `&types=${i}`).join("");
+    if (filters?.status?.value?.length) {
+      url += filters.status.value.map((i) => "&status=" + i).join("");
     }
 
-    if (filters?.categories?.value instanceof Array) {
-      url += filters.categories.value.map((i) => `&categories=${i}`).join("");
+    if (filters?.types?.value?.length) {
+      url += filters.types.value.map((i) => "&types=" + i).join("");
     }
 
-    if (filters?.age_limit?.value instanceof Array) {
-      url += filters.age_limit.value.map((i) => `&age_limit=${i}`).join("");
+    if (filters?.categories?.value?.include?.length) {
+      url += filters.categories.value.include
+        .map((i) => "&categories=" + i).join("");
+    }
+
+    if (filters?.categories?.value?.exclude?.length) {
+      url += filters.categories.value.exclude
+        .map((i) => "&exclude_categories=" + i).join("");
+    }
+
+    if (filters?.age_limit?.value?.length) {
+      url += filters.age_limit.value.map((i) => "&age_limit=" + i).join("");
     }
 
     url += "&page=" + pageNo;
@@ -176,7 +190,7 @@ class ReN implements Plugin.PluginBase {
     },
     genres: {
       label: "Жанры:",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "Боевик", value: "112" },
         { label: "Война", value: "123" },
@@ -209,11 +223,11 @@ class ReN implements Plugin.PluginBase {
         { label: "Эротика", value: "118" },
         { label: "Юмор", value: "104" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     categories: {
       label: "Тэги:",
-      value: [],
+      value: { include: [], exclude: [] },
       options: [
         { label: "[Награжденная работа]", value: "648" },
         { label: "18+", value: "423" },
@@ -913,7 +927,7 @@ class ReN implements Plugin.PluginBase {
         { label: "R-15 Японское возрастное огр.", value: "332" },
         { label: "R-18", value: "424" },
       ],
-      type: FilterTypes.CheckboxGroup,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     types: {
       label: "Типы:",

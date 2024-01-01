@@ -63,18 +63,16 @@ var WPmangaStreamPlugin = /** @class */ (function () {
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
                         loadedCheerio("article.maindet").each(function () {
-                            var novelName = loadedCheerio(this).find("h2").text();
+                            var name = loadedCheerio(this).find("h2").text();
                             var image = loadedCheerio(this).find("img");
-                            var novelCover = image.attr("data-src") || image.attr("src");
-                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
-                            if (!novelUrl)
+                            var url = loadedCheerio(this).find("h2 a").attr("href");
+                            if (!url)
                                 return;
-                            var novel = {
-                                name: novelName,
-                                cover: novelCover,
-                                url: novelUrl,
-                            };
-                            novels.push(novel);
+                            novels.push({
+                                name: name,
+                                cover: image.attr("data-src") || image.attr("src"),
+                                url: url,
+                            });
                         });
                         return [2 /*return*/, novels];
                 }
@@ -124,22 +122,17 @@ var WPmangaStreamPlugin = /** @class */ (function () {
                         loadedCheerio(".eplister")
                             .find("li")
                             .each(function () {
-                            var chapterName = loadedCheerio(this).find(".epl-num").text() +
+                            var name = loadedCheerio(this).find(".epl-num").text() +
                                 " - " +
                                 loadedCheerio(this).find(".epl-title").text();
-                            var releaseDate = loadedCheerio(this).find(".epl-date").text().trim();
-                            var chapterUrl = loadedCheerio(this).find("a").attr("href");
-                            if (!chapterUrl)
+                            var releaseTime = loadedCheerio(this).find(".epl-date").text().trim();
+                            var url = loadedCheerio(this).find("a").attr("href");
+                            if (!url)
                                 return;
-                            var chapter = {
-                                name: chapterName,
-                                url: chapterUrl,
-                                releaseDate: releaseDate,
-                            };
-                            novelChapters.push(chapter);
+                            novelChapters.push({ name: name, url: url, releaseTime: releaseTime });
                         });
                         novel.chapters = novelChapters;
-                        if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.reverseChapters) && novel.chapters)
+                        if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.reverseChapters) && novel.chapters.length)
                             novel.chapters.reverse();
                         return [2 /*return*/, novel];
                 }
@@ -174,18 +167,16 @@ var WPmangaStreamPlugin = /** @class */ (function () {
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
                         loadedCheerio("article.maindet").each(function () {
-                            var novelName = loadedCheerio(this).find("h2").text();
+                            var name = loadedCheerio(this).find("h2").text();
                             var image = loadedCheerio(this).find("img");
-                            var novelCover = image.attr("data-src") || image.attr("src");
-                            var novelUrl = loadedCheerio(this).find("h2 a").attr("href");
-                            if (!novelUrl)
+                            var url = loadedCheerio(this).find("h2 a").attr("href");
+                            if (!url)
                                 return;
-                            var novel = {
-                                name: novelName,
-                                cover: novelCover,
-                                url: novelUrl,
-                            };
-                            novels.push(novel);
+                            novels.push({
+                                name: name,
+                                cover: image.attr("data-src") || image.attr("src"),
+                                url: url,
+                            });
                         });
                         return [2 /*return*/, novels];
                 }

@@ -41,7 +41,7 @@ const generator = function generator(metadata: RulateMetadata) {
   const pluginScript = `
   ${rulateTemplate}
 const plugin = new RulatePlugin(${JSON.stringify(metadata)
-    .replace(/"type":"([^"]+)"/g, `"type":FilterTypes.$1`)
+    .replace(/"type":"([^"]+)"/g, '"type":FilterTypes.$1')
     .replace(/\.XCheckbox/g, ".ExcludableCheckboxGroup") //remember to redo
     .replace(/\.Checkbox/g, ".CheckboxGroup")});
 export default plugin;

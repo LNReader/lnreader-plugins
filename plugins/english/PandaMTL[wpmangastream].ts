@@ -155,5 +155,5 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
   fetchImage = fetchFile;
 }
 
-const plugin = new WPmangaStreamPlugin({"id":"kol-novel","sourceSite":"https://kolnovel.com/","sourceName":"Kol Novel","options":{"lang":"arabic","reverseChapters":true}});
+const plugin = new WPmangaStreamPlugin({"id":"pandamtl.com","sourceSite":"https://pandamtl.com/","sourceName":"PandaMTL","options":{"lang":"english","reverseChapters":true}});
 export default plugin;

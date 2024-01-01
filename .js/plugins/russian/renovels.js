@@ -78,7 +78,7 @@ var ReN = /** @class */ (function () {
             },
             genres: {
                 label: "Жанры:",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Боевик", value: "112" },
                     { label: "Война", value: "123" },
@@ -111,11 +111,11 @@ var ReN = /** @class */ (function () {
                     { label: "Эротика", value: "118" },
                     { label: "Юмор", value: "104" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             categories: {
                 label: "Тэги:",
-                value: [],
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "[Награжденная работа]", value: "648" },
                     { label: "18+", value: "423" },
@@ -815,7 +815,7 @@ var ReN = /** @class */ (function () {
                     { label: "R-15 Японское возрастное огр.", value: "332" },
                     { label: "R-18", value: "424" },
                 ],
-                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             types: {
                 label: "Типы:",
@@ -857,41 +857,50 @@ var ReN = /** @class */ (function () {
         };
     }
     ReN.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, novels;
             var _this = this;
-            return __generator(this, function (_j) {
-                switch (_j.label) {
+            return __generator(this, function (_x) {
+                switch (_x.label) {
                     case 0:
                         url = this.site + "/api/search/catalog/?count=30&ordering=";
                         url += ((_b = filters === null || filters === void 0 ? void 0 : filters.order) === null || _b === void 0 ? void 0 : _b.value)
                             ? filters.order.value.replace("+", "")
                             : "-";
                         url += showLatestNovels ? "chapter_date" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "rating";
-                        if (((_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value) instanceof Array) {
-                            url += filters.genres.value.map(function (i) { return "&genres=".concat(i); }).join("");
+                        if ((_f = (_e = (_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.include) === null || _f === void 0 ? void 0 : _f.length) {
+                            url += filters.genres.value.include.map(function (i) { return "&genres=" + i; }).join("");
                         }
-                        if (((_e = filters === null || filters === void 0 ? void 0 : filters.status) === null || _e === void 0 ? void 0 : _e.value) instanceof Array) {
-                            url += filters === null || filters === void 0 ? void 0 : filters.status.value.map(function (i) { return "&status=".concat(i); }).join("");
+                        if ((_j = (_h = (_g = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _g === void 0 ? void 0 : _g.value) === null || _h === void 0 ? void 0 : _h.exclude) === null || _j === void 0 ? void 0 : _j.length) {
+                            url += filters.genres.value.exclude
+                                .map(function (i) { return "&exclude_genres=" + i; }).join("");
                         }
-                        if (((_f = filters === null || filters === void 0 ? void 0 : filters.types) === null || _f === void 0 ? void 0 : _f.value) instanceof Array) {
-                            url += filters.types.value.map(function (i) { return "&types=".concat(i); }).join("");
+                        if ((_l = (_k = filters === null || filters === void 0 ? void 0 : filters.status) === null || _k === void 0 ? void 0 : _k.value) === null || _l === void 0 ? void 0 : _l.length) {
+                            url += filters.status.value.map(function (i) { return "&status=" + i; }).join("");
                         }
-                        if (((_g = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _g === void 0 ? void 0 : _g.value) instanceof Array) {
-                            url += filters.categories.value.map(function (i) { return "&categories=".concat(i); }).join("");
+                        if ((_o = (_m = filters === null || filters === void 0 ? void 0 : filters.types) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.length) {
+                            url += filters.types.value.map(function (i) { return "&types=" + i; }).join("");
                         }
-                        if (((_h = filters === null || filters === void 0 ? void 0 : filters.age_limit) === null || _h === void 0 ? void 0 : _h.value) instanceof Array) {
-                            url += filters.age_limit.value.map(function (i) { return "&age_limit=".concat(i); }).join("");
+                        if ((_r = (_q = (_p = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.include) === null || _r === void 0 ? void 0 : _r.length) {
+                            url += filters.categories.value.include
+                                .map(function (i) { return "&categories=" + i; }).join("");
+                        }
+                        if ((_u = (_t = (_s = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.exclude) === null || _u === void 0 ? void 0 : _u.length) {
+                            url += filters.categories.value.exclude
+                                .map(function (i) { return "&exclude_categories=" + i; }).join("");
+                        }
+                        if ((_w = (_v = filters === null || filters === void 0 ? void 0 : filters.age_limit) === null || _v === void 0 ? void 0 : _v.value) === null || _w === void 0 ? void 0 : _w.length) {
+                            url += filters.age_limit.value.map(function (i) { return "&age_limit=" + i; }).join("");
                         }
                         url += "&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _j.sent();
+                        result = _x.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        body = (_j.sent());
+                        body = (_x.sent());
                         novels = [];
                         body.content.forEach(function (novel) {
                             var _a, _b;
