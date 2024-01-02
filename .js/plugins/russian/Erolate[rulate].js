@@ -57,7 +57,7 @@ var RulatePlugin = /** @class */ (function () {
         var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         var filters = _a.filters, showLatestNovels = _a.showLatestNovels;
         return __awaiter(this, void 0, void 0, function () {
-            var novels, baseUrl, url, result, body, loadedCheerio;
+            var novels, baseUrl, url, body, loadedCheerio;
             return __generator(this, function (_o) {
                 switch (_o.label) {
                     case 0:
@@ -99,11 +99,8 @@ var RulatePlugin = /** @class */ (function () {
                             url += filters.trash.value.map(function (i) { return "&" + i + "=1"; }).join("");
                         }
                         url += "&Book_page=" + pageNo;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _o.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _o.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         loadedCheerio('ul[class="search-results"] > li:not([class="ad_type_catalog"])').each(function () {

@@ -43,9 +43,7 @@ class Jaomix implements Plugin.PluginBase {
       "&sortby=" + (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
     url += "&gpage=" + pageNo;
 
-    const result = await fetchApi(url);
-    const body = await result.text();
-
+    const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
@@ -72,9 +70,7 @@ class Jaomix implements Plugin.PluginBase {
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelUrl);
-    const body = await result.text();
-
+    const body = await fetchApi(novelUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
@@ -113,8 +109,7 @@ class Jaomix implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(chapterUrl);
-    const body = await result.text();
+    const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div[class="adblock-service"]').remove();
@@ -128,8 +123,7 @@ class Jaomix implements Plugin.PluginBase {
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd&gpage=${pageNo}`;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];

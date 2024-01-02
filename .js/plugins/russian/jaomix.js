@@ -165,7 +165,7 @@ var Jaomix = /** @class */ (function () {
         var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels;
+            var url, body, loadedCheerio, novels;
             return __generator(this, function (_o) {
                 switch (_o.label) {
                     case 0:
@@ -187,11 +187,8 @@ var Jaomix = /** @class */ (function () {
                         url +=
                             "&sortby=" + (showLatestNovels ? "upd" : ((_m = filters === null || filters === void 0 ? void 0 : filters.sortby) === null || _m === void 0 ? void 0 : _m.value) || "topweek");
                         url += "&gpage=" + pageNo;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _o.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _o.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
@@ -217,14 +214,11 @@ var Jaomix = /** @class */ (function () {
     };
     Jaomix.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, chapters;
+            var body, loadedCheerio, novel, chapters;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
@@ -264,14 +258,11 @@ var Jaomix = /** @class */ (function () {
     };
     Jaomix.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, chapterText;
+            var body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         loadedCheerio('div[class="adblock-service"]').remove();
@@ -284,16 +275,13 @@ var Jaomix = /** @class */ (function () {
     Jaomix.prototype.searchNovels = function (searchTerm, pageNo) {
         if (pageNo === void 0) { pageNo = 1; }
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels;
+            var url, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = "".concat(this.site, "/?searchrn=").concat(searchTerm, "&but=\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u044E&sortby=upd&gpage=").concat(pageNo);
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];

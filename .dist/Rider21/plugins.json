@@ -167,6 +167,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/noblemtl/icon.png"
 		},
 		{
+			"id": "FWN.com",
+			"name": "Web NOVEL",
+			"site": "https://freewebnovel.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/freewebnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/freewebnovel/icon.png"
+		},
+		{
 			"id": "guavaread",
 			"name": "Guavaread[madara]",
 			"site": "https://guavaread.com/",
@@ -257,15 +266,6 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/noblemtl/icon.png"
 		},
 		{
-			"id": "noblemtl.com",
-			"name": "Noble Machine translations[wpmangastream]",
-			"site": "https://noblemtl.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NobleMachinetranslations[wpmangastream].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/wpmangastream/icons/noblemtl.com.png"
-		},
-		{
 			"id": "nocturneTLS",
 			"name": "Nocturne Translations[madara]",
 			"site": "https://nocturnetls.net/",
@@ -345,15 +345,6 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/pandaMTL.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/wordpress/icon.png"
-		},
-		{
-			"id": "pandamtl.com",
-			"name": "PandaMTL[wpmangastream]",
-			"site": "https://pandamtl.com/",
-			"lang": "English",
-			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/PandaMTL[wpmangastream].js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/wpmangastream/icons/pandamtl.com.png"
 		},
 		{
 			"id": "readwebnovels",

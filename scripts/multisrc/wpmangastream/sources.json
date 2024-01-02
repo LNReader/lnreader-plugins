@@ -16,23 +16,5 @@
       "lang": "arabic",
       "reverseChapters": true
     }
-  },
-  {
-    "id": "pandamtl.com",
-    "sourceSite": "https://pandamtl.com/",
-    "sourceName": "PandaMTL",
-    "options": {
-      "lang": "english",
-      "reverseChapters": true
-    }
-  },
-  {
-    "id": "noblemtl.com",
-    "sourceSite": "https://noblemtl.com/",
-    "sourceName": "Noble Machine translations",
-    "options": {
-      "lang": "english",
-      "reverseChapters": true
-    }
   }
 ]

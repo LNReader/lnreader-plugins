@@ -178,7 +178,7 @@ var freedlit = /** @class */ (function () {
         var _b, _c, _d, _e, _f;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels;
+            var url, body, loadedCheerio, novels;
             return __generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -189,11 +189,8 @@ var freedlit = /** @class */ (function () {
                         url += "&access=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.access) === null || _e === void 0 ? void 0 : _e.value) || "all");
                         url += "&adult=" + (((_f = filters === null || filters === void 0 ? void 0 : filters.adult) === null || _f === void 0 ? void 0 : _f.value) || "hide");
                         url += "&page=" + pageNo;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _g.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _g.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
@@ -216,14 +213,11 @@ var freedlit = /** @class */ (function () {
     freedlit.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, chapters;
+            var body, loadedCheerio, novel, chapters;
             return __generator(this, function (_c) {
                 switch (_c.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _c.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _c.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
@@ -254,14 +248,11 @@ var freedlit = /** @class */ (function () {
     };
     freedlit.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, chapterText;
+            var body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         loadedCheerio('div[class="standart-block"]').remove();
@@ -274,16 +265,13 @@ var freedlit = /** @class */ (function () {
     };
     freedlit.prototype.searchNovels = function (searchTerm) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels;
+            var url, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = "".concat(this.site, "/search?query=").concat(searchTerm, "&type=all");
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];

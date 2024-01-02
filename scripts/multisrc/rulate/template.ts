@@ -85,8 +85,7 @@ class RulatePlugin implements Plugin.PluginBase {
 
     url += "&Book_page=" + pageNo;
 
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio(
