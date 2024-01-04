@@ -12,12 +12,9 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
 };
 
 const generator = function generator(source: WPmangaStreamMetadata) {
-  const WPmangaStreamTemplate = readFileSync(
-    path.join(__dirname, "template.ts"),
-    {
-      encoding: "utf-8",
-    },
-  );
+  const WPmangaStreamTemplate = readFileSync(path.join(__dirname, "template.ts"),{
+    encoding: "utf-8",
+  });
 
   const pluginScript = `
   ${WPmangaStreamTemplate}

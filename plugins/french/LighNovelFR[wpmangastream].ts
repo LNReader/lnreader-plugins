@@ -97,27 +97,20 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
       novel.summary += loadedCheerio(p).text().trim() + "\\n\\n";
     }
 
-    const novelChapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = loadedCheerio(".eplister li")
+      .map((index, element) => ({
+        name:
+          loadedCheerio(element).find(".epl-num").text() +
+          loadedCheerio(element).find(".epl-title").text(),
+        releaseTime: loadedCheerio(element).find(".epl-date").text().trim(),
+        url: loadedCheerio(element).find("a").attr("href") || "",
+      }))
+      .get()
+      .filter((chapter) => chapter.name && chapter.url);
 
-    loadedCheerio(".eplister")
-      .find("li")
-      .each(function () {
-        const name =
-          loadedCheerio(this).find(".epl-num").text() +
-          " - " +
-          loadedCheerio(this).find(".epl-title").text();
+    if (this.options?.reverseChapters && chapters.length) chapters.reverse();
 
-        const releaseTime = loadedCheerio(this).find(".epl-date").text().trim();
-        const url = loadedCheerio(this).find("a").attr("href");
-
-        if (!url) return;
-        novelChapters.push({ name, url, releaseTime });
-      });
-
-    novel.chapters = novelChapters;
-    if (this.options?.reverseChapters && novel.chapters.length)
-      novel.chapters.reverse();
-
+    novel.chapters = chapters;
     return novel;
   }
 

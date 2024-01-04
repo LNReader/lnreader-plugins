@@ -526,6 +526,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/authortoday/icon.png"
 		},
 		{
+			"id": "bookhamster",
+			"name": "Bookhamster[ifreedom]",
+			"site": "https://bookhamster.ru",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/russian/Bookhamster[ifreedom].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/ifreedom/icons/bookhamster.png"
+		},
+		{
 			"id": "bookriver",
 			"name": "Bookriver",
 			"site": "https://bookriver.ru",
@@ -560,6 +569,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/russian/LitSpace.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/ru/freedlit/icon.png"
+		},
+		{
+			"id": "ifreedom",
+			"name": "Свободный Мир Ранобэ[ifreedom]",
+			"site": "https://ifreedom.su",
+			"lang": "русский язык",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/russian/СвободныйМирРанобэ[ifreedom].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/ifreedom/icons/ifreedom.png"
 		},
 		{
 			"id": "jaomix.ru",

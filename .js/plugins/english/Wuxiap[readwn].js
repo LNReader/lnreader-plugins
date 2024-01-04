@@ -57,63 +57,53 @@ var ReadwnPlugin = /** @class */ (function () {
         var _b, _c, _d, _e;
         var filters = _a.filters, showLatestNovels = _a.showLatestNovels;
         return __awaiter(this, void 0, void 0, function () {
-            var novels, baseUrl, url, body, loadedCheerio;
+            var url, body, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_f) {
                 switch (_f.label) {
                     case 0:
-                        novels = [];
-                        baseUrl = this.site;
-                        url = baseUrl + "/list/";
+                        url = this.site + "/list/";
                         url += (((_b = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _b === void 0 ? void 0 : _b.value) || "all") + "/";
                         url += (((_c = filters === null || filters === void 0 ? void 0 : filters.status) === null || _c === void 0 ? void 0 : _c.value) || "all") + "-";
-                        url +=
-                            (showLatestNovels ? "lastdotime" : ((_d = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _d === void 0 ? void 0 : _d.value) || "newstime") +
-                                "-";
-                        url += pageNo - 1 + ".html";
-                        if ((_e = filters === null || filters === void 0 ? void 0 : filters.tags) === null || _e === void 0 ? void 0 : _e.value) {
-                            url = baseUrl + "/tags/" + filters.tags.value + "-0.html";
+                        url += showLatestNovels ? "lastdotime" : ((_d = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _d === void 0 ? void 0 : _d.value) || "newstime";
+                        url += "-" + (pageNo - 1) + ".html";
+                        if ((_e = filters === null || filters === void 0 ? void 0 : filters.tags) === null || _e === void 0 ? void 0 : _e.value) { //only 1 page
+                            url = this.site + "/tags/" + filters.tags.value + "-0.html";
                         }
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
                         body = _f.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio("li.novel-item").each(function () {
-                            var name = loadedCheerio(this).find("h4").text();
-                            var url = loadedCheerio(this).find("a").attr("href");
-                            var cover = loadedCheerio(this)
-                                .find(".novel-cover > img")
-                                .attr("data-src");
-                            if (!name || !url)
-                                return;
-                            novels.push({
-                                name: name,
-                                cover: baseUrl + cover,
-                                url: baseUrl + url,
-                            });
-                        });
+                        novels = loadedCheerio("li.novel-item")
+                            .map(function (index, element) { return ({
+                            name: loadedCheerio(element).find("h4").text(),
+                            cover: _this.site +
+                                loadedCheerio(element).find(".novel-cover > img").attr("data-src"),
+                            url: _this.site + loadedCheerio(element).find("a").attr("href"),
+                        }); })
+                            .get();
                         return [2 /*return*/, novels];
                 }
             });
         });
     };
     ReadwnPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var baseUrl, body, loadedCheerio, novel, chapters, latestChapterNo, lastChapterNo, novelId, i, name_1, releaseTime, url;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        baseUrl = this.site;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
+            var body, loadedCheerio, novel, latestChapterNo, chapters, lastChapterNo, i;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        body = _a.sent();
+                        body = _b.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
                             url: novelUrl,
                         };
                         novel.name = loadedCheerio("h1.novel-title").text();
                         novel.author = loadedCheerio("span[itemprop=author]").text();
-                        novel.cover =
-                            baseUrl + loadedCheerio("figure.cover > img").attr("data-src");
+                        novel.cover = this.site + loadedCheerio("figure.cover > img").attr("data-src");
                         novel.summary = loadedCheerio(".summary")
                             .text()
                             .replace("Summary", "")
@@ -127,38 +117,36 @@ var ReadwnPlugin = /** @class */ (function () {
                                 novel.status = loadedCheerio(this).find("strong").text();
                             }
                         });
-                        chapters = [];
                         latestChapterNo = parseInt(loadedCheerio(".header-stats")
                             .find("span > strong")
                             .first()
                             .text()
                             .trim());
-                        lastChapterNo = 1;
-                        loadedCheerio(".chapter-list li").each(function () {
+                        chapters = loadedCheerio(".chapter-list li")
+                            .map(function (index, element) {
                             var _a;
-                            var name = loadedCheerio(this).find("a .chapter-title").text().trim();
-                            var url = (_a = loadedCheerio(this).find("a").attr("href")) === null || _a === void 0 ? void 0 : _a.trim();
-                            var releaseTime = loadedCheerio(this)
-                                .find("a .chapter-update")
-                                .text()
-                                .trim();
-                            lastChapterNo = parseInt(loadedCheerio(this).find("a .chapter-no").text().trim());
+                            var name = loadedCheerio(element).find("a .chapter-title").text().trim();
+                            var url = (_a = loadedCheerio(element).find("a").attr("href")) === null || _a === void 0 ? void 0 : _a.trim();
+                            var releaseTime = loadedCheerio(element).find("a .chapter-update").text().trim();
                             if (!name || !url)
-                                return;
-                            chapters.push({
+                                return null;
+                            return {
                                 name: name,
                                 releaseTime: (0, parseMadaraDate_1.parseMadaraDate)(releaseTime),
-                                url: baseUrl + url,
-                            });
-                        });
-                        novelId = "/" + novelUrl.replace(".html", "").replace(this.site, "") + "_";
-                        // Itterate once more before loop to finish off
-                        lastChapterNo++;
-                        for (i = lastChapterNo; i <= latestChapterNo; i++) {
-                            name_1 = "Chapter " + i;
-                            releaseTime = null;
-                            url = baseUrl + novelId + i + ".html";
-                            chapters.push({ name: name_1, releaseTime: releaseTime, url: url });
+                                url: _this.site + url,
+                            };
+                        })
+                            .get()
+                            .filter(function (chapter) { return chapter; });
+                        if (latestChapterNo > chapters.length) {
+                            lastChapterNo = parseInt(((_a = chapters[chapters.length - 1].url.match(/_(\d+)\.html/)) === null || _a === void 0 ? void 0 : _a[1]) || "", 10);
+                            for (i = (lastChapterNo || chapters.length) + 1; i <= latestChapterNo; i++) {
+                                chapters.push({
+                                    name: "Chapter " + i,
+                                    releaseTime: null,
+                                    url: novelUrl.replace(".html", "_" + i + ".html"),
+                                });
+                            }
                         }
                         novel.chapters = chapters;
                         return [2 /*return*/, novel];
@@ -175,48 +163,44 @@ var ReadwnPlugin = /** @class */ (function () {
                     case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        chapterText = loadedCheerio(".chapter-content").html();
-                        return [2 /*return*/, chapterText || ""];
+                        chapterText = loadedCheerio(".chapter-content").html() || "";
+                        return [2 /*return*/, chapterText];
                 }
             });
         });
     };
-    ReadwnPlugin.prototype.searchNovels = function (searchTerm) {
+    ReadwnPlugin.prototype.searchNovels = function (keyboard) {
         return __awaiter(this, void 0, void 0, function () {
-            var novels, baseUrl, searchUrl, result, loadedCheerio;
+            var result, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        novels = [];
-                        baseUrl = this.site;
-                        searchUrl = baseUrl + "/e/search/index.php";
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(searchUrl, {
-                                headers: {
-                                    "Content-Type": "application/x-www-form-urlencoded",
-                                    Referer: baseUrl + "search.html",
-                                    Origin: baseUrl,
-                                    "user-agent": this.userAgent ||
-                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
-                                },
-                                method: "POST",
-                                body: JSON.stringify({
-                                    show: "title",
-                                    tempid: 1,
-                                    tbname: "news",
-                                    keyboard: searchTerm,
-                                }),
-                            }).then(function (res) { return res.text(); })];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/e/search/index.php", {
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                Referer: this.site + "/search.html",
+                                Origin: this.site,
+                                "user-agent": this.userAgent ||
+                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+                            },
+                            method: "POST",
+                            body: JSON.stringify({
+                                show: "title",
+                                tempid: 1,
+                                tbname: "news",
+                                keyboard: keyboard,
+                            }),
+                        }).then(function (res) { return res.text(); })];
                     case 1:
                         result = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(result);
-                        loadedCheerio("li.novel-item").each(function () {
-                            var name = loadedCheerio(this).find("h4").text();
-                            var url = loadedCheerio(this).find("a").attr("href");
-                            var cover = loadedCheerio(this).find("img").attr("data-src");
-                            if (!name || !url)
-                                return;
-                            novels.push({ name: name, cover: baseUrl + cover, url: baseUrl + url });
-                        });
+                        novels = loadedCheerio("li.novel-item")
+                            .map(function (index, element) { return ({
+                            name: loadedCheerio(element).find("h4").text(),
+                            cover: _this.site + loadedCheerio(element).find("img").attr("data-src"),
+                            url: _this.site + loadedCheerio(element).find("a").attr("href"),
+                        }); })
+                            .get();
                         return [2 /*return*/, novels];
                 }
             });

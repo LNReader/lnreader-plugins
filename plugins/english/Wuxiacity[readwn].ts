@@ -39,55 +39,42 @@ class ReadwnPlugin implements Plugin.PluginBase {
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const novels: Plugin.NovelItem[] = [];
-    const baseUrl = this.site;
-
-    let url = baseUrl + "/list/";
+    let url = this.site + "/list/";
     url += (filters?.genres?.value || "all") + "/";
     url += (filters?.status?.value || "all") + "-";
-    url +=
-      (showLatestNovels ? "lastdotime" : filters?.sort?.value || "newstime") +
-      "-";
-    url += pageNo - 1 + ".html";
+    url += showLatestNovels ? "lastdotime" : filters?.sort?.value || "newstime";
+    url += "-" + (pageNo - 1) + ".html";
 
-    if (filters?.tags?.value) {
-      url = baseUrl + "/tags/" + filters.tags.value + "-0.html";
+    if (filters?.tags?.value) { //only 1 page
+      url = this.site + "/tags/" + filters.tags.value + "-0.html";
     }
 
     const body = await fetchApi(url).then((res) => res.text());
-
     const loadedCheerio = parseHTML(body);
-    loadedCheerio("li.novel-item").each(function () {
-      const name = loadedCheerio(this).find("h4").text();
-      const url = loadedCheerio(this).find("a").attr("href");
-      const cover = loadedCheerio(this)
-        .find(".novel-cover > img")
-        .attr("data-src");
-      if (!name || !url) return;
 
-      novels.push({
-        name: name,
-        cover: baseUrl + cover,
-        url: baseUrl + url,
-      });
-    });
+    const novels: Plugin.NovelItem[] = loadedCheerio("li.novel-item")
+      .map((index, element) => ({
+        name: loadedCheerio(element).find("h4").text(),
+        cover: this.site +
+          loadedCheerio(element).find(".novel-cover > img").attr("data-src"),
+        url: this.site + loadedCheerio(element).find("a").attr("href"),
+      }))
+      .get();
 
     return novels;
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const baseUrl = this.site;
     const body = await fetchApi(novelUrl).then((res) => res.text());
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
     };
 
     novel.name = loadedCheerio("h1.novel-title").text();
     novel.author = loadedCheerio("span[itemprop=author]").text();
-    novel.cover =
-      baseUrl + loadedCheerio("figure.cover > img").attr("data-src");
+    novel.cover = this.site + loadedCheerio("figure.cover > img").attr("data-src");
 
     novel.summary = loadedCheerio(".summary")
       .text()
@@ -105,7 +92,6 @@ class ReadwnPlugin implements Plugin.PluginBase {
       }
     });
 
-    const chapters: Plugin.ChapterItem[] = [];
     const latestChapterNo = parseInt(
       loadedCheerio(".header-stats")
         .find("span > strong")
@@ -114,36 +100,36 @@ class ReadwnPlugin implements Plugin.PluginBase {
         .trim(),
     );
 
-    let lastChapterNo = 1;
-    loadedCheerio(".chapter-list li").each(function () {
-      const name = loadedCheerio(this).find("a .chapter-title").text().trim();
-      const url = loadedCheerio(this).find("a").attr("href")?.trim();
-      const releaseTime = loadedCheerio(this)
-        .find("a .chapter-update")
-        .text()
-        .trim();
-      lastChapterNo = parseInt(
-        loadedCheerio(this).find("a .chapter-no").text().trim(),
+    const chapters: Plugin.ChapterItem[] = loadedCheerio(".chapter-list li")
+      .map((index, element) => {
+        const name = loadedCheerio(element).find("a .chapter-title").text().trim();
+        const url = loadedCheerio(element).find("a").attr("href")?.trim();
+        const releaseTime = loadedCheerio(element).find("a .chapter-update").text().trim();
+
+        if (!name || !url) return null;
+
+        return {
+          name,
+          releaseTime: parseMadaraDate(releaseTime),
+          url: this.site + url,
+        };
+      })
+      .get()
+      .filter((chapter) => chapter);
+
+    if (latestChapterNo > chapters.length) {
+      const lastChapterNo = parseInt(
+        chapters[chapters.length - 1].url.match(/_(\d+)\.html/)?.[1] || "",
+        10,
       );
-      if (!name || !url) return;
 
-      chapters.push({
-        name,
-        releaseTime: parseMadaraDate(releaseTime),
-        url: baseUrl + url,
-      });
-    });
-    const novelId =
-      "/" + novelUrl.replace(".html", "").replace(this.site, "") + "_";
-
-    // Itterate once more before loop to finish off
-    lastChapterNo++;
-    for (let i = lastChapterNo; i <= latestChapterNo; i++) {
-      const name = "Chapter " + i;
-      const releaseTime = null;
-      const url = baseUrl + novelId + i + ".html";
-
-      chapters.push({ name, releaseTime, url });
+      for (let i = (lastChapterNo || chapters.length) + 1; i <= latestChapterNo; i++) {
+        chapters.push({
+          name: "Chapter " + i,
+          releaseTime: null,
+          url: novelUrl.replace(".html", "_" + i + ".html"),
+        });
+      }
     }
 
     novel.chapters = chapters;
@@ -152,26 +138,18 @@ class ReadwnPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterUrl: string): Promise<string> {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
-
     const loadedCheerio = parseHTML(body);
 
-    const chapterText = loadedCheerio(".chapter-content").html();
-    return chapterText || "";
+    const chapterText = loadedCheerio(".chapter-content").html() || "";
+    return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    //page: number | undefined = 1,
-  ): Promise<Plugin.NovelItem[]> {
-    const novels: Plugin.NovelItem[] = [];
-    const baseUrl = this.site;
-    const searchUrl = baseUrl + "/e/search/index.php";
-
-    const result = await fetchApi(searchUrl, {
+  async searchNovels(keyboard: string): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(this.site + "/e/search/index.php", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Referer: baseUrl + "search.html",
-        Origin: baseUrl,
+        Referer: this.site + "/search.html",
+        Origin: this.site,
         "user-agent":
           this.userAgent ||
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
@@ -181,19 +159,18 @@ class ReadwnPlugin implements Plugin.PluginBase {
         show: "title",
         tempid: 1,
         tbname: "news",
-        keyboard: searchTerm,
+        keyboard,
       }),
     }).then((res) => res.text());
-
     const loadedCheerio = parseHTML(result);
-    loadedCheerio("li.novel-item").each(function () {
-      const name = loadedCheerio(this).find("h4").text();
-      const url = loadedCheerio(this).find("a").attr("href");
-      const cover = loadedCheerio(this).find("img").attr("data-src");
-      if (!name || !url) return;
 
-      novels.push({ name, cover: baseUrl + cover, url: baseUrl + url });
-    });
+    const novels: Plugin.NovelItem[] = loadedCheerio("li.novel-item")
+      .map((index, element) => ({
+        name: loadedCheerio(element).find("h4").text(),
+        cover: this.site + loadedCheerio(element).find("img").attr("data-src"),
+        url: this.site + loadedCheerio(element).find("a").attr("href"),
+      }))
+      .get();
 
     return novels;
   }

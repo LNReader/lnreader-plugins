@@ -82,7 +82,7 @@ var WPmangaStreamPlugin = /** @class */ (function () {
     WPmangaStreamPlugin.prototype.parseNovelAndChapters = function (url) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var body, loadedCheerio, novel, summary, i, p, novelChapters;
+            var body, loadedCheerio, novel, summary, i, p, chapters;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
@@ -118,22 +118,18 @@ var WPmangaStreamPlugin = /** @class */ (function () {
                             p = summary[i];
                             novel.summary += loadedCheerio(p).text().trim() + "\\n\\n";
                         }
-                        novelChapters = [];
-                        loadedCheerio(".eplister")
-                            .find("li")
-                            .each(function () {
-                            var name = loadedCheerio(this).find(".epl-num").text() +
-                                " - " +
-                                loadedCheerio(this).find(".epl-title").text();
-                            var releaseTime = loadedCheerio(this).find(".epl-date").text().trim();
-                            var url = loadedCheerio(this).find("a").attr("href");
-                            if (!url)
-                                return;
-                            novelChapters.push({ name: name, url: url, releaseTime: releaseTime });
-                        });
-                        novel.chapters = novelChapters;
-                        if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.reverseChapters) && novel.chapters.length)
-                            novel.chapters.reverse();
+                        chapters = loadedCheerio(".eplister li")
+                            .map(function (index, element) { return ({
+                            name: loadedCheerio(element).find(".epl-num").text() +
+                                loadedCheerio(element).find(".epl-title").text(),
+                            releaseTime: loadedCheerio(element).find(".epl-date").text().trim(),
+                            url: loadedCheerio(element).find("a").attr("href") || "",
+                        }); })
+                            .get()
+                            .filter(function (chapter) { return chapter.name && chapter.url; });
+                        if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.reverseChapters) && chapters.length)
+                            chapters.reverse();
+                        novel.chapters = chapters;
                         return [2 /*return*/, novel];
                 }
             });

@@ -10,9 +10,7 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
   return list
     .map<ReadwnMetadata>((p) => {
       p.filters.tags.options.unshift(...defaultSettings.filters.tags.options);
-      p.filters.genres.options.unshift(
-        ...defaultSettings.filters.genres.options,
-      );
+      p.filters.genres.options.unshift(...defaultSettings.filters.genres.options);
       p.filters = Object.assign(defaultSettings.filters, p.filters);
 
       const d = false;
