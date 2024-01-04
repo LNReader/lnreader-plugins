@@ -14,16 +14,24 @@ class freedlit implements Plugin.PluginBase {
   cookieString = "";
 
   async popularNovels(
-    pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    page: number,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + "/books/";
-    url += (filters?.genre?.value || "all") + "?sort=";
+    let url = this.site + "/get-books/all/list/" + page + "?sort=";
     url += showLatestNovels ? "recent" : filters?.sort?.value || "popular";
     url += "&status=" + (filters?.status?.value || "all");
     url += "&access=" + (filters?.access?.value || "all");
     url += "&adult=" + (filters?.adult?.value || "hide");
-    url += "&page=" + pageNo;
+
+    if (filters?.genre?.value?.include?.length) {
+      url += filters.genre.value.include
+        .map(id => '&genres_included[]=' + id).join("");
+    }
+
+    if (filters?.genre?.value?.exclude?.length) {
+      url += filters.genre.value.exclude
+        .map(id => '&genres_excluded[]=' + id).join("");
+    }
 
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
@@ -123,7 +131,7 @@ class freedlit implements Plugin.PluginBase {
     },
     genre: {
       label: "Жанры:",
-      value: "",
+      value: { include: [], exclude: [] },
       options: [
         { label: "Любой жанр", value: "all" },
         { label: "Альтернативная история", value: "alternative-history" },
@@ -200,7 +208,7 @@ class freedlit implements Plugin.PluginBase {
         { label: "Юмористическое фэнтези", value: "humor-fantasy" },
         { label: "RPS", value: "rps" },
       ],
-      type: FilterTypes.Picker,
+      type: FilterTypes.ExcludableCheckboxGroup,
     },
     status: {
       label: "Статус:",

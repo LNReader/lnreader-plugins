@@ -105,14 +105,17 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
     if (novel.author == "Не указан") delete novel.author;
 
-    const chapters: Plugin.ChapterItem[] = loadedCheerio("div.li-ranobe")
-      .map((index, element) => ({
-        name: loadedCheerio(element).find("a").text(),
-        releaseTime: loadedCheerio(element).find("div.li-col2-ranobe").text().trim(),
-        url: loadedCheerio(element).find("a").attr("href") || "",
-      }))
-      .get()
-      .filter((chapter) => chapter.name && chapter.url);
+    const chapters: Plugin.ChapterItem[] = [];
+    loadedCheerio("div.li-ranobe").each(function () {
+      const name = loadedCheerio(this).find("a").text();
+      const url = loadedCheerio(this).find("a").attr("href");
+      if (!loadedCheerio(this).find("label.buy-ranobe").length && name && url) {
+        const releaseTime = loadedCheerio(this)
+          .find("div.li-col2-ranobe").text().trim();
+
+        chapters.push({ name, releaseTime, url });
+      }
+    });
 
     novel.chapters = chapters.reverse();
     return novel;
@@ -121,6 +124,14 @@ class IfreedomPlugin implements Plugin.PluginBase {
   async parseChapter(chapterUrl: string): Promise<string> {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
+
+    loadedCheerio(".entry-content img").each(function () {
+      const srcset = loadedCheerio(this).attr("srcset")?.split?.(" ");
+      if (srcset?.length) {
+        const bestlink = srcset.filter((url) => url.startsWith("http")).unshift();
+        if (typeof bestlink == 'string') loadedCheerio(this).attr("src", bestlink);
+      }
+    });
 
     const chapterText = loadedCheerio(".entry-content").html() || "";
     return chapterText;

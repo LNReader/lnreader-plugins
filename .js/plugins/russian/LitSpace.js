@@ -64,7 +64,7 @@ var freedlit = /** @class */ (function () {
             },
             genre: {
                 label: "Жанры:",
-                value: "",
+                value: { include: [], exclude: [] },
                 options: [
                     { label: "Любой жанр", value: "all" },
                     { label: "Альтернативная история", value: "alternative-history" },
@@ -141,7 +141,7 @@ var freedlit = /** @class */ (function () {
                     { label: "Юмористическое фэнтези", value: "humor-fantasy" },
                     { label: "RPS", value: "rps" },
                 ],
-                type: filterInputs_1.FilterTypes.Picker,
+                type: filterInputs_1.FilterTypes.ExcludableCheckboxGroup,
             },
             status: {
                 label: "Статус:",
@@ -174,24 +174,30 @@ var freedlit = /** @class */ (function () {
             },
         };
     }
-    freedlit.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f;
+    freedlit.prototype.popularNovels = function (page, _a) {
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, body, loadedCheerio, novels;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            return __generator(this, function (_m) {
+                switch (_m.label) {
                     case 0:
-                        url = this.site + "/books/";
-                        url += (((_b = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _b === void 0 ? void 0 : _b.value) || "all") + "?sort=";
-                        url += showLatestNovels ? "recent" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "popular";
-                        url += "&status=" + (((_d = filters === null || filters === void 0 ? void 0 : filters.status) === null || _d === void 0 ? void 0 : _d.value) || "all");
-                        url += "&access=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.access) === null || _e === void 0 ? void 0 : _e.value) || "all");
-                        url += "&adult=" + (((_f = filters === null || filters === void 0 ? void 0 : filters.adult) === null || _f === void 0 ? void 0 : _f.value) || "hide");
-                        url += "&page=" + pageNo;
+                        url = this.site + "/get-books/all/list/" + page + "?sort=";
+                        url += showLatestNovels ? "recent" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "popular";
+                        url += "&status=" + (((_c = filters === null || filters === void 0 ? void 0 : filters.status) === null || _c === void 0 ? void 0 : _c.value) || "all");
+                        url += "&access=" + (((_d = filters === null || filters === void 0 ? void 0 : filters.access) === null || _d === void 0 ? void 0 : _d.value) || "all");
+                        url += "&adult=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.adult) === null || _e === void 0 ? void 0 : _e.value) || "hide");
+                        if ((_h = (_g = (_f = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) {
+                            url += filters.genre.value.include
+                                .map(function (id) { return '&genres_included[]=' + id; }).join("");
+                        }
+                        if ((_l = (_k = (_j = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.exclude) === null || _l === void 0 ? void 0 : _l.length) {
+                            url += filters.genre.value.exclude
+                                .map(function (id) { return '&genres_excluded[]=' + id; }).join("");
+                        }
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        body = _g.sent();
+                        body = _m.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
                         loadedCheerio("#bookListBlock > div > div").each(function () {

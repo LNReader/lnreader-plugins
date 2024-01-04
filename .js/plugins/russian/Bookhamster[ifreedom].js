@@ -129,14 +129,16 @@ var IfreedomPlugin = /** @class */ (function () {
                         });
                         if (novel.author == "Не указан")
                             delete novel.author;
-                        chapters = loadedCheerio("div.li-ranobe")
-                            .map(function (index, element) { return ({
-                            name: loadedCheerio(element).find("a").text(),
-                            releaseTime: loadedCheerio(element).find("div.li-col2-ranobe").text().trim(),
-                            url: loadedCheerio(element).find("a").attr("href") || "",
-                        }); })
-                            .get()
-                            .filter(function (chapter) { return chapter.name && chapter.url; });
+                        chapters = [];
+                        loadedCheerio("div.li-ranobe").each(function () {
+                            var name = loadedCheerio(this).find("a").text();
+                            var url = loadedCheerio(this).find("a").attr("href");
+                            if (!loadedCheerio(this).find("label.buy-ranobe").length && name && url) {
+                                var releaseTime = loadedCheerio(this)
+                                    .find("div.li-col2-ranobe").text().trim();
+                                chapters.push({ name: name, releaseTime: releaseTime, url: url });
+                            }
+                        });
                         novel.chapters = chapters.reverse();
                         return [2 /*return*/, novel];
                 }
@@ -152,6 +154,15 @@ var IfreedomPlugin = /** @class */ (function () {
                     case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio(".entry-content img").each(function () {
+                            var _a, _b;
+                            var srcset = (_b = (_a = loadedCheerio(this).attr("srcset")) === null || _a === void 0 ? void 0 : _a.split) === null || _b === void 0 ? void 0 : _b.call(_a, " ");
+                            if (srcset === null || srcset === void 0 ? void 0 : srcset.length) {
+                                var bestlink = srcset.filter(function (url) { return url.startsWith("http"); }).unshift();
+                                if (typeof bestlink == 'string')
+                                    loadedCheerio(this).attr("src", bestlink);
+                            }
+                        });
                         chapterText = loadedCheerio(".entry-content").html() || "";
                         return [2 /*return*/, chapterText];
                 }

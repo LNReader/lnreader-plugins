@@ -184,6 +184,7 @@ class ficbook implements Plugin.PluginBase {
       label: "Направление:",
       value: "",
       options: [
+        { label: "Все", value: "" },
         { label: "Джен", value: "gen" },
         { label: "Гет", value: "het" },
         { label: "Слэш", value: "slash-fics-3712917" },
@@ -198,6 +199,7 @@ class ficbook implements Plugin.PluginBase {
       label: "Тэги:",
       value: "",
       options: [
+        { label: "Все", value: "" },
         { label: "#1fic1week", value: "884" },
         { label: "#7daystowrite", value: "2961" },
         { label: "#Бинго_ТФ", value: "1458" },

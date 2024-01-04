@@ -129,11 +129,13 @@ class RulatePlugin implements Plugin.PluginBase {
     )
       .text()
       .trim();
+    if (novel.name?.includes?.("[")) {
+      novel.name = novel.name.split("[")[0].trim();
+    }
     novel.cover =
       baseUrl + loadedCheerio('div[class="images"] > div img').attr("src");
-    novel.summary = loadedCheerio(
-      "#Info > div:nth-child(3), .book-description",
-    ).text();
+    novel.summary = 
+      loadedCheerio("#Info > div:nth-child(3), .book-description").text().trim();
     novel.author = loadedCheerio(
       ".book-stats-icons_author > span:nth-child(2) > a:nth-child(1)",
     ).text();
@@ -188,7 +190,7 @@ class RulatePlugin implements Plugin.PluginBase {
         .attr("href");
 
       if (
-        loadedCheerio(this).find('td > span[class="disabled"]').length < 1 &&
+        !loadedCheerio(this).find('td > span[class="disabled"]').length &&
         releaseDate
       ) {
         chapters.push({
@@ -230,10 +232,8 @@ class RulatePlugin implements Plugin.PluginBase {
     const chapterText = loadedCheerio(".content-text").html();
     return chapterText || "";
   }
-  async searchNovels(
-    searchTerm: string,
-    //page: number | undefined = 1,
-  ): Promise<Plugin.NovelItem[]> {
+
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
     const result = await fetchApi(
       this.site + "/search/autocomplete?query=" + searchTerm,
