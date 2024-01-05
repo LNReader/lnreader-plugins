@@ -86,9 +86,12 @@ class freedlit implements Plugin.PluginBase {
   async parseChapter(chapterUrl: string): Promise<string> {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
-
-    const chapterText = loadedCheerio('div[class="chapter"] div[data-bind]').html();
-    return chapterText || "";
+  
+    loadedCheerio("div.mobile-block").remove();
+    loadedCheerio("div.standart-block").remove();
+  
+    const chapterText = loadedCheerio('div[class="chapter"]').html() || "";
+    return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {

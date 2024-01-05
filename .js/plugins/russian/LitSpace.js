@@ -261,8 +261,10 @@ var freedlit = /** @class */ (function () {
                     case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        chapterText = loadedCheerio('div[class="chapter"] div[data-bind]').html();
-                        return [2 /*return*/, chapterText || ""];
+                        loadedCheerio("div.mobile-block").remove();
+                        loadedCheerio("div.standart-block").remove();
+                        chapterText = loadedCheerio('div[class="chapter"]').html() || "";
+                        return [2 /*return*/, chapterText];
                 }
             });
         });
