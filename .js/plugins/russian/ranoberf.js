@@ -139,7 +139,7 @@ var RNRF = /** @class */ (function () {
                         };
                         chapters = [];
                         (_b = book === null || book === void 0 ? void 0 : book.chapters) === null || _b === void 0 ? void 0 : _b.forEach(function (chapter) {
-                            if (!(chapter === null || chapter === void 0 ? void 0 : chapter.isDonate) || (chapter === null || chapter === void 0 ? void 0 : chapter.isUserPaid)) {
+                            if (!chapter.isDonate || chapter.isUserPaid) {
                                 chapters.push({
                                     name: chapter.title,
                                     releaseTime: (0, dayjs_1.default)(chapter.publishedAt).format("LLL"),

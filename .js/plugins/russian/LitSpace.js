@@ -228,20 +228,20 @@ var freedlit = /** @class */ (function () {
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
                             url: novelUrl,
-                            name: loadedCheerio(".book-info > h4").text(),
+                            name: loadedCheerio(".book-info h4").text(),
                             cover: (_a = loadedCheerio(".book-cover > div > img").attr("src")) === null || _a === void 0 ? void 0 : _a.trim(),
                             summary: (_b = loadedCheerio("#nav-home").text()) === null || _b === void 0 ? void 0 : _b.trim(),
-                            author: loadedCheerio(".book-info > h5 > a").text(),
+                            author: loadedCheerio(".book-info h5 > a").text(),
                             genres: loadedCheerio(".genre-list > a")
                                 .map(function (index, element) { return loadedCheerio(element).text(); })
                                 .get()
                                 .join(","),
                         };
                         chapters = [];
-                        loadedCheerio("#nav-contents > div").each(function () {
-                            var name = loadedCheerio(this).find("a").text();
+                        loadedCheerio("a.chapter-line").each(function () {
+                            var name = loadedCheerio(this).find("h6").text();
                             var releaseTime = loadedCheerio(this).find('span[class="date"]').text();
-                            var url = loadedCheerio(this).find("a").attr("href");
+                            var url = loadedCheerio(this).attr("href");
                             if (!name || !url)
                                 return;
                             chapters.push({ name: name, releaseTime: releaseTime, url: url });
@@ -261,9 +261,7 @@ var freedlit = /** @class */ (function () {
                     case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio('div[class="standart-block"]').remove();
-                        loadedCheerio('div[class="mobile-block"]').remove();
-                        chapterText = loadedCheerio('div[class="chapter"]').html();
+                        chapterText = loadedCheerio('div[class="chapter"] div[data-bind]').html();
                         return [2 /*return*/, chapterText || ""];
                 }
             });

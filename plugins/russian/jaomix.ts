@@ -72,13 +72,13 @@ class Jaomix implements Plugin.PluginBase {
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
     const body = await fetchApi(novelUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
+
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
+      name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
+      cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
+      summary: loadedCheerio('div[id="desc-tab"]').text().trim()
     };
-
-    novel.name = loadedCheerio('div[class="desc-book"] > h1').text().trim();
-    novel.cover = loadedCheerio('div[class="img-book"] > img').attr("src");
-    novel.summary = loadedCheerio('div[id="desc-tab"]').text().trim();
 
     loadedCheerio("#info-book > p").each(function () {
       let text = loadedCheerio(this).text().replace(/,/g, "").split(" ");

@@ -47,8 +47,7 @@ class RLIB implements Plugin.PluginBase {
     }
 
     if (filters.statuss?.value?.length) {
-      url += filters.statuss.value
-        .map((i) => "&manga_status[]=" + i).join("");
+      url += filters.statuss.value.map((i) => "&manga_status[]=" + i).join("");
     }
 
     if (filters.genres?.value?.include?.length) {
@@ -63,7 +62,7 @@ class RLIB implements Plugin.PluginBase {
 
     if (filters.tags?.value?.include?.length) {
       url += filters.tags.value.include
-        ?.map((i) => "&tags[include][]=" + i).join("");
+        .map((i) => "&tags[include][]=" + i).join("");
     }
 
     if (filters.tags?.value?.exclude?.length) {
@@ -139,12 +138,12 @@ class RLIB implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     let chaptersRaw: any = body.match(
-      /window.__DATA__ = [\s\S]*?window._this.SITE_COLOR_/gm,
+      /window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm,
     );
 
     chaptersRaw = chaptersRaw?.[0]
       ?.replace("window.__DATA__ = ", "")
-      ?.replace("window._this.SITE_COLOR_", "")
+      ?.replace("window._SITE_COLOR_", "")
       ?.trim()
       ?.slice(0, -1);
 
@@ -167,7 +166,7 @@ class RLIB implements Plugin.PluginBase {
 
   async parseChapter(chapterUrl: string): Promise<string> {
     const result = await fetchApi(
-      chapterUrl + (this.ui ? `&ui=${this.ui}` : ""),
+      chapterUrl + (this.ui ? "&ui=" + this.ui : ""),
     );
     const body = await result.text();
 

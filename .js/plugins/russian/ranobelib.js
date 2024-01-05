@@ -271,12 +271,12 @@ var RLIB = /** @class */ (function () {
         };
     }
     RLIB.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
-            return __generator(this, function (_6) {
-                switch (_6.label) {
+            return __generator(this, function (_5) {
+                switch (_5.label) {
                     case 0:
                         url = "".concat(this.site, "/manga-list?sort=");
                         url += showLatestNovels
@@ -298,8 +298,7 @@ var RLIB = /** @class */ (function () {
                             url += filters.status.value.map(function (i) { return "&status[]=" + i; }).join("");
                         }
                         if ((_q = (_p = filters.statuss) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.length) {
-                            url += filters.statuss.value
-                                .map(function (i) { return "&manga_status[]=" + i; }).join("");
+                            url += filters.statuss.value.map(function (i) { return "&manga_status[]=" + i; }).join("");
                         }
                         if ((_t = (_s = (_r = filters.genres) === null || _r === void 0 ? void 0 : _r.value) === null || _s === void 0 ? void 0 : _s.include) === null || _t === void 0 ? void 0 : _t.length) {
                             url += filters.genres.value.include
@@ -310,22 +309,23 @@ var RLIB = /** @class */ (function () {
                                 .map(function (i) { return "&genres[exclude][]=" + i; }).join("");
                         }
                         if ((_z = (_y = (_x = filters.tags) === null || _x === void 0 ? void 0 : _x.value) === null || _y === void 0 ? void 0 : _y.include) === null || _z === void 0 ? void 0 : _z.length) {
-                            url += (_0 = filters.tags.value.include) === null || _0 === void 0 ? void 0 : _0.map(function (i) { return "&tags[include][]=" + i; }).join("");
+                            url += filters.tags.value.include
+                                .map(function (i) { return "&tags[include][]=" + i; }).join("");
                         }
-                        if ((_3 = (_2 = (_1 = filters.tags) === null || _1 === void 0 ? void 0 : _1.value) === null || _2 === void 0 ? void 0 : _2.exclude) === null || _3 === void 0 ? void 0 : _3.length) {
+                        if ((_2 = (_1 = (_0 = filters.tags) === null || _0 === void 0 ? void 0 : _0.value) === null || _1 === void 0 ? void 0 : _1.exclude) === null || _2 === void 0 ? void 0 : _2.length) {
                             url += filters.tags.value.exclude
                                 .map(function (i) { return "&tags[exclude][]=" + i; }).join("");
                         }
                         url += "&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _6.sent();
+                        result = _5.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _6.sent();
+                        body = _5.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        this.ui = (_5 = (_4 = loadedCheerio("a.header-right-menu__item")
-                            .attr("href")) === null || _4 === void 0 ? void 0 : _4.replace) === null || _5 === void 0 ? void 0 : _5.call(_4, /[^0-9]/g, "");
+                        this.ui = (_4 = (_3 = loadedCheerio("a.header-right-menu__item")
+                            .attr("href")) === null || _3 === void 0 ? void 0 : _3.replace) === null || _4 === void 0 ? void 0 : _4.call(_3, /[^0-9]/g, "");
                         novels = [];
                         loadedCheerio(".media-card-wrap").each(function () {
                             var name = loadedCheerio(this).find(".media-card__title").text();
@@ -384,8 +384,8 @@ var RLIB = /** @class */ (function () {
                             }
                         });
                         chapters = [];
-                        chaptersRaw = body.match(/window.__DATA__ = [\s\S]*?window._this.SITE_COLOR_/gm);
-                        chaptersRaw = (_d = (_c = (_b = (_a = chaptersRaw === null || chaptersRaw === void 0 ? void 0 : chaptersRaw[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._this.SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
+                        chaptersRaw = body.match(/window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm);
+                        chaptersRaw = (_d = (_c = (_b = (_a = chaptersRaw === null || chaptersRaw === void 0 ? void 0 : chaptersRaw[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
                         chaptersJson = JSON.parse(chaptersRaw);
                         this.ui = (_e = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson.user) === null || _e === void 0 ? void 0 : _e.id;
                         (_g = (_f = chaptersJson.chapters) === null || _f === void 0 ? void 0 : _f.list) === null || _g === void 0 ? void 0 : _g.forEach(function (chapter) {
@@ -408,7 +408,7 @@ var RLIB = /** @class */ (function () {
             var result, body, loadedCheerio, baseUrl, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl + (this.ui ? "&ui=".concat(this.ui) : ""))];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl + (this.ui ? "&ui=" + this.ui : ""))];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];

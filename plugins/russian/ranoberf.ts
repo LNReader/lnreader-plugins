@@ -71,7 +71,7 @@ class RNRF implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     book?.chapters?.forEach((chapter) => {
-      if (!chapter?.isDonate || chapter?.isUserPaid) {
+      if (!chapter.isDonate || chapter.isUserPaid) {
         chapters.push({
           name: chapter.title,
           releaseTime: dayjs(chapter.publishedAt).format("LLL"),

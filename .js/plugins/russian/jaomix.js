@@ -223,10 +223,10 @@ var Jaomix = /** @class */ (function () {
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
                             url: novelUrl,
+                            name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
+                            cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
+                            summary: loadedCheerio('div[id="desc-tab"]').text().trim()
                         };
-                        novel.name = loadedCheerio('div[class="desc-book"] > h1').text().trim();
-                        novel.cover = loadedCheerio('div[class="img-book"] > img').attr("src");
-                        novel.summary = loadedCheerio('div[id="desc-tab"]').text().trim();
                         loadedCheerio("#info-book > p").each(function () {
                             var text = loadedCheerio(this).text().replace(/,/g, "").split(" ");
                             if (text[0] === "Автор:") {

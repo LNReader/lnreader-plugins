@@ -58,10 +58,10 @@ class freedlit implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      name: loadedCheerio(".book-info > h4").text(),
+      name: loadedCheerio(".book-info h4").text(),
       cover: loadedCheerio(".book-cover > div > img").attr("src")?.trim(),
       summary: loadedCheerio("#nav-home").text()?.trim(),
-      author: loadedCheerio(".book-info > h5 > a").text(),
+      author: loadedCheerio(".book-info h5 > a").text(),
       genres: loadedCheerio(".genre-list > a")
         .map((index, element) => loadedCheerio(element).text())
         .get()
@@ -70,10 +70,10 @@ class freedlit implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio("#nav-contents > div").each(function () {
-      const name = loadedCheerio(this).find("a").text();
+    loadedCheerio("a.chapter-line").each(function () {
+      const name = loadedCheerio(this).find("h6").text();
       const releaseTime = loadedCheerio(this).find('span[class="date"]').text();
-      const url = loadedCheerio(this).find("a").attr("href");
+      const url = loadedCheerio(this).attr("href");
       if (!name || !url) return;
 
       chapters.push({ name, releaseTime, url });
@@ -87,17 +87,11 @@ class freedlit implements Plugin.PluginBase {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio('div[class="standart-block"]').remove();
-    loadedCheerio('div[class="mobile-block"]').remove();
-    const chapterText = loadedCheerio('div[class="chapter"]').html();
-
+    const chapterText = loadedCheerio('div[class="chapter"] div[data-bind]').html();
     return chapterText || "";
   }
 
-  async searchNovels(
-    searchTerm: string,
-    //page: number | undefined = 1,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/search?query=${searchTerm}&type=all`;
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
