@@ -57,6 +57,7 @@ const run = async () => {
         const success = await generate(name);
         if (success) console.log(`[${name}] OK`);
     }
+    console.log('Generating: .js files');
 };
 
 run();
