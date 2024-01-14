@@ -5,35 +5,35 @@ export async function fetchApi(
         [x: string]: string | Record<string,string> | undefined | FormData | Headers;
     },
 ) {
-    let userAgent: string | undefined;
+    let defaultHeaders: {
+        'User-Agent'?: string,
+        'Cookie'?: string,
+    } = {};
     try {
-        // get your user agent when you open localhost:3000
-        const getUserAgent = (await import('../index.js')).getUserAgent;
-        userAgent = getUserAgent();
+        const getHeaders = (await import('../index.js')).getHeaders;
+        defaultHeaders = getHeaders();
     }catch{
         // nothing to do
     }
 
-    // there're 2 type of Headers, plain object {} or Headers instance
-    if(userAgent) {
-        if(init?.headers) {
-            if(init.headers instanceof Headers){ 
-                if(!init.headers.get('User-Agent')){
-                    init.headers.set('User-Agent', userAgent);
-                }
-            }else{
-                init.headers = {
-                    "User-agent": userAgent,
-                    ...init.headers
-                }
+    if(init?.headers) {
+        if(init.headers instanceof Headers){ 
+            if(!init.headers.get('User-Agent') && defaultHeaders['User-Agent']){
+                init.headers.set('User-Agent', defaultHeaders['User-Agent']);
+            }
+            if(defaultHeaders.Cookie) {
+                init.headers.set('Cookie', defaultHeaders.Cookie);
             }
         }else{
-            init = {
-                ...init,
-                headers: {
-                    "User-Agent": userAgent
-                }
-            }
+            init.headers = {
+                ...defaultHeaders,
+                ...init.headers,
+            };
+        }
+    }else{
+        init = {
+            ...init,
+            headers: defaultHeaders
         }
     }
 
