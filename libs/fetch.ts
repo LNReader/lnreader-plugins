@@ -5,16 +5,15 @@ export async function fetchApi(
         [x: string]: string | Record<string,string> | undefined | FormData | Headers;
     },
 ) {
-    let defaultHeaders: {
-        'User-Agent'?: string,
-        'Cookie'?: string,
-    } = {};
+    let defaultHeaders: Record<string,string> = {};
     try {
-        const getHeaders = (await import('../index.js')).getHeaders;
+        const {getHeaders} = (await import('../index.js'));
         defaultHeaders = getHeaders();
     }catch{
         // nothing to do
     }
+
+    console.log("defaultHeaders", defaultHeaders);
 
     if(init?.headers) {
         if(init.headers instanceof Headers){ 
