@@ -2,6 +2,7 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
+import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 
 class AllNovelFullPlugin implements Plugin.PluginBase {
     id = "anf.net";
@@ -17,10 +18,17 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
             const novelName = loadedCheerio(el)
                 .find("h3.truyen-title > a")
                 .text();
-            const novelCover =
-                this.site + loadedCheerio(el).find("img.cover").attr("src");
-            const novelUrl =
-                this.site + loadedCheerio(el).find("h3.truyen-title > a").attr("href");
+            let novelCover = loadedCheerio(el).find("img.cover").attr("src");
+            let novelUrl = loadedCheerio(el).find("h3.truyen-title > a").attr("href");
+
+            if (!novelUrl) return;
+
+            if (novelUrl && !isUrlAbsolute(novelUrl)) {
+                novelUrl = this.site + novelUrl;
+            }
+            if (novelCover && !isUrlAbsolute(novelCover)){
+                novelCover = this.site + novelCover;
+            }
 
             const novel = {
                 url: novelUrl,
@@ -112,13 +120,13 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
                 const cUrl = loadedCheerio(el).attr("value");
                 const chapterUrl = this.site + cUrl
 
-                if (cUrl) {
-                    chapter.push({
-                        name: chapterName,
-                        releaseTime: releaseDate,
-                        url: chapterUrl,
-                    });
-                }
+                if (!cUrl) return;
+
+                chapter.push({
+                    name: chapterName,
+                    releaseTime: releaseDate,
+                    url: chapterUrl,
+                });
             });
 
             return chapter;

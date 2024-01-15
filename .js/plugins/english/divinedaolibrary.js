@@ -38,38 +38,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
-var filterInputs_1 = require("@libs/filterInputs");
-var parseMadaraDate_1 = require("@libs/parseMadaraDate");
-var ComradeMaoPlugin = /** @class */ (function () {
-    function ComradeMaoPlugin() {
-        this.id = "comrademao";
-        this.name = "Comrade Mao";
-        this.site = "https://comrademao.com/";
+var defaultCover_1 = require("@libs/defaultCover");
+var DDLPlugin = /** @class */ (function () {
+    function DDLPlugin() {
+        this.id = "DDL.com";
+        this.name = "Divine Dao Library";
+        this.site = "https://www.divinedaolibrary.com/";
         this.version = "1.0.0";
-        this.icon = "src/en/comrademao/icon.png";
+        this.icon = "src/en/divinedaolibrary/icon.png";
         this.userAgent = "";
-        this.filters = {
-            category: {
-                value: "",
-                label: "Type",
-                options: [
-                    { label: "Chinese", value: "/mtype/chinese/" },
-                    { label: "Japanese", value: "/mtype/japanese/" },
-                    { label: "Korean", value: "/mtype/korean/" },
-                    { label: "Manhua", value: "/mtype/manhua/" },
-                ],
-                type: filterInputs_1.FilterTypes.Picker,
-            },
-        };
     }
-    ComradeMaoPlugin.prototype.parseNovels = function (loadedCheerio) {
+    DDLPlugin.prototype.parseNovels = function (loadedCheerio, searchTerm) {
         var novels = [];
-        loadedCheerio(".listupd")
-            .find("div.bs")
+        loadedCheerio("#main")
+            .find("li")
             .each(function () {
-            var novelName = loadedCheerio(this).find(".tt").text().trim();
-            var novelCover = loadedCheerio(this).find("img").attr("src");
-            var novelUrl = loadedCheerio(this).find("a").attr("href");
+            var novelName = loadedCheerio(this).find("a").text();
+            var novelCover = defaultCover_1.defaultCover;
+            var novelUrl = loadedCheerio(this).find(" a").attr("href");
             if (!novelUrl)
                 return;
             var novel = {
@@ -79,18 +65,22 @@ var ComradeMaoPlugin = /** @class */ (function () {
             };
             novels.push(novel);
         });
+        if (searchTerm) {
+            novels = novels.filter(function (novel) {
+                return novel.name.toLowerCase().includes(searchTerm.toLowerCase());
+            });
+        }
         return novels;
     };
-    ComradeMaoPlugin.prototype.popularNovels = function (pageNo, _a) {
+    ;
+    DDLPlugin.prototype.popularNovels = function (pageNo, _a) {
         var filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var link, headers, body, loadedCheerio;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        link = this.site;
-                        link += filters.category.value;
-                        link += "page/" + pageNo + "/?post_type=novel";
+                        link = this.site + "novels";
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(link, { headers: headers }).then(function (result) {
                                 return result.text();
@@ -103,7 +93,7 @@ var ComradeMaoPlugin = /** @class */ (function () {
             });
         });
     };
-    ComradeMaoPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
+    DDLPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
             var url, headers, result, body, loadedCheerio, novel, chapter;
             return __generator(this, function (_a) {
@@ -122,79 +112,72 @@ var ComradeMaoPlugin = /** @class */ (function () {
                             url: url,
                             chapters: [],
                         };
-                        novel.name = loadedCheerio(".entry-title").text().trim();
-                        novel.cover = loadedCheerio("div.thumbook > div > img").attr("src");
-                        loadedCheerio(".infox .wd-full").each(function (i, el) {
-                            var detailName = loadedCheerio(el).find("b").text();
-                            var detail = loadedCheerio(el).find('span').text();
-                            switch (detailName) {
-                                case 'Publisher: ':
-                                    novel.author = detail.trim();
-                                    break;
-                                case 'Status: ':
-                                    novel.status = detail.trim();
-                                    break;
-                                case 'Genres:':
-                                    novel.genres = detail.trim().replace(/ , /g, ',');
-                                    break;
-                                case 'Description: ':
-                                    novel.summary = detail.trim();
-                                    break;
-                            }
-                        });
+                        novel.name = loadedCheerio("h1.entry-title").text().trim();
+                        novel.cover =
+                            loadedCheerio(".entry-content").find("img").attr("data-ezsrc") ||
+                                defaultCover_1.defaultCover;
+                        novel.summary = loadedCheerio("#main > article > div > p:nth-child(6)")
+                            .text()
+                            .trim();
+                        novel.author = loadedCheerio("#main > article > div > h3:nth-child(2)")
+                            .text()
+                            .replace(/Author:/g, "")
+                            .trim();
                         chapter = [];
-                        loadedCheerio("#chapterlist")
-                            .find("li")
+                        loadedCheerio("#main")
+                            .find("li > span > a")
                             .each(function () {
-                            var releaseDate = (0, parseMadaraDate_1.parseMadaraDate)(loadedCheerio(this).find(".chapterdate").text());
-                            var chapterName = loadedCheerio(this)
-                                .find(".chapternum")
-                                .text();
-                            var chapterUrl = loadedCheerio(this).find("a").attr("href");
+                            var chapterName = loadedCheerio(this).text().trim();
+                            var releaseDate = null;
+                            var chapterUrl = loadedCheerio(this).attr("href");
                             if (!chapterUrl)
                                 return;
                             chapter.push({
                                 name: chapterName,
-                                url: chapterUrl,
                                 releaseTime: releaseDate,
+                                url: chapterUrl,
                             });
                         });
-                        novel.chapters = chapter.reverse();
+                        novel.chapters = chapter;
                         return [2 /*return*/, novel];
                 }
             });
         });
     };
     ;
-    ComradeMaoPlugin.prototype.parseChapter = function (chapterUrl) {
-        var _a;
+    DDLPlugin.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var headers, result, body, loadedCheerio, chapterText;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var headers, result, body, loadedCheerio, chapterName, chapterText;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl, { headers: headers })];
                     case 1:
-                        result = _b.sent();
+                        result = _a.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _b.sent();
+                        body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        chapterText = ((_a = loadedCheerio("#chaptercontent").html()) === null || _a === void 0 ? void 0 : _a.trim()) || "";
+                        chapterName = loadedCheerio(".entry-title").text().trim();
+                        chapterText = loadedCheerio(".entry-content").html();
+                        if (!chapterText) {
+                            chapterText = loadedCheerio(".page-header").html();
+                        }
+                        chapterText = "<p><h1>".concat(chapterName, "</h1></p>") + chapterText;
                         return [2 /*return*/, chapterText];
                 }
             });
         });
     };
     ;
-    ComradeMaoPlugin.prototype.searchNovels = function (searchTerm, pageNo) {
+    DDLPlugin.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
             var url, headers, result, body, loadedCheerio;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = "".concat(this.site, "page/").concat(pageNo, "/?s=").concat(searchTerm, "&post_type=novel");
+                        url = this.site + "novels";
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
                     case 1:
@@ -203,13 +186,13 @@ var ComradeMaoPlugin = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        return [2 /*return*/, this.parseNovels(loadedCheerio)];
+                        return [2 /*return*/, this.parseNovels(loadedCheerio, searchTerm)];
                 }
             });
         });
     };
     ;
-    ComradeMaoPlugin.prototype.fetchImage = function (url) {
+    DDLPlugin.prototype.fetchImage = function (url) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -219,6 +202,6 @@ var ComradeMaoPlugin = /** @class */ (function () {
             });
         });
     };
-    return ComradeMaoPlugin;
+    return DDLPlugin;
 }());
-exports.default = new ComradeMaoPlugin();
+exports.default = new DDLPlugin();

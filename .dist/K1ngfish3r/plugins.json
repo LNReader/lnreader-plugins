@@ -158,6 +158,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/multisrc/madara/icons/daonovel.png"
 		},
 		{
+			"id": "DDL.com",
+			"name": "Divine Dao Library",
+			"site": "https://www.divinedaolibrary.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/.js/plugins/english/divinedaolibrary.js",
+			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/src/en/divinedaolibrary/icon.png"
+		},
+		{
 			"id": "fanTLS",
 			"name": "Fans Translations[madara]",
 			"site": "https://fanstranslations.com/",

@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var filterInputs_1 = require("@libs/filterInputs");
+var isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
 var AllNovelFullPlugin = /** @class */ (function () {
     function AllNovelFullPlugin() {
         this.id = "anf.net";
@@ -111,8 +112,16 @@ var AllNovelFullPlugin = /** @class */ (function () {
             var novelName = loadedCheerio(el)
                 .find("h3.truyen-title > a")
                 .text();
-            var novelCover = _this.site + loadedCheerio(el).find("img.cover").attr("src");
-            var novelUrl = _this.site + loadedCheerio(el).find("h3.truyen-title > a").attr("href");
+            var novelCover = loadedCheerio(el).find("img.cover").attr("src");
+            var novelUrl = loadedCheerio(el).find("h3.truyen-title > a").attr("href");
+            if (!novelUrl)
+                return;
+            if (novelUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelUrl)) {
+                novelUrl = _this.site + novelUrl;
+            }
+            if (novelCover && !(0, isAbsoluteUrl_1.isUrlAbsolute)(novelCover)) {
+                novelCover = _this.site + novelCover;
+            }
             var novel = {
                 url: novelUrl,
                 name: novelName,
@@ -211,13 +220,13 @@ var AllNovelFullPlugin = /** @class */ (function () {
                                             var releaseDate = null;
                                             var cUrl = loadedCheerio(el).attr("value");
                                             var chapterUrl = _this.site + cUrl;
-                                            if (cUrl) {
-                                                chapter.push({
-                                                    name: chapterName,
-                                                    releaseTime: releaseDate,
-                                                    url: chapterUrl,
-                                                });
-                                            }
+                                            if (!cUrl)
+                                                return;
+                                            chapter.push({
+                                                name: chapterName,
+                                                releaseTime: releaseDate,
+                                                url: chapterUrl,
+                                            });
                                         });
                                         return [2 /*return*/, chapter];
                                 }

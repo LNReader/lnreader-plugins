@@ -21,14 +21,14 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
                 const novelCover = loadedCheerio(this).find("img").attr("src");
                 const novelUrl = loadedCheerio(this).find("a").attr("href");
     
-                if (novelUrl) {
-                    const novel = {
-                        name: novelName,
-                        cover: novelCover,
-                        url: novelUrl,
-                    }
-                novels.push(novel);
+                if (!novelUrl) return;
+
+                const novel = {
+                    name: novelName,
+                    cover: novelCover,
+                    url: novelUrl,
                 }
+                novels.push(novel);
             });
         return novels;
     }
@@ -102,13 +102,13 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
                     .text();
                 const chapterUrl = loadedCheerio(this).find("a").attr("href");
 
-                if (chapterUrl) {
-                    chapter.push({
-                        name: chapterName,
-                        url: chapterUrl,
-                        releaseTime: releaseDate,
-                    });
-                }
+                if (!chapterUrl) return;
+
+                chapter.push({
+                    name: chapterName,
+                    url: chapterUrl,
+                    releaseTime: releaseDate,
+                });
             });
 
         novel.chapters = chapter.reverse();
