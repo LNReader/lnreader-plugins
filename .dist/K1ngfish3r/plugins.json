@@ -131,6 +131,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/multisrc/madara/icons/clicknovel.png"
 		},
 		{
+			"id": "comrademao",
+			"name": "Comrade Mao",
+			"site": "https://comrademao.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/.js/plugins/english/comrademao.js",
+			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/src/en/comrademao/icon.png"
+		},
+		{
 			"id": "cratenovel",
 			"name": "CrateNovel[madara]",
 			"site": "https://cratenovel.com/",

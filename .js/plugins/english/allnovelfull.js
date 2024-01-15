@@ -262,7 +262,7 @@ var AllNovelFullPlugin = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = "".concat(this.site, "/search?keyword=").concat(searchTerm);
+                        url = "".concat(this.site, "/search?keyword=").concat(searchTerm, "&page=").concat(pageNo);
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
                     case 1:

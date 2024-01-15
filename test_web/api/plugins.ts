@@ -63,7 +63,7 @@ export const popularNovels = async (
 export const searchNovels = async (
     pluginRequirePath: string,
     searchTerm: string
-) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm);
+) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, 1);
 
 export const parseNovelAndChapters = async (
     pluginRequirePath: string,

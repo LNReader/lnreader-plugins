@@ -145,9 +145,9 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
 
     async searchNovels(
         searchTerm: string,
-        pageNo?: number | undefined
+        pageNo: number
     ): Promise<Plugin.NovelItem[]> {
-        const url = `${this.site}/search?keyword=${searchTerm}`;
+        const url = `${this.site}/search?keyword=${searchTerm}&page=${pageNo}`;
         const headers = new Headers();
         const result = await fetchApi(url, { headers });
         const body = await result.text();

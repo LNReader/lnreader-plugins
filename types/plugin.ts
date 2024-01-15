@@ -66,7 +66,7 @@ export namespace Plugin {
         ): Promise<NovelItem[]>;
         parseNovelAndChapters(novelUrl: string): Promise<SourceNovel>;
         parseChapter(chapterUrl: string): Promise<string>;
-        searchNovels(searchTerm: string, pageNo?: number): Promise<NovelItem[]>;
+        searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
         /**
          *
          * @param url Image url
