@@ -167,6 +167,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/src/en/divinedaolibrary/icon.png"
 		},
 		{
+			"id": "earlynovel",
+			"name": "Early Novel",
+			"site": "https://earlynovel.net/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/.js/plugins/english/earlynovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/plugins/icons/multisrc/madara/icons/latestnovel.png"
+		},
+		{
 			"id": "fanTLS",
 			"name": "Fans Translations[madara]",
 			"site": "https://fanstranslations.com/",

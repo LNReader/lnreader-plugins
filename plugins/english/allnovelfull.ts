@@ -51,7 +51,6 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
         else
             link += filters.order.value;
 
-        
         link += `?page=${pageNo}`;
 
         const headers = new Headers();
@@ -105,9 +104,9 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
         const novelId = loadedCheerio("#rating").attr("data-novel-id");
 
         const getChapters = async (id: string) => {
-            const chapterListUrl = this.site + "/ajax/chapter-option?novelId=" + id;
+            const chaptersUrl = this.site + "/ajax/chapter-option?novelId=" + id;
 
-            const data = await fetchApi(chapterListUrl, { headers });
+            const data = await fetchApi(chaptersUrl, { headers });
             const chapters = await data.text();
 
             loadedCheerio = parseHTML(chapters);
