@@ -49,7 +49,6 @@ const getHeaders = () => {
     /** @type {Record<string,string>} */
     const headers = {};
     const els = document.querySelectorAll(".headerinfo").forEach((el) => {
-        console.log(el);
         /** @type {HTMLSpanElement | null} */
         const nameSpan = el.querySelector(".headername");
         /** @type {HTMLSpanElement | null} */
@@ -733,7 +732,6 @@ class PluginWrapper {
                     }),
                 })
             ).text();
-            console.log(chapterText)
             PluginWrapper.previewSettings.html = chapterText;
             PluginWrapper.previewSettings.sanitizedHTML =
                 window.sanitizeChapterText(chapterText);
