@@ -12,7 +12,8 @@ class TuNovelaLigera implements Plugin.PluginBase {
     icon = "src/es/tunovelaligera/icon.png";
     site = "https://tunovelaligera.com/";
     version = "1.0.0";
-    userAgent = "";
+    userAgent = "";
+
 
     async popularNovels(
         pageNo: number,
@@ -20,11 +21,11 @@ class TuNovelaLigera implements Plugin.PluginBase {
     ): Promise<Plugin.NovelItem[]> {
         let link = `${this.site}`;
 
-        link += filters.genres ? `genero/` + filters.genres : "novelas";
+        link += filters.genres.value ? `genero/` + filters.genres.value : "novelas";
 
         link += `/page/${pageNo}`;
 
-        link += filters.order;
+        link += filters.order.value;
 
         const headers = new Headers();
         const result = await fetchApi(link, { headers });

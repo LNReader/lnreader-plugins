@@ -132,9 +132,9 @@ var TuNovelaLigera = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         link = "".concat(this.site);
-                        link += filters.genres ? "genero/" + filters.genres : "novelas";
+                        link += filters.genres.value ? "genero/" + filters.genres.value : "novelas";
                         link += "/page/".concat(pageNo);
-                        link += filters.order;
+                        link += filters.order.value;
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(link, { headers: headers })];
                     case 1:
