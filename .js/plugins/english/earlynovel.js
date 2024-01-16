@@ -64,6 +64,7 @@ var EarlyNovelPlugin = /** @class */ (function () {
                 value: "",
                 label: "Genre",
                 options: [
+                    { label: "None", value: "" },
                     { label: "Action", value: "/genre/action-1" },
                     { label: "Adult", value: "/genre/adult-2" },
                     { label: "Adventure", value: "/genre/adventure-3" },

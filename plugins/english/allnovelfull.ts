@@ -183,6 +183,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
             value: "",
             label: "Genre",
             options: [
+                { label: "None", value: "" },
                 { label: "Shounen", value: "/genre/Shounen" },
                 { label: "Harem", value: "/genre/Harem" },
                 { label: "Comedy", value: "/genre/Comedy" },

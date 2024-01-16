@@ -64,6 +64,7 @@ var AllNovelFullPlugin = /** @class */ (function () {
                 value: "",
                 label: "Genre",
                 options: [
+                    { label: "None", value: "" },
                     { label: "Shounen", value: "/genre/Shounen" },
                     { label: "Harem", value: "/genre/Harem" },
                     { label: "Comedy", value: "/genre/Comedy" },

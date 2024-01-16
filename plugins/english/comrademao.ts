@@ -151,6 +151,7 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
             value: "",
             label: "Type",
             options: [
+                { label: "None", value: "" },
                 { label: "Chinese", value: "/mtype/chinese/" },
                 { label: "Japanese", value: "/mtype/japanese/" },
                 { label: "Korean", value: "/mtype/korean/" },
