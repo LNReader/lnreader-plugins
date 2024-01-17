@@ -19,12 +19,6 @@ export async function fetchApi(
     }
     if (init?.headers) {
         if (init.headers instanceof Headers) {
-            if (
-                !init.headers.get("User-Agent") &&
-                defaultHeaders["User-Agent"]
-            ) {
-                init.headers.set("User-Agent", defaultHeaders["User-Agent"]);
-            }
             for (const [name, value] of Object.entries(defaultHeaders)) {
                 if (!init.headers.get(name)) init.headers.set(name, value);
             }
@@ -40,12 +34,36 @@ export async function fetchApi(
             headers: defaultHeaders,
         };
     }
-    console.log(url, init)
+    console.log(url, init);
     return await fetch(url, init);
 }
 
 export const fetchFile = async function (url: string, init?: RequestInit) {
     if (!init) init = {};
+    let defaultHeaders: Record<string, string> = {};
+    try {
+        const { getHeaders } = await import("../index.js");
+        defaultHeaders = getHeaders();
+    } catch {
+        // nothing to do
+    }
+    if (init?.headers) {
+        if (init.headers instanceof Headers) {
+            for (const [name, value] of Object.entries(defaultHeaders)) {
+                if (!init.headers.get(name)) init.headers.set(name, value);
+            }
+        } else {
+            init.headers = {
+                ...defaultHeaders,
+                ...init.headers,
+            };
+        }
+    } else {
+        init = {
+            ...init,
+            headers: defaultHeaders,
+        };
+    }
     try {
         const res = await fetch(url, init);
         if (!res.ok) return undefined;
