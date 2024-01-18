@@ -9,7 +9,7 @@ class Smakolykytl implements Plugin.PluginBase {
   site = "https://smakolykytl.site/";
   version = "1.0.0";
   icon = "src/ua/smakolykytl/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     pageNo: number,

@@ -49,7 +49,6 @@ var RulatePlugin = /** @class */ (function () {
         this.icon = "multisrc/rulate/icons/".concat(iconFileName, ".png");
         this.site = metadata.sourceSite;
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = metadata.filters;
     }
     RulatePlugin.prototype.popularNovels = function (pageNo, _a) {

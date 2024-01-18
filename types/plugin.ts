@@ -59,7 +59,6 @@ export namespace Plugin {
         site: string;
         filters?: Filters;
         version: string;
-        userAgent: string;
         popularNovels(
             pageNo: number,
             options: PopularNovelsOptions<Filters>
@@ -108,7 +107,6 @@ export const isPlugin = (p: any): p is Plugin.PluginBase => {
         "version",
         "icon",
         "site",
-        "userAgent",
     ];
     for (let i = 0; i < requireds_fields.length; i++) {
         const key = requireds_fields[i];

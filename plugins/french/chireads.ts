@@ -8,7 +8,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
     icon: string;
     site: string;
     version: string;
-    userAgent: string;
+
 
     constructor() {
         this.id = "chireads.com";
@@ -16,7 +16,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
         this.icon = "src/fr/chireads/icon.png";
         this.site = "https://chireads.com";
         this.version = "1.0.0";
-        this.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
+
     }
     parseNovels(loadedCheerio: CheerioAPI) {
         return [];

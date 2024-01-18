@@ -46,7 +46,6 @@ var LSHNovel = /** @class */ (function () {
         this.icon = "multisrc/wpmangastream/icons/lshnovel.png";
         this.site = "https://lshnovel.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 value: "popular",

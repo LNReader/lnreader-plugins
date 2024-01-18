@@ -9,7 +9,7 @@ class LightNovelBrasil implements Plugin.PluginBase {
     icon = "multisrc/wpmangastream/icons/lightnovelbrasil.png";
     site = "https://lightnovelbrasil.com/";
     version = "1.0.0";
-    userAgent = "";
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>

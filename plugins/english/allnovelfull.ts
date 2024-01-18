@@ -10,7 +10,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
     icon = "src/en/allnovelfull/icon.png";
     site = "https://allnovelfull.net";
     version = "1.0.0";
-    userAgent = "";
+
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];
 

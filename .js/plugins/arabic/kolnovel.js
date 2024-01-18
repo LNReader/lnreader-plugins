@@ -46,7 +46,6 @@ var KolNovel = /** @class */ (function () {
         this.icon = "multisrc/wpmangastream/icons/kolnovel.png";
         this.site = "https://kolnovel.lol/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 label: "ترتيب حسب",

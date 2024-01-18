@@ -49,7 +49,6 @@ var TuNovelaLigera = /** @class */ (function () {
         this.icon = "src/es/tunovelaligera/icon.png";
         this.site = "https://tunovelaligera.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 value: "?m_orderby=rating",

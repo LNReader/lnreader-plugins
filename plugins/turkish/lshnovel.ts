@@ -9,7 +9,7 @@ class LSHNovel implements Plugin.PluginBase {
     icon = "multisrc/wpmangastream/icons/lshnovel.png";
     site = "https://lshnovel.com/";
     version = "1.0.0";
-    userAgent = "";
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>

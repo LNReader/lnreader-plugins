@@ -12,7 +12,7 @@ class TL implements Plugin.PluginBase {
   site = "https://novel.tl";
   version = "1.0.0";
   icon = "src/ru/noveltl/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     page: number,

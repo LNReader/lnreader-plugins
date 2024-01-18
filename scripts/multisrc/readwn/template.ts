@@ -19,7 +19,6 @@ class ReadwnPlugin implements Plugin.PluginBase {
   icon: string;
   site: string;
   version: string;
-  userAgent: string;
   filters?: Filters;
 
   constructor(metadata: ReadwnMetadata) {
@@ -29,7 +28,6 @@ class ReadwnPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readwn/icons/${iconFileName}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
-    this.userAgent = "";
     this.filters = metadata.filters;
   }
 
@@ -149,7 +147,6 @@ class ReadwnPlugin implements Plugin.PluginBase {
         Referer: this.site + "/search.html",
         Origin: this.site,
         "user-agent":
-          this.userAgent ||
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
       },
       method: "POST",

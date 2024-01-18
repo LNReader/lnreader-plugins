@@ -51,7 +51,6 @@ var RNBH = /** @class */ (function () {
         this.version = "1.0.0";
         this.site = "https://ranobehub.org/";
         this.icon = "src/ru/ranobehub/icon.png";
-        this.userAgent = "";
         this.fetchImage = fetch_1.fetchFile;
         this.filters = {
             sort: {

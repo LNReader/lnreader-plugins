@@ -49,7 +49,6 @@ var Smakolykytl = /** @class */ (function () {
         this.site = "https://smakolykytl.site/";
         this.version = "1.0.0";
         this.icon = "src/ua/smakolykytl/icon.png";
-        this.userAgent = "";
         this.fetchImage = fetch_1.fetchFile;
     }
     Smakolykytl.prototype.popularNovels = function (pageNo, _a) {

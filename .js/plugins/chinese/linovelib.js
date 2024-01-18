@@ -47,7 +47,6 @@ var Linovelib = /** @class */ (function () {
         this.icon = "src/cn/linovelib/icon.png";
         this.site = "https://w.linovelib.com";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             sort: {
                 label: "Sort By",

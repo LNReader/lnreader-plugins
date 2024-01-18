@@ -12,7 +12,7 @@ class RLIB implements Plugin.PluginBase {
   version = "1.0.0";
   icon = "src/ru/ranobelib/icon.png";
   ui: string | number | undefined = undefined;
-  userAgent = "";
+
 
   async popularNovels(
     pageNo: number,

@@ -46,7 +46,6 @@ var HakoPlugin = /** @class */ (function () {
         this.icon = "src/vi/hakolightnovel/icon.png";
         this.site = "https://ln.hako.vn";
         this.version = "1.0.0";
-        this.userAgent = "";
     }
     HakoPlugin.prototype.parseNovels = function (loadedCheerio) {
         var _this = this;

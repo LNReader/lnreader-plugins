@@ -41,7 +41,6 @@ class MadaraPlugin implements Plugin.PluginBase {
     icon: string;
     site: string;
     version: string;
-    userAgent: string;
     options?: MadaraOptions;
     filters?: Filters | undefined;
 
@@ -54,7 +53,6 @@ class MadaraPlugin implements Plugin.PluginBase {
         this.icon = `multisrc/madara/icons/${iconFileName}.png`;
         this.site = metadata.sourceSite;
         this.version = "1.0.0";
-        this.userAgent = "";
         this.options = metadata.options;
         this.filters = metadata.filters;
     }

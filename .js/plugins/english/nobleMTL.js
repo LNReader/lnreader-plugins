@@ -46,7 +46,6 @@ var NobleMTL = /** @class */ (function () {
         this.icon = "src/en/noblemtl/icon.png";
         this.site = "https://noblemtl.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 label: "Sort By",

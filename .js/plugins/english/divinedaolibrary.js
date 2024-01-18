@@ -46,7 +46,6 @@ var DDLPlugin = /** @class */ (function () {
         this.site = "https://www.divinedaolibrary.com/";
         this.version = "1.0.0";
         this.icon = "src/en/divinedaolibrary/icon.png";
-        this.userAgent = "";
     }
     DDLPlugin.prototype.parseNovels = function (loadedCheerio, searchTerm) {
         var novels = [];

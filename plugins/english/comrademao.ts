@@ -10,7 +10,7 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
     site = "https://comrademao.com/";
     version = "1.0.0";
     icon = "src/en/comrademao/icon.png";
-    userAgent = "";
+
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];
 

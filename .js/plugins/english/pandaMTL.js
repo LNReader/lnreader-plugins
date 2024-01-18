@@ -46,7 +46,6 @@ var PandaMTL = /** @class */ (function () {
         this.icon = "src/en/wordpress/icon.png";
         this.site = "https://pandamtl.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 label: "Sort By",

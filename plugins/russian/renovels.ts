@@ -10,7 +10,7 @@ class ReN implements Plugin.PluginBase {
   site = "https://renovels.org";
   version = "1.0.0";
   icon = "src/ru/renovels/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     pageNo: number,
