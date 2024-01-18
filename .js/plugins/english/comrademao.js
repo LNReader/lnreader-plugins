@@ -47,7 +47,6 @@ var ComradeMaoPlugin = /** @class */ (function () {
         this.site = "https://comrademao.com/";
         this.version = "1.0.0";
         this.icon = "src/en/comrademao/icon.png";
-        this.userAgent = "";
         this.filters = {
             category: {
                 value: "",

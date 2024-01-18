@@ -47,7 +47,6 @@ var AllNovelFullPlugin = /** @class */ (function () {
         this.icon = "src/en/allnovelfull/icon.png";
         this.site = "https://allnovelfull.net";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 value: "/most-popular",

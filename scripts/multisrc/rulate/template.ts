@@ -18,7 +18,6 @@ class RulatePlugin implements Plugin.PluginBase {
   icon: string;
   site: string;
   version: string;
-  userAgent: string;
   filters?: Filters | undefined;
 
   constructor(metadata: RulateMetadata) {
@@ -28,7 +27,6 @@ class RulatePlugin implements Plugin.PluginBase {
     this.icon = `multisrc/rulate/icons/${iconFileName}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
-    this.userAgent = "";
     this.filters = metadata.filters;
   }
 

@@ -62,7 +62,6 @@ var MadaraPlugin = /** @class */ (function () {
         this.icon = "multisrc/madara/icons/".concat(iconFileName, ".png");
         this.site = metadata.sourceSite;
         this.version = "1.0.0";
-        this.userAgent = "";
         this.options = metadata.options;
         this.filters = metadata.filters;
     }

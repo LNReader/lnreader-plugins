@@ -50,7 +50,6 @@ var ReN = /** @class */ (function () {
         this.site = "https://renovels.org";
         this.version = "1.0.0";
         this.icon = "src/ru/renovels/icon.png";
-        this.userAgent = "";
         this.fetchImage = fetch_1.fetchFile;
         this.filters = {
             sort: {

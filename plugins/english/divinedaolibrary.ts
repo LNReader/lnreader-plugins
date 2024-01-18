@@ -10,7 +10,7 @@ class DDLPlugin implements Plugin.PluginBase {
     site = "https://www.divinedaolibrary.com/";
     version = "1.0.0";
     icon = "src/en/divinedaolibrary/icon.png";
-    userAgent = "";
+
     parseNovels(loadedCheerio: CheerioAPI, searchTerm?: string){
         let novels: Plugin.NovelItem[] = [];
 

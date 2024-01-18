@@ -47,7 +47,6 @@ var BLN = /** @class */ (function () {
         this.icon = "src/en/bestlightnovel/icon.png";
         this.site = "https://bestlightnovel.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
     }
     BLN.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {

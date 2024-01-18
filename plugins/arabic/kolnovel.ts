@@ -9,7 +9,7 @@ class KolNovel implements Plugin.PluginBase {
     icon = "multisrc/wpmangastream/icons/kolnovel.png";
     site = "https://kolnovel.lol/";
     version = "1.0.0";
-    userAgent = "";
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>

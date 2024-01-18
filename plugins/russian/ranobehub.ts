@@ -11,7 +11,7 @@ class RNBH implements Plugin.PluginBase {
   version = "1.0.0";
   site = "https://ranobehub.org/";
   icon = "src/ru/ranobehub/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     pageNo: number,

@@ -9,7 +9,7 @@ class PandaMTL implements Plugin.PluginBase {
     icon = "src/en/wordpress/icon.png";
     site = "https://pandamtl.com/";
     version = "1.0.0";
-    userAgent = "";
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>

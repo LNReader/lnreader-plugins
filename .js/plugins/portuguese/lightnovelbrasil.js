@@ -46,7 +46,6 @@ var LightNovelBrasil = /** @class */ (function () {
         this.icon = "multisrc/wpmangastream/icons/lightnovelbrasil.png";
         this.site = "https://lightnovelbrasil.com/";
         this.version = "1.0.0";
-        this.userAgent = "";
         this.filters = {
             order: {
                 label: "Sort By",

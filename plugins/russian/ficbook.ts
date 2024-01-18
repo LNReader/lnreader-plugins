@@ -11,7 +11,7 @@ class ficbook implements Plugin.PluginBase {
   site = "https://ficbook.net";
   version = "1.0.0";
   icon = "src/ru/ficbook/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     pageNo: number,

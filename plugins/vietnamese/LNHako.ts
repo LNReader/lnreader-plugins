@@ -8,7 +8,7 @@ class HakoPlugin implements Plugin.PluginBase {
     icon: string;
     site: string;
     version: string;
-    userAgent: string;
+
 
     constructor() {
         this.id = "ln.hako";
@@ -16,7 +16,7 @@ class HakoPlugin implements Plugin.PluginBase {
         this.icon = "src/vi/hakolightnovel/icon.png";
         this.site = "https://ln.hako.vn";
         this.version = "1.0.0";
-        this.userAgent = "";
+
     }
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];

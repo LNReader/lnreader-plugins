@@ -47,7 +47,6 @@ var EarlyNovelPlugin = /** @class */ (function () {
         this.version = "1.0.0";
         this.icon = "multisrc/madara/icons/latestnovel.png";
         this.site = "https://earlynovel.net/";
-        this.userAgent = "";
         this.filters = {
             order: {
                 value: "/most-popular",

@@ -9,7 +9,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   site = "https://freewebnovel.com";
   version = "1.0.0";
   icon = "src/en/freewebnovel/icon.png";
-  userAgent = "";
+
 
   async popularNovels(
     page: number,

@@ -46,7 +46,6 @@ var WPmangaStreamPlugin = /** @class */ (function () {
         this.icon = "multisrc/wpmangastream/icons/".concat(metadata.id, ".png");
         this.site = metadata.sourceSite;
         this.version = "1.0.0";
-        this.userAgent = "";
         this.options = metadata.options;
     }
     WPmangaStreamPlugin.prototype.popularNovels = function (page) {

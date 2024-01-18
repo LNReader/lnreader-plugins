@@ -12,7 +12,7 @@ class TuNovelaLigera implements Plugin.PluginBase {
     icon = "src/es/tunovelaligera/icon.png";
     site = "https://tunovelaligera.com/";
     version = "1.0.0";
-    userAgent = "";
+
 
 
     async popularNovels(

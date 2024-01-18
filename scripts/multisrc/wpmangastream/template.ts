@@ -21,7 +21,6 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
   icon: string;
   site: string;
   version: string;
-  userAgent: string;
   options?: WPmangaStreamOptions;
 
   constructor(metadata: WPmangaStreamMetadata) {
@@ -30,7 +29,6 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/wpmangastream/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
-    this.userAgent = "";
     this.options = metadata.options;
   }
 

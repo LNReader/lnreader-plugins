@@ -11,7 +11,7 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
     version = "1.0.0";
     icon = "multisrc/madara/icons/latestnovel.png";
     site = "https://earlynovel.net/";
-    userAgent = "";
+
     parseNovels(loadedCheerio: CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
 
