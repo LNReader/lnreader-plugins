@@ -971,6 +971,43 @@ $(".parseNovelAndChapters-btn").on("click", () =>
 $(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
 $(".fetchImage-btn").on("click", () => state.current_plugin?.fetchImage());
 
+/** @type {Record<string,string>} */
+let lastCopiedHeaders = {};
+
+const checkIfHeadersChanged = () => {
+    const currentHeaders = getHeaders();
+
+    const headers = new Set(Object.keys(currentHeaders));
+    // quick exit if all custom headers removed
+    if (headers.size <= 2) {
+        $("#headersnotcopied").css({ display: "none" });
+        return;
+    }
+
+    // get a list of all headers
+    for (const headername of Object.keys(lastCopiedHeaders)) {
+        headers.add(headername);
+    }
+
+    headers.delete("Cookie");
+    headers.delete("User-Agent");
+
+    let headersChanged = false;
+    // check if they're all the same
+    for (const headername of Array.from(headers)) {
+        if (currentHeaders[headername] !== lastCopiedHeaders[headername])
+            headersChanged = true;
+    }
+
+    if (headersChanged) $("#headersnotcopied").css({ display: "block" });
+    else $("#headersnotcopied").css({ display: "none" });
+};
+
+// get all header inputs and check if headers changed after
+$(".headerinfo > span[contenteditable='true']").each((_, inputElement) => {
+    $(inputElement).on("input", checkIfHeadersChanged);
+});
+
 $("#addheaderbtn").on("click", () => {
     /**
      <div class="headerinfo" data-headername="Cookie">
@@ -981,10 +1018,44 @@ $("#addheaderbtn").on("click", () => {
     const nameSpan = $("<span>").addClass("headername");
     const valueSpan = $("<span>").addClass("headervalue");
     const separator = $("<b>").html(":&nbsp;");
+    const clearButton = $("<button>")
+        .text("Clear")
+        .addClass("headereditbutton")
+        .on("click", () => {
+            valueSpan.text("");
+            checkIfHeadersChanged();
+        });
+    const removeButton = $("<button>")
+        .text("Remove")
+        .addClass("headereditbutton");
     nameSpan[0].contentEditable = "true";
     valueSpan[0].contentEditable = "true";
-    const headerinfo = $("<div>").append(nameSpan, separator, valueSpan).attr("class", "headerinfo");
-    $("#headerinfos").append(headerinfo)
+    nameSpan.on("input", checkIfHeadersChanged);
+    valueSpan.on("input", checkIfHeadersChanged);
+    const headerinfo = $("<div>")
+        .append(nameSpan, separator, valueSpan, clearButton, removeButton)
+        .attr("class", "headerinfo");
+    removeButton.on("click", () => {
+        headerinfo.remove();
+        checkIfHeadersChanged();
+    });
+    $("#headerinfos").append(headerinfo);
+});
+
+$("#copyascode").on("click", async () => {
+    const headers = getHeaders();
+    const strippedHeaders = {
+        ...headers,
+    };
+    delete strippedHeaders["Cookie"];
+    delete strippedHeaders["User-Agent"];
+    await navigator.clipboard.writeText(
+        JSON.stringify(strippedHeaders, null, 4)
+    );
+    lastCopiedHeaders = headers;
+    checkIfHeadersChanged();
+    $("#headerscopied").css({ display: "block" });
+    setTimeout(() => $("#headerscopied").css({ display: "none" }), 1000);
 });
 
 const currentWrapper = () => state.current_plugin || emptyPluginWrapper;
@@ -1171,4 +1242,6 @@ $(() => {
         );
     }
     refreshPreviewSettings();
+    lastCopiedHeaders = getHeaders();
+    checkIfHeadersChanged();
 });

@@ -52,7 +52,7 @@
     <div id="test-container">
         <div class="test-wrapper" id="headerChanger">
             <div class="form-group">
-                <label for="cookie">Headers</label>
+                <div class="title">Headers</div>
                 <div id="headerinfos">
                     <div class="headerinfo" data-headername="User-Agent">
                         <span class="headername" >User-Agent</span><b>:</b>
@@ -64,6 +64,9 @@
                     </div>
                 </div>
                 <button id="addheaderbtn" class="btn-secondary pl-1 pr-1">Add header</button>
+                <button id="copyascode" class="btn-secondary pl-1 pr-1">Copy as code</button>
+                <div id="headersnotcopied">Remember to copy the headers into the plugin file after changing them!</div>
+                <div id="headerscopied" display="none">Copied</div>
             </div> 
         </div>
         <div class="test-wrapper" id="popularNovels">
