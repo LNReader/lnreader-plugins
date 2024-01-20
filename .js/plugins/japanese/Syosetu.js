@@ -56,6 +56,9 @@ var Syosetu = /** @class */ (function () {
         this.icon = "src/jp/syosetu/icon.png";
         this.site = "https://yomou.syosetu.com/";
         this.version = "1.0.0";
+        this.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        };
         this.searchUrl = function (pagenum, order) {
             return "https://yomou.syosetu.com/search.php?order=".concat(order || "hyoka").concat(pagenum !== undefined
                 ? "&p=".concat(pagenum <= 1 || pagenum > 100 ? "1" : pagenum) // check if pagenum is between 1 and 100
@@ -74,7 +77,7 @@ var Syosetu = /** @class */ (function () {
                             var result, body, cheerioQuery, pageNovels;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.searchUrl(pagenumber))];
+                                    case 0: return [4 /*yield*/, fetch(this.searchUrl(pagenumber), { headers: this.headers })];
                                     case 1:
                                         result = _a.sent();
                                         return [4 /*yield*/, result.text()];
@@ -115,7 +118,7 @@ var Syosetu = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         chapters = [];
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                        return [4 /*yield*/, fetch(novelUrl, { headers: this.headers })];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -155,7 +158,7 @@ var Syosetu = /** @class */ (function () {
                             });
                         });
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.searchUrl() + "&word=".concat(novel.name))];
+                    case 3: return [4 /*yield*/, fetch(this.searchUrl() + "&word=".concat(novel.name), { headers: this.headers })];
                     case 4:
                         nameResult = _a.sent();
                         return [4 /*yield*/, nameResult.text()];
@@ -191,7 +194,7 @@ var Syosetu = /** @class */ (function () {
             var result, body, cheerioQuery, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, fetch(chapterUrl, { headers: this.headers })];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];
@@ -219,7 +222,7 @@ var Syosetu = /** @class */ (function () {
                             var result, body, cheerioQuery, pageNovels;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.searchUrl(pagenumber) + "&word=".concat(searchTerm))];
+                                    case 0: return [4 /*yield*/, fetch(this.searchUrl(pagenumber) + "&word=".concat(searchTerm), { headers: this.headers })];
                                     case 1:
                                         result = _a.sent();
                                         return [4 /*yield*/, result.text()];
