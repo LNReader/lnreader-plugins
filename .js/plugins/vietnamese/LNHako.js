@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
+var novelStatus_1 = require("@libs/novelStatus");
 var HakoPlugin = /** @class */ (function () {
     function HakoPlugin() {
         this.id = "ln.hako";
@@ -50,7 +51,7 @@ var HakoPlugin = /** @class */ (function () {
     HakoPlugin.prototype.parseNovels = function (loadedCheerio) {
         var _this = this;
         var novels = [];
-        loadedCheerio(".row > .thumb-item-flow").each(function (index, ele) {
+        loadedCheerio("#mainpart .row .thumb-item-flow").each(function (index, ele) {
             var url = loadedCheerio(ele)
                 .find("div.thumb_attr.series-title > a")
                 .attr("href");
@@ -97,7 +98,7 @@ var HakoPlugin = /** @class */ (function () {
     };
     HakoPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var novel, result, body, loadedCheerio, background, novelCover, chapters;
+            var novel, result, body, loadedCheerio, background, novelCover, num, part, chapters;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -112,7 +113,7 @@ var HakoPlugin = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        novel.name = loadedCheerio(".series-name").text();
+                        novel.name = loadedCheerio(".series-name").text().trim();
                         background = loadedCheerio(".series-cover > .a6-ratio > div").attr("style") ||
                             "";
                         novelCover = background.substring(background.indexOf("http"), background.length - 2);
@@ -122,41 +123,61 @@ var HakoPlugin = /** @class */ (function () {
                                 : this.site + novelCover
                             : "";
                         novel.summary = loadedCheerio(".summary-content").text().trim();
-                        novel.author = loadedCheerio("#mainpart > div:nth-child(2) > div > div:nth-child(1) > section > main > div.top-part > div > div.col-12.col-md-9 > div.series-information > div:nth-child(2) > span.info-value > a")
-                            .text()
-                            .trim();
-                        novel.genres = loadedCheerio(".series-gernes")
+                        novel.genres = loadedCheerio(".series-information > div:nth-child(1)")
                             .text()
                             .trim()
-                            .replace(/ +/g, " ")
-                            .split("\n")
-                            .filter(function (e) { return e.trim(); })
-                            .join(", ");
-                        novel.status = loadedCheerio("#mainpart > div:nth-child(2) > div > div:nth-child(1) > section > main > div.top-part > div > div.col-12.col-md-9 > div.series-information > div:nth-child(4) > span.info-value > a")
+                            .split(/\n[\s\n]*/).join(',');
+                        novel.author = loadedCheerio('.series-information > div:nth-child(2) > .info-value')
                             .text()
                             .trim();
-                        chapters = [];
-                        loadedCheerio(".list-chapters li").each(function (index, ele) {
-                            var chapterUrl = loadedCheerio(ele).find("a").attr("href");
-                            if (chapterUrl && !(0, isAbsoluteUrl_1.isUrlAbsolute)(chapterUrl)) {
-                                chapterUrl = _this.site + chapterUrl;
+                        novel.artist = loadedCheerio('.series-information > div:nth-child(3) > .info-value')
+                            .text()
+                            .trim();
+                        novel.status = loadedCheerio('.series-information > div:nth-child(4) > .info-value')
+                            .text()
+                            .trim();
+                        switch (novel.status) {
+                            case 'Đang tiến hành':
+                                novel.status = novelStatus_1.NovelStatus.Ongoing;
+                                break;
+                            case 'Tạm ngưng':
+                                novel.status = novelStatus_1.NovelStatus.OnHiatus;
+                                break;
+                            case 'Completed':
+                                novel.status = novelStatus_1.NovelStatus.Completed;
+                                break;
+                            default:
+                                novel.status = novelStatus_1.NovelStatus.Unknown;
+                        }
+                        num = 0, part = 1;
+                        chapters = loadedCheerio('.list-chapters li').toArray().map(function (ele) {
+                            var _a;
+                            var chapterUrl = _this.site + loadedCheerio(ele).find("a").attr("href");
+                            var chapterName = loadedCheerio(ele)
+                                .find(".chapter-name")
+                                .text()
+                                .trim();
+                            var chapterNumber = Number((_a = chapterName.match(/Chương\s*(\d+)/i)) === null || _a === void 0 ? void 0 : _a[1]);
+                            if (chapterNumber) {
+                                num = chapterNumber;
+                                part = 1;
                             }
-                            if (chapterUrl) {
-                                var chapterName = loadedCheerio(ele)
-                                    .find(".chapter-name")
-                                    .text()
-                                    .trim();
-                                var releaseTime = loadedCheerio(ele)
-                                    .find(".chapter-time")
-                                    .text();
-                                var chapter = {
-                                    name: chapterName,
-                                    releaseTime: releaseTime,
-                                    url: chapterUrl,
-                                };
-                                chapters.push(chapter);
+                            else {
+                                chapterNumber = num + part / 10;
+                                part++;
                             }
-                        });
+                            var chapterTime = loadedCheerio(ele)
+                                .find(".chapter-time")
+                                .text()
+                                .split('/')
+                                .map(function (x) { return Number(x); });
+                            return {
+                                url: chapterUrl || '',
+                                name: chapterName,
+                                releaseTime: new Date(chapterTime[2], chapterTime[1], chapterTime[0]).toISOString(),
+                                chapterNumber: chapterNumber,
+                            };
+                        }).filter(function (c) { return c.url; });
                         novel.chapters = chapters;
                         return [2 /*return*/, novel];
                 }
@@ -187,7 +208,7 @@ var HakoPlugin = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = this.site + "/tim-kiem?keywords=" + searchTerm;
+                        url = this.site + "/tim-kiem?keywords=" + searchTerm + '&page=' + pageNo;
                         return [4 /*yield*/, fetch(url)];
                     case 1:
                         result = _a.sent();
