@@ -1,21 +1,22 @@
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Filters } from "@libs/filterInputs";
+import { Plugin } from "@typings/plugin";
 
-export const id = "skynovels.net";
-export const name = "SkyNovels";
-export const site = "https://www.skynovels.net/";
-export const version = "1.0.0";
-export const icon = "src/es/skynovels/icon.png";
+class SkyNovels implements Plugin.PluginBase {
+  id = "skynovels.net";
+  name = "SkyNovels";
+  site = "https://www.skynovels.net/";
+  version = "1.0.0";
+  icon = "src/es/skynovels/icon.png";
+  baseUrl = this.site;
 
-const baseUrl = site;
-
-export const popularNovels: Plugin.popularNovels = async function (page) {
+  async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
     const url = "https://api.skynovels.net/api/novels?&q";
 
     const result = await fetchApi(url);
     const body = await result.json() as response;
 
-    const novels: Novel.Item[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     body.novels?.forEach((res) => {
         const novelName = res.nvl_title;
@@ -24,7 +25,7 @@ export const popularNovels: Plugin.popularNovels = async function (page) {
             res.image +
             "/novels/false";
         const novelUrl =
-            baseUrl + "novelas/" + res.id + "/" + res.nvl_name + "/";
+            this.baseUrl + "novelas/" + res.id + "/" + res.nvl_name + "/";
 
         const novel = { name: novelName, url: novelUrl, cover: novelCover };
 
@@ -32,11 +33,9 @@ export const popularNovels: Plugin.popularNovels = async function (page) {
     });
 
     return novels;
-};
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novUrl) {
-        const novelId = novUrl.split("/")[4];
+  }
+  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+    const novelId = novelUrl.split("/")[4];
         const url =
             "https://api.skynovels.net/api/novel/" + novelId + "/reading?&q";
 
@@ -45,7 +44,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
         const item = body?.novel?.[0];
 
-        let novel: Novel.instance = { url: novUrl };
+        let novel: Plugin.SourceNovel = { url: novelUrl };
 
         novel.name = item?.nvl_title;
 
@@ -61,13 +60,13 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.summary = item?.nvl_content;
         novel.status = item?.nvl_status;
 
-        let novelChapters: Chapter.Item[] = [];
+        let novelChapters: Plugin.ChapterItem[] = [];
 
         item?.volumes?.forEach((volume) => {
             volume?.chapters?.forEach((chapter) => {
                 const chapterName = chapter.chp_index_title;
                 const releaseDate = new Date(chapter.createdAt).toDateString();
-                const chapterUrl = novUrl + chapter.id + "/" + chapter.chp_name;
+                const chapterUrl = novelUrl + chapter.id + "/" + chapter.chp_name;
 
                 const chap = {
                     name: chapterName,
@@ -82,10 +81,9 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.chapters = novelChapters;
 
         return novel;
-    };
-
-export const parseChapter: Plugin.parseChapter = async function (chapUrl) {
-    let chapterId: string = chapUrl.split("/")[6];
+  }
+  async parseChapter(chapterUrl: string): Promise<string> {
+    let chapterId: string = chapterUrl.split("/")[6];
     const url = `https://api.skynovels.net/api/novel-chapter/${chapterId}`;
 
     const result = await fetchApi(url);
@@ -96,9 +94,8 @@ export const parseChapter: Plugin.parseChapter = async function (chapUrl) {
     let chapterText = item?.chp_content || '404';
 
     return chapterText;
-};
-
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
+  }
+  async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
     const url = "https://api.skynovels.net/api/novels?&q";
 
@@ -109,7 +106,7 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
         novel.nvl_title.toLowerCase().includes(searchTerm)
     );
 
-    const novels: Novel.Item[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     results?.forEach((res) => {
         const novelName = res.nvl_title;
@@ -118,7 +115,7 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
             res.image +
             "/novels/false";
         const novelUrl =
-            baseUrl + "novelas/" + res.id + "/" + res.nvl_name + "/";
+            this.baseUrl + "novelas/" + res.id + "/" + res.nvl_name + "/";
 
         const novel = { name: novelName, url: novelUrl, cover: novelCover };
 
@@ -126,9 +123,13 @@ export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
     });
 
     return novels;
-};
+  }
+  async fetchImage(url: string): Promise<string | undefined> {
+    return fetchFile(url);
+  }
+}
 
-export const fetchImage: Plugin.fetchImage = fetchFile;
+export default new SkyNovels();
 
 interface response {
   novels?: (NovelsEntity)[] | null;

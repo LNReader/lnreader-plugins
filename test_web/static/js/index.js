@@ -56,8 +56,8 @@ const getHeaders = () => {
         if (nameSpan && valueSpan) {
             const { innerText: name } = nameSpan;
             const { innerText: value } = valueSpan;
-            if (typeof name === "string" && typeof value === "string") {
-                headers[name] = value;
+            if (typeof name === "string" && typeof value === "string" && value.trim()) {
+                headers[name] = value.trim();
             }
         }
     });
