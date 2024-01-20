@@ -531,6 +531,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/multisrc/madara/icons/morenovel.png"
 		},
 		{
+			"id": "novelringan.com",
+			"name": "NovelRingan",
+			"site": "https://novelringan.com/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/indonesian/novelringan.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/id/novelringan/icon.png"
+		},
+		{
 			"id": "wbnovel",
 			"name": "WBNovel[madara]",
 			"site": "https://wbnovel.com/",

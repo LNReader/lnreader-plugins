@@ -20,6 +20,13 @@ export const getHeaders = () => {
 app.use((req, res, next) => {
     const xHeaders = req.headers["x-custom-headers"];
     if (xHeaders && typeof xHeaders === "string") {
+        for (const [headerName, headerValue] of Object.entries(pluginApi.fetchHeaders)) {
+            if (
+                typeof headerName === "string" &&
+                typeof headerValue === "string"
+            )
+                delete pluginApi.fetchHeaders[headerName];
+        }
         const headers = JSON.parse(xHeaders);
         for (const [headerName, headerValue] of Object.entries(headers)) {
             if (
