@@ -12,7 +12,6 @@ class RNRF implements Plugin.PluginBase {
   site = "https://ранобэ.рф";
   version = "1.0.0";
   icon = "src/ru/ranoberf/icon.png";
-
 
   async popularNovels(
     pageNo: number,

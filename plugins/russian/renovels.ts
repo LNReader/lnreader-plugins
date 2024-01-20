@@ -10,14 +10,10 @@ class ReN implements Plugin.PluginBase {
   site = "https://renovels.org";
   version = "1.0.0";
   icon = "src/ru/renovels/icon.png";
-
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search/catalog/?count=30&ordering=";
     url += filters?.order?.value
@@ -31,7 +27,8 @@ class ReN implements Plugin.PluginBase {
 
     if (filters?.genres?.value?.exclude?.length) {
       url += filters.genres.value.exclude
-        .map((i) => "&exclude_genres=" + i).join("");
+        .map((i) => "&exclude_genres=" + i)
+        .join("");
     }
 
     if (filters?.status?.value?.length) {
@@ -44,12 +41,14 @@ class ReN implements Plugin.PluginBase {
 
     if (filters?.categories?.value?.include?.length) {
       url += filters.categories.value.include
-        .map((i) => "&categories=" + i).join("");
+        .map((i) => "&categories=" + i)
+        .join("");
     }
 
     if (filters?.categories?.value?.exclude?.length) {
       url += filters.categories.value.exclude
-        .map((i) => "&exclude_categories=" + i).join("");
+        .map((i) => "&exclude_categories=" + i)
+        .join("");
     }
 
     if (filters?.age_limit?.value?.length) {
@@ -61,15 +60,11 @@ class ReN implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = (await result.json()) as { content: responseNovels[] };
 
-    const novels: Plugin.NovelItem[] = [];
-
-    body.content.forEach((novel) =>
-      novels.push({
-        name: novel.main_name || novel.secondary_name,
-        cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
-        url: this.site + "/novel/" + novel.dir,
-      }),
-    );
+    const novels: Plugin.NovelItem[] = body.content.map((novel) => ({
+      name: novel.main_name || novel.secondary_name,
+      cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
+      url: this.site + "/novel/" + novel.dir,
+    }));
 
     return novels;
   }

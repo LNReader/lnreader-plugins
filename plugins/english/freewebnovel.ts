@@ -9,7 +9,6 @@ class FreeWebNovel implements Plugin.PluginBase {
   site = "https://freewebnovel.com";
   version = "1.0.0";
   icon = "src/en/freewebnovel/icon.png";
-
 
   async popularNovels(
     page: number,
@@ -78,11 +77,11 @@ class FreeWebNovel implements Plugin.PluginBase {
   }
 
   async searchNovels(
-    searchkey: string,
+    searchTerm: string,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site + "/search/", {
       method: "POST",
-      body: JSON.stringify({ searchkey }),
+      body: "searchkey=" + encodeURIComponent(searchTerm)
     }).then((res) => res.text());
 
     const loadedCheerio = parseHTML(body);

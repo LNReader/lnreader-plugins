@@ -128,7 +128,7 @@ var FreeWebNovel = /** @class */ (function () {
             });
         });
     };
-    FreeWebNovel.prototype.searchNovels = function (searchkey) {
+    FreeWebNovel.prototype.searchNovels = function (searchTerm) {
         return __awaiter(this, void 0, void 0, function () {
             var body, loadedCheerio, novels;
             var _this = this;
@@ -136,7 +136,7 @@ var FreeWebNovel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/search/", {
                             method: "POST",
-                            body: JSON.stringify({ searchkey: searchkey }),
+                            body: "searchkey=" + encodeURIComponent(searchTerm)
                         }).then(function (res) { return res.text(); })];
                     case 1:
                         body = _a.sent();

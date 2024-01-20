@@ -170,20 +170,22 @@ var Jaomix = /** @class */ (function () {
                         url = this.site + "/?searchrn";
                         if ((_c = (_b = filters === null || filters === void 0 ? void 0 : filters.lang) === null || _b === void 0 ? void 0 : _b.value) === null || _c === void 0 ? void 0 : _c.length) {
                             url += filters.lang.value
-                                .map(function (lang, idx) { return "&lang[".concat(idx, "]=").concat(lang); }).join("");
+                                .map(function (lang, idx) { return "&lang[".concat(idx, "]=").concat(lang); })
+                                .join("");
                         }
                         if ((_f = (_e = (_d = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.include) === null || _f === void 0 ? void 0 : _f.length) {
                             url += filters.genre.value.include
-                                .map(function (genre, idx) { return "&genre[".concat(idx, "]=").concat(genre); }).join("");
+                                .map(function (genre, idx) { return "&genre[".concat(idx, "]=").concat(genre); })
+                                .join("");
                         }
                         if ((_j = (_h = (_g = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _g === void 0 ? void 0 : _g.value) === null || _h === void 0 ? void 0 : _h.exclude) === null || _j === void 0 ? void 0 : _j.length) {
                             url += filters.genre.value.exclude
-                                .map(function (genre, idx) { return "&delgenre[".concat(idx, "]=del ").concat(genre); }).join("");
+                                .map(function (genre, idx) { return "&delgenre[".concat(idx, "]=del ").concat(genre); })
+                                .join("");
                         }
                         url += "&sortcountchapt=" + (((_k = filters === null || filters === void 0 ? void 0 : filters.sortcountchapt) === null || _k === void 0 ? void 0 : _k.value) || "1");
                         url += "&sortdaycreate=" + (((_l = filters === null || filters === void 0 ? void 0 : filters.sortdaycreate) === null || _l === void 0 ? void 0 : _l.value) || "1");
-                        url +=
-                            "&sortby=" + (showLatestNovels ? "upd" : ((_m = filters === null || filters === void 0 ? void 0 : filters.sortby) === null || _m === void 0 ? void 0 : _m.value) || "topweek");
+                        url += "&sortby=" + (showLatestNovels ? "upd" : ((_m = filters === null || filters === void 0 ? void 0 : filters.sortby) === null || _m === void 0 ? void 0 : _m.value) || "topweek");
                         url += "&gpage=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
@@ -223,7 +225,7 @@ var Jaomix = /** @class */ (function () {
                             url: novelUrl,
                             name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
                             cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
-                            summary: loadedCheerio('div[id="desc-tab"]').text().trim()
+                            summary: loadedCheerio('div[id="desc-tab"]').text().trim(),
                         };
                         loadedCheerio("#info-book > p").each(function () {
                             var text = loadedCheerio(this).text().replace(/,/g, "").split(" ");

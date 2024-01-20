@@ -286,11 +286,13 @@ var RLIB = /** @class */ (function () {
                         }
                         if ((_h = (_g = (_f = filters.format) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) {
                             url += filters.format.value.include
-                                .map(function (i) { return "&format[include][]=" + i; }).join("");
+                                .map(function (i) { return "&format[include][]=" + i; })
+                                .join("");
                         }
                         if ((_l = (_k = (_j = filters.format) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.exclude) === null || _l === void 0 ? void 0 : _l.length) {
                             url += filters.format.value.exclude
-                                .map(function (i) { return "&format[exclude][]=" + i; }).join("");
+                                .map(function (i) { return "&format[exclude][]=" + i; })
+                                .join("");
                         }
                         if ((_o = (_m = filters.status) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.length) {
                             url += filters.status.value.map(function (i) { return "&status[]=" + i; }).join("");
@@ -300,19 +302,23 @@ var RLIB = /** @class */ (function () {
                         }
                         if ((_t = (_s = (_r = filters.genres) === null || _r === void 0 ? void 0 : _r.value) === null || _s === void 0 ? void 0 : _s.include) === null || _t === void 0 ? void 0 : _t.length) {
                             url += filters.genres.value.include
-                                .map(function (i) { return "&genres[include][]=" + i; }).join("");
+                                .map(function (i) { return "&genres[include][]=" + i; })
+                                .join("");
                         }
                         if ((_w = (_v = (_u = filters.genres) === null || _u === void 0 ? void 0 : _u.value) === null || _v === void 0 ? void 0 : _v.exclude) === null || _w === void 0 ? void 0 : _w.length) {
                             url += filters.genres.value.exclude
-                                .map(function (i) { return "&genres[exclude][]=" + i; }).join("");
+                                .map(function (i) { return "&genres[exclude][]=" + i; })
+                                .join("");
                         }
                         if ((_z = (_y = (_x = filters.tags) === null || _x === void 0 ? void 0 : _x.value) === null || _y === void 0 ? void 0 : _y.include) === null || _z === void 0 ? void 0 : _z.length) {
                             url += filters.tags.value.include
-                                .map(function (i) { return "&tags[include][]=" + i; }).join("");
+                                .map(function (i) { return "&tags[include][]=" + i; })
+                                .join("");
                         }
                         if ((_2 = (_1 = (_0 = filters.tags) === null || _0 === void 0 ? void 0 : _0.value) === null || _1 === void 0 ? void 0 : _1.exclude) === null || _2 === void 0 ? void 0 : _2.length) {
                             url += filters.tags.value.exclude
-                                .map(function (i) { return "&tags[exclude][]=" + i; }).join("");
+                                .map(function (i) { return "&tags[exclude][]=" + i; })
+                                .join("");
                         }
                         url += "&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
@@ -356,7 +362,7 @@ var RLIB = /** @class */ (function () {
                             url: novelUrl,
                         };
                         novel.name = loadedCheerio(".media-name__main").text().trim();
-                        novel.cover = loadedCheerio(".media-sidebar__cover img").attr("src");
+                        novel.cover = loadedCheerio(".container_responsive img").attr("src");
                         novel.summary = loadedCheerio(".media-description__text").text().trim();
                         novel.genres = loadedCheerio('div[class="media-tags"]')
                             .text()

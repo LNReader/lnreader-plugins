@@ -187,11 +187,13 @@ var freedlit = /** @class */ (function () {
                         url += "&adult=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.adult) === null || _e === void 0 ? void 0 : _e.value) || "hide");
                         if ((_h = (_g = (_f = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) {
                             url += filters.genre.value.include
-                                .map(function (id) { return '&genres_included[]=' + id; }).join("");
+                                .map(function (id) { return "&genres_included[]=" + id; })
+                                .join("");
                         }
                         if ((_l = (_k = (_j = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.exclude) === null || _l === void 0 ? void 0 : _l.length) {
                             url += filters.genre.value.exclude
-                                .map(function (id) { return '&genres_excluded[]=' + id; }).join("");
+                                .map(function (id) { return "&genres_excluded[]=" + id; })
+                                .join("");
                         }
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:

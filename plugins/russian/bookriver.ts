@@ -11,7 +11,6 @@ class Bookriver implements Plugin.PluginBase {
   site = "https://bookriver.ru";
   version = "1.0.0";
   icon = "src/ru/bookriver/icon.png";
-
 
   async popularNovels(
     pageNo: number,
@@ -22,7 +21,10 @@ class Bookriver implements Plugin.PluginBase {
       ? "last-update"
       : filters?.sort?.value || "bestseller";
 
-    if (filters?.genres?.value instanceof Array && filters?.genres?.value.length) {
+    if (
+      filters?.genres?.value instanceof Array &&
+      filters?.genres?.value.length
+    ) {
       url += "&g=" + filters.genres.value.join(",");
     }
 

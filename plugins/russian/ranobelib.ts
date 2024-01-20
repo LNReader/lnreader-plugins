@@ -11,15 +11,11 @@ class RLIB implements Plugin.PluginBase {
   site = "https://ranobelib.me";
   version = "1.0.0";
   icon = "src/ru/ranobelib/icon.png";
-  ui: string | number | undefined = undefined;
-
+  ui: string | undefined = undefined;
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = `${this.site}/manga-list?sort=`;
     url += showLatestNovels
@@ -33,12 +29,14 @@ class RLIB implements Plugin.PluginBase {
 
     if (filters.format?.value?.include?.length) {
       url += filters.format.value.include
-        .map((i) => "&format[include][]=" + i).join("");
+        .map((i) => "&format[include][]=" + i)
+        .join("");
     }
 
     if (filters.format?.value?.exclude?.length) {
       url += filters.format.value.exclude
-        .map((i) => "&format[exclude][]=" + i).join("");
+        .map((i) => "&format[exclude][]=" + i)
+        .join("");
     }
 
     if (filters.status?.value?.length) {
@@ -51,22 +49,26 @@ class RLIB implements Plugin.PluginBase {
 
     if (filters.genres?.value?.include?.length) {
       url += filters.genres.value.include
-        .map((i) => "&genres[include][]=" + i).join("");
+        .map((i) => "&genres[include][]=" + i)
+        .join("");
     }
 
     if (filters.genres?.value?.exclude?.length) {
       url += filters.genres.value.exclude
-        .map((i) => "&genres[exclude][]=" + i).join("");
+        .map((i) => "&genres[exclude][]=" + i)
+        .join("");
     }
 
     if (filters.tags?.value?.include?.length) {
       url += filters.tags.value.include
-        .map((i) => "&tags[include][]=" + i).join("");
+        .map((i) => "&tags[include][]=" + i)
+        .join("");
     }
 
     if (filters.tags?.value?.exclude?.length) {
       url += filters.tags.value.exclude
-        .map((i) => "&tags[exclude][]=" + i).join("");
+        .map((i) => "&tags[exclude][]=" + i)
+        .join("");
     }
 
     url += "&page=" + pageNo;
@@ -103,7 +105,7 @@ class RLIB implements Plugin.PluginBase {
 
     novel.name = loadedCheerio(".media-name__main").text().trim();
 
-    novel.cover = loadedCheerio(".media-sidebar__cover img").attr("src");
+    novel.cover = loadedCheerio(".container_responsive img").attr("src");
 
     novel.summary = loadedCheerio(".media-description__text").text().trim();
 
@@ -504,7 +506,7 @@ interface TeamsEntity1 {
   is_active: number;
 }
 interface User {
-  id: number;
+  id: string;
   avatar: string;
   access: boolean;
   isAdmin: boolean;

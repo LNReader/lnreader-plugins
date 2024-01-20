@@ -208,7 +208,8 @@ var AuthorToday = /** @class */ (function () {
                             url += "&genre=" + filters.genre.value;
                         }
                         url +=
-                            "&sorting=" + (showLatestNovels ? "recent" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "popular");
+                            "&sorting=" +
+                                (showLatestNovels ? "recent" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "popular");
                         url += "&form=" + (((_d = filters === null || filters === void 0 ? void 0 : filters.form) === null || _d === void 0 ? void 0 : _d.value) || "any");
                         url += "&state=" + (((_e = filters === null || filters === void 0 ? void 0 : filters.state) === null || _e === void 0 ? void 0 : _e.value) || "any");
                         url += "&series=" + (((_f = filters === null || filters === void 0 ? void 0 : filters.series) === null || _f === void 0 ? void 0 : _f.value) || "any");

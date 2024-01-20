@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fetch_1 = require("@libs/fetch");
 var filterInputs_1 = require("@libs/filterInputs");
+var novelStatus_1 = require("@libs/novelStatus");
 var cheerio_1 = require("cheerio");
 var parseMadaraDate_1 = require("@libs/parseMadaraDate");
 var ReadwnPlugin = /** @class */ (function () {
@@ -101,7 +102,8 @@ var ReadwnPlugin = /** @class */ (function () {
                         };
                         novel.name = loadedCheerio("h1.novel-title").text();
                         novel.author = loadedCheerio("span[itemprop=author]").text();
-                        novel.cover = this.site + loadedCheerio("figure.cover > img").attr("data-src");
+                        novel.cover =
+                            this.site + loadedCheerio("figure.cover > img").attr("data-src");
                         novel.summary = loadedCheerio(".summary")
                             .text()
                             .replace("Summary", "")
@@ -112,7 +114,10 @@ var ReadwnPlugin = /** @class */ (function () {
                             .join(",");
                         loadedCheerio("div.header-stats > span").each(function () {
                             if (loadedCheerio(this).find("small").text() === "Status") {
-                                novel.status = loadedCheerio(this).find("strong").text();
+                                novel.status =
+                                    loadedCheerio(this).find("strong").text() === "Ongoing"
+                                        ? novelStatus_1.NovelStatus.Ongoing
+                                        : novelStatus_1.NovelStatus.Completed;
                             }
                         });
                         latestChapterNo = parseInt(loadedCheerio(".header-stats")
@@ -167,7 +172,7 @@ var ReadwnPlugin = /** @class */ (function () {
             });
         });
     };
-    ReadwnPlugin.prototype.searchNovels = function (keyboard) {
+    ReadwnPlugin.prototype.searchNovels = function (searchTerm) {
         return __awaiter(this, void 0, void 0, function () {
             var result, loadedCheerio, novels;
             var _this = this;
@@ -178,15 +183,10 @@ var ReadwnPlugin = /** @class */ (function () {
                                 "Content-Type": "application/x-www-form-urlencoded",
                                 Referer: this.site + "/search.html",
                                 Origin: this.site,
-                                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
                             },
                             method: "POST",
-                            body: JSON.stringify({
-                                show: "title",
-                                tempid: 1,
-                                tbname: "news",
-                                keyboard: keyboard,
-                            }),
+                            body: "show=title&tempid=1&tbname=news&keyboard=" +
+                                encodeURIComponent(searchTerm),
                         }).then(function (res) { return res.text(); })];
                     case 1:
                         result = _a.sent();

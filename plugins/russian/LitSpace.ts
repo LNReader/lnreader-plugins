@@ -10,7 +10,6 @@ class freedlit implements Plugin.PluginBase {
   site = "https://freedlit.space";
   version = "1.0.0";
   icon = "src/ru/freedlit/icon.png";
-
 
   async popularNovels(
     page: number,
@@ -24,12 +23,14 @@ class freedlit implements Plugin.PluginBase {
 
     if (filters?.genre?.value?.include?.length) {
       url += filters.genre.value.include
-        .map(id => '&genres_included[]=' + id).join("");
+        .map((id) => "&genres_included[]=" + id)
+        .join("");
     }
 
     if (filters?.genre?.value?.exclude?.length) {
       url += filters.genre.value.exclude
-        .map(id => '&genres_excluded[]=' + id).join("");
+        .map((id) => "&genres_excluded[]=" + id)
+        .join("");
     }
 
     const body = await fetchApi(url).then((res) => res.text());
@@ -85,10 +86,10 @@ class freedlit implements Plugin.PluginBase {
   async parseChapter(chapterUrl: string): Promise<string> {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
-  
+
     loadedCheerio("div.mobile-block").remove();
     loadedCheerio("div.standart-block").remove();
-  
+
     const chapterText = loadedCheerio('div[class="chapter"]').html() || "";
     return chapterText;
   }

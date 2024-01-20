@@ -15,7 +15,6 @@ class AuthorToday implements Plugin.PluginBase {
   icon = "src/ru/authortoday/icon.png";
   site = "https://author.today";
   version = "1.0.0";
-
 
   async popularNovels(
     pageNo: number,
@@ -27,7 +26,8 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     url +=
-      "&sorting=" + (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
+      "&sorting=" +
+      (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
 
     url += "&form=" + (filters?.form?.value || "any");
     url += "&state=" + (filters?.state?.value || "any");

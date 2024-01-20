@@ -131,7 +131,8 @@ var Bookriver = /** @class */ (function () {
                         url += showLatestNovels
                             ? "last-update"
                             : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "bestseller";
-                        if (((_c = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _c === void 0 ? void 0 : _c.value) instanceof Array && ((_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value.length)) {
+                        if (((_c = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _c === void 0 ? void 0 : _c.value) instanceof Array &&
+                            ((_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value.length)) {
                             url += "&g=" + filters.genres.value.join(",");
                         }
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];

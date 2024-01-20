@@ -4,7 +4,6 @@ import { Plugin } from "@typings/plugin";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import { parseMadaraDate } from "@libs/parseMadaraDate";
-// import { defaultCover } from "@libs/defaultCover";
 
 export interface ReadwnMetadata {
   id: string;
@@ -70,7 +69,8 @@ class ReadwnPlugin implements Plugin.PluginBase {
 
     novel.name = loadedCheerio("h1.novel-title").text();
     novel.author = loadedCheerio("span[itemprop=author]").text();
-    novel.cover = this.site + loadedCheerio("figure.cover > img").attr("data-src");
+    novel.cover =
+      this.site + loadedCheerio("figure.cover > img").attr("data-src");
 
     novel.summary = loadedCheerio(".summary")
       .text()
@@ -84,7 +84,10 @@ class ReadwnPlugin implements Plugin.PluginBase {
 
     loadedCheerio("div.header-stats > span").each(function () {
       if (loadedCheerio(this).find("small").text() === "Status") {
-        novel.status = loadedCheerio(this).find("strong").text();
+        novel.status =
+          loadedCheerio(this).find("strong").text() === "Ongoing"
+            ? NovelStatus.Ongoing
+            : NovelStatus.Completed;
       }
     });
 
@@ -140,22 +143,17 @@ class ReadwnPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(keyboard: string): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.site + "/e/search/index.php", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Referer: this.site + "/search.html",
         Origin: this.site,
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
       },
       method: "POST",
-      body: JSON.stringify({
-        show: "title",
-        tempid: 1,
-        tbname: "news",
-        keyboard,
-      }),
+      body:
+        "show=title&tempid=1&tbname=news&keyboard=" +
+        encodeURIComponent(searchTerm),
     }).then((res) => res.text());
     const loadedCheerio = parseHTML(result);
 

@@ -11,14 +11,10 @@ class RNBH implements Plugin.PluginBase {
   version = "1.0.0";
   site = "https://ranobehub.org/";
   icon = "src/ru/ranobehub/icon.png";
-
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + `api/search?page=${pageNo}&sort=`;
     url += showLatestNovels

@@ -857,7 +857,7 @@ var TL = /** @class */ (function () {
                             body: JSON.stringify({
                                 query: "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
                                 variables: {
-                                    url: chapterUrl,
+                                    url: decodeURI(chapterUrl),
                                 },
                             }),
                         })];

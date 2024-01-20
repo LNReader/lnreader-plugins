@@ -873,7 +873,8 @@ var ReN = /** @class */ (function () {
                         }
                         if ((_j = (_h = (_g = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _g === void 0 ? void 0 : _g.value) === null || _h === void 0 ? void 0 : _h.exclude) === null || _j === void 0 ? void 0 : _j.length) {
                             url += filters.genres.value.exclude
-                                .map(function (i) { return "&exclude_genres=" + i; }).join("");
+                                .map(function (i) { return "&exclude_genres=" + i; })
+                                .join("");
                         }
                         if ((_l = (_k = filters === null || filters === void 0 ? void 0 : filters.status) === null || _k === void 0 ? void 0 : _k.value) === null || _l === void 0 ? void 0 : _l.length) {
                             url += filters.status.value.map(function (i) { return "&status=" + i; }).join("");
@@ -883,11 +884,13 @@ var ReN = /** @class */ (function () {
                         }
                         if ((_r = (_q = (_p = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.include) === null || _r === void 0 ? void 0 : _r.length) {
                             url += filters.categories.value.include
-                                .map(function (i) { return "&categories=" + i; }).join("");
+                                .map(function (i) { return "&categories=" + i; })
+                                .join("");
                         }
                         if ((_u = (_t = (_s = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.exclude) === null || _u === void 0 ? void 0 : _u.length) {
                             url += filters.categories.value.exclude
-                                .map(function (i) { return "&exclude_categories=" + i; }).join("");
+                                .map(function (i) { return "&exclude_categories=" + i; })
+                                .join("");
                         }
                         if ((_w = (_v = filters === null || filters === void 0 ? void 0 : filters.age_limit) === null || _v === void 0 ? void 0 : _v.value) === null || _w === void 0 ? void 0 : _w.length) {
                             url += filters.age_limit.value.map(function (i) { return "&age_limit=" + i; }).join("");
@@ -899,10 +902,9 @@ var ReN = /** @class */ (function () {
                         return [4 /*yield*/, result.json()];
                     case 2:
                         body = (_x.sent());
-                        novels = [];
-                        body.content.forEach(function (novel) {
+                        novels = body.content.map(function (novel) {
                             var _a, _b;
-                            return novels.push({
+                            return ({
                                 name: novel.main_name || novel.secondary_name,
                                 cover: _this.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
                                 url: _this.site + "/novel/" + novel.dir,

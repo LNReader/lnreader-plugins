@@ -12,7 +12,6 @@ class TL implements Plugin.PluginBase {
   site = "https://novel.tl";
   version = "1.0.0";
   icon = "src/ru/noveltl/icon.png";
-
 
   async popularNovels(
     page: number,
@@ -138,7 +137,7 @@ class TL implements Plugin.PluginBase {
         query:
           "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
         variables: {
-          url: chapterUrl,
+          url: decodeURI(chapterUrl),
         },
       }),
     });
