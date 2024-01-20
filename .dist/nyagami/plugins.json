@@ -540,6 +540,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/id/novelringan/icon.png"
 		},
 		{
+			"id": "sakura.id",
+			"name": "SakuraNovel",
+			"site": "https://sakuranovel.id/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/indonesian/sakuranovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/id/sakuranovel/icon.png"
+		},
+		{
 			"id": "wbnovel",
 			"name": "WBNovel[madara]",
 			"site": "https://wbnovel.com/",
