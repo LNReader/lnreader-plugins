@@ -293,6 +293,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
+			"id": "nitromanga",
+			"name": "Nitro Manga",
+			"site": "https://nitromanga.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/english/nitromanga.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/en/nitromanga/icon.png"
+		},
+		{
 			"id": "noblemtl",
 			"name": "NobleMTL",
 			"site": "https://noblemtl.com/",
