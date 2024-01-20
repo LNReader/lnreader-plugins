@@ -504,6 +504,15 @@
 	],
 	"Bahasa Indonesia": [
 		{
+			"id": "IDWN.id",
+			"name": "IndoWebNovel",
+			"site": "https://indowebnovel.id/id/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/indonesian/indowebnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/id/indowebnovel/icon.png"
+		},
+		{
 			"id": "meionovel",
 			"name": "MeioNovel[madara]",
 			"site": "https://meionovel.id/",
@@ -522,6 +531,24 @@
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/madara/icons/morenovel.png"
 		},
 		{
+			"id": "novelringan.com",
+			"name": "NovelRingan",
+			"site": "https://novelringan.com/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/indonesian/novelringan.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/id/novelringan/icon.png"
+		},
+		{
+			"id": "sakura.id",
+			"name": "SakuraNovel",
+			"site": "https://sakuranovel.id/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/indonesian/sakuranovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/id/sakuranovel/icon.png"
+		},
+		{
 			"id": "wbnovel",
 			"name": "WBNovel[madara]",
 			"site": "https://wbnovel.com/",
@@ -529,6 +556,28 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/indonesian/WBNovel[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/multisrc/madara/icons/wbnovel.png"
+		}
+	],
+	"日本語": [
+		{
+			"id": "yomou.syosetu",
+			"name": "Syosetu",
+			"site": "https://yomou.syosetu.com/",
+			"lang": "日本語",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/japanese/Syosetu.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/jp/syosetu/icon.png"
+		}
+	],
+	"한국어, 조선말": [
+		{
+			"id": "agit.xyz",
+			"name": "Agitoon",
+			"site": "https://agit501.xyz/",
+			"lang": "한국어, 조선말",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/korean/Agitoon.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/kr/agitoon/agit.png"
 		}
 	],
 	"Português": [
@@ -672,6 +721,51 @@
 	],
 	"español, castellano": [
 		{
+			"id": "awuxia.com",
+			"name": "ReinoWuxia",
+			"site": "http://www.reinowuxia.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/novelawuxia.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/novelawuxia/icon.png"
+		},
+		{
+			"id": "HasuTL",
+			"name": "Hasu Translations",
+			"site": "https://hasutl.wordpress.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/hasutl.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/hasutl/icon.png"
+		},
+		{
+			"id": "ligera.com",
+			"name": "Novelas Ligera",
+			"site": "https://novelasligera.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/novelasligera.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/novelasligera/icon.png"
+		},
+		{
+			"id": "oasisTL.wp",
+			"name": "Oasis Translations",
+			"site": "https://oasistranslations.wordpress.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/oasistranslations.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/oasistranslations/icon.png"
+		},
+		{
+			"id": "skynovels.net",
+			"name": "SkyNovels",
+			"site": "https://www.skynovels.net/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/skynovels.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/skynovels/icon.png"
+		},
+		{
 			"id": "tunovelaligera",
 			"name": "TuNovelaLigera",
 			"site": "https://tunovelaligera.com/",
@@ -679,9 +773,27 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/tunovelaligera.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/tunovelaligera/icon.png"
+		},
+		{
+			"id": "yuukitls.com",
+			"name": "Yuuki Tls",
+			"site": "https://yuukitls.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/spanish/yukitls.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/es/yuukitls/icon.png"
 		}
 	],
 	"Türkçe": [
+		{
+			"id": "epiknovel.com",
+			"name": "EpikNovel",
+			"site": "https://www.epiknovel.com/",
+			"lang": "Türkçe",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/.js/plugins/turkish/epiknovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/plugins/icons/src/tr/epiknovel/icon.png"
+		},
 		{
 			"id": "lshnovel",
 			"name": "Liebe Schnee Hiver Novel",
