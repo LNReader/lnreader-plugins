@@ -185,6 +185,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/multisrc/madara/icons/fanstranslations.png"
 		},
 		{
+			"id": "foxaholic",
+			"name": "Foxaholic",
+			"site": "https://www.foxaholic.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/english/foxaholic.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/en/foxaholic/icon.png"
+		},
+		{
 			"id": "freenovel.me",
 			"name": "FreeNovelMe[madara]",
 			"site": "https://freenovel.me/",
