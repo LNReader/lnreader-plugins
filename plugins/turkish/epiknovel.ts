@@ -3,19 +3,13 @@ import { fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 
-export const id = "epiknovel.com";
-export const name = "EpikNovel";
-export const site = "https://www.epiknovel.com/";
-export const version = "1.0.0";
-export const icon = "src/tr/epiknovel/icon.png";
-
 class EpikNovel implements Plugin.PluginBase {
     id = "epiknovel.com";
     name = "EpikNovel";
     icon = "src/tr/epiknovel/icon.png";
     site = "https://www.epiknovel.com/";
     version = "1.0.0";
-    baseUrl = site;
+    baseUrl = this.site;
     async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
         let url = this.baseUrl + "seri-listesi?Sayfa=" + pageNo;
 

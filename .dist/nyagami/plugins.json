@@ -672,6 +672,15 @@
 	],
 	"español, castellano": [
 		{
+			"id": "HasuTL",
+			"name": "Hasu Translations",
+			"site": "https://hasutl.wordpress.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/spanish/hasutl.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/es/hasutl/icon.png"
+		},
+		{
 			"id": "tunovelaligera",
 			"name": "TuNovelaLigera",
 			"site": "https://tunovelaligera.com/",

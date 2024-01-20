@@ -38,22 +38,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
-var EpikNovel = /** @class */ (function () {
-    function EpikNovel() {
-        this.id = "epiknovel.com";
-        this.name = "EpikNovel";
-        this.icon = "src/tr/epiknovel/icon.png";
-        this.site = "https://www.epiknovel.com/";
+var HasulTL = /** @class */ (function () {
+    function HasulTL() {
+        this.id = "HasuTL";
+        this.name = "Hasu Translations";
+        this.icon = "src/es/hasutl/icon.png";
+        this.site = "https://hasutl.wordpress.com/";
         this.version = "1.0.0";
         this.baseUrl = this.site;
     }
-    EpikNovel.prototype.popularNovels = function (pageNo, options) {
+    HasulTL.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = this.baseUrl + "seri-listesi?Sayfa=" + pageNo;
+                        url = this.baseUrl + "light-novels-activas/";
                         return [4 /*yield*/, fetch(url)];
                     case 1:
                         result = _a.sent();
@@ -62,10 +62,12 @@ var EpikNovel = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio("div.col-lg-12.col-md-12").each(function () {
-                            var novelName = loadedCheerio(this).find("h3").text();
-                            var novelCover = loadedCheerio(this).find("img").attr("data-src");
-                            var novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
+                        loadedCheerio("div.wp-block-columns").each(function () {
+                            var novelName = loadedCheerio(this).find(".wp-block-button").text();
+                            var novelCover = loadedCheerio(this).find("img").attr("src");
+                            var novelUrl = loadedCheerio(this)
+                                .find(".wp-block-button > a")
+                                .attr("href");
                             if (!novelUrl)
                                 return;
                             var novel = {
@@ -75,15 +77,14 @@ var EpikNovel = /** @class */ (function () {
                             };
                             novels.push(novel);
                         });
-                        // console.log(novels);
                         return [2 /*return*/, novels];
                 }
             });
         });
     };
-    EpikNovel.prototype.parseNovelAndChapters = function (novelUrl) {
+    HasulTL.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novel, novelChapters;
+            var url, result, body, loadedCheerio, novel, novelSummary, novelChapters;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -95,53 +96,37 @@ var EpikNovel = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        novel = { url: url };
-                        novel.name = loadedCheerio("h1#tables").text().trim();
-                        novel.cover = loadedCheerio("img.manga-cover").attr("src");
-                        novel.summary = loadedCheerio("#wrapper > div.row > div.col-md-9 > div:nth-child(6) > p:nth-child(3)")
-                            .text()
-                            .trim();
-                        novel.status = loadedCheerio("#wrapper > div.row > div.col-md-9 > div.row > div.col-md-9 > h4:nth-child(3) > a")
-                            .text()
-                            .trim();
-                        novel.author = loadedCheerio("#NovelInfo > p:nth-child(4)")
-                            .text()
-                            .replace(/Publisher:|\s/g, "")
-                            .trim();
+                        novel = {
+                            url: url,
+                        };
+                        novel.url = novelUrl;
+                        novel.name = loadedCheerio(".post-header").text();
+                        novel.cover = loadedCheerio(".featured-media > img").attr("src");
+                        novelSummary = loadedCheerio(".post-content").find("p").html();
+                        novel.summary = novelSummary;
                         novelChapters = [];
-                        loadedCheerio("table").find("tr").first().remove();
-                        loadedCheerio("table")
-                            .find("tr")
+                        loadedCheerio(".wp-block-media-text__content")
+                            .find("a")
                             .each(function () {
-                            var releaseDate = loadedCheerio(this)
-                                .find("td:nth-child(3)")
-                                .text();
-                            var chapterName = loadedCheerio(this)
-                                .find("td:nth-child(1) > a")
-                                .text();
-                            if (loadedCheerio(this).find("td:nth-child(1) > span").length >
-                                0) {
-                                chapterName = "🔒 " + chapterName;
-                            }
-                            var chapterUrl = loadedCheerio(this)
-                                .find(" td:nth-child(1) > a")
-                                .attr("href");
+                            var chapterName = loadedCheerio(this).text().trim();
+                            var releaseDate = null;
+                            var chapterUrl = loadedCheerio(this).attr("href");
                             if (!chapterUrl)
                                 return;
-                            novelChapters.push({
+                            var chapter = {
                                 name: chapterName,
-                                url: chapterUrl,
                                 releaseTime: releaseDate,
-                            });
+                                url: chapterUrl,
+                            };
+                            novelChapters.push(chapter);
                         });
                         novel.chapters = novelChapters;
-                        // console.log(novel);
                         return [2 /*return*/, novel];
                 }
             });
         });
     };
-    EpikNovel.prototype.parseChapter = function (chapterUrl) {
+    HasulTL.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, chapterText;
             return __generator(this, function (_a) {
@@ -155,25 +140,19 @@ var EpikNovel = /** @class */ (function () {
                     case 2:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        chapterText = '';
-                        if (result.url === "https://www.epiknovel.com/login") {
-                            chapterText = "Premium Chapter";
-                        }
-                        else {
-                            chapterText = loadedCheerio("div#icerik").html() || '';
-                        }
+                        chapterText = loadedCheerio(".post-content").html() || '';
                         return [2 /*return*/, chapterText];
                 }
             });
         });
     };
-    EpikNovel.prototype.searchNovels = function (searchTerm, pageNo) {
+    HasulTL.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = this.baseUrl + "seri-listesi?q=" + searchTerm + '&Sayfa=' + pageNo;
+                        url = "".concat(this.baseUrl, "?s=").concat(searchTerm, "&post_type=wp-manga");
                         return [4 /*yield*/, fetch(url)];
                     case 1:
                         result = _a.sent();
@@ -182,27 +161,35 @@ var EpikNovel = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio("div.col-lg-12.col-md-12").each(function () {
-                            var novelName = loadedCheerio(this).find("h3").text();
-                            var novelCover = loadedCheerio(this).find("img").attr("data-src");
-                            var novelUrl = loadedCheerio(this).find("h3 > a").attr("href");
-                            if (!novelUrl)
-                                return;
-                            var novel = {
-                                name: novelName,
-                                cover: novelCover,
-                                url: novelUrl,
-                            };
-                            novels.push(novel);
+                        loadedCheerio(".post-container").each(function () {
+                            var novelName = loadedCheerio(this).find(".post-header").text();
+                            if (!novelName.includes("Cap") &&
+                                !novelName.includes("Vol") &&
+                                !novelName.includes("Light Novels")) {
+                                var novelCover = loadedCheerio(this).find("img").attr("src");
+                                var novelUrl = loadedCheerio(this).find("a").attr("href");
+                                if (!novelUrl)
+                                    return;
+                                var novel = {
+                                    name: novelName,
+                                    cover: novelCover,
+                                    url: novelUrl,
+                                };
+                                novels.push(novel);
+                            }
                         });
                         return [2 /*return*/, novels];
                 }
             });
         });
     };
-    EpikNovel.prototype.fetchImage = function (url) {
-        return (0, fetch_1.fetchFile)(url);
+    HasulTL.prototype.fetchImage = function (url) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, (0, fetch_1.fetchFile)(url)];
+            });
+        });
     };
-    return EpikNovel;
+    return HasulTL;
 }());
-exports.default = new EpikNovel();
+exports.default = new HasulTL();
