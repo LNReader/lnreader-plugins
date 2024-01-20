@@ -293,6 +293,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/multisrc/madara/icons/neosekaitranslations.png"
 		},
 		{
+			"id": "NF.me",
+			"name": "NovelFull",
+			"site": "https://novelfull.me/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/english/NovelFullMe.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/en/novelfullme/icon.png"
+		},
+		{
 			"id": "nitromanga",
 			"name": "Nitro Manga",
 			"site": "https://nitromanga.com/",
