@@ -708,6 +708,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/es/oasistranslations/icon.png"
 		},
 		{
+			"id": "skynovels.net",
+			"name": "SkyNovels",
+			"site": "https://www.skynovels.net/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/spanish/skynovels.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/es/skynovels/icon.png"
+		},
+		{
 			"id": "tunovelaligera",
 			"name": "TuNovelaLigera",
 			"site": "https://tunovelaligera.com/",
