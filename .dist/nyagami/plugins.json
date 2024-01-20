@@ -504,6 +504,15 @@
 	],
 	"Bahasa Indonesia": [
 		{
+			"id": "IDWN.id",
+			"name": "IndoWebNovel",
+			"site": "https://indowebnovel.id/id/",
+			"lang": "Bahasa Indonesia",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/indonesian/indowebnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/id/indowebnovel/icon.png"
+		},
+		{
 			"id": "meionovel",
 			"name": "MeioNovel[madara]",
 			"site": "https://meionovel.id/",
