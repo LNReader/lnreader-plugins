@@ -531,6 +531,17 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/multisrc/madara/icons/wbnovel.png"
 		}
 	],
+	"한국어, 조선말": [
+		{
+			"id": "agit.xyz",
+			"name": "Agitoon",
+			"site": "https://agit501.xyz/",
+			"lang": "한국어, 조선말",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/korean/Agitoon.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/kr/agitoon/agit.png"
+		}
+	],
 	"Português": [
 		{
 			"id": "lightnovelbrasil",
