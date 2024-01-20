@@ -80,7 +80,7 @@ app.post("/fetchImage/", async (req, res) => {
         req.body["pluginRequirePath"],
         req.body["url"]
     );
-    res.json(base64);
+    res.send(base64);
 });
 
 app.get("/", (req, res) => {
