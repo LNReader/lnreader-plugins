@@ -724,6 +724,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/spanish/tunovelaligera.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/es/tunovelaligera/icon.png"
+		},
+		{
+			"id": "yuukitls.com",
+			"name": "Yuuki Tls",
+			"site": "https://yuukitls.com/",
+			"lang": "español, castellano",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/.js/plugins/spanish/yukitls.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-plugins/icons/src/es/yuukitls/icon.png"
 		}
 	],
 	"Türkçe": [
