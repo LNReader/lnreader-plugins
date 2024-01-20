@@ -3,14 +3,6 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 
-export const id = "NF.me";
-export const name = "NovelFull";
-export const site = "https://novelfull.me/";
-export const version = "1.0.0";
-export const icon = "src/en/novelfullme/icon.png";
-
-const baseUrl = site;
-
 class NovelFull implements Plugin.PluginBase {
     id = "NF.me";
     name = "NovelFull";
@@ -20,7 +12,7 @@ class NovelFull implements Plugin.PluginBase {
     icon = "src/en/novelfullme/icon.png";
     baseUrl = this.site;
     async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
-        const url = `${baseUrl}popular?page=${pageNo}`;
+        const url = `${this.baseUrl}popular?page=${pageNo}`;
 
         const result = await fetchApi(url);
         const body = await result.text();
@@ -29,13 +21,13 @@ class NovelFull implements Plugin.PluginBase {
 
         let novels: Plugin.NovelItem[] = [];
 
-        loadedCheerio(".book-item").each(function () {
-            const novelName = loadedCheerio(this).find(".title").text();
+        loadedCheerio(".book-item").each((idx, ele) => {
+            const novelName = loadedCheerio(ele).find(".title").text();
             const novelCover =
-                "https:" + loadedCheerio(this).find("img").attr("data-src");
+                "https:" + loadedCheerio(ele).find("img").attr("data-src");
             const novelUrl =
-                baseUrl +
-                loadedCheerio(this).find(".title a").attr("href")?.substring(1);
+                this.baseUrl +
+                loadedCheerio(ele).find(".title a").attr("href")?.substring(1);
 
             const novel = { name: novelName, cover: novelCover, url: novelUrl };
 
@@ -93,7 +85,7 @@ class NovelFull implements Plugin.PluginBase {
         let chapters: Plugin.ChapterItem[] = [];
 
         const chaptersUrl =
-            novelUrl.replace(baseUrl, "https://novelfull.me/api/novels/") +
+            novelUrl.replace(this.baseUrl, "https://novelfull.me/api/novels/") +
             "/chapters?source=detail";
 
         const chaptersRequest = await fetchApi(chaptersUrl);
@@ -143,7 +135,7 @@ class NovelFull implements Plugin.PluginBase {
         return chapterText;
     }
     async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
-        const url = `${baseUrl}search?status=all&sort=views&q=${searchTerm}`;
+        const url = `${this.baseUrl}search?status=all&sort=views&q=${searchTerm}`;
 
         const result = await fetchApi(url);
         const body = await result.text();
@@ -152,13 +144,13 @@ class NovelFull implements Plugin.PluginBase {
 
         let novels: Plugin.NovelItem[] = [];
 
-        loadedCheerio(".book-item").each(function () {
-            const novelName = loadedCheerio(this).find(".title").text();
+        loadedCheerio(".book-item").each((idx, ele) => {
+            const novelName = loadedCheerio(ele).find(".title").text();
             const novelCover =
-                "https:" + loadedCheerio(this).find("img").attr("data-src");
+                "https:" + loadedCheerio(ele).find("img").attr("data-src");
             const novelUrl =
-                baseUrl +
-                loadedCheerio(this).find(".title a").attr("href")?.substring(1);
+                this.baseUrl +
+                loadedCheerio(ele).find(".title a").attr("href")?.substring(1);
 
             const novel = { name: novelName, cover: novelCover, url: novelUrl };
 

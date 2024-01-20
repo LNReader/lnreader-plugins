@@ -36,15 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.icon = exports.version = exports.site = exports.name = exports.id = void 0;
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
-exports.id = "NF.me";
-exports.name = "NovelFull";
-exports.site = "https://novelfull.me/";
-exports.version = "1.0.0";
-exports.icon = "src/en/novelfullme/icon.png";
-var baseUrl = exports.site;
 var NovelFull = /** @class */ (function () {
     function NovelFull() {
         this.id = "NF.me";
@@ -57,10 +50,11 @@ var NovelFull = /** @class */ (function () {
     NovelFull.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = "".concat(baseUrl, "popular?page=").concat(pageNo);
+                        url = "".concat(this.baseUrl, "popular?page=").concat(pageNo);
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _a.sent();
@@ -69,12 +63,12 @@ var NovelFull = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio(".book-item").each(function () {
+                        loadedCheerio(".book-item").each(function (idx, ele) {
                             var _a;
-                            var novelName = loadedCheerio(this).find(".title").text();
-                            var novelCover = "https:" + loadedCheerio(this).find("img").attr("data-src");
-                            var novelUrl = baseUrl +
-                                ((_a = loadedCheerio(this).find(".title a").attr("href")) === null || _a === void 0 ? void 0 : _a.substring(1));
+                            var novelName = loadedCheerio(ele).find(".title").text();
+                            var novelCover = "https:" + loadedCheerio(ele).find("img").attr("data-src");
+                            var novelUrl = _this.baseUrl +
+                                ((_a = loadedCheerio(ele).find(".title a").attr("href")) === null || _a === void 0 ? void 0 : _a.substring(1));
                             var novel = { name: novelName, cover: novelCover, url: novelUrl };
                             novels.push(novel);
                         });
@@ -120,7 +114,7 @@ var NovelFull = /** @class */ (function () {
                         novel.genres = (_b = loadedCheerio("body > div.layout > div.main-container.book-details > div > div.row.no-gutters > div.col-lg-8 > div.book-info > div.detail > div.meta.box.mt-1.p-10 > p:nth-child(2)")
                             .text()) === null || _b === void 0 ? void 0 : _b.replace("Genres :", "").replace(/[\s\n]+/g, " ").trim();
                         chapters = [];
-                        chaptersUrl = novelUrl.replace(baseUrl, "https://novelfull.me/api/novels/") +
+                        chaptersUrl = novelUrl.replace(this.baseUrl, "https://novelfull.me/api/novels/") +
                             "/chapters?source=detail";
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(chaptersUrl)];
                     case 3:
@@ -178,10 +172,11 @@ var NovelFull = /** @class */ (function () {
     NovelFull.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        url = "".concat(baseUrl, "search?status=all&sort=views&q=").concat(searchTerm);
+                        url = "".concat(this.baseUrl, "search?status=all&sort=views&q=").concat(searchTerm);
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _a.sent();
@@ -190,12 +185,12 @@ var NovelFull = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        loadedCheerio(".book-item").each(function () {
+                        loadedCheerio(".book-item").each(function (idx, ele) {
                             var _a;
-                            var novelName = loadedCheerio(this).find(".title").text();
-                            var novelCover = "https:" + loadedCheerio(this).find("img").attr("data-src");
-                            var novelUrl = baseUrl +
-                                ((_a = loadedCheerio(this).find(".title a").attr("href")) === null || _a === void 0 ? void 0 : _a.substring(1));
+                            var novelName = loadedCheerio(ele).find(".title").text();
+                            var novelCover = "https:" + loadedCheerio(ele).find("img").attr("data-src");
+                            var novelUrl = _this.baseUrl +
+                                ((_a = loadedCheerio(ele).find(".title a").attr("href")) === null || _a === void 0 ? void 0 : _a.substring(1));
                             var novel = { name: novelName, cover: novelCover, url: novelUrl };
                             novels.push(novel);
                         });
