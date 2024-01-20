@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "zetroTL", "sourceSite": "https://zetrotranslation.com/", "sourceName": "Zetro Translation", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adventure", "value": "adventure" }, { "label": "Comedy", "value": "comedy" }, { "label": "Dark Elf", "value": "dark-elf" }, { "label": "Drama", "value": "drama" }, { "label": "Ecchi", "value": "ecchi" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Harem", "value": "harem" }, { "label": "Horror", "value": "horror" }, { "label": "Isekai", "value": "isekai" }, { "label": "Mecha", "value": "mecha" }, { "label": "Mystery", "value": "mystery" }, { "label": "NTR", "value": "ntr" }, { "label": "Original Works", "value": "original-works" }, { "label": "Rom-Com", "value": "rom-com" }, { "label": "Romance", "value": "romance" }, { "label": "School", "value": "school" }, { "label": "Shoujo", "value": "shoujo" }, { "label": "Slice of Life", "value": "slice-of-life" }, { "label": "Villain", "value": "villain" }, { "label": "Yuri", "value": "yuri" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "genres": "genre" }, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "zetroTL", "sourceSite": "https://zetrotranslation.com/", "sourceName": "Zetro Translation", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adventure", "value": "adventure" }, { "label": "Comedy", "value": "comedy" }, { "label": "Dark Elf", "value": "dark-elf" }, { "label": "Drama", "value": "drama" }, { "label": "Ecchi", "value": "ecchi" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Harem", "value": "harem" }, { "label": "Horror", "value": "horror" }, { "label": "Isekai", "value": "isekai" }, { "label": "Mecha", "value": "mecha" }, { "label": "Mystery", "value": "mystery" }, { "label": "NTR", "value": "ntr" }, { "label": "Original Works", "value": "original-works" }, { "label": "Rom-Com", "value": "rom-com" }, { "label": "Romance", "value": "romance" }, { "label": "School", "value": "school" }, { "label": "Shoujo", "value": "shoujo" }, { "label": "Slice of Life", "value": "slice-of-life" }, { "label": "Villain", "value": "villain" }, { "label": "Yuri", "value": "yuri" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "genres": "genre" }, "lang": "English" } });
 exports.default = plugin;

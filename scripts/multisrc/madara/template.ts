@@ -169,7 +169,11 @@ class MadaraPlugin implements Plugin.PluginBase {
 
         let html;
 
-        if (this.options?.useNewChapterEndpoint !== true) {
+        if (this.options?.useNewChapterEndpoint) {
+            html = await fetchApi(novelUrl + "ajax/chapters/", {
+                method: "POST",
+            }).then((res) => res.text());
+        } else {
             const novelId =
                 loadedCheerio(".rating-post-id").attr("value") ||
                 loadedCheerio("#manga-chapters-holder").attr("data-id") ||
@@ -182,10 +186,6 @@ class MadaraPlugin implements Plugin.PluginBase {
             html = await fetchApi(this.site + "wp-admin/admin-ajax.php", {
                 method: "POST",
                 body: formData,
-            }).then((res) => res.text());
-        } else {
-            html = await fetchApi(novelUrl + "ajax/chapters/", {
-                method: "POST",
             }).then((res) => res.text());
         }
 

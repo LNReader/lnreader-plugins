@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "novel4up", "sourceSite": "https://novel4up.com/", "sourceName": "Novel4Up", "filters": { "sort": { "label": "ترتيب حسب:", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "أ-ي", "value": "alphabet" }, { "label": "الأحدث", "value": "latest" }, { "label": "الأكثر مشاهدة", "value": "views" }, { "label": "التقييم", "value": "rating" }, { "label": "الجديد", "value": "new-manga" }, { "label": "الشائع", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "التصنيفات", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "أكشن", "value": "action" }, { "label": "الخارق للطبيعة", "value": "supernatural" }, { "label": "تاريخي", "value": "historical" }, { "label": "تحقيق", "value": "detective" }, { "label": "تراجيديا", "value": "tragedy" }, { "label": "حريم", "value": "harem" }, { "label": "حياة مدرسية", "value": "school-life" }, { "label": "خيال علمي", "value": "sci-fi" }, { "label": "دراما", "value": "drama" }, { "label": "رعب", "value": "horror" }, { "label": "رومانسي", "value": "romance" }, { "label": "رياضة", "value": "sports" }, { "label": "سحر", "value": "magic" }, { "label": "شريحة من الحياة", "value": "slice-of-life" }, { "label": "شوانهوا", "value": "xuanhuan" }, { "label": "شوجو", "value": "shoujo" }, { "label": "شونين", "value": "shounen" }, { "label": "غموض", "value": "mystery" }, { "label": "فانتازيا", "value": "fantasy" }, { "label": "فنون قتال", "value": "martial-arts" }, { "label": "كوميديا", "value": "comedy" }, { "label": "مغامرة", "value": "adventure" }, { "label": "ميكا", "value": "mecha" }, { "label": "نفسي", "value": "psychological" }, { "label": "ون شوت", "value": "one-shot" }, { "label": "ووشيا", "value": "wuxia" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "lang": "Arabic" } });
+var plugin = new MadaraPlugin({ "id": "novel4up", "sourceSite": "https://novel4up.com/", "sourceName": "Novel4Up", "filters": { "sort": { "label": "ترتيب حسب:", "value": "", "options": [{ "label": "أ-ي", "value": "alphabet" }, { "label": "الأحدث", "value": "latest" }, { "label": "الأكثر مشاهدة", "value": "views" }, { "label": "التقييم", "value": "rating" }, { "label": "الجديد", "value": "new-manga" }, { "label": "الشائع", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "التصنيفات", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "أكشن", "value": "action" }, { "label": "الخارق للطبيعة", "value": "supernatural" }, { "label": "تاريخي", "value": "historical" }, { "label": "تحقيق", "value": "detective" }, { "label": "تراجيديا", "value": "tragedy" }, { "label": "حريم", "value": "harem" }, { "label": "حياة مدرسية", "value": "school-life" }, { "label": "خيال علمي", "value": "sci-fi" }, { "label": "دراما", "value": "drama" }, { "label": "رعب", "value": "horror" }, { "label": "رومانسي", "value": "romance" }, { "label": "رياضة", "value": "sports" }, { "label": "سحر", "value": "magic" }, { "label": "شريحة من الحياة", "value": "slice-of-life" }, { "label": "شوانهوا", "value": "xuanhuan" }, { "label": "شوجو", "value": "shoujo" }, { "label": "شونين", "value": "shounen" }, { "label": "غموض", "value": "mystery" }, { "label": "فانتازيا", "value": "fantasy" }, { "label": "فنون قتال", "value": "martial-arts" }, { "label": "كوميديا", "value": "comedy" }, { "label": "مغامرة", "value": "adventure" }, { "label": "ميكا", "value": "mecha" }, { "label": "نفسي", "value": "psychological" }, { "label": "ون شوت", "value": "one-shot" }, { "label": "ووشيا", "value": "wuxia" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "lang": "Arabic" } });
 exports.default = plugin;

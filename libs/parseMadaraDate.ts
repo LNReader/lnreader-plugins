@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 export const parseMadaraDate = (date: string) => {
     if (date.includes("ago")) {
-        const dayJSDate = dayjs(new Date()); // today
+        const dayJSDate = dayjs(); // today
         const timeAgo = date.match(/\d+/)?.[0] || "";
         const timeAgoInt = parseInt(timeAgo, 10);
 

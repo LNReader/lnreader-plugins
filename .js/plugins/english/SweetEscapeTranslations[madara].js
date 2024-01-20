@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "sweetEscapeTL", "sourceSite": "https://sweetescapetranslations.com/", "sourceName": "Sweet Escape Translations", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adult", "value": "adult" }, { "label": "Comedy", "value": "comedy" }, { "label": "Drama", "value": "drama" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Gender Bender", "value": "gender-bender" }, { "label": "Mature", "value": "mature" }, { "label": "Modern", "value": "modern" }, { "label": "Mystery", "value": "mystery" }, { "label": "R-15", "value": "r-15" }, { "label": "Romance", "value": "romance" }, { "label": "Slice of Life", "value": "slice-of-life" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "novels": "manga", "novel": "manga", "chapter": "manga", "genres": "manga-genre" }, "useNewChapterEndpoint": false, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "sweetEscapeTL", "sourceSite": "https://sweetescapetranslations.com/", "sourceName": "Sweet Escape Translations", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adult", "value": "adult" }, { "label": "Comedy", "value": "comedy" }, { "label": "Drama", "value": "drama" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Gender Bender", "value": "gender-bender" }, { "label": "Mature", "value": "mature" }, { "label": "Modern", "value": "modern" }, { "label": "Mystery", "value": "mystery" }, { "label": "R-15", "value": "r-15" }, { "label": "Romance", "value": "romance" }, { "label": "Slice of Life", "value": "slice-of-life" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "novels": "manga", "novel": "manga", "chapter": "manga", "genres": "manga-genre" }, "useNewChapterEndpoint": false, "lang": "English" } });
 exports.default = plugin;

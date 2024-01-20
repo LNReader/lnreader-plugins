@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "webnoveloku", "sourceSite": "https://www.webnoveloku.com/", "sourceName": "WebNovelOku ", "filters": { "sort": { "label": "Sırala", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "A-Z", "value": "alphabet" }, { "label": "En Son", "value": "latest" }, { "label": "Görüntülenme", "value": "views" }, { "label": "Popülarite", "value": "trending" }, { "label": "Reyting", "value": "rating" }, { "label": "Yeni", "value": "new-manga" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "lang": "Turkish" } });
+var plugin = new MadaraPlugin({ "id": "webnoveloku", "sourceSite": "https://www.webnoveloku.com/", "sourceName": "WebNovelOku ", "filters": { "sort": { "label": "Sırala", "value": "", "options": [{ "label": "A-Z", "value": "alphabet" }, { "label": "En Son", "value": "latest" }, { "label": "Görüntülenme", "value": "views" }, { "label": "Popülarite", "value": "trending" }, { "label": "Reyting", "value": "rating" }, { "label": "Yeni", "value": "new-manga" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "lang": "Turkish" } });
 exports.default = plugin;

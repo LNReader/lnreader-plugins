@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "hizomanga", "sourceSite": "https://hizomanga.com/", "sourceName": "HizoManga", "filters": { "sort": { "label": "ترتيب حسب", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "A-Z", "value": "alphabet" }, { "label": "New", "value": "new-manga" }, { "label": "الأحدث", "value": "latest" }, { "label": "الأكثر مشاهدة", "value": "views" }, { "label": "التقييم", "value": "rating" }, { "label": "الرائج", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "التصنيفات", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "آلات", "value": "mechanisms" }, { "label": "أكشن", "value": "action" }, { "label": "إثارة", "value": "excitement" }, { "label": "إيسكاي", "value": "%d8%a5%d9%8a%d8%b3%d9%83%d8%a7%d9%8a" }, { "label": "الحياة اليومية", "value": "slice-of-life" }, { "label": "الحياة مدرسية", "value": "school-life" }, { "label": "تاريخي", "value": "historical" }, { "label": "تراجيدي", "value": "tragic" }, { "label": "جريمة", "value": "%d8%ac%d8%b1%d9%8a%d9%85%d8%a9" }, { "label": "جندر بندر", "value": "%d8%ac%d9%86%d8%af%d8%b1-%d8%a8%d9%86%d8%af%d8%b1" }, { "label": "جوسي", "value": "josei" }, { "label": "حريم", "value": "harem" }, { "label": "خارق للطبيعة", "value": "supernatural" }, { "label": "خيال", "value": "fantasy" }, { "label": "خيال علمي", "value": "sci-fi" }, { "label": "دراما", "value": "drama" }, { "label": "دموي", "value": "%d8%af%d9%85%d9%88%d9%8a" }, { "label": "راشد", "value": "mature" }, { "label": "رعب", "value": "horror" }, { "label": "رومانسي", "value": "romance" }, { "label": "رياضة", "value": "sports" }, { "label": "زمنكاني", "value": "my-time" }, { "label": "زومبي", "value": "%d8%b2%d9%88%d9%85%d8%a8%d9%8a" }, { "label": "سينين", "value": "seinen" }, { "label": "شريحة من الحياة", "value": "%d8%b4%d8%b1%d9%8a%d8%ad%d8%a9-%d9%85%d9%86-%d8%a7%d9%84%d8%ad%d9%8a%d8%a7%d8%a9" }, { "label": "شوجو", "value": "shoujo" }, { "label": "شونين", "value": "shounen" }, { "label": "طبي", "value": "%d8%b7%d8%a8%d9%8a" }, { "label": "غموض", "value": "ambiguity" }, { "label": "فنون قتالية", "value": "martial-arts" }, { "label": "قوة خارقة", "value": "superpower" }, { "label": "كوميدي", "value": "comedy" }, { "label": "مغامرات", "value": "adventure" }, { "label": "نفسي", "value": "psychological" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "novels": "serie", "novel": "serie", "chapter": "serie", "genres": "manga-genre" }, "useNewChapterEndpoint": true, "lang": "Arabic" } });
+var plugin = new MadaraPlugin({ "id": "hizomanga", "sourceSite": "https://hizomanga.com/", "sourceName": "HizoManga", "filters": { "sort": { "label": "ترتيب حسب", "value": "", "options": [{ "label": "A-Z", "value": "alphabet" }, { "label": "New", "value": "new-manga" }, { "label": "الأحدث", "value": "latest" }, { "label": "الأكثر مشاهدة", "value": "views" }, { "label": "التقييم", "value": "rating" }, { "label": "الرائج", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "التصنيفات", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "آلات", "value": "mechanisms" }, { "label": "أكشن", "value": "action" }, { "label": "إثارة", "value": "excitement" }, { "label": "إيسكاي", "value": "%d8%a5%d9%8a%d8%b3%d9%83%d8%a7%d9%8a" }, { "label": "الحياة اليومية", "value": "slice-of-life" }, { "label": "الحياة مدرسية", "value": "school-life" }, { "label": "تاريخي", "value": "historical" }, { "label": "تراجيدي", "value": "tragic" }, { "label": "جريمة", "value": "%d8%ac%d8%b1%d9%8a%d9%85%d8%a9" }, { "label": "جندر بندر", "value": "%d8%ac%d9%86%d8%af%d8%b1-%d8%a8%d9%86%d8%af%d8%b1" }, { "label": "جوسي", "value": "josei" }, { "label": "حريم", "value": "harem" }, { "label": "خارق للطبيعة", "value": "supernatural" }, { "label": "خيال", "value": "fantasy" }, { "label": "خيال علمي", "value": "sci-fi" }, { "label": "دراما", "value": "drama" }, { "label": "دموي", "value": "%d8%af%d9%85%d9%88%d9%8a" }, { "label": "راشد", "value": "mature" }, { "label": "رعب", "value": "horror" }, { "label": "رومانسي", "value": "romance" }, { "label": "رياضة", "value": "sports" }, { "label": "زمنكاني", "value": "my-time" }, { "label": "زومبي", "value": "%d8%b2%d9%88%d9%85%d8%a8%d9%8a" }, { "label": "سينين", "value": "seinen" }, { "label": "شريحة من الحياة", "value": "%d8%b4%d8%b1%d9%8a%d8%ad%d8%a9-%d9%85%d9%86-%d8%a7%d9%84%d8%ad%d9%8a%d8%a7%d8%a9" }, { "label": "شوجو", "value": "shoujo" }, { "label": "شونين", "value": "shounen" }, { "label": "طبي", "value": "%d8%b7%d8%a8%d9%8a" }, { "label": "غموض", "value": "ambiguity" }, { "label": "فنون قتالية", "value": "martial-arts" }, { "label": "قوة خارقة", "value": "superpower" }, { "label": "كوميدي", "value": "comedy" }, { "label": "مغامرات", "value": "adventure" }, { "label": "نفسي", "value": "psychological" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "path": { "novels": "serie", "novel": "serie", "chapter": "serie", "genres": "manga-genre" }, "useNewChapterEndpoint": true, "lang": "Arabic" } });
 exports.default = plugin;

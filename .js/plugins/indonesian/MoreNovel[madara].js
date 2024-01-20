@@ -173,7 +173,14 @@ var MadaraPlugin = /** @class */ (function () {
                                     .next()
                                     .text()
                                     .trim();
-                        if (!(((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint) !== true)) return [3 /*break*/, 3];
+                        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.useNewChapterEndpoint)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
+                                method: "POST",
+                            }).then(function (res) { return res.text(); })];
+                    case 2:
+                        html = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
                         novelId = loadedCheerio(".rating-post-id").attr("value") ||
                             loadedCheerio("#manga-chapters-holder").attr("data-id") ||
                             "";
@@ -184,12 +191,6 @@ var MadaraPlugin = /** @class */ (function () {
                                 method: "POST",
                                 body: formData,
                             }).then(function (res) { return res.text(); })];
-                    case 2:
-                        html = _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl + "ajax/chapters/", {
-                            method: "POST",
-                        }).then(function (res) { return res.text(); })];
                     case 4:
                         html = _b.sent();
                         _b.label = 5;
@@ -292,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "morenovel", "sourceSite": "https://morenovel.net/", "sourceName": "MoreNovel", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Default", "value": "" }, { "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adventure", "value": "adventure" }, { "label": "Comedy", "value": "comedy" }, { "label": "Drama", "value": "drama" }, { "label": "Ecchi", "value": "ecchi" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Gender Bender", "value": "gender-bender" }, { "label": "Harem", "value": "harem" }, { "label": "Historical", "value": "historical" }, { "label": "Horror", "value": "horror" }, { "label": "Josei", "value": "josei" }, { "label": "Martial Arts", "value": "martial-arts" }, { "label": "Mature", "value": "mature" }, { "label": "Mecha", "value": "mecha" }, { "label": "Mystery", "value": "mystery" }, { "label": "Psychological", "value": "psychological" }, { "label": "Romance", "value": "romance" }, { "label": "School Life", "value": "school-life" }, { "label": "Sci-fi", "value": "sci-fi" }, { "label": "Seinen", "value": "seinen" }, { "label": "Shoujo", "value": "shoujo" }, { "label": "Shoujo Ai", "value": "shoujo-ai" }, { "label": "Shounen", "value": "shounen" }, { "label": "Shounen Ai", "value": "shounen-ai" }, { "label": "Slice of Life", "value": "slice-of-life" }, { "label": "Sports", "value": "sports" }, { "label": "Supernatural", "value": "supernatural" }, { "label": "Tragedy", "value": "tragedy" }, { "label": "Wuxia", "value": "wuxia" }, { "label": "Xianxia", "value": "xianxia" }, { "label": "Xuanhuan", "value": "xuanhuan" }, { "label": "Yaoi", "value": "yaoi" }, { "label": "Yuri", "value": "yuri" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "useNewChapterEndpoint": true, "lang": "Indonesian" } });
+var plugin = new MadaraPlugin({ "id": "morenovel", "sourceSite": "https://morenovel.net/", "sourceName": "MoreNovel", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker }, "genres": { "label": "GENRES", "value": "", "options": [{ "label": "NONE", "value": "" }, { "label": "Action", "value": "action" }, { "label": "Adventure", "value": "adventure" }, { "label": "Comedy", "value": "comedy" }, { "label": "Drama", "value": "drama" }, { "label": "Ecchi", "value": "ecchi" }, { "label": "Fantasy", "value": "fantasy" }, { "label": "Gender Bender", "value": "gender-bender" }, { "label": "Harem", "value": "harem" }, { "label": "Historical", "value": "historical" }, { "label": "Horror", "value": "horror" }, { "label": "Josei", "value": "josei" }, { "label": "Martial Arts", "value": "martial-arts" }, { "label": "Mature", "value": "mature" }, { "label": "Mecha", "value": "mecha" }, { "label": "Mystery", "value": "mystery" }, { "label": "Psychological", "value": "psychological" }, { "label": "Romance", "value": "romance" }, { "label": "School Life", "value": "school-life" }, { "label": "Sci-fi", "value": "sci-fi" }, { "label": "Seinen", "value": "seinen" }, { "label": "Shoujo", "value": "shoujo" }, { "label": "Shoujo Ai", "value": "shoujo-ai" }, { "label": "Shounen", "value": "shounen" }, { "label": "Shounen Ai", "value": "shounen-ai" }, { "label": "Slice of Life", "value": "slice-of-life" }, { "label": "Sports", "value": "sports" }, { "label": "Supernatural", "value": "supernatural" }, { "label": "Tragedy", "value": "tragedy" }, { "label": "Wuxia", "value": "wuxia" }, { "label": "Xianxia", "value": "xianxia" }, { "label": "Xuanhuan", "value": "xuanhuan" }, { "label": "Yaoi", "value": "yaoi" }, { "label": "Yuri", "value": "yuri" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "useNewChapterEndpoint": true, "lang": "Indonesian" } });
 exports.default = plugin;
