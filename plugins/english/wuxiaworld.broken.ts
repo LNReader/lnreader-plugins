@@ -1,50 +1,52 @@
-import cheerio from "cheerio";
+import { load as parseHTML} from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
+import { Filters } from "@libs/filterInputs";
 
-export const id = "wuxiaworld";
-export const name = "Wuxia World (WIP)";
-export const version = "0.5.0";
-export const icon = "src/en/wuxiaworld/icon.png";
-export const site = "https://www.wuxiaworld.com/";
+interface NovelEntry {
+    name: string;
+    coverUrl: string;
+    slug: string;
+}
 
+class WuxiaWorld implements Plugin.PluginBase {
+    id = "wuxiaworld";
+    name = "Wuxia World";
+    icon = "src/en/wuxiaworld/icon.png";
+    site = "https://www.wuxiaworld.com/";
+    filters?: Filters | undefined;
+    version = "0.5.0";
+    baseUrl = this.site;
+    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
+        const link = `${this.baseUrl}api/novels`;
 
-const pluginId = id;
-const baseUrl = site;
+        const result = await fetch(link);
+        const data = await result.json();
 
-export const popularNovels: Plugin.popularNovels = async function (page) {
-    const link = `${baseUrl}api/novels`;
+        let novels: Plugin.NovelItem[] = [];
 
-    const result = await fetchApi(link, {}, pluginId);
-    const data = await result.json();
+        data.items.map((novel: NovelEntry) => {
+            let name = novel.name;
+            let cover = novel.coverUrl;
+            let url = this.baseUrl + "novel/" + novel.slug + "/";
 
-    let novels: Novel.Item[] = [];
-
-    data.items.map((novel) => {
-        let name = novel.name;
-        let cover = novel.coverUrl;
-        let url = baseUrl + "novel/" + novel.slug + "/";
-
-        novels.push({
-            name,
-            cover,
-            url,
+            novels.push({
+                name,
+                cover,
+                url,
+            });
         });
-    });
 
-    return novels;
-};
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+        return novels;
+    }
+    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        console.log(url);
-        const result = await fetchApi(url, {}, pluginId);
+        const result = await fetchApi(url);
         const body = await result.text();
 
-        const loadedCheerio = cheerio.load(body);
+        const loadedCheerio = parseHTML(body);
 
-        const novel: Novel.instance = {
+        const novel: Plugin.SourceNovel = {
             url,
             chapters: [],
         };
@@ -75,20 +77,19 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.genres = genres.join(",");
 
         novel.status = loadedCheerio("div.font-set-b10")
-            .text()
-            .includes("Complete");
+            .text();
 
-        let chapter: Chapter.Item[] = [];
+        let chapter: Plugin.ChapterItem[] = [];
 
-        loadedCheerio("div.border-b").each(function () {
-            const name = loadedCheerio(this)
+        loadedCheerio("div.border-b.border-gray-line-base").each((idx, ele) => {
+            const name = loadedCheerio(ele)
                 .find("a > div > div > div > span")
                 .text();
-            const releaseTime = loadedCheerio(this)
+            const releaseTime = loadedCheerio(ele)
                 .find("a > div > div > div > div > span")
                 .text();
-            let url = loadedCheerio(this).find("a").attr("href")?.slice(1);
-            url = `${baseUrl}${url}`;
+            let url = loadedCheerio(ele).find("a").attr("href")?.slice(1);
+            url = `${this.baseUrl}${url}`;
 
             chapter.push({ name, releaseTime, url });
         });
@@ -96,51 +97,49 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.chapters = chapter;
 
         return novel;
-    };
+    }
+    async parseChapter(chapterUrl: string): Promise<string> {
+        const result = await fetchApi(chapterUrl);
+        const body = await result.text();
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const result = await fetchApi(chapterUrl, {}, pluginId);
-    const body = await result.text();
+        const loadedCheerio = parseHTML(body);
 
-    const loadedCheerio = cheerio.load(body);
+        loadedCheerio(".chapter-nav").remove();
 
-    loadedCheerio(".chapter-nav").remove();
+        loadedCheerio("#chapter-content > script").remove();
 
-    loadedCheerio("#chapter-content > script").remove();
+        let chapterText = loadedCheerio("#chapter-content").html() || '';
 
-    let chapterText = loadedCheerio("#chapter-content").html();
+        return chapterText;
+    }
+    async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
+        const searchUrl = "https://www.wuxiaworld.com/api/novels/search?query=";
 
-    return chapterText;
-};
+        const url = `${searchUrl}${searchTerm}`;
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const searchUrl = "https://www.wuxiaworld.com/api/novels/search?query=";
+        const result = await fetchApi(url);
+        const data = await result.json();
 
-    const url = `${searchUrl}${searchTerm}`;
+        const novels: Plugin.NovelItem[] = [];
 
-    const result = await fetchApi(url);
-    const data = await result.json();
+        data.items.map((novel: NovelEntry) => {
+            let name = novel.name;
+            let cover = novel.coverUrl;
+            let url = this.baseUrl + "novel/" + novel.slug + "/";
 
-    const novels: Novel.Item[] = [];
-
-    data.items.map((novel) => {
-        let name = novel.name;
-        let cover = novel.cover;
-        let url = baseUrl + "novel/" + novel.slug + "/";
-
-        novels.push({
-            name,
-            url,
-            cover,
+            novels.push({
+                name,
+                url,
+                cover,
+            });
         });
-    });
 
-    return novels;
-};
+        return novels;
+    }
+    fetchImage(url: string): Promise<string | undefined> {
+        return fetchFile(url);
+    }
 
-export const fetchImage: Plugin.fetchImage = async function (url) {
-    const headers = {
-        Referer: baseUrl,
-    };
-    return await fetchFile(url, { headers: headers });
-};
+}
+
+export default new WuxiaWorld();

@@ -500,6 +500,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/multisrc/readwn/icons/wuxiap.png"
 		},
 		{
+			"id": "wuxiaworld",
+			"name": "Wuxia World",
+			"site": "https://www.wuxiaworld.com/",
+			"lang": "English",
+			"version": "0.5.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/wuxiaworld.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/wuxiaworld/icon.png"
+		},
+		{
 			"id": "wuxiaworld.site",
 			"name": "WuxiaWorld.Site[madara]",
 			"site": "https://wuxiaworld.site/",
