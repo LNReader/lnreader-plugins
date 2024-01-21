@@ -312,7 +312,7 @@
 		},
 		{
 			"id": "NF.me",
-			"name": "NovelFull",
+			"name": "NovelFullMe",
 			"site": "https://novelfull.me/",
 			"lang": "English",
 			"version": "1.0.0",
@@ -372,6 +372,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/novelbin.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/novelbin/icon.png"
+		},
+		{
+			"id": "novelfull",
+			"name": "NovelFull",
+			"site": "https://novelfull.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/novelfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/novelfull/icon.png"
 		},
 		{
 			"id": "novelhold",
