@@ -115,7 +115,7 @@ var WuxiaWorld = /** @class */ (function () {
                         novel.status = loadedCheerio("div.font-set-b10")
                             .text();
                         chapter = [];
-                        loadedCheerio("div.border-b").each(function (idx, ele) {
+                        loadedCheerio("div.border-b.border-gray-line-base").each(function (idx, ele) {
                             var _a;
                             var name = loadedCheerio(ele)
                                 .find("a > div > div > div > span")
