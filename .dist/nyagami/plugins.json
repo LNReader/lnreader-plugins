@@ -374,6 +374,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/novelbin/icon.png"
 		},
 		{
+			"id": "novelhold",
+			"name": "Novel Hall",
+			"site": "https://novelhall.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/novelhall.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/novelhall/icon.png"
+		},
+		{
 			"id": "novelmultiverse",
 			"name": "NovelMultiverse[madara]",
 			"site": "https://www.novelmultiverse.com/",
