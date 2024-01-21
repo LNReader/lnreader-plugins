@@ -46,12 +46,6 @@ var MTLNovel = /** @class */ (function () {
         this.icon = "src/en/mtlnovel/icon.png";
         this.site = "https://www.mtlnovel.com/";
         this.baseUrl = this.site;
-        this.headers = {
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-            "Cache-Control": "max-age=0",
-            "Upgrade-Insecure-Requests": "1s"
-        };
     }
     MTLNovel.prototype.popularNovels = function (pageNo, options) {
         return __awaiter(this, void 0, void 0, function () {
@@ -60,7 +54,7 @@ var MTLNovel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         url = "".concat(this.baseUrl, "alltime-rank/page/").concat(pageNo);
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: this.headers }).then(function (result) { return result.text(); })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (result) { return result.text(); })];
                     case 1:
                         body = _a.sent();
                         console.log(body);
