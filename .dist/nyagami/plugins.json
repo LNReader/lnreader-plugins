@@ -329,6 +329,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/nitromanga/icon.png"
 		},
 		{
+			"id": "NO.net",
+			"name": "novelsOnline",
+			"site": "https://novelsonline.net",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/NovelOnline.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/coverNotAvailable.jpg"
+		},
+		{
 			"id": "noblemtl",
 			"name": "NobleMTL",
 			"site": "https://noblemtl.com/",
