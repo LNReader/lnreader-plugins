@@ -1,62 +1,50 @@
 import { load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
+import { Filters } from "@libs/filterInputs";
 
-const pluginId = "mtlnovel";
-const baseUrl = "https://www.mtlnovel.com/";
+class MTLNovel implements Plugin.PluginBase {
+    id = "mtlnovel";
+    name = "MTL Novel";
+    version = "1.0.0";
+    icon = "src/en/mtlnovel/icon.png";
+    site = "https://www.mtlnovel.com/";
+    baseUrl = this.site;
+    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
+        const url = `${this.baseUrl}alltime-rank/page/${pageNo}`;
+        const body = await fetchApi(url).then((result) => result.text());
+        console.log(body);
+        
+        const loadedCheerio = parseHTML(body);
 
-export const popularNovels: Plugin.popularNovels = async function (page) {
-    const url = `${baseUrl}alltime-rank/page/${page}`;
+        let novels: Plugin.NovelItem[] = [];
 
-    const headers = {
-        Referer: `${baseUrl}`,
-        "User-Agent":
-            "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
-    };
+        loadedCheerio("div.box.wide").each(function () {
+            const novelName = loadedCheerio(this)
+                .find("a.list-title")
+                .text()
+                .slice(4);
+            const novelCover = loadedCheerio(this).find("amp-img").attr("src");
+            const novelUrl = loadedCheerio(this).find("a.list-title").attr("href");
 
-    const body = await fetchApi(
-        url,
-        {
-            method: "GET",
-            headers: headers,
-        },
-        pluginId
-    ).then((result) => result.text());
+            if (!novelUrl) return;
 
-    const loadedCheerio = parseHTML(body);
+            const novel = {
+                name: novelName,
+                cover: novelCover,
+                url: novelUrl,
+            };
 
-    let novels: Novel.Item[] = [];
+            novels.push(novel);
+        });
 
-    loadedCheerio("div.box.wide").each(function () {
-        const novelName = loadedCheerio(this)
-            .find("a.list-title")
-            .text()
-            .slice(4);
-        const novelCover = loadedCheerio(this).find("amp-img").attr("src");
-        const novelUrl = loadedCheerio(this).find("a.list-title").attr("href");
-
-        if (!novelUrl) return;
-
-        const novel = {
-            name: novelName,
-            cover: novelCover,
-            url: novelUrl,
-        };
-
-        novels.push(novel);
-    });
-
-    return novels;
-};
-
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+        return novels;
+    }
+    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
 
         let headers = {
-            Referer: `${baseUrl}alltime-rank/`,
-            "User-Agent":
-                "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+            Referer: `${this.baseUrl}alltime-rank/`,
         };
 
         const body = await fetchApi(
@@ -65,12 +53,11 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
                 method: "GET",
                 headers: headers,
             },
-            pluginId
         ).then((result) => result.text());
 
         let loadedCheerio = parseHTML(body);
 
-        const novel: Novel.instance = {
+        const novel: Plugin.SourceNovel = {
             url,
             chapters: [],
         };
@@ -95,7 +82,7 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
             loadedCheerio = parseHTML(listBody);
 
-            let chapter: Chapter.Item[] = [];
+            let chapter: Plugin.ChapterItem[] = [];
 
             loadedCheerio("div.ch-list")
                 .find("a.ch-link")
@@ -105,12 +92,13 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
                         .replace("~ ", "");
                     const releaseDate = null;
                     const chapterUrl = loadedCheerio(this).attr("href");
-
-                    chapter.push({
-                        url: chapterUrl,
-                        name: chapterName,
-                        releaseTime: releaseDate,
-                    });
+                    if (chapterUrl) {
+                        chapter.push({
+                            url: chapterUrl,
+                            name: chapterName,
+                            releaseTime: releaseDate,
+                        });
+                    }
                 });
             return chapter.reverse();
         }
@@ -118,63 +106,50 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.chapters = await getChapters();
 
         return novel;
-    };
+    }
+    async parseChapter(chapterUrl: string): Promise<string> {
+        const body = await fetchApi(chapterUrl).then((r) => r.text());
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const body = await fetchApi(chapterUrl, {}, pluginId).then((r) => r.text());
+        const loadedCheerio = parseHTML(body);
 
-    const loadedCheerio = parseHTML(body);
+        const chapterText = loadedCheerio("div.par").html() || '';
 
-    const chapterText = loadedCheerio("div.par").html();
+        return chapterText;
+    }
+    async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
+        const searchUrl =
+            this.baseUrl +
+            "wp-admin/admin-ajax.php?action=autosuggest&q=" +
+            searchTerm +
+            "&__amp_source_origin=https%3A%2F%2Fwww.mtlnovel.com";
 
-    return chapterText;
-};
+        const res = await fetch(searchUrl);
+        const result = await res.json();
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const searchUrl =
-        baseUrl +
-        "wp-admin/admin-ajax.php?action=autosuggest&q=" +
-        searchTerm +
-        "&__amp_source_origin=https%3A%2F%2Fwww.mtlnovel.com";
+        let novels: Plugin.NovelItem[] = [];
+        interface SearchEntry {
+            title: string;
+            thumbnail: string;
+            permalink: string;
+        }
+        result.items[0].results.map((item: SearchEntry) => {
+            const novelName = item.title.replace(/<\/?strong>/g, "");
+            const novelCover = item.thumbnail;
+            const novelUrl = item.permalink.replace(
+                "https://www.mtlnovel.com/",
+                ""
+            );
 
-    const res = await fetch(searchUrl);
-    const result = await res.json();
+            const novel = { name: novelName, cover: novelCover, url: novelUrl };
 
-    let novels: Novel.Item[] = [];
+            novels.push(novel);
+        });
 
-    result.items[0].results.map((item) => {
-        const novelName = item.title.replace(/<\/?strong>/g, "");
-        const novelCover = item.thumbnail;
-        const novelUrl = item.permalink.replace(
-            "https://www.mtlnovel.com/",
-            ""
-        );
+        return novels;
+    }
+    async fetchImage(url: string): Promise<string | undefined> {
+        return fetchFile(url);
+    }
 
-        const novel = { name: novelName, cover: novelCover, url: novelUrl };
-
-        novels.push(novel);
-    });
-
-    return novels;
-};
-
-export const fetchImage: Plugin.fetchImage = async function (url) {
-    const headers = {
-        Referer: baseUrl,
-    };
-    return await fetchFile(url, { headers: headers });
-};
-
-module.exports = {
-    id: pluginId,
-    name: "MTL Novel",
-    version: "1.0.0",
-    icon: "src/en/mtlnovel/icon.png",
-    site: baseUrl,
-    protected: false,
-    fetchImage,
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-};
+}
+export default new MTLNovel();
