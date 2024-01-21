@@ -230,6 +230,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/lightnovelpub/icon.png"
 		},
 		{
+			"id": "lightnovelworld",
+			"name": "LightNovelWorld",
+			"site": "https://www.webnovelworld.org/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/lightnovelworld.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/lightnovelworld/icon.png"
+		},
+		{
 			"id": "lnheaven",
 			"name": "LightNovelHeaven[madara]",
 			"site": "https://lightnovelheaven.com/",
