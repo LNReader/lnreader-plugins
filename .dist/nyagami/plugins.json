@@ -230,6 +230,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/lightnovelpub/icon.png"
 		},
 		{
+			"id": "LightNovelUpdates",
+			"name": "Light Novel Updates",
+			"site": "https://www.lightnovelupdates.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/lightnovelupdates.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/lightnovelupdates/icon.png"
+		},
+		{
 			"id": "lightnovelworld",
 			"name": "LightNovelWorld",
 			"site": "https://www.webnovelworld.org/",
