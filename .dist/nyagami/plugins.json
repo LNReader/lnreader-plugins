@@ -464,6 +464,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/multisrc/madara/icons/noveltranslate.png"
 		},
 		{
+			"id": "novelupdates",
+			"name": "Novel Updates",
+			"site": "https://www.novelupdates.com/",
+			"lang": "English",
+			"version": "0.5.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/.js/plugins/english/novelupdates.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/fix-en/icons/src/en/novelupdates/icon.png"
+		},
+		{
 			"id": "onlymtl",
 			"name": "OnlyMTL[madara]",
 			"site": "https://www.onlymtl.com/",
