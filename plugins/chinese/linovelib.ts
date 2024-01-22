@@ -72,9 +72,8 @@ class Linovelib implements Plugin.PluginBase {
             "#bookDetailWrapper .book-rand-a a"
         ).text();
 
-        // TODO: Need some regex and dirty selector to get it
-        // Need to look into how to translate that message
-        novel.status = undefined;
+        const meta = loadedCheerio("#bookDetailWrapper .book-meta").text()
+        novel.status = meta.includes("完结") ? "完结" : "连载";
 
         novel.genres = loadedCheerio(".tag-small.red")
             .children("a")

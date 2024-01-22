@@ -108,7 +108,7 @@ var Linovelib = /** @class */ (function () {
     Linovelib.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var url, body, loadedCheerio, novel, chapter, idPattern, novelId, chaptersUrl, chaptersBody, chaptersLoadedCheerio, volumeName, chapterId;
+            var url, body, loadedCheerio, novel, meta, chapter, idPattern, novelId, chaptersUrl, chaptersBody, chaptersLoadedCheerio, volumeName, chapterId;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -126,9 +126,8 @@ var Linovelib = /** @class */ (function () {
                         novel.cover = loadedCheerio("#bookDetailWrapper img.book-cover").attr("src");
                         novel.summary = loadedCheerio("#bookSummary content").text();
                         novel.author = loadedCheerio("#bookDetailWrapper .book-rand-a a").text();
-                        // TODO: Need some regex and dirty selector to get it
-                        // Need to look into how to translate that message
-                        novel.status = undefined;
+                        meta = loadedCheerio("#bookDetailWrapper .book-meta").text();
+                        novel.status = meta.includes("完结") ? "完结" : "连载";
                         novel.genres = loadedCheerio(".tag-small.red")
                             .children("a")
                             .map(function (i, el) { return loadedCheerio(el).text(); })
