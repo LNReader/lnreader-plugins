@@ -434,85 +434,87 @@ class Linovelib implements Plugin.PluginBase {
         searchTerm: string,
         pageNo?: number | undefined
     ): Promise<Plugin.NovelItem[]> {
-        const searchUrl = `${this.site}/search/`;
-        const Term = encodeURI(searchTerm);
-        let NextPage, NoNextPage: boolean, DeadEnd;
-        pageNo = 1;
+        const url = `${this.site}/search/${encodeURI(searchTerm)}_${pageNo}.html`;
+        const body = await fetchText(url);
+
+        const pageCheerio = parseHTML(body);
+
         const novels: Plugin.NovelItem[] = [];
 
-        const addPage = async (pageCheerio: CheerioAPI, redirect: string) => {
-            const loadSearchResults = () => {
-                pageCheerio(".book-ol .book-layout").each((i, el) => {
-                    let nUrl = pageCheerio(el).attr("href");
+        // const addPage = async (pageCheerio: CheerioAPI, redirect: string) => {
+        //     const loadSearchResults = () => {
+        //         pageCheerio(".book-ol .book-layout").each((i, el) => {
+        //             let nUrl = pageCheerio(el).attr("href");
 
-                    const novelName = pageCheerio(el)
-                        .find(".book-title")
-                        .text();
-                    const novelCover = pageCheerio(el)
-                        .find("div.book-cover > img")
-                        .attr("data-src");
-                    const novelUrl = this.site + nUrl;
+        //             const novelName = pageCheerio(el)
+        //                 .find(".book-title")
+        //                 .text();
+        //             const novelCover = pageCheerio(el)
+        //                 .find("div.book-cover > img")
+        //                 .attr("data-src");
+        //             const novelUrl = this.site + nUrl;
 
-                    if (!nUrl) return;
+        //             if (!nUrl) return;
 
-                    novels.push({
-                        name: novelName,
-                        url: novelUrl,
-                        cover: novelCover,
-                    });
-                });
-            };
+        //             novels.push({
+        //                 name: novelName,
+        //                 url: novelUrl,
+        //                 cover: novelCover,
+        //             });
+        //         });
+        //     };
 
-            const novelResults = pageCheerio(".book-ol a.book-layout");
-            if (novelResults.length === 0) {
-            } else {
-                loadSearchResults();
-            }
+        //     const novelResults = pageCheerio(".book-ol a.book-layout");
+        //     if (novelResults.length === 0) {
+        //     } else {
+        //         loadSearchResults();
+        //     }
 
-            if (redirect.length) {
-                novels.length = 0;
-                const novelName = pageCheerio(
-                    "#bookDetailWrapper .book-title"
-                ).text();
+        //     if (redirect.length) {
+        //         novels.length = 0;
+        //         const novelName = pageCheerio(
+        //             "#bookDetailWrapper .book-title"
+        //         ).text();
 
-                const novelCover = pageCheerio(
-                    "#bookDetailWrapper div.book-cover > img"
-                ).attr("src");
-                const novelUrl =
-                    this.site +
-                    pageCheerio("#btnReadBook").attr("href")?.slice(0, -8) +
-                    ".html";
-                novels.push({
-                    name: novelName,
-                    url: novelUrl,
-                    cover: novelCover,
-                });
-            }
-        };
+        //         const novelCover = pageCheerio(
+        //             "#bookDetailWrapper div.book-cover > img"
+        //         ).attr("src");
+        //         const novelUrl =
+        //             this.site +
+        //             pageCheerio("#btnReadBook").attr("href")?.slice(0, -8) +
+        //             ".html";
+        //         novels.push({
+        //             name: novelName,
+        //             url: novelUrl,
+        //             cover: novelCover,
+        //         });
+        //     }
+        // };
 
-        const loadPage = async (url: string) => {
-            const body = await fetchText(url);
-            const pageCheerio = parseHTML(body);
-            const redirect = pageCheerio("div.book-layout").text();
-            await addPage(pageCheerio, redirect);
-            NextPage = pageCheerio(".next").attr("href");
-            if (!NextPage) {
-                NoNextPage === true;
-            } else {
-                NoNextPage = NextPage === "#" ? true : false;
-            }
-            return { pageCheerio, NoNextPage };
-        };
+        // NOTE: don't know redirect is for what, comment out for now
 
-        let url = `${searchUrl}${Term}_${pageNo}.html`;
-        do {
-            const page = await loadPage(url);
-            DeadEnd = page.NoNextPage;
-            if (DeadEnd === false) {
-                pageNo++;
-                url = `${searchUrl}${Term}_${pageNo}.html`;
-            }
-        } while (DeadEnd === false);
+        // const redirect = pageCheerio("div.book-layout").text();
+        // await addPage(pageCheerio, redirect);
+
+        pageCheerio(".book-ol .book-layout").each((i, el) => {
+            let nUrl = pageCheerio(el).attr("href");
+
+            const novelName = pageCheerio(el)
+                .find(".book-title")
+                .text();
+            const novelCover = pageCheerio(el)
+                .find("div.book-cover > img")
+                .attr("data-src");
+            const novelUrl = this.site + nUrl;
+
+            if (!nUrl) return;
+
+            novels.push({
+                name: novelName,
+                url: novelUrl,
+                cover: novelCover,
+            });
+        });
 
         return novels;
     }

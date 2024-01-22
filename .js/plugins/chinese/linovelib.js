@@ -380,99 +380,81 @@ var Linovelib = /** @class */ (function () {
     };
     Linovelib.prototype.searchNovels = function (searchTerm, pageNo) {
         return __awaiter(this, void 0, void 0, function () {
-            var searchUrl, Term, NextPage, NoNextPage, DeadEnd, novels, addPage, loadPage, url, page;
+            var url, body, pageCheerio, novels;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        searchUrl = "".concat(this.site, "/search/");
-                        Term = encodeURI(searchTerm);
-                        pageNo = 1;
+                        url = "".concat(this.site, "/search/").concat(encodeURI(searchTerm), "_").concat(pageNo, ".html");
+                        return [4 /*yield*/, (0, fetch_1.fetchText)(url)];
+                    case 1:
+                        body = _a.sent();
+                        pageCheerio = (0, cheerio_1.load)(body);
                         novels = [];
-                        addPage = function (pageCheerio, redirect) { return __awaiter(_this, void 0, void 0, function () {
-                            var loadSearchResults, novelResults, novelName, novelCover, novelUrl;
-                            var _this = this;
-                            var _a;
-                            return __generator(this, function (_b) {
-                                loadSearchResults = function () {
-                                    pageCheerio(".book-ol .book-layout").each(function (i, el) {
-                                        var nUrl = pageCheerio(el).attr("href");
-                                        var novelName = pageCheerio(el)
-                                            .find(".book-title")
-                                            .text();
-                                        var novelCover = pageCheerio(el)
-                                            .find("div.book-cover > img")
-                                            .attr("data-src");
-                                        var novelUrl = _this.site + nUrl;
-                                        if (!nUrl)
-                                            return;
-                                        novels.push({
-                                            name: novelName,
-                                            url: novelUrl,
-                                            cover: novelCover,
-                                        });
-                                    });
-                                };
-                                novelResults = pageCheerio(".book-ol a.book-layout");
-                                if (novelResults.length === 0) {
-                                }
-                                else {
-                                    loadSearchResults();
-                                }
-                                if (redirect.length) {
-                                    novels.length = 0;
-                                    novelName = pageCheerio("#bookDetailWrapper .book-title").text();
-                                    novelCover = pageCheerio("#bookDetailWrapper div.book-cover > img").attr("src");
-                                    novelUrl = this.site +
-                                        ((_a = pageCheerio("#btnReadBook").attr("href")) === null || _a === void 0 ? void 0 : _a.slice(0, -8)) +
-                                        ".html";
-                                    novels.push({
-                                        name: novelName,
-                                        url: novelUrl,
-                                        cover: novelCover,
-                                    });
-                                }
-                                return [2 /*return*/];
+                        // const addPage = async (pageCheerio: CheerioAPI, redirect: string) => {
+                        //     const loadSearchResults = () => {
+                        //         pageCheerio(".book-ol .book-layout").each((i, el) => {
+                        //             let nUrl = pageCheerio(el).attr("href");
+                        //             const novelName = pageCheerio(el)
+                        //                 .find(".book-title")
+                        //                 .text();
+                        //             const novelCover = pageCheerio(el)
+                        //                 .find("div.book-cover > img")
+                        //                 .attr("data-src");
+                        //             const novelUrl = this.site + nUrl;
+                        //             if (!nUrl) return;
+                        //             novels.push({
+                        //                 name: novelName,
+                        //                 url: novelUrl,
+                        //                 cover: novelCover,
+                        //             });
+                        //         });
+                        //     };
+                        //     const novelResults = pageCheerio(".book-ol a.book-layout");
+                        //     if (novelResults.length === 0) {
+                        //     } else {
+                        //         loadSearchResults();
+                        //     }
+                        //     if (redirect.length) {
+                        //         novels.length = 0;
+                        //         const novelName = pageCheerio(
+                        //             "#bookDetailWrapper .book-title"
+                        //         ).text();
+                        //         const novelCover = pageCheerio(
+                        //             "#bookDetailWrapper div.book-cover > img"
+                        //         ).attr("src");
+                        //         const novelUrl =
+                        //             this.site +
+                        //             pageCheerio("#btnReadBook").attr("href")?.slice(0, -8) +
+                        //             ".html";
+                        //         novels.push({
+                        //             name: novelName,
+                        //             url: novelUrl,
+                        //             cover: novelCover,
+                        //         });
+                        //     }
+                        // };
+                        // NOTE: don't know redirect is for what, comment out for now
+                        // const redirect = pageCheerio("div.book-layout").text();
+                        // await addPage(pageCheerio, redirect);
+                        pageCheerio(".book-ol .book-layout").each(function (i, el) {
+                            var nUrl = pageCheerio(el).attr("href");
+                            var novelName = pageCheerio(el)
+                                .find(".book-title")
+                                .text();
+                            var novelCover = pageCheerio(el)
+                                .find("div.book-cover > img")
+                                .attr("data-src");
+                            var novelUrl = _this.site + nUrl;
+                            if (!nUrl)
+                                return;
+                            novels.push({
+                                name: novelName,
+                                url: novelUrl,
+                                cover: novelCover,
                             });
-                        }); };
-                        loadPage = function (url) { return __awaiter(_this, void 0, void 0, function () {
-                            var body, pageCheerio, redirect;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, (0, fetch_1.fetchText)(url)];
-                                    case 1:
-                                        body = _a.sent();
-                                        pageCheerio = (0, cheerio_1.load)(body);
-                                        redirect = pageCheerio("div.book-layout").text();
-                                        return [4 /*yield*/, addPage(pageCheerio, redirect)];
-                                    case 2:
-                                        _a.sent();
-                                        NextPage = pageCheerio(".next").attr("href");
-                                        if (!NextPage) {
-                                            NoNextPage === true;
-                                        }
-                                        else {
-                                            NoNextPage = NextPage === "#" ? true : false;
-                                        }
-                                        return [2 /*return*/, { pageCheerio: pageCheerio, NoNextPage: NoNextPage }];
-                                }
-                            });
-                        }); };
-                        url = "".concat(searchUrl).concat(Term, "_").concat(pageNo, ".html");
-                        _a.label = 1;
-                    case 1: return [4 /*yield*/, loadPage(url)];
-                    case 2:
-                        page = _a.sent();
-                        DeadEnd = page.NoNextPage;
-                        if (DeadEnd === false) {
-                            pageNo++;
-                            url = "".concat(searchUrl).concat(Term, "_").concat(pageNo, ".html");
-                        }
-                        _a.label = 3;
-                    case 3:
-                        if (DeadEnd === false) return [3 /*break*/, 1];
-                        _a.label = 4;
-                    case 4: return [2 /*return*/, novels];
+                        });
+                        return [2 /*return*/, novels];
                 }
             });
         });
