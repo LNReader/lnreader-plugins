@@ -77,9 +77,9 @@
 		{
 			"id": "linovelib",
 			"name": "Linovelib",
-			"site": "https://w.linovelib.com",
+			"site": "https://www.bilinovel.com",
 			"lang": "中文, 汉语, 漢語",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/chinese/linovelib.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/cn/linovelib/icon.png"
 		}
@@ -221,6 +221,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/guavaread.png"
 		},
 		{
+			"id": "lightnovelpub",
+			"name": "LightNovelPub",
+			"site": "https://www.lightnovelpub.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/lightnovelpub.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/lightnovelpub/icon.png"
+		},
+		{
 			"id": "LightNovelUpdates",
 			"name": "Light Novel Updates[madara]",
 			"site": "https://www.lightnovelupdates.com/",
@@ -228,6 +237,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/LightNovelUpdates[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/lightnovelupdates.png"
+		},
+		{
+			"id": "lightnovelworld",
+			"name": "LightNovelWorld",
+			"site": "https://www.webnovelworld.org/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/lightnovelworld.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/lightnovelworld/icon.png"
 		},
 		{
 			"id": "lnheaven",
@@ -275,6 +293,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/mtl-novel.png"
 		},
 		{
+			"id": "mtlnovel",
+			"name": "MTL Novel",
+			"site": "https://www.mtlnovel.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/mtlnovel.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/mtlnovel/icon.png"
+		},
+		{
 			"id": "mtlnovel.club",
 			"name": "MTLNovel.Club[madara]",
 			"site": "https://mtlnovel.club/",
@@ -282,6 +309,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/MTLNovelClub[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/mtlnovel.club.png"
+		},
+		{
+			"id": "mtlreader",
+			"name": "MTL Reader",
+			"site": "https://mtlreader.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/mtlreader.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/mtlreader/icon.png"
 		},
 		{
 			"id": "mysticalmerries",
@@ -303,7 +339,7 @@
 		},
 		{
 			"id": "NF.me",
-			"name": "NovelFull",
+			"name": "NovelFullMe",
 			"site": "https://novelfull.me/",
 			"lang": "English",
 			"version": "1.0.0",
@@ -318,6 +354,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NitroManga[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/nitromanga.png"
+		},
+		{
+			"id": "NO.net",
+			"name": "novelsOnline",
+			"site": "https://novelsonline.net",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NovelOnline.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/coverNotAvailable.jpg"
 		},
 		{
 			"id": "noblemtl",
@@ -354,6 +399,24 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/novelbin.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/novelbin/icon.png"
+		},
+		{
+			"id": "novelfull",
+			"name": "NovelFull",
+			"site": "https://novelfull.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/novelfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/novelfull/icon.png"
+		},
+		{
+			"id": "novelhall",
+			"name": "Novel Hall",
+			"site": "https://novelhall.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/novelhall.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/novelhall/icon.png"
 		},
 		{
 			"id": "novelmultiverse",
@@ -399,6 +462,15 @@
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NovelTranslate[madara].js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/noveltranslate.png"
+		},
+		{
+			"id": "novelupdates",
+			"name": "Novel Updates",
+			"site": "https://www.novelupdates.com/",
+			"lang": "English",
+			"version": "0.5.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/novelupdates.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/novelupdates/icon.png"
 		},
 		{
 			"id": "onlymtl",
@@ -893,9 +965,18 @@
 			"name": "Hako",
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/vietnamese/LNHako.js",
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/vi/hakolightnovel/icon.png"
+		},
+		{
+			"id": "truyenfull",
+			"name": "Truyện Full",
+			"site": "https://truyenfull.vn",
+			"lang": "Tiếng Việt",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/vietnamese/truyenfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/vi/truyenfull/icon.png"
 		}
 	]
 }
