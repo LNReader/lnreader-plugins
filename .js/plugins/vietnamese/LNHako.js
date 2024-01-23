@@ -40,13 +40,86 @@ var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var isAbsoluteUrl_1 = require("@libs/isAbsoluteUrl");
 var novelStatus_1 = require("@libs/novelStatus");
+var filterInputs_1 = require("@libs/filterInputs");
 var HakoPlugin = /** @class */ (function () {
     function HakoPlugin() {
         this.id = "ln.hako";
         this.name = "Hako";
         this.icon = "src/vi/hakolightnovel/icon.png";
         this.site = "https://ln.hako.vn";
-        this.version = "1.0.0";
+        this.version = "1.0.1";
+        this.filters = {
+            alphabet: {
+                type: filterInputs_1.FilterTypes.Picker,
+                value: "",
+                label: "Chữ cái",
+                options: [
+                    { label: 'Tất cả', value: '' },
+                    { label: 'Khác', value: 'khac' },
+                    { label: 'A', value: 'a' },
+                    { label: 'B', value: 'b' },
+                    { label: 'C', value: 'c' },
+                    { label: 'D', value: 'd' },
+                    { label: 'E', value: 'e' },
+                    { label: 'F', value: 'f' },
+                    { label: 'G', value: 'g' },
+                    { label: 'H', value: 'h' },
+                    { label: 'I', value: 'i' },
+                    { label: 'J', value: 'j' },
+                    { label: 'K', value: 'k' },
+                    { label: 'L', value: 'l' },
+                    { label: 'M', value: 'm' },
+                    { label: 'N', value: 'n' },
+                    { label: 'O', value: 'o' },
+                    { label: 'P', value: 'p' },
+                    { label: 'Q', value: 'q' },
+                    { label: 'R', value: 'r' },
+                    { label: 'S', value: 's' },
+                    { label: 'T', value: 't' },
+                    { label: 'U', value: 'u' },
+                    { label: 'V', value: 'v' },
+                    { label: 'W', value: 'w' },
+                    { label: 'X', value: 'x' },
+                    { label: 'Y', value: 'y' },
+                    { label: 'Z', value: 'z' },
+                ]
+            },
+            type: {
+                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                label: "Phân loại",
+                value: [],
+                options: [
+                    { label: "Truyện dịch", value: "truyendich" },
+                    { label: "Truyện sáng tác", value: "sangtac" },
+                    { label: "Convert", value: "convert" }
+                ]
+            },
+            status: {
+                type: filterInputs_1.FilterTypes.CheckboxGroup,
+                label: "Tình trạng",
+                value: [],
+                options: [
+                    { label: "Đang tiến hành", value: "dangtienhanh" },
+                    { label: "Tạm ngưng", value: "tamngung" },
+                    { label: "Đã hoàn thành", value: "hoanthanh" }
+                ]
+            },
+            sort: {
+                type: filterInputs_1.FilterTypes.Picker,
+                label: "Sắp xếp",
+                value: "top",
+                options: [
+                    { label: "A-Z", value: "tentruyen" },
+                    { label: "Z-A", value: "tentruyenza" },
+                    { label: "Mới cập nhật", value: "capnhat" },
+                    { label: "Truyện mới", value: "truyenmoi" },
+                    { label: "Theo dõi", value: "theodoi" },
+                    { label: "Top toàn thời gian", value: "top" },
+                    { label: "Top tháng", value: "topthang" },
+                    { label: "Số từ", value: "sotu" },
+                ]
+            }
+        };
     }
     HakoPlugin.prototype.parseNovels = function (loadedCheerio) {
         var _this = this;
@@ -75,21 +148,34 @@ var HakoPlugin = /** @class */ (function () {
         });
         return novels;
     };
-    HakoPlugin.prototype.popularNovels = function (pageNo, options) {
+    HakoPlugin.prototype.popularNovels = function (pageNo, _a) {
+        var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var link, result, body, loadedCheerio;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var link, params, _i, _b, novelType, _c, _d, status_1, result, body, loadedCheerio;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
-                        link = this.site +
-                            "/danh-sach?truyendich=1&sapxep=topthang&page=" +
-                            pageNo;
+                        link = this.site + "/danh-sach";
+                        if (filters.alphabet.value) {
+                            link += "/" + filters.alphabet.value;
+                        }
+                        params = new URLSearchParams();
+                        for (_i = 0, _b = filters.type.value; _i < _b.length; _i++) {
+                            novelType = _b[_i];
+                            params.append(novelType, "1");
+                        }
+                        for (_c = 0, _d = filters.status.value; _c < _d.length; _c++) {
+                            status_1 = _d[_c];
+                            params.append(status_1, "1");
+                        }
+                        params.append("sapxep", filters.sort.value);
+                        link += '?' + params.toString() + '&page=' + pageNo;
                         return [4 /*yield*/, fetch(link)];
                     case 1:
-                        result = _a.sent();
+                        result = _e.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _a.sent();
+                        body = _e.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         return [2 /*return*/, this.parseNovels(loadedCheerio)];
                 }
