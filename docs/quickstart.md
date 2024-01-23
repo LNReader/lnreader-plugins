@@ -24,4 +24,7 @@
    Example `plugins/english/nobleMTL.ts`
 3. Add an icon to `icons/src/<lang>/<plugin-name>/icon.png`
 
+> [!WARNING]
+> Icon size should be exactly 96x96px!
+
 ### Creating multi-source plugins
