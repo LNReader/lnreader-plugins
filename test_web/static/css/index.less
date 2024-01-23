@@ -21,6 +21,7 @@
 }
 
 #search-results {
+    background-color: transparent;
     position: absolute;
     top: calc(100% - 0.5rem);
     width: fit-content;
@@ -29,8 +30,11 @@
     overflow-x: hidden;
     padding: 0.375rem 0;
     border-radius: 5px;
-    background-color: white;
     z-index: 3;
+    button {
+        background-color: white;
+        text-transform: capitalize;
+    }
 }
 
 #turnoff-catch {
