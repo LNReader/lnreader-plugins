@@ -207,7 +207,8 @@ See [Using cheerio](#usingcheerio) for more information on how to parse HTML doc
 
 `SourceNovel` Novel information and chapter list as [SourceNovel](#sourcenovel) object
 
-> [!CAUTION] > [SourceNovel::url]() should be the same value as [NovelItem::url]() provided as parameter!
+> [!CAUTION]
+> [SourceNovel::url]() should be the same value as [NovelItem::url]() provided as parameter!
 
 ###### Example:
 
