@@ -36,19 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.site = exports.version = exports.icon = exports.name = exports.id = void 0;
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var defaultCover_1 = require("@libs/defaultCover");
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
-var pluginId = "yomou.syosetu";
-exports.id = pluginId;
-exports.name = "Syosetu";
-exports.icon = "src/jp/syosetu/icon.png";
-exports.version = "1.0.0";
-exports.site = "https://yomou.syosetu.com/";
 var Syosetu = /** @class */ (function () {
     function Syosetu() {
         this.id = "yomou.syosetu";

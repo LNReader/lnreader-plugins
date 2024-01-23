@@ -9,7 +9,8 @@ class NobleMTL implements Plugin.PluginBase {
     icon = "src/en/noblemtl/icon.png";
     site = "https://noblemtl.com/";
     version = "1.0.0";
-
+
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>

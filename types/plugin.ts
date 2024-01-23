@@ -22,7 +22,9 @@ export namespace Plugin {
     export interface SourceNovel {
         url: string;
         name?: string;
+        /** Novel cover absolute URL */
         cover?: string;
+        /** Comma separated genre list */
         genres?: string;
         summary?: string;
         author?: string;
