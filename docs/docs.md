@@ -66,6 +66,9 @@ class ExamplePlugin implements Plugin.PluginBase {
 }
 ```
 
+> [!WARNING]
+> Icons should be 96x96px
+
 #### PluginBase::site
 
 The url to the plugin's site
