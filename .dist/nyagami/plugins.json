@@ -968,6 +968,15 @@
 			"version": "1.0.1",
 			"url": "https://raw.githubusercontent.com/nyagami/plugins/vi/.js/plugins/vietnamese/LNHako.js",
 			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/vi/icons/src/vi/hakolightnovel/icon.png"
+		},
+		{
+			"id": "truyenfull",
+			"name": "Truyện Full",
+			"site": "https://truyenfull.vn",
+			"lang": "Tiếng Việt",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/nyagami/plugins/vi/.js/plugins/vietnamese/truyenfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/nyagami/plugins/vi/icons/src/vi/truyenfull/icon.png"
 		}
 	]
 }
