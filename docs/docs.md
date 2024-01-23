@@ -88,9 +88,9 @@ class ExamplePlugin implements Plugin.PluginBase {
 Version of your plugin formatted according to [semver2.0 spec](https://semver.org/) i.e. `<major>.<minor>.<patch>`
 
 Where
-`patch` increments on small fixes that fix the plugin (like site changed a selector, filter had a typo etc.)
-`minor` increments on fixes that improve the plugin (like adding/removing filters, adding search options etc.)
-`major` increments on fixes that fix the major issues with the plugin (like changing site link)
+- `patch` increments on small fixes that fix the plugin (like site changed a selector, filter had a typo etc.)
+- `minor` increments on fixes that improve the plugin (like adding/removing filters, adding search options etc.)
+- `major` increments on fixes that fix the major issues with the plugin (like changing site link)
 
 ###### Example
 
