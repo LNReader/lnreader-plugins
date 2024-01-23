@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "clicknovel", "sourceSite": "https://clicknovel.net/", "sourceName": "ClickNovel", "filters": {}, "options": { "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "clicknovel", "sourceSite": "https://clicknovel.net/", "sourceName": "ClickNovel", "filters": {} });
 exports.default = plugin;

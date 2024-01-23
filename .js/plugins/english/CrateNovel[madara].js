@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "cratenovel", "sourceSite": "https://cratenovel.com/", "sourceName": "CrateNovel", "filters": {}, "options": { "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "cratenovel", "sourceSite": "https://cratenovel.com/", "sourceName": "CrateNovel", "filters": {}, "options": { "useNewChapterEndpoint": true } });
 exports.default = plugin;

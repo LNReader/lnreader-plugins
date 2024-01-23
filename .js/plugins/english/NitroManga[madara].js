@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "sugarbbscan", "sourceSite": "https://sugarbbscan.com/", "sourceName": "Sugar Babies", "filters": {}, "options": { "path": { "novels": "series", "novel": "series", "chapter": "series" } } });
+var plugin = new MadaraPlugin({ "id": "nitromanga", "sourceSite": "https://nitromanga.com/", "sourceName": "Nitro Manga", "options": { "path": { "genres": "mangas-genre", "novels": "mangas-genre/novel" }, "useNewChapterEndpoint": true }, "filters": {} });
 exports.default = plugin;

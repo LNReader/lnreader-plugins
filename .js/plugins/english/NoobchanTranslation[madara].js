@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "noobchanTL", "sourceSite": "https://noobchan.xyz/", "sourceName": "Noobchan Translation", "filters": {}, "options": { "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "noobchanTL", "sourceSite": "https://noobchan.xyz/", "sourceName": "Noobchan Translation", "filters": {}, "options": { "useNewChapterEndpoint": true } });
 exports.default = plugin;

@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "foxaholic", "sourceSite": "https://www.foxaholic.com/", "sourceName": "Foxaholic", "options": { "lang": "English" }, "filters": {} });
+var plugin = new MadaraPlugin({ "id": "foxaholic", "sourceSite": "https://www.foxaholic.com/", "sourceName": "Foxaholic", "filters": {} });
 exports.default = plugin;

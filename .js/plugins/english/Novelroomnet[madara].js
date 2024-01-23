@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "novelroom", "sourceSite": "https://novelroom.net/", "sourceName": "Novelroom.net", "filters": {}, "options": { "path": { "novels": "manga", "novel": "manga", "chapter": "manga" }, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "novelroom", "sourceSite": "https://novelroom.net/", "sourceName": "Novelroom.net", "filters": {}, "options": { "path": { "novels": "manga", "novel": "manga", "chapter": "manga" } } });
 exports.default = plugin;

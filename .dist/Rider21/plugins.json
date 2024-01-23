@@ -312,12 +312,12 @@
 		},
 		{
 			"id": "nitromanga",
-			"name": "Nitro Manga",
+			"name": "Nitro Manga[madara]",
 			"site": "https://nitromanga.com/",
 			"lang": "English",
 			"version": "1.0.0",
-			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/nitromanga.js",
-			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/nitromanga/icon.png"
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/NitroManga[madara].js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/madara/icons/nitromanga.png"
 		},
 		{
 			"id": "noblemtl",

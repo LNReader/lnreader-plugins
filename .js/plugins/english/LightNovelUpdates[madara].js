@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "LightNovelUpdates", "sourceSite": "https://www.lightnovelupdates.com/", "sourceName": "Light Novel Updates", "options": { "lang": "English" }, "filters": {} });
+var plugin = new MadaraPlugin({ "id": "LightNovelUpdates", "sourceSite": "https://www.lightnovelupdates.com/", "sourceName": "Light Novel Updates", "filters": {} });
 exports.default = plugin;

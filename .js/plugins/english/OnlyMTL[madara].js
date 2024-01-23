@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "onlymtl", "sourceSite": "https://www.onlymtl.com/", "sourceName": "OnlyMTL", "filters": {}, "options": { "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "onlymtl", "sourceSite": "https://www.onlymtl.com/", "sourceName": "OnlyMTL", "filters": {}, "options": { "useNewChapterEndpoint": true } });
 exports.default = plugin;

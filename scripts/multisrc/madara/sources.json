@@ -171,8 +171,7 @@
       "path": {
         "genres": "manga-genre"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -445,8 +444,7 @@
         "novel": "manga",
         "chapter": "manga",
         "genres": "manga-genre"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -747,8 +745,7 @@
         "novel": "manga",
         "chapter": "manga",
         "genres": "manga-genre"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -794,8 +791,7 @@
         "novel": "series",
         "chapter": "series"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -841,8 +837,7 @@
         "novel": "series",
         "chapter": "series"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -1032,9 +1027,6 @@
         "value": "",
         "type": "Picker"
       }
-    },
-    "options": {
-      "lang": "English"
     }
   },
   {
@@ -1346,8 +1338,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -1393,8 +1384,7 @@
         "novel": "novels",
         "chapter": "novels"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -1703,8 +1693,7 @@
         "novel": "manga",
         "chapter": "manga",
         "genres": "manga-genre"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -1954,9 +1943,6 @@
         ],
         "type": "Picker"
       }
-    },
-    "options": {
-      "lang": "English"
     }
   },
   {
@@ -2002,8 +1988,7 @@
         "novel": "series",
         "chapter": "series"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -2550,9 +2535,6 @@
         ],
         "type": "Picker"
       }
-    },
-    "options": {
-      "lang": "English"
     }
   },
   {
@@ -2561,18 +2543,14 @@
     "sourceName": "CrateNovel",
     "filters": {},
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
     "id": "clicknovel",
     "sourceSite": "https://clicknovel.net/",
     "sourceName": "ClickNovel",
-    "filters": {},
-    "options": {
-      "lang": "English"
-    }
+    "filters": {}
   },
   {
     "id": "readwebnovels",
@@ -2610,9 +2588,6 @@
         ],
         "type": "Picker"
       }
-    },
-    "options": {
-      "lang": "English"
     }
   },
   {
@@ -2849,8 +2824,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -3048,8 +3022,7 @@
         "chapter": "series",
         "genres": "genre"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -3239,8 +3212,7 @@
     "sourceName": "OnlyMTL",
     "filters": {},
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -3885,8 +3857,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -3895,8 +3866,7 @@
     "sourceName": "MTLNovel.Club",
     "filters": {},
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -3905,8 +3875,7 @@
     "sourceName": "Noobchan Translation",
     "filters": {},
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -4078,8 +4047,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -4181,8 +4149,7 @@
         "chapter": "manga",
         "genres": "manga-genre"
       },
-      "useNewChapterEndpoint": false,
-      "lang": "English"
+      "useNewChapterEndpoint": false
     }
   },
   {
@@ -4223,8 +4190,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -4494,8 +4460,7 @@
       }
     },
     "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -4601,9 +4566,6 @@
         ],
         "type": "Picker"
       }
-    },
-    "options": {
-      "lang": "English"
     }
   },
   {
@@ -4870,8 +4832,7 @@
       "path": {
         "genres": "manga-genre"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -5005,8 +4966,7 @@
     "options": {
       "path": {
         "genres": "genre"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -5243,8 +5203,7 @@
         "novel": "novels",
         "chapter": "novels",
         "genres": "manga-genre"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -5257,8 +5216,7 @@
         "novels": "series",
         "novel": "series",
         "chapter": "series"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -5271,8 +5229,7 @@
         "novels": "manga",
         "novel": "manga",
         "chapter": "manga"
-      },
-      "lang": "English"
+      }
     }
   },
   {
@@ -5318,8 +5275,7 @@
         "novel": "manga",
         "chapter": "manga"
       },
-      "useNewChapterEndpoint": true,
-      "lang": "English"
+      "useNewChapterEndpoint": true
     }
   },
   {
@@ -5366,17 +5322,23 @@
   {
     "id": "LightNovelUpdates",
     "sourceSite": "https://www.lightnovelupdates.com/",
-    "sourceName": "Light Novel Updates",
-    "options": {
-      "lang": "English"
-    }
+    "sourceName": "Light Novel Updates"
   },
   {
     "id": "foxaholic",
     "sourceSite": "https://www.foxaholic.com/",
-    "sourceName": "Foxaholic",
+    "sourceName": "Foxaholic"
+  },
+  {
+    "id": "nitromanga",
+    "sourceSite": "https://nitromanga.com/",
+    "sourceName": "Nitro Manga",
     "options": {
-      "lang": "English"
+      "path": {
+        "genres": "mangas-genre",
+        "novels": "mangas-genre/novel"
+      },
+      "useNewChapterEndpoint": true
     }
   }
 ]

@@ -293,5 +293,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "wuxiaworld.site", "sourceSite": "https://wuxiaworld.site/", "sourceName": "WuxiaWorld.Site", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "wuxiaworld.site", "sourceSite": "https://wuxiaworld.site/", "sourceName": "WuxiaWorld.Site", "filters": { "sort": { "label": "Order by", "value": "", "options": [{ "label": "Rating", "value": "rating" }, { "label": "A-Z", "value": "alphabet" }, { "label": "Latest", "value": "latest" }, { "label": "Most Views", "value": "views" }, { "label": "New", "value": "new-manga" }, { "label": "Trending", "value": "trending" }], "type": filterInputs_1.FilterTypes.Picker } }, "options": { "useNewChapterEndpoint": true } });
 exports.default = plugin;

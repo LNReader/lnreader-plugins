@@ -292,5 +292,5 @@ var MadaraPlugin = /** @class */ (function () {
     };
     return MadaraPlugin;
 }());
-var plugin = new MadaraPlugin({ "id": "mtlnovel.club", "sourceSite": "https://mtlnovel.club/", "sourceName": "MTLNovel.Club", "filters": {}, "options": { "useNewChapterEndpoint": true, "lang": "English" } });
+var plugin = new MadaraPlugin({ "id": "mtlnovel.club", "sourceSite": "https://mtlnovel.club/", "sourceName": "MTLNovel.Club", "filters": {}, "options": { "useNewChapterEndpoint": true } });
 exports.default = plugin;
