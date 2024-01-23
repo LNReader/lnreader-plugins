@@ -77,9 +77,9 @@
 		{
 			"id": "linovelib",
 			"name": "Linovelib",
-			"site": "https://w.linovelib.com",
+			"site": "https://www.bilinovel.com",
 			"lang": "中文, 汉语, 漢語",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/.js/plugins/chinese/linovelib.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/icons/src/cn/linovelib/icon.png"
 		}
@@ -965,9 +965,18 @@
 			"name": "Hako",
 			"site": "https://ln.hako.vn",
 			"lang": "Tiếng Việt",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/.js/plugins/vietnamese/LNHako.js",
 			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/icons/src/vi/hakolightnovel/icon.png"
+		},
+		{
+			"id": "truyenfull",
+			"name": "Truyện Full",
+			"site": "https://truyenfull.vn",
+			"lang": "Tiếng Việt",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/.js/plugins/vietnamese/truyenfull.js",
+			"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-sources/master/icons/src/vi/truyenfull/icon.png"
 		}
 	]
 }
