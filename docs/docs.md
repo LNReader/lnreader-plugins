@@ -369,10 +369,13 @@ Every property of this object is a different filter. The key of the object is th
 ```ts
 filters = {
     order: {<FilterProperties>}
-}
+} satisfies Filters;
 // accessible in popularNovels as
 options.filters.order
 ```
+
+> [!CAUTION]
+> Do not forget to add `satisfies Filters` after the Filter definition object!
 
 ##### FilterProperties
 
@@ -396,7 +399,7 @@ filters = {
             { label: "Romance", value: "romans" },
         ],
     },
-};
+} satisfies Filters;
 ```
 
 ##### Filter types
@@ -448,7 +451,7 @@ The keys of the filter values correspond to Filter definition keys
 
 ```ts
 // Filter definition object
-filters = { abc: {} };
+filters = { abc: {} } satisfies Filters;
 
 // then
 options.filters; // FilterValues
