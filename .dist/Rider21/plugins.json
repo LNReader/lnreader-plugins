@@ -491,6 +491,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/multisrc/readwn/icons/wuxiap.png"
 		},
 		{
+			"id": "wuxiaworld",
+			"name": "Wuxia World (WIP)",
+			"site": "https://www.wuxiaworld.com",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/english/wuxiaworld.js",
+			"iconUrl": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/icons/src/en/wuxiaworld/icon.png"
+		},
+		{
 			"id": "wuxiaworld.site",
 			"name": "WuxiaWorld.Site[madara]",
 			"site": "https://wuxiaworld.site/",
