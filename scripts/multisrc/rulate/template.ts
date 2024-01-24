@@ -171,7 +171,7 @@ class RulatePlugin implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio("table > tbody > tr.chapter_row").each((chapterNumber, element) => {
+    loadedCheerio("table > tbody > tr.chapter_row").each((chapterIndex, element) => {
       const chapterName = loadedCheerio(element).find('td[class="t"] > a').text().trim();
       const releaseDate = loadedCheerio(element).find("td > span").attr("title")?.trim();
       const chapterUrl = loadedCheerio(element).find('td[class="t"] > a').attr("href");
@@ -181,7 +181,7 @@ class RulatePlugin implements Plugin.PluginBase {
           name: chapterName,
           url: this.site + chapterUrl,
           releaseTime: releaseDate,
-          chapterNumber
+          chapterNumber: chapterIndex + 1,
         });
       }
     });

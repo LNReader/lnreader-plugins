@@ -11,9 +11,9 @@ class Wuxiaworld implements Plugin.PluginBase {
   site = "https://www.wuxiaworld.com";
 
   async popularNovels(): Promise<Plugin.NovelItem[]> {
-    const result = (
-        await fetchApi(this.site + "/api/novels").then((res) => res.json())
-    ) as { items: NovelList[] };
+    const result = (await fetchApi(this.site + "/api/novels").then((res) =>
+      res.json(),
+    )) as { items: NovelList[] };
 
     const novels: Plugin.NovelItem[] = result.items.map((novel) => ({
       name: novel.name,
@@ -31,7 +31,9 @@ class Wuxiaworld implements Plugin.PluginBase {
 
     novel.name = loadedCheerio("h1.line-clamp-2").text();
     novel.cover = loadedCheerio("img.absolute").attr("src");
-    novel.summary = loadedCheerio("div.flex-col:nth-child(4) > div > div > span > span")
+    novel.summary = loadedCheerio(
+      "div.flex-col:nth-child(4) > div > div > span > span",
+    )
       .text()
       .trim();
 
@@ -46,7 +48,7 @@ class Wuxiaworld implements Plugin.PluginBase {
       .map((index, element) =>
         loadedCheerio(element).find("div > div").text()?.trim(),
       )
-      .get()
+      .get();
 
     if (genres?.length) {
       novel.genres = genres.join(",");
@@ -57,11 +59,11 @@ class Wuxiaworld implements Plugin.PluginBase {
       : NovelStatus.Ongoing;
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio("div.border-b.border-gray-line-base")
-      .map((chapterNumber, element) => ({
+      .map((chapterIndex, element) => ({
         name: loadedCheerio(element).find("a > div > div > div > span").text(),
         url: this.site + loadedCheerio(element).find("a").attr("href"),
         releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
-        chapterNumber,
+        chapterNumber: chapterIndex + 1,
       }))
       .get();
 

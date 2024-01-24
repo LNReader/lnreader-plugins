@@ -296,7 +296,7 @@ var AuthorToday = /** @class */ (function () {
                                     name: chapter.title || 'Глава ' + (chapterIndex + 1),
                                     url: "".concat(apiUrl, "v1/work/").concat(workID, "/chapter/").concat(chapter.id, "/text"),
                                     releaseTime: (0, dayjs_1.default)(chapter.publishTime || chapter.lastModificationTime).format("LLL"),
-                                    chapterNumber: chapter.sortOrder || chapterIndex,
+                                    chapterNumber: (chapter.sortOrder || chapterIndex) + 1,
                                 });
                             }
                         });

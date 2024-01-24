@@ -16,7 +16,7 @@ class RNBH implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + `api/search?page=${pageNo}&sort=`;
+    let url = this.site + "api/search?page=" + pageNo + "&sort=";
     url += showLatestNovels
       ? "last_chapter_at"
       : filters?.sort || "computed_rating";
@@ -96,8 +96,6 @@ class RNBH implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    let chapterNumber = 1;
-
     const chaptersRaw = await fetchApi(`${this.site}api/ranobe/${novelId}/contents`);
     const chaptersJSON = (await chaptersRaw.json()) as {
       volumes: VolumesEntity[];
@@ -109,9 +107,8 @@ class RNBH implements Plugin.PluginBase {
             name: chapter.name,
             url: chapter.url,
             releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
-            chapterNumber,
+            chapterNumber: chapters.length + 1,
           });
-          chapterNumber++;
         }),
     );
 

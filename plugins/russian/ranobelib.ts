@@ -17,7 +17,7 @@ class RLIB implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = `${this.site}/manga-list?sort=`;
+    let url = this.site + "/manga-list?sort=";
     url += showLatestNovels ? "last_chapter_at" : filters?.sort?.value || "rate";
     url += "&dir=" + (filters?.order?.value || "desc");
 
@@ -155,7 +155,7 @@ class RLIB implements Plugin.PluginBase {
         name:
           "Том " + chapter.chapter_volume +
           "Глава " + chapter.chapter_number +
-            chapter.chapter_name ? " " + chapter.chapter_name.trim() : "",
+            (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
         url:
           this.site + "/" + chaptersJson.manga.slug +
           "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +

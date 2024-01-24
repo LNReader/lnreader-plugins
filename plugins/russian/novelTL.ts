@@ -110,7 +110,6 @@ class TL implements Plugin.PluginBase {
     });
 
     const chapters: Plugin.ChapterItem[] = [];
-    let chapterNumber = 1;
 
     json.data.project?.subprojects?.content?.forEach((work) =>
       work.volumes.content.forEach((volume, volumeIndex) =>
@@ -122,10 +121,9 @@ class TL implements Plugin.PluginBase {
                 (chapter.title || "Глава " + (chapterIndex + 1)),
               url: "https://" + chapter.fullUrl,
               releaseTime: dayjs(chapter.publishDate).format("LLL"),
-              chapterNumber,
+              chapterNumber: chapters.length + 1,
             });
           }
-          chapterNumber++;
         }),
       ),
     );

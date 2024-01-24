@@ -969,7 +969,7 @@ var ReN = /** @class */ (function () {
                                 chapters.push({
                                     name: "Том " + chapter.tome +
                                         "Глава " + chapter.chapter +
-                                        chapter.name ? " " + chapter.name.trim() : "",
+                                        (chapter.name ? " " + chapter.name.trim() : ""),
                                     url: "".concat(_this.site, "/novel/").concat(novelID, "/").concat(chapter.id, "/"),
                                     releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
                                     chapterNumber: chapter.index,

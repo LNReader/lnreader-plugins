@@ -107,18 +107,18 @@ var RNRF = /** @class */ (function () {
         });
     };
     RNRF.prototype.parseNovelAndChapters = function (novelUrl) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var result, body, loadedCheerio, jsonRaw, book, novel, chapters;
             var _this = this;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
                     case 1:
-                        result = _c.sent();
+                        result = _b.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _c.sent();
+                        body = _b.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
                         book = JSON.parse(jsonRaw || "{}").props.pageProps.book;
@@ -136,7 +136,7 @@ var RNRF = /** @class */ (function () {
                                 : novelStatus_1.NovelStatus.Completed,
                         };
                         chapters = [];
-                        (_b = book === null || book === void 0 ? void 0 : book.chapters) === null || _b === void 0 ? void 0 : _b.forEach(function (chapter, chapterIndex) {
+                        book === null || book === void 0 ? void 0 : book.chapters.forEach(function (chapter, chapterIndex) {
                             if (!chapter.isDonate || chapter.isUserPaid) {
                                 chapters.push({
                                     name: chapter.title,

@@ -102,7 +102,7 @@ class AuthorToday implements Plugin.PluginBase {
           name: chapter.title || 'Глава ' + (chapterIndex + 1),
           url: `${apiUrl}v1/work/${workID}/chapter/${chapter.id}/text`,
           releaseTime: dayjs(chapter.publishTime || chapter.lastModificationTime).format("LLL"),
-          chapterNumber: chapter.sortOrder || chapterIndex,
+          chapterNumber: (chapter.sortOrder || chapterIndex) + 1,
         });
       }
     });

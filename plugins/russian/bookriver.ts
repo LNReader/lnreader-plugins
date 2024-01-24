@@ -71,13 +71,13 @@ class Bookriver implements Plugin.PluginBase {
     };
 
     const chapters: Plugin.ChapterItem[] = [];
-    book?.ebook?.chapters?.forEach((chapter, chapterNumber) => {
+    book?.ebook?.chapters?.forEach((chapter, chapterIndex) => {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
           url: this.site + "/reader/" + book?.slug + "/" + chapter.chapterId,
           releaseTime: dayjs(chapter?.firstPublishedAt || chapter.createdAt).format("LLL"),
-          chapterNumber,
+          chapterNumber: chapterIndex + 1,
         });
       }
     });

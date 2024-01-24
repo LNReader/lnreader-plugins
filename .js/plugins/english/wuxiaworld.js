@@ -54,7 +54,9 @@ var Wuxiaworld = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/novels").then(function (res) { return res.json(); })];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/novels").then(function (res) {
+                            return res.json();
+                        })];
                     case 1:
                         result = (_a.sent());
                         novels = result.items.map(function (novel) { return ({
@@ -99,11 +101,11 @@ var Wuxiaworld = /** @class */ (function () {
                             ? novelStatus_1.NovelStatus.Completed
                             : novelStatus_1.NovelStatus.Ongoing;
                         chapters = loadedCheerio("div.border-b.border-gray-line-base")
-                            .map(function (chapterNumber, element) { return ({
+                            .map(function (chapterIndex, element) { return ({
                             name: loadedCheerio(element).find("a > div > div > div > span").text(),
                             url: _this.site + loadedCheerio(element).find("a").attr("href"),
                             releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
-                            chapterNumber: chapterNumber,
+                            chapterNumber: chapterIndex + 1,
                         }); })
                             .get();
                         novel.chapters = chapters;

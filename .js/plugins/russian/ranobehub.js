@@ -1020,7 +1020,7 @@ var RNBH = /** @class */ (function () {
             return __generator(this, function (_x) {
                 switch (_x.label) {
                     case 0:
-                        url = this.site + "api/search?page=".concat(pageNo, "&sort=");
+                        url = this.site + "api/search?page=" + pageNo + "&sort=";
                         url += showLatestNovels
                             ? "last_chapter_at"
                             : (filters === null || filters === void 0 ? void 0 : filters.sort) || "computed_rating";
@@ -1073,7 +1073,7 @@ var RNBH = /** @class */ (function () {
     RNBH.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function () {
-            var novelId, result, json, novel, tags, chapters, chapterNumber, chaptersRaw, chaptersJSON;
+            var novelId, result, json, novel, tags, chapters, chaptersRaw, chaptersJSON;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -1104,7 +1104,6 @@ var RNBH = /** @class */ (function () {
                             novel.genres = tags.join(", ");
                         }
                         chapters = [];
-                        chapterNumber = 1;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(this.site, "api/ranobe/").concat(novelId, "/contents"))];
                     case 3:
                         chaptersRaw = _e.sent();
@@ -1118,9 +1117,8 @@ var RNBH = /** @class */ (function () {
                                     name: chapter.name,
                                     url: chapter.url,
                                     releaseTime: (0, dayjs_1.default)(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
-                                    chapterNumber: chapterNumber,
+                                    chapterNumber: chapters.length + 1,
                                 });
-                                chapterNumber++;
                             });
                         });
                         novel.chapters = chapters;

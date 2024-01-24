@@ -190,7 +190,7 @@ var RulatePlugin = /** @class */ (function () {
                             novel.genres = genres.reverse().join(",");
                         }
                         chapters = [];
-                        loadedCheerio("table > tbody > tr.chapter_row").each(function (chapterNumber, element) {
+                        loadedCheerio("table > tbody > tr.chapter_row").each(function (chapterIndex, element) {
                             var _a;
                             var chapterName = loadedCheerio(element).find('td[class="t"] > a').text().trim();
                             var releaseDate = (_a = loadedCheerio(element).find("td > span").attr("title")) === null || _a === void 0 ? void 0 : _a.trim();
@@ -200,7 +200,7 @@ var RulatePlugin = /** @class */ (function () {
                                     name: chapterName,
                                     url: _this.site + chapterUrl,
                                     releaseTime: releaseDate,
-                                    chapterNumber: chapterNumber
+                                    chapterNumber: chapterIndex + 1,
                                 });
                             }
                         });

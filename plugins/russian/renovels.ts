@@ -118,7 +118,7 @@ class ReN implements Plugin.PluginBase {
             name:
               "Том " + chapter.tome + 
               "Глава " + chapter.chapter + 
-                chapter.name ? " " + chapter.name.trim() : "",
+                (chapter.name ? " " + chapter.name.trim() : ""),
             url: `${this.site}/novel/${novelID}/${chapter.id}/`,
             releaseTime: dayjs(chapter.upload_date).format("LLL"),
             chapterNumber: chapter.index,

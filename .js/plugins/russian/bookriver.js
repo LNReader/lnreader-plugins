@@ -188,13 +188,13 @@ var Bookriver = /** @class */ (function () {
                                 : novelStatus_1.NovelStatus.Completed,
                         };
                         chapters = [];
-                        (_e = (_d = book === null || book === void 0 ? void 0 : book.ebook) === null || _d === void 0 ? void 0 : _d.chapters) === null || _e === void 0 ? void 0 : _e.forEach(function (chapter, chapterNumber) {
+                        (_e = (_d = book === null || book === void 0 ? void 0 : book.ebook) === null || _d === void 0 ? void 0 : _d.chapters) === null || _e === void 0 ? void 0 : _e.forEach(function (chapter, chapterIndex) {
                             if (chapter.available) {
                                 chapters.push({
                                     name: chapter.name,
                                     url: _this.site + "/reader/" + (book === null || book === void 0 ? void 0 : book.slug) + "/" + chapter.chapterId,
                                     releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.firstPublishedAt) || chapter.createdAt).format("LLL"),
-                                    chapterNumber: chapterNumber,
+                                    chapterNumber: chapterIndex + 1,
                                 });
                             }
                         });

@@ -2583,13 +2583,18 @@ var ficbook = /** @class */ (function () {
                                 chapters.push({ name: name_1, url: novelUrl, releaseTime: releaseTime });
                         }
                         else {
-                            loadedCheerio("li.part").each(function (chapterNumber, element) {
+                            loadedCheerio("li.part").each(function (chapterIndex, element) {
                                 var name = loadedCheerio(element).find("h3").text();
                                 var url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
                                 if (!name || !url)
                                     return;
                                 var releaseTime = loadedCheerio(element).find("div > span").attr("title");
-                                chapters.push({ name: name, url: _this.site + url, releaseTime: releaseTime, chapterNumber: chapterNumber });
+                                chapters.push({
+                                    name: name,
+                                    url: _this.site + url,
+                                    releaseTime: releaseTime,
+                                    chapterNumber: chapterIndex + 1,
+                                });
                             });
                         }
                         novel.chapters = chapters;

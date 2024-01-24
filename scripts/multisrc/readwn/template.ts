@@ -100,7 +100,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
     );
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio(".chapter-list li")
-      .map((chapterNumber, element) => {
+      .map((chapterIndex, element) => {
         const name = loadedCheerio(element).find("a .chapter-title").text().trim();
         const url = loadedCheerio(element).find("a").attr("href")?.trim();
         const releaseTime = loadedCheerio(element).find("a .chapter-update").text().trim();
@@ -111,7 +111,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
           name,
           url: this.site + url,
           releaseTime: parseMadaraDate(releaseTime),
-          chapterNumber,
+          chapterNumber: chapterIndex + 1,
         };
       })
       .get()
@@ -128,7 +128,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
           name: "Chapter " + i,
           url: novelUrl.replace(".html", "_" + i + ".html"),
           releaseTime: null,
-          chapterNumber: chapters.length + 1
+          chapterNumber: i,
         });
       }
     }

@@ -276,7 +276,7 @@ var RLIB = /** @class */ (function () {
             return __generator(this, function (_5) {
                 switch (_5.label) {
                     case 0:
-                        url = "".concat(this.site, "/manga-list?sort=");
+                        url = this.site + "/manga-list?sort=";
                         url += showLatestNovels ? "last_chapter_at" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "rate";
                         url += "&dir=" + (((_c = filters === null || filters === void 0 ? void 0 : filters.order) === null || _c === void 0 ? void 0 : _c.value) || "desc");
                         if ((_e = (_d = filters.type) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
@@ -395,7 +395,7 @@ var RLIB = /** @class */ (function () {
                             return chapters.push({
                                 name: "Том " + chapter.chapter_volume +
                                     "Глава " + chapter.chapter_number +
-                                    chapter.chapter_name ? " " + chapter.chapter_name.trim() : "",
+                                    (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
                                 url: _this.site + "/" + chaptersJson.manga.slug +
                                     "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +
                                     "?bid=" + (chapter.branch_id || ""),

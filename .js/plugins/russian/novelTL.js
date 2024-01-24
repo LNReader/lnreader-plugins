@@ -772,7 +772,7 @@ var TL = /** @class */ (function () {
     TL.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         return __awaiter(this, void 0, void 0, function () {
-            var result, json, novel, genres, chapters, chapterNumber;
+            var result, json, novel, genres, chapters;
             return __generator(this, function (_q) {
                 switch (_q.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/site/v2/graphql", {
@@ -826,7 +826,6 @@ var TL = /** @class */ (function () {
                             }
                         });
                         chapters = [];
-                        chapterNumber = 1;
                         (_p = (_o = (_m = json.data.project) === null || _m === void 0 ? void 0 : _m.subprojects) === null || _o === void 0 ? void 0 : _o.content) === null || _p === void 0 ? void 0 : _p.forEach(function (work) {
                             return work.volumes.content.forEach(function (volume, volumeIndex) {
                                 return volume.chapters.forEach(function (chapter, chapterIndex) {
@@ -836,10 +835,9 @@ var TL = /** @class */ (function () {
                                                 (chapter.title || "Глава " + (chapterIndex + 1)),
                                             url: "https://" + chapter.fullUrl,
                                             releaseTime: (0, dayjs_1.default)(chapter.publishDate).format("LLL"),
-                                            chapterNumber: chapterNumber,
+                                            chapterNumber: chapters.length + 1,
                                         });
                                     }
-                                    chapterNumber++;
                                 });
                             });
                         });

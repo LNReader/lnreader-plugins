@@ -238,13 +238,13 @@ var freedlit = /** @class */ (function () {
                                 .join(","),
                         };
                         chapters = [];
-                        loadedCheerio("a.chapter-line").each(function (chapterNumber, element) {
+                        loadedCheerio("a.chapter-line").each(function (chapterIndex, element) {
                             var name = loadedCheerio(element).find("h6").text();
                             var url = loadedCheerio(element).attr("href");
                             if (!name || !url)
                                 return;
                             var releaseTime = loadedCheerio(element).find('span[class="date"]').text();
-                            chapters.push({ name: name, url: url, releaseTime: releaseTime, chapterNumber: chapterNumber });
+                            chapters.push({ name: name, url: url, releaseTime: releaseTime, chapterNumber: chapterIndex + 1 });
                         });
                         novel.chapters = chapters;
                         return [2 /*return*/, novel];

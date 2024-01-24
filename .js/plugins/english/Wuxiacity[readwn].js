@@ -126,7 +126,7 @@ var ReadwnPlugin = /** @class */ (function () {
                             .text()
                             .trim());
                         chapters = loadedCheerio(".chapter-list li")
-                            .map(function (chapterNumber, element) {
+                            .map(function (chapterIndex, element) {
                             var _a;
                             var name = loadedCheerio(element).find("a .chapter-title").text().trim();
                             var url = (_a = loadedCheerio(element).find("a").attr("href")) === null || _a === void 0 ? void 0 : _a.trim();
@@ -137,7 +137,7 @@ var ReadwnPlugin = /** @class */ (function () {
                                 name: name,
                                 url: _this.site + url,
                                 releaseTime: (0, parseMadaraDate_1.parseMadaraDate)(releaseTime),
-                                chapterNumber: chapterNumber,
+                                chapterNumber: chapterIndex + 1,
                             };
                         })
                             .get()
@@ -149,7 +149,7 @@ var ReadwnPlugin = /** @class */ (function () {
                                     name: "Chapter " + i,
                                     url: novelUrl.replace(".html", "_" + i + ".html"),
                                     releaseTime: null,
-                                    chapterNumber: chapters.length + 1
+                                    chapterNumber: i,
                                 });
                             }
                         }

@@ -97,14 +97,17 @@ class ficbook implements Plugin.PluginBase {
 
       if (name) chapters.push({ name, url: novelUrl, releaseTime });
     } else {
-      loadedCheerio("li.part").each((chapterNumber, element) => {
+      loadedCheerio("li.part").each((chapterIndex, element) => {
         const name = loadedCheerio(element).find("h3").text();
         const url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
         if (!name || !url) return;
 
         const releaseTime = loadedCheerio(element).find("div > span").attr("title");
-        chapters.push({ name, url: this.site + url, releaseTime, chapterNumber });
+        chapters.push({ 
+          name, url: this.site + url, releaseTime, chapterNumber: chapterIndex + 1,
+        });
       });
+
     }
 
     novel.chapters = chapters;

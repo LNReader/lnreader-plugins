@@ -57,11 +57,11 @@ class FreeWebNovel implements Plugin.PluginBase {
     novel.summary = loadedCheerio(".inner").text().trim();
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio("#idData > li > a")
-      .map((chapterNumber, element) => ({
-        name: loadedCheerio(element).attr("title") || "Chapter " + chapterNumber,
+      .map((chapterIndex, element) => ({
+        name: loadedCheerio(element).attr("title") || "Chapter " + chapterIndex,
         url: this.site + loadedCheerio(element).attr("href"),
         releaseTime: null,
-        chapterNumber,
+        chapterNumber: chapterIndex + 1,
       }))
       .get();
 
@@ -94,7 +94,7 @@ class FreeWebNovel implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = loadedCheerio(".li-row > .li > .con")
       .map((index, element) => ({
         name: loadedCheerio(element).find(".tit").text(),
-        cover: loadedCheerio(element).find(".pic > a > img").attr("data-cfsrc"),
+        cover: loadedCheerio(element).find(".pic > a > img").attr("src"),
         url: this.site + loadedCheerio(element).find("h3 > a").attr("href"),
       }))
       .get();
