@@ -54,7 +54,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
         const result = await fetchApi(url, { headers });
         const body = await result.text();
 
-        let loadedCheerio = parseHTML(body);
+        const loadedCheerio = parseHTML(body);
 
         const novel: Plugin.SourceNovel = {
             url,
@@ -68,8 +68,8 @@ class LnMTLPlugin implements Plugin.PluginBase {
         novel.summary = loadedCheerio("div.description").text().trim();
 
         loadedCheerio(".panel-body > dl").each(function () {
-            let detailName = loadedCheerio(this).find("dt").text().trim();
-            let detail = loadedCheerio(this).find("dd").text().trim();
+            const detailName = loadedCheerio(this).find("dt").text().trim();
+            const detail = loadedCheerio(this).find("dd").text().trim();
 
             switch (detailName) {
                 case "Authors":
@@ -100,7 +100,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
         volumes = volumes.map((volume: { id: number; }) => volume.id);
 
         for (const volume of volumes) {
-            let volumeData = await fetchApi(
+            const volumeData = await fetchApi(
                 `${this.site}chapter?page=1&volumeId=${volume}`
             );
             const volumePage = await volumeData.json();
@@ -108,7 +108,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
             // volumeData = volumeData.data.map((volume) => volume.slug);
 
             for (let i = 1; i <= volumePage.last_page; i++) {
-                let chapterData = await fetchApi(
+                const chapterData = await fetchApi(
                     `${this.site}chapter?page=${i}&volumeId=${volume}`
                 );
                 const chapterInfo = await chapterData.json();
@@ -117,7 +117,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
                 (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
                     name: `#${chapter.number} ${chapter.title}`,
                     url: `${this.site}chapter/${chapter.slug}`,
-                    releaseTime: chapter.created_at,
+                    releaseTime: new Date (chapter.created_at).toISOString(), //formats time obtained to UTC +0, TODO: Make it not convert
                 }));
 
                 chapter.push(...chapterDetails);
@@ -164,7 +164,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
         const search = await fetch(`${this.site}${list}`);
         const data = await search.json();
 
-        let nov = data.filter((res: { name: string; }) =>
+        const nov = data.filter((res: { name: string; }) =>
             res.name.toLowerCase().includes(searchTerm.toLowerCase()),
         );
 

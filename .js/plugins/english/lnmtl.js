@@ -187,7 +187,7 @@ var LnMTLPlugin = /** @class */ (function () {
                         chapterDetails = chapterInfo.data.map(function (chapter) { return ({
                             name: "#".concat(chapter.number, " ").concat(chapter.title),
                             url: "".concat(_this.site, "chapter/").concat(chapter.slug),
-                            releaseTime: chapter.created_at,
+                            releaseTime: new Date(chapter.created_at).toISOString(), //formats time obtained to UTC +0, TODO: Make it not convert
                         }); });
                         chapter.push.apply(chapter, chapterDetails);
                         _c.label = 9;
