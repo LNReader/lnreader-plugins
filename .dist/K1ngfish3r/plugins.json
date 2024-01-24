@@ -509,6 +509,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/icons/multisrc/madara/icons/readwebnovels.png"
 		},
 		{
+			"id": "scribblehub",
+			"name": "ScribbleHub",
+			"site": "https://www.scribblehub.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/.js/plugins/english/scribblehub.js",
+			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/icons/src/en/scribblehub/icon.png"
+		},
+		{
 			"id": "sleeptTLS",
 			"name": "SleepyTranslations[madara]",
 			"site": "https://sleepytranslations.com/",

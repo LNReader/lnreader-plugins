@@ -23,7 +23,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
                     .find("h3.truyen-title > a")
                     .text();
                 const novelCover = loadedCheerio(el).find("img.cover").attr("src");
-                console.log(novelCover);
     
                 if (!nUrl) return;
                 novels.push({
