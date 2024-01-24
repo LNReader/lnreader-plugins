@@ -70,7 +70,7 @@ export namespace Plugin {
         /**
          *
          * @param url Image url
-         * @returns {string} Base64 of image
+         * @returns {Promise<string|undefined>} Base64 of image
          * @example
          * ```ts
          *  const headers = {
