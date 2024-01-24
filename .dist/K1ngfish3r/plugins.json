@@ -257,6 +257,15 @@
 			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/icons/multisrc/madara/icons/lightnovelheaven.png"
 		},
 		{
+			"id": "lnmtl",
+			"name": "LnMTL",
+			"site": "https://lnmtl.com/",
+			"lang": "English",
+			"version": "1.0.0",
+			"url": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/.js/plugins/english/lnmtl.js",
+			"iconUrl": "https://raw.githubusercontent.com/K1ngfish3r/lnreader-sources/master/icons/src/en/lnmtl/icon.png"
+		},
+		{
 			"id": "Ltnovel.com",
 			"name": "Ltnovel[readwn]",
 			"site": "https://www.ltnovel.com",
