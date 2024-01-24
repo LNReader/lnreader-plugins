@@ -153,7 +153,7 @@ class NobleMTL implements Plugin.PluginBase {
         searchTerm: string,
         pageNo: number
     ): Promise<Plugin.NovelItem[]> {
-        const url = `${this.site}/page/${pageNo}/?s=${searchTerm}`;
+        const url = `${this.site}page/${pageNo}/?s=${searchTerm}`;
         const headers = new Headers();
         const result = await fetchApi(url, { headers });
         const body = await result.text();
