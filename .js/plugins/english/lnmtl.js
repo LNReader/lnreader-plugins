@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
+var filterInputs_1 = require("@libs/filterInputs");
 var LnMTLPlugin = /** @class */ (function () {
     function LnMTLPlugin() {
         this.id = "lnmtl";
@@ -45,6 +46,37 @@ var LnMTLPlugin = /** @class */ (function () {
         this.icon = "src/en/lnmtl/icon.png";
         this.site = "https://lnmtl.com/";
         this.version = "1.0.0";
+        this.filters = {
+            order: {
+                value: "favourites",
+                label: "Order by",
+                options: [
+                    { label: "Favourites", value: "favourites" },
+                    { label: "Name", value: "name" },
+                    { label: "Addition Date", value: "date" },
+                ],
+                type: filterInputs_1.FilterTypes.Picker,
+            },
+            sort: {
+                value: "desc",
+                label: "Sort by",
+                options: [
+                    { label: "Descending", value: "desc" },
+                    { label: "Ascending", value: "asc" },
+                ],
+                type: filterInputs_1.FilterTypes.Picker,
+            },
+            storyStatus: {
+                value: "all",
+                label: "Status",
+                options: [
+                    { label: "All", value: "all" },
+                    { label: "Ongoing", value: "ongoing" },
+                    { label: "Finished", value: "finished" },
+                ],
+                type: filterInputs_1.FilterTypes.Picker,
+            },
+        };
     }
     LnMTLPlugin.prototype.popularNovels = function (page, _a) {
         var filters = _a.filters;
@@ -53,7 +85,11 @@ var LnMTLPlugin = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        link = this.site + "novel?page=" + page;
+                        link = this.site + "novel?";
+                        link += "orderBy=".concat(filters.order.value);
+                        link += "&order=".concat(filters.sort.value);
+                        link += "&filter=".concat(filters.storyStatus.value);
+                        link += "&page=".concat(page);
                         headers = new Headers();
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(link, { headers: headers }).then(function (result) {
                                 return result.text();

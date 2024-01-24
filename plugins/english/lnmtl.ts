@@ -12,9 +12,14 @@ class LnMTLPlugin implements Plugin.PluginBase {
 
     async popularNovels(
         page: number,
-        { filters }: Plugin.PopularNovelsOptions
+        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {    
-        let link = this.site + "novel?page=" + page;
+        let link = this.site + "novel?";
+
+        link += `orderBy=${filters.order.value}`;
+        link += `&order=${filters.sort.value}`;
+        link += `&filter=${filters.storyStatus.value}`;
+        link += `&page=${page}`;                         
 
         const headers = new Headers();
         const body = await fetchApi(link, { headers }).then((result) =>
@@ -182,6 +187,38 @@ class LnMTLPlugin implements Plugin.PluginBase {
     async fetchImage(url: string): Promise<string | undefined> {
         return await fetchFile(url);
     }
+
+    filters = {
+        order: {
+            value: "favourites",
+            label: "Order by",
+            options: [
+                { label: "Favourites", value: "favourites" },
+                { label: "Name", value: "name" },
+                { label: "Addition Date", value: "date" },
+            ],
+            type: FilterTypes.Picker,
+        },
+        sort: {
+            value: "desc",
+            label: "Sort by",
+            options: [
+                { label: "Descending", value: "desc" },
+                { label: "Ascending", value: "asc" },
+            ],
+            type: FilterTypes.Picker,
+        },
+        storyStatus: {
+            value: "all",
+            label: "Status",
+            options: [
+                { label: "All", value: "all" },
+                { label: "Ongoing", value: "ongoing" },
+                { label: "Finished", value: "finished" },
+            ],
+            type: FilterTypes.Picker,
+        },
+    } satisfies Filters;
 }
 
 export default new LnMTLPlugin();
