@@ -81,7 +81,7 @@ var LnMTLPlugin = /** @class */ (function () {
     LnMTLPlugin.prototype.popularNovels = function (page, _a) {
         var filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var link, headers, body, loadedCheerio, novels;
+            var link, body, loadedCheerio, novels;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -90,8 +90,7 @@ var LnMTLPlugin = /** @class */ (function () {
                         link += "&order=".concat(filters.sort.value);
                         link += "&filter=".concat(filters.storyStatus.value);
                         link += "&page=".concat(page);
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link, { headers: headers }).then(function (result) {
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link).then(function (result) {
                                 return result.text();
                             })];
                     case 1:
@@ -120,14 +119,13 @@ var LnMTLPlugin = /** @class */ (function () {
     LnMTLPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var url, headers, result, body, loadedCheerio, novel, volumes, chapter, _i, volumes_1, volume, volumeData, volumePage, i, chapterData, chapterInfo, chapterDetails;
+            var url, result, body, loadedCheerio, novel, delay, volumes, chapter, _i, volumes_1, volume, volumeData, volumePage, i, chapterData, chapterInfo, chapterDetails;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         url = novelUrl;
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _c.sent();
                         return [4 /*yield*/, result.text()];
@@ -158,6 +156,7 @@ var LnMTLPlugin = /** @class */ (function () {
                             .text()
                             .trim()
                             .replace(/\s\s/g, ",");
+                        delay = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
                         volumes = JSON.parse(((_b = (_a = loadedCheerio("main")
                             .next()
                             .html()) === null || _a === void 0 ? void 0 : _a.match(/lnmtl.volumes = \[(.*?)\]/)[0]) === null || _b === void 0 ? void 0 : _b.replace("lnmtl.volumes = ", "")) || "");
@@ -166,7 +165,7 @@ var LnMTLPlugin = /** @class */ (function () {
                         _i = 0, volumes_1 = volumes;
                         _c.label = 3;
                     case 3:
-                        if (!(_i < volumes_1.length)) return [3 /*break*/, 11];
+                        if (!(_i < volumes_1.length)) return [3 /*break*/, 13];
                         volume = volumes_1[_i];
                         return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(this.site, "chapter?page=1&volumeId=").concat(volume))];
                     case 4:
@@ -187,17 +186,21 @@ var LnMTLPlugin = /** @class */ (function () {
                         chapterDetails = chapterInfo.data.map(function (chapter) { return ({
                             name: "#".concat(chapter.number, " ").concat(chapter.title),
                             url: "".concat(_this.site, "chapter/").concat(chapter.slug),
-                            releaseTime: new Date(chapter.created_at).toISOString(), //formats time obtained to UTC +0, TODO: Make it not convert
+                            releaseTime: new Date(chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
                         }); });
                         chapter.push.apply(chapter, chapterDetails);
                         _c.label = 9;
                     case 9:
                         i++;
                         return [3 /*break*/, 6];
-                    case 10:
+                    case 10: return [4 /*yield*/, delay(1000)];
+                    case 11:
+                        _c.sent();
+                        _c.label = 12;
+                    case 12:
                         _i++;
                         return [3 /*break*/, 3];
-                    case 11:
+                    case 13:
                         novel.chapters = chapter;
                         return [2 /*return*/, novel];
                 }
@@ -208,12 +211,10 @@ var LnMTLPlugin = /** @class */ (function () {
     LnMTLPlugin.prototype.parseChapter = function (chapterUrl) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var headers, result, body, loadedCheerio, chapterText;
+            var result, body, loadedCheerio, chapterText;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl, { headers: headers })];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
                     case 1:
                         result = _b.sent();
                         return [4 /*yield*/, result.text()];

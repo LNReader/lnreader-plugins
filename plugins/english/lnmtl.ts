@@ -21,8 +21,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
         link += `&filter=${filters.storyStatus.value}`;
         link += `&page=${page}`;                         
 
-        const headers = new Headers();
-        const body = await fetchApi(link, { headers }).then((result) =>
+        const body = await fetchApi(link).then((result) =>
             result.text()
         );
 
@@ -50,8 +49,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -87,6 +85,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
             .trim()
             .replace(/\s\s/g, ",");
 
+        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
         let volumes = JSON.parse(
             loadedCheerio("main")
                 .next()
@@ -117,11 +116,12 @@ class LnMTLPlugin implements Plugin.PluginBase {
                 (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
                     name: `#${chapter.number} ${chapter.title}`,
                     url: `${this.site}chapter/${chapter.slug}`,
-                    releaseTime: new Date (chapter.created_at).toISOString(), //formats time obtained to UTC +0, TODO: Make it not convert
+                    releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
                 }));
 
                 chapter.push(...chapterDetails);
             }
+            await delay(1000);
         }
 
         novel.chapters = chapter;
@@ -130,8 +130,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
     };
 
     async parseChapter(chapterUrl: string): Promise<string> {
-        const headers = new Headers();
-        const result = await fetchApi(chapterUrl, { headers });
+        const result = await fetchApi(chapterUrl);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
