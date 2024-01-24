@@ -236,13 +236,12 @@ var NovelUpdates = /** @class */ (function () {
     };
     NovelUpdates.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, headers, result, body, loadedCheerio, novel, type, summary, chapter, novelId, formData, link, text;
+            var url, result, body, loadedCheerio, novel, type, summary, chapter, novelId, formData, link, text;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = novelUrl;
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];

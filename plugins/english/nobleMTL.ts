@@ -152,7 +152,6 @@ class NobleMTL implements Plugin.PluginBase {
     async searchNovels(
         searchTerm: string,
         pageNo: number
-
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}/page/${pageNo}/?s=${searchTerm}`;
         const headers = new Headers();
