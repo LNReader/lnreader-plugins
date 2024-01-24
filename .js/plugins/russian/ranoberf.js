@@ -136,12 +136,13 @@ var RNRF = /** @class */ (function () {
                                 : novelStatus_1.NovelStatus.Completed,
                         };
                         chapters = [];
-                        (_b = book === null || book === void 0 ? void 0 : book.chapters) === null || _b === void 0 ? void 0 : _b.forEach(function (chapter) {
+                        (_b = book === null || book === void 0 ? void 0 : book.chapters) === null || _b === void 0 ? void 0 : _b.forEach(function (chapter, chapterIndex) {
                             if (!chapter.isDonate || chapter.isUserPaid) {
                                 chapters.push({
                                     name: chapter.title,
-                                    releaseTime: (0, dayjs_1.default)(chapter.publishedAt).format("LLL"),
                                     url: _this.site + chapter.url,
+                                    releaseTime: (0, dayjs_1.default)(chapter.publishedAt).format("LLL"),
+                                    chapterNumber: book.chapters.length - chapterIndex,
                                 });
                             }
                         });

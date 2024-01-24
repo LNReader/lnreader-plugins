@@ -277,9 +277,7 @@ var RLIB = /** @class */ (function () {
                 switch (_5.label) {
                     case 0:
                         url = "".concat(this.site, "/manga-list?sort=");
-                        url += showLatestNovels
-                            ? "last_chapter_at"
-                            : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "rate";
+                        url += showLatestNovels ? "last_chapter_at" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "rate";
                         url += "&dir=" + (((_c = filters === null || filters === void 0 ? void 0 : filters.order) === null || _c === void 0 ? void 0 : _c.value) || "desc");
                         if ((_e = (_d = filters.type) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
                             url += filters.type.value.map(function (i) { return "&types[]=" + i; }).join("");
@@ -345,18 +343,18 @@ var RLIB = /** @class */ (function () {
         });
     };
     RLIB.prototype.parseNovelAndChapters = function (novelUrl) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, chapters, chaptersRaw, chaptersJson;
+            var result, body, loadedCheerio, novel, chapters, chaptersRaw, chaptersJson, totalChapters;
             var _this = this;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            return __generator(this, function (_j) {
+                switch (_j.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
                     case 1:
-                        result = _h.sent();
+                        result = _j.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _h.sent();
+                        body = _j.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
                             url: novelUrl,
@@ -391,14 +389,18 @@ var RLIB = /** @class */ (function () {
                         chaptersRaw = body.match(/window.__DATA__ = [\s\S]*?window._SITE_COLOR_/gm);
                         chaptersRaw = (_d = (_c = (_b = (_a = chaptersRaw === null || chaptersRaw === void 0 ? void 0 : chaptersRaw[0]) === null || _a === void 0 ? void 0 : _a.replace("window.__DATA__ = ", "")) === null || _b === void 0 ? void 0 : _b.replace("window._SITE_COLOR_", "")) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.slice(0, -1);
                         chaptersJson = JSON.parse(chaptersRaw);
-                        this.ui = (_e = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson.user) === null || _e === void 0 ? void 0 : _e.id;
-                        (_g = (_f = chaptersJson.chapters) === null || _f === void 0 ? void 0 : _f.list) === null || _g === void 0 ? void 0 : _g.forEach(function (chapter) {
-                            var _a;
+                        totalChapters = ((_e = chaptersJson.chapters.list) === null || _e === void 0 ? void 0 : _e.length) || 0;
+                        this.ui = (_f = chaptersJson === null || chaptersJson === void 0 ? void 0 : chaptersJson.user) === null || _f === void 0 ? void 0 : _f.id;
+                        (_h = (_g = chaptersJson.chapters) === null || _g === void 0 ? void 0 : _g.list) === null || _h === void 0 ? void 0 : _h.forEach(function (chapter, chapterIndex) {
                             return chapters.push({
-                                name: (_a = "\u0422\u043E\u043C ".concat(chapter.chapter_volume, " \u0413\u043B\u0430\u0432\u0430 ").concat(chapter.chapter_number, " ").concat(chapter.chapter_name)) === null || _a === void 0 ? void 0 : _a.trim(),
+                                name: "Том " + chapter.chapter_volume +
+                                    "Глава " + chapter.chapter_number +
+                                    chapter.chapter_name ? " " + chapter.chapter_name.trim() : "",
+                                url: _this.site + "/" + chaptersJson.manga.slug +
+                                    "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +
+                                    "?bid=" + (chapter.branch_id || ""),
                                 releaseTime: (0, dayjs_1.default)(chapter.chapter_created_at).format("LLL"),
-                                url: "".concat(_this.site, "/").concat(chaptersJson.manga.slug, "/v").concat(chapter.chapter_volume, "/c").concat(chapter.chapter_number, "?bid=") +
-                                    ((chapter === null || chapter === void 0 ? void 0 : chapter.branch_id) || ""),
+                                chapterNumber: totalChapters - chapterIndex,
                             });
                         });
                         novel.chapters = chapters.reverse();

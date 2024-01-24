@@ -118,11 +118,11 @@ var RulatePlugin = /** @class */ (function () {
     RulatePlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var baseUrl, novel, result, formData, body, loadedCheerio, genres, chapters;
+            var novel, result, formData, body, loadedCheerio, genres, chapters;
+            var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        baseUrl = this.site;
                         novel = {
                             url: novelUrl,
                         };
@@ -154,7 +154,7 @@ var RulatePlugin = /** @class */ (function () {
                             novel.name = novel.name.split("[")[0].trim();
                         }
                         novel.cover =
-                            baseUrl + loadedCheerio('div[class="images"] > div img').attr("src");
+                            this.site + loadedCheerio('div[class="images"] > div img').attr("src");
                         novel.summary =
                             loadedCheerio("#Info > div:nth-child(3), .book-description").text().trim();
                         novel.author = loadedCheerio(".book-stats-icons_author > span:nth-child(2) > a:nth-child(1)").text();
@@ -190,24 +190,17 @@ var RulatePlugin = /** @class */ (function () {
                             novel.genres = genres.reverse().join(",");
                         }
                         chapters = [];
-                        loadedCheerio("table > tbody > tr.chapter_row").each(function () {
+                        loadedCheerio("table > tbody > tr.chapter_row").each(function (chapterNumber, element) {
                             var _a;
-                            var chapterName = loadedCheerio(this)
-                                .find('td[class="t"] > a')
-                                .text()
-                                .trim();
-                            var releaseDate = (_a = loadedCheerio(this)
-                                .find("td > span")
-                                .attr("title")) === null || _a === void 0 ? void 0 : _a.trim();
-                            var chapterUrl = loadedCheerio(this)
-                                .find('td[class="t"] > a')
-                                .attr("href");
-                            if (!loadedCheerio(this).find('td > span[class="disabled"]').length &&
-                                releaseDate) {
+                            var chapterName = loadedCheerio(element).find('td[class="t"] > a').text().trim();
+                            var releaseDate = (_a = loadedCheerio(element).find("td > span").attr("title")) === null || _a === void 0 ? void 0 : _a.trim();
+                            var chapterUrl = loadedCheerio(element).find('td[class="t"] > a').attr("href");
+                            if (!loadedCheerio(element).find('td > span[class="disabled"]').length && releaseDate) {
                                 chapters.push({
                                     name: chapterName,
+                                    url: _this.site + chapterUrl,
                                     releaseTime: releaseDate,
-                                    url: baseUrl + chapterUrl,
+                                    chapterNumber: chapterNumber
                                 });
                             }
                         });

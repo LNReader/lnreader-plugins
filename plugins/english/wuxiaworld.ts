@@ -13,7 +13,7 @@ class Wuxiaworld implements Plugin.PluginBase {
   async popularNovels(): Promise<Plugin.NovelItem[]> {
     const result = (
         await fetchApi(this.site + "/api/novels").then((res) => res.json())
-    ) as { items: novelList[] };
+    ) as { items: NovelList[] };
 
     const novels: Plugin.NovelItem[] = result.items.map((novel) => ({
       name: novel.name,
@@ -56,11 +56,12 @@ class Wuxiaworld implements Plugin.PluginBase {
       ? NovelStatus.Completed
       : NovelStatus.Ongoing;
 
-    const chapters: Plugin.ChapterItem[] = loadedCheerio("div.border-b")
-      .map((index, element) => ({
+    const chapters: Plugin.ChapterItem[] = loadedCheerio("div.border-b.border-gray-line-base")
+      .map((chapterNumber, element) => ({
         name: loadedCheerio(element).find("a > div > div > div > span").text(),
-        releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
         url: this.site + loadedCheerio(element).find("a").attr("href"),
+        releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
+        chapterNumber,
       }))
       .get();
 
@@ -81,7 +82,7 @@ class Wuxiaworld implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = this.site + "/api/novels/search?query=" + searchTerm;
-    const result = (await fetchApi(url).then((res) => res.json())) as { items: novelList[]; };
+    const result = (await fetchApi(url).then((res) => res.json())) as { items: SearchList[]; };
 
     const novels: Plugin.NovelItem[] = result.items.map((novel) => ({
       name: novel.name,
@@ -97,7 +98,7 @@ class Wuxiaworld implements Plugin.PluginBase {
 
 export default new Wuxiaworld();
 
-interface novelList {
+interface NovelList {
   id: number;
   name: string;
   active: boolean;

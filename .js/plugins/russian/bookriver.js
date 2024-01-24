@@ -119,34 +119,34 @@ var Bookriver = /** @class */ (function () {
         };
     }
     Bookriver.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g;
+        var _b, _c, _d, _e, _f;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, loadedCheerio, novels, jsonRaw, json;
             var _this = this;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         url = this.site + "/genre?page=".concat(pageNo, "&perPage=24&sortingType=");
                         url += showLatestNovels
                             ? "last-update"
                             : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "bestseller";
                         if (((_c = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _c === void 0 ? void 0 : _c.value) instanceof Array &&
-                            ((_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value.length)) {
+                            filters.genres.value.length) {
                             url += "&g=" + filters.genres.value.join(",");
                         }
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _h.sent();
+                        result = _g.sent();
                         return [4 /*yield*/, result.text()];
                     case 2:
-                        body = _h.sent();
+                        body = _g.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = [];
                         jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
                         if (jsonRaw) {
                             json = JSON.parse(jsonRaw);
-                            (_g = (_f = (_e = json.props.pageProps.state.pagesFilter) === null || _e === void 0 ? void 0 : _e.genre) === null || _f === void 0 ? void 0 : _f.books) === null || _g === void 0 ? void 0 : _g.forEach(function (novel) {
+                            (_f = (_e = (_d = json.props.pageProps.state.pagesFilter) === null || _d === void 0 ? void 0 : _d.genre) === null || _e === void 0 ? void 0 : _e.books) === null || _f === void 0 ? void 0 : _f.forEach(function (novel) {
                                 return novels.push({
                                     name: novel.name,
                                     cover: novel.coverImages[0].url,
@@ -182,18 +182,19 @@ var Bookriver = /** @class */ (function () {
                             cover: book === null || book === void 0 ? void 0 : book.coverImages[0].url,
                             summary: book === null || book === void 0 ? void 0 : book.annotation,
                             author: (_b = book === null || book === void 0 ? void 0 : book.author) === null || _b === void 0 ? void 0 : _b.name,
-                            genres: (_c = book === null || book === void 0 ? void 0 : book.tags) === null || _c === void 0 ? void 0 : _c.map(function (item) { return item.name; }).join(", "),
+                            genres: (_c = book === null || book === void 0 ? void 0 : book.tags) === null || _c === void 0 ? void 0 : _c.map(function (tag) { return tag.name; }).join(", "),
                             status: (book === null || book === void 0 ? void 0 : book.statusComplete) === "writing"
                                 ? novelStatus_1.NovelStatus.Ongoing
                                 : novelStatus_1.NovelStatus.Completed,
                         };
                         chapters = [];
-                        (_e = (_d = book === null || book === void 0 ? void 0 : book.ebook) === null || _d === void 0 ? void 0 : _d.chapters) === null || _e === void 0 ? void 0 : _e.forEach(function (chapter) {
+                        (_e = (_d = book === null || book === void 0 ? void 0 : book.ebook) === null || _d === void 0 ? void 0 : _d.chapters) === null || _e === void 0 ? void 0 : _e.forEach(function (chapter, chapterNumber) {
                             if (chapter.available) {
                                 chapters.push({
                                     name: chapter.name,
-                                    releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.firstPublishedAt) || chapter.createdAt).format("LLL"),
                                     url: _this.site + "/reader/" + (book === null || book === void 0 ? void 0 : book.slug) + "/" + chapter.chapterId,
+                                    releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.firstPublishedAt) || chapter.createdAt).format("LLL"),
+                                    chapterNumber: chapterNumber,
                                 });
                             }
                         });
@@ -243,7 +244,7 @@ var Bookriver = /** @class */ (function () {
                     case 2:
                         json = (_c.sent());
                         novels = [];
-                        (_b = (_a = json === null || json === void 0 ? void 0 : json.data) === null || _a === void 0 ? void 0 : _a.books) === null || _b === void 0 ? void 0 : _b.forEach(function (novel) {
+                        (_b = (_a = json.data) === null || _a === void 0 ? void 0 : _a.books) === null || _b === void 0 ? void 0 : _b.forEach(function (novel) {
                             return novels.push({
                                 name: novel.name,
                                 cover: novel.coverImages[0].url,

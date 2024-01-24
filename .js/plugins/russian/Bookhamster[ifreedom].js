@@ -89,7 +89,7 @@ var IfreedomPlugin = /** @class */ (function () {
     };
     IfreedomPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var body, loadedCheerio, novel, chapters;
+            var body, loadedCheerio, novel, chapters, totalChapters;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
@@ -128,13 +128,13 @@ var IfreedomPlugin = /** @class */ (function () {
                         if (novel.author == "Не указан")
                             delete novel.author;
                         chapters = [];
-                        loadedCheerio("div.li-ranobe").each(function () {
-                            var name = loadedCheerio(this).find("a").text();
-                            var url = loadedCheerio(this).find("a").attr("href");
-                            if (!loadedCheerio(this).find("label.buy-ranobe").length && name && url) {
-                                var releaseTime = loadedCheerio(this)
-                                    .find("div.li-col2-ranobe").text().trim();
-                                chapters.push({ name: name, releaseTime: releaseTime, url: url });
+                        totalChapters = loadedCheerio("div.li-ranobe").length;
+                        loadedCheerio("div.li-ranobe").each(function (chapterIndex, element) {
+                            var name = loadedCheerio(element).find("a").text();
+                            var url = loadedCheerio(element).find("a").attr("href");
+                            if (!loadedCheerio(element).find("label.buy-ranobe").length && name && url) {
+                                var releaseTime = loadedCheerio(element).find("div.li-col2-ranobe").text().trim();
+                                chapters.push({ name: name, url: url, releaseTime: releaseTime, chapterNumber: totalChapters - chapterIndex });
                             }
                         });
                         novel.chapters = chapters.reverse();

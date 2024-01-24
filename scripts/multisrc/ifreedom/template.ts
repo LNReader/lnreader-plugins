@@ -102,14 +102,14 @@ class IfreedomPlugin implements Plugin.PluginBase {
     if (novel.author == "Не указан") delete novel.author;
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio("div.li-ranobe").each(function () {
-      const name = loadedCheerio(this).find("a").text();
-      const url = loadedCheerio(this).find("a").attr("href");
-      if (!loadedCheerio(this).find("label.buy-ranobe").length && name && url) {
-        const releaseTime = loadedCheerio(this)
-          .find("div.li-col2-ranobe").text().trim();
+    const totalChapters = loadedCheerio("div.li-ranobe").length;
 
-        chapters.push({ name, releaseTime, url });
+    loadedCheerio("div.li-ranobe").each((chapterIndex, element) => {
+      const name = loadedCheerio(element).find("a").text();
+      const url = loadedCheerio(element).find("a").attr("href");
+      if (!loadedCheerio(element).find("label.buy-ranobe").length && name && url) {
+        const releaseTime = loadedCheerio(element).find("div.li-col2-ranobe").text().trim();
+        chapters.push({ name, url, releaseTime, chapterNumber: totalChapters - chapterIndex });
       }
     });
 

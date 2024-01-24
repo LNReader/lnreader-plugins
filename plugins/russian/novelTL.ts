@@ -103,20 +103,30 @@ class TL implements Plugin.PluginBase {
         novel.author =
           person.name.firstName + " " + (person.name?.lastName || "");
       }
+      if (person.role == "illustrator" && person.name.firstName) {
+        novel.artist =
+          person.name.firstName + " " + (person.name?.lastName || "");
+      }
     });
 
     const chapters: Plugin.ChapterItem[] = [];
+    let chapterNumber = 1;
+
     json.data.project?.subprojects?.content?.forEach((work) =>
-      work.volumes.content.forEach((volume) =>
-        volume.chapters.forEach(
-          (chapter) =>
-            chapter?.published &&
+      work.volumes.content.forEach((volume, volumeIndex) =>
+        volume.chapters.forEach((chapter, chapterIndex) => {
+          if (chapter.published) {
             chapters.push({
-              name: volume.shortName + " " + chapter.title,
+              name:
+                (volume.shortName || "Том " + (volumeIndex + 1)) + " " +
+                (chapter.title || "Глава " + (chapterIndex + 1)),
               url: "https://" + chapter.fullUrl,
               releaseTime: dayjs(chapter.publishDate).format("LLL"),
-            }),
-        ),
+              chapterNumber,
+            });
+          }
+          chapterNumber++;
+        }),
       ),
     );
 
@@ -934,12 +944,12 @@ interface Volumes {
 }
 
 interface VolumesContent {
-  shortName: string;
+  shortName: null | string;
   chapters: ChapterElement[];
 }
 
 interface ChapterElement {
-  title: string;
+  title: null | string;
   publishDate: Date;
   fullUrl: string;
   published: boolean;

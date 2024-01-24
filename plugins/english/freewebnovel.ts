@@ -57,10 +57,11 @@ class FreeWebNovel implements Plugin.PluginBase {
     novel.summary = loadedCheerio(".inner").text().trim();
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio("#idData > li > a")
-      .map((index, element) => ({
-        name: loadedCheerio(element).attr("title") || "Chapter " + index,
-        releaseTime: null,
+      .map((chapterNumber, element) => ({
+        name: loadedCheerio(element).attr("title") || "Chapter " + chapterNumber,
         url: this.site + loadedCheerio(element).attr("href"),
+        releaseTime: null,
+        chapterNumber,
       }))
       .get();
 
@@ -80,6 +81,11 @@ class FreeWebNovel implements Plugin.PluginBase {
     searchTerm: string,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site + "/search/", {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Referer: this.site,
+        Origin: this.site,
+      },
       method: "POST",
       body: "searchkey=" + encodeURIComponent(searchTerm)
     }).then((res) => res.text());

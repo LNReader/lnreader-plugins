@@ -23,7 +23,7 @@ class Bookriver implements Plugin.PluginBase {
 
     if (
       filters?.genres?.value instanceof Array &&
-      filters?.genres?.value.length
+      filters.genres.value.length
     ) {
       url += "&g=" + filters.genres.value.join(",");
     }
@@ -56,13 +56,14 @@ class Bookriver implements Plugin.PluginBase {
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
     const json: response = JSON.parse(jsonRaw || "{}");
     const book = json.props.pageProps.state.book?.bookPage;
+
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
       name: book?.name,
       cover: book?.coverImages[0].url,
       summary: book?.annotation,
       author: book?.author?.name,
-      genres: book?.tags?.map((item) => item.name).join(", "),
+      genres: book?.tags?.map((tag) => tag.name).join(", "),
       status:
         book?.statusComplete === "writing"
           ? NovelStatus.Ongoing
@@ -70,14 +71,13 @@ class Bookriver implements Plugin.PluginBase {
     };
 
     const chapters: Plugin.ChapterItem[] = [];
-    book?.ebook?.chapters?.forEach((chapter) => {
+    book?.ebook?.chapters?.forEach((chapter, chapterNumber) => {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
-          releaseTime: dayjs(
-            chapter?.firstPublishedAt || chapter.createdAt,
-          ).format("LLL"),
           url: this.site + "/reader/" + book?.slug + "/" + chapter.chapterId,
+          releaseTime: dayjs(chapter?.firstPublishedAt || chapter.createdAt).format("LLL"),
+          chapterNumber,
         });
       }
     });
@@ -107,7 +107,7 @@ class Bookriver implements Plugin.PluginBase {
     const json = (await result.json()) as responseSearch;
 
     const novels: Plugin.NovelItem[] = [];
-    json?.data?.books?.forEach((novel) =>
+    json.data?.books?.forEach((novel) =>
       novels.push({
         name: novel.name,
         cover: novel.coverImages[0].url,

@@ -70,13 +70,13 @@ class freedlit implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio("a.chapter-line").each(function () {
-      const name = loadedCheerio(this).find("h6").text();
-      const releaseTime = loadedCheerio(this).find('span[class="date"]').text();
-      const url = loadedCheerio(this).attr("href");
+    loadedCheerio("a.chapter-line").each((chapterNumber, element) => {
+      const name = loadedCheerio(element).find("h6").text();
+      const url = loadedCheerio(element).attr("href");
       if (!name || !url) return;
 
-      chapters.push({ name, releaseTime, url });
+      const releaseTime = loadedCheerio(element).find('span[class="date"]').text();
+      chapters.push({ name, url, releaseTime, chapterNumber });
     });
 
     novel.chapters = chapters;

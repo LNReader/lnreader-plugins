@@ -98,17 +98,15 @@ class ReN implements Plugin.PluginBase {
       novel.genres = tags.join(",");
     }
 
-    const all = Math.floor(body.content.count_chapters / 100 + 1);
+    const all = body.content.count_chapters / 100 + 1;
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let i = 0; i < all; i++) {
       const chapterResult = await fetchApi(
         this.site +
-          "/api/titles/chapters/?branch_id=" +
-          branch_id +
-          "&count=100&page=" +
-          (i + 1),
+          "/api/titles/chapters/?branch_id=" + branch_id +
+          "&count=100&page=" + (i + 1),
       );
       const volumes = (await chapterResult.json()) as {
         content: responseСhapters[];
@@ -117,9 +115,13 @@ class ReN implements Plugin.PluginBase {
       volumes.content.forEach((chapter) => {
         if (!chapter.is_paid || chapter.is_bought) {
           chapters.push({
-            name: `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`?.trim(),
-            releaseTime: dayjs(chapter.upload_date).format("LLL"),
+            name:
+              "Том " + chapter.tome + 
+              "Глава " + chapter.chapter + 
+                chapter.name ? " " + chapter.name.trim() : "",
             url: `${this.site}/novel/${novelID}/${chapter.id}/`,
+            releaseTime: dayjs(chapter.upload_date).format("LLL"),
+            chapterNumber: chapter.index,
           });
         }
       });

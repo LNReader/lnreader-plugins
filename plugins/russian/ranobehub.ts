@@ -59,7 +59,7 @@ class RNBH implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
     body.resource.forEach((novel) =>
       novels.push({
-        name: novel.names?.rus || novel.names.eng,
+        name: novel.names.rus || novel.names.eng || novel.names.original,
         cover: novel.poster.medium,
         url: novel.url,
       }),
@@ -96,24 +96,23 @@ class RNBH implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const fetchChaptersUrl = `${this.site}api/ranobe/${novelId}/contents`;
+    let chapterNumber = 1;
 
-    const chaptersRaw = await fetchApi(fetchChaptersUrl);
+    const chaptersRaw = await fetchApi(`${this.site}api/ranobe/${novelId}/contents`);
     const chaptersJSON = (await chaptersRaw.json()) as {
       volumes: VolumesEntity[];
     };
 
-    chaptersJSON.volumes.forEach(
-      (volume) =>
-        volume.chapters?.forEach((chapter) =>
+    chaptersJSON.volumes.forEach((volume) =>
+        volume.chapters?.forEach((chapter) => {
           chapters.push({
             name: chapter.name,
             url: chapter.url,
-            releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format(
-              "LLL",
-            ),
-          }),
-        ),
+            releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
+            chapterNumber,
+          });
+          chapterNumber++;
+        }),
     );
 
     novel.chapters = chapters;
@@ -125,7 +124,6 @@ class RNBH implements Plugin.PluginBase {
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-
     loadedCheerio(".chapter-hoticons").remove();
     const baseUrl = this.site;
     loadedCheerio("div.text:nth-child(1)  img").each(function () {
@@ -135,8 +133,7 @@ class RNBH implements Plugin.PluginBase {
       }
     });
 
-    let chapterText: string =
-      loadedCheerio("div.text:nth-child(1)").html() || "";
+    let chapterText = loadedCheerio("div.text:nth-child(1)").html() || "";
 
     // Remove script tags
     chapterText = chapterText?.replace(
@@ -161,7 +158,12 @@ class RNBH implements Plugin.PluginBase {
       ?.find((item) => item?.meta?.key === "ranobe")
       ?.data?.forEach((novel) =>
         novels.push({
-          name: novel?.names?.rus || novel?.names?.eng || novel?.name || "",
+          name:
+            novel?.names?.rus ||
+            novel?.names?.eng ||
+            novel.name ||
+            novel?.names?.original ||
+            "",
           url:
             "https://ranobehub.org/ranobe/" +
             novel?.url?.match(
@@ -1152,9 +1154,9 @@ interface responseNovels {
   counts: Counts;
 }
 interface Names {
-  eng: string;
+  eng?: string;
   rus?: string;
-  original?: string;
+  original: string;
 }
 interface Poster {
   medium: string;

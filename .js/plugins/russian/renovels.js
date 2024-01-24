@@ -949,7 +949,7 @@ var ReN = /** @class */ (function () {
                         if (tags.length) {
                             novel.genres = tags.join(",");
                         }
-                        all = Math.floor(body.content.count_chapters / 100 + 1);
+                        all = body.content.count_chapters / 100 + 1;
                         branch_id = ((_f = (_e = body.content.branches) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.id) || body.content.id;
                         chapters = [];
                         i = 0;
@@ -957,22 +957,22 @@ var ReN = /** @class */ (function () {
                     case 3:
                         if (!(i < all)) return [3 /*break*/, 7];
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site +
-                                "/api/titles/chapters/?branch_id=" +
-                                branch_id +
-                                "&count=100&page=" +
-                                (i + 1))];
+                                "/api/titles/chapters/?branch_id=" + branch_id +
+                                "&count=100&page=" + (i + 1))];
                     case 4:
                         chapterResult = _g.sent();
                         return [4 /*yield*/, chapterResult.json()];
                     case 5:
                         volumes = (_g.sent());
                         volumes.content.forEach(function (chapter) {
-                            var _a;
                             if (!chapter.is_paid || chapter.is_bought) {
                                 chapters.push({
-                                    name: (_a = "\u0422\u043E\u043C ".concat(chapter.tome, " \u0413\u043B\u0430\u0432\u0430 ").concat(chapter.chapter, " ").concat(chapter.name)) === null || _a === void 0 ? void 0 : _a.trim(),
-                                    releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
+                                    name: "Том " + chapter.tome +
+                                        "Глава " + chapter.chapter +
+                                        chapter.name ? " " + chapter.name.trim() : "",
                                     url: "".concat(_this.site, "/novel/").concat(novelID, "/").concat(chapter.id, "/"),
+                                    releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
+                                    chapterNumber: chapter.index,
                                 });
                             }
                         });

@@ -68,12 +68,13 @@ class RNRF implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    book?.chapters?.forEach((chapter) => {
+    book?.chapters?.forEach((chapter, chapterIndex) => {
       if (!chapter.isDonate || chapter.isUserPaid) {
         chapters.push({
           name: chapter.title,
-          releaseTime: dayjs(chapter.publishedAt).format("LLL"),
           url: this.site + chapter.url,
+          releaseTime: dayjs(chapter.publishedAt).format("LLL"),
+          chapterNumber: book.chapters.length - chapterIndex,
         });
       }
     });

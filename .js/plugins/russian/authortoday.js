@@ -226,13 +226,13 @@ var AuthorToday = /** @class */ (function () {
                     case 2:
                         json = (_k.sent());
                         novels = [];
-                        if ((json === null || json === void 0 ? void 0 : json.code) === "NotFound") {
+                        if (json.code === "NotFound") {
                             return [2 /*return*/, novels];
                         }
                         (_j = json === null || json === void 0 ? void 0 : json.searchResults) === null || _j === void 0 ? void 0 : _j.forEach(function (novel) {
                             return novels.push({
                                 name: novel.title,
-                                cover: (novel === null || novel === void 0 ? void 0 : novel.coverUrl)
+                                cover: novel.coverUrl
                                     ? "https://cm.author.today/content/" + novel.coverUrl
                                     : defaultCover_1.defaultCover,
                                 url: _this.site + "/work/" + novel.id,
@@ -246,7 +246,7 @@ var AuthorToday = /** @class */ (function () {
     AuthorToday.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var workID, result, json, novel, chaptersRaw, chaptersJSON, chapters;
+            var workID, result, book, novel, chaptersRaw, chaptersJSON, chapters;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -260,25 +260,25 @@ var AuthorToday = /** @class */ (function () {
                         result = _b.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        json = (_b.sent());
+                        book = (_b.sent());
                         novel = {
                             url: novelUrl,
-                            name: json.title,
-                            cover: (json === null || json === void 0 ? void 0 : json.coverUrl) ? json.coverUrl.split("?")[0] : defaultCover_1.defaultCover,
-                            author: (json === null || json === void 0 ? void 0 : json.originalAuthor) ||
-                                (json === null || json === void 0 ? void 0 : json.authorFIO) ||
-                                (json === null || json === void 0 ? void 0 : json.coAuthorFIO) ||
-                                (json === null || json === void 0 ? void 0 : json.secondCoAuthorFIO) ||
-                                (json === null || json === void 0 ? void 0 : json.translator) ||
+                            name: book.title,
+                            cover: book.coverUrl ? book.coverUrl.split("?")[0] : defaultCover_1.defaultCover,
+                            genres: (_a = book.tags) === null || _a === void 0 ? void 0 : _a.join(", "),
+                            summary: "",
+                            author: book.originalAuthor ||
+                                book.authorFIO ||
+                                book.coAuthorFIO ||
+                                book.secondCoAuthorFIO ||
+                                book.translator ||
                                 "",
-                            genres: (_a = json === null || json === void 0 ? void 0 : json.tags) === null || _a === void 0 ? void 0 : _a.join(", "),
-                            status: (json === null || json === void 0 ? void 0 : json.isFinished) ? novelStatus_1.NovelStatus.Completed : novelStatus_1.NovelStatus.Ongoing,
+                            status: book.isFinished ? novelStatus_1.NovelStatus.Completed : novelStatus_1.NovelStatus.Ongoing,
                         };
-                        novel.summary = "";
-                        novel.summary += (json === null || json === void 0 ? void 0 : json.annotation) ? json.annotation + "\n" : "";
-                        novel.summary += (json === null || json === void 0 ? void 0 : json.authorNotes)
-                            ? "Примечания автора:\n" + json.authorNotes
-                            : "";
+                        if (book.annotation)
+                            novel.summary += book.annotation + "\n";
+                        if (book.authorNotes)
+                            novel.summary += "Примечания автора:\n" + book.authorNotes;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(apiUrl, "v1/work/").concat(workID, "/content"), {
                                 headers: {
                                     Authorization: token,
@@ -290,12 +290,13 @@ var AuthorToday = /** @class */ (function () {
                     case 4:
                         chaptersJSON = (_b.sent());
                         chapters = [];
-                        chaptersJSON === null || chaptersJSON === void 0 ? void 0 : chaptersJSON.forEach(function (chapter, index) {
-                            if ((chapter === null || chapter === void 0 ? void 0 : chapter.isAvailable) && !(chapter === null || chapter === void 0 ? void 0 : chapter.isDraft)) {
+                        chaptersJSON.forEach(function (chapter, chapterIndex) {
+                            if (chapter.isAvailable && !chapter.isDraft) {
                                 chapters.push({
-                                    name: (chapter === null || chapter === void 0 ? void 0 : chapter.title) || "\u0413\u043B\u0430\u0432\u0430 ".concat(index + 1),
-                                    releaseTime: (0, dayjs_1.default)((chapter === null || chapter === void 0 ? void 0 : chapter.publishTime) || chapter.lastModificationTime).format("LLL"),
+                                    name: chapter.title || 'Глава ' + (chapterIndex + 1),
                                     url: "".concat(apiUrl, "v1/work/").concat(workID, "/chapter/").concat(chapter.id, "/text"),
+                                    releaseTime: (0, dayjs_1.default)(chapter.publishTime || chapter.lastModificationTime).format("LLL"),
+                                    chapterNumber: chapter.sortOrder || chapterIndex,
                                 });
                             }
                         });
@@ -320,7 +321,7 @@ var AuthorToday = /** @class */ (function () {
                         return [4 /*yield*/, result.json()];
                     case 2:
                         json = (_a.sent());
-                        if (json === null || json === void 0 ? void 0 : json.code) {
+                        if (json.code) {
                             return [2 /*return*/, json.code + "\n" + (json === null || json === void 0 ? void 0 : json.message)];
                         }
                         key = json.key.split("").reverse().join("") + "@_@";
@@ -344,6 +345,7 @@ var AuthorToday = /** @class */ (function () {
         });
     };
     AuthorToday.prototype.searchNovels = function (searchTerm, pageNo) {
+        if (pageNo === void 0) { pageNo = 1; }
         return __awaiter(this, void 0, void 0, function () {
             var baseUrl, url, result, body, loadedCheerio, novels;
             return __generator(this, function (_a) {
@@ -351,7 +353,7 @@ var AuthorToday = /** @class */ (function () {
                     case 0:
                         baseUrl = this.site;
                         url = baseUrl + "/search?category=works&q=" + searchTerm + "&page=";
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url + (pageNo || 1))];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url + pageNo)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];

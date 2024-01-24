@@ -214,7 +214,7 @@ var Jaomix = /** @class */ (function () {
     };
     Jaomix.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var body, loadedCheerio, novel, chapters;
+            var body, loadedCheerio, novel, chapters, totalChapters;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
@@ -242,13 +242,14 @@ var Jaomix = /** @class */ (function () {
                             }
                         });
                         chapters = [];
-                        loadedCheerio(".download-chapter div.title").each(function () {
-                            var name = loadedCheerio(this).find("a").attr("title");
-                            var releaseTime = loadedCheerio(this).find("time").text();
-                            var url = loadedCheerio(this).find("a").attr("href");
+                        totalChapters = loadedCheerio(".download-chapter div.title").length;
+                        loadedCheerio(".download-chapter div.title").each(function (chapterIndex, element) {
+                            var name = loadedCheerio(element).find("a").attr("title");
+                            var url = loadedCheerio(element).find("a").attr("href");
                             if (!name || !url)
                                 return;
-                            chapters.push({ name: name, releaseTime: releaseTime, url: url });
+                            var releaseTime = loadedCheerio(element).find("time").text();
+                            chapters.push({ name: name, url: url, releaseTime: releaseTime, chapterNumber: totalChapters - chapterIndex });
                         });
                         novel.chapters = chapters.reverse();
                         return [2 /*return*/, novel];

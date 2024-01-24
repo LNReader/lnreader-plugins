@@ -91,14 +91,15 @@ class Jaomix implements Plugin.PluginBase {
     });
 
     const chapters: Plugin.ChapterItem[] = [];
+    const totalChapters = loadedCheerio(".download-chapter div.title").length;
 
-    loadedCheerio(".download-chapter div.title").each(function () {
-      const name = loadedCheerio(this).find("a").attr("title");
-      const releaseTime = loadedCheerio(this).find("time").text();
-      const url = loadedCheerio(this).find("a").attr("href");
+    loadedCheerio(".download-chapter div.title").each((chapterIndex, element) => {
+      const name = loadedCheerio(element).find("a").attr("title");
+      const url = loadedCheerio(element).find("a").attr("href");
       if (!name || !url) return;
 
-      chapters.push({ name, releaseTime, url });
+      const releaseTime = loadedCheerio(element).find("time").text();
+      chapters.push({ name, url, releaseTime, chapterNumber: totalChapters - chapterIndex });
     });
 
     novel.chapters = chapters.reverse();

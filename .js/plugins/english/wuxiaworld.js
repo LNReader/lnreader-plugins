@@ -98,11 +98,12 @@ var Wuxiaworld = /** @class */ (function () {
                         novel.status = loadedCheerio("div.font-set-b10").text().includes("Complete")
                             ? novelStatus_1.NovelStatus.Completed
                             : novelStatus_1.NovelStatus.Ongoing;
-                        chapters = loadedCheerio("div.border-b")
-                            .map(function (index, element) { return ({
+                        chapters = loadedCheerio("div.border-b.border-gray-line-base")
+                            .map(function (chapterNumber, element) { return ({
                             name: loadedCheerio(element).find("a > div > div > div > span").text(),
-                            releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
                             url: _this.site + loadedCheerio(element).find("a").attr("href"),
+                            releaseTime: loadedCheerio(element).find("a > div > div > div > div > span").text(),
+                            chapterNumber: chapterNumber,
                         }); })
                             .get();
                         novel.chapters = chapters;

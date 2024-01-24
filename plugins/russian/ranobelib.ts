@@ -18,9 +18,7 @@ class RLIB implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = `${this.site}/manga-list?sort=`;
-    url += showLatestNovels
-      ? "last_chapter_at"
-      : filters?.sort?.value || "rate";
+    url += showLatestNovels ? "last_chapter_at" : filters?.sort?.value || "rate";
     url += "&dir=" + (filters?.order?.value || "desc");
 
     if (filters.type?.value?.length) {
@@ -148,16 +146,22 @@ class RLIB implements Plugin.PluginBase {
       ?.trim()
       ?.slice(0, -1);
 
-    let chaptersJson: responseBook = JSON.parse(chaptersRaw);
+    const chaptersJson: responseBook = JSON.parse(chaptersRaw);
+    const totalChapters = chaptersJson.chapters.list?.length || 0;
     this.ui = chaptersJson?.user?.id;
 
-    chaptersJson.chapters?.list?.forEach((chapter) =>
+    chaptersJson.chapters?.list?.forEach((chapter, chapterIndex) =>
       chapters.push({
-        name: `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`?.trim(),
-        releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
+        name:
+          "Том " + chapter.chapter_volume +
+          "Глава " + chapter.chapter_number +
+            chapter.chapter_name ? " " + chapter.chapter_name.trim() : "",
         url:
-          `${this.site}/${chaptersJson.manga.slug}/v${chapter.chapter_volume}/c${chapter.chapter_number}?bid=` +
-          (chapter?.branch_id || ""),
+          this.site + "/" + chaptersJson.manga.slug +
+          "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +
+          "?bid=" + (chapter.branch_id || ""),
+        releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
+        chapterNumber: totalChapters - chapterIndex,
       }),
     );
 
@@ -472,7 +476,7 @@ interface ListEntity {
   chapter_created_at: string;
   status?: null;
   price: number;
-  branch_id: number;
+  branch_id?: number;
   username: string;
 }
 interface TeamsEntity {

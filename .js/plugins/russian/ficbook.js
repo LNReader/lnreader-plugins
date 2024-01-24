@@ -2540,7 +2540,8 @@ var ficbook = /** @class */ (function () {
     ficbook.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, tags, chapters, baseUrl, name_1, releaseTime;
+            var result, body, loadedCheerio, novel, tags, chapters, name_1, releaseTime;
+            var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
@@ -2565,7 +2566,7 @@ var ficbook = /** @class */ (function () {
                         tags = loadedCheerio('div[class="tags"] > a')
                             .map(function (index, element) { return loadedCheerio(element).text(); })
                             .get();
-                        if (tags) {
+                        if (tags.length) {
                             novel.genres = tags.join(",");
                         }
                         if (!novel.cover || ((_a = novel.cover) === null || _a === void 0 ? void 0 : _a.includes("/design/"))) {
@@ -2575,23 +2576,20 @@ var ficbook = /** @class */ (function () {
                             novel.cover = novel.cover.replace(/covers\/m_|covers\/d_/g, "covers/");
                         }
                         chapters = [];
-                        baseUrl = this.site;
                         if (loadedCheerio("#content").length == 1) {
                             name_1 = loadedCheerio(".title-area > h2").text();
                             releaseTime = loadedCheerio(".part-date > span").attr("title");
                             if (name_1)
-                                chapters.push({ name: name_1, releaseTime: releaseTime, url: novelUrl });
+                                chapters.push({ name: name_1, url: novelUrl, releaseTime: releaseTime });
                         }
                         else {
-                            loadedCheerio("li.part").each(function () {
-                                var name = loadedCheerio(this).find("h3").text();
-                                var releaseTime = loadedCheerio(this)
-                                    .find("div > span")
-                                    .attr("title");
-                                var url = loadedCheerio(this).find("a:nth-child(1)").attr("href");
+                            loadedCheerio("li.part").each(function (chapterNumber, element) {
+                                var name = loadedCheerio(element).find("h3").text();
+                                var url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
                                 if (!name || !url)
                                     return;
-                                chapters.push({ name: name, releaseTime: releaseTime, url: baseUrl + url });
+                                var releaseTime = loadedCheerio(element).find("div > span").attr("title");
+                                chapters.push({ name: name, url: _this.site + url, releaseTime: releaseTime, chapterNumber: chapterNumber });
                             });
                         }
                         novel.chapters = chapters;

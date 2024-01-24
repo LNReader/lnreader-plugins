@@ -100,7 +100,6 @@ class RulatePlugin implements Plugin.PluginBase {
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const baseUrl = this.site;
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
     };
@@ -129,7 +128,7 @@ class RulatePlugin implements Plugin.PluginBase {
       novel.name = novel.name.split("[")[0].trim();
     }
     novel.cover =
-      baseUrl + loadedCheerio('div[class="images"] > div img').attr("src");
+      this.site + loadedCheerio('div[class="images"] > div img').attr("src");
     novel.summary = 
       loadedCheerio("#Info > div:nth-child(3), .book-description").text().trim();
     novel.author = loadedCheerio(
@@ -172,27 +171,17 @@ class RulatePlugin implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio("table > tbody > tr.chapter_row").each(function () {
-      const chapterName = loadedCheerio(this)
-        .find('td[class="t"] > a')
-        .text()
-        .trim();
-      const releaseDate = loadedCheerio(this)
-        .find("td > span")
-        .attr("title")
-        ?.trim();
-      const chapterUrl = loadedCheerio(this)
-        .find('td[class="t"] > a')
-        .attr("href");
+    loadedCheerio("table > tbody > tr.chapter_row").each((chapterNumber, element) => {
+      const chapterName = loadedCheerio(element).find('td[class="t"] > a').text().trim();
+      const releaseDate = loadedCheerio(element).find("td > span").attr("title")?.trim();
+      const chapterUrl = loadedCheerio(element).find('td[class="t"] > a').attr("href");
 
-      if (
-        !loadedCheerio(this).find('td > span[class="disabled"]').length &&
-        releaseDate
-      ) {
+      if (!loadedCheerio(element).find('td > span[class="disabled"]').length && releaseDate) {
         chapters.push({
           name: chapterName,
+          url: this.site + chapterUrl,
           releaseTime: releaseDate,
-          url: baseUrl + chapterUrl,
+          chapterNumber
         });
       }
     });

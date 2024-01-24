@@ -43,14 +43,14 @@ class AuthorToday implements Plugin.PluginBase {
     const json = (await result.json()) as response;
     const novels: Plugin.NovelItem[] = [];
 
-    if (json?.code === "NotFound") {
+    if (json.code === "NotFound") {
       return novels;
     }
 
     json?.searchResults?.forEach((novel) =>
       novels.push({
         name: novel.title,
-        cover: novel?.coverUrl
+        cover: novel.coverUrl
           ? "https://cm.author.today/content/" + novel.coverUrl
           : defaultCover,
         url: this.site + "/work/" + novel.id,
@@ -67,27 +67,26 @@ class AuthorToday implements Plugin.PluginBase {
       },
     });
 
-    const json = (await result.json()) as responseBook;
+    const book = (await result.json()) as responseBook;
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      name: json.title,
-      cover: json?.coverUrl ? json.coverUrl.split("?")[0] : defaultCover,
+      name: book.title,
+      cover: book.coverUrl ? book.coverUrl.split("?")[0] : defaultCover,
+      genres: book.tags?.join(", "),
+      summary: "",
       author:
-        json?.originalAuthor ||
-        json?.authorFIO ||
-        json?.coAuthorFIO ||
-        json?.secondCoAuthorFIO ||
-        json?.translator ||
+        book.originalAuthor ||
+        book.authorFIO ||
+        book.coAuthorFIO ||
+        book.secondCoAuthorFIO ||
+        book.translator ||
         "",
-      genres: json?.tags?.join(", "),
-      status: json?.isFinished ? NovelStatus.Completed : NovelStatus.Ongoing,
+      status: book.isFinished ? NovelStatus.Completed : NovelStatus.Ongoing,
     };
 
-    novel.summary = "";
-    novel.summary += json?.annotation ? json.annotation + "\n" : "";
-    novel.summary += json?.authorNotes
-      ? "Примечания автора:\n" + json.authorNotes
-      : "";
+    if (book.annotation) novel.summary += book.annotation + "\n";
+    if (book.authorNotes) novel.summary += "Примечания автора:\n" + book.authorNotes;
+
     // all chapters
     const chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
       headers: {
@@ -97,14 +96,13 @@ class AuthorToday implements Plugin.PluginBase {
 
     const chaptersJSON = (await chaptersRaw.json()) as ChaptersEntity[];
     const chapters: Plugin.ChapterItem[] = [];
-    chaptersJSON?.forEach((chapter, index) => {
-      if (chapter?.isAvailable && !chapter?.isDraft) {
+    chaptersJSON.forEach((chapter, chapterIndex) => {
+      if (chapter.isAvailable && !chapter.isDraft) {
         chapters.push({
-          name: chapter?.title || `Глава ${index + 1}`,
-          releaseTime: dayjs(
-            chapter?.publishTime || chapter.lastModificationTime,
-          ).format("LLL"),
+          name: chapter.title || 'Глава ' + (chapterIndex + 1),
           url: `${apiUrl}v1/work/${workID}/chapter/${chapter.id}/text`,
+          releaseTime: dayjs(chapter.publishTime || chapter.lastModificationTime).format("LLL"),
+          chapterNumber: chapter.sortOrder || chapterIndex,
         });
       }
     });
@@ -121,7 +119,7 @@ class AuthorToday implements Plugin.PluginBase {
     });
     const json = (await result.json()) as encryptedСhapter;
 
-    if (json?.code) {
+    if (json.code) {
       return json.code + "\n" + json?.message;
     }
 
@@ -148,11 +146,11 @@ class AuthorToday implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo?: number | undefined,
+    pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const baseUrl = this.site;
     const url = baseUrl + "/search?category=works&q=" + searchTerm + "&page=";
-    const result = await fetchApi(url + (pageNo || 1));
+    const result = await fetchApi(url + pageNo);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
@@ -483,7 +481,7 @@ interface ChaptersEntity {
   title: string;
   isDraft: boolean;
   sortOrder: number;
-  publishTime: string;
+  publishTime?: string;
   lastModificationTime: string;
   textLength: number;
   isAvailable: boolean;

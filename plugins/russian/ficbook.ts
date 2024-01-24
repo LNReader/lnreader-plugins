@@ -78,7 +78,8 @@ class ficbook implements Plugin.PluginBase {
     const tags = loadedCheerio('div[class="tags"] > a')
       .map((index, element) => loadedCheerio(element).text())
       .get();
-    if (tags) {
+
+    if (tags.length) {
       novel.genres = tags.join(",");
     }
 
@@ -89,23 +90,20 @@ class ficbook implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const baseUrl = this.site;
 
     if (loadedCheerio("#content").length == 1) {
       const name = loadedCheerio(".title-area > h2").text();
       const releaseTime = loadedCheerio(".part-date > span").attr("title");
 
-      if (name) chapters.push({ name, releaseTime, url: novelUrl });
+      if (name) chapters.push({ name, url: novelUrl, releaseTime });
     } else {
-      loadedCheerio("li.part").each(function () {
-        const name = loadedCheerio(this).find("h3").text();
-        const releaseTime = loadedCheerio(this)
-          .find("div > span")
-          .attr("title");
-        const url = loadedCheerio(this).find("a:nth-child(1)").attr("href");
+      loadedCheerio("li.part").each((chapterNumber, element) => {
+        const name = loadedCheerio(element).find("h3").text();
+        const url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
         if (!name || !url) return;
 
-        chapters.push({ name, releaseTime, url: baseUrl + url });
+        const releaseTime = loadedCheerio(element).find("div > span").attr("title");
+        chapters.push({ name, url: this.site + url, releaseTime, chapterNumber });
       });
     }
 

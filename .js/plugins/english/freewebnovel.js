@@ -101,10 +101,11 @@ var FreeWebNovel = /** @class */ (function () {
                             .replace(/[\t\n]/g, "");
                         novel.summary = loadedCheerio(".inner").text().trim();
                         chapters = loadedCheerio("#idData > li > a")
-                            .map(function (index, element) { return ({
-                            name: loadedCheerio(element).attr("title") || "Chapter " + index,
-                            releaseTime: null,
+                            .map(function (chapterNumber, element) { return ({
+                            name: loadedCheerio(element).attr("title") || "Chapter " + chapterNumber,
                             url: _this.site + loadedCheerio(element).attr("href"),
+                            releaseTime: null,
+                            chapterNumber: chapterNumber,
                         }); })
                             .get();
                         novel.chapters = chapters;
@@ -135,6 +136,11 @@ var FreeWebNovel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/search/", {
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                Referer: this.site,
+                                Origin: this.site,
+                            },
                             method: "POST",
                             body: "searchkey=" + encodeURIComponent(searchTerm)
                         }).then(function (res) { return res.text(); })];
