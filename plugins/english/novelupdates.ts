@@ -83,8 +83,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
