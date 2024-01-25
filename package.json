@@ -6,7 +6,7 @@
     "scripts": {
         "start": "tsc-watch --onSuccess \"node ./.js/index.js\"",
         "test": "exit 0",
-        "json": "tsc && mv ./.js/index.js ./.js/index.js.temp && node ./.js/scripts/json_plugins.js && mv ./.js/index.js.temp ./.js/index.js && git add plugins && git add .dist && git add .js/plugins",
+        "json": "tsc && mv ./.js/index.js ./.js/index.js.temp && node ./.js/scripts/json_plugins.js && mv ./.js/index.js.temp ./.js/index.js && git add plugins",
         "generate": "ts-node ./scripts/multisrc/generate.ts && tsc",
         "clearMulti": "ts-node ./scripts/clearMultisrc.ts",
         "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css"
