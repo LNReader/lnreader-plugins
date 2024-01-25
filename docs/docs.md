@@ -1,12 +1,18 @@
 ## Documentation for LNReader plugins
 
--   [PluginBase](#pluginbase)
-    -   [NovelItem](#novelitem)
-    -   [SourceNovel](#sourcenovel)
-    -   [ChapterItem](#chapteritem)
-    -   [Filters](#filters)
--   [Using Cheerio](#using-cheerio)
--   [Custom fetching functions](#custom-fetching-functions)
+- [PluginBase](#pluginbase)
+  - [NovelItem](#novelitem)
+  - [SourceNovel](#sourcenovel)
+  - [ChapterItem](#chapteritem)
+  - [Filters](#filters)
+- [Using Cheerio](#using-cheerio)
+- [Custom fetching functions](#custom-fetching-functions)
+
+Most of the Plugin/Novel type definitions accessed using the `Plugin` namespace imported via
+
+```ts
+import { Plugin } from "@typings/plugin";
+```
 
 ### PluginBase
 
@@ -88,6 +94,7 @@ class ExamplePlugin implements Plugin.PluginBase {
 Version of your plugin formatted according to [semver2.0 spec](https://semver.org/) i.e. `<major>.<minor>.<patch>`
 
 Where
+
 - `patch` increments on small fixes that fix the plugin (like site changed a selector, filter had a typo etc.)
 - `minor` increments on fixes that improve the plugin (like adding/removing filters, adding search options etc.)
 - `major` increments on fixes that fix the major issues with the plugin (like changing site link)
@@ -148,12 +155,12 @@ async popularNovels(
     ): Promise<Plugin.NovelItem[]>
 ```
 
-See [Using cheerio](#usingcheerio) for more information on how to parse HTML documents
+See [Using cheerio](#using-cheerio) for more information on how to parse HTML documents
 
 ###### Parameters
 
--   `page` current page to fetch
--   `options` [PopularNovelsOptions](#pluginbasepopularnovelsoptions)
+- `page` current page to fetch
+- `options` [PopularNovelsOptions](#pluginbasepopularnovelsoptions)
 
 ###### Returns
 
@@ -185,9 +192,9 @@ class ExamplePlugin implements Plugin.PluginBase {
 
 This type is used for getting the options of the [popularNovels](#pluginbasepopularnovels) function
 
--   <span id='popularnovelsoptions-showlatestnovels'></span>`showLatestNovels: boolean` flag set when opened with `Latest` button
+- <span id='popularnovelsoptions-showlatestnovels'></span>`showLatestNovels: boolean` flag set when opened with `Latest` button
 
--   <span id='popularnovelsoptions-showlatestnovels'></span>`filters: FilterValues<typeof filters>` object containing all selected filter values. [More about Filters](#filters)
+- <span id='popularnovelsoptions-showlatestnovels'></span>`filters: FilterValues<typeof filters>` object containing all selected filter values. [More about Filters](#filters)
 
 #### PluginBase::parseNovelAndChapters
 
@@ -197,18 +204,17 @@ Function that is used to get the information about particular novel and the list
 async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel>
 ```
 
-See [Using cheerio](#usingcheerio) for more information on how to parse HTML documents
+See [Using cheerio](#using-cheerio) for more information on how to parse HTML documents
 
 ###### Parameters
 
--   `novelUrl` value from [NovelItem::url](#novelitemurl)
+- `novelUrl` value from [NovelItem::url](#novelitemurl)
 
 ###### Returns
 
 `SourceNovel` Novel information and chapter list as [SourceNovel](#sourcenovel) object
 
-> [!CAUTION]
-> [SourceNovel::url]() should be the same value as [NovelItem::url]() provided as parameter!
+> [!CAUTION] > [SourceNovel::url]() should be the same value as [NovelItem::url]() provided as parameter!
 
 ###### Example:
 
@@ -249,11 +255,11 @@ Function that is used to get the information about particular novel and the list
 async parseChapter(chapterUrl: string): Promise<string>
 ```
 
-See [Using cheerio](#usingcheerio) for more information on how to parse HTML documents
+See [Using cheerio](#using-cheerio) for more information on how to parse HTML documents
 
 ###### Parameters
 
--   `chapterUrl` value from [ChapterItem::url](#chapteritemurl)
+- `chapterUrl` value from [ChapterItem::url](#chapteritemurl)
 
 ###### Returns
 
@@ -279,12 +285,12 @@ Function that is used to find Novels in the source
 async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]>
 ```
 
-See [Using cheerio](#usingcheerio) for more information on how to parse HTML documents
+See [Using cheerio](#using-cheerio) for more information on how to parse HTML documents
 
 ###### Parameters
 
--   `searchTerm` the search term
--   `page` search page number
+- `searchTerm` the search term
+- `page` search page number
 
 ###### Returns
 
@@ -308,7 +314,7 @@ class ExamplePlugin implements Plugin.PluginBase {
 
 #### PluginBase::fetchImage
 
-Function used if when images failed to load due to site's protection
+Function used if images failed to load due to site's protection
 
 ```ts
 async fetchImage(url: string): Promise<string | undefined>
@@ -318,15 +324,15 @@ See [Fetch functions]() for detailed list of fetch functions provided by us to h
 
 ###### Parameter
 
--   `url` Image's url to fetch
+- `url` Image's url to fetch
 
 ###### Returns
 
--   `string` base64 representation of the image
+- `string` base64 representation of the image
 
 or
 
--   `undefined` on error
+- `undefined` on error
 
 ###### Example
 
@@ -334,7 +340,10 @@ or
 class ExamplePlugin implements Plugin.PluginBase {
     ...
     async fetchImage(url: string): Promise<string | undefined> {
-        return fetchFile(url);
+        const headers = {
+            Referer: "https://ln.hako.vn",
+        };
+        return await fetchFile(url, { headers: headers });
     }
     ...
 }
@@ -344,9 +353,37 @@ class ExamplePlugin implements Plugin.PluginBase {
 
 ### NovelItem
 
+It is an object representing information how to store/access the novel
+
+| Field                            | type     | Required | Description                                |
+| -------------------------------- | -------- | -------- | ------------------------------------------ |
+| <p id="novelitemurl">url</p>     | `string` | yes      | The url to the site                        |
+| <p id="novelitemname">name</p>   | `string` | yes      | The name of the novel shown in the library |
+| <p id="novelitemcover">cover</p> | `string` | no       | URL to novel's cover                       |
+
+#### Default cover
+
+You can use the default `Cover not available` cover by importing
+
+```ts
+import { defaultCover } from "@libs/defaultCover";
+```
+
 ---
 
 ### SourceNovel
+
+| Field | Type   | Required | Desciption |
+| ----- | ------ | -------- | ---------- |
+| url   | string | yes      |            |
+| name  | string | no       | string     |
+|cover|`string`|no||
+|genres|`string`|no||
+|summary|`string`|no||
+|author|`string`|no||
+|artist|`string`|no||
+|status|[NovelStatus] or `string`|no||
+        chapters?: ChapterItem[];
 
 ---
 
@@ -356,10 +393,16 @@ class ExamplePlugin implements Plugin.PluginBase {
 
 ### Filters
 
+`Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@libs/filterInputs` file:
+
+```ts
+import { FilterTypes, Filters } from "@libs/filterInputs";
+```
+
 There are 2 main objects when using filters:
 
--   [Filter definition](#filterdefinition) object
--   [FilterValues](#filterValue) object
+- [Filter definition](#filter-definition-object) object
+- [FilterValues](#filterValue) object
 
 #### Filter definition object
 
@@ -390,15 +433,15 @@ options.filters.order
 
 ```ts
 filters = {
-    genre: {
-        type: FilterTypes.CheckboxGroup,
-        label: "Genres",
-        value: [],
-        options: [
-            { label: "Isekai", value: "isekai" },
-            { label: "Romance", value: "romans" },
-        ],
-    },
+  genre: {
+    type: FilterTypes.CheckboxGroup,
+    label: "Genres",
+    value: [],
+    options: [
+      { label: "Isekai", value: "isekai" },
+      { label: "Romance", value: "romans" },
+    ],
+  },
 } satisfies Filters;
 ```
 
@@ -418,14 +461,14 @@ Types of filters supported
 
 ```ts
 options: [
-    {
-        label: "default", // in-app label
-        value: "", // in-code value
-    },
-    {
-        label: "Value ABC",
-        value: "abc",
-    },
+  {
+    label: "default", // in-app label
+    value: "", // in-code value
+  },
+  {
+    label: "Value ABC",
+    value: "abc",
+  },
 ];
 ```
 
@@ -433,14 +476,14 @@ options: [
 
 ```ts
 options: [
-    {
-        label: "Value ABC", // in-app label
-        value: "abc", // in-code value
-    },
-    {
-        label: "Value DEF",
-        value: "def",
-    },
+  {
+    label: "Value ABC", // in-app label
+    value: "abc", // in-code value
+  },
+  {
+    label: "Value DEF",
+    value: "def",
+  },
 ];
 ```
 
@@ -462,8 +505,8 @@ options.filters.abc; // FilterValue for abc filter
 
 Properties of FilterValue:
 
--   `type: FilterType` type of the filter
--   `value` value dependent on [FilterTypes](#filter-types)
+- `type: FilterType` type of the filter
+- `value` value dependent on [FilterTypes](#filter-types)
 
 ```ts
 options.filters.abc.value; // value of the filter
@@ -479,8 +522,6 @@ options.filters.abc.type; // type of the filter
 }
 ```
 
-
 ### Using Cheerio
-
 
 ### Custom fetching functions
