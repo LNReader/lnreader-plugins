@@ -7,7 +7,6 @@ on:
 
 jobs:
     updatejson:
-        if: github.repository == 'LNReader/lnreader-sources'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -21,6 +20,8 @@ jobs:
 
             - name: Update plugins host
               run: |
-                git config user.name rajarsheechatterjee
-                git config user.email rajarshee.adm@gmail.com
-                host.sh
+                git config user.name nyagami
+                git config user.email hoangquan05112002@gmail.com
+                chmod +x ./host.sh
+                ./host.sh
+              shell: bash

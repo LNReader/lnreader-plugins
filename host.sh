@@ -1,5 +1,3 @@
-git fetch
-
 current=`git rev-parse --abbrev-ref HEAD`
 dist=dist
 exists=`git show-ref refs/heads/$dist`
