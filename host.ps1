@@ -2,7 +2,8 @@ $current='git rev-parse --abbrev-ref HEAD'
 $dist='dist'
 $exists='git show-ref refs/heads/$dist'
 
-if  (-n "$exists" ){
+if  ($exists){
+    ## Make a new one
     git checkout $dist
 }else{
     git checkout -b $dist
