@@ -137,10 +137,8 @@ class NovelUpdates implements Plugin.PluginBase {
 
         loadedCheerio("li.sp_li_chp").each(function () {
             const chapterName = loadedCheerio(this).text().trim();
-            const chapterNumber = Number(chapterName.match(/c(\d+)/i)?.[0]);
-
+            const chapterNumber = Number(chapterName.match(/c(\d+)/i)?.[0]) || undefined;
             const releaseDate = null;
-
             const chapterUrl =
                 "https:" +
                 loadedCheerio(this).find("a").first().next().attr("href");

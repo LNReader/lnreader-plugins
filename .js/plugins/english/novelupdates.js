@@ -282,7 +282,7 @@ var NovelUpdates = /** @class */ (function () {
                         loadedCheerio("li.sp_li_chp").each(function () {
                             var _a;
                             var chapterName = loadedCheerio(this).text().trim();
-                            var chapterNumber = Number((_a = chapterName.match(/c(\d+)/i)) === null || _a === void 0 ? void 0 : _a[0]);
+                            var chapterNumber = Number((_a = chapterName.match(/c(\d+)/i)) === null || _a === void 0 ? void 0 : _a[0]) || undefined;
                             var releaseDate = null;
                             var chapterUrl = "https:" +
                                 loadedCheerio(this).find("a").first().next().attr("href");
