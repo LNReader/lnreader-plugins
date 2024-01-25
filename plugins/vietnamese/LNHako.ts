@@ -3,20 +3,14 @@ import { fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 import { NovelStatus } from "@libs/novelStatus";
-class HakoPlugin implements Plugin.PluginBase {
-    id: string;
-    name: string;
-    icon: string;
-    site: string;
-    version: string;
+import { FilterTypes, Filters } from "@libs/filterInputs";
 
-    constructor() {
-        this.id = "ln.hako";
-        this.name = "Hako";
-        this.icon = "src/vi/hakolightnovel/icon.png";
-        this.site = "https://ln.hako.vn";
-        this.version = "1.0.0";
-    }
+class HakoPlugin implements Plugin.PluginBase {
+    id = "ln.hako";
+    name = "Hako";
+    icon = "src/vi/hakolightnovel/icon.png";
+    site = "https://ln.hako.vn";
+    version = "1.0.1";
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];
         loadedCheerio("#mainpart .row .thumb-item-flow").each((index, ele) => {
@@ -50,12 +44,21 @@ class HakoPlugin implements Plugin.PluginBase {
     }
     async popularNovels(
         pageNo: number,
-        options: Plugin.PopularNovelsOptions
+        {showLatestNovels, filters}: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
-        const link =
-            this.site +
-            "/danh-sach?truyendich=1&sapxep=topthang&page=" +
-            pageNo;
+        let link = this.site + "/danh-sach"
+        if(filters.alphabet.value){
+            link += "/" + filters.alphabet.value;
+        }
+        const params = new URLSearchParams();
+        for(const novelType of filters.type.value){
+            params.append(novelType, "1");
+        }
+        for(const status of filters.status.value){
+            params.append(status, "1");
+        }
+        params.append("sapxep", filters.sort.value);
+        link += '?' + params.toString() + '&page=' + pageNo
         const result = await fetch(link);
         const body = await result.text();
         const loadedCheerio = parseHTML(body);
@@ -175,6 +178,78 @@ class HakoPlugin implements Plugin.PluginBase {
         };
         return await fetchFile(url, { headers: headers });
     }
+    filters = {
+        alphabet: {
+            type: FilterTypes.Picker,
+            value: "",
+            label: "Chữ cái",
+            options: [
+                {label: 'Tất cả', value: ''},
+                {label: 'Khác', value: 'khac'},
+                {label: 'A', value: 'a'},
+                {label: 'B', value: 'b'},
+                {label: 'C', value: 'c'},
+                {label: 'D', value: 'd'},
+                {label: 'E', value: 'e'},
+                {label: 'F', value: 'f'},
+                {label: 'G', value: 'g'},
+                {label: 'H', value: 'h'},
+                {label: 'I', value: 'i'},
+                {label: 'J', value: 'j'},
+                {label: 'K', value: 'k'},
+                {label: 'L', value: 'l'},
+                {label: 'M', value: 'm'},
+                {label: 'N', value: 'n'},
+                {label: 'O', value: 'o'},
+                {label: 'P', value: 'p'},
+                {label: 'Q', value: 'q'},
+                {label: 'R', value: 'r'},
+                {label: 'S', value: 's'},
+                {label: 'T', value: 't'},
+                {label: 'U', value: 'u'},
+                {label: 'V', value: 'v'},
+                {label: 'W', value: 'w'},
+                {label: 'X', value: 'x'},
+                {label: 'Y', value: 'y'},
+                {label: 'Z', value: 'z'},
+            ]
+        },
+        type: {
+            type: FilterTypes.CheckboxGroup,
+            label: "Phân loại",
+            value: [],
+            options: [
+                {label: "Truyện dịch", value: "truyendich"},
+                {label: "Truyện sáng tác", value: "sangtac"},
+                {label: "Convert", value: "convert"}
+            ]
+        },
+        status: {
+            type: FilterTypes.CheckboxGroup,
+            label: "Tình trạng",
+            value: [],
+            options: [
+                {label: "Đang tiến hành", value: "dangtienhanh"},
+                {label: "Tạm ngưng", value: "tamngung"},
+                {label: "Đã hoàn thành", value: "hoanthanh"}
+            ]
+        },
+        sort: {
+            type: FilterTypes.Picker,
+            label: "Sắp xếp",
+            value: "top",
+            options: [
+                {label: "A-Z", value: "tentruyen"},
+                {label: "Z-A", value: "tentruyenza"},
+                {label: "Mới cập nhật", value: "capnhat"},
+                {label: "Truyện mới", value: "truyenmoi"},
+                {label: "Theo dõi", value: "theodoi"},
+                {label: "Top toàn thời gian", value: "top"},
+                {label: "Top tháng", value: "topthang"},
+                {label: "Số từ", value: "sotu"},
+            ]
+        }
+    } satisfies Filters;
 }
 
 export default new HakoPlugin();

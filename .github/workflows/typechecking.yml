@@ -18,12 +18,4 @@ jobs:
               run: npm install
 
             - name: Typescript checking
-              run: |
-                  cat > config.json << EOF
-                  {
-                      "githubUsername": "LNReader",
-                      "githubRepository": "lnreader-sources",
-                      "githubBranch": "master"
-                  }
-                  EOF
-                  tsc
+              run: tsc

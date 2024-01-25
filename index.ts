@@ -8,7 +8,10 @@ import * as pluginApi from "./test_web/api/plugins";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
 const app = express();
-const port = 3000;
+const port = Number(process.argv[2]);
+if(!port){
+    process.exit(0);
+}
 const host = "localhost";
 
 const dirname = path.join(__dirname, "..");
@@ -95,7 +98,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, host, () => {
-    console.log("Testing plugins web listening on http://localhost:3000");
+    console.log(`Testing plugins web listening on http://localhost:${port}`);
 });
 
 //Dayjs localization

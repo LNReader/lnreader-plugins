@@ -5,22 +5,18 @@ import { languages } from "@libs/languages";
 import * as path from "path";
 import { Plugin, isPlugin } from "@typings/plugin";
 
-import config from "./../config.json";
-
 const root = path.dirname(__dirname);
 const outRoot = path.join(root, "..");
-const username = config.githubUsername;
-const repo = config.githubRepository;
-const branch = config.githubBranch;
-if (!username || !repo || !branch) {
-    console.error("config.json not provided!");
-    process.exit(1);
-}
-if (!fs.existsSync(path.join(outRoot, ".dist", username))) {
-    fs.mkdirSync(path.join(outRoot, ".dist", username));
-}
-const githubIconsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/icons`;
-const githubPluginsLink = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/.js/plugins`;
+const { execSync } = require('child_process');
+const REMOTE = execSync('git remote get-url origin').toString().replace(/[\s\n]/g, '');
+const CURRENT_BRANCH = execSync('git rev-parse --abbrev-ref HEAD').toString().replace(/[\s\n]/g, '');
+const USERNAME = REMOTE.split('/')[3].trim();
+const REPO = REMOTE.split('/')[4].trim().replace(/\.git$/, '');
+const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
+
+
+const ICON_LINK = `${USER_CONTENT_LINK}/icons`;
+const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/plugins`;
 
 const json: {
     [key: string]: {
@@ -33,8 +29,11 @@ const json: {
         iconUrl: string;
     }[];
 } = {};
-const jsonPath = path.join(outRoot, ".dist", username, "plugins.json");
-const jsonMinPath = path.join(outRoot, ".dist", username, "plugins.min.json");
+if(!fs.existsSync(path.join(outRoot, '.dist'))){
+    fs.mkdirSync(path.join(outRoot, '.dist'));
+}
+const jsonPath = path.join(outRoot, ".dist", "plugins.json");
+const jsonMinPath = path.join(outRoot, ".dist", "plugins.min.json");
 const pluginSet = new Set();
 
 for (let language in languages) {
@@ -64,8 +63,8 @@ for (let language in languages) {
             site,
             lang: languageNative,
             version,
-            url: `${githubPluginsLink}/${language.toLowerCase()}/${plugin}`,
-            iconUrl: `${githubIconsLink}/${icon}`,
+            url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
+            iconUrl: `${ICON_LINK}/${icon}`,
         } as const;
 
         if (pluginSet.has(id)) {
