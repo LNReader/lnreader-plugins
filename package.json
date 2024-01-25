@@ -9,7 +9,8 @@
         "json": "tsc && node ./.js/scripts/json_plugins.js && git add plugins",
         "generate": "ts-node ./scripts/multisrc/generate.ts && tsc",
         "clearMulti": "ts-node ./scripts/clearMultisrc.ts",
-        "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css"
+        "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
+        "host": "host.sh"
     },
     "author": "LNReader",
     "license": "MIT",
