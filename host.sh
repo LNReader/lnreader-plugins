@@ -17,3 +17,4 @@ git commit -m "Host plugins"
 git push -f
 
 git checkout $current
+sleep 5
