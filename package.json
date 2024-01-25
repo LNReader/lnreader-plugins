@@ -6,8 +6,8 @@
     "scripts": {
         "start": "tsc-watch --onSuccess \"node ./.js/index.js 3000\"",
         "test": "exit 0",
-        "json": "tsc && node ./.js/scripts/json_plugins.js && git add plugins",
-        "generate": "ts-node ./scripts/multisrc/generate.ts && tsc",
+        "json": "tsc && node ./.js/scripts/json_plugins.js",
+        "generate": "ts-node ./scripts/multisrc/generate.ts",
         "clearMulti": "ts-node ./scripts/clearMultisrc.ts",
         "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
         "host": "host.sh"
