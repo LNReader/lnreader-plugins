@@ -72,8 +72,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
         link += '&pg=' + page;
 
-        const headers = new Headers();
-        const body = await fetchApi(link, { headers }).then((result) =>
+        const body = await fetchApi(link).then((result) =>
             result.text()
         );
 
@@ -104,6 +103,7 @@ class NovelUpdates implements Plugin.PluginBase {
             .map((i, el) => loadedCheerio(el).text())
             .toArray()
             .join(",");
+
         novel.status = loadedCheerio("#editstatus").text().includes("Ongoing")
             ? "Ongoing"
             : "Completed";
@@ -137,6 +137,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
         loadedCheerio("li.sp_li_chp").each(function () {
             const chapterName = loadedCheerio(this).text().trim();
+            const chapterNumber = Number(chapterName.match(/c(\d+)/i)?.[0]);
 
             const releaseDate = null;
 
@@ -148,6 +149,7 @@ class NovelUpdates implements Plugin.PluginBase {
                 name: chapterName,
                 releaseTime: releaseDate,
                 url: chapterUrl,
+                chapterNumber: chapterNumber
             });
         });
 

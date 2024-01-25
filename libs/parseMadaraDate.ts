@@ -20,7 +20,7 @@ export const parseMadaraDate = (date: string) => {
             dayJSDate.subtract(timeAgoInt, "months"); // go back N months
         }
 
-        return dayJSDate.format("LL");
+        return dayJSDate.toISOString();
     }
     return date; // there is no "ago" so don't mess with the date
 };

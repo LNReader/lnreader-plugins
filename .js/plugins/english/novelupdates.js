@@ -188,7 +188,7 @@ var NovelUpdates = /** @class */ (function () {
         var _b, _c, _d, _e, _f, _g;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var link, headers, body, loadedCheerio;
+            var link, body, loadedCheerio;
             return __generator(this, function (_h) {
                 switch (_h.label) {
                     case 0:
@@ -222,8 +222,7 @@ var NovelUpdates = /** @class */ (function () {
                         link += '&sort=' + filters.sort.value;
                         link += '&order=' + filters.order.value;
                         link += '&pg=' + page;
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link, { headers: headers }).then(function (result) {
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link).then(function (result) {
                                 return result.text();
                             })];
                     case 1:
@@ -281,7 +280,9 @@ var NovelUpdates = /** @class */ (function () {
                         text = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(text);
                         loadedCheerio("li.sp_li_chp").each(function () {
+                            var _a;
                             var chapterName = loadedCheerio(this).text().trim();
+                            var chapterNumber = Number((_a = chapterName.match(/c(\d+)/i)) === null || _a === void 0 ? void 0 : _a[0]);
                             var releaseDate = null;
                             var chapterUrl = "https:" +
                                 loadedCheerio(this).find("a").first().next().attr("href");
@@ -289,6 +290,7 @@ var NovelUpdates = /** @class */ (function () {
                                 name: chapterName,
                                 releaseTime: releaseDate,
                                 url: chapterUrl,
+                                chapterNumber: chapterNumber
                             });
                         });
                         novel.chapters = chapter.reverse();
