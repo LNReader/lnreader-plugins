@@ -19,7 +19,7 @@ Repository to host plugins and related issues, and requests for
 
 #### via the testing website
 
-- `./host.sh`
+- `npm run host`
 
 [Detailed tutorial for testing website](./docs/website-tutorial.md)
 
