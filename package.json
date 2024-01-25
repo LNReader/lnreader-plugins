@@ -4,12 +4,13 @@
     "description": "Plugins repo for LNReader",
     "main": "index.js",
     "scripts": {
-        "start": "tsc-watch --onSuccess \"node ./.js/index.js\"",
+        "start": "tsc-watch --onSuccess \"node ./.js/index.js 3000\"",
         "test": "exit 0",
-        "json": "tsc && mv ./.js/index.js ./.js/index.js.temp && node ./.js/scripts/json_plugins.js && mv ./.js/index.js.temp ./.js/index.js && git add plugins && git add .dist && git add .js/plugins",
-        "generate": "ts-node ./scripts/multisrc/generate.ts && tsc",
+        "json": "tsc && node ./.js/scripts/json_plugins.js",
+        "generate": "ts-node ./scripts/multisrc/generate.ts",
         "clearMulti": "ts-node ./scripts/clearMultisrc.ts",
-        "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css"
+        "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
+        "host": "host.sh"
     },
     "author": "LNReader",
     "license": "MIT",
@@ -41,8 +42,5 @@
         "@types/node": "^20.3.1",
         "pre-commit": "^1.2.2",
         "tsc-watch": "^6.0.4"
-    },
-    "pre-commit": [
-        "json"
-    ]
+    }
 }
