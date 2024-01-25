@@ -12,6 +12,13 @@ if  ($exists){
     git checkout -b $dist
 }
 
+if(-Not $?){
+    # If checkout failed
+    echo "=========="
+    echo "Could not checkout branch dist! See the error above and fix it!"
+    exit 1
+}
+
 git merge $current --strategy-option theirs
 
 npm run generate

@@ -8,6 +8,13 @@ else
     git checkout -b $dist
 fi
 
+if [ $? -eq 1 ]; then
+    # If checkout failed
+    echo "=========="
+    echo "Could not checkout branch dist! See the error above and fix it!"
+    exit 1
+fi
+
 git merge $current --strategy-option theirs
 
 npm run generate

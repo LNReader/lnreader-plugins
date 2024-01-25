@@ -10,7 +10,7 @@
         "generate": "ts-node ./scripts/multisrc/generate.ts",
         "clearMulti": "ts-node ./scripts/clearMultisrc.ts",
         "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
-        "host": "host.sh"
+        "host": "chmod +x ./host.sh && ./host.sh"
     },
     "author": "LNReader",
     "license": "MIT",
