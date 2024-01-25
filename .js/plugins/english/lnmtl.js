@@ -153,9 +153,10 @@ var LnMTLPlugin = /** @class */ (function () {
                         });
                         novel.genres = loadedCheerio('.panel-heading:contains(" Genres ")')
                             .next()
-                            .text()
-                            .trim()
-                            .replace(/\s\s/g, ",");
+                            .find('a')
+                            .map(function (i, el) { return loadedCheerio(el).text(); })
+                            .toArray()
+                            .join(",");
                         delay = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
                         volumes = JSON.parse(((_b = (_a = loadedCheerio("main")
                             .next()

@@ -81,9 +81,10 @@ class LnMTLPlugin implements Plugin.PluginBase {
 
         novel.genres = loadedCheerio('.panel-heading:contains(" Genres ")')
             .next()
-            .text()
-            .trim()
-            .replace(/\s\s/g, ",");
+            .find('a')
+            .map((i,el) => loadedCheerio(el).text())
+            .toArray()
+            .join(",");
 
         const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
         let volumes = JSON.parse(
