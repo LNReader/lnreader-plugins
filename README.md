@@ -26,23 +26,6 @@ Repository to host plugins and related issues, and requests for [LNReader](https
 
 - Prerequisites: Nodejs >= 18
 1. `npm install`
-2.  Create `config.json` file in root dir
-
-```json
-{
-	"githubUsername": "<username>",
-	"githubRepository": "<repo>",
-	"githubBranch": "<branch>"
-}
-```
-Example
-```json
-{
-	"githubUsername": "LNReader",
-	"githubRepository": "lnreader-sources",
-	"githubBranch": "master"
-}
-```
 ## Contributing
 
 1. Choose your language in [plugins](./plugins)
@@ -61,7 +44,7 @@ Example
 
 ### If you want to test in app side.
 
-- Commit and push changes. Check your own json files in github fork: `.dist/<username>/`
+- `./host.sh`
 
 - Change these in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/master/src/plugins/pluginManager.ts) (app repo) to yours
 
@@ -70,15 +53,7 @@ Example
 ```ts
 const  githubUsername = 'LNReader';
 const  githubRepository = 'lnreader-sources';
-const  githubBranch = 'master';
 ```
-
- 
-
-- Note: No need to modify `.dist` folder when opening PR. There's already action for that job.
-
-  
-
 ----------
 
   
