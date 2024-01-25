@@ -3,9 +3,9 @@ $dist='dist'
 $exists='git show-ref refs/heads/$dist'
 
 if  ($exists){
-    ## Make a new one
     git checkout $dist
 }else{
+    ## Make a new one
     git checkout -b $dist
 }
 
