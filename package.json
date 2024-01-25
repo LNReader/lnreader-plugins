@@ -42,8 +42,5 @@
         "@types/node": "^20.3.1",
         "pre-commit": "^1.2.2",
         "tsc-watch": "^6.0.4"
-    },
-    "pre-commit": [
-        "json"
-    ]
+    }
 }
