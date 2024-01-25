@@ -20,8 +20,8 @@ jobs:
 
             - name: Update plugins host
               run: |
-                git config user.name nyagami
-                git config user.email hoangquan05112002@gmail.com
+                git config user.name rajarsheechatterjee
+                git config user.email rajarshee.adm@gmail.com
                 chmod +x ./host.sh
                 ./host.sh
               shell: bash
