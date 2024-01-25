@@ -1,6 +1,9 @@
-$current='git rev-parse --abbrev-ref HEAD'
+$current=$(git rev-parse --abbrev-ref HEAD)
 $dist='dist'
-$exists='git show-ref refs/heads/$dist'
+$exists=$(git show-ref refs/heads/$dist)
+
+echo $current
+echo $exists
 
 if  ($exists){
     git checkout $dist
