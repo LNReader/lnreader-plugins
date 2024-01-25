@@ -9,14 +9,14 @@ class RNBH implements Plugin.PluginBase {
   id = "RNBH.org";
   name = "RanobeHub";
   version = "1.0.0";
-  site = "https://ranobehub.org/";
+  site = "https://ranobehub.org";
   icon = "src/ru/ranobehub/icon.png";
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + "api/search?page=" + pageNo + "&sort=";
+    let url = this.site + "/api/search?page=" + pageNo + "&sort=";
     url += showLatestNovels
       ? "last_chapter_at"
       : filters?.sort || "computed_rating";
@@ -26,32 +26,25 @@ class RNBH implements Plugin.PluginBase {
       if (filters.country?.value?.length) {
         url += "&country=" + filters.country.value.join(",");
       }
-      if (
-        filters.tags?.value?.include?.length ||
-        filters.events?.value?.include?.length
-      ) {
-        const tagsPositive = [
-          filters.tags.value?.include,
-          filters.events.value?.include,
-        ]
-          .flat()
-          .filter((t) => t);
-        url += "&tags:positive=" + tagsPositive.join(",");
+
+      const includeTags = [
+        filters.tags?.value?.include,
+        filters.events?.value?.include,
+      ].flat().filter((t) => t);
+
+      if (includeTags.length) {
+        url += "&tags:positive=" + includeTags.join(",");
       }
-      if (
-        filters?.tags?.value?.exclude?.length ||
-        filters?.events?.value?.exclude?.length
-      ) {
-        const tagsNegative = [
-          filters.tags.value?.exclude,
-          filters.events.value?.exclude,
-        ]
-          .flat()
-          .filter((t) => t);
-        url += "&tags:negative=" + tagsNegative.join(",");
+
+      const excludeTags = [
+        filters.tags?.value?.exclude,
+        filters.events?.value?.exclude,
+      ].flat().filter((t) => t);
+
+      if (excludeTags.length) {
+        url += "&tags:negative=" + excludeTags.join(",");
       }
     }
-
     url += "&take=40";
     const result = await fetchApi(url);
     const body = (await result.json()) as { resource: responseNovels[] };
@@ -72,7 +65,7 @@ class RNBH implements Plugin.PluginBase {
     const novelId = novelUrl
       .substring("https://ranobehub.org/ranobe/".length)
       .split("-")[0];
-    const result = await fetchApi(`${this.site}api/ranobe/${novelId}`);
+    const result = await fetchApi(this.site + "/api/ranobe/" + novelId);
     const json = (await result.json()) as { data: responseNovel };
 
     const novel: Plugin.SourceNovel = {
@@ -96,7 +89,7 @@ class RNBH implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const chaptersRaw = await fetchApi(`${this.site}api/ranobe/${novelId}/contents`);
+    const chaptersRaw = await fetchApi(`${this.site}/api/ranobe/${novelId}/contents`);
     const chaptersJSON = (await chaptersRaw.json()) as {
       volumes: VolumesEntity[];
     };
@@ -122,11 +115,10 @@ class RNBH implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
     loadedCheerio(".chapter-hoticons").remove();
-    const baseUrl = this.site;
-    loadedCheerio("div.text:nth-child(1)  img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const dataMediaId = loadedCheerio(this).attr("data-media-id");
-        loadedCheerio(this).attr("src", baseUrl + "api/media/" + dataMediaId);
+    loadedCheerio("div.text:nth-child(1)  img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const dataMediaId = loadedCheerio(element).attr("data-media-id");
+        loadedCheerio(element).attr("src", this.site + "/api/media/" + dataMediaId);
       }
     });
 
@@ -144,11 +136,9 @@ class RNBH implements Plugin.PluginBase {
     searchTerm: string,
     //pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}api/fulltext/global?query=${searchTerm}&take=10`;
-
+    const url = `${this.site}/api/fulltext/global?query=${searchTerm}&take=10`;
     const result = await fetchApi(url);
     const data = (await result.json()) as responseSearch[];
-
     const novels: Plugin.NovelItem[] = [];
 
     data

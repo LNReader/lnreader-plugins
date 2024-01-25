@@ -58,7 +58,7 @@ class FreeWebNovel implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio("#idData > li > a")
       .map((chapterIndex, element) => ({
-        name: loadedCheerio(element).attr("title") || "Chapter " + chapterIndex,
+        name: loadedCheerio(element).attr("title") || "Chapter " + (chapterIndex + 1),
         url: this.site + loadedCheerio(element).attr("href"),
         releaseTime: null,
         chapterNumber: chapterIndex + 1,

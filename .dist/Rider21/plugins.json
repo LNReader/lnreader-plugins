@@ -811,7 +811,7 @@
 		{
 			"id": "RNBH.org",
 			"name": "RanobeHub",
-			"site": "https://ranobehub.org/",
+			"site": "https://ranobehub.org",
 			"lang": "русский язык",
 			"version": "1.0.0",
 			"url": "https://raw.githubusercontent.com/Rider21/lnreader-sources/plugins/.js/plugins/russian/ranobehub.js",

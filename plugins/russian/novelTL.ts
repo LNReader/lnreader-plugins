@@ -151,16 +151,15 @@ class TL implements Plugin.PluginBase {
     });
     const json = (await result.json()) as response;
 
-    const baseUrl = this.site;
     const loadedCheerio = parseHTML(json.data.chapter?.text?.text || "");
-    loadedCheerio("p > a[href]").each(function () {
-      let src = baseUrl + loadedCheerio(this).attr("href");
+    loadedCheerio("p > a[href]").each((index, element) => {
+      let src = loadedCheerio(element).attr("href") || "";
       if (!src.startsWith("http")) {
-        src = baseUrl + src;
+        src = this.site + src;
       }
-      loadedCheerio(this).find("picture").remove();
-      loadedCheerio(this).removeAttr("href");
-      loadedCheerio(`<img src="${src}">`).appendTo(this);
+      loadedCheerio(element).find("picture").remove();
+      loadedCheerio(element).removeAttr("href");
+      loadedCheerio(`<img src="${src}">`).appendTo(element);
     });
 
     const chapterText = loadedCheerio.html();

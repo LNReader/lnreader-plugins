@@ -84,10 +84,9 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(chapterUrl);
-    const body = await result.text();
+    const result = await fetchApi(chapterUrl).then((res) => res.text());
 
-    let loadedCheerio = parseHTML(body);
+    let loadedCheerio = parseHTML(result);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
     const json: response = JSON.parse(jsonRaw || "{}");
 
@@ -95,11 +94,10 @@ class RNRF implements Plugin.PluginBase {
       json.props.pageProps?.chapter?.content?.text || "",
     );
 
-    const baseUrl = this.site;
-    loadedCheerio("img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio("img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
 

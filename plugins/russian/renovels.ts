@@ -21,39 +21,17 @@ class ReN implements Plugin.PluginBase {
       : "-";
     url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
-    if (filters?.genres?.value?.include?.length) {
-      url += filters.genres.value.include.map((i) => "&genres=" + i).join("");
-    }
-
-    if (filters?.genres?.value?.exclude?.length) {
-      url += filters.genres.value.exclude
-        .map((i) => "&exclude_genres=" + i)
-        .join("");
-    }
-
-    if (filters?.status?.value?.length) {
-      url += filters.status.value.map((i) => "&status=" + i).join("");
-    }
-
-    if (filters?.types?.value?.length) {
-      url += filters.types.value.map((i) => "&types=" + i).join("");
-    }
-
-    if (filters?.categories?.value?.include?.length) {
-      url += filters.categories.value.include
-        .map((i) => "&categories=" + i)
-        .join("");
-    }
-
-    if (filters?.categories?.value?.exclude?.length) {
-      url += filters.categories.value.exclude
-        .map((i) => "&exclude_categories=" + i)
-        .join("");
-    }
-
-    if (filters?.age_limit?.value?.length) {
-      url += filters.age_limit.value.map((i) => "&age_limit=" + i).join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]: any) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + value.join("&" + type + "=");
+      }
+      if (value?.include instanceof Array && value.include.length) {
+        url += "&" + value.include.join("&" + type + "=");
+      }
+      if (value?.exclude instanceof Array && value.exclude.length) {
+        url += "&" + value.exclude.join("&exclude_" + type + "=");
+      }
+    });
 
     url += "&page=" + pageNo;
 
@@ -62,7 +40,7 @@ class ReN implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = body.content.map((novel) => ({
       name: novel.main_name || novel.secondary_name,
-      cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
+      cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
       url: this.site + "/novel/" + novel.dir,
     }));
 
@@ -80,8 +58,8 @@ class ReN implements Plugin.PluginBase {
       summary: body.content.description,
       cover:
         this.site +
-        (body.content.img?.high ||
-          body.content.img?.mid ||
+        (body.content.img.high ||
+          body.content.img.mid ||
           body.content.img.low),
       status:
         body.content.status.name === "Продолжается"
@@ -117,7 +95,7 @@ class ReN implements Plugin.PluginBase {
           chapters.push({
             name:
               "Том " + chapter.tome + 
-              "Глава " + chapter.chapter + 
+              " Глава " + chapter.chapter + 
                 (chapter.name ? " " + chapter.name.trim() : ""),
             url: `${this.site}/novel/${novelID}/${chapter.id}/`,
             releaseTime: dayjs(chapter.upload_date).format("LLL"),
@@ -151,7 +129,7 @@ class ReN implements Plugin.PluginBase {
     body.content.forEach((novel) =>
       novels.push({
         name: novel.main_name || novel.secondary_name,
-        cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
+        cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
         url: this.site + "/novel/" + novel.dir,
       }),
     );

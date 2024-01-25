@@ -308,7 +308,8 @@ var AuthorToday = /** @class */ (function () {
     };
     AuthorToday.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, json, key, text, i, loadedCheerio, baseUrl, chapterText;
+            var result, json, key, text, i, loadedCheerio, chapterText;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl, {
@@ -330,12 +331,11 @@ var AuthorToday = /** @class */ (function () {
                             text += String.fromCharCode(json.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)));
                         }
                         loadedCheerio = (0, cheerio_1.load)(text);
-                        baseUrl = this.site;
-                        loadedCheerio("img").each(function () {
+                        loadedCheerio("img").each(function (index, element) {
                             var _a;
-                            if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
-                                var src = loadedCheerio(this).attr("src");
-                                loadedCheerio(this).attr("src", baseUrl + src);
+                            if (!((_a = loadedCheerio(element).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
+                                var src = loadedCheerio(element).attr("src");
+                                loadedCheerio(element).attr("src", _this.site + src);
                             }
                         });
                         chapterText = loadedCheerio.html();
@@ -347,39 +347,31 @@ var AuthorToday = /** @class */ (function () {
     AuthorToday.prototype.searchNovels = function (searchTerm, pageNo) {
         if (pageNo === void 0) { pageNo = 1; }
         return __awaiter(this, void 0, void 0, function () {
-            var baseUrl, url, result, body, loadedCheerio, novels;
+            var url, result, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        baseUrl = this.site;
-                        url = baseUrl + "/search?category=works&q=" + searchTerm + "&page=";
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url + pageNo)];
+                        url = this.site + "/search?category=works&q=" + searchTerm + "&page=" + pageNo;
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
                         result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _a.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         novels = [];
-                        loadedCheerio("div.book-row").each(function () {
-                            var _a;
-                            var name = loadedCheerio(this)
+                        loadedCheerio("div.book-row").each(function (index, element) {
+                            var _a, _b;
+                            var name = loadedCheerio(element)
                                 .find('div[class="book-title"] a')
                                 .text()
                                 .trim();
-                            var cover = loadedCheerio(this).find("img").attr("src");
-                            var url = baseUrl +
-                                "/work/" +
-                                ((_a = loadedCheerio(this)
-                                    .find('div[class="book-title"] a')
-                                    .attr("href")) === null || _a === void 0 ? void 0 : _a.split("/")[2]);
-                            if (cover) {
-                                cover = cover.split("?")[0];
-                            }
-                            else {
-                                cover = defaultCover_1.defaultCover;
-                            }
-                            novels.push({ name: name, cover: cover, url: url });
+                            var cover = loadedCheerio(element).find("img").attr("src");
+                            var url = (_b = (_a = loadedCheerio(element)
+                                .find('div[class="book-title"] a')
+                                .attr("href")) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b[2];
+                            cover = cover ? cover.split("?")[0] : defaultCover_1.defaultCover;
+                            if (!url)
+                                return;
+                            novels.push({ name: name, cover: cover, url: _this.site + "/work/" + url });
                         });
                         return [2 /*return*/, novels];
                 }

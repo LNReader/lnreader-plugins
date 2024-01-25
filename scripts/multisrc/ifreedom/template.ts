@@ -31,20 +31,17 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
+    { filters, showLatestNovels }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/vse-knigi/?sort=" +
       (showLatestNovels ? "По дате обновления" : filters?.sort?.value || "По рейтингу");
 
-    if (filters?.status?.value instanceof Array) {
-      url += filters.status.value.map((i) => "&status[]=" + i).join("");
-    }
-    if (filters?.lang?.value instanceof Array) {
-      url += filters.lang.value.map((i) => "&lang[]=" + i).join("");
-    }
-    if (filters?.genre?.value instanceof Array) {
-      url += filters.genre.value.map((i) => "&genre[]=" + i).join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + value.join("&" + type + "[]=");
+      }
+    });
+
     url += "&bpage=" + page;
 
     const body = await fetchApi(url).then((res) => res.text());
@@ -121,11 +118,14 @@ class IfreedomPlugin implements Plugin.PluginBase {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio(".entry-content img").each(function () {
-      const srcset = loadedCheerio(this).attr("srcset")?.split?.(" ");
+    loadedCheerio(".entry-content img").each((index, element) => {
+      const srcset = loadedCheerio(element).attr("srcset")?.split?.(" ");
       if (srcset?.length) {
-        const bestlink = srcset.filter((url) => url.startsWith("http")).unshift();
-        if (typeof bestlink == 'string') loadedCheerio(this).attr("src", bestlink);
+        loadedCheerio(element).removeAttr("srcset");
+        const bestlink: string[] = srcset.filter((url) => url.startsWith("http"));
+        if (bestlink[bestlink.length - 1]) {
+          loadedCheerio(element).attr("src", bestlink[bestlink.length - 1]);
+        }
       }
     });
 

@@ -16,8 +16,7 @@ class ficbook implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const baseUrl = this.site;
-    let url = baseUrl;
+    let url = this.site;
 
     if (filters?.directions?.value) {
       url += "/popular-fanfics/" + filters.directions.value;
@@ -27,33 +26,29 @@ class ficbook implements Plugin.PluginBase {
       url += "/" + (filters?.sort?.value || "fanfiction") + "?p=" + pageNo;
     }
 
-    const result = await fetchApi(url);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
-
+    const result = await fetchApi(url).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio("article.fanfic-inline").each(function () {
-      const name = loadedCheerio(this).find("h3 > a").text().trim();
-      let cover = loadedCheerio(this).find("picture > img").attr("src");
-      const url = loadedCheerio(this).find("h3 > a").attr("href");
+    loadedCheerio("article.fanfic-inline").each((index, element) => {
+      const name = loadedCheerio(element).find("h3 > a").text().trim();
+      let cover = loadedCheerio(element).find("picture > img").attr("src");
+      const url = loadedCheerio(element).find("h3 > a").attr("href");
 
       cover = cover
         ? cover.replace(/covers\/m_|covers\/d_/g, "covers/")
         : defaultCover;
       if (!name || !url) return;
 
-      novels.push({ name, cover, url: baseUrl + url.replace(/\?.*/g, "") });
+      novels.push({ name, cover, url: this.site + url.replace(/\?.*/g, "") });
     });
 
     return novels;
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelUrl);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(novelUrl).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
@@ -115,10 +110,8 @@ class ficbook implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(chapterUrl);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(chapterUrl).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     let chapterText = "";
 
     loadedCheerio("#content")

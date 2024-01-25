@@ -133,11 +133,10 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     const loadedCheerio = parseHTML(text);
-    const baseUrl = this.site;
-    loadedCheerio("img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio("img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
     const chapterText = loadedCheerio.html();
@@ -148,34 +147,27 @@ class AuthorToday implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const baseUrl = this.site;
-    const url = baseUrl + "/search?category=works&q=" + searchTerm + "&page=";
-    const result = await fetchApi(url + pageNo);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
+    const url =
+      this.site + "/search?category=works&q=" + searchTerm + "&page=" + pageNo;
+    const result = await fetchApi(url).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio("div.book-row").each(function () {
-      const name = loadedCheerio(this)
+    loadedCheerio("div.book-row").each((index, element) => {
+      const name = loadedCheerio(element)
         .find('div[class="book-title"] a')
         .text()
         .trim();
-      let cover = loadedCheerio(this).find("img").attr("src");
-      const url =
-        baseUrl +
-        "/work/" +
-        loadedCheerio(this)
-          .find('div[class="book-title"] a')
-          .attr("href")
-          ?.split("/")[2];
+      let cover = loadedCheerio(element).find("img").attr("src");
+      const url = loadedCheerio(element)
+        .find('div[class="book-title"] a')
+        .attr("href")
+        ?.split("/")?.[2];
 
-      if (cover) {
-        cover = cover.split("?")[0];
-      } else {
-        cover = defaultCover;
-      }
+      cover = cover ? cover.split("?")[0] : defaultCover;
 
-      novels.push({ name, cover, url });
+      if (!url) return;
+      novels.push({ name, cover, url: this.site + "/work/" + url });
     });
 
     return novels;

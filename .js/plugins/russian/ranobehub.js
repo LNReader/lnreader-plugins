@@ -49,7 +49,7 @@ var RNBH = /** @class */ (function () {
         this.id = "RNBH.org";
         this.name = "RanobeHub";
         this.version = "1.0.0";
-        this.site = "https://ranobehub.org/";
+        this.site = "https://ranobehub.org";
         this.icon = "src/ru/ranobehub/icon.png";
         this.fetchImage = fetch_1.fetchFile;
         this.filters = {
@@ -1013,14 +1013,14 @@ var RNBH = /** @class */ (function () {
         };
     }
     RNBH.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, tagsPositive, tagsNegative, result, body, novels;
-            return __generator(this, function (_x) {
-                switch (_x.label) {
+            var url, includeTags, excludeTags, result, body, novels;
+            return __generator(this, function (_p) {
+                switch (_p.label) {
                     case 0:
-                        url = this.site + "api/search?page=" + pageNo + "&sort=";
+                        url = this.site + "/api/search?page=" + pageNo + "&sort=";
                         url += showLatestNovels
                             ? "last_chapter_at"
                             : (filters === null || filters === void 0 ? void 0 : filters.sort) || "computed_rating";
@@ -1029,34 +1029,28 @@ var RNBH = /** @class */ (function () {
                             if ((_e = (_d = filters.country) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
                                 url += "&country=" + filters.country.value.join(",");
                             }
-                            if (((_h = (_g = (_f = filters.tags) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) ||
-                                ((_l = (_k = (_j = filters.events) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.include) === null || _l === void 0 ? void 0 : _l.length)) {
-                                tagsPositive = [
-                                    (_m = filters.tags.value) === null || _m === void 0 ? void 0 : _m.include,
-                                    (_o = filters.events.value) === null || _o === void 0 ? void 0 : _o.include,
-                                ]
-                                    .flat()
-                                    .filter(function (t) { return t; });
-                                url += "&tags:positive=" + tagsPositive.join(",");
+                            includeTags = [
+                                (_g = (_f = filters.tags) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include,
+                                (_j = (_h = filters.events) === null || _h === void 0 ? void 0 : _h.value) === null || _j === void 0 ? void 0 : _j.include,
+                            ].flat().filter(function (t) { return t; });
+                            if (includeTags.length) {
+                                url += "&tags:positive=" + includeTags.join(",");
                             }
-                            if (((_r = (_q = (_p = filters === null || filters === void 0 ? void 0 : filters.tags) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.exclude) === null || _r === void 0 ? void 0 : _r.length) ||
-                                ((_u = (_t = (_s = filters === null || filters === void 0 ? void 0 : filters.events) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.exclude) === null || _u === void 0 ? void 0 : _u.length)) {
-                                tagsNegative = [
-                                    (_v = filters.tags.value) === null || _v === void 0 ? void 0 : _v.exclude,
-                                    (_w = filters.events.value) === null || _w === void 0 ? void 0 : _w.exclude,
-                                ]
-                                    .flat()
-                                    .filter(function (t) { return t; });
-                                url += "&tags:negative=" + tagsNegative.join(",");
+                            excludeTags = [
+                                (_l = (_k = filters.tags) === null || _k === void 0 ? void 0 : _k.value) === null || _l === void 0 ? void 0 : _l.exclude,
+                                (_o = (_m = filters.events) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.exclude,
+                            ].flat().filter(function (t) { return t; });
+                            if (excludeTags.length) {
+                                url += "&tags:negative=" + excludeTags.join(",");
                             }
                         }
                         url += "&take=40";
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _x.sent();
+                        result = _p.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        body = (_x.sent());
+                        body = (_p.sent());
                         novels = [];
                         body.resource.forEach(function (novel) {
                             return novels.push({
@@ -1080,7 +1074,7 @@ var RNBH = /** @class */ (function () {
                         novelId = novelUrl
                             .substring("https://ranobehub.org/ranobe/".length)
                             .split("-")[0];
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(this.site, "api/ranobe/").concat(novelId))];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/ranobe/" + novelId)];
                     case 1:
                         result = _e.sent();
                         return [4 /*yield*/, result.json()];
@@ -1104,7 +1098,7 @@ var RNBH = /** @class */ (function () {
                             novel.genres = tags.join(", ");
                         }
                         chapters = [];
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(this.site, "api/ranobe/").concat(novelId, "/contents"))];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)("".concat(this.site, "/api/ranobe/").concat(novelId, "/contents"))];
                     case 3:
                         chaptersRaw = _e.sent();
                         return [4 /*yield*/, chaptersRaw.json()];
@@ -1129,7 +1123,8 @@ var RNBH = /** @class */ (function () {
     };
     RNBH.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, baseUrl, chapterText;
+            var result, body, loadedCheerio, chapterText;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
@@ -1140,12 +1135,11 @@ var RNBH = /** @class */ (function () {
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         loadedCheerio(".chapter-hoticons").remove();
-                        baseUrl = this.site;
-                        loadedCheerio("div.text:nth-child(1)  img").each(function () {
+                        loadedCheerio("div.text:nth-child(1)  img").each(function (index, element) {
                             var _a;
-                            if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
-                                var dataMediaId = loadedCheerio(this).attr("data-media-id");
-                                loadedCheerio(this).attr("src", baseUrl + "api/media/" + dataMediaId);
+                            if (!((_a = loadedCheerio(element).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
+                                var dataMediaId = loadedCheerio(element).attr("data-media-id");
+                                loadedCheerio(element).attr("src", _this.site + "/api/media/" + dataMediaId);
                             }
                         });
                         chapterText = loadedCheerio("div.text:nth-child(1)").html() || "";
@@ -1163,7 +1157,7 @@ var RNBH = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        url = "".concat(this.site, "api/fulltext/global?query=").concat(searchTerm, "&take=10");
+                        url = "".concat(this.site, "/api/fulltext/global?query=").concat(searchTerm, "&take=10");
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _c.sent();

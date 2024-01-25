@@ -114,7 +114,7 @@ var RLIB = /** @class */ (function () {
                 ],
                 type: filterInputs_1.FilterTypes.CheckboxGroup,
             },
-            statuss: {
+            manga_status: {
                 label: "Статус тайтла",
                 value: [],
                 options: [
@@ -269,65 +269,35 @@ var RLIB = /** @class */ (function () {
         };
     }
     RLIB.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
+        var _b, _c, _d, _e;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels;
-            return __generator(this, function (_5) {
-                switch (_5.label) {
+            var url, result, loadedCheerio, novels;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
                         url = this.site + "/manga-list?sort=";
                         url += showLatestNovels ? "last_chapter_at" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "rate";
                         url += "&dir=" + (((_c = filters === null || filters === void 0 ? void 0 : filters.order) === null || _c === void 0 ? void 0 : _c.value) || "desc");
-                        if ((_e = (_d = filters.type) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) {
-                            url += filters.type.value.map(function (i) { return "&types[]=" + i; }).join("");
-                        }
-                        if ((_h = (_g = (_f = filters.format) === null || _f === void 0 ? void 0 : _f.value) === null || _g === void 0 ? void 0 : _g.include) === null || _h === void 0 ? void 0 : _h.length) {
-                            url += filters.format.value.include
-                                .map(function (i) { return "&format[include][]=" + i; })
-                                .join("");
-                        }
-                        if ((_l = (_k = (_j = filters.format) === null || _j === void 0 ? void 0 : _j.value) === null || _k === void 0 ? void 0 : _k.exclude) === null || _l === void 0 ? void 0 : _l.length) {
-                            url += filters.format.value.exclude
-                                .map(function (i) { return "&format[exclude][]=" + i; })
-                                .join("");
-                        }
-                        if ((_o = (_m = filters.status) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.length) {
-                            url += filters.status.value.map(function (i) { return "&status[]=" + i; }).join("");
-                        }
-                        if ((_q = (_p = filters.statuss) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.length) {
-                            url += filters.statuss.value.map(function (i) { return "&manga_status[]=" + i; }).join("");
-                        }
-                        if ((_t = (_s = (_r = filters.genres) === null || _r === void 0 ? void 0 : _r.value) === null || _s === void 0 ? void 0 : _s.include) === null || _t === void 0 ? void 0 : _t.length) {
-                            url += filters.genres.value.include
-                                .map(function (i) { return "&genres[include][]=" + i; })
-                                .join("");
-                        }
-                        if ((_w = (_v = (_u = filters.genres) === null || _u === void 0 ? void 0 : _u.value) === null || _v === void 0 ? void 0 : _v.exclude) === null || _w === void 0 ? void 0 : _w.length) {
-                            url += filters.genres.value.exclude
-                                .map(function (i) { return "&genres[exclude][]=" + i; })
-                                .join("");
-                        }
-                        if ((_z = (_y = (_x = filters.tags) === null || _x === void 0 ? void 0 : _x.value) === null || _y === void 0 ? void 0 : _y.include) === null || _z === void 0 ? void 0 : _z.length) {
-                            url += filters.tags.value.include
-                                .map(function (i) { return "&tags[include][]=" + i; })
-                                .join("");
-                        }
-                        if ((_2 = (_1 = (_0 = filters.tags) === null || _0 === void 0 ? void 0 : _0.value) === null || _1 === void 0 ? void 0 : _1.exclude) === null || _2 === void 0 ? void 0 : _2.length) {
-                            url += filters.tags.value.exclude
-                                .map(function (i) { return "&tags[exclude][]=" + i; })
-                                .join("");
-                        }
+                        Object.entries(filters || {}).forEach(function (_a) {
+                            var type = _a[0], value = _a[1].value;
+                            if (value instanceof Array && value.length) {
+                                url += "&" + value.join("&" + type + "[]=");
+                            }
+                            if ((value === null || value === void 0 ? void 0 : value.include) instanceof Array && value.include.length) {
+                                url += "&" + value.include.join("&" + type + "[include][]=");
+                            }
+                            if ((value === null || value === void 0 ? void 0 : value.exclude) instanceof Array && value.exclude.length) {
+                                url += "&" + value.exclude.join("&" + type + "[exclude][]=");
+                            }
+                        });
                         url += "&page=" + pageNo;
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _5.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _5.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
-                        this.ui = (_4 = (_3 = loadedCheerio("a.header-right-menu__item")
-                            .attr("href")) === null || _3 === void 0 ? void 0 : _3.replace) === null || _4 === void 0 ? void 0 : _4.call(_3, /[^0-9]/g, "");
+                        result = _f.sent();
+                        loadedCheerio = (0, cheerio_1.load)(result);
+                        this.ui = (_e = (_d = loadedCheerio("a.header-right-menu__item")
+                            .attr("href")) === null || _d === void 0 ? void 0 : _d.replace) === null || _e === void 0 ? void 0 : _e.call(_d, /[^0-9]/g, "");
                         novels = [];
                         loadedCheerio(".media-card-wrap").each(function () {
                             var name = loadedCheerio(this).find(".media-card__title").text();
@@ -345,15 +315,12 @@ var RLIB = /** @class */ (function () {
     RLIB.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, chapters, chaptersRaw, chaptersJson, totalChapters;
+            var body, loadedCheerio, novel, chapters, chaptersRaw, chaptersJson, totalChapters;
             var _this = this;
             return __generator(this, function (_j) {
                 switch (_j.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _j.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
                         body = _j.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novel = {
@@ -394,7 +361,7 @@ var RLIB = /** @class */ (function () {
                         (_h = (_g = chaptersJson.chapters) === null || _g === void 0 ? void 0 : _g.list) === null || _h === void 0 ? void 0 : _h.forEach(function (chapter, chapterIndex) {
                             return chapters.push({
                                 name: "Том " + chapter.chapter_volume +
-                                    "Глава " + chapter.chapter_number +
+                                    " Глава " + chapter.chapter_number +
                                     (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
                                 url: _this.site + "/" + chaptersJson.manga.slug +
                                     "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +
@@ -411,26 +378,24 @@ var RLIB = /** @class */ (function () {
     };
     RLIB.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, baseUrl, chapterText;
+            var result, loadedCheerio, chapterText;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl + (this.ui ? "&ui=" + this.ui : ""))];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl + (this.ui ? "&ui=" + this.ui : "")).then(function (res) { return res.text(); })];
                     case 1:
                         result = _a.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _a.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
-                        baseUrl = this.site;
-                        loadedCheerio(".reader-container img").each(function () {
-                            var src = loadedCheerio(this).attr("data-src") || loadedCheerio(this).attr("src");
+                        loadedCheerio = (0, cheerio_1.load)(result);
+                        loadedCheerio(".reader-container img").each(function (index, element) {
+                            var src = loadedCheerio(element).attr("data-src") ||
+                                loadedCheerio(element).attr("src");
                             if (!(src === null || src === void 0 ? void 0 : src.startsWith("http"))) {
-                                loadedCheerio(this).attr("src", baseUrl + src);
+                                loadedCheerio(element).attr("src", _this.site + src);
                             }
                             else {
-                                loadedCheerio(this).attr("src", src);
+                                loadedCheerio(element).attr("src", src);
                             }
-                            loadedCheerio(this).removeAttr("data-src");
+                            loadedCheerio(element).removeAttr("data-src");
                         });
                         chapterText = loadedCheerio(".reader-container").html();
                         return [2 /*return*/, chapterText || ""];

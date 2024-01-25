@@ -850,7 +850,8 @@ var TL = /** @class */ (function () {
     TL.prototype.parseChapter = function (chapterUrl) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var result, json, baseUrl, loadedCheerio, chapterText;
+            var result, json, loadedCheerio, chapterText;
+            var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/site/v2/graphql", {
@@ -873,16 +874,15 @@ var TL = /** @class */ (function () {
                         return [4 /*yield*/, result.json()];
                     case 2:
                         json = (_c.sent());
-                        baseUrl = this.site;
                         loadedCheerio = (0, cheerio_1.load)(((_b = (_a = json.data.chapter) === null || _a === void 0 ? void 0 : _a.text) === null || _b === void 0 ? void 0 : _b.text) || "");
-                        loadedCheerio("p > a[href]").each(function () {
-                            var src = baseUrl + loadedCheerio(this).attr("href");
+                        loadedCheerio("p > a[href]").each(function (index, element) {
+                            var src = loadedCheerio(element).attr("href") || "";
                             if (!src.startsWith("http")) {
-                                src = baseUrl + src;
+                                src = _this.site + src;
                             }
-                            loadedCheerio(this).find("picture").remove();
-                            loadedCheerio(this).removeAttr("href");
-                            loadedCheerio("<img src=\"".concat(src, "\">")).appendTo(this);
+                            loadedCheerio(element).find("picture").remove();
+                            loadedCheerio(element).removeAttr("href");
+                            loadedCheerio("<img src=\"".concat(src, "\">")).appendTo(element);
                         });
                         chapterText = loadedCheerio.html();
                         return [2 /*return*/, chapterText];

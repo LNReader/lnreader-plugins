@@ -35,8 +35,7 @@ class RulatePlugin implements Plugin.PluginBase {
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const baseUrl = this.site;
-    let url = baseUrl + "/search?t=";
+    let url = this.site + "/search?t=";
     url += "&cat=" + (filters?.cat?.value || "0");
     url += "&s_lang=" + (filters?.s_lang?.value || "0");
     url += "&t_lang=" + (filters?.t_lang?.value || "0");
@@ -45,39 +44,13 @@ class RulatePlugin implements Plugin.PluginBase {
     url += "&atmosphere=" + (filters?.atmosphere?.value || "0");
     url += "&adult=" + (filters?.adult?.value || "0");
 
-    if (filters?.genres?.value instanceof Array) {
-      url += filters.genres.value.map((i) => "&genres[]=" + i).join("");
-    }
-
-    //if (filters?.genres?.value?.exclude instanceof Array) {
-    //  url += filters.genres.value.exclude
-    //    ?.map((i) => "&genres_ex[]=" + i)
-    //    .join("");
-    //}
-
-    if (filters?.tags?.value instanceof Array) {
-      url += filters.tags.value.map((i) => "&tags[]=" + i).join("");
-    }
-
-    //if (filters?.tags?.value?.exclude instanceof Array) {
-    //  url += filters.tags.value.exclude
-    //    ?.map((i) => "&tags_ex[]=" + i)
-    //    .join("");
-    //}
-
-    if (filters?.fandoms?.value instanceof Array) {
-      url += filters.fandoms.value.map((i) => "&fandoms[]=" + i).join("");
-    }
-
-    // if (filters?.fandoms?.value?.exclude instanceof Array) {
-    //   url += filters.fandoms.value.exclude
-    //     .map((i) => "&fandoms_ex[]=" + i)
-    //     .join("");
-    // }
-
-    if (filters?.trash?.value instanceof Array) {
-      url += filters.trash.value.map((i) => "&" + i + "=1").join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + value
+            .map((val) => (type == "extra" ? val + "=1" : type + "[]=" + val))
+            .join("&");
+      }
+    });
 
     url += "&Book_page=" + pageNo;
 
@@ -86,14 +59,14 @@ class RulatePlugin implements Plugin.PluginBase {
 
     loadedCheerio(
       'ul[class="search-results"] > li:not([class="ad_type_catalog"])',
-    ).each(function () {
-      loadedCheerio(this).find("p > a").text();
-      const name = loadedCheerio(this).find("p > a").text();
-      const cover = loadedCheerio(this).find("img").attr("src");
-      const url = loadedCheerio(this).find("p > a").attr("href");
+    ).each((index, element) => {
+      loadedCheerio(element).find("p > a").text();
+      const name = loadedCheerio(element).find("p > a").text();
+      const cover = loadedCheerio(element).find("img").attr("src");
+      const url = loadedCheerio(element).find("p > a").attr("href");
       if (!name || !url) return;
 
-      novels.push({ name, cover: baseUrl + cover, url: baseUrl + url });
+      novels.push({ name, cover: this.site + cover, url: this.site + url });
     });
 
     return novels;
@@ -191,7 +164,6 @@ class RulatePlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const baseUrl = this.site;
     let result = await fetchApi(chapterUrl);
     if (result.url.includes("mature?path=")) {
       const formData = new FormData();
@@ -207,10 +179,10 @@ class RulatePlugin implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio(".content-text img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio(".content-text img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
 

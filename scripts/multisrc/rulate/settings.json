@@ -1552,7 +1552,7 @@
       ],
       "type": "Picker"
     },
-    "trash": {
+    "extra": {
       "label": "Другое:",
       "value": [],
       "options": [

@@ -2498,12 +2498,12 @@ var ficbook = /** @class */ (function () {
         var _b, _c, _d;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var baseUrl, url, result, body, loadedCheerio, novels;
+            var url, result, loadedCheerio, novels;
+            var _this = this;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
-                        baseUrl = this.site;
-                        url = baseUrl;
+                        url = this.site;
                         if ((_b = filters === null || filters === void 0 ? void 0 : filters.directions) === null || _b === void 0 ? void 0 : _b.value) {
                             url += "/popular-fanfics/" + filters.directions.value;
                         }
@@ -2513,24 +2513,21 @@ var ficbook = /** @class */ (function () {
                         else {
                             url += "/" + (((_d = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _d === void 0 ? void 0 : _d.value) || "fanfiction") + "?p=" + pageNo;
                         }
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
                         result = _e.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _e.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         novels = [];
-                        loadedCheerio("article.fanfic-inline").each(function () {
-                            var name = loadedCheerio(this).find("h3 > a").text().trim();
-                            var cover = loadedCheerio(this).find("picture > img").attr("src");
-                            var url = loadedCheerio(this).find("h3 > a").attr("href");
+                        loadedCheerio("article.fanfic-inline").each(function (index, element) {
+                            var name = loadedCheerio(element).find("h3 > a").text().trim();
+                            var cover = loadedCheerio(element).find("picture > img").attr("src");
+                            var url = loadedCheerio(element).find("h3 > a").attr("href");
                             cover = cover
                                 ? cover.replace(/covers\/m_|covers\/d_/g, "covers/")
                                 : defaultCover_1.defaultCover;
                             if (!name || !url)
                                 return;
-                            novels.push({ name: name, cover: cover, url: baseUrl + url.replace(/\?.*/g, "") });
+                            novels.push({ name: name, cover: cover, url: _this.site + url.replace(/\?.*/g, "") });
                         });
                         return [2 /*return*/, novels];
                 }
@@ -2540,17 +2537,14 @@ var ficbook = /** @class */ (function () {
     ficbook.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, novel, tags, chapters, name_1, releaseTime;
+            var result, loadedCheerio, novel, tags, chapters, name_1, releaseTime;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
                         result = _b.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _b.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         novel = {
                             url: novelUrl,
                         };
@@ -2606,16 +2600,13 @@ var ficbook = /** @class */ (function () {
     ficbook.prototype.parseChapter = function (chapterUrl) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, chapterText;
+            var result, loadedCheerio, chapterText;
             return __generator(this, function (_c) {
                 switch (_c.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl).then(function (res) { return res.text(); })];
                     case 1:
                         result = _c.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _c.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         chapterText = "";
                         (_b = (_a = loadedCheerio("#content")
                             .html()) === null || _a === void 0 ? void 0 : _a.split("\n")) === null || _b === void 0 ? void 0 : _b.forEach(function (line) {

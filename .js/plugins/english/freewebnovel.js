@@ -102,7 +102,7 @@ var FreeWebNovel = /** @class */ (function () {
                         novel.summary = loadedCheerio(".inner").text().trim();
                         chapters = loadedCheerio("#idData > li > a")
                             .map(function (chapterIndex, element) { return ({
-                            name: loadedCheerio(element).attr("title") || "Chapter " + chapterIndex,
+                            name: loadedCheerio(element).attr("title") || "Chapter " + (chapterIndex + 1),
                             url: _this.site + loadedCheerio(element).attr("href"),
                             releaseTime: null,
                             chapterNumber: chapterIndex + 1,

@@ -855,94 +855,76 @@ var ReN = /** @class */ (function () {
         };
     }
     ReN.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+        var _b, _c;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
             var url, result, body, novels;
             var _this = this;
-            return __generator(this, function (_x) {
-                switch (_x.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         url = this.site + "/api/search/catalog/?count=30&ordering=";
                         url += ((_b = filters === null || filters === void 0 ? void 0 : filters.order) === null || _b === void 0 ? void 0 : _b.value)
                             ? filters.order.value.replace("+", "")
                             : "-";
                         url += showLatestNovels ? "chapter_date" : ((_c = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _c === void 0 ? void 0 : _c.value) || "rating";
-                        if ((_f = (_e = (_d = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.include) === null || _f === void 0 ? void 0 : _f.length) {
-                            url += filters.genres.value.include.map(function (i) { return "&genres=" + i; }).join("");
-                        }
-                        if ((_j = (_h = (_g = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _g === void 0 ? void 0 : _g.value) === null || _h === void 0 ? void 0 : _h.exclude) === null || _j === void 0 ? void 0 : _j.length) {
-                            url += filters.genres.value.exclude
-                                .map(function (i) { return "&exclude_genres=" + i; })
-                                .join("");
-                        }
-                        if ((_l = (_k = filters === null || filters === void 0 ? void 0 : filters.status) === null || _k === void 0 ? void 0 : _k.value) === null || _l === void 0 ? void 0 : _l.length) {
-                            url += filters.status.value.map(function (i) { return "&status=" + i; }).join("");
-                        }
-                        if ((_o = (_m = filters === null || filters === void 0 ? void 0 : filters.types) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.length) {
-                            url += filters.types.value.map(function (i) { return "&types=" + i; }).join("");
-                        }
-                        if ((_r = (_q = (_p = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _p === void 0 ? void 0 : _p.value) === null || _q === void 0 ? void 0 : _q.include) === null || _r === void 0 ? void 0 : _r.length) {
-                            url += filters.categories.value.include
-                                .map(function (i) { return "&categories=" + i; })
-                                .join("");
-                        }
-                        if ((_u = (_t = (_s = filters === null || filters === void 0 ? void 0 : filters.categories) === null || _s === void 0 ? void 0 : _s.value) === null || _t === void 0 ? void 0 : _t.exclude) === null || _u === void 0 ? void 0 : _u.length) {
-                            url += filters.categories.value.exclude
-                                .map(function (i) { return "&exclude_categories=" + i; })
-                                .join("");
-                        }
-                        if ((_w = (_v = filters === null || filters === void 0 ? void 0 : filters.age_limit) === null || _v === void 0 ? void 0 : _v.value) === null || _w === void 0 ? void 0 : _w.length) {
-                            url += filters.age_limit.value.map(function (i) { return "&age_limit=" + i; }).join("");
-                        }
+                        Object.entries(filters || {}).forEach(function (_a) {
+                            var type = _a[0], value = _a[1].value;
+                            if (value instanceof Array && value.length) {
+                                url += "&" + value.join("&" + type + "=");
+                            }
+                            if ((value === null || value === void 0 ? void 0 : value.include) instanceof Array && value.include.length) {
+                                url += "&" + value.include.join("&" + type + "=");
+                            }
+                            if ((value === null || value === void 0 ? void 0 : value.exclude) instanceof Array && value.exclude.length) {
+                                url += "&" + value.exclude.join("&exclude_" + type + "=");
+                            }
+                        });
                         url += "&page=" + pageNo;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
-                        result = _x.sent();
+                        result = _d.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        body = (_x.sent());
-                        novels = body.content.map(function (novel) {
-                            var _a, _b;
-                            return ({
-                                name: novel.main_name || novel.secondary_name,
-                                cover: _this.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
-                                url: _this.site + "/novel/" + novel.dir,
-                            });
-                        });
+                        body = (_d.sent());
+                        novels = body.content.map(function (novel) { return ({
+                            name: novel.main_name || novel.secondary_name,
+                            cover: _this.site + (novel.img.high || novel.img.mid || novel.img.low),
+                            url: _this.site + "/novel/" + novel.dir,
+                        }); });
                         return [2 /*return*/, novels];
                 }
             });
         });
     };
     ReN.prototype.parseNovelAndChapters = function (novelUrl) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function () {
             var novelID, result, body, novel, tags, all, branch_id, chapters, i, chapterResult, volumes;
             var _this = this;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
                         novelID = novelUrl.split("/")[4];
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site + "/api/titles/" + novelID)];
                     case 1:
-                        result = _g.sent();
+                        result = _e.sent();
                         return [4 /*yield*/, result.json()];
                     case 2:
-                        body = (_g.sent());
+                        body = (_e.sent());
                         novel = {
                             url: novelUrl,
                             name: body.content.main_name || body.content.secondary_name,
                             summary: body.content.description,
                             cover: this.site +
-                                (((_a = body.content.img) === null || _a === void 0 ? void 0 : _a.high) ||
-                                    ((_b = body.content.img) === null || _b === void 0 ? void 0 : _b.mid) ||
+                                (body.content.img.high ||
+                                    body.content.img.mid ||
                                     body.content.img.low),
                             status: body.content.status.name === "Продолжается"
                                 ? novelStatus_1.NovelStatus.Ongoing
                                 : novelStatus_1.NovelStatus.Completed,
                         };
-                        tags = [(_c = body.content) === null || _c === void 0 ? void 0 : _c.genres, (_d = body.content) === null || _d === void 0 ? void 0 : _d.categories]
+                        tags = [(_a = body.content) === null || _a === void 0 ? void 0 : _a.genres, (_b = body.content) === null || _b === void 0 ? void 0 : _b.categories]
                             .flat()
                             .map(function (tags) { return tags === null || tags === void 0 ? void 0 : tags.name; })
                             .filter(function (tags) { return tags; });
@@ -950,25 +932,25 @@ var ReN = /** @class */ (function () {
                             novel.genres = tags.join(",");
                         }
                         all = body.content.count_chapters / 100 + 1;
-                        branch_id = ((_f = (_e = body.content.branches) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.id) || body.content.id;
+                        branch_id = ((_d = (_c = body.content.branches) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.id) || body.content.id;
                         chapters = [];
                         i = 0;
-                        _g.label = 3;
+                        _e.label = 3;
                     case 3:
                         if (!(i < all)) return [3 /*break*/, 7];
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(this.site +
                                 "/api/titles/chapters/?branch_id=" + branch_id +
                                 "&count=100&page=" + (i + 1))];
                     case 4:
-                        chapterResult = _g.sent();
+                        chapterResult = _e.sent();
                         return [4 /*yield*/, chapterResult.json()];
                     case 5:
-                        volumes = (_g.sent());
+                        volumes = (_e.sent());
                         volumes.content.forEach(function (chapter) {
                             if (!chapter.is_paid || chapter.is_bought) {
                                 chapters.push({
                                     name: "Том " + chapter.tome +
-                                        "Глава " + chapter.chapter +
+                                        " Глава " + chapter.chapter +
                                         (chapter.name ? " " + chapter.name.trim() : ""),
                                     url: "".concat(_this.site, "/novel/").concat(novelID, "/").concat(chapter.id, "/"),
                                     releaseTime: (0, dayjs_1.default)(chapter.upload_date).format("LLL"),
@@ -976,7 +958,7 @@ var ReN = /** @class */ (function () {
                                 });
                             }
                         });
-                        _g.label = 6;
+                        _e.label = 6;
                     case 6:
                         i++;
                         return [3 /*break*/, 3];
@@ -1022,10 +1004,9 @@ var ReN = /** @class */ (function () {
                         body = (_a.sent());
                         novels = [];
                         body.content.forEach(function (novel) {
-                            var _a, _b;
                             return novels.push({
                                 name: novel.main_name || novel.secondary_name,
-                                cover: _this.site + (((_a = novel.img) === null || _a === void 0 ? void 0 : _a.high) || ((_b = novel.img) === null || _b === void 0 ? void 0 : _b.mid) || novel.img.low),
+                                cover: _this.site + (novel.img.high || novel.img.mid || novel.img.low),
                                 url: _this.site + "/novel/" + novel.dir,
                             });
                         });

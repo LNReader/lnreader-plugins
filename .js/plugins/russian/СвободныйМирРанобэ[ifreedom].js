@@ -51,28 +51,25 @@ var IfreedomPlugin = /** @class */ (function () {
         this.filters = metadata.filters;
     }
     IfreedomPlugin.prototype.popularNovels = function (page, _a) {
-        var _b, _c, _d, _e;
+        var _b;
         var filters = _a.filters, showLatestNovels = _a.showLatestNovels;
         return __awaiter(this, void 0, void 0, function () {
             var url, body, loadedCheerio, novels;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         url = this.site + "/vse-knigi/?sort=" +
                             (showLatestNovels ? "По дате обновления" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "По рейтингу");
-                        if (((_c = filters === null || filters === void 0 ? void 0 : filters.status) === null || _c === void 0 ? void 0 : _c.value) instanceof Array) {
-                            url += filters.status.value.map(function (i) { return "&status[]=" + i; }).join("");
-                        }
-                        if (((_d = filters === null || filters === void 0 ? void 0 : filters.lang) === null || _d === void 0 ? void 0 : _d.value) instanceof Array) {
-                            url += filters.lang.value.map(function (i) { return "&lang[]=" + i; }).join("");
-                        }
-                        if (((_e = filters === null || filters === void 0 ? void 0 : filters.genre) === null || _e === void 0 ? void 0 : _e.value) instanceof Array) {
-                            url += filters.genre.value.map(function (i) { return "&genre[]=" + i; }).join("");
-                        }
+                        Object.entries(filters || {}).forEach(function (_a) {
+                            var type = _a[0], value = _a[1].value;
+                            if (value instanceof Array && value.length) {
+                                url += "&" + value.join("&" + type + "[]=");
+                            }
+                        });
                         url += "&bpage=" + page;
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        body = _f.sent();
+                        body = _c.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
                         novels = loadedCheerio("div.one-book-home > div.img-home a")
                             .map(function (index, element) { return ({
@@ -152,13 +149,15 @@ var IfreedomPlugin = /** @class */ (function () {
                     case 1:
                         body = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(body);
-                        loadedCheerio(".entry-content img").each(function () {
+                        loadedCheerio(".entry-content img").each(function (index, element) {
                             var _a, _b;
-                            var srcset = (_b = (_a = loadedCheerio(this).attr("srcset")) === null || _a === void 0 ? void 0 : _a.split) === null || _b === void 0 ? void 0 : _b.call(_a, " ");
+                            var srcset = (_b = (_a = loadedCheerio(element).attr("srcset")) === null || _a === void 0 ? void 0 : _a.split) === null || _b === void 0 ? void 0 : _b.call(_a, " ");
                             if (srcset === null || srcset === void 0 ? void 0 : srcset.length) {
-                                var bestlink = srcset.filter(function (url) { return url.startsWith("http"); }).unshift();
-                                if (typeof bestlink == 'string')
-                                    loadedCheerio(this).attr("src", bestlink);
+                                loadedCheerio(element).removeAttr("srcset");
+                                var bestlink = srcset.filter(function (url) { return url.startsWith("http"); });
+                                if (bestlink[bestlink.length - 1]) {
+                                    loadedCheerio(element).attr("src", bestlink[bestlink.length - 1]);
+                                }
                             }
                         });
                         chapterText = loadedCheerio(".entry-content").html() || "";

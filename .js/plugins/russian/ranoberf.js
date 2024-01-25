@@ -155,25 +155,22 @@ var RNRF = /** @class */ (function () {
     RNRF.prototype.parseChapter = function (chapterUrl) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, jsonRaw, json, baseUrl, chapterText;
+            var result, loadedCheerio, jsonRaw, json, chapterText;
+            var _this = this;
             return __generator(this, function (_d) {
                 switch (_d.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(chapterUrl).then(function (res) { return res.text(); })];
                     case 1:
                         result = _d.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _d.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
                         json = JSON.parse(jsonRaw || "{}");
                         loadedCheerio = (0, cheerio_1.load)(((_c = (_b = (_a = json.props.pageProps) === null || _a === void 0 ? void 0 : _a.chapter) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.text) || "");
-                        baseUrl = this.site;
-                        loadedCheerio("img").each(function () {
+                        loadedCheerio("img").each(function (index, element) {
                             var _a;
-                            if (!((_a = loadedCheerio(this).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
-                                var src = loadedCheerio(this).attr("src");
-                                loadedCheerio(this).attr("src", baseUrl + src);
+                            if (!((_a = loadedCheerio(element).attr("src")) === null || _a === void 0 ? void 0 : _a.startsWith("http"))) {
+                                var src = loadedCheerio(element).attr("src");
+                                loadedCheerio(element).attr("src", _this.site + src);
                             }
                         });
                         chapterText = loadedCheerio.html();

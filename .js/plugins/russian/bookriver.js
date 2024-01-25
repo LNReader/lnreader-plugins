@@ -119,34 +119,28 @@ var Bookriver = /** @class */ (function () {
         };
     }
     Bookriver.prototype.popularNovels = function (pageNo, _a) {
-        var _b, _c, _d, _e, _f;
+        var _b, _c, _d, _e, _f, _g;
         var showLatestNovels = _a.showLatestNovels, filters = _a.filters;
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novels, jsonRaw, json;
+            var url, result, loadedCheerio, novels, jsonRaw, json;
             var _this = this;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
                         url = this.site + "/genre?page=".concat(pageNo, "&perPage=24&sortingType=");
-                        url += showLatestNovels
-                            ? "last-update"
-                            : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "bestseller";
-                        if (((_c = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _c === void 0 ? void 0 : _c.value) instanceof Array &&
-                            filters.genres.value.length) {
+                        url += showLatestNovels ? "last-update" : ((_b = filters === null || filters === void 0 ? void 0 : filters.sort) === null || _b === void 0 ? void 0 : _b.value) || "bestseller";
+                        if ((_d = (_c = filters === null || filters === void 0 ? void 0 : filters.genres) === null || _c === void 0 ? void 0 : _c.value) === null || _d === void 0 ? void 0 : _d.length) {
                             url += "&g=" + filters.genres.value.join(",");
                         }
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url).then(function (res) { return res.text(); })];
                     case 1:
-                        result = _g.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _g.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        result = _h.sent();
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         novels = [];
                         jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
                         if (jsonRaw) {
                             json = JSON.parse(jsonRaw);
-                            (_f = (_e = (_d = json.props.pageProps.state.pagesFilter) === null || _d === void 0 ? void 0 : _d.genre) === null || _e === void 0 ? void 0 : _e.books) === null || _f === void 0 ? void 0 : _f.forEach(function (novel) {
+                            (_g = (_f = (_e = json.props.pageProps.state.pagesFilter) === null || _e === void 0 ? void 0 : _e.genre) === null || _f === void 0 ? void 0 : _f.books) === null || _g === void 0 ? void 0 : _g.forEach(function (novel) {
                                 return novels.push({
                                     name: novel.name,
                                     cover: novel.coverImages[0].url,
@@ -162,17 +156,14 @@ var Bookriver = /** @class */ (function () {
     Bookriver.prototype.parseNovelAndChapters = function (novelUrl) {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, jsonRaw, json, book, novel, chapters;
+            var result, loadedCheerio, jsonRaw, json, book, novel, chapters;
             var _this = this;
             return __generator(this, function (_f) {
                 switch (_f.label) {
-                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl)];
+                    case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(novelUrl).then(function (res) { return res.text(); })];
                     case 1:
                         result = _f.sent();
-                        return [4 /*yield*/, result.text()];
-                    case 2:
-                        body = _f.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body);
+                        loadedCheerio = (0, cheerio_1.load)(result);
                         jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
                         json = JSON.parse(jsonRaw || "{}");
                         book = (_a = json.props.pageProps.state.book) === null || _a === void 0 ? void 0 : _a.bookPage;
