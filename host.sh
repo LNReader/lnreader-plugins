@@ -10,9 +10,8 @@ fi
 git merge $current --strategy-option theirs
 
 npm run generate
-npm run json
 git add -f .dist git add .js/plugins
 git commit -m "Host plugins"
-git push -f origin dist
+git push -f
 
 git checkout $current
