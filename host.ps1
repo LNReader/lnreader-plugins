@@ -1,12 +1,12 @@
-current=`git rev-parse --abbrev-ref HEAD`
-dist=dist
-exists=`git show-ref refs/heads/$dist`
+$current='git rev-parse --abbrev-ref HEAD'
+$dist='dist'
+$exists='git show-ref refs/heads/$dist'
 
-if [ -n "$exists" ]; then
+if  (-n "$exists" ){
     git checkout $dist
-else
+}else{
     git checkout -b $dist
-fi
+}
 
 git merge $current --strategy-option theirs
 
