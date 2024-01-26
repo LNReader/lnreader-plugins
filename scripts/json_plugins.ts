@@ -42,7 +42,7 @@ for (let language in languages) {
     const langPath = path.join(root, "plugins", language.toLowerCase());
     if (!fs.existsSync(langPath)) continue;
     const plugins = fs.readdirSync(langPath);
-    json[languageNative] = [];
+    json[language] = [];
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
         const instance:
@@ -74,7 +74,7 @@ for (let language in languages) {
             pluginSet.add(id);
         }
 
-        json[languageNative].push(info);
+        json[language].push(info);
         console.log(name, "✅");
     });
 }
