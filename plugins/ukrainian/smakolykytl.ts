@@ -8,8 +8,9 @@ class Smakolykytl implements Plugin.PluginBase {
   name = "Смаколики";
   site = "https://smakolykytl.site/";
   version = "1.0.0";
-  icon = "src/ua/smakolykytl/icon.png";
-
+  icon = "src/uk/smakolykytl/icon.png";
+
+
 
   async popularNovels(
     pageNo: number,
