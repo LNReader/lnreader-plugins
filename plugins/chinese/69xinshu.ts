@@ -11,7 +11,6 @@ class XinShu69 implements Plugin.PluginBase {
     icon = "src/cn/69xinshu/icon.png";
     site = "https://www.69xinshu.com";
     version = "0.1.0";
-    userAgent = "";
 
     async popularNovels(
         pageNo: number,

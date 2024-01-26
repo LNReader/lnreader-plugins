@@ -10,7 +10,6 @@ class Shu69 implements Plugin.PluginBase {
     icon = "src/cn/69shu/icon.png";
     site = "https://www.69shu.xyz";
     version = "0.1.0";
-    userAgent = "";
 
     async popularNovels(
         pageNo: number,
