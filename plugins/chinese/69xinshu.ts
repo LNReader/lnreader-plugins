@@ -24,7 +24,7 @@ class XinShu69 implements Plugin.PluginBase {
         }
 
         const body = await fetchText(url, {}, 'gbk');
-        if (body === '') throw Error('无法获取小说内容，请检查网络');
+        if (body === '') throw Error('无法获取小说列表，请检查网络');
 
         const loadedCheerio = parseHTML(body);
 
@@ -119,8 +119,7 @@ class XinShu69 implements Plugin.PluginBase {
     }
 
     async parseChapter(chapterUrl: string): Promise<string> {
-        const url = chapterUrl;
-        const body = await fetchText(url, {}, 'gbk');
+        const body = await fetchText(chapterUrl, {}, 'gbk');
 
         const loadedCheerio = parseHTML(body);
 
@@ -139,15 +138,17 @@ class XinShu69 implements Plugin.PluginBase {
 
     async searchNovels(
         searchTerm: string,
-        pageNo?: number | undefined
+        pageNo: number
     ): Promise<Plugin.NovelItem[]> {
+        if (pageNo > 1) return [];
+
         const searchUrl = `${this.site}/modules/article/search.php`;
         const formData = new FormData();
         formData.append('searchkey', encode(searchTerm, 'gbk'));
         formData.append('searchtype', 'all');
 
         const body = await fetchText(searchUrl, { method: 'post', body: formData, }, 'gbk');
-        if (body === '') throw Error('无法获取小说内容，请检查网络');
+        if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
         let loadedCheerio = parseHTML(body);
 
@@ -178,29 +179,17 @@ class XinShu69 implements Plugin.PluginBase {
             value: "0",
             options: [
                 { label: "全部分类", value: "0" },
-
                 { label: "言情小说", value: "3" },
-
                 { label: "玄幻魔法", value: "1" },
-
                 { label: "修真武侠", value: "2" },
-
                 { label: "穿越时空", value: "11" },
-
                 { label: "都市小说", value: "9" },
-
                 { label: "历史军事", value: "4" },
-
                 { label: "游戏竞技", value: "5" },
-
                 { label: "科幻空间", value: "6" },
-
                 { label: "悬疑惊悚", value: "7" },
-
                 { label: "同人小说", value: "8" },
-
                 { label: "官场职场", value: "10" },
-
                 { label: "青春校园", value: "12" },
             ],
             type: FilterTypes.Picker,
