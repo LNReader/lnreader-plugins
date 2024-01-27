@@ -2,7 +2,7 @@ import { load as loadCheerio } from "cheerio";
 import { fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { defaultCover } from "@libs/defaultCover";
-import { Filters } from "@libs/filterInputs";
+import { FilterTypes, Filters } from "@libs/filterInputs";
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -12,11 +12,11 @@ class Syosetu implements Plugin.PluginBase {
     name = "Syosetu";
     icon = "src/jp/syosetu/icon.png";
     site = "https://yomou.syosetu.com/";
-    filters?: Filters | undefined;
     version = "1.0.0";
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
+        "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    };
     searchUrl = (pagenum?: number, order?: string) => {
         return `https://yomou.syosetu.com/search.php?order=${order || "hyoka"}${
             pagenum !== undefined
@@ -24,18 +24,24 @@ class Syosetu implements Plugin.PluginBase {
                 : "" // if isn't don't set ?p
         }`;
     };
-    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
+    async popularNovels(
+        pageNo: number,
+        options: Plugin.PopularNovelsOptions<Filters>
+    ): Promise<Plugin.NovelItem[]> {
+        console.log("fetch page", pageNo);
         const getNovelsFromPage = async (pagenumber: number) => {
             // load page
 
-            const result = await fetch(this.searchUrl(pagenumber), {headers: this.headers});
+            const result = await fetch(this.searchUrl(pagenumber), {
+                headers: this.headers,
+            });
             const body = await result.text();
             // Cheerio it!
             const cheerioQuery = loadCheerio(body, { decodeEntities: false });
             let pageNovels: Plugin.NovelItem[] = [];
             // find class=searchkekka_box
             cheerioQuery(".searchkekka_box").each(function (i, e) {
-                // get div with link and name
+                // get div with link and name   
                 const novelDIV = cheerioQuery(this).find(".novel_h");
                 // get link element
                 const novelA = novelDIV.children()[0];
@@ -48,13 +54,13 @@ class Syosetu implements Plugin.PluginBase {
             });
             // return all novels from this page
             return pageNovels;
-        }
+        };
         const novels = await getNovelsFromPage(pageNo);
         return novels;
     }
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         let chapters: Plugin.ChapterItem[] = [];
-        const result = await fetch(novelUrl, {headers: this.headers});
+        const result = await fetch(novelUrl, { headers: this.headers });
         const body = await result.text();
         const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
@@ -103,7 +109,7 @@ class Syosetu implements Plugin.PluginBase {
 
             const nameResult = await fetch(
                 this.searchUrl() + `&word=${novel.name}`,
-                {headers: this.headers}
+                { headers: this.headers }
             );
             const nameBody = await nameResult.text();
             const summaryQuery = loadCheerio(nameBody, {
@@ -129,7 +135,7 @@ class Syosetu implements Plugin.PluginBase {
         return novel;
     }
     async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetch(chapterUrl, {headers: this.headers});
+        const result = await fetch(chapterUrl, { headers: this.headers });
         const body = await result.text();
 
         // create cheerioQuery
@@ -137,11 +143,15 @@ class Syosetu implements Plugin.PluginBase {
             decodeEntities: false,
         });
 
-        let chapterText = cheerioQuery("#novel_honbun") // get chapter text
-            .html() || '';
+        let chapterText =
+            cheerioQuery("#novel_honbun") // get chapter text
+                .html() || "";
         return chapterText;
     }
-    async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
+    async searchNovels(
+        searchTerm: string,
+        pageNo: number
+    ): Promise<Plugin.NovelItem[]> {
         let novels = [];
 
         // returns list of novels from given page
@@ -149,7 +159,7 @@ class Syosetu implements Plugin.PluginBase {
             // load page
             const result = await fetch(
                 this.searchUrl(pagenumber) + `&word=${searchTerm}`,
-                {headers: this.headers}
+                { headers: this.headers }
             );
             const body = await result.text();
             // Cheerio it!
@@ -171,7 +181,7 @@ class Syosetu implements Plugin.PluginBase {
             });
             // return all novels from this page
             return pageNovels;
-        }
+        };
 
         // counter of loaded pages
         // let pagesLoaded = 0;
@@ -194,6 +204,62 @@ class Syosetu implements Plugin.PluginBase {
     async fetchImage(url: string): Promise<string | undefined> {
         return fetchFile(url);
     }
+    filters = {
+        ranking: {
+            type: FilterTypes.Picker,
+            label: "Ranked by",
+            options: [
+                { label: "日間", value: "daily" },
+                { label: "週間", value: "weekly" },
+                { label: "月間", value: "monthly" },
+                { label: "四半期", value: "quarter" },
+                { label: "年間", value: "yearly" },
+                { label: "累計", value: "total" },
+            ],
+            value: "total",
+        },
+        genre: {
+            type: FilterTypes.Picker,
+            label: "Ranking Genre",
+            options: [
+                { label: "総ジャンル", value: "" },
+                { label: "異世界転生/転移〔恋愛〕〕", value: "1" },
+                { label: "異世界転生/転移〔ファンタジー〕", value: "2" },
+                { label: "異世界転生/転移〔文芸・SF・その他〕", value: "o" },
+                { label: "異世界〔恋愛〕", value: "101" },
+                { label: "現実世界〔恋愛〕", value: "102" },
+                { label: "ハイファンタジー〔ファンタジー〕", value: "201" },
+                { label: "ローファンタジー〔ファンタジー〕", value: "202" },
+                { label: "純文学〔文芸〕", value: "301" },
+                { label: "ヒューマンドラマ〔文芸〕", value: "302" },
+                { label: "歴史〔文芸〕", value: "303" },
+                { label: "推理〔文芸〕", value: "304" },
+                { label: "ホラー〔文芸〕", value: "305" },
+                { label: "アクション〔文芸〕", value: "306" },
+                { label: "コメディー〔文芸〕", value: "307" },
+                { label: "VRゲーム〔SF〕", value: "401" },
+                { label: "宇宙〔SF〕", value: "402" },
+                { label: "空想科学〔SF〕", value: "403" },
+                { label: "パニック〔SF〕", value: "404" },
+                { label: "童話〔その他〕", value: "9901" },
+                { label: "詩〔その他〕", value: "9902" },
+                { label: "エッセイ〔その他〕", value: "9903" },
+                { label: "その他〔その他〕", value: "9999" },
+            ],
+            value: "",
+        },
+        modifier: {
+            type: FilterTypes.Picker,
+            label: "Modifier",
+            options: [
+                { label: "すべて", value: "total" },
+                { label: "連載中", value: "r" },
+                { label: "完結済", value: "er" },
+                { label: "短編", value: "t" },
+            ],
+            value: "total",
+        },
+    } satisfies Filters;
 }
 
 export default new Syosetu();

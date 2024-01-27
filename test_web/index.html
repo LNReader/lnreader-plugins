@@ -8,13 +8,15 @@
     <link rel="shortcut icon" sizes="128x128" type="image/png" href="/static/ico.png" defer />
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/mdb5.css">
-    <link rel="stylesheet/less" type="text/css" href="/static/css/index.less" />
+    <link rel="stylesheet/less" type="text/css" href="/static/css/new.less" />
+    <link rel="stylesheet/less" type="text/css" href="/static/css/accordion.less" />
     <script src="/static/js/less.js"></script>
     <script src="static/md5Themes/themes.js"></script>
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/html-sanitize.js" defer></script>
     <script src="/static/js/bootstrap.min.js" defer></script>
     <script src="/static/js/mdb5.js" defer></script>
+    <script src="/static/js/accordion.js" defer></script>
     <script src="/static/js/index.js" defer></script>
     <title>Testing plugin</title>
 </head>
@@ -27,6 +29,7 @@
             <div id="search-results">
                 <div id="turnoff-catch"></div>
             </div>
+            <div id="loadedplugin"></div>
         </form>
         <div class="input-group">
             <div class="input-group-append">
@@ -36,7 +39,8 @@
                 <option value="">Any</option>
             </select>
         </div>
-        <button class="btn btn-secondary" id="darkstyletoggle" style="float:left;" onclick="toggleDarkMode(this)">Light mode</div>
+        <button class="btn btn-secondary" id="darkstyletoggle" style="float:left;" onclick="toggleDarkMode(this)">Light
+            mode</div>
             <script>
                 const toggleDarkMode = (btn) => {
                     if (document.body.classList.contains("darkmode")) {
@@ -50,211 +54,49 @@
             </script>
     </nav>
     <div id="test-container">
-        <div class="test-wrapper" id="headerChanger">
-            <div class="form-group">
-                <div class="title">Headers</div>
-                <div id="headerinfos">
-                    <div class="headerinfo" data-headername="User-Agent">
-                        <span class="headername" >User-Agent</span><b>:</b>
-                        <span class="headervalue"></span>
-                    </div>
-                    <div class="headerinfo">
-                        <span class="headername">Cookie</span><b>:&nbsp;</b>
-                        <span class="headervalue" contenteditable="true" ></span>
-                    </div>
-                </div>
-                <button id="addheaderbtn" class="btn-secondary pl-1 pr-1">Add header</button>
-                <button id="copyascode" class="btn-secondary pl-1 pr-1">Copy as code</button>
-                <div id="headersnotcopied">Remember to copy the headers into the plugin file after changing them!</div>
-                <div id="headerscopied" display="none">Copied</div>
-            </div> 
-        </div>
-        <div class="test-wrapper" id="popularNovels">
-            <div class="title">
-                popularNovels
-            </div>
-            <div style="display: inline-block;" class="modal-container">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtersModal">
-                    Filters
-                </button>
-                <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog"
-                    aria-labelledby="filtersModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="filterModalLabel">Filters</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
+        <main-accordion class="accordion tests-accordion">
+            <accordion-box class="accordion-box" id="headerChanger" collapsed>
+                <accordion-header>
+                    Headers
+                </accordion-header>
+                <accordion-content>
+                    <div id="headerinfos">
+                        <div class="headerinfo" data-headername="User-Agent">
+                            <span class="headername">User-Agent</span><b>:</b>
+                            <span class="headervalue"></span>
+                        </div>
+                        <div class="headerinfo">
+                            <span class="headername">Cookie</span><b>:&nbsp;</b>
+                            <span class="headervalue" contenteditable="true"></span>
                         </div>
                     </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary popularNovels-btn">fetch</button>
-            <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="novel-list">
-            </div>
-        </div>
-        <div class="test-wrapper" id="searchNovels">
-            <div class="title">
-                searchNovels
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="searchTerm">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary searchNovels-btn" type="button">search</button>
+                    <button id="addheaderbtn" class="btn-secondary pl-1 pr-1">Add header</button>
+                    <button id="copyascode" class="btn-secondary pl-1 pr-1">Copy as code</button>
+                    <div id="headersnotcopied">Remember to copy the headers into the plugin file after changing them!
                     </div>
-                </div>
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <div class="novel-list">
-            </div>
-        </div>
-        <div class="test-wrapper" id="parseNovelAndChapters">
-            <div class="title">
-                parseNovelAndChapters
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="novel url" id="parse-novel-url">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary parseNovelAndChapters-btn" type="button"
-                            id="parse-novel-btn">fetch</button>
-                    </div>
-                </div>
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <div class="novel-list">
-                <div class="novel-item">
-                </div>
-                <div class="chapter-list-container">
-                    <div class="chapter-list">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="test-wrapper" id="parseChapter">
-            <div class="title">
-                parseChapter
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="chapter url" id="chapter-parse-url">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary parseChapter-btn" type="button"
-                            id="chapter-parse-btn">fetch</button>
-                    </div>
-                </div>
-                <div id="preview-toggler">
-                    <div class="slider-checkbox">
-                        <label>
-                            <input type="checkbox" id="raw-preview-switch" />
-                            <span>Raw</span>
-                        </label>
-                    </div>
-                    <div class="slider-checkbox">
-                        <label>
-                            <input type="checkbox" id="sanitize-preview-html" />
-                            <span>Sanitized HTML</span>
-                        </label>
-                    </div>
-                    <div id="scaled-info"></div>
-                    <div class="modal-container">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#settingsModal">
-                            Preview settings
+                    <div id="headerscopied" display="none">Copied</div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="popularNovels" collapsed>
+                <accordion-header>
+                    popularNovels
+                </accordion-header>
+                <accordion-content>
+                    <div style="display: inline-block;" class="modal-container">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtersModal">
+                            Filters
                         </button>
-                        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog"
-                            aria-labelledby="settingsModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog"
+                            aria-labelledby="filtersModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                                        <h5 class="modal-title" id="filterModalLabel">Filters</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <div>
-                                            <label class="filter-label">Preview Size</label>
-                                            <div id="size-input">
-                                                <div>
-                                                    <select id="size-preset">
-                                                        <option value="800,1200">Default</option>
-                                                        <option value="2200,2480">8" Fold</option>
-                                                        <option value="1536,2048">Nexus 9 (Tablet)</option>
-                                                        <option value="1440,2560">Pixel XL</option>
-                                                        <option value="1440,3120">Pixel 6 Pro</option>
-                                                        <option value="1080,2400">Pixel 6</option>
-                                                        <option value="1080,2340">Pixel 5</option>
-                                                        <option value="1440,3040">Pixel 4 XL</option>
-                                                        <option value="1080,2280">Pixel 4</option>
-                                                        <option value="1080,2160">Pixel 3</option>
-                                                        <option value="1080,1920">Pixel 2</option>
-                                                        <option value="768,1280">Nexus 4</option>
-                                                        <option value="720,1280">720p</option>
-                                                        <option value="480,854">480p</option>
-                                                        <option value="480,800">Nexus One</option>
-                                                        <option value="320,480">320p</option>
-                                                    </select>
-                                                    <div class="btn btn-primary" id="load-preset-size">Load preset</div>
-                                                </div>
-                                                <div>
-                                                    <input type="number" id="width-input"
-                                                        style="display:inline-block" />
-                                                    <input type="number" id="height-input"
-                                                        style="display:inline-block" />
-                                                    <div class="btn btn-primary" id="swap-iframe-size">Rotate</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Theme</label>
-                                            <div id="theme-picker">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Background Color</label>
-                                            <input type="text" id="bgc-input" />
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Text Color</label>
-                                            <input type="text" id="txt-input" />
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Text Align</label>
-                                            <select id="ta-input" class="custom-select">
-                                                <option value="left" selected>Left</option>
-                                                <option value="right">Right</option>
-                                                <option value="center">Center</option>
-                                                <option value="justify">Justify</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Font Size</label>
-                                            <input type="number" id="fs-input" />
-                                        </div>
-                                        <div>
-                                            <label class="filter-label">Line Height</label>
-                                            <input step="0.1" type="number" id="lh-input" />
-                                        </div>
-                                        <hr />
-                                        <div>
-                                            <label class="filter-label">Custom CSS</label>
-                                            <textarea rows="5" id="css-ta"></textarea>
-                                        </div>
-                                        <hr />
-                                        <div>
-                                            <label class="filter-label">Custom JS</label>
-                                            <textarea rows="5" id="js-ta"></textarea>
-                                        </div>
-                                        <hr />
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
@@ -264,30 +106,210 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <div class="form-group" id="chapter-viewer">
-            </div>
-        </div>
-        <div class="test-wrapper" id="fetchImage">
-            <div class="title">
-                fetchImage
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="image url (should be in chapterText)">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary fetchImage-btn" type="button">fetch</button>
+                    <button type="button" class="btn btn-primary popularNovels-btn">fetch</button>
+                    <span id="fetch-status">Fetching page: <span id="fetching-page">1</span></span>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
                     </div>
-                </div>
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <img src="" style="min-height: 300px; max-width: 450px;" alt="">
-        </div>
-    </div>
+                    <div class="novel-list">
+                    </div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="searchNovels" collapsed>
+                <accordion-header>
+                    searchNovels
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="searchTerm">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary searchNovels-btn" type="button">search</button>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="novel-list">
+                    </div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="parseNovelAndChapters" collapsed>
+                <accordion-header>
+                    parseNovelAndChapters
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="novel url" id="parse-novel-url">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary parseNovelAndChapters-btn" type="button"
+                                id="parse-novel-btn">fetch</button>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="parsed-novel-info">
+                        <div class="novel-item">
+                        </div>
+                        <div class="chapter-list-container">
+                            <div class="chapter-list">
+                            </div>
+                        </div>
+                    </div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="parseChapter" collapsed>
+                <accordion-header>
+                    parseChapter
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="chapter url" id="chapter-parse-url">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary parseChapter-btn" type="button"
+                                id="chapter-parse-btn">fetch</button>
+                        </div>
+                    </div>
+                    <div id="preview-toggler">
+                        <div class="slider-checkbox">
+                            <label>
+                                <input type="checkbox" id="raw-preview-switch" />
+                                <span>Raw</span>
+                            </label>
+                        </div>
+                        <div class="slider-checkbox">
+                            <label>
+                                <input type="checkbox" id="sanitize-preview-html" />
+                                <span>Sanitized HTML</span>
+                            </label>
+                        </div>
+                        <div id="scaled-info"></div>
+                        <div class="modal-container">
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#settingsModal">
+                                Preview settings
+                            </button>
+                            <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog"
+                                aria-labelledby="settingsModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div>
+                                                <label class="filter-label">Preview Size</label>
+                                                <div id="size-input">
+                                                    <div>
+                                                        <select id="size-preset">
+                                                            <option value="800,1200">Default</option>
+                                                            <option value="2200,2480">8" Fold</option>
+                                                            <option value="1536,2048">Nexus 9 (Tablet)</option>
+                                                            <option value="1440,2560">Pixel XL</option>
+                                                            <option value="1440,3120">Pixel 6 Pro</option>
+                                                            <option value="1080,2400">Pixel 6</option>
+                                                            <option value="1080,2340">Pixel 5</option>
+                                                            <option value="1440,3040">Pixel 4 XL</option>
+                                                            <option value="1080,2280">Pixel 4</option>
+                                                            <option value="1080,2160">Pixel 3</option>
+                                                            <option value="1080,1920">Pixel 2</option>
+                                                            <option value="768,1280">Nexus 4</option>
+                                                            <option value="720,1280">720p</option>
+                                                            <option value="480,854">480p</option>
+                                                            <option value="480,800">Nexus One</option>
+                                                            <option value="320,480">320p</option>
+                                                        </select>
+                                                        <div class="btn btn-primary" id="load-preset-size">Load preset
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <input type="number" id="width-input"
+                                                            style="display:inline-block" />
+                                                        <input type="number" id="height-input"
+                                                            style="display:inline-block" />
+                                                        <div class="btn btn-primary" id="swap-iframe-size">Rotate</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Theme</label>
+                                                <div id="theme-picker">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Background Color</label>
+                                                <input type="text" id="bgc-input" />
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Text Color</label>
+                                                <input type="text" id="txt-input" />
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Text Align</label>
+                                                <select id="ta-input" class="custom-select">
+                                                    <option value="left" selected>Left</option>
+                                                    <option value="right">Right</option>
+                                                    <option value="center">Center</option>
+                                                    <option value="justify">Justify</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Font Size</label>
+                                                <input type="number" id="fs-input" />
+                                            </div>
+                                            <div>
+                                                <label class="filter-label">Line Height</label>
+                                                <input step="0.1" type="number" id="lh-input" />
+                                            </div>
+                                            <hr />
+                                            <div>
+                                                <label class="filter-label">Custom CSS</label>
+                                                <textarea rows="5" id="css-ta"></textarea>
+                                            </div>
+                                            <hr />
+                                            <div>
+                                                <label class="filter-label">Custom JS</label>
+                                                <textarea rows="5" id="js-ta"></textarea>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="form-group" id="chapter-viewer">
+                    </div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="fetchImage" collapsed>
+                <accordion-header>
+                    fetchImage
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="image url (should be in chapterText)">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary fetchImage-btn" type="button">fetch</button>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <img src="" style="min-height: 300px; max-width: 450px;" alt="">
+                </accordion-content>
+            </accordion-box>
+        </main-accordion>
 </body>
 
 </html>

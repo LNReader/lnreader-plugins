@@ -17,6 +17,7 @@
  */
 /** @typedef {{backgroundColor:string, textColor:string}} Theme */
 /** @typedef {Theme[]} Themes */
+/** @typedef {import("./accordion").AccordionBox} AccordionBox */
 
 /// <reference path="./types.d.ts" />
 
@@ -36,6 +37,8 @@ const state = {
     current_plugin: undefined,
     /** @type {FilterToValues<Filters>} */
     filterValues: {},
+    /** popularNovels page */
+    pop_page: 1,
 };
 
 /** @type {JQuery<HTMLSelectElement>}*/
@@ -56,7 +59,11 @@ const getHeaders = () => {
         if (nameSpan && valueSpan) {
             const { innerText: name } = nameSpan;
             const { innerText: value } = valueSpan;
-            if (typeof name === "string" && typeof value === "string" && value.trim()) {
+            if (
+                typeof name === "string" &&
+                typeof value === "string" &&
+                value.trim()
+            ) {
                 headers[name] = value.trim();
             }
         }
@@ -195,7 +202,9 @@ const test_plugin = (/** @type {HTMLButtonElement} */ btn) => {
     plugin_search.attr("data-require", plugin_requirePath);
     plugin_search.val(ele.text().split("/")[1]);
     $("#turnoff-catch").trigger("click");
-    state.current_plugin.getFilters();
+    state.current_plugin.getFilters().then(() => {
+        $("#loadedplugin").text("Loaded: " + btn.innerText);
+    });
 };
 
 class PluginWrapper {
@@ -205,7 +214,7 @@ class PluginWrapper {
     constructor(requirePath) {
         /** @type {string} */
         this.requirePath = requirePath;
-        this.currentView = previewSwitch[0].checked ? "preview" : "raw";
+        this.currentView = previewSwitch?.[0]?.checked ? "preview" : "raw";
     }
 
     /** @type {JQuery<HTMLDivElement>} */
@@ -501,19 +510,23 @@ class PluginWrapper {
     /**
      *
      * @param {NovelItem} novel
+     * @param {{target:AccordionBox}|undefined} parsable
      * @returns
      */
-    static createNovelItem(novel, parsable = false) {
+    static createNovelItem(novel, parsable = undefined) {
         /** @type {JQuery<HTMLDivElement>} */
         const novel_item = $(`<div>`);
         novel_item.addClass("novel-item");
+        const novel_image = $("<div>")
+            .addClass("novel-img")
+            .appendTo(novel_item);
         $("<img>")
             .attr("src", novel.cover || "")
             .attr("alt", "No cover found")
-            .appendTo(novel_item);
+            .appendTo(novel_image);
         /** @type {JQuery<HTMLDivElement>} */
         const novel_info = $("<div>");
-        novel_info.addClass("novel_info").appendTo(novel_item);
+        novel_info.addClass("novel-info").appendTo(novel_item);
         this.createInfoItem("name", novel.name).appendTo(novel_info);
         this.createInfoItem("url", novel.url).appendTo(novel_info);
         this.createInfoItem("cover", novel.cover || "undefined").appendTo(
@@ -525,11 +538,19 @@ class PluginWrapper {
                     .addClass("btn btn-primary parse-novel-btn")
                     .text("Parse")
                     .on("click", () => {
+                        // parsable.target.toggle();
+                        /** @type {JQuery<AccordionBox>} */
+                        const pnc = $("#parseNovelAndChapters");
+                        const box = pnc[0];
+                        if (box) console.log(box);
+                        if (box.collapsed) {
+                            box.toggle();
+                        }
                         $("#parse-novel-url").val(novel.url);
+                        $("#parse-novel-btn").trigger("click");
                         $("#parseNovelAndChapters")[0].scrollIntoView({
                             behavior: "smooth",
                         });
-                        $("#parse-novel-btn").trigger("click");
                     })
             );
         return novel_item;
@@ -565,18 +586,28 @@ class PluginWrapper {
             .attr("data", chapter.url)
             .text("Parse")
             .on("click", () => {
+                /** @type {JQuery<AccordionBox>} */
+                const parseChapter = $("#parseChapter");
                 $("#chapter-parse-url").val(chapter.url);
-                $("#parseChapter")[0].scrollIntoView({ behavior: "smooth" });
+                if (parseChapter[0].collapsed) {
+                    parseChapter[0].toggle();
+                }
                 $("#chapter-parse-btn").trigger("click");
+                $("#parseChapter")[0].scrollIntoView({ behavior: "smooth" });
             })
             .appendTo(chapter_item);
         return chapter_item;
     }
 
     async getPopularNovels() {
+        console.log("gettin popn");
         const spinner = $("#popularNovels .spinner-border");
+        console.log(spinner);
         spinner.show();
+        /** @type {JQuery<AccordionBox>} */
+        const accordionBox = $("#popularNovels");
         const novel_list = $("#popularNovels .novel-list");
+        console.log(novel_list);
         /** @type {FilterToValues<Filters>} */
         const filters = { ...state.filterValues };
         try {
@@ -590,6 +621,7 @@ class PluginWrapper {
                     body: JSON.stringify({
                         pluginRequirePath: this.requirePath,
                         filters: filters,
+                        page: state.pop_page,
                     }),
                 })
             ).json();
@@ -602,7 +634,9 @@ class PluginWrapper {
             }
             novel_list.append(
                 ...novels.map((novel) =>
-                    PluginWrapper.createNovelItem(novel, true)
+                    PluginWrapper.createNovelItem(novel, {
+                        target: accordionBox[0],
+                    })
                 )
             );
         } catch (/** @type {unknown}*/ e) {
@@ -617,6 +651,8 @@ class PluginWrapper {
     }
 
     async getSearchedNovels() {
+        /** @type {JQuery<AccordionBox>} */
+        const accordionBox = $("#searchNovels");
         /** @type {JQuery<HTMLInputElement>} */
         const searchBox = $("#searchNovels input");
         const searchTerm = searchBox.val();
@@ -642,7 +678,9 @@ class PluginWrapper {
 
             novel_list.append(
                 ...novels.map((novel) =>
-                    PluginWrapper.createNovelItem(novel, true)
+                    PluginWrapper.createNovelItem(novel, {
+                        target: accordionBox[0],
+                    })
                 )
             );
         } catch (/** @type {unknown} */ e) {
@@ -659,7 +697,7 @@ class PluginWrapper {
     async getNovelAndChapters() {
         /** @type {JQuery<HTMLInputElement>} */
         const novelUrlInput = $("#parseNovelAndChapters input");
-        const novel_item = $("#parseNovelAndChapters .novel-list .novel-item");
+        const novel_item = $("#parseNovelAndChapters .novel-item");
         const chapter_list = $("#parseNovelAndChapters .chapter-list");
         const novelUrl = novelUrlInput.val();
         const spinner = $("#parseNovelAndChapters .spinner-border");
@@ -688,7 +726,7 @@ class PluginWrapper {
             });
 
             novel_data
-                .children("div")
+                .children("div + div")
                 .append(
                     PluginWrapper.createInfoItem(
                         "summary",
@@ -699,7 +737,7 @@ class PluginWrapper {
                     PluginWrapper.createInfoItem("status", sourceNovel.status),
                     PluginWrapper.createInfoItem("genres", sourceNovel.genres)
                 );
-            novel_data.appendTo(novel_item);
+            novel_item.replaceWith(novel_data);
 
             chapter_list.html("");
             if (sourceNovel.chapters)
@@ -1093,7 +1131,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>} */
     const width = $("#width-input");
-    width[0].value = `${PluginWrapper.previewSettings.iframeSize.width}`;
+    if (width[0])
+        width[0].value = `${PluginWrapper.previewSettings.iframeSize.width}`;
     width.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.iframeSize.width = parseFloat(value);
         currentWrapper().refreshPreview();
@@ -1101,7 +1140,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>} */
     const height = $("#height-input");
-    height[0].value = `${PluginWrapper.previewSettings.iframeSize.height}`;
+    if (height[0])
+        height[0].value = `${PluginWrapper.previewSettings.iframeSize.height}`;
     height.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.iframeSize.height = parseFloat(value);
         currentWrapper().refreshPreview();
@@ -1126,14 +1166,16 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>}*/
     const shouldSanitizeHTML = $("#sanitize-preview-html");
-    PluginWrapper.toggleHTMLSanitize(shouldSanitizeHTML[0].checked);
+    if (shouldSanitizeHTML[0])
+        PluginWrapper.toggleHTMLSanitize(shouldSanitizeHTML[0].checked);
     shouldSanitizeHTML.off("click").on("click", ({ target: { checked } }) => {
         PluginWrapper.toggleHTMLSanitize(checked);
     });
 
     /** @type {JQuery<HTMLInputElement>} */
     const lineHeight = $("#lh-input");
-    lineHeight[0].value = `${PluginWrapper.previewSettings.readerSettings.lineHeight}`;
+    if (lineHeight[0])
+        lineHeight[0].value = `${PluginWrapper.previewSettings.readerSettings.lineHeight}`;
     lineHeight.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.readerSettings.lineHeight =
             parseFloat(value);
@@ -1142,7 +1184,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>} */
     const backgroundColor = $("#bgc-input");
-    backgroundColor[0].value = `${PluginWrapper.previewSettings.readerSettings.theme}`;
+    if (backgroundColor[0])
+        backgroundColor[0].value = `${PluginWrapper.previewSettings.readerSettings.theme}`;
     backgroundColor.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.readerSettings.theme = value;
         currentWrapper().refreshPreview();
@@ -1150,7 +1193,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>} */
     const textColor = $("#txt-input");
-    textColor[0].value = `${PluginWrapper.previewSettings.readerSettings.textColor}`;
+    if (textColor[0])
+        textColor[0].value = `${PluginWrapper.previewSettings.readerSettings.textColor}`;
     textColor.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.readerSettings.textColor = value;
         currentWrapper().refreshPreview();
@@ -1158,7 +1202,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLInputElement>} */
     const fontSize = $("#fs-input");
-    fontSize[0].value = `${PluginWrapper.previewSettings.readerSettings.textSize}`;
+    if (fontSize[0])
+        fontSize[0].value = `${PluginWrapper.previewSettings.readerSettings.textSize}`;
     fontSize.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.readerSettings.textSize =
             parseFloat(value);
@@ -1175,7 +1220,8 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLTextAreaElement>} */
     const customCSS = $("#css-ta");
-    customCSS[0].value = PluginWrapper.previewSettings.customCSS;
+    if (customCSS[0])
+        customCSS[0].value = PluginWrapper.previewSettings.customCSS;
     customCSS.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.customCSS = value;
         currentWrapper().refreshPreview();
@@ -1183,7 +1229,7 @@ const refreshPreviewSettings = () => {
 
     /** @type {JQuery<HTMLTextAreaElement>} */
     const customJS = $("#js-ta");
-    customJS[0].value = PluginWrapper.previewSettings.customJS;
+    if (customJS[0]) customJS[0].value = PluginWrapper.previewSettings.customJS;
     customJS.off("change").on("change", ({ target: { value } }) => {
         PluginWrapper.previewSettings.customJS = value;
         currentWrapper().refreshPreview();

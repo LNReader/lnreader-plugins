@@ -12,6 +12,33 @@
 .darkmode {
     color-scheme: dark;
     background-color: var(--main-bg);
+
+    main-accordion {
+        accordion-box {
+            &:not([collapsed]) {
+                accordion-header {
+                    button {
+                        color: white;
+                    }
+                }
+            }
+            accordion-header {
+                button {
+                    color: #cccc;
+                    background-color: var(--main-bg);
+                }
+            }
+            background-color: var(--highlight-bg);
+            color: var(--text-color);
+            input {
+                &[type="text"] {
+                    background-color: var(--main-bg);
+                    border-color: var(--dark-border-color);
+                }
+            }
+        }
+    }
+
     .headerinfo span[contenteditable="true"] {
         border: 1px solid #fff2;
     }
@@ -34,20 +61,20 @@
             color: var(--text-color);
             border-color: var(--dark-border-color);
         }
+        #search-results {
+            color: var(--text-color);
+            background-color: transparent;
+            button {
+                background-color: var(--hr-color);
+                color: var(--dark-label-color);
+                font-weight: bolder;
+            }
+        }
     }
     button.btn-secondary {
         background-color: var(--btn-secondary-color);
         &:focus {
             box-shadow: none;
-        }
-    }
-    #search-results {
-        color: var(--text-color);
-        background-color: transparent;
-        button {
-            background-color: var(--hr-color);
-            color: var(--dark-label-color);
-            font-weight: bolder;
         }
     }
     #darkstyletoggle {
@@ -79,16 +106,6 @@
         color: rgb(182, 176, 166);
         background-color: var(--main-bg);
         border-color: var(--dark-border-color);
-    }
-    .test-wrapper {
-        background-color: var(--highlight-bg);
-        color: var(--text-color);
-        input {
-            &[type="text"] {
-                background-color: var(--main-bg);
-                border-color: var(--dark-border-color);
-            }
-        }
     }
     .modal-content {
         background-color: var(--main-bg);

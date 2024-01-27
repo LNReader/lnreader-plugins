@@ -6,7 +6,7 @@ import { Plugin, isPlugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 const root = path.dirname(require?.main?.filename || "");
 
-export const fetchHeaders: Record<string, string> = {}
+export const fetchHeaders: Record<string, string> = {};
 
 export const all_plugins = (): PluginList => {
     const res: PluginList = {};
@@ -48,9 +48,12 @@ const getPlugin = async (
 ): Promise<Plugin.PluginBase | null> => {
     console.log("loading plugin", requirePath);
     const plugin = await require(requirePath).default;
-    console.log(plugin);
-    if (isPlugin(plugin)) return plugin;
-    console.log("Not a plugin!");
+    // console.log(plugin);
+    if (isPlugin(plugin)) {
+        console.log("loaded plugin", plugin.name);
+        return plugin;
+    }
+    console.error("Not a plugin!");
     return null;
 };
 

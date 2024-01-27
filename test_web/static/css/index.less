@@ -1,25 +1,5 @@
 @import "./darkmode";
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.navbar {
-    width: 100vw;
-    align-items: center;
-    padding-inline: 3%;
-    gap: auto;
-    justify-content: space-between;
-    label.input-group-text {
-        height: 100%;
-    }
-    button.btn-secondary {
-        padding-inline: 5px;
-    }
-}
-
 #search-results {
     position: absolute;
     top: calc(100% - 0.5rem);
@@ -225,7 +205,7 @@
     margin-bottom: 100px;
 }
 
-.test-wrapper {
+.accordion-box {
     margin: 1rem;
     padding: 0.5rem;
     background-color: aliceblue;
@@ -242,40 +222,8 @@
     margin-inline: auto;
 }
 
-.headerinfo {
-    margin-bottom: 5px;
-    span[contenteditable="true"] {
-        border: 1px solid black;
-        padding: 3px 10px;
-        display: inline;
-    }
-}
-
-#headersnotcopied,
-#headerscopied {
-    font-size: 1.3rem;
-}
-
-#headersnotcopied {
-    color: red;
-    display: none;
-}
-
-#headerscopied {
-    color: green;
-    display: none;
-}
-
-.headereditbutton {
-    margin-left: 5px;
-    border: none;
-    padding-inline: 5px;
-}
-
 #popularNovels,
 #searchNovels {
-    height: 350px;
-    overflow-y: hidden;
     overflow-x: scroll;
 }
 
@@ -289,10 +237,6 @@
     width: 85%;
     margin-inline: auto;
     margin-top: 5px;
-}
-
-#parseNovelAndChapters {
-    height: 380px;
 }
 
 .title {
@@ -320,6 +264,8 @@
 
 .novel-list {
     display: flex;
+    overflow-x: scroll;
+    scrollbar-width: 5px;
     margin-top: 0.5rem;
     height: 300px;
     width: 100%;
