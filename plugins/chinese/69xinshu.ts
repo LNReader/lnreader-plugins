@@ -10,7 +10,7 @@ class XinShu69 implements Plugin.PluginBase {
     name = "69书吧";
     icon = "src/cn/69xinshu/icon.png";
     site = "https://www.69xinshu.com";
-    version = "0.1.0";
+    version = "0.1.1";
 
     async popularNovels(
         pageNo: number,
@@ -124,18 +124,17 @@ class XinShu69 implements Plugin.PluginBase {
 
         const loadedCheerio = parseHTML(body);
 
-        const chapterText = loadedCheerio('div.txtnav').prop('innerText') ?? '';
-        // remove empty lines
-        let lines = chapterText.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
-        // remove the first two lines which are the chapter name and author name
-        lines = lines.slice(2);
+        const chapterText = (loadedCheerio('div.txtnav').prop('innerText') ?? '')
+            .split('\n')
+            // remove empty lines
+            .map((line: string) => line.trim())
+            .filter((line: string) => line !== '')
+            // remove the first two lines which are the chapter name and author name
+            .slice(2)
+            .map((line: string) => `<p>${line}</p>`)
+            .join('\n');
 
-        let parsedText = '';
-        for (let line of lines) {
-            parsedText += `<p>${line}</p>`;
-        }
-
-        return parsedText;
+        return chapterText;
     };
 
     async searchNovels(

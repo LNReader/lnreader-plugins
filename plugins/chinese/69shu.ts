@@ -9,7 +9,7 @@ class Shu69 implements Plugin.PluginBase {
     name = "69书吧";
     icon = "src/cn/69shu/icon.png";
     site = "https://www.69shu.xyz";
-    version = "0.1.0";
+    version = "0.1.1";
 
     async popularNovels(
         pageNo: number,
@@ -121,7 +121,14 @@ class Shu69 implements Plugin.PluginBase {
 
         const loadedCheerio = parseHTML(body);
 
-        const chapterText = loadedCheerio('#chaptercontent').html() || '';
+        const chapterText = loadedCheerio('#chaptercontent p')
+            .map((i, el) => loadedCheerio(el).text())
+            .get()
+            // remove empty lines and 69shu ads
+            .map((line: string) => line.trim())
+            .filter((line: string) => line !== '' && !line.includes('69书吧'))
+            .map((line: string) => `<p>${line}</p>`)
+            .join('\n');
 
         return chapterText;
     };
