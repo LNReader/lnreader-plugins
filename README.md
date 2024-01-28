@@ -30,7 +30,7 @@ Repository to host plugins and related issues, and requests for
 #### via an app
 
 1. Run `npm run host`
-2. Change the values in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/master/src/plugins/pluginManager.ts) (in-app) to yours
+2. Change the values in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/master/src/plugins/pluginManager.ts) (in-app) to yours 
 
 ```ts
 const githubUsername = "LNReader";
