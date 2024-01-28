@@ -62,13 +62,15 @@ export const getFilter = async (pluginRequirePath: string) =>
 
 export const popularNovels = async (
     pluginRequirePath: string,
+    page: number,
     options: Plugin.PopularNovelsOptions<Filters>
-) => (await getPlugin(pluginRequirePath))?.popularNovels(1, options);
+) => (await getPlugin(pluginRequirePath))?.popularNovels(page, options);
 
 export const searchNovels = async (
     pluginRequirePath: string,
+    page: number,
     searchTerm: string
-) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, 1);
+) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, page);
 
 export const parseNovelAndChapters = async (
     pluginRequirePath: string,

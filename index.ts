@@ -9,7 +9,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 
 const app = express();
 const port = Number(process.argv[2]);
-if(!port){
+if (!port) {
     process.exit(0);
 }
 const host = "localhost";
@@ -23,7 +23,9 @@ export const getHeaders = () => {
 app.use((req, res, next) => {
     const xHeaders = req.headers["x-custom-headers"];
     if (xHeaders && typeof xHeaders === "string") {
-        for (const [headerName, headerValue] of Object.entries(pluginApi.fetchHeaders)) {
+        for (const [headerName, headerValue] of Object.entries(
+            pluginApi.fetchHeaders
+        )) {
             if (
                 typeof headerName === "string" &&
                 typeof headerValue === "string"
@@ -56,20 +58,35 @@ app.post("/filters", async (req, res) => {
     res.json(filters || []);
 });
 app.post("/popularNovels/", async (req, res) => {
-    const filters = req.body["filters"] || {};
+    const requirePath = req.body["pluginRequirePath"];
     const showLatestNovels = req.body["showLatestNovels"] || false;
-    const novels = await pluginApi.popularNovels(
-        req.body["pluginRequirePath"],
-        { showLatestNovels, filters }
-    );
-    res.json(novels);
+    const defaultFilters = await pluginApi.getFilter(requirePath);
+    const filters = showLatestNovels
+        ? defaultFilters
+        : req.body["filters"] || defaultFilters;
+    const page = parseInt(req.body["page"]);
+    try {
+        const novels = await pluginApi.popularNovels(requirePath, page || 1, {
+            showLatestNovels,
+            filters,
+        });
+        res.json(novels);
+    } catch (err) {
+        res.json({ error: err });
+    }
 });
 app.post("/searchNovels/", async (req, res) => {
-    const novels = await pluginApi.searchNovels(
-        req.body["pluginRequirePath"],
-        req.body["searchTerm"]
-    );
-    res.json(novels);
+    const page = parseInt(req.body["page"]) || 1;
+    try {
+        const novels = await pluginApi.searchNovels(
+            req.body["pluginRequirePath"],
+            page,
+            req.body["searchTerm"]
+        );
+        res.json(novels);
+    } catch (err) {
+        res.json({ error: err });
+    }
 });
 app.post("/parseNovelAndChapters/", async (req, res) => {
     const sourceNovel = await pluginApi.parseNovelAndChapters(

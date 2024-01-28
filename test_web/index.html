@@ -8,7 +8,7 @@
     <link rel="shortcut icon" sizes="128x128" type="image/png" href="/static/ico.png" defer />
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/mdb5.css">
-    <link rel="stylesheet/less" type="text/css" href="/static/css/new.less" />
+    <link rel="stylesheet/less" type="text/css" href="/static/css/index.less" />
     <link rel="stylesheet/less" type="text/css" href="/static/css/accordion.less" />
     <script src="/static/js/less.js"></script>
     <script src="static/md5Themes/themes.js"></script>
@@ -83,7 +83,8 @@
                 </accordion-header>
                 <accordion-content>
                     <div style="display: inline-block;" class="modal-container">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtersModal">
+                        <button id="filters-btn" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#filtersModal">
                             Filters
                         </button>
                         <div class="modal fade" id="filtersModal" tabindex="-1" role="dialog"
@@ -106,8 +107,21 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary popularNovels-btn">fetch</button>
-                    <span id="fetch-status">Fetching page: <span id="fetching-page">1</span></span>
+                    <div class="inline-container fetch-btn">
+                        <button type="button" class="btn btn-primary popularNovels-btn">fetch</button>
+                    </div>
+                    <div class="inline-container page-select">
+                        <select>
+                            <option>1</option>
+                        </select>
+                        <span class="page-the-same-warn"></span>
+                    </div>
+                    <div class="inline-slider-checkbox">
+                        <label>
+                            <input type="checkbox" id="latest-switch" />
+                            <span>Popular</span>
+                        </label>
+                    </div>
                     <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>
@@ -120,11 +134,19 @@
                     searchNovels
                 </accordion-header>
                 <accordion-content>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="searchTerm">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary searchNovels-btn" type="button">search</button>
+                    <div class="searchbar">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="searchTerm">
+                            <div class="input-group-append fetch-btn">
+                                <button class="btn btn-primary searchNovels-btn" type="button">search</button>
+                            </div>
                         </div>
+                    </div>
+                    <div class="inline-container page-select">
+                        <select>
+                            <option>1</option>
+                        </select>
+                        <span class="page-the-same-warn"></span>
                     </div>
                     <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>

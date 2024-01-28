@@ -18,9 +18,235 @@
 /** @typedef {{backgroundColor:string, textColor:string}} Theme */
 /** @typedef {Theme[]} Themes */
 /** @typedef {import("./accordion").AccordionBox} AccordionBox */
-
 /// <reference path="./types.d.ts" />
 
+// #region DOM Queries
+const nav = $("nav");
+
+/** @type {JQuery<AccordionBox>} */
+const headerChanger = $("#headerChanger");
+
+/** @type {JQuery<AccordionBox>} */
+const popularNovels = $("#popularNovels");
+/** @type {JQuery<HTMLDivElement>} */
+const popularNovels_page_select = $("#popularNovels .page-select");
+/** @type {JQuery<HTMLDivElement>} */
+const popularNovels_fetch_btn = $("#popularNovels .fetch-btn");
+/** @type {JQuery<HTMLDivElement>} */
+const popularNovels_spinner = $("#popularNovels .spinner-border");
+/** @type {JQuery<HTMLDivElement>} */
+const popularNovels_novel_list = $("#popularNovels .novel-list");
+
+/** @type {JQuery<AccordionBox>} */
+const searchNovels = $("#searchNovels");
+/** @type {JQuery<HTMLDivElement>} */
+const seacrhNovels_novel_list = $("#searchNovels .novel-list");
+/** @type {JQuery<HTMLDivElement>} */
+const searchNovels_page_select = $("#searchNovels .page-select");
+/** @type {JQuery<HTMLDivElement>} */
+const searchNovels_fetch_btn = $("#searchNovels .fetch-btn");
+/** @type {JQuery<HTMLInputElement>} */
+const searchNovels_searchbar = $("#searchNovels .searchbar input");
+
+/** @type {JQuery<AccordionBox>} */
+const parseNovelAndChapters = $("#parseNovelAndChapters");
+
+/** @type {JQuery<AccordionBox>} */
+const parseChapter = $("#parseChapter");
+
+/** @type {JQuery<AccordionBox>} */
+const fetchImage = $("#fetchImage");
+
+/** @type {JQuery<HTMLSelectElement>}*/
+const plugin_language_selection = $("#language");
+/** @type {JQuery<HTMLInputElement>} */
+const plugin_search = $("#plugin");
+/** @type {JQuery<HTMLDivElement>} */
+const plugin_search_results = $("#search-results");
+/** @type {JQuery<HTMLButtonElement>} */
+const clear_plugin_search = $("#clear-search");
+
+/** @type {JQuery<HTMLInputElement>} */
+const previewSwitch = $("#raw-preview-switch");
+/** @type {JQuery<HTMLDivElement>} */
+const chapterViewer = $("#chapter-viewer");
+/** @type {JQuery<HTMLDivElement>} */
+const filtersModal = $("#filtersModal .modal-body");
+/** @type {JQuery<HTMLInputElement>} */
+const latestSwitch = $("#latest-switch");
+
+// #endregion
+
+// #region pagination
+class NovelListPagination {
+    constructor(
+        /** @type {boolean} */ sL,
+        /** @type {JQuery<HTMLDivElement>} */ sE,
+        /** @type {JQuery<HTMLDivElement>} */ fC,
+        /** @type {JQuery<HTMLDivElement>} */ nL
+    ) {
+        /** @type {Record<number,NovelItem[]>} */
+        this.pageStore = {};
+        this._showlatest = sL;
+        this.lastFetchedPage = 0;
+        this.currentPage = 0;
+        this.canFetchMore = true;
+        this.selectElement = sE;
+        this.fetchContainer = fC;
+        this.resetStoreOnFetch = true;
+        this.novelList = nL;
+    }
+    get showLatest() {
+        return this._showlatest;
+    }
+    set showLatest(val) {
+        this._showlatest = val;
+        this.reset();
+    }
+    get fetchBtn() {
+        return this.fetchContainer.children("button")[0];
+    }
+    get numSelect() {
+        return this.selectElement.children("select")[0];
+    }
+    lockFetch(cause = 0) {
+        this.canFetchMore = false;
+        this.fetchBtn.disabled = true;
+        if (cause === 1) this.fetchBtn.innerText = "no more to fetch";
+        if (cause === 2) this.fetchBtn.innerText = "fetching";
+        if (cause === 3) this.fetchBtn.innerText = "error";
+    }
+    unlockFetch() {
+        this.canFetchMore = true;
+        this.fetchBtn.disabled = false;
+        this.fetchBtn.innerText = "fetch";
+    }
+    async fetchNovels(
+        /** @type {(page:number, latest: boolean)=>Promise<NovelItem[]>} */ fn
+    ) {
+        this.error = undefined;
+        if (this.resetStoreOnFetch) {
+            this.resetStoreOnFetch = false;
+            this.pageStore = {};
+        }
+        try {
+            this.lockFetch(2);
+            const lfp = ++this.lastFetchedPage;
+            console.log("fetching ", lfp, "page");
+            const novels = await fn(lfp, this.showLatest);
+            if (novels.length === 0) {
+                this.lastFetchedPage--;
+                this.lockFetch(1);
+                if (this.lastFetchedPage === 0) {
+                    this.error = "No novels found!";
+                    this.render();
+                }
+                return false;
+            }
+            this.loadNovels(lfp, novels);
+            this.unlockFetch();
+            return true;
+        } catch (e) {
+            this.lastFetchedPage--;
+            this.lockFetch(3);
+            this.error = `${e}`;
+            this.render();
+            return false;
+        }
+    }
+    showNextPage() {
+        console.log("lf", this.lastFetchedPage, "cp", this.currentPage);
+        if (this.lastFetchedPage > this.currentPage) {
+            this.currentPage = this.lastFetchedPage;
+            this.render();
+        }
+        this.numSelect.value = `${this.currentPage}`;
+    }
+    arePagesTheSame(
+        /** @type {NovelItem[]} */ p1,
+        /** @type {NovelItem[]} */ p2
+    ) {
+        if (p1.length !== p2.length) return false;
+        let i = 0;
+        for (const novel of p1) {
+            if (novel.url !== p2[i].url) return false;
+            i++;
+        }
+        return true;
+    }
+    loadNovels(/** @type {number} */ page, /** @type {NovelItem[]} */ list) {
+        this.pageStore[page] = list;
+        if (page - 1 > 0 && this.pageStore[page - 1]) {
+            if (
+                this.arePagesTheSame(
+                    this.pageStore[page],
+                    this.pageStore[page - 1]
+                )
+            ) {
+                if (this.numSelect.nextElementSibling)
+                    this.numSelect.nextElementSibling.innerHTML =
+                        "Pages are the same! It's possible that pagination is not implemented in the source!";
+            }
+        }
+    }
+    reset() {
+        this.hideSelectBox();
+        this.currentPage = 0;
+        this.lastFetchedPage = 0;
+        this.resetStoreOnFetch = true;
+        this.error = undefined;
+        if (this.numSelect.nextElementSibling) {
+            this.numSelect.nextElementSibling.innerHTML = "";
+        }
+        this.unlockFetch();
+    }
+    setupSelectBox() {
+        this.selectElement[0].style.display = "inline";
+        this.numSelect.innerHTML = "";
+        for (let i = 1; i <= this.lastFetchedPage; i++) {
+            const option = $("<option>").text(`${i}`).val(`${i}`);
+            this.numSelect.append(option[0]);
+        }
+        this.numSelect.value = `${this.currentPage}`;
+        this.numSelect.onchange = () => {
+            this.currentPage = parseInt(this.numSelect.value);
+            this.render();
+        };
+    }
+    hideSelectBox() {
+        this.selectElement[0].style.display = "";
+    }
+    render() {
+        if (this.lastFetchedPage > 1) {
+            if (!this.pageStore[this.currentPage]) {
+                console.log("no page store, erroring");
+                this.reset();
+                this.error =
+                    "Please request new pages after previous one loaded! Try again!";
+            }
+        }
+        if (this.error) {
+            this.novelList.html("");
+            this.novelList.append(this.error);
+            return;
+        }
+        if (this.lastFetchedPage > 0) {
+            this.setupSelectBox();
+            this.fetchBtn.innerText = "fetch next";
+        }
+        this.novelList.html("");
+        this.novelList.append(
+            ...this.pageStore[this.currentPage].map((novel) =>
+                PluginWrapper.createNovelItem(novel, {
+                    target: popularNovels[0],
+                })
+            )
+        );
+    }
+}
+// #endregion
+
+// #region state
 const state = {
     /** @type {PluginList} */
     all_plugins: {},
@@ -37,40 +263,23 @@ const state = {
     current_plugin: undefined,
     /** @type {FilterToValues<Filters>} */
     filterValues: {},
-    /** popularNovels page */
-    pop_page: 1,
+    /** popularNovels pagination states */
+    popular_pages: new NovelListPagination(
+        false,
+        popularNovels_page_select,
+        popularNovels_fetch_btn,
+        popularNovels_novel_list
+    ),
+    search_pages: new NovelListPagination(
+        false,
+        searchNovels_page_select,
+        searchNovels_fetch_btn,
+        seacrhNovels_novel_list
+    ),
 };
+// #endregion
 
-/** @type {JQuery<HTMLSelectElement>}*/
-const language_selection = $("#language");
-/** @type {JQuery<HTMLInputElement>} */
-const plugin_search = $("#plugin");
-/** @type {JQuery<HTMLDivElement>} */
-const search_results = $("#search-results");
-
-const getHeaders = () => {
-    /** @type {Record<string,string>} */
-    const headers = {};
-    const els = document.querySelectorAll(".headerinfo").forEach((el) => {
-        /** @type {HTMLSpanElement | null} */
-        const nameSpan = el.querySelector(".headername");
-        /** @type {HTMLSpanElement | null} */
-        const valueSpan = el.querySelector(".headervalue");
-        if (nameSpan && valueSpan) {
-            const { innerText: name } = nameSpan;
-            const { innerText: value } = valueSpan;
-            if (
-                typeof name === "string" &&
-                typeof value === "string" &&
-                value.trim()
-            ) {
-                headers[name] = value.trim();
-            }
-        }
-    });
-    return headers;
-};
-
+// #region util functions
 /**
  *
  * @param {string} path
@@ -85,127 +294,7 @@ const fetchFromAPI = async (path, init = undefined) => {
     }
     return fetch(path, init);
 };
-
-const loadPluginsIntoSearchBar = () => {
-    const { language, keyword } = state.plugin_search;
-    const plugins = language ? state.all_plugins[language] : state.plugin_infos;
-    state.plugins_in_search = keyword
-        ? plugins.filter((p) =>
-              keyword.charAt(0) === "-"
-                  ? !p.name
-                        .toLowerCase()
-                        .includes(keyword.toLowerCase().substring(1))
-                  : p.name.toLowerCase().includes(keyword.toLowerCase())
-          )
-        : plugins;
-};
-
-fetchFromAPI("/all_plugins")
-    .then((res) => res.json())
-    .then((/** @type {PluginList} */ all) => {
-        state.all_plugins = all;
-        for (let lang in all) {
-            language_selection.append(`<option>${lang}</option>`);
-            state.plugin_infos = state.plugin_infos.concat(all[lang]);
-        }
-    })
-    .then((_) => {
-        loadPluginsIntoSearchBar();
-    });
-
-language_selection.on("change", (e) => {
-    state.plugin_search.language = e.target.value;
-    loadPluginsIntoSearchBar();
-});
-
-const display_search = () => {
-    search_results.hide();
-    search_results.empty();
-    if (!$("#turnoff-catch").length) {
-        const turnoff_catch = $("<div>").attr("id", "turnoff-catch");
-        $("body").append(turnoff_catch);
-        turnoff_catch.on("click", () => {
-            search_results.hide();
-            turnoff_catch.remove();
-        });
-    }
-    state.plugins_in_search.forEach((plugin) => {
-        // search_results.append(`
-        //     <div style="display: flex; align-items: center;">
-        //         <button style="display: flex; align-items: center; height: 30px; flex-shrink: 0;" data-require="${plugin.requirePath}" onclick="test_plugin(this)" type="button" class="search-item btn btn-light btn-outline-primary btn-md btn-block">
-        //             <img src="./icons/${plugin.icon}" style="height: 100%; object-fit: contain; margin-right: 10px;">
-        //             ${plugin.lang}/${plugin.name}
-        //         </button>
-        //     </div>
-        // `);
-
-        /** @type {JQuery<HTMLImageElement>} */
-        const img = $("<img>", { src: `./icons/${plugin.icon}` });
-        img.css({
-            height: "100%",
-            "object-fit": "contains",
-            "margin-right": "10px",
-        });
-        /** @type {JQuery<HTMLButtonElement>} */
-        const btn = $("<button>", {
-            type: "button",
-            class: "search-item btn btn-light btn-outline-primary btn-md btn-block",
-        });
-        btn.css({
-            display: "flex",
-            "align-items": "center",
-            height: "30px",
-            "flex-shrink": 0,
-        })
-            .attr("data-require", `${plugin.requirePath}`)
-            .on("click", (e) => {
-                test_plugin(e.target);
-            });
-        /** @type {JQuery<HTMLDivElement>} */
-        const div = $("<div>");
-        div.css({
-            display: "flex",
-            "align-items": "center",
-        });
-        btn.append(img).append(`${plugin.lang}/${plugin.name}`);
-        div.append(btn);
-        search_results.append(div);
-    });
-    search_results.show();
-};
-
-plugin_search.on("focus", () => {
-    if (!state.all_plugins) return;
-    plugin_search[0].selectionStart = 0;
-    plugin_search[0].selectionEnd = plugin_search.val()?.length || 0;
-    loadPluginsIntoSearchBar();
-    display_search();
-});
-
-plugin_search.on("keyup", (e) => {
-    state.plugin_search.keyword = e.target.value;
-    loadPluginsIntoSearchBar();
-    display_search();
-});
-
-$("#clear-search").on("click", (e) => {
-    search_results.hide();
-    plugin_search.val("");
-    plugin_search.attr("data-require", "");
-});
-
-const test_plugin = (/** @type {HTMLButtonElement} */ btn) => {
-    const ele = $(btn);
-    const plugin_requirePath = ele.attr("data-require");
-    if (!plugin_requirePath) return;
-    state.current_plugin = new PluginWrapper(plugin_requirePath);
-    plugin_search.attr("data-require", plugin_requirePath);
-    plugin_search.val(ele.text().split("/")[1]);
-    $("#turnoff-catch").trigger("click");
-    state.current_plugin.getFilters().then(() => {
-        $("#loadedplugin").text("Loaded: " + btn.innerText);
-    });
-};
+// #endregion
 
 class PluginWrapper {
     /**
@@ -217,10 +306,41 @@ class PluginWrapper {
         this.currentView = previewSwitch?.[0]?.checked ? "preview" : "raw";
     }
 
-    /** @type {JQuery<HTMLDivElement>} */
-    chapterViewer = $("#chapter-viewer");
-    /** @type {JQuery<HTMLDivElement>} */
-    filtersModal = $("#filtersModal .modal-body");
+    static previewSettings = {
+        htmlTemplate: "",
+        fillJS: "",
+        fillCSS: "",
+        customJS: "",
+        customCSS: "",
+        readerSettings: {
+            theme: "#292832",
+            textColor: "#CCCCCC",
+            textSize: 16,
+            textAlign: "left",
+            padding: 5,
+            fontFamily: "",
+            lineHeight: 1.5,
+        },
+        iframeSize: {
+            width: 800,
+            height: 1200,
+        },
+        /** @type {Theme} */
+        theme: window.themes[window.themes.length - 2],
+        layoutHeight: 0,
+        novel: { pluginId: 0 },
+        chapter: { novelId: 0, id: 0 },
+        html: "",
+        sanitizedHTML: "",
+        sanitize: true,
+        StatusBar: { currentHeight: 0 },
+    };
+
+    /** @type {"raw" | "preview"} */
+    currentView = "raw";
+
+    /** @type {NodeJS.Timeout[]} */
+    static clocks = [];
 
     /**
      * @param {[string,Filters[string]]} flt
@@ -250,6 +370,7 @@ class PluginWrapper {
                         .attr("title", `key: ${key}`)
                         .addClass("custom-select")
                         .on("change", (e) => {
+                            state.popular_pages.reset();
                             state.filterValues[key].value =
                                 e.target.selectedOptions[0].value;
                         })
@@ -289,6 +410,7 @@ class PluginWrapper {
                         // set checkbox attributes and listeners
                         inp.attr("id", id).on("change", (e) => {
                             const { checked } = e.target;
+                            state.popular_pages.reset();
                             const fV = state.filterValues[key];
                             if (Array.isArray(fV.value)) {
                                 fV.value = checked
@@ -333,6 +455,7 @@ class PluginWrapper {
                     const inp = $("<input>", { type: "text" });
                     inp.attr("id", id)
                         .on("change", (e) => {
+                            state.popular_pages.reset();
                             const fV = state.filterValues[key];
                             if (typeof fV.value === "string") {
                                 fV.value = e.target.value;
@@ -396,6 +519,7 @@ class PluginWrapper {
                         xchb.attr("id", id);
                         label.text(cb.label).append(xchb).append($("<span>"));
                         xchb.on("change", (e) => {
+                            state.popular_pages.reset();
                             e.preventDefault();
                             e.stopImmediatePropagation();
                             e.stopPropagation();
@@ -463,10 +587,10 @@ class PluginWrapper {
                     }),
                 })
             ).json();
-            this.filtersModal.html("");
+            filtersModal.html("");
             state.filterValues = {};
             for (const fKey in filters) {
-                this.filtersModal.append(
+                filtersModal.append(
                     PluginWrapper.createFilterElement([fKey, filters[fKey]]),
                     $("<hr>")
                 );
@@ -508,7 +632,6 @@ class PluginWrapper {
     };
 
     /**
-     *
      * @param {NovelItem} novel
      * @param {{target:AccordionBox}|undefined} parsable
      * @returns
@@ -542,23 +665,23 @@ class PluginWrapper {
                         /** @type {JQuery<AccordionBox>} */
                         const pnc = $("#parseNovelAndChapters");
                         const box = pnc[0];
-                        if (box) console.log(box);
-                        if (box.collapsed) {
-                            box.toggle();
-                        }
                         $("#parse-novel-url").val(novel.url);
                         $("#parse-novel-btn").trigger("click");
-                        $("#parseNovelAndChapters")[0].scrollIntoView({
-                            behavior: "smooth",
-                        });
+                        if (box.collapsed) {
+                            box.toggle();
+                            setTimeout(() => {
+                                // scroll after it un-collapses
+                                box.scrollIntoView({
+                                    behavior: "smooth",
+                                });
+                            }, 500);
+                        } else box.scrollIntoView({ behavior: "smooth" });
                     })
             );
         return novel_item;
     }
 
-    /**
-     * @param {ChapterItem} chapter
-     */
+    /** @param {ChapterItem} chapter */
     static createChapterItem(chapter) {
         /**
          * @type {JQuery<HTMLDivElement>}
@@ -588,65 +711,57 @@ class PluginWrapper {
             .on("click", () => {
                 /** @type {JQuery<AccordionBox>} */
                 const parseChapter = $("#parseChapter");
+                const box = parseChapter[0];
                 $("#chapter-parse-url").val(chapter.url);
-                if (parseChapter[0].collapsed) {
-                    parseChapter[0].toggle();
-                }
                 $("#chapter-parse-btn").trigger("click");
-                $("#parseChapter")[0].scrollIntoView({ behavior: "smooth" });
+                if (box.collapsed) {
+                    box.toggle();
+                    setTimeout(() => {
+                        // scroll after it un-collapses
+                        box.scrollIntoView({
+                            behavior: "smooth",
+                        });
+                    }, 500);
+                } else box.scrollIntoView({ behavior: "smooth" });
             })
             .appendTo(chapter_item);
         return chapter_item;
     }
 
     async getPopularNovels() {
-        console.log("gettin popn");
-        const spinner = $("#popularNovels .spinner-border");
-        console.log(spinner);
-        spinner.show();
-        /** @type {JQuery<AccordionBox>} */
-        const accordionBox = $("#popularNovels");
-        const novel_list = $("#popularNovels .novel-list");
-        console.log(novel_list);
+        popularNovels_spinner.show();
         /** @type {FilterToValues<Filters>} */
         const filters = { ...state.filterValues };
         try {
-            /** @type {NovelItem[] | {error:string}} */
-            const novels = await (
-                await fetchFromAPI(`/popularNovels/`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        pluginRequirePath: this.requirePath,
-                        filters: filters,
-                        page: state.pop_page,
-                    }),
-                })
-            ).json();
-            // clear the novel_list
-            novel_list.html("");
-
-            if ("error" in novels) throw `There was an error! ${novels.error}`;
-            if (novels.length === 0) {
-                novel_list.text("Couldn't find anything!");
-            }
-            novel_list.append(
-                ...novels.map((novel) =>
-                    PluginWrapper.createNovelItem(novel, {
-                        target: accordionBox[0],
+            await state.popular_pages.fetchNovels(async (page, latest) => {
+                console.log("Asking for page #", page);
+                const novels = await (
+                    await fetchFromAPI(`/popularNovels/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            showLatestNovels: latest,
+                            pluginRequirePath: this.requirePath,
+                            filters: filters,
+                            page,
+                        }),
                     })
-                )
-            );
+                ).json();
+                if ("error" in novels)
+                    throw `popularNovels threw an error:<div class='error'>${novels.error}</div>`;
+                return novels;
+            });
+            state.popular_pages.showNextPage();
         } catch (/** @type {unknown}*/ e) {
             console.error(e);
             if (e)
-                novel_list.text(
+                popularNovels_novel_list.html(
                     `${typeof e === "object" && "message" in e ? e.message : e}`
                 );
         } finally {
-            spinner.hide();
+            popularNovels_spinner.hide();
         }
     }
 
@@ -657,36 +772,31 @@ class PluginWrapper {
         const searchBox = $("#searchNovels input");
         const searchTerm = searchBox.val();
         const spinner = $("#searchNovels .spinner-border");
-        const novel_list = $("#searchNovels .novel-list");
         spinner.show();
         try {
-            /** @type {NovelItem[] | {error:string}} */
-            const novels = await (
-                await fetchFromAPI(`/searchNovels/`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        pluginRequirePath: this.requirePath,
-                        searchTerm: searchTerm,
-                    }),
-                })
-            ).json();
-            novel_list.html("");
-            if ("error" in novels) throw `Could not fetch! ${novels.error}`;
-
-            novel_list.append(
-                ...novels.map((novel) =>
-                    PluginWrapper.createNovelItem(novel, {
-                        target: accordionBox[0],
+            await state.search_pages.fetchNovels(async (n, _) => {
+                const novels = await (
+                    await fetchFromAPI(`/searchNovels/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            pluginRequirePath: this.requirePath,
+                            searchTerm: searchTerm,
+                            page: n,
+                        }),
                     })
-                )
-            );
+                ).json();
+                if ("error" in novels)
+                    throw `searchNovels threw an error:<div class='error'>${novels.error}</div>`;
+                return novels;
+            });
+            state.search_pages.showNextPage();
         } catch (/** @type {unknown} */ e) {
             console.error(e);
             if (e)
-                novel_list.text(
+                seacrhNovels_novel_list.html(
                     `${typeof e === "object" && "message" in e ? e.message : e}`
                 );
         } finally {
@@ -785,42 +895,6 @@ class PluginWrapper {
         }
     }
 
-    static previewSettings = {
-        htmlTemplate: "",
-        fillJS: "",
-        fillCSS: "",
-        customJS: "",
-        customCSS: "",
-        readerSettings: {
-            theme: "#292832",
-            textColor: "#CCCCCC",
-            textSize: 16,
-            textAlign: "left",
-            padding: 5,
-            fontFamily: "",
-            lineHeight: 1.5,
-        },
-        iframeSize: {
-            width: 800,
-            height: 1200,
-        },
-        /** @type {Theme} */
-        theme: window.themes[window.themes.length - 2],
-        layoutHeight: 0,
-        novel: { pluginId: 0 },
-        chapter: { novelId: 0, id: 0 },
-        html: "",
-        sanitizedHTML: "",
-        sanitize: true,
-        StatusBar: { currentHeight: 0 },
-    };
-
-    /** @type {"raw" | "preview"} */
-    currentView = "raw";
-
-    /** @type {NodeJS.Timeout[]} */
-    static clocks = [];
-
     /**
      * @param {Window | null} iframeWindow
      */
@@ -875,7 +949,7 @@ class PluginWrapper {
             clearTimeout(c);
         });
         this.currentView = "preview";
-        this.chapterViewer.empty();
+        chapterViewer.empty();
         // create the iframe
         /** @type {JQuery<HTMLIFrameElement>} */
         const iframe = $("<iframe>");
@@ -908,13 +982,13 @@ class PluginWrapper {
                 }px`,
             });
         }
-        this.chapterViewer.append(iframe);
+        chapterViewer.append(iframe);
         const iframeWindow = iframe[0].contentWindow;
         this.loadHTMLToIFrame(iframeWindow);
     }
 
     showRawChapterText() {
-        this.chapterViewer.empty();
+        chapterViewer.empty();
         /**
          * @type {JQuery<HTMLTextAreaElement>}
          */
@@ -922,7 +996,7 @@ class PluginWrapper {
         chapterRawTextarea
             .attr("rows", "10")
             .attr("maxlength", 10000000)
-            .appendTo(this.chapterViewer);
+            .appendTo(chapterViewer);
         chapterRawTextarea.addClass("form-control");
         const rawHTML = PluginWrapper.previewSettings.sanitize
             ? PluginWrapper.previewSettings.sanitizedHTML
@@ -993,24 +1067,35 @@ class PluginWrapper {
         }
     }
 }
+const currentWrapper = () => state.current_plugin || emptyPluginWrapper;
+const emptyPluginWrapper = new PluginWrapper("");
 
-$(".popularNovels-btn").on("click", () =>
-    state.current_plugin?.getPopularNovels()
-);
-
-$(".searchNovels-btn").on("click", () =>
-    state.current_plugin?.getSearchedNovels()
-);
-
-$(".parseNovelAndChapters-btn").on("click", () =>
-    state.current_plugin?.getNovelAndChapters()
-);
-
-$(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
-$(".fetchImage-btn").on("click", () => state.current_plugin?.fetchImage());
-
+// #region headers
 /** @type {Record<string,string>} */
 let lastCopiedHeaders = {};
+
+const getHeaders = () => {
+    /** @type {Record<string,string>} */
+    const headers = {};
+    const els = document.querySelectorAll(".headerinfo").forEach((el) => {
+        /** @type {HTMLSpanElement | null} */
+        const nameSpan = el.querySelector(".headername");
+        /** @type {HTMLSpanElement | null} */
+        const valueSpan = el.querySelector(".headervalue");
+        if (nameSpan && valueSpan) {
+            const { innerText: name } = nameSpan;
+            const { innerText: value } = valueSpan;
+            if (
+                typeof name === "string" &&
+                typeof value === "string" &&
+                value.trim()
+            ) {
+                headers[name] = value.trim();
+            }
+        }
+    });
+    return headers;
+};
 
 const checkIfHeadersChanged = () => {
     const currentHeaders = getHeaders();
@@ -1040,72 +1125,9 @@ const checkIfHeadersChanged = () => {
     if (headersChanged) $("#headersnotcopied").css({ display: "block" });
     else $("#headersnotcopied").css({ display: "none" });
 };
+// #endregion
 
-// get all header inputs and check if headers changed after
-$(".headerinfo > span[contenteditable='true']").each((_, inputElement) => {
-    $(inputElement).on("input", checkIfHeadersChanged);
-});
-
-$("#addheaderbtn").on("click", () => {
-    /**
-     <div class="headerinfo" data-headername="Cookie">
-        <span class="headername" onclick="this.nextElementSibling.nextElementSibling.focus()">Cookie</span><b>:&nbsp;</b>
-        <span class="headervalue" contenteditable="true" ></span>
-    </div>
-     */
-    const nameSpan = $("<span>").addClass("headername");
-    const valueSpan = $("<span>").addClass("headervalue");
-    const separator = $("<b>").html(":&nbsp;");
-    const clearButton = $("<button>")
-        .text("Clear")
-        .addClass("headereditbutton")
-        .on("click", () => {
-            valueSpan.text("");
-            checkIfHeadersChanged();
-        });
-    const removeButton = $("<button>")
-        .text("Remove")
-        .addClass("headereditbutton");
-    nameSpan[0].contentEditable = "true";
-    valueSpan[0].contentEditable = "true";
-    nameSpan.on("input", checkIfHeadersChanged);
-    valueSpan.on("input", checkIfHeadersChanged);
-    const headerinfo = $("<div>")
-        .append(nameSpan, separator, valueSpan, clearButton, removeButton)
-        .attr("class", "headerinfo");
-    removeButton.on("click", () => {
-        headerinfo.remove();
-        checkIfHeadersChanged();
-    });
-    $("#headerinfos").append(headerinfo);
-});
-
-$("#copyascode").on("click", async () => {
-    const headers = getHeaders();
-    const strippedHeaders = {
-        ...headers,
-    };
-    delete strippedHeaders["Cookie"];
-    delete strippedHeaders["User-Agent"];
-    await navigator.clipboard.writeText(
-        JSON.stringify(strippedHeaders, null, 4)
-    );
-    lastCopiedHeaders = headers;
-    checkIfHeadersChanged();
-    $("#headerscopied").css({ display: "block" });
-    setTimeout(() => $("#headerscopied").css({ display: "none" }), 1000);
-});
-
-const currentWrapper = () => state.current_plugin || emptyPluginWrapper;
-
-/**
- * @type {JQuery<HTMLInputElement>}
- */
-const previewSwitch = $("#raw-preview-switch");
-const emptyPluginWrapper = new PluginWrapper("");
-previewSwitch.on("change", () => {
-    currentWrapper().toggleChapterView();
-});
+// #region preview
 
 const loadThemePreset = (/** @type {Theme} */ t) => {
     PluginWrapper.previewSettings.theme = t;
@@ -1236,6 +1258,231 @@ const refreshPreviewSettings = () => {
     });
 };
 
+// #endregion
+
+// load plugin
+
+const load_plugin = (/** @type {HTMLButtonElement} */ btn) => {
+    const ele = $(btn);
+    const plugin_requirePath = ele.attr("data-require");
+    if (!plugin_requirePath) return;
+    state.current_plugin = new PluginWrapper(plugin_requirePath);
+    plugin_search.attr("data-require", plugin_requirePath);
+    plugin_search.val(ele.text().split("/")[1]);
+    state.popular_pages.reset();
+    state.search_pages.reset();
+    destroySearchTurnOffBox();
+    state.current_plugin.getFilters().then(() => {
+        $("#loadedplugin").text("Loaded: " + btn.innerText);
+    });
+};
+
+// #region plugin search
+
+const loadPluginsIntoSearchBar = () => {
+    const { language, keyword } = state.plugin_search;
+    const plugins = language ? state.all_plugins[language] : state.plugin_infos;
+    state.plugins_in_search = keyword
+        ? plugins.filter((p) =>
+              keyword.charAt(0) === "-"
+                  ? !p.name
+                        .toLowerCase()
+                        .includes(keyword.toLowerCase().substring(1))
+                  : p.name.toLowerCase().includes(keyword.toLowerCase())
+          )
+        : plugins;
+};
+
+fetchFromAPI("/all_plugins")
+    .then((res) => res.json())
+    .then((/** @type {PluginList} */ all) => {
+        state.all_plugins = all;
+        for (let lang in all) {
+            plugin_language_selection.append(`<option>${lang}</option>`);
+            state.plugin_infos = state.plugin_infos.concat(all[lang]);
+        }
+    });
+
+const destroySearchTurnOffBox = () => {
+    $("#turnoff-catch").trigger("click");
+};
+
+const createSearchTurnOffBox = () => {
+    // if there is no unclick box
+    if (!$("#turnoff-catch").length) {
+        // create it
+        const turnoff_catch = $("<div>").attr("id", "turnoff-catch");
+        $("body").append(turnoff_catch);
+        turnoff_catch.on("click", () => {
+            plugin_search_results.hide();
+            turnoff_catch.remove();
+        });
+    }
+};
+
+const display_plugin_search = () => {
+    plugin_search_results.hide();
+    plugin_search_results.empty();
+    createSearchTurnOffBox();
+    state.plugins_in_search.forEach((plugin) => {
+        /** @type {JQuery<HTMLImageElement>} */
+        const img = $("<img>", { src: `./icons/${plugin.icon}` });
+        img.css({
+            height: "100%",
+            "object-fit": "contains",
+            "margin-right": "10px",
+        });
+        /** @type {JQuery<HTMLButtonElement>} */
+        const btn = $("<button>", {
+            type: "button",
+            class: "search-item btn btn-light btn-outline-primary btn-md btn-block",
+        });
+        btn.css({
+            display: "flex",
+            "align-items": "center",
+            height: "30px",
+            "flex-shrink": 0,
+        })
+            .attr("data-require", `${plugin.requirePath}`)
+            .on("click", (e) => {
+                load_plugin(e.target);
+            });
+        /** @type {JQuery<HTMLDivElement>} */
+        const div = $("<div>");
+        div.css({
+            display: "flex",
+            "align-items": "center",
+        });
+        btn.append(img).append(`${plugin.lang}/${plugin.name}`);
+        div.append(btn);
+        plugin_search_results.append(div);
+    });
+    plugin_search_results.show();
+};
+// #endregion
+
+// #region event handlers
+plugin_language_selection.on("change", (e) => {
+    state.plugin_search.language = e.target.value;
+    loadPluginsIntoSearchBar();
+});
+
+plugin_search.on("focus", () => {
+    if (!state.all_plugins) return;
+    plugin_search[0].selectionStart = 0;
+    plugin_search[0].selectionEnd = plugin_search.val()?.length || 0;
+    loadPluginsIntoSearchBar();
+    display_plugin_search();
+});
+
+plugin_search.on("keyup", (e) => {
+    state.plugin_search.keyword = e.target.value;
+    loadPluginsIntoSearchBar();
+    display_plugin_search();
+});
+
+clear_plugin_search.on("click", (e) => {
+    plugin_search_results.hide();
+    plugin_search.val("");
+    plugin_search.attr("data-require", "");
+});
+
+previewSwitch.on("change", () => {
+    currentWrapper().toggleChapterView();
+});
+
+// get all header inputs and check if headers changed after
+$(".headerinfo > span[contenteditable='true']").each((_, inputElement) => {
+    $(inputElement).on("input", checkIfHeadersChanged);
+});
+
+latestSwitch.on("change", () => {
+    const label = latestSwitch.siblings("span");
+    /** @type {JQuery<HTMLInputElement>} */
+    const filtersBtn = $("#filters-btn");
+    if (latestSwitch[0].checked) {
+        state.popular_pages.showLatest = true;
+        filtersBtn[0].disabled = true;
+        label.text("Latest");
+    } else {
+        state.popular_pages.showLatest = false;
+        filtersBtn[0].disabled = false;
+        label.text("Popular");
+    }
+});
+
+searchNovels_searchbar.on("keyup", () => {
+    state.search_pages.reset();
+});
+
+$("#addheaderbtn").on("click", () => {
+    /**
+     <div class="headerinfo" data-headername="Cookie">
+        <span class="headername" onclick="this.nextElementSibling.nextElementSibling.focus()">Cookie</span><b>:&nbsp;</b>
+        <span class="headervalue" contenteditable="true" ></span>
+    </div>
+     */
+    const nameSpan = $("<span>").addClass("headername");
+    const valueSpan = $("<span>").addClass("headervalue");
+    const separator = $("<b>").html(":&nbsp;");
+    const clearButton = $("<button>")
+        .text("Clear")
+        .addClass("headereditbutton")
+        .on("click", () => {
+            valueSpan.text("");
+            checkIfHeadersChanged();
+        });
+    const removeButton = $("<button>")
+        .text("Remove")
+        .addClass("headereditbutton");
+    nameSpan[0].contentEditable = "true";
+    valueSpan[0].contentEditable = "true";
+    nameSpan.on("input", checkIfHeadersChanged);
+    valueSpan.on("input", checkIfHeadersChanged);
+    const headerinfo = $("<div>")
+        .append(nameSpan, separator, valueSpan, clearButton, removeButton)
+        .attr("class", "headerinfo");
+    removeButton.on("click", () => {
+        headerinfo.remove();
+        checkIfHeadersChanged();
+    });
+    $("#headerinfos").append(headerinfo);
+});
+
+$("#copyascode").on("click", async () => {
+    const headers = getHeaders();
+    const strippedHeaders = {
+        ...headers,
+    };
+    delete strippedHeaders["Cookie"];
+    delete strippedHeaders["User-Agent"];
+    await navigator.clipboard.writeText(
+        JSON.stringify(strippedHeaders, null, 4)
+    );
+    lastCopiedHeaders = headers;
+    checkIfHeadersChanged();
+    $("#headerscopied").css({ display: "block" });
+    setTimeout(() => $("#headerscopied").css({ display: "none" }), 1000);
+});
+
+// buttons:
+$(".popularNovels-btn").on("click", () =>
+    state.current_plugin?.getPopularNovels()
+);
+
+$(".searchNovels-btn").on("click", () =>
+    state.current_plugin?.getSearchedNovels()
+);
+
+$(".parseNovelAndChapters-btn").on("click", () =>
+    state.current_plugin?.getNovelAndChapters()
+);
+
+$(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
+$(".fetchImage-btn").on("click", () => state.current_plugin?.fetchImage());
+
+// #endregion
+
 // JQuery document.body.onload
 $(() => {
     /** @type {JQuery<HTMLSpanElement>} */
@@ -1265,6 +1512,7 @@ $(() => {
     ]).then(() => {
         emptyPluginWrapper.refreshPreview();
     });
+    latestSwitch.trigger("change");
     for (const key in window.themes) {
         const t = window.themes[key];
         const picker = $("#theme-picker");

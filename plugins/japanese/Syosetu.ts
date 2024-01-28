@@ -1,8 +1,9 @@
-import { load as loadCheerio } from "cheerio";
-import { fetchFile } from "@libs/fetch";
+import { load, load as loadCheerio } from "cheerio";
+import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { defaultCover } from "@libs/defaultCover";
 import { FilterTypes, Filters } from "@libs/filterInputs";
+import { NovelItem } from "../../test_web/static/js";
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -26,34 +27,54 @@ class Syosetu implements Plugin.PluginBase {
     };
     async popularNovels(
         pageNo: number,
-        options: Plugin.PopularNovelsOptions<Filters>
+        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
-        console.log("fetch page", pageNo);
+        console.log("filter", filters);
         const getNovelsFromPage = async (pagenumber: number) => {
             // load page
+            let url = this.site;
 
-            const result = await fetch(this.searchUrl(pagenumber), {
-                headers: this.headers,
+            if (!filters.genre.value) {
+                url += `rank/list/type/${filters.ranking.value}_${filters.modifier.value}/?p=${pagenumber}`;
+            } else {
+                url += `rank/${
+                    filters.genre.value.length === 1
+                        ? "isekailist"
+                        : "genrelist"
+                }/type/${filters.ranking.value}_${filters.genre.value}${
+                    filters.modifier.value === "total"
+                        ? ""
+                        : `_${filters.modifier.value}`
+                }/?p=${pagenumber}`;
+            }
+            const html = await (await fetchApi(url)).text();
+
+            const loadedCheerio = loadCheerio(html, {
+                decodeEntities: false,
             });
-            const body = await result.text();
-            // Cheerio it!
-            const cheerioQuery = loadCheerio(body, { decodeEntities: false });
-            let pageNovels: Plugin.NovelItem[] = [];
-            // find class=searchkekka_box
-            cheerioQuery(".searchkekka_box").each(function (i, e) {
-                // get div with link and name   
-                const novelDIV = cheerioQuery(this).find(".novel_h");
-                // get link element
-                const novelA = novelDIV.children()[0];
-                // add new novel to array
-                pageNovels.push({
-                    name: novelDIV.text(), // get the name
-                    url: novelA.attribs.href, // get last part of the link
+
+            if (
+                parseInt(loadedCheerio(".is-current").html() || "1") !==
+                pagenumber
+            )
+                return [];
+
+            const novels: NovelItem[] = [];
+            loadedCheerio(".c-card").each((_, e) => {
+                const anchor = loadedCheerio(e).find(
+                    ".p-ranklist-item__title a"
+                );
+                const url = anchor.attr("href");
+                if (!url) return;
+                const name = anchor.text();
+                const novel: NovelItem = {
+                    url,
+                    name,
                     cover: defaultCover,
-                });
+                };
+                novels.push(novel);
             });
-            // return all novels from this page
-            return pageNovels;
+            return novels;
         };
         const novels = await getNovelsFromPage(pageNo);
         return novels;
@@ -157,10 +178,9 @@ class Syosetu implements Plugin.PluginBase {
         // returns list of novels from given page
         const getNovelsFromPage = async (pagenumber: number) => {
             // load page
-            const result = await fetch(
-                this.searchUrl(pagenumber) + `&word=${searchTerm}`,
-                { headers: this.headers }
-            );
+            const url = this.searchUrl(pagenumber) + `&word=${searchTerm}`;
+            console.log(url);
+            const result = await fetch(url, { headers: this.headers });
             const body = await result.text();
             // Cheerio it!
             const cheerioQuery = loadCheerio(body, { decodeEntities: false });
@@ -191,7 +211,7 @@ class Syosetu implements Plugin.PluginBase {
         //     pagesLoaded++;
         // } while (pagesLoaded < maxPageLoad && isNext); // check if we should load more
 
-        novels = await getNovelsFromPage(1);
+        novels = await getNovelsFromPage(pageNo);
 
         /** Use
          * novels.push(...(await getNovelsFromPage(pageNumber)))
