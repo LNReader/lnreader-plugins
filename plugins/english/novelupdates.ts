@@ -104,6 +104,7 @@ class NovelUpdates implements Plugin.PluginBase {
             .map((i, el) => loadedCheerio(el).text())
             .toArray()
             .join(",");
+
         novel.status = loadedCheerio("#editstatus").text().includes("Ongoing")
             ? "Ongoing"
             : "Completed";
@@ -137,9 +138,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
         loadedCheerio("li.sp_li_chp").each(function () {
             const chapterName = loadedCheerio(this).text().trim();
-
             const releaseDate = null;
-
             const chapterUrl =
                 "https:" +
                 loadedCheerio(this).find("a").first().next().attr("href");
@@ -183,6 +182,12 @@ class NovelUpdates implements Plugin.PluginBase {
         let isTumblr = chapterUrl.toLowerCase().includes("tumblr");
 
         let isWattpad = chapterUrl.toLowerCase().includes("wattpad");
+
+        let isAnomalously = chapterUrl.toLowerCase().includes('anotivereads');
+
+        let isBlossomTranslation = chapterUrl
+            .toLowerCase()
+            .includes('blossomtranslation');
 
         let isLightNovelsTls = chapterUrl
             .toLowerCase()
@@ -230,8 +235,10 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (isTumblr) {
             chapterText = loadedCheerio(".post").html()!;
         } else if (isBlogspot) {
-            loadedCheerio(".post-share-buttons").remove();
-            chapterText = loadedCheerio(".entry-content").html()!;
+            loadedCheerio('.post-share-buttons').remove();
+            chapterText =
+                loadedCheerio('.entry-content').html() ||
+                loadedCheerio('#post-body').html()!;
         } else if (isHostedNovel) {
             chapterText = loadedCheerio(".chapter").html()!;
         } else if (isScribbleHub) {
@@ -241,9 +248,19 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (isTravisTranslation) {
             chapterText = loadedCheerio(".reader-content").html()!;
         } else if (isLightNovelsTls) {
-            chapterText = loadedCheerio(".text_story").html()!;
+            chapterText = loadedCheerio('.text_story').html()!;
+        } else if (isBlossomTranslation) {
+            chapterText = loadedCheerio('.manga-child-content').html()!;
+        } else if (isAnomalously) {
+            chapterText = loadedCheerio('#comic').html()!;
         } else if (isiNovelTranslation) {
-            chapterText = loadedCheerio(".chakra-skeleton").html()!;
+            const link = 'https://api.' + chapterUrl.slice(8);
+            const json = await fetchApi(link).then(r => r.json());
+            chapterText = json.content.replace(/\n/g, '<br>');
+            if (json.notes) {
+                chapterText +=
+                '<br><hr><br>TL Notes:<br>' + json.notes.replace(/\n/g, '<br>');
+            }
         } else if (isWordPress) {
             /**
              * Remove wordpress bloat tags
@@ -308,8 +325,7 @@ class NovelUpdates implements Plugin.PluginBase {
     }
     async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
         const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
