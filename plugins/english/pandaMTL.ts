@@ -9,29 +9,28 @@ class PandaMTL implements Plugin.PluginBase {
     icon = "src/en/wordpress/icon.png";
     site = "https://pandamtl.com/";
     version = "1.0.0";
-
+
+
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
         let link = `${this.site}series/?page=${pageNo}`;
 
-        if (filters.genres.value.length) {
+        if (filters.genres.value.length)
             link += filters.genres.value.map((i) => `&genre[]=${i}`).join("");
-        }
 
         if (filters.type.value.length)
             link += filters.type.value.map((i) => `&lang[]=${i}`).join("");
 
-        link += "&status=" + (filters?.status ? filters.status : "");
-
-        link += "&order=" + (filters?.order ? filters.order : "popular");
+        link += "&status=" + filters.status.value;
+        link += "&order=" + filters.order.value;
 
         const headers = new Headers();
         const body = await fetchApi(link, { headers }).then((result) =>
             result.text()
         );
-
+        console.log(link);
         const loadedCheerio = parseHTML(body);
 
         const novels: Plugin.NovelItem[] = [];
@@ -177,18 +176,13 @@ class PandaMTL implements Plugin.PluginBase {
     filters = {
         order: {
             label: "Sort By",
-            value: "",
+            value: "popular",
             options: [
                 { label: "Default", value: "" },
-
                 { label: "A-Z", value: "title" },
-
                 { label: "Z-A", value: "titlereverse" },
-
                 { label: "Latest Update", value: "update" },
-
                 { label: "Latest Added", value: "latest" },
-
                 { label: "Popular", value: "popular" },
             ],
             type: FilterTypes.Picker,
@@ -198,11 +192,8 @@ class PandaMTL implements Plugin.PluginBase {
             value: "",
             options: [
                 { label: "All", value: "" },
-
                 { label: "Ongoing", value: "ongoing" },
-
                 { label: "Hiatus", value: "hiatus" },
-
                 { label: "Completed", value: "completed" },
             ],
             type: FilterTypes.Picker,
@@ -212,7 +203,6 @@ class PandaMTL implements Plugin.PluginBase {
             label: "Type",
             options: [
                 { label: "Light Novel (KR)", value: "light-novel-kr" },
-
                 { label: "Web Novel", value: "web-novel" },
             ],
             type: FilterTypes.CheckboxGroup,
@@ -222,41 +212,23 @@ class PandaMTL implements Plugin.PluginBase {
             value: [],
             options: [
                 { label: "Action", value: "action" },
-
                 { label: "Adult", value: "adult" },
-
                 { label: "Adventure", value: "adventure" },
-
                 { label: "Comedy", value: "comedy" },
-
                 { label: "Ecchi", value: "ecchi" },
-
                 { label: "Fantasy", value: "fantasy" },
-
                 { label: "Harem", value: "harem" },
-
                 { label: "Josei", value: "josei" },
-
                 { label: "Martial Arts", value: "martial-arts" },
-
                 { label: "Mature", value: "mature" },
-
                 { label: "Romance", value: "romance" },
-
                 { label: "School Life", value: "school-life" },
-
                 { label: "Sci-fi", value: "sci-fi" },
-
                 { label: "Seinen", value: "seinen" },
-
                 { label: "Slice of Life", value: "slice-of-life" },
-
                 { label: "Smut", value: "smut" },
-
                 { label: "Sports", value: "sports" },
-
                 { label: "Supernatural", value: "supernatural" },
-
                 { label: "Tragedy", value: "tragedy" },
             ],
             type: FilterTypes.CheckboxGroup,
