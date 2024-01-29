@@ -38,7 +38,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
     Object.entries(filters || {}).forEach(([type, { value }]) => {
       if (value instanceof Array && value.length) {
-        url += "&" + value.join("&" + type + "[]=");
+        url += "&" + type + "[]=" + value.join("&" + type + "[]=");
       }
     });
 

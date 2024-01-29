@@ -5340,5 +5340,18 @@
       },
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "tunovelaligera",
+    "sourceSite": "https://tunovelaligera.com/",
+    "sourceName": "TuNovelaLigera",
+    "options": {
+      "path": {
+        "genres": "genero",
+        "novels": "novelas"
+      },
+      "lang": "spanish",
+      "useLSPCharterPage": true
+    }
   }
 ]

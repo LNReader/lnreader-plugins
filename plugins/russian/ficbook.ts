@@ -165,7 +165,7 @@ class ficbook implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка:",
-      value: "",
+      value: "fanfiction",
       options: [
         { label: "Горячие работы", value: "fanfiction" },
         { label: "Популярные ", value: "popular-fanfics" },

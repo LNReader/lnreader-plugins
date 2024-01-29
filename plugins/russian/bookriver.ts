@@ -114,7 +114,7 @@ class Bookriver implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "bestseller",
       options: [
         { label: "Бестселлеры", value: "bestseller" },
         { label: "Дате добавления", value: "newest" },

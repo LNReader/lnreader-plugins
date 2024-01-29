@@ -131,7 +131,7 @@ class RNRF implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "popular",
       options: [
         { label: "Рейтинг", value: "popular" },
         { label: "Дате добавления", value: "new" },

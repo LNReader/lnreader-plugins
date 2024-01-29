@@ -116,7 +116,7 @@ class freedlit implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка:",
-      value: "",
+      value: "popular",
       options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству комментариев", value: "comments" },
@@ -209,7 +209,7 @@ class freedlit implements Plugin.PluginBase {
     },
     status: {
       label: "Статус:",
-      value: "",
+      value: "all",
       options: [
         { label: "Любой статус", value: "all" },
         { label: "В процессе", value: "in-process" },
@@ -219,7 +219,7 @@ class freedlit implements Plugin.PluginBase {
     },
     access: {
       label: "Доступ:",
-      value: "",
+      value: "all",
       options: [
         { label: "Любой доступ", value: "all" },
         { label: "Бесплатные", value: "free" },
@@ -229,7 +229,7 @@ class freedlit implements Plugin.PluginBase {
     },
     adult: {
       label: "Возрастные ограничения:",
-      value: "",
+      value: "hide",
       options: [
         { label: "Скрыть 18+", value: "hide" },
         { label: "Показать +18", value: "show" },

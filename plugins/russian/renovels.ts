@@ -16,20 +16,21 @@ class ReN implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search/catalog/?count=30&ordering=";
-    url += filters?.order?.value
-      ? (filters.order.value as string).replace("+", "")
-      : "-";
+    url += filters?.order?.value ? "-" : "";
     url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
       if (value instanceof Array && value.length) {
-        url += "&" + value.join("&" + type + "=");
+        url += "&" + type + "=" +
+          value.join("&" + type + "=");
       }
       if (value?.include instanceof Array && value.include.length) {
-        url += "&" + value.include.join("&" + type + "=");
+        url += "&" + type + "=" + 
+          value.include.join("&" + type + "=");
       }
       if (value?.exclude instanceof Array && value.exclude.length) {
-        url += "&" + value.exclude.join("&exclude_" + type + "=");
+        url += "&exclude_" + type + "=" + 
+          value.exclude.join("&exclude_" + type + "=");
       }
     });
 
@@ -54,7 +55,7 @@ class ReN implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      name: body.content.main_name || body.content.secondary_name,
+      name: body.content.main_name || body.content.secondary_name || body.content.another_name,
       summary: body.content.description,
       cover:
         this.site +
@@ -142,7 +143,7 @@ class ReN implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "rating",
       options: [
         { label: "Рейтинг", value: "rating" },
         { label: "Просмотры", value: "views" },
@@ -158,7 +159,7 @@ class ReN implements Plugin.PluginBase {
       value: "",
       options: [
         { label: "По убыванию", value: "-" },
-        { label: "По возрастанию", value: "+" },
+        { label: "По возрастанию", value: "" },
       ],
       type: FilterTypes.Picker,
     },

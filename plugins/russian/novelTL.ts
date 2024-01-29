@@ -15,7 +15,7 @@ class TL implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    { filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",

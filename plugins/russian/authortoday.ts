@@ -178,7 +178,7 @@ class AuthorToday implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "popular",
       options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству лайков", value: "likes" },
@@ -193,6 +193,7 @@ class AuthorToday implements Plugin.PluginBase {
       label: "Жанры",
       value: "",
       options: [
+        { label: "Все", value:"" },
         { label: "Альтернативная история", value: "sf-history" },
         { label: "Антиутопия", value: "dystopia" },
         { label: "Бизнес-литература", value: "biznes-literatura" },
@@ -260,7 +261,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     form: {
       label: "Форма произведения",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой", value: "any" },
         { label: "Перевод", value: "translation" },
@@ -274,7 +275,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     state: {
       label: "Статус произведения",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой статус", value: "any" },
         { label: "В процессе", value: "in-progress" },
@@ -284,7 +285,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     series: {
       label: "Статус цикла",
-      value: "",
+      value: "any",
       options: [
         { label: "Не важно", value: "any" },
         { label: "Вне цикла", value: "out" },
@@ -295,7 +296,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     access: {
       label: "Тип доступа",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой", value: "any" },
         { label: "Платный", value: "paid" },
@@ -305,7 +306,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     promo: {
       label: "Промо-фрагмент",
-      value: "",
+      value: "hide",
       options: [
         { label: "Скрывать", value: "hide" },
         { label: "Показывать", value: "show" },

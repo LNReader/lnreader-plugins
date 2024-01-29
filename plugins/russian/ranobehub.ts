@@ -17,9 +17,9 @@ class RNBH implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search?page=" + pageNo + "&sort=";
-    url += showLatestNovels
+    url += showLatestNovels 
       ? "last_chapter_at"
-      : filters?.sort || "computed_rating";
+      : filters?.sort?.value || "computed_rating";
     url += "&status=" + (filters?.status?.value ? filters?.status?.value : "0");
 
     if (filters) {
@@ -168,7 +168,7 @@ class RNBH implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "computed_rating",
       options: [
         { label: "по рейтингу", value: "computed_rating" },
         { label: "по дате обновления", value: "last_chapter_at" },

@@ -23,13 +23,15 @@ class RLIB implements Plugin.PluginBase {
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
       if (value instanceof Array && value.length) {
-        url += "&" + value.join("&" + type + "[]=");
+        url += "&" + type + "[]=" + value.join("&" + type + "[]=");
       }
       if (value?.include instanceof Array && value.include.length) {
-        url += "&" + value.include.join("&" + type + "[include][]=");
+        url += "&" + type + "[include][]=" + 
+          value.include.join("&" + type + "[include][]=");
       } 
       if (value?.exclude instanceof Array && value.exclude.length) {
-        url += "&" + value.exclude.join("&" + type + "[exclude][]=");
+        url += "&" + type + "[exclude][]=" + 
+          value.exclude.join("&" + type + "[exclude][]=");
       }
     });
 
@@ -177,7 +179,7 @@ class RLIB implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "rate",
       options: [
         { label: "Рейтинг", value: "rate" },
         { label: "Имя", value: "name" },
@@ -190,7 +192,7 @@ class RLIB implements Plugin.PluginBase {
     },
     order: {
       label: "Порядок",
-      value: "",
+      value: "desc",
       options: [
         { label: "По убыванию", value: "desc" },
         { label: "По возрастанию", value: "asc" },
