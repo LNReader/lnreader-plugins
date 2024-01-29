@@ -30,7 +30,7 @@ class PandaMTL implements Plugin.PluginBase {
         const body = await fetchApi(link, { headers }).then((result) =>
             result.text()
         );
-        console.log(link);
+
         const loadedCheerio = parseHTML(body);
 
         const novels: Plugin.NovelItem[] = [];
