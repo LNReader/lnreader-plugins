@@ -164,29 +164,29 @@ class MadaraPlugin implements Plugin.PluginBase {
       }).then((res) => res.text());
     } else if (this.options?.useLSPCharterPage) {
       const lastPage = parseInt(
-        loadedCheerio(".lcp_paginator > li  a[title]:last-child").attr("href")
-          ?.split("0=")?.[1] || "0",
+        loadedCheerio(".lcp_paginator > li:nth-last-child(2) > a").text() || "0",
         10,
       );
+
       if (lastPage) {
-        for (let i = 1; i < lastPage; i++) {
+        for (let i = 0; i < lastPage; i++) {
+          if (i) {
+            await delay(1500);
+            const lspRaw = await fetchApi(novelUrl + "?lcp_page0=" + i).then(
+            (res) => res.text(),
+            );
+            loadedCheerio = parseHTML(lspRaw);
+          }
           loadedCheerio("#lcp_instance_0 li > a").each((chapterIndex, element) => {
             const name = loadedCheerio(element).text();
             const url = loadedCheerio(element).attr("href");
             if (!name || !url) return;
-
             chapters.push({
               name,
               url,
               releaseTime: null,
-              chapterNumber: chapters.length + 1,
             });
           });
-          await delay(1500);
-          const lspRaw = await fetchApi(novelUrl + "?lcp_page0=" + i).then(
-            (res) => res.text(),
-          );
-          loadedCheerio = parseHTML(lspRaw);
         }
       }
     } else {
@@ -250,6 +250,7 @@ class MadaraPlugin implements Plugin.PluginBase {
       loadedCheerio(".text-left").html() ||
       loadedCheerio(".text-right").html() ||
       loadedCheerio(".entry-content").html() ||
+      loadedCheerio(".c-blog-post > div > div:nth-child(2)").html() ||
       "";
 
     return chapterText;

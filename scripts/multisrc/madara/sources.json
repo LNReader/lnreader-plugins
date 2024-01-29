@@ -6,6 +6,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -32,11 +33,11 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       },
       "genres": {
         "label": "GENRES",
+        "value": "",
         "options": [
           {
             "label": "Action",
@@ -53,6 +54,10 @@
           {
             "label": "Drama",
             "value": "drama"
+          },
+          {
+            "label": "Eastern",
+            "value": "eastern"
           },
           {
             "label": "Ecchi",
@@ -163,7 +168,6 @@
             "value": "yaoi"
           }
         ],
-        "value": "",
         "type": "Picker"
       }
     },
@@ -181,6 +185,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -207,11 +212,11 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       },
       "genres": {
         "label": "GENRES",
+        "value": "",
         "options": [
           {
             "label": "Action",
@@ -262,6 +267,10 @@
             "value": "ecchi"
           },
           {
+            "label": "Fan-Fiction",
+            "value": "fan-fiction"
+          },
+          {
             "label": "Fantasy",
             "value": "fantasy"
           },
@@ -286,6 +295,10 @@
             "value": "horror"
           },
           {
+            "label": "Humor",
+            "value": "humor"
+          },
+          {
             "label": "Isekai",
             "value": "isekai"
           },
@@ -300,6 +313,10 @@
           {
             "label": "Lolicon",
             "value": "lolicon"
+          },
+          {
+            "label": "Magic",
+            "value": "magic"
           },
           {
             "label": "Magical Realism",
@@ -434,7 +451,6 @@
             "value": "yuri"
           }
         ],
-        "value": "",
         "type": "Picker"
       }
     },
@@ -454,6 +470,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -480,11 +497,11 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       },
       "genres": {
         "label": "GENRES",
+        "value": "",
         "options": [
           {
             "label": "Action",
@@ -735,7 +752,6 @@
             "value": "yuri"
           }
         ],
-        "value": "",
         "type": "Picker"
       }
     },
@@ -752,39 +768,6 @@
     "id": "lunarletters",
     "sourceSite": "https://www.lunarletters.com/",
     "sourceName": "LunarLetters",
-    "filters": {
-      "sort": {
-        "label": "Order by",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "value": "",
-        "type": "Picker"
-      }
-    },
     "options": {
       "path": {
         "novels": "series",
@@ -801,6 +784,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -827,7 +811,6 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       }
     },
@@ -847,6 +830,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -873,11 +857,11 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       },
       "genres": {
         "label": "GENRES",
+        "value": "",
         "options": [
           {
             "label": "Action",
@@ -1024,7 +1008,6 @@
             "value": "xuanhuan"
           }
         ],
-        "value": "",
         "type": "Picker"
       }
     }
@@ -1036,6 +1019,7 @@
     "filters": {
       "sort": {
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -1062,7 +1046,6 @@
             "value": "trending"
           }
         ],
-        "value": "",
         "type": "Picker"
       },
       "genres": {
@@ -1343,41 +1326,8 @@
   },
   {
     "id": "daonovel",
-    "sourceSite": "https://daonovel.com/",
+    "sourceSite": "https://www.daonovel.com/",
     "sourceName": "DaoNovel",
-    "filters": {
-      "sort": {
-        "value": "",
-        "label": "Order by",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      }
-    },
     "options": {
       "path": {
         "novels": "novels-list",
@@ -1393,8 +1343,8 @@
     "sourceName": "MostNovel",
     "filters": {
       "sort": {
-        "value": "",
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -1424,8 +1374,8 @@
         "type": "Picker"
       },
       "genres": {
-        "value": "",
         "label": "GENRES",
+        "value": "",
         "options": [
           {
             "label": "ACG",
@@ -1514,6 +1464,10 @@
           {
             "label": "Gender Bender",
             "value": "gender-bender"
+          },
+          {
+            "label": "General",
+            "value": "general"
           },
           {
             "label": "Harem",
@@ -1702,8 +1656,8 @@
     "sourceName": "NovelMultiverse",
     "filters": {
       "sort": {
-        "value": "",
         "label": "Order by",
+        "value": "",
         "options": [
           {
             "label": "Rating",
@@ -2538,57 +2492,9 @@
     }
   },
   {
-    "id": "cratenovel",
-    "sourceSite": "https://cratenovel.com/",
-    "sourceName": "CrateNovel",
-    "filters": {},
-    "options": {
-      "useNewChapterEndpoint": true
-    }
-  },
-  {
-    "id": "clicknovel",
-    "sourceSite": "https://clicknovel.net/",
-    "sourceName": "ClickNovel",
-    "filters": {}
-  },
-  {
     "id": "readwebnovels",
     "sourceSite": "https://readwebnovels.net/",
-    "sourceName": "ReadWebNovels",
-    "filters": {
-      "sort": {
-        "label": "Order by",
-        "value": "",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      }
-    }
+    "sourceName": "ReadWebNovels"
   },
   {
     "id": "wbnovel",
@@ -3210,7 +3116,6 @@
     "id": "onlymtl",
     "sourceSite": "https://www.onlymtl.com/",
     "sourceName": "OnlyMTL",
-    "filters": {},
     "options": {
       "useNewChapterEndpoint": true
     }
@@ -3410,7 +3315,6 @@
     "id": "ar-mtl",
     "sourceSite": "https://ar-mtl.club/",
     "sourceName": "ArMTL",
-    "filters": {},
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic"
@@ -3572,7 +3476,6 @@
     "id": "teamxnovel",
     "sourceSite": "https://teamxnovel.com/",
     "sourceName": "TeamXNovel",
-    "filters": {},
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic"
@@ -3864,16 +3767,6 @@
     "id": "mtlnovel.club",
     "sourceSite": "https://mtlnovel.club/",
     "sourceName": "MTLNovel.Club",
-    "filters": {},
-    "options": {
-      "useNewChapterEndpoint": true
-    }
-  },
-  {
-    "id": "noobchanTL",
-    "sourceSite": "https://noobchan.xyz/",
-    "sourceName": "Noobchan Translation",
-    "filters": {},
     "options": {
       "useNewChapterEndpoint": true
     }
@@ -3882,170 +3775,6 @@
     "id": "guavaread",
     "sourceSite": "https://guavaread.com/",
     "sourceName": "Guavaread",
-    "filters": {
-      "sort": {
-        "label": "Order by",
-        "value": "",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      },
-      "genres": {
-        "label": "GENRES",
-        "value": "",
-        "options": [
-          {
-            "label": "Action",
-            "value": "action"
-          },
-          {
-            "label": "Adult",
-            "value": "adult"
-          },
-          {
-            "label": "Adventure",
-            "value": "adventure"
-          },
-          {
-            "label": "Comedy",
-            "value": "comedy"
-          },
-          {
-            "label": "Complete",
-            "value": "complete"
-          },
-          {
-            "label": "Cooking",
-            "value": "cooking"
-          },
-          {
-            "label": "Detective",
-            "value": "detective"
-          },
-          {
-            "label": "Drama",
-            "value": "drama"
-          },
-          {
-            "label": "Dropped",
-            "value": "dropped"
-          },
-          {
-            "label": "Ecchi",
-            "value": "ecchi"
-          },
-          {
-            "label": "Fantasy",
-            "value": "fantasy"
-          },
-          {
-            "label": "Gender Bender",
-            "value": "gender-bender"
-          },
-          {
-            "label": "Historical",
-            "value": "historical"
-          },
-          {
-            "label": "Horror",
-            "value": "horror"
-          },
-          {
-            "label": "Josei",
-            "value": "josei"
-          },
-          {
-            "label": "Mature",
-            "value": "mature"
-          },
-          {
-            "label": "Mystery",
-            "value": "mystery"
-          },
-          {
-            "label": "Original Story",
-            "value": "original-story"
-          },
-          {
-            "label": "Pilot",
-            "value": "pilot"
-          },
-          {
-            "label": "Psychological",
-            "value": "psychological"
-          },
-          {
-            "label": "R-15",
-            "value": "r-15"
-          },
-          {
-            "label": "R-19",
-            "value": "r-19"
-          },
-          {
-            "label": "Reverse Harem",
-            "value": "reverse-harem"
-          },
-          {
-            "label": "Romance",
-            "value": "romance"
-          },
-          {
-            "label": "School Life",
-            "value": "school-life"
-          },
-          {
-            "label": "Sci-fi",
-            "value": "sci-fi"
-          },
-          {
-            "label": "Shoujo",
-            "value": "shoujo"
-          },
-          {
-            "label": "Slice of Life",
-            "value": "slice-of-life"
-          },
-          {
-            "label": "Smut",
-            "value": "smut"
-          },
-          {
-            "label": "Supernatural",
-            "value": "supernatural"
-          },
-          {
-            "label": "Tragedy",
-            "value": "tragedy"
-          }
-        ],
-        "type": "Picker"
-      }
-    },
     "options": {
       "useNewChapterEndpoint": true
     }
@@ -4426,39 +4155,6 @@
     "id": "novelstic",
     "sourceSite": "https://novelstic.com/",
     "sourceName": "Novelstic",
-    "filters": {
-      "sort": {
-        "label": "Order by",
-        "value": "",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      }
-    },
     "options": {
       "useNewChapterEndpoint": true
     }
@@ -4572,262 +4268,6 @@
     "id": "mtl-novel",
     "sourceSite": "https://mtl-novel.com/",
     "sourceName": "MTL-Novel",
-    "filters": {
-      "sort": {
-        "label": "Order by",
-        "value": "",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "New",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      },
-      "genres": {
-        "label": "GENRES",
-        "value": "",
-        "options": [
-          {
-            "label": "Action",
-            "value": "action"
-          },
-          {
-            "label": "Adult",
-            "value": "adult"
-          },
-          {
-            "label": "Adventure",
-            "value": "adventure"
-          },
-          {
-            "label": "Chinese",
-            "value": "chinese"
-          },
-          {
-            "label": "Comedy",
-            "value": "comedy"
-          },
-          {
-            "label": "Conan",
-            "value": "conan"
-          },
-          {
-            "label": "Drama",
-            "value": "drama"
-          },
-          {
-            "label": "Erciyuan",
-            "value": "erciyuan"
-          },
-          {
-            "label": "Fairy Tail",
-            "value": "fairy-tail"
-          },
-          {
-            "label": "Faloo",
-            "value": "faloo"
-          },
-          {
-            "label": "Fan-Fiction",
-            "value": "fan-fiction"
-          },
-          {
-            "label": "Fantasy",
-            "value": "fantasy"
-          },
-          {
-            "label": "FoodWars!",
-            "value": "foodwars"
-          },
-          {
-            "label": "Game",
-            "value": "game"
-          },
-          {
-            "label": "Gender Bender",
-            "value": "gender-bender"
-          },
-          {
-            "label": "Harem",
-            "value": "harem"
-          },
-          {
-            "label": "Historical",
-            "value": "historical"
-          },
-          {
-            "label": "Horror",
-            "value": "horror"
-          },
-          {
-            "label": "Hunter x Hunter",
-            "value": "hunter-x-hunter"
-          },
-          {
-            "label": "Japanese",
-            "value": "japanese"
-          },
-          {
-            "label": "Jojo",
-            "value": "jojo"
-          },
-          {
-            "label": "Josei",
-            "value": "josei"
-          },
-          {
-            "label": "Korean",
-            "value": "korean"
-          },
-          {
-            "label": "Martial Arts",
-            "value": "martial-arts"
-          },
-          {
-            "label": "Marvel",
-            "value": "marvel"
-          },
-          {
-            "label": "Mature",
-            "value": "mature"
-          },
-          {
-            "label": "Mecha",
-            "value": "mecha"
-          },
-          {
-            "label": "Military",
-            "value": "military"
-          },
-          {
-            "label": "Mystery",
-            "value": "mystery"
-          },
-          {
-            "label": "Naruto",
-            "value": "naruto"
-          },
-          {
-            "label": "One piece",
-            "value": "one-piece"
-          },
-          {
-            "label": "Pokemon",
-            "value": "pokemon"
-          },
-          {
-            "label": "Psychological",
-            "value": "psychological"
-          },
-          {
-            "label": "Romance",
-            "value": "romance"
-          },
-          {
-            "label": "School Life",
-            "value": "school-life"
-          },
-          {
-            "label": "Sci-fi",
-            "value": "sci-fi"
-          },
-          {
-            "label": "Seinen",
-            "value": "seinen"
-          },
-          {
-            "label": "Shoujo",
-            "value": "shoujo"
-          },
-          {
-            "label": "Shoujo Ai",
-            "value": "shoujo-ai"
-          },
-          {
-            "label": "Shounen Ai",
-            "value": "shounen-ai"
-          },
-          {
-            "label": "Slice of Life",
-            "value": "slice-of-life"
-          },
-          {
-            "label": "Smut",
-            "value": "smut"
-          },
-          {
-            "label": "Sport",
-            "value": "sport"
-          },
-          {
-            "label": "Sports",
-            "value": "sports"
-          },
-          {
-            "label": "Supernatural",
-            "value": "supernatural"
-          },
-          {
-            "label": "System",
-            "value": "system"
-          },
-          {
-            "label": "Tragedy",
-            "value": "tragedy"
-          },
-          {
-            "label": "Urban",
-            "value": "urban"
-          },
-          {
-            "label": "Urban Life",
-            "value": "urban-life"
-          },
-          {
-            "label": "Wuxia",
-            "value": "wuxia"
-          },
-          {
-            "label": "Xianxia",
-            "value": "xianxia"
-          },
-          {
-            "label": "Xuanhuan",
-            "value": "xuanhuan"
-          },
-          {
-            "label": "Yaoi",
-            "value": "yaoi"
-          },
-          {
-            "label": "Yuri",
-            "value": "yuri"
-          }
-        ],
-        "type": "Picker"
-      }
-    },
     "options": {
       "path": {
         "genres": "manga-genre"
@@ -5207,23 +4647,9 @@
     }
   },
   {
-    "id": "sugarbbscan",
-    "sourceSite": "https://sugarbbscan.com/",
-    "sourceName": "Sugar Babies",
-    "filters": {},
-    "options": {
-      "path": {
-        "novels": "series",
-        "novel": "series",
-        "chapter": "series"
-      }
-    }
-  },
-  {
     "id": "novelroom",
     "sourceSite": "https://novelroom.net/",
     "sourceName": "Novelroom.net",
-    "filters": {},
     "options": {
       "path": {
         "novels": "manga",
@@ -5236,42 +4662,8 @@
     "id": "novelr18",
     "sourceSite": "https://novelr18.com/",
     "sourceName": "NovelR18",
-    "filters": {
-      "sort": {
-        "label": "Sort by :",
-        "value": "",
-        "options": [
-          {
-            "label": "Rating",
-            "value": "rating"
-          },
-          {
-            "label": "A-Z",
-            "value": "alphabet"
-          },
-          {
-            "label": "Latest Update",
-            "value": "latest"
-          },
-          {
-            "label": "Most Views",
-            "value": "views"
-          },
-          {
-            "label": "Newly Added Novels",
-            "value": "new-manga"
-          },
-          {
-            "label": "Trending",
-            "value": "trending"
-          }
-        ],
-        "type": "Picker"
-      }
-    },
     "options": {
       "path": {
-        "novels": "novel",
         "novel": "manga",
         "chapter": "manga"
       },
@@ -5281,7 +4673,7 @@
   {
     "id": "webnoveloku",
     "sourceSite": "https://www.webnoveloku.com/",
-    "sourceName": "WebNovelOku ",
+    "sourceName": "WebNovelOku",
     "filters": {
       "sort": {
         "label": "Sırala",
@@ -5322,7 +4714,283 @@
   {
     "id": "LightNovelUpdates",
     "sourceSite": "https://www.lightnovelupdates.com/",
-    "sourceName": "Light Novel Updates"
+    "sourceName": "Light Novel Updates",
+    "filters": {
+      "sort": {
+        "label": "Order by",
+        "value": "",
+        "options": [
+          {
+            "label": "Rating",
+            "value": "rating"
+          },
+          {
+            "label": "A-Z",
+            "value": "alphabet"
+          },
+          {
+            "label": "Latest",
+            "value": "latest"
+          },
+          {
+            "label": "Most Views",
+            "value": "views"
+          },
+          {
+            "label": "New",
+            "value": "new-manga"
+          },
+          {
+            "label": "Trending",
+            "value": "trending"
+          }
+        ],
+        "type": "Picker"
+      },
+      "genres": {
+        "label": "GENRES",
+        "value": "",
+        "options": [
+          {
+            "label": "Action",
+            "value": "action"
+          },
+          {
+            "label": "Adventure",
+            "value": "adventure"
+          },
+          {
+            "label": "Chinese",
+            "value": "chinese"
+          },
+          {
+            "label": "Chinese Novel",
+            "value": "chinese-novel"
+          },
+          {
+            "label": "Comedy",
+            "value": "comedy"
+          },
+          {
+            "label": "Drama",
+            "value": "drama"
+          },
+          {
+            "label": "Ecchi",
+            "value": "ecchi"
+          },
+          {
+            "label": "Fantasy",
+            "value": "fantasy"
+          },
+          {
+            "label": "Filipino",
+            "value": "filipino"
+          },
+          {
+            "label": "Filipino Novel",
+            "value": "filipino-novel"
+          },
+          {
+            "label": "Gender Bender",
+            "value": "gender-bender"
+          },
+          {
+            "label": "Genre",
+            "value": "genre"
+          },
+          {
+            "label": "Harem",
+            "value": "harem"
+          },
+          {
+            "label": "Historical",
+            "value": "historical"
+          },
+          {
+            "label": "Horror",
+            "value": "horror"
+          },
+          {
+            "label": "Indonesia",
+            "value": "indonesia"
+          },
+          {
+            "label": "Indonesia Novel",
+            "value": "indonesia-novel"
+          },
+          {
+            "label": "Japanese",
+            "value": "japanese"
+          },
+          {
+            "label": "Josei",
+            "value": "josei"
+          },
+          {
+            "label": "Khmer",
+            "value": "khmer"
+          },
+          {
+            "label": "Korean",
+            "value": "korean"
+          },
+          {
+            "label": "Korean Novel",
+            "value": "korean-novel"
+          },
+          {
+            "label": "Language",
+            "value": "language"
+          },
+          {
+            "label": "Light Novel",
+            "value": "light-novel"
+          },
+          {
+            "label": "Lolicon",
+            "value": "lolicon"
+          },
+          {
+            "label": "Malaysian",
+            "value": "malaysian"
+          },
+          {
+            "label": "Malaysian Novel",
+            "value": "malaysian-novel"
+          },
+          {
+            "label": "Martial Arts",
+            "value": "martial-arts"
+          },
+          {
+            "label": "Mature",
+            "value": "mature"
+          },
+          {
+            "label": "Mecha",
+            "value": "mecha"
+          },
+          {
+            "label": "Mystery",
+            "value": "mystery"
+          },
+          {
+            "label": "N/A",
+            "value": "n-a"
+          },
+          {
+            "label": "Novel Type",
+            "value": "novel-type"
+          },
+          {
+            "label": "Psychological",
+            "value": "psychological"
+          },
+          {
+            "label": "Romance",
+            "value": "romance"
+          },
+          {
+            "label": "School Life",
+            "value": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "value": "sci-fi"
+          },
+          {
+            "label": "Seinen",
+            "value": "seinen"
+          },
+          {
+            "label": "Shotacon",
+            "value": "shotacon"
+          },
+          {
+            "label": "Shoujo",
+            "value": "shoujo"
+          },
+          {
+            "label": "Shoujo Ai",
+            "value": "shoujo-ai"
+          },
+          {
+            "label": "Shounen",
+            "value": "shounen"
+          },
+          {
+            "label": "Shounen Ai",
+            "value": "shounen-ai"
+          },
+          {
+            "label": "Slice of Life",
+            "value": "slice-of-life-3"
+          },
+          {
+            "label": "Slice of Life",
+            "value": "slice-of-life"
+          },
+          {
+            "label": "Smut",
+            "value": "smut"
+          },
+          {
+            "label": "Sports",
+            "value": "sports"
+          },
+          {
+            "label": "Supernatural",
+            "value": "supernatural"
+          },
+          {
+            "label": "Thai",
+            "value": "thai"
+          },
+          {
+            "label": "Thai Novel",
+            "value": "thai-novel"
+          },
+          {
+            "label": "Tragedy",
+            "value": "tragedy"
+          },
+          {
+            "label": "Vietnamese",
+            "value": "vietnamese"
+          },
+          {
+            "label": "Vietnamese Novel",
+            "value": "vietnamese-novel"
+          },
+          {
+            "label": "Web Novel",
+            "value": "web-novel"
+          },
+          {
+            "label": "Wuxia",
+            "value": "wuxia"
+          },
+          {
+            "label": "Xianxia",
+            "value": "xianxia"
+          },
+          {
+            "label": "Xuanhuan",
+            "value": "xuanhuan"
+          },
+          {
+            "label": "Yaoi",
+            "value": "yaoi"
+          },
+          {
+            "label": "Yuri",
+            "value": "yuri"
+          }
+        ],
+        "type": "Picker"
+      }
+    }
   },
   {
     "id": "foxaholic",
@@ -5333,6 +5001,270 @@
     "id": "nitromanga",
     "sourceSite": "https://nitromanga.com/",
     "sourceName": "Nitro Manga",
+    "filters": {
+      "sort": {
+        "label": "Order by",
+        "value": "",
+        "options": [
+          {
+            "label": "Rating",
+            "value": "rating"
+          },
+          {
+            "label": "A-Z",
+            "value": "alphabet"
+          },
+          {
+            "label": "Latest",
+            "value": "latest"
+          },
+          {
+            "label": "Most Views",
+            "value": "views"
+          },
+          {
+            "label": "New",
+            "value": "new-manga"
+          },
+          {
+            "label": "Trending",
+            "value": "trending"
+          }
+        ],
+        "type": "Picker"
+      },
+      "genres": {
+        "label": "GENRES",
+        "value": "",
+        "options": [
+          {
+            "label": "Action",
+            "value": "action"
+          },
+          {
+            "label": "Adventure",
+            "value": "adventure"
+          },
+          {
+            "label": "Apocalyptic",
+            "value": "apocalyptic"
+          },
+          {
+            "label": "Beasts",
+            "value": "beasts"
+          },
+          {
+            "label": "Cheat Systems",
+            "value": "cheat-systems"
+          },
+          {
+            "label": "Comedy",
+            "value": "comedy"
+          },
+          {
+            "label": "Completed",
+            "value": "completed"
+          },
+          {
+            "label": "Crime",
+            "value": "crime"
+          },
+          {
+            "label": "Cultivation",
+            "value": "cultivation"
+          },
+          {
+            "label": "Demons",
+            "value": "demons"
+          },
+          {
+            "label": "Drama",
+            "value": "drama"
+          },
+          {
+            "label": "Dungeons",
+            "value": "dungeons"
+          },
+          {
+            "label": "Ecchi",
+            "value": "ecchi"
+          },
+          {
+            "label": "Fantasy",
+            "value": "fantasy"
+          },
+          {
+            "label": "Game",
+            "value": "game"
+          },
+          {
+            "label": "Genius MC",
+            "value": "genius-mc"
+          },
+          {
+            "label": "Ghosts",
+            "value": "ghosts"
+          },
+          {
+            "label": "Harem",
+            "value": "harem"
+          },
+          {
+            "label": "Historical",
+            "value": "historical"
+          },
+          {
+            "label": "Horror",
+            "value": "horror"
+          },
+          {
+            "label": "Hunter",
+            "value": "hunter"
+          },
+          {
+            "label": "Isekai",
+            "value": "isekai"
+          },
+          {
+            "label": "Magic",
+            "value": "magic"
+          },
+          {
+            "label": "Manga",
+            "value": "manga"
+          },
+          {
+            "label": "Manhua",
+            "value": "manhua"
+          },
+          {
+            "label": "Manhwa",
+            "value": "manhwa"
+          },
+          {
+            "label": "Martial Arts",
+            "value": "martial-arts"
+          },
+          {
+            "label": "Mature",
+            "value": "mature"
+          },
+          {
+            "label": "Mecha",
+            "value": "mecha"
+          },
+          {
+            "label": "Medical",
+            "value": "medical"
+          },
+          {
+            "label": "Monsters",
+            "value": "monsters"
+          },
+          {
+            "label": "Murim",
+            "value": "murim"
+          },
+          {
+            "label": "Mystery",
+            "value": "mystery"
+          },
+          {
+            "label": "Novel",
+            "value": "novel"
+          },
+          {
+            "label": "Overpowered",
+            "value": "overpowered"
+          },
+          {
+            "label": "Psychological",
+            "value": "psychological"
+          },
+          {
+            "label": "Rebirth",
+            "value": "rebirth"
+          },
+          {
+            "label": "Regression",
+            "value": "regression"
+          },
+          {
+            "label": "Reincarnation",
+            "value": "reincarnation"
+          },
+          {
+            "label": "Revenge",
+            "value": "revenge"
+          },
+          {
+            "label": "Romance",
+            "value": "romance"
+          },
+          {
+            "label": "School Life",
+            "value": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "value": "sci-fi"
+          },
+          {
+            "label": "Seinen",
+            "value": "seinen"
+          },
+          {
+            "label": "Shounen",
+            "value": "shounen"
+          },
+          {
+            "label": "Slice of Life",
+            "value": "slice-of-life"
+          },
+          {
+            "label": "Sports",
+            "value": "sports"
+          },
+          {
+            "label": "Super Power",
+            "value": "super-power"
+          },
+          {
+            "label": "Supernatural",
+            "value": "supernatural"
+          },
+          {
+            "label": "System",
+            "value": "system"
+          },
+          {
+            "label": "Time Travel",
+            "value": "time-travel"
+          },
+          {
+            "label": "Tragedy",
+            "value": "tragedy"
+          },
+          {
+            "label": "Video Games",
+            "value": "video-games"
+          },
+          {
+            "label": "Webtoon",
+            "value": "webtoon"
+          },
+          {
+            "label": "Wuxia",
+            "value": "wuxia"
+          },
+          {
+            "label": "Zombie",
+            "value": "zombie"
+          }
+        ],
+        "type": "Picker"
+      }
+    },
     "options": {
       "path": {
         "genres": "mangas-genre",
@@ -5350,8 +5282,8 @@
         "genres": "genero",
         "novels": "novelas"
       },
-      "lang": "spanish",
-      "useLSPCharterPage": true
+      "useLSPCharterPage": true,
+      "lang": "spanish"
     }
   }
 ]
