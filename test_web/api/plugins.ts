@@ -21,7 +21,7 @@ export const all_plugins = (): PluginList => {
         );
         if (!fs.existsSync(langPath)) continue;
         const plugins = fs.readdirSync(langPath);
-        res[languageNative] = [];
+        res[languageEnglish] = [];
         plugins.forEach((plugin) => {
             if (plugin.startsWith(".")) return;
             const requirePath = `@plugins/${languageEnglish.toLowerCase()}/${
@@ -37,7 +37,7 @@ export const all_plugins = (): PluginList => {
                 requirePath,
                 icon,
             }; // lang: language with native name
-            res[info.lang].push(info);
+            res[languageEnglish].push(info);
         });
     }
     return res;

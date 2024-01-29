@@ -38,11 +38,10 @@ const pluginSet = new Set();
 
 for (let language in languages) {
     // language with English name
-    const languageNative = languages[language as keyof typeof languages];
     const langPath = path.join(root, "plugins", language.toLowerCase());
     if (!fs.existsSync(langPath)) continue;
     const plugins = fs.readdirSync(langPath);
-    json[languageNative] = [];
+    json[language] = [];
     plugins.forEach((plugin) => {
         if (plugin.startsWith(".")) return;
         const instance:
@@ -61,7 +60,7 @@ for (let language in languages) {
             id,
             name,
             site,
-            lang: languageNative,
+            lang: language,
             version,
             url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
             iconUrl: `${ICON_LINK}/${icon}`,
@@ -74,7 +73,7 @@ for (let language in languages) {
             pluginSet.add(id);
         }
 
-        json[languageNative].push(info);
+        json[language].push(info);
         console.log(name, "✅");
     });
 }

@@ -2,25 +2,27 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchText, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
+import { NovelStatus } from "@libs/novelStatus";
 
 class Linovelib implements Plugin.PluginBase {
     id = "linovelib";
     name = "Linovelib";
     icon = "src/cn/linovelib/icon.png";
     site = "https://www.bilinovel.com";
-    version = "1.0.1";
+    version = "1.1.0";
 
     async popularNovels(
         pageNo: number,
-        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
+        {
+            showLatestNovels,
+            filters,
+        }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
-        let link = `${this.site}/top/`;
+        const rank = showLatestNovels ? 'lastupdate' : filters.rank.value;
+        const url = `${this.site}/top/${rank}/${pageNo}.html`;
 
-        link += filters.sort.value;
-
-        link += `/${pageNo}.html`;
-
-        const body = await fetchText(link);
+        const body = await fetchText(url);
+        if (body === '') throw Error('无法获取小说列表，请检查网络');
 
         const loadedCheerio = parseHTML(body);
 
@@ -51,7 +53,9 @@ class Linovelib implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
+
         const body = await fetchText(url);
+        if (body === '') throw Error('无法获取小说内容，请检查网络');
 
         let loadedCheerio = parseHTML(body);
 
@@ -73,7 +77,7 @@ class Linovelib implements Plugin.PluginBase {
         ).text();
 
         const meta = loadedCheerio("#bookDetailWrapper .book-meta").text()
-        novel.status = meta.includes("完结") ? "完结" : "连载";
+        novel.status = meta.includes("完结") ? NovelStatus.Completed : NovelStatus.Ongoing;
 
         novel.genres = loadedCheerio(".tag-small.red")
             .children("a")
@@ -431,10 +435,12 @@ class Linovelib implements Plugin.PluginBase {
 
     async searchNovels(
         searchTerm: string,
-        pageNo?: number | undefined
+        pageNo: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}/search/${encodeURI(searchTerm)}_${pageNo}.html`;
+
         const body = await fetchText(url);
+        if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
         const pageCheerio = parseHTML(body);
 
@@ -528,32 +534,21 @@ class Linovelib implements Plugin.PluginBase {
     }
 
     filters = {
-        sort: {
-            label: "Sort By",
+        rank: {
+            label: "排行榜",
             value: "monthvisit",
             options: [
                 { label: "月点击榜", value: "monthvisit" },
-
                 { label: "周点击榜", value: "weekvisit" },
-
                 { label: "月推荐榜", value: "monthvote" },
-
                 { label: "周推荐榜", value: "weekvote" },
-
                 { label: "月鲜花榜", value: "monthflower" },
-
                 { label: "周鲜花榜", value: "weekflower" },
-
                 { label: "月鸡蛋榜", value: "monthegg" },
-
                 { label: "周鸡蛋榜", value: "weekegg" },
-
                 { label: "最近更新", value: "lastupdate" },
-
                 { label: "最新入库", value: "postdate" },
-
                 { label: "收藏榜", value: "goodnum" },
-
                 { label: "新书榜", value: "newhot" },
             ],
             type: FilterTypes.Picker,
