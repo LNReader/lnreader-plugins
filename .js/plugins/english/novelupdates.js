@@ -274,15 +274,16 @@ var NovelUpdates = /** @class */ (function () {
                         link = "".concat(this.site, "wp-admin/admin-ajax.php");
                         return [4 /*yield*/, (0, fetch_1.fetchApi)(link, {
                                 method: "POST",
+                                // headers: {
+                                //     cookie: 'wordpress_logged_in_6beec58f7168d95c44933bfb0d113ee4=K1ngfisher%7C1722063870%7C3DW8PmrOG8vRmoOs1I6WsTfI9jPj02gK2KsKU15PyzR%7Cb77565d071c03ce988331f4b354c773e505be1b46bf0b6e67624c92e8d30815c',
+                                // },
                                 body: formData,
                             }).then(function (data) { return data.text(); })];
                     case 3:
                         text = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(text);
                         loadedCheerio("li.sp_li_chp").each(function () {
-                            var _a;
                             var chapterName = loadedCheerio(this).text().trim();
-                            var chapterNumber = Number((_a = chapterName.match(/c(\d+)/i)) === null || _a === void 0 ? void 0 : _a[0]) || undefined;
                             var releaseDate = null;
                             var chapterUrl = "https:" +
                                 loadedCheerio(this).find("a").first().next().attr("href");
@@ -290,7 +291,6 @@ var NovelUpdates = /** @class */ (function () {
                                 name: chapterName,
                                 releaseTime: releaseDate,
                                 url: chapterUrl,
-                                chapterNumber: chapterNumber
                             });
                         });
                         novel.chapters = chapter.reverse();
@@ -305,7 +305,7 @@ var NovelUpdates = /** @class */ (function () {
     };
     NovelUpdates.prototype.parseChapter = function (chapterUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var chapterText, result, body, loadedCheerio, isWuxiaWorld, isBlogspot, isTumblr, isWattpad, isLightNovelsTls, isiNovelTranslation, isTravisTranslation, isWordPressStr, isWordPress, isRainOfSnow, isWebNovel, isHostedNovel, isScribbleHub, bloatClasses, tags;
+            var chapterText, result, body, loadedCheerio, isWuxiaWorld, isBlogspot, isTumblr, isWattpad, isAnomalously, isBlossomTranslation, isLightNovelsTls, isiNovelTranslation, isTravisTranslation, isWordPressStr, isWordPress, isRainOfSnow, isWebNovel, isHostedNovel, isScribbleHub, link, json, bloatClasses, tags;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -321,6 +321,10 @@ var NovelUpdates = /** @class */ (function () {
                         isBlogspot = chapterUrl.toLowerCase().includes("blogspot");
                         isTumblr = chapterUrl.toLowerCase().includes("tumblr");
                         isWattpad = chapterUrl.toLowerCase().includes("wattpad");
+                        isAnomalously = chapterUrl.toLowerCase().includes('anotivereads');
+                        isBlossomTranslation = chapterUrl
+                            .toLowerCase()
+                            .includes('blossomtranslation');
                         isLightNovelsTls = chapterUrl
                             .toLowerCase()
                             .includes("lightnovelstranslations");
@@ -346,38 +350,66 @@ var NovelUpdates = /** @class */ (function () {
                         isWebNovel = chapterUrl.toLowerCase().includes("webnovel");
                         isHostedNovel = chapterUrl.toLowerCase().includes("hostednovel");
                         isScribbleHub = chapterUrl.toLowerCase().includes("scribblehub");
-                        if (isWuxiaWorld) {
-                            chapterText = loadedCheerio("#chapter-content").html();
+                        if (!isWuxiaWorld) return [3 /*break*/, 3];
+                        chapterText = loadedCheerio("#chapter-content").html();
+                        return [3 /*break*/, 16];
+                    case 3:
+                        if (!isRainOfSnow) return [3 /*break*/, 4];
+                        chapterText = loadedCheerio("div.content").html();
+                        return [3 /*break*/, 16];
+                    case 4:
+                        if (!isTumblr) return [3 /*break*/, 5];
+                        chapterText = loadedCheerio(".post").html();
+                        return [3 /*break*/, 16];
+                    case 5:
+                        if (!isBlogspot) return [3 /*break*/, 6];
+                        loadedCheerio('.post-share-buttons').remove();
+                        chapterText =
+                            loadedCheerio('.entry-content').html() ||
+                                loadedCheerio('#post-body').html();
+                        return [3 /*break*/, 16];
+                    case 6:
+                        if (!isHostedNovel) return [3 /*break*/, 7];
+                        chapterText = loadedCheerio(".chapter").html();
+                        return [3 /*break*/, 16];
+                    case 7:
+                        if (!isScribbleHub) return [3 /*break*/, 8];
+                        chapterText = loadedCheerio("div.chp_raw").html();
+                        return [3 /*break*/, 16];
+                    case 8:
+                        if (!isWattpad) return [3 /*break*/, 9];
+                        chapterText = loadedCheerio(".container  pre").html();
+                        return [3 /*break*/, 16];
+                    case 9:
+                        if (!isTravisTranslation) return [3 /*break*/, 10];
+                        chapterText = loadedCheerio(".reader-content").html();
+                        return [3 /*break*/, 16];
+                    case 10:
+                        if (!isLightNovelsTls) return [3 /*break*/, 11];
+                        chapterText = loadedCheerio('.text_story').html();
+                        return [3 /*break*/, 16];
+                    case 11:
+                        if (!isBlossomTranslation) return [3 /*break*/, 12];
+                        chapterText = loadedCheerio('.manga-child-content').html();
+                        return [3 /*break*/, 16];
+                    case 12:
+                        if (!isAnomalously) return [3 /*break*/, 13];
+                        chapterText = loadedCheerio('#comic').html();
+                        return [3 /*break*/, 16];
+                    case 13:
+                        if (!isiNovelTranslation) return [3 /*break*/, 15];
+                        link = 'https://api.' + chapterUrl.slice(8);
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(link).then(function (r) { return r.json(); })];
+                    case 14:
+                        json = _a.sent();
+                        chapterText = json.content.replace(/\n/g, '<br>');
+                        if (json.notes) {
+                            chapterText +=
+                                '<br><hr><br>TL Notes:<br>' + json.notes.replace(/\n/g, '<br>');
                         }
-                        else if (isRainOfSnow) {
-                            chapterText = loadedCheerio("div.content").html();
-                        }
-                        else if (isTumblr) {
-                            chapterText = loadedCheerio(".post").html();
-                        }
-                        else if (isBlogspot) {
-                            loadedCheerio(".post-share-buttons").remove();
-                            chapterText = loadedCheerio(".entry-content").html();
-                        }
-                        else if (isHostedNovel) {
-                            chapterText = loadedCheerio(".chapter").html();
-                        }
-                        else if (isScribbleHub) {
-                            chapterText = loadedCheerio("div.chp_raw").html();
-                        }
-                        else if (isWattpad) {
-                            chapterText = loadedCheerio(".container  pre").html();
-                        }
-                        else if (isTravisTranslation) {
-                            chapterText = loadedCheerio(".reader-content").html();
-                        }
-                        else if (isLightNovelsTls) {
-                            chapterText = loadedCheerio(".text_story").html();
-                        }
-                        else if (isiNovelTranslation) {
-                            chapterText = loadedCheerio(".chakra-skeleton").html();
-                        }
-                        else if (isWordPress) {
+                        return [3 /*break*/, 16];
+                    case 15:
+                        if (isWordPress) {
                             bloatClasses = [
                                 ".c-ads",
                                 "#madara-comments",
@@ -416,6 +448,8 @@ var NovelUpdates = /** @class */ (function () {
                             tags.map(function (tag) { return loadedCheerio(tag).remove(); });
                             chapterText = loadedCheerio("body").html();
                         }
+                        _a.label = 16;
+                    case 16:
                         if (chapterText) {
                             /**
                              * Convert relative urls to absolute
@@ -429,13 +463,12 @@ var NovelUpdates = /** @class */ (function () {
     };
     NovelUpdates.prototype.searchNovels = function (searchTerm, page) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, headers, result, body, loadedCheerio;
+            var url, result, body, loadedCheerio;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = "".concat(this.site, "page/").concat(page, "/?s=").concat(searchTerm, "&post_type=seriesplans");
-                        headers = new Headers();
-                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url, { headers: headers })];
+                        return [4 /*yield*/, (0, fetch_1.fetchApi)(url)];
                     case 1:
                         result = _a.sent();
                         return [4 /*yield*/, result.text()];

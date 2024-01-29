@@ -72,6 +72,17 @@ class NovelUpdates implements Plugin.PluginBase {
 
         link += '&pg=' + page;
 
+        // headers.append('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8')
+        // headers.append('Accept-Language', 'en-US,en;q=0.5')
+        // headers.append('Accept-Encoding', 'gzip, deflate, br')
+        // headers.append('Upgrade-Insecure-Requests', '1')
+        // headers.append('Sec-Fetch-Dest', 'document')
+        // headers.append('Sec-Fetch-Mode', 'navigate')
+        // headers.append('Sec-Fetch-Site', 'same-origin')
+        // headers.append('Sec-Fetch-User', '?1')
+        // headers.append('Pragma', 'no-cache')
+        // headers.append('Cache-Control', 'no-cache')
+        
         const body = await fetchApi(link).then((result) =>
             result.text()
         );
@@ -129,6 +140,9 @@ class NovelUpdates implements Plugin.PluginBase {
             link,
             {
                 method: "POST",
+                // headers: {
+                //     cookie: 'wordpress_logged_in_6beec58f7168d95c44933bfb0d113ee4=K1ngfisher%7C1722063870%7C3DW8PmrOG8vRmoOs1I6WsTfI9jPj02gK2KsKU15PyzR%7Cb77565d071c03ce988331f4b354c773e505be1b46bf0b6e67624c92e8d30815c',
+                // },
                 body: formData,
             },
         ).then((data) => data.text());
@@ -137,7 +151,6 @@ class NovelUpdates implements Plugin.PluginBase {
 
         loadedCheerio("li.sp_li_chp").each(function () {
             const chapterName = loadedCheerio(this).text().trim();
-            const chapterNumber = Number(chapterName.match(/c(\d+)/i)?.[0]) || undefined;
             const releaseDate = null;
             const chapterUrl =
                 "https:" +
@@ -147,7 +160,6 @@ class NovelUpdates implements Plugin.PluginBase {
                 name: chapterName,
                 releaseTime: releaseDate,
                 url: chapterUrl,
-                chapterNumber: chapterNumber
             });
         });
 
@@ -183,6 +195,12 @@ class NovelUpdates implements Plugin.PluginBase {
         let isTumblr = chapterUrl.toLowerCase().includes("tumblr");
 
         let isWattpad = chapterUrl.toLowerCase().includes("wattpad");
+
+        let isAnomalously = chapterUrl.toLowerCase().includes('anotivereads');
+
+        let isBlossomTranslation = chapterUrl
+            .toLowerCase()
+            .includes('blossomtranslation');
 
         let isLightNovelsTls = chapterUrl
             .toLowerCase()
@@ -230,8 +248,10 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (isTumblr) {
             chapterText = loadedCheerio(".post").html()!;
         } else if (isBlogspot) {
-            loadedCheerio(".post-share-buttons").remove();
-            chapterText = loadedCheerio(".entry-content").html()!;
+            loadedCheerio('.post-share-buttons').remove();
+            chapterText =
+                loadedCheerio('.entry-content').html() ||
+                loadedCheerio('#post-body').html()!;
         } else if (isHostedNovel) {
             chapterText = loadedCheerio(".chapter").html()!;
         } else if (isScribbleHub) {
@@ -241,9 +261,19 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (isTravisTranslation) {
             chapterText = loadedCheerio(".reader-content").html()!;
         } else if (isLightNovelsTls) {
-            chapterText = loadedCheerio(".text_story").html()!;
+            chapterText = loadedCheerio('.text_story').html()!;
+        } else if (isBlossomTranslation) {
+            chapterText = loadedCheerio('.manga-child-content').html()!;
+        } else if (isAnomalously) {
+            chapterText = loadedCheerio('#comic').html()!;
         } else if (isiNovelTranslation) {
-            chapterText = loadedCheerio(".chakra-skeleton").html()!;
+            const link = 'https://api.' + chapterUrl.slice(8);
+            const json = await fetchApi(link).then(r => r.json());
+            chapterText = json.content.replace(/\n/g, '<br>');
+            if (json.notes) {
+                chapterText +=
+                '<br><hr><br>TL Notes:<br>' + json.notes.replace(/\n/g, '<br>');
+            }
         } else if (isWordPress) {
             /**
              * Remove wordpress bloat tags
@@ -308,8 +338,7 @@ class NovelUpdates implements Plugin.PluginBase {
     }
     async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
         const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);

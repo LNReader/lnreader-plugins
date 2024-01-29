@@ -5,7 +5,7 @@ type FetchInit = {
     [x: string]: string | Record<string, string> | undefined | FormData | Headers;
 };
 
-const makeInit = async (init?: FetchInit) => {
+export const makeInit = async (init?: FetchInit) => {
     let defaultHeaders: Record<string, string> = {};
     try {
         const { getHeaders } = await import("../index.js");

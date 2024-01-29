@@ -35,11 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var cheerio_1 = require("cheerio");
 var fetch_1 = require("@libs/fetch");
 var filterInputs_1 = require("@libs/filterInputs");
-var parseMadaraDate_1 = require("@libs/parseMadaraDate");
+var dayjs_1 = __importDefault(require("dayjs"));
 var ScribbleHubPlugin = /** @class */ (function () {
     function ScribbleHubPlugin() {
         this.id = "scribblehub";
@@ -223,7 +226,7 @@ var ScribbleHubPlugin = /** @class */ (function () {
     };
     ScribbleHubPlugin.prototype.parseNovelAndChapters = function (novelUrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, body, loadedCheerio, novel, formData, data, text, chapter;
+            var url, result, body, loadedCheerio, novel, formData, data, text, chapter, parseISODate;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -268,6 +271,27 @@ var ScribbleHubPlugin = /** @class */ (function () {
                         text = _a.sent();
                         loadedCheerio = (0, cheerio_1.load)(text);
                         chapter = [];
+                        parseISODate = function (date) {
+                            var _a;
+                            if (date.includes("ago")) {
+                                var dayJSDate = (0, dayjs_1.default)(new Date()); // today
+                                var timeAgo = ((_a = date.match(/\d+/)) === null || _a === void 0 ? void 0 : _a[0]) || "";
+                                var timeAgoInt = parseInt(timeAgo, 10);
+                                if (!timeAgo)
+                                    return date; // there is no number!
+                                if (date.includes("hours ago") || date.includes("hour ago")) {
+                                    dayJSDate.subtract(timeAgoInt, "hours"); // go back N hours
+                                }
+                                if (date.includes("days ago") || date.includes("day ago")) {
+                                    dayJSDate.subtract(timeAgoInt, "days"); // go back N days
+                                }
+                                if (date.includes("months ago") || date.includes("month ago")) {
+                                    dayJSDate.subtract(timeAgoInt, "months"); // go back N months
+                                }
+                                return dayJSDate.toISOString();
+                            }
+                            return null;
+                        };
                         loadedCheerio('.toc_w').each(function () {
                             var chapterName = loadedCheerio(this).find('.toc_a').text();
                             var releaseDate = loadedCheerio(this).find('.fic_date_pub').text();
@@ -276,7 +300,7 @@ var ScribbleHubPlugin = /** @class */ (function () {
                                 return;
                             chapter.push({
                                 name: chapterName,
-                                releaseTime: (0, parseMadaraDate_1.parseMadaraDate)(releaseDate),
+                                releaseTime: parseISODate(releaseDate),
                                 url: chapterUrl,
                             });
                         });

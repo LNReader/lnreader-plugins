@@ -2,7 +2,7 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
-import { parseMadaraDate } from "@libs/parseMadaraDate";
+import dayjs from "dayjs";
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
     id = "scribblehub";
@@ -124,6 +124,31 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
 
         const chapter: Plugin.ChapterItem[] = [];
 
+        const parseISODate = (date: string) => {
+            if (date.includes("ago")) {
+                const dayJSDate = dayjs(new Date()); // today
+                const timeAgo = date.match(/\d+/)?.[0] || "";
+                const timeAgoInt = parseInt(timeAgo, 10);
+        
+                if (!timeAgo) return date; // there is no number!
+        
+                if (date.includes("hours ago") || date.includes("hour ago")) {
+                    dayJSDate.subtract(timeAgoInt, "hours"); // go back N hours
+                }
+        
+                if (date.includes("days ago") || date.includes("day ago")) {
+                    dayJSDate.subtract(timeAgoInt, "days"); // go back N days
+                }
+        
+                if (date.includes("months ago") || date.includes("month ago")) {
+                    dayJSDate.subtract(timeAgoInt, "months"); // go back N months
+                }
+        
+                return dayJSDate.toISOString();
+            }
+            return null;
+        };
+
         loadedCheerio('.toc_w').each(function () {
             const chapterName = loadedCheerio(this).find('.toc_a').text();
             const releaseDate = loadedCheerio(this).find('.fic_date_pub').text();
@@ -132,7 +157,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
             if (!chapterUrl) return;
             chapter.push({
                 name: chapterName,
-                releaseTime: parseMadaraDate(releaseDate),
+                releaseTime: parseISODate(releaseDate),
                 url: chapterUrl,
             });
         });
