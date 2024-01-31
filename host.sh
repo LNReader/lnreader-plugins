@@ -10,6 +10,7 @@ fi
 
 git merge $current --strategy-option theirs
 
+npm run clearMulti
 npm run generate
 npm run json
 git add .

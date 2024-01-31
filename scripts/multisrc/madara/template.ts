@@ -7,6 +7,7 @@ import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+const includesAny = (str: string, keywords: string[]) => new RegExp(keywords.join('|')).test(str);
 
 interface MadaraOptionPath {
   genres?: string;
@@ -69,7 +70,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     if (filters?.genres?.value) {
       url +=
         (this.options?.path?.genres || MadaraDefaultPath.genres) +
-            "/" + filters.genres.value;
+          "/" + filters.genres.value;
     } else {
       url += this.options?.path?.novels || MadaraDefaultPath.novels;
     }
@@ -119,6 +120,7 @@ class MadaraPlugin implements Plugin.PluginBase {
       loadedCheerio(".summary_image > a > img").attr("data-lazy-src") ||
       loadedCheerio(".summary_image > a > img").attr("data-src") ||
       loadedCheerio(".summary_image > a > img").attr("src") ||
+      loadedCheerio(".summary_image > a > img").attr("src") ||
       defaultCover;
 
     loadedCheerio(".post-content_item, .post-content").each(function () {
@@ -129,7 +131,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         case "Genre(s)":
         case "Género(s)":
         case "التصنيفات":
-          novel.genres = detail.replace(/[\\t\\n]/g, ",");
+          novel.genres = detail;
           break;
         case "Author(s)":
         case "Autor(es)":
@@ -172,9 +174,8 @@ class MadaraPlugin implements Plugin.PluginBase {
         for (let i = 0; i < lastPage; i++) {
           if (i) {
             await delay(1500);
-            const lspRaw = await fetchApi(novelUrl + "?lcp_page0=" + i).then(
-            (res) => res.text(),
-            );
+            const lspRaw = await fetchApi(novelUrl + "?lcp_page0=" + i)
+              .then((res) => res.text());
             loadedCheerio = parseHTML(lspRaw);
           }
           loadedCheerio("#lcp_instance_0 li > a").each((chapterIndex, element) => {
@@ -213,8 +214,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     loadedCheerio(".wp-manga-chapter").each((chapterIndex, element) => {
       const chapterName = loadedCheerio(element).find("a").text().trim();
 
-      let releaseDate = null;
-      releaseDate = loadedCheerio(element)
+      let releaseDate = loadedCheerio(element)
         .find("span.chapter-release-date")
         .text()
         .trim();
@@ -222,10 +222,6 @@ class MadaraPlugin implements Plugin.PluginBase {
       if (releaseDate) {
         releaseDate = this.parseData(releaseDate);
       } else {
-        /**
-         * Insert current date
-         */
-
         releaseDate = dayjs().format("LL");
       }
 
@@ -234,7 +230,7 @@ class MadaraPlugin implements Plugin.PluginBase {
       chapters.push({
         name: chapterName,
         url: chapterUrl,
-        releaseTime: releaseDate,
+        releaseTime: releaseDate || null,
         chapterNumber: totalChapters - chapterIndex,
       });
     });
@@ -293,16 +289,60 @@ class MadaraPlugin implements Plugin.PluginBase {
     const timeAgoInt = parseInt(timeAgo, 10);
 
     if (!timeAgo) return date; // there is no number!
-    if (date.includes("hours ago") || date.includes("hour ago")) {
+
+    if (includesAny(date, ["detik", "segundo", "second", "วินาที"])) {
+      dayJSDate.subtract(timeAgoInt, "second"); // go back N seconds
+    } else if (
+      includesAny(date, [
+        "menit",
+        "dakika",
+        "min",
+        "minute",
+        "minuto",
+        "นาที",
+        "دقائق",
+      ])
+    ) {
+      dayJSDate.subtract(timeAgoInt, "minute"); // go back N minute
+    } else if (
+      includesAny(date, [
+        "jam",
+        "saat",
+        "heure",
+        "hora",
+        "hour",
+        "ชั่วโมง",
+        "giờ",
+        "ore",
+        "ساعة",
+        "小时",
+      ])
+    ) {
       dayJSDate.subtract(timeAgoInt, "hours"); // go back N hours
-    }
-
-    if (date.includes("days ago") || date.includes("day ago")) {
+    } else if (
+      includesAny(date, [
+        "hari",
+        "gün",
+        "jour",
+        "día",
+        "dia",
+        "day",
+        "วัน",
+        "ngày",
+        "giorni",
+        "أيام",
+        "天",
+      ])
+    ) {
       dayJSDate.subtract(timeAgoInt, "days"); // go back N days
-    }
-
-    if (date.includes("months ago") || date.includes("month ago")) {
-      dayJSDate.subtract(timeAgoInt, "months"); // go back N months
+    } else if (includesAny(date, ["week", "semana"])) {
+      dayJSDate.subtract(timeAgoInt, "week"); // go back N a week
+    } else if (includesAny(date, ["month", "mes"])) {
+      dayJSDate.subtract(timeAgoInt, "month"); // go back N months
+    } else if (includesAny(date, ["year", "año"])) {
+      dayJSDate.subtract(timeAgoInt, "year"); // go back N years
+    } else {
+      return date;
     }
 
     return dayJSDate.format("LL");
