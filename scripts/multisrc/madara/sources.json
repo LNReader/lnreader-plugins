@@ -5274,19 +5274,6 @@
     }
   },
   {
-    "id": "tunovelaligera",
-    "sourceSite": "https://tunovelaligera.com/",
-    "sourceName": "TuNovelaLigera",
-    "options": {
-      "path": {
-        "genres": "genero",
-        "novels": "novelas"
-      },
-      "useLSPCharterPage": true,
-      "lang": "spanish"
-    }
-  },
-  {
     "id": "kiniga",
     "sourceSite": "https://kiniga.com/",
     "sourceName": "Kiniga",

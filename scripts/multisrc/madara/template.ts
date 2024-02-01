@@ -7,7 +7,8 @@ import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-const includesAny = (str: string, keywords: string[]) => new RegExp(keywords.join('|')).test(str);
+const includesAny = (str: string, keywords: string[]) =>
+  new RegExp(keywords.join("|")).test(str);
 
 interface MadaraOptionPath {
   genres?: string;
@@ -25,7 +26,6 @@ const MadaraDefaultPath = {
 
 interface MadaraOptions {
   useNewChapterEndpoint?: boolean;
-  useLSPCharterPage?: boolean;
   path?: MadaraOptionPath;
   lang?: string;
   orderBy?: string;
@@ -164,32 +164,6 @@ class MadaraPlugin implements Plugin.PluginBase {
       html = await fetchApi(novelUrl + "ajax/chapters/", {
         method: "POST",
       }).then((res) => res.text());
-    } else if (this.options?.useLSPCharterPage) {
-      const lastPage = parseInt(
-        loadedCheerio(".lcp_paginator > li:nth-last-child(2) > a").text() || "0",
-        10,
-      );
-
-      if (lastPage) {
-        for (let i = 0; i < lastPage; i++) {
-          if (i) {
-            await delay(1500);
-            const lspRaw = await fetchApi(novelUrl + "?lcp_page0=" + i)
-              .then((res) => res.text());
-            loadedCheerio = parseHTML(lspRaw);
-          }
-          loadedCheerio("#lcp_instance_0 li > a").each((chapterIndex, element) => {
-            const name = loadedCheerio(element).text();
-            const url = loadedCheerio(element).attr("href");
-            if (!name || !url) return;
-            chapters.push({
-              name,
-              url,
-              releaseTime: null,
-            });
-          });
-        }
-      }
     } else {
       const novelId =
         loadedCheerio(".rating-post-id").attr("value") ||
@@ -210,7 +184,7 @@ class MadaraPlugin implements Plugin.PluginBase {
       loadedCheerio = parseHTML(html);
     }
 
-    const totalChapters = loadedCheerio(".eplister li").length;
+    const totalChapters = loadedCheerio(".wp-manga-chapter").length;
     loadedCheerio(".wp-manga-chapter").each((chapterIndex, element) => {
       const chapterName = loadedCheerio(element).find("a").text().trim();
 

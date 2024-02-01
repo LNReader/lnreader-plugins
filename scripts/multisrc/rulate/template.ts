@@ -23,8 +23,7 @@ class RulatePlugin implements Plugin.PluginBase {
   constructor(metadata: RulateMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName + "[rulate]";
-    const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
-    this.icon = `multisrc/rulate/icons/${iconFileName}.png`;
+    this.icon = `multisrc/rulate/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
     this.filters = metadata.filters;

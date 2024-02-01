@@ -23,8 +23,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
   constructor(metadata: ReadwnMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName + "[readwn]";
-    const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
-    this.icon = `multisrc/readwn/icons/${iconFileName}.png`;
+    this.icon = `multisrc/readwn/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
     this.filters = metadata.filters;
