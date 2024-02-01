@@ -138,8 +138,7 @@ class Genesis implements Plugin.PluginBase {
         return novel;
     }
     async parseChapter(chapterUrl: string): Promise<string> {
-        const headers = new Headers();
-        const result = await fetchApi(chapterUrl, { headers });
+        const result = await fetchApi(chapterUrl);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
