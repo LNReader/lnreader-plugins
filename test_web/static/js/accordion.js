@@ -1,6 +1,6 @@
 /** @ts-check */
 
-class AccordionContent extends HTMLDivElement {
+class AccordionContent extends HTMLElement {
     constructor() {
         super();
         this.gridElement = document.createElement("div");
@@ -17,9 +17,10 @@ class AccordionContent extends HTMLDivElement {
     }
 }
 
-class AccordionHeader extends HTMLDivElement {
+class AccordionHeader extends HTMLElement {
     constructor() {
         super();
+        console.log("contructor?");
         this.btn = document.createElement("button");
     }
     get html() {
@@ -38,6 +39,7 @@ class AccordionHeader extends HTMLDivElement {
         return this.parentElement;
     }
     connectedCallback() {
+        console.log("I AM ON THE SCREEN, DO YOUR FUCKING JOB");
         const childNodes = Array.from(this.childNodes);
         this.innerHTML = "";
         this.btn.append(...childNodes);
@@ -68,20 +70,16 @@ class AccordionBox extends HTMLElement {
     }
 }
 
-class Accordion extends HTMLDivElement {
+class Accordion extends HTMLElement {
     constructor() {
         super();
     }
 }
 
-window.customElements.define("main-accordion", Accordion, { extends: "div" });
+window.customElements.define("main-accordion", Accordion);
 window.customElements.define("accordion-box", AccordionBox);
-window.customElements.define("accordion-header", AccordionHeader, {
-    extends: "div",
-});
-window.customElements.define("accordion-content", AccordionContent, {
-    extends: "div",
-});
+window.customElements.define("accordion-header", AccordionHeader);
+window.customElements.define("accordion-content", AccordionContent);
 
 // Export types for use in index.js
 const module = {};
