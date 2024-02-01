@@ -38,7 +38,6 @@ const pluginSet = new Set();
 
 for (let language in languages) {
     // language with English name
-    const languageNative = languages[language as keyof typeof languages];
     const langPath = path.join(root, "plugins", language.toLowerCase());
     if (!fs.existsSync(langPath)) continue;
     const plugins = fs.readdirSync(langPath);
@@ -61,7 +60,7 @@ for (let language in languages) {
             id,
             name,
             site,
-            lang: languageNative,
+            lang: language,
             version,
             url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
             iconUrl: `${ICON_LINK}/${icon}`,
