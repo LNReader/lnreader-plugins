@@ -88,7 +88,9 @@ class Genesis implements Plugin.PluginBase {
                 .each(function () {
                     const chapterUrl = loadedCheerio(this).find("a").attr("href");
                     if (!chapterUrl) return;
-                    const chapterName =
+                    const chapterpaid = loadedCheerio(this).find('.epl-price').text();
+                    if (chapterpaid !== "Free") return
+                        const chapterName =
                         loadedCheerio(this).find(".epl-num").text() +
                         " - " +
                         loadedCheerio(this).find(".epl-title").text();
