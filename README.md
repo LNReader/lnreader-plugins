@@ -29,7 +29,7 @@ Repository to host plugins and related issues, and requests for
 
 #### via an app
 
-1. Run `npm run host`
+1. Run `npm run host-linux` or `npm run host-windows` (depending on your operating system)
 2. Change the values in [pluginManager.ts](https://github.com/LNReader/lnreader/blob/master/src/plugins/pluginManager.ts) (in-app) to yours 
 
 ```ts
