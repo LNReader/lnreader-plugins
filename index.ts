@@ -97,7 +97,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(dirname, "test_web", "index.html"));
 });
 
-app.listen(6969, host, () => {
+app.listen(port, host, () => {
     console.log(`Testing plugins web listening on http://localhost:${port}`);
 });
 
