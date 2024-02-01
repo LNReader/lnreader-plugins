@@ -6,7 +6,7 @@ import { Plugin } from "@typings/plugin";
 class NovelUpdates implements Plugin.PluginBase {
     id = "novelupdates";
     name = "Novel Updates";
-    version = "0.5.0";
+    version = "0.6.0";
     icon = "src/en/novelupdates/icon.png";
     site = "https://www.novelupdates.com/";
 
