@@ -834,6 +834,7 @@ class PluginWrapper {
                 url: sourceNovel.url,
                 cover: sourceNovel.cover,
             });
+            
 
             novel_data
                 .children("div + div")
@@ -848,6 +849,16 @@ class PluginWrapper {
                     PluginWrapper.createInfoItem("genres", sourceNovel.genres)
                 );
             novel_item.replaceWith(novel_data);
+
+            console.log(sourceNovel.chapters);
+            console.log(sourceNovel.chapters?.map((r) => r.url));
+
+            if (
+                sourceNovel?.chapters?.length !==
+                new Set(sourceNovel?.chapters?.map((r) => r.url) || []).size
+            ) {
+                alert("Chapter urls are the same!");
+            }
 
             chapter_list.html("");
             if (sourceNovel.chapters)

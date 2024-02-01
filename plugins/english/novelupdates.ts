@@ -10,6 +10,8 @@ class NovelUpdates implements Plugin.PluginBase {
     icon = "src/en/novelupdates/icon.png";
     site = "https://www.novelupdates.com/";
 
+    heads = { "User-Agent": undefined };
+
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];
 
@@ -86,7 +88,7 @@ class NovelUpdates implements Plugin.PluginBase {
         link += "&pg=" + page;
 
         const body = await fetchApi(link, {
-            headers: { "User-Agent": undefined },
+            headers: this.heads,
         }).then((result) => result.text());
 
         const loadedCheerio = parseHTML(body);
@@ -95,7 +97,9 @@ class NovelUpdates implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        const result = await fetchApi(url);
+        const result = await fetchApi(url, {
+            headers: this.heads,
+        });
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
@@ -140,6 +144,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const text = await fetchApi(link, {
             method: "POST",
             body: formData,
+            headers: { ...this.heads },
         }).then((data) => data.text());
 
         loadedCheerio = parseHTML(text);
@@ -319,7 +324,9 @@ class NovelUpdates implements Plugin.PluginBase {
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
         const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url, {
+            headers: this.heads,
+        });
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
