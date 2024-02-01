@@ -2,78 +2,59 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
-
 class Genesis implements Plugin.PluginBase {
     id = "genesistls";
     name = "GenesisTLs";
     icon = "src/en/genesistls/icon.png";
     site = "https://genesistls.com/";
     version = "1.0.0";
-
     parseNovels(loadedCheerio: CheerioAPI) {
         const novels: Plugin.NovelItem[] = [];
-
         loadedCheerio("article.bs").each(function () {
             const novelName = loadedCheerio(this).find(".ntitle").text().trim();
             let image = loadedCheerio(this).find("img");
             const novelCover = image.attr("data-src") || image.attr("src");
             const novelUrl = loadedCheerio(this).find("a").attr("href");
-
             if (!novelUrl) return;
             const novel = {
                 name: novelName,
                 cover: novelCover,
                 url: novelUrl,
             };
-
             novels.push(novel);
         });
-
         return novels;
     }
-
     async popularNovels(
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
         let link = `${this.site}series/?page=${pageNo}`;
-
         if (filters.genres.value.length)
             link += filters.genres.value.map((i) => `&genre[]=${i}`).join("");
-
         if (filters.type.value.length)
             link += filters.type.value.map((i) => `&lang[]=${i}`).join("");
-
         link += "&status=" + filters.status.value;
-
         link += "&order=" + filters.order.value;
-
         const body = await fetchApi(link).then((result) =>
             result.text()
         );
-
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
-
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
         const result = await fetchApi(url);
         const body = await result.text();
-
         let loadedCheerio = parseHTML(body);
-
         const novel: Plugin.SourceNovel = {
             url,
             chapters: [],
         };
-
         novel.name = loadedCheerio(".entry-title").text();
-
         novel.cover =
             loadedCheerio("img.wp-post-image").attr("data-src") ||
             loadedCheerio("img.wp-post-image").attr("src");
-
         loadedCheerio("div.spe > span").each(function () {
             const detailName = loadedCheerio(this).find("b").text().trim();
             const detail = loadedCheerio(this)
@@ -82,7 +63,6 @@ class Genesis implements Plugin.PluginBase {
                 .end()
                 .text()
                 .trim();
-
             switch (detailName) {
                 case "Author:":
                     novel.author = detail;
@@ -92,78 +72,65 @@ class Genesis implements Plugin.PluginBase {
                     break;
             }
         });
-
         novel.genres = loadedCheerio(".genxed")
             .text()
             .trim()
             .replace(/\s/g, ",");
-
         loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
         novel.summary = loadedCheerio('div[itemprop="description"]')
             .find("br")
             .replaceWith("\n")
             .end()
             .text();
-
-        let chapter: Plugin.ChapterItem[] = [];
-
-        loadedCheerio(".eplister")
-            .find("li")
-            .each(function () {
-                const chapterName =
-                    loadedCheerio(this).find(".epl-num").text() +
-                    " - " +
-                    loadedCheerio(this).find(".epl-title").text();
-
-                const releaseDate = loadedCheerio(this)
-                    .find(".epl-date")
-                    .text()
-                    .trim();
-
-                const chapterUrl = loadedCheerio(this).find("a").attr("href");
-
-                if (!chapterUrl) return;
-                const chapterpaid = loadedCheerio(this).find('.epl-price').text();
-                if (chapterpaid !== "Free") return
-
-                chapter.push({
-                    name: chapterName,
-                    releaseTime: releaseDate,
-                    url: chapterUrl,
+            let chapter: Plugin.ChapterItem[] = [];
+            loadedCheerio(".eplister")
+                .find("li")
+                .each(function () {
+                    const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                    if (!chapterUrl) return;
+                    const chapterName =
+                        loadedCheerio(this).find(".epl-num").text() +
+                        " - " +
+                        loadedCheerio(this).find(".epl-title").text();
+                    const releaseDate = loadedCheerio(this)
+                        .find(".epl-date")
+                        .text()
+                        .trim();
+            
+                    if (!releaseDate) return;
+            
+                    chapter.push({
+                        name: chapterName,
+                        releaseTime: new Date(releaseDate).toISOString(),
+                        url: chapterUrl,
+                    });
                 });
-            });
-
-        novel.chapters = chapter.reverse();
-
+            novel.chapters = chapter.reverse();
         return novel;
+
     }
-    async parseChapter(chapterUrl: string): Promise<string> {
+        async parseChapter(chapterUrl: string): Promise<string> {
         const result = await fetchApi(chapterUrl);
         const body = await result.text();
-
         const loadedCheerio = parseHTML(body);
-
         let chapterText = loadedCheerio(".epcontent").html() || "";
-
         return chapterText;
     }
-
     async searchNovels(
         searchTerm: string,
         pageNo: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${pageNo}/?s=${searchTerm}`;
-        const result = await fetchApi(url);
+        const headers = new Headers();
+        const result = await fetchApi(url, { headers });
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
-
     async fetchImage(url: string): Promise<string | undefined> {
         return await fetchFile(url);
     }
-
     filters = {
         order: {
             label: "Sort By",
@@ -178,7 +145,6 @@ class Genesis implements Plugin.PluginBase {
             type: FilterTypes.Picker,
             value: "",
         },
-
         status: {
             label: "Status",
             options: [
@@ -296,6 +262,9 @@ class Genesis implements Plugin.PluginBase {
             type: FilterTypes.CheckboxGroup,
             value: [],
         },
+    } satisfies Filters;
+}
+export default new Genesis();
     } satisfies Filters;
 }
 
