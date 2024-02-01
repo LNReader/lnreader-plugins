@@ -89,25 +89,37 @@ app.post("/searchNovels/", async (req, res) => {
     }
 });
 app.post("/parseNovelAndChapters/", async (req, res) => {
-    const sourceNovel = await pluginApi.parseNovelAndChapters(
-        req.body["pluginRequirePath"],
-        req.body["novelUrl"]
-    );
-    res.json(sourceNovel);
+    try {
+        const sourceNovel = await pluginApi.parseNovelAndChapters(
+            req.body["pluginRequirePath"],
+            req.body["novelUrl"]
+        );
+        res.json(sourceNovel);
+    } catch (err) {
+        res.json({ error: err });
+    }
 });
 app.post("/parseChapter/", async (req, res) => {
-    const chapterText = await pluginApi.parseChapter(
-        req.body["pluginRequirePath"],
-        req.body["chapterUrl"]
-    );
-    res.send(chapterText);
+    try {
+        const chapterText = await pluginApi.parseChapter(
+            req.body["pluginRequirePath"],
+            req.body["chapterUrl"]
+        );
+        res.send(chapterText);
+    } catch (err) {
+        res.json({ error: err });
+    }
 });
 app.post("/fetchImage/", async (req, res) => {
-    const base64 = await pluginApi.fetchImage(
-        req.body["pluginRequirePath"],
-        req.body["url"]
-    );
-    res.send(base64);
+    try {
+        const base64 = await pluginApi.fetchImage(
+            req.body["pluginRequirePath"],
+            req.body["url"]
+        );
+        res.send(base64);
+    } catch (err) {
+        res.json({ error: err });
+    }
 });
 
 app.get("/", (req, res) => {
