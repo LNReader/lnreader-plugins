@@ -267,7 +267,4 @@ class Genesis implements Plugin.PluginBase {
     } satisfies Filters;
 }
 export default new Genesis();
-    } satisfies Filters;
-}
 
-export default new Genesis();
