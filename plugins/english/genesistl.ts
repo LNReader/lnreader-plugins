@@ -48,8 +48,7 @@ class Genesis implements Plugin.PluginBase {
 
         link += "&order=" + filters.order.value;
 
-        const headers = new Headers();
-        const body = await fetchApi(link, { headers }).then((result) =>
+        const body = await fetchApi(link).then((result) =>
             result.text()
         );
 
