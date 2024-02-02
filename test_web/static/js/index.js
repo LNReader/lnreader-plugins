@@ -792,7 +792,7 @@ class PluginWrapper {
                     throw `searchNovels threw an error:<div class='error'>${novels.error}</div>`;
                 return novels;
             });
-            // state.search_pages.showNextPage();
+            state.search_pages.showNextPage();
         } catch (/** @type {unknown} */ e) {
             console.error(e);
             if (e)
