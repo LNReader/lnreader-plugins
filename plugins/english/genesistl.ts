@@ -2,6 +2,7 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
+import dayjs from "dayjs";
 class Genesis implements Plugin.PluginBase {
     id = "genesistls";
     name = "GenesisTLs";
@@ -33,7 +34,7 @@ class Genesis implements Plugin.PluginBase {
         if (filters.genres.value.length)
             link += filters.genres.value.map((i) => `&genre[]=${i}`).join("");
         if (filters.type.value.length)
-            link += filters.type.value.map((i) => `&type[]=${i}`).join("");
+            link += filters.type.value.map((i) => `&lang[]=${i}`).join("");
         link += "&status=" + filters.status.value;
         link += "&order=" + filters.order.value;
         const body = await fetchApi(link).then((result) =>
@@ -103,7 +104,7 @@ class Genesis implements Plugin.PluginBase {
             
                     chapter.push({
                         name: chapterName,
-                        releaseTime: new Date(releaseDate).toISOString(),
+                        releaseTime: dayjs(releaseDate).toISOString(),
                         url: chapterUrl,
                     });
                 });
@@ -123,7 +124,8 @@ class Genesis implements Plugin.PluginBase {
         pageNo: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${pageNo}/?s=${searchTerm}`;
-        const result = await fetchApi(url);
+        const headers = new Headers();
+        const result = await fetchApi(url, { headers });
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -160,8 +162,12 @@ class Genesis implements Plugin.PluginBase {
         type: {
             label: "Type",
             options: [
+                { label: "Chinese novel", value: "chinese-novel" },
+                { label: "habyeol", value: "habyeol" },
                 { label: "korean novel", value: "korean-novel" },
                 { label: "Web Novel", value: "web-novel" },
+                { label: "삼심", value: "%ec%82%bc%ec%8b%ac" },
+                { label: "호곡", value: "%ed%98%b8%ea%b3%a1" },
             ],
             type: FilterTypes.CheckboxGroup,
             value: [],
@@ -169,45 +175,92 @@ class Genesis implements Plugin.PluginBase {
         genres: {
             label: "Genres",
             options: [
+                { label: "A.I", value: "a.i" },
                 { label: "Academy", value: "academy" },
                 { label: "Action", value: "action" },
                 { label: "Adult", value: "adult" },
                 { label: "Adventure", value: "adventure" },
+                { label: "Alternative History", value: "alternative-history" },
                 { label: "Another World", value: "another-world" },
-                { label: "Comdey", value: "comdey" },
+                { label: "Apocalypse", value: "apocalypse" },
+                { label: "Bromance", value: "bromance" },
                 { label: "Comedy", value: "comedy" },
-                { label: "Dark Fantasy", value: "dark-fantasy" },
+                { label: "Dark fantasy", value: "dark-fantasy" },
+                { label: "Demons", value: "demons" },
                 { label: "Drama", value: "drama" },
-                { label: "Fantasy", value: "fantasy" },
-                { label: "Fantasy Fusion", value: "fantasy-fusion" },
+                { label: "Dystopia", value: "dystopia" },
+                { label: "Ecchi", value: "ecchi" },
+                { label: "Entertainment", value: "entertainment" },
+                { label: "Exhaustion", value: "exhaustion" },
+                { label: "Fanfiction", value: "fanfiction" },
+                { label: "fantasy", value: "fantasy" },
+                { label: "finance", value: "finance" },
+                { label: "Full color", value: "full-color" },
+                { label: "Game", value: "game" },
+                { label: "Gender Bender", value: "gender-bender" },
+                { label: "Genius", value: "genius" },
                 { label: "Harem", value: "harem" },
+                { label: "Hero", value: "hero" },
                 { label: "Historical", value: "historical" },
-                { label: "Horror", value: "horror" },
                 { label: "Hunter", value: "hunter" },
+                { label: "korean novel", value: "korean-novel" },
                 { label: "Light Novel", value: "light-novel" },
+                {
+                    label: "List Adventure Manga Genres",
+                    value: "list-adventure-manga-genres",
+                },
+                { label: "Long Strip", value: "long-strip" },
+                { label: "Love comedy", value: "love-comedy" },
+                { label: "magic", value: "magic" },
+                { label: "Manhua", value: "manhua" },
                 { label: "Martial Arts", value: "martial-arts" },
                 { label: "Mature", value: "mature" },
+                { label: "Medieval", value: "medieval" },
                 { label: "Misunderstanding", value: "misunderstanding" },
                 { label: "Modern", value: "modern" },
-                { label: "Munchkin", value: "munchkin" },
-                { label: "Murim", value: "murim" },
-                { label: "mystery", value: "mystery" },
-                { label: "No Harem", value: "no-harem" },
-                { label: "NO NTR", value: "no-ntr" },
-                { label: "obsession", value: "obsession" },
+                { label: "modern fantasy", value: "modern-fantasy" },
+                { label: "music", value: "music" },
+                { label: "Mystery", value: "mystery" },
+                { label: "Necromancy", value: "necromancy" },
+                { label: "No Romance", value: "no-romance" },
+                { label: "NTL", value: "ntl" },
+                { label: "o", value: "o" },
+                { label: "Obsession", value: "obsession" },
+                { label: "Politics", value: "politics" },
                 { label: "Possession", value: "possession" },
+                { label: "Programming", value: "programming" },
                 { label: "Psychological", value: "psychological" },
+                { label: "Pure Love", value: "pure-love" },
+                { label: "Redemption", value: "redemption" },
                 { label: "Regression", value: "regression" },
                 { label: "Regret", value: "regret" },
-                { label: "reincarnation", value: "reincarnation" },
+                { label: "Reincarnation", value: "reincarnation" },
+                { label: "Revenge", value: "revenge" },
                 { label: "Romance", value: "romance" },
+                { label: "Romance Fanrasy", value: "romance-fanrasy" },
+                { label: "Salvation", value: "salvation" },
                 { label: "School Life", value: "school-life" },
+                { label: "Sci-fi", value: "sci-fi" },
+                { label: "Science fiction", value: "science-fiction" },
                 { label: "Seinen", value: "seinen" },
-                { label: "Slice of life", value: "slice-of-life" },
+                { label: "Shounen", value: "shounen" },
+                { label: "Slice of Life", value: "slice-of-life" },
+                { label: "Soft yandere", value: "soft-yandere" },
+                { label: "Sports", value: "sports" },
                 { label: "Supernatural", value: "supernatural" },
+                { label: "Survival", value: "survival" },
+                { label: "system", value: "system" },
+                { label: "Time limit", value: "time-limit" },
                 { label: "Tragedy", value: "tragedy" },
-                { label: "Transmigrated to Game", value: "transmigrated-to-game" },
                 { label: "Transmigration", value: "transmigration" },
+                { label: "TS", value: "ts" },
+                { label: "Tsundere", value: "tsundere" },
+                { label: "Unique", value: "unique" },
+                { label: "Wholesome", value: "wholesome" },
+                { label: "Wuxia", value: "wuxia" },
+                { label: "Xuanhuan", value: "xuanhuan" },
+                { label: "Yandere", value: "yandere" },
+                { label: "Yuri", value: "yuri" },
             ],
             type: FilterTypes.CheckboxGroup,
             value: [],
