@@ -29,7 +29,6 @@ class Syosetu implements Plugin.PluginBase {
         pageNo: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
-        console.log("filter", filters);
         const getNovelsFromPage = async (pagenumber: number) => {
             // load page
             let url = this.site;

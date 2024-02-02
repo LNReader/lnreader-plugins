@@ -12,10 +12,6 @@ Run \`npm start -- <port>\` to change it
 
 watch.start("--onSuccess", `node ./.js/index.js ${port}`);
 
-watch.on("compile_errors", () => {
-    console.log("compile error");
-});
-
 try {
 } catch (e) {
     watch.kill(); // Fatal error, kill the compiler instance.

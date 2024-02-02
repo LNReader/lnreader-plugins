@@ -340,7 +340,6 @@ class NovelUpdates implements Plugin.PluginBase {
         page: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
-        const headers = new Headers();
         const result = await fetchApi(url, {
             headers: this.heads,
         });
