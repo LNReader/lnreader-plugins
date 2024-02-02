@@ -123,8 +123,7 @@ class Genesis implements Plugin.PluginBase {
         pageNo: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${pageNo}/?s=${searchTerm}`;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
