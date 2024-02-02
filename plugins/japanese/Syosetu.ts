@@ -7,14 +7,6 @@ import { Filters } from "@libs/filterInputs";
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
 
-const pluginId = "yomou.syosetu";
-
-export const id = pluginId;
-export const name = "Syosetu";
-export const icon = "src/jp/syosetu/icon.png";
-export const version = "1.0.0";
-export const site = "https://yomou.syosetu.com/";
-
 class Syosetu implements Plugin.PluginBase {
     id = "yomou.syosetu";
     name = "Syosetu";
