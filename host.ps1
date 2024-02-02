@@ -1,19 +1,23 @@
-current=`git rev-parse --abbrev-ref HEAD`
-dist=dist
-exists=`git show-ref refs/heads/$dist`
+$current=$(git rev-parse --abbrev-ref HEAD)
+$dist='dist'
+$exists=$(git show-ref refs/heads/$dist)
 
-if [ -n "$exists" ]; then
+echo $current
+echo $exists
+
+if  ($exists){
     git checkout $dist
-else
+}else{
+    ## Make a new one
     git checkout -b $dist
-fi
+}
 
-if [ $? -eq 1 ]; then
+if(-Not $?){
     # If checkout failed
     echo "=========="
     echo "Could not checkout branch dist! See the error above and fix it!"
     exit 1
-fi
+}
 
 git merge $current --strategy-option theirs
 
