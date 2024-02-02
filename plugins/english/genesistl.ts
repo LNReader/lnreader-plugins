@@ -33,7 +33,7 @@ class Genesis implements Plugin.PluginBase {
         if (filters.genres.value.length)
             link += filters.genres.value.map((i) => `&genre[]=${i}`).join("");
         if (filters.type.value.length)
-            link += filters.type.value.map((i) => `&lang[]=${i}`).join("");
+            link += filters.type.value.map((i) => `&type[]=${i}`).join("");
         link += "&status=" + filters.status.value;
         link += "&order=" + filters.order.value;
         const body = await fetchApi(link).then((result) =>
