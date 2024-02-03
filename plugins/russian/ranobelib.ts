@@ -5,6 +5,13 @@ import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
+const statusKey = [
+  NovelStatus.Ongoing,
+  NovelStatus.Completed,
+  NovelStatus.OnHiatus,
+  NovelStatus.Cancelled,
+];
+
 class RLIB implements Plugin.PluginBase {
   id = "RLIB";
   name = "RanobeLib";
@@ -82,15 +89,14 @@ class RLIB implements Plugin.PluginBase {
         .find('div[class="media-info-list__title"]')
         .text();
 
-      if (name === "Статус перевода") {
-        novel.status =
-          loadedCheerio(this).find("div:nth-child(2)").text().trim() ===
-          "Продолжается"
-            ? NovelStatus.Ongoing
-            : NovelStatus.Completed;
-      } else if (name === "Автор") {
+      if (name === "Автор") {
         novel.author = loadedCheerio(this)
-          .find("div:nth-child(2)")
+          .find('div[class="media-info-list__value"]')
+          .text()
+          .trim();
+      } else if (name === "Художник") {
+        novel.artist = loadedCheerio(this)
+          .find('div[class="media-info-list__value"]')
           .text()
           .trim();
       }
@@ -110,6 +116,7 @@ class RLIB implements Plugin.PluginBase {
 
     const chaptersJson: responseBook = JSON.parse(chaptersRaw);
     const totalChapters = chaptersJson.chapters.list?.length || 0;
+    novel.status = statusKey[chaptersJson.manga.status + 1] || NovelStatus.Unknown;
     this.ui = chaptersJson?.user?.id;
 
     chaptersJson.chapters?.list?.forEach((chapter, chapterIndex) =>
