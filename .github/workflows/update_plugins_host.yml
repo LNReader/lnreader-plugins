@@ -1,27 +1,27 @@
-name: Update plugins host
+name: Update Plugins
 
 on:
-    push:
-        branches:
-            - master
+  push:
+    branches:
+      - master
 
 jobs:
-    updatehost:
-        if: github.repository == 'LNReader/lnreader-sources'
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  token: ${{ secrets.REPO_SCOPED_TOKEN }} 
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: "18"
-            - name: Install dependencies
-              run: npm install
+  updatehost:
+    if: github.repository == 'LNReader/lnreader-sources'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install dependencies
+        run: npm install
 
-            - name: Update plugins host
-              run: |
-                git config user.name rajarsheechatterjee
-                git config user.email rajarshee.adm@gmail.com
-                npm run host-linux
-              shell: bash
+      - name: Update plugins host
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          npm run host-linux
+        shell: bash
