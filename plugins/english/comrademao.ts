@@ -2,7 +2,7 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
-import { parseMadaraDate } from "@libs/parseMadaraDate";
+import dayjs from "dayjs";
 
 class ComradeMaoPlugin implements Plugin.PluginBase {
     id = "comrademao";
@@ -20,14 +20,14 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
                 const novelName = loadedCheerio(this).find(".tt").text().trim();
                 const novelCover = loadedCheerio(this).find("img").attr("src");
                 const novelUrl = loadedCheerio(this).find("a").attr("href");
-    
+
                 if (!novelUrl) return;
 
                 const novel = {
                     name: novelName,
                     cover: novelCover,
                     url: novelUrl,
-                }
+                };
                 novels.push(novel);
             });
         return novels;
@@ -35,7 +35,7 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
 
     async popularNovels(
         pageNo: number,
-        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
+        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
     ): Promise<Plugin.NovelItem[]> {
         let link = this.site;
 
@@ -43,25 +43,19 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
 
         link += "page/" + pageNo + "/?post_type=novel";
 
-        const headers = new Headers();
-        const body = await fetchApi(link, { headers }).then((result) =>
-            result.text()
-        );
+        const body = await fetchApi(link).then((result) => result.text());
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const url = novelUrl;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
-        const body = await result.text();
+        const body = await fetchApi(novelUrl).then((result) => result.text());
 
         let loadedCheerio = parseHTML(body);
 
         const novel: Plugin.SourceNovel = {
-            url,
+            url: novelUrl,
             chapters: [],
         };
 
@@ -69,23 +63,23 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
 
         novel.cover = loadedCheerio("div.thumbook > div > img").attr("src");
 
-        loadedCheerio(".infox .wd-full").each((i,el) => {
-        	const detailName = loadedCheerio(el).find("b").text();
-          	const detail = loadedCheerio(el).find('span').text();
+        loadedCheerio(".infox .wd-full").each((i, el) => {
+            const detailName = loadedCheerio(el).find("b").text();
+            const detail = loadedCheerio(el).find("span").text();
 
             switch (detailName) {
-              case 'Publisher: ':
-                novel.author = detail.trim();
-                break;
-              case 'Status: ':
-                novel.status = detail.trim();
-                break;
-              case 'Genres:':
-				novel.genres = detail.trim().replace(/ , /g, ',');
-                break;
-              case 'Description: ':
-                novel.summary = detail.trim();
-                break;
+                case "Publisher: ":
+                    novel.author = detail.trim();
+                    break;
+                case "Status: ":
+                    novel.status = detail.trim();
+                    break;
+                case "Genres:":
+                    novel.genres = detail.trim().replace(/ , /g, ",");
+                    break;
+                case "Description: ":
+                    novel.summary = detail.trim();
+                    break;
             }
         });
 
@@ -94,53 +88,78 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
         loadedCheerio("#chapterlist")
             .find("li")
             .each(function () {
-                const releaseDate = parseMadaraDate(
-                    loadedCheerio(this).find(".chapterdate").text()
-                );
+                const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                if (!chapterUrl) return;
+
                 const chapterName = loadedCheerio(this)
                     .find(".chapternum")
                     .text();
-                const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                let releaseTime = loadedCheerio(this)
+                    .find(".chapterdate")
+                    .text();
 
-                if (!chapterUrl) return;
+                if (releaseTime?.includes?.("ago")) {
+                    const timeAgo = releaseTime.match(/\d+/)?.[0] || "0";
+                    const timeAgoInt = parseInt(timeAgo, 10);
 
+                    if (timeAgoInt) {
+                        const dayJSDate = dayjs(); // today
+                        if (
+                            releaseTime.includes("hours ago") ||
+                            releaseTime.includes("hour ago")
+                        ) {
+                            dayJSDate.subtract(timeAgoInt, "hours"); // go back N hours
+                        }
+
+                        if (
+                            releaseTime.includes("days ago") ||
+                            releaseTime.includes("day ago")
+                        ) {
+                            dayJSDate.subtract(timeAgoInt, "days"); // go back N days
+                        }
+
+                        if (
+                            releaseTime.includes("months ago") ||
+                            releaseTime.includes("month ago")
+                        ) {
+                            dayJSDate.subtract(timeAgoInt, "months"); // go back N months
+                        }
+
+                        releaseTime = dayJSDate.format("LL");
+                    }
+                }
                 chapter.push({
                     name: chapterName,
                     url: chapterUrl,
-                    releaseTime: releaseDate,
+                    releaseTime,
                 });
             });
 
         novel.chapters = chapter.reverse();
 
         return novel;
-    };
+    }
 
     async parseChapter(chapterUrl: string): Promise<string> {
-        const headers = new Headers();
-        const result = await fetchApi(chapterUrl, { headers });
-        const body = await result.text();
-
+        const body = await fetchApi(chapterUrl).then((result) => result.text());
         const loadedCheerio = parseHTML(body);
 
         const chapterText = loadedCheerio("#chaptercontent").html()?.trim() || "";
 
         return chapterText;
-    };
+    }
 
     async searchNovels(
         searchTerm: string,
-        pageNo: number
+        pageNo: number,
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}page/${pageNo}/?s=${searchTerm}&post_type=novel`;
 
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
-        const body = await result.text();
+        const body = await fetchApi(url).then((result) => result.text());
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
-    };
+    }
 
     async fetchImage(url: string): Promise<string | undefined> {
         return await fetchFile(url);

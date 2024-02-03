@@ -3,7 +3,7 @@ import { Filters, FilterTypes } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
-import { parseMadaraDate } from "@libs/parseMadaraDate";
+import dayjs from "dayjs";
 
 export interface ReadwnMetadata {
   id: string;
@@ -102,14 +102,44 @@ class ReadwnPlugin implements Plugin.PluginBase {
       .map((chapterIndex, element) => {
         const name = loadedCheerio(element).find("a .chapter-title").text().trim();
         const url = loadedCheerio(element).find("a").attr("href")?.trim();
-        const releaseTime = loadedCheerio(element).find("a .chapter-update").text().trim();
-
         if (!name || !url) return null;
+
+        let releaseTime = loadedCheerio(element).find("a .chapter-update").text().trim();
+        if (releaseTime?.includes?.("ago")) {
+          const timeAgo = releaseTime.match(/\d+/)?.[0] || "0";
+          const timeAgoInt = parseInt(timeAgo, 10);
+
+          if (timeAgoInt) {
+            const dayJSDate = dayjs(); // today
+            if (
+              releaseTime.includes("hours ago") || 
+              releaseTime.includes("hour ago")
+            ) {
+              dayJSDate.subtract(timeAgoInt, "hours"); // go back N hours
+            }
+
+            if (
+              releaseTime.includes("days ago") || 
+              releaseTime.includes("day ago")
+            ) {
+              dayJSDate.subtract(timeAgoInt, "days"); // go back N days
+            }
+
+            if (
+              releaseTime.includes("months ago") ||
+              releaseTime.includes("month ago")
+            ) {
+              dayJSDate.subtract(timeAgoInt, "months"); // go back N months
+            }
+
+            releaseTime = dayJSDate.format("LL");
+          }
+        }
 
         return {
           name,
           url: this.site + url,
-          releaseTime: parseMadaraDate(releaseTime),
+          releaseTime: releaseTime,
           chapterNumber: chapterIndex + 1,
         };
       })
