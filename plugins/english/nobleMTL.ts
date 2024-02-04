@@ -1,25 +1,27 @@
 ﻿import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { FilterTypes, Filters } from "@libs/filterInputs";
+import { Filters, FilterTypes } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 
-class NobleMTL implements Plugin.PluginBase {
-    id = "noblemtl";
-    name = "NobleMTL";
-    icon = "src/en/noblemtl/icon.png";
-    site = "https://noblemtl.com/";
-    version = "1.0.0";
+class NovelUpdates implements Plugin.PluginBase {
+    id = "novelupdates";
+    name = "Novel Updates";
+    version = "0.5.0";
+    icon = "src/en/novelupdates/icon.png";
+    site = "https://www.novelupdates.com/";
 
-    parseNovels(loadedCheerio: CheerioAPI) {
+    parseNovels(loadedCheerio: CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
 
-        loadedCheerio("article.bs").each(function () {
-            const novelName = loadedCheerio(this).find(".ntitle").text().trim();
-            let image = loadedCheerio(this).find("img");
-            const novelCover = image.attr("data-src") || image.attr("src");
-            const novelUrl = loadedCheerio(this).find("a").attr("href");
+        loadedCheerio("div.search_main_box_nu").each((idx, ele) => {
+            const novelCover = loadedCheerio(ele).find("img").attr("src");
+            const novelName = loadedCheerio(ele).find(".search_title > a").text();
+            const novelUrl = loadedCheerio(ele)
+                .find(".search_title > a")
+                .attr("href");
 
             if (!novelUrl) return;
+
             const novel = {
                 name: novelName,
                 cover: novelCover,
@@ -32,21 +34,43 @@ class NobleMTL implements Plugin.PluginBase {
         return novels;
     }
 
-    async popularNovels(
-        pageNo: number,
-        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
-    ): Promise<Plugin.NovelItem[]> {
-        let link = `${this.site}series/?page=${pageNo}`;
+    async popularNovels(page: number, { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>): Promise<Plugin.NovelItem[]> {
+        let link = `${this.site}`;
+        if (filters.language.value.length ||
+            filters.novelType.value.length ||
+            filters.genres.value.include?.length ||
+            filters.genres.value.exclude?.length ||
+            filters.storyStatus.value.length ){
+        link += "series-finder/?sf=1"
+        } else if (showLatestNovels){
+            link += "latest-series/?st=1" 
+            } else {
+            link += "series-ranking/?rank=week"
+            };
+        
+        if (filters.language.value.length)
+            link += '&org=' + filters.language.value.join(',');
+        
+        if (filters.novelType.value.length)
+            link += '&nt=' + filters.novelType.value.join(',');
 
-        if (filters.genres.value.length)
-            link += filters.genres.value.map((i) => `&genre[]=${i}`).join("");
+        if (filters.genres.value.include?.length)
+            link += '&gi=' + filters.genres.value.include.join(',');
 
-        if (filters.type.value.length)
-            link += filters.type.value.map((i) => `&lang[]=${i}`).join("");
+        if (filters.genres.value.exclude?.length)
+            link += '&ge=' + filters.genres.value.exclude.join(',');
 
-        link += "&status=" + filters.status.value;
+        if (filters.genres.value.include?.length || filters.genres.value.exclude?.length)
+            link += '&mgi=' + filters.genre_operator.value;
 
-        link += "&order=" + filters.order.value;
+        if (filters.storyStatus.value.length)
+            link += '&ss=' + filters.storyStatus.value;
+
+        link += '&sort=' + filters.sort.value;
+
+        link += '&order=' + filters.order.value;
+
+        link += '&pg=' + page;
 
         const headers = new Headers();
         const body = await fetchApi(link, { headers }).then((result) =>
@@ -59,8 +83,7 @@ class NobleMTL implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
@@ -70,234 +93,367 @@ class NobleMTL implements Plugin.PluginBase {
             chapters: [],
         };
 
-        novel.name = loadedCheerio(".entry-title").text();
+        novel.name = loadedCheerio(".seriestitlenu").text();
 
-        novel.cover =
-            loadedCheerio("img.wp-post-image").attr("data-src") ||
-            loadedCheerio("img.wp-post-image").attr("src");
+        novel.cover = loadedCheerio(".seriesimg > img").attr("src");
 
-        loadedCheerio("div.spe > span").each(function () {
-            const detailName = loadedCheerio(this).find("b").text().trim();
-            const detail = loadedCheerio(this)
-                .find("b")
-                .remove()
-                .end()
-                .text()
-                .trim();
+        novel.author = loadedCheerio("#showauthors").text().trim();
 
-            switch (detailName) {
-                case "Author:":
-                    novel.author = detail;
-                    break;
-                case "Status:":
-                    novel.status = detail;
-                    break;
-            }
-        });
+        novel.genres = loadedCheerio("#seriesgenre")
+            .children("a")
+            .map((i, el) => loadedCheerio(el).text())
+            .toArray()
+            .join(",");
 
-        novel.genres = loadedCheerio(".genxed")
-            .text()
-            .trim()
-            .replace(/\s/g, ",");
+        novel.status = loadedCheerio("#editstatus").text().includes("Ongoing")
+            ? "Ongoing"
+            : "Completed";
 
-        loadedCheerio('div[itemprop="description"]  h3,p.a,strong').remove();
-        novel.summary = loadedCheerio('div[itemprop="description"]')
-            .find("br")
-            .replaceWith("\n")
-            .end()
-            .text();
+        let type = loadedCheerio("#showtype").text().trim();
+
+        let summary = loadedCheerio("#editdescription").text().trim();
+
+        novel.summary = summary + `\n\nType: ${type}`;
 
         let chapter: Plugin.ChapterItem[] = [];
 
-        loadedCheerio(".eplister")
-            .find("li")
-            .each(function () {
-                const chapterUrl = loadedCheerio(this).find("a").attr("href");
-                if (!chapterUrl) return;
-                const chapterName =
-                    loadedCheerio(this).find(".epl-num").text() +
-                    " - " +
-                    loadedCheerio(this).find(".epl-title").text();
-                const releaseDate = loadedCheerio(this)
-                    .find(".epl-date")
-                    .text()
-                    .trim(); // Feb 25, 2024
+        const novelId = loadedCheerio("input#mypostid").attr("value")!;
 
-                if (!releaseDate) return;
+        let formData = new FormData();
+        formData.append("action", "nd_getchapters");
+        formData.append("mygrr", "0");
+        formData.append("mypostid", novelId);
 
-                chapter.push({
-                    name: chapterName,
-                    releaseTime: new Date(releaseDate).toISOString(),
-                    url: chapterUrl,
-                });
+        let link = `${this.site}wp-admin/admin-ajax.php`;
+
+        const text = await fetchApi(
+            link,
+            {
+                method: "POST",
+                body: formData,
+            },
+        ).then((data) => data.text());
+
+        loadedCheerio = parseHTML(text);
+
+        loadedCheerio("li.sp_li_chp").each(function () {
+            const chapterName = loadedCheerio(this).text().trim();
+            const releaseDate = null;
+            const chapterUrl =
+                "https:" +
+                loadedCheerio(this).find("a").first().next().attr("href");
+
+            chapter.push({
+                name: chapterName,
+                releaseTime: releaseDate,
+                url: chapterUrl,
             });
+        });
 
         novel.chapters = chapter.reverse();
 
         return novel;
     }
+    getLocation(href: string) {
+        var match = href.match(
+            /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/
+        );
+        return match && `${match[1]}//${match[3]}`;
+    }
+
     async parseChapter(chapterUrl: string): Promise<string> {
-        const headers = new Headers();
-        const result = await fetchApi(chapterUrl, { headers });
+        let chapterText = "";
+
+        const result = await fetchApi(
+            chapterUrl,
+        );
         const body = await result.text();
+
+        // console.log(result.chapterUrl);
+
+        // console.log('Redirected URL: ', result.chapterUrl);
 
         const loadedCheerio = parseHTML(body);
 
-        let chapterText = loadedCheerio(".epcontent").html() || "";
+        let isWuxiaWorld = chapterUrl.toLowerCase().includes("wuxiaworld");
+
+        let isBlogspot = chapterUrl.toLowerCase().includes("blogspot");
+
+        let isTumblr = chapterUrl.toLowerCase().includes("tumblr");
+
+        let isWattpad = chapterUrl.toLowerCase().includes("wattpad");
+
+        let isAnomalously = chapterUrl.toLowerCase().includes('anotivereads');
+
+        let isBlossomTranslation = chapterUrl
+            .toLowerCase()
+            .includes('blossomtranslation');
+
+        let isLightNovelsTls = chapterUrl
+            .toLowerCase()
+            .includes("lightnovelstranslations");
+
+        let isiNovelTranslation = chapterUrl
+            .toLowerCase()
+            .includes("inoveltranslation");
+
+        let isTravisTranslation = chapterUrl
+            .toLowerCase()
+            .includes("travistranslations");
+
+        /**
+         * Checks if its a wordpress site
+         */
+        let isWordPressStr =
+            loadedCheerio('meta[name="generator"]').attr("content") ||
+            loadedCheerio("footer").text();
+
+        let isWordPress = false;
+
+        if (isWordPressStr) {
+            isWordPress =
+                isWordPressStr.toLowerCase().includes("wordpress") ||
+                isWordPressStr.includes("Site Kit by Google") ||
+                loadedCheerio(".powered-by")
+                    .text()
+                    .toLowerCase()
+                    .includes("wordpress");
+        }
+
+        let isRainOfSnow = chapterUrl.toLowerCase().includes("rainofsnow");
+
+        let isWebNovel = chapterUrl.toLowerCase().includes("webnovel");
+
+        let isHostedNovel = chapterUrl.toLowerCase().includes("hostednovel");
+
+        let isScribbleHub = chapterUrl.toLowerCase().includes("scribblehub");
+
+        if (isWuxiaWorld) {
+            chapterText = loadedCheerio("#chapter-content").html()!;
+        } else if (isRainOfSnow) {
+            chapterText = loadedCheerio("div.content").html()!;
+        } else if (isTumblr) {
+            chapterText = loadedCheerio(".post").html()!;
+        } else if (isBlogspot) {
+            loadedCheerio('.post-share-buttons').remove();
+            chapterText =
+                loadedCheerio('.entry-content').html() ||
+                loadedCheerio('#post-body').html()!;
+        } else if (isHostedNovel) {
+            chapterText = loadedCheerio(".chapter").html()!;
+        } else if (isScribbleHub) {
+            chapterText = loadedCheerio("div.chp_raw").html()!;
+        } else if (isWattpad) {
+            chapterText = loadedCheerio(".container  pre").html()!;
+        } else if (isTravisTranslation) {
+            chapterText = loadedCheerio(".reader-content").html()!;
+        } else if (isLightNovelsTls) {
+            chapterText = loadedCheerio('.text_story').html()!;
+        } else if (isBlossomTranslation) {
+            chapterText = loadedCheerio('.manga-child-content').html()!;
+        } else if (isAnomalously) {
+            chapterText = loadedCheerio('#comic').html()!;
+        } else if (isiNovelTranslation) {
+            const link = 'https://api.' + chapterUrl.slice(8);
+            const json = await fetchApi(link).then(r => r.json());
+            chapterText = json.content.replace(/\n/g, '<br>');
+            if (json.notes) {
+                chapterText +=
+                '<br><hr><br>TL Notes:<br>' + json.notes.replace(/\n/g, '<br>');
+            }
+        } else if (isWordPress) {
+            /**
+             * Remove wordpress bloat tags
+             */
+
+            const bloatClasses = [
+                ".c-ads",
+                "#madara-comments",
+                "#comments",
+                ".content-comments",
+                ".sharedaddy",
+                ".wp-dark-mode-switcher",
+                ".wp-next-post-navi",
+                ".wp-block-buttons",
+                ".wp-block-columns",
+                ".post-cats",
+                ".sidebar",
+                ".author-avatar",
+                ".ezoic-ad",
+            ];
+
+            bloatClasses.map((tag) => loadedCheerio(tag).remove());
+
+            chapterText =
+                loadedCheerio(".entry-content").html() ||
+                loadedCheerio(".single_post").html() ||
+                loadedCheerio(".post-entry").html() ||
+                loadedCheerio(".main-content").html() ||
+                loadedCheerio("article.post").html() ||
+                loadedCheerio(".content").html() ||
+                loadedCheerio("#content").html() ||
+                loadedCheerio(".page-body").html() ||
+                loadedCheerio(".td-page-content").html()!;
+        } else if (isWebNovel) {
+            chapterText = loadedCheerio(".cha-words").html()!;
+
+            if (!chapterText) {
+                chapterText = loadedCheerio("._content").html()!;
+            }
+        } else {
+            /**
+             * Remove unnecessary tags
+             */
+            const tags = ["nav", "header", "footer", ".hidden"];
+
+            tags.map((tag) => loadedCheerio(tag).remove());
+
+            chapterText = loadedCheerio("body").html()!;
+        }
+
+        if (chapterText) {
+            /**
+             * Convert relative urls to absolute
+             */
+            chapterText = chapterText.replace(
+                /href="\//g,
+                `href="${this.getLocation(chapterUrl)}/`
+            );
+        }
 
         return chapterText;
     }
-
-    async searchNovels(
-        searchTerm: string,
-        pageNo: number
-    ): Promise<Plugin.NovelItem[]> {
-        const url = `${this.site}page/${pageNo}/?s=${searchTerm}`;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+    async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
+        const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
 
-    async fetchImage(url: string): Promise<string | undefined> {
-        return await fetchFile(url);
+    fetchImage(url: string): Promise<string | undefined> {
+        return fetchFile(url);
     }
 
     filters = {
-        order: {
-            label: "Sort By",
+        sort: {
+            label: "Sort Results By",
+            value: "sdate",
             options: [
-                { label: "Default", value: "" },
-                { label: "A-Z", value: "title" },
-                { label: "Z-A", value: "titlereverse" },
-                { label: "Latest Update", value: "update" },
-                { label: "Latest Added", value: "latest" },
-                { label: "Popular", value: "popular" },
+                { label: "Last Updated", value: "sdate" },
+                { label: "Rating", value: "srate" },
+                { label: "Rank", value: "srank" },
+                { label: "Reviews", value: "sreview" },
+                { label: "Chapters", value: "srel" },
+                { label: "Title", value: "abc" },
+                { label: "Readers", value: "sread" },
+                { label: "Frequency", value: "sfrel" },
             ],
             type: FilterTypes.Picker,
-            value: "",
         },
-
-        status: {
-            label: "Status",
+        order: {
+            label: "Order",
+            value: "desc",
+            options: [
+                { label: "Descending", value: "desc" },
+                { label: "Ascending", value: "asc" },
+            ],
+            type: FilterTypes.Picker,
+        },
+        storyStatus: {
+            label: "Story Status (Translation)",
+            value: "",
             options: [
                 { label: "All", value: "" },
-                { label: "Ongoing", value: "ongoing" },
-                { label: "Hiatus", value: "hiatus" },
-                { label: "Completed", value: "completed" },
+                { label: "Completed", value: "2" },
+                { label: "Ongoing", value: "3" },
+                { label: "Hiatus", value: "4" },
             ],
             type: FilterTypes.Picker,
-            value: "",
         },
-        type: {
-            label: "Type",
+        language: {
+            label: "Language",
+            value: [],
             options: [
-                { label: "Chinese novel", value: "chinese-novel" },
-                { label: "habyeol", value: "habyeol" },
-                { label: "korean novel", value: "korean-novel" },
-                { label: "Web Novel", value: "web-novel" },
-                { label: "삼심", value: "%ec%82%bc%ec%8b%ac" },
-                { label: "호곡", value: "%ed%98%b8%ea%b3%a1" },
+                { label: "None", value: "" },
+                { label: "Chinese", value: "495" },
+                { label: "Filipino", value: "9181" },
+                { label: "Indonesian", value: "9179" },
+                { label: "Japanese", value: "496" },
+                { label: "Khmer", value: "18657" },
+                { label: "Korean", value: "497" },
+                { label: "Malaysian", value: "9183" },
+                { label: "Thai", value: "9954" },
+                { label: "Vietnamese", value: "9177" },
             ],
             type: FilterTypes.CheckboxGroup,
+        },
+        novelType: {
+            label: "Novel Type",
             value: [],
+            options: [
+                { label: "Light Novel", value: "2443" },
+                { label: "Published Novel", value: "26874" },
+                { label: "Web Novel", value: "2444" },
+            ],
+            type: FilterTypes.CheckboxGroup,
         },
         genres: {
             label: "Genres",
+            type: FilterTypes.ExcludableCheckboxGroup,
+            value: {
+                include: [],
+                exclude: [],
+            },
             options: [
-                { label: "A.I", value: "a.i" },
-                { label: "Academy", value: "academy" },
-                { label: "Action", value: "action" },
-                { label: "Adult", value: "adult" },
-                { label: "Adventure", value: "adventure" },
-                { label: "Alternative History", value: "alternative-history" },
-                { label: "Another World", value: "another-world" },
-                { label: "Apocalypse", value: "apocalypse" },
-                { label: "Bromance", value: "bromance" },
-                { label: "Comedy", value: "comedy" },
-                { label: "Dark fantasy", value: "dark-fantasy" },
-                { label: "Demons", value: "demons" },
-                { label: "Drama", value: "drama" },
-                { label: "Dystopia", value: "dystopia" },
-                { label: "Ecchi", value: "ecchi" },
-                { label: "Entertainment", value: "entertainment" },
-                { label: "Exhaustion", value: "exhaustion" },
-                { label: "Fanfiction", value: "fanfiction" },
-                { label: "fantasy", value: "fantasy" },
-                { label: "finance", value: "finance" },
-                { label: "Full color", value: "full-color" },
-                { label: "Game", value: "game" },
-                { label: "Gender Bender", value: "gender-bender" },
-                { label: "Genius", value: "genius" },
-                { label: "Harem", value: "harem" },
-                { label: "Hero", value: "hero" },
-                { label: "Historical", value: "historical" },
-                { label: "Hunter", value: "hunter" },
-                { label: "korean novel", value: "korean-novel" },
-                { label: "Light Novel", value: "light-novel" },
-                {
-                    label: "List Adventure Manga Genres",
-                    value: "list-adventure-manga-genres",
-                },
-                { label: "Long Strip", value: "long-strip" },
-                { label: "Love comedy", value: "love-comedy" },
-                { label: "magic", value: "magic" },
-                { label: "Manhua", value: "manhua" },
-                { label: "Martial Arts", value: "martial-arts" },
-                { label: "Mature", value: "mature" },
-                { label: "Medieval", value: "medieval" },
-                { label: "Misunderstanding", value: "misunderstanding" },
-                { label: "Modern", value: "modern" },
-                { label: "modern fantasy", value: "modern-fantasy" },
-                { label: "music", value: "music" },
-                { label: "Mystery", value: "mystery" },
-                { label: "Necromancy", value: "necromancy" },
-                { label: "No Romance", value: "no-romance" },
-                { label: "NTL", value: "ntl" },
-                { label: "o", value: "o" },
-                { label: "Obsession", value: "obsession" },
-                { label: "Politics", value: "politics" },
-                { label: "Possession", value: "possession" },
-                { label: "Programming", value: "programming" },
-                { label: "Psychological", value: "psychological" },
-                { label: "Pure Love", value: "pure-love" },
-                { label: "Redemption", value: "redemption" },
-                { label: "Regression", value: "regression" },
-                { label: "Regret", value: "regret" },
-                { label: "Reincarnation", value: "reincarnation" },
-                { label: "Revenge", value: "revenge" },
-                { label: "Romance", value: "romance" },
-                { label: "Romance Fanrasy", value: "romance-fanrasy" },
-                { label: "Salvation", value: "salvation" },
-                { label: "School Life", value: "school-life" },
-                { label: "Sci-fi", value: "sci-fi" },
-                { label: "Science fiction", value: "science-fiction" },
-                { label: "Seinen", value: "seinen" },
-                { label: "Shounen", value: "shounen" },
-                { label: "Slice of Life", value: "slice-of-life" },
-                { label: "Soft yandere", value: "soft-yandere" },
-                { label: "Sports", value: "sports" },
-                { label: "Supernatural", value: "supernatural" },
-                { label: "Survival", value: "survival" },
-                { label: "system", value: "system" },
-                { label: "Time limit", value: "time-limit" },
-                { label: "Tragedy", value: "tragedy" },
-                { label: "Transmigration", value: "transmigration" },
-                { label: "TS", value: "ts" },
-                { label: "Tsundere", value: "tsundere" },
-                { label: "Unique", value: "unique" },
-                { label: "Wholesome", value: "wholesome" },
-                { label: "Wuxia", value: "wuxia" },
-                { label: "Xuanhuan", value: "xuanhuan" },
-                { label: "Yandere", value: "yandere" },
-                { label: "Yuri", value: "yuri" },
+                { label: "Action", value: "8" },
+                { label: "Adult", value: "280" },
+                { label: "Adventure", value: "13" },
+                { label: "Comedy", value: "17" },
+                { label: "Drama", value: "9" },
+                { label: "Ecchi", value: "292" },
+                { label: "Fantasy", value: "5" },
+                { label: "Gender Bender", value: "168" },
+                { label: "Harem", value: "3" },
+                { label: "Historical", value: "330" },
+                { label: "Horror", value: "343" },
+                { label: "Josei", value: "324" },
+                { label: "Martial Arts", value: "14" },
+                { label: "Mature", value: "4" },
+                { label: "Mecha", value: "10" },
+                { label: "Mystery", value: "245" },
+                { label: "Psychoical", value: "486" },
+                { label: "Romance", value: "15" },
+                { label: "School Life", value: "6" },
+                { label: "Sci-fi", value: "11" },
+                { label: "Seinen", value: "18" },
+                { label: "Shoujo", value: "157" },
+                { label: "Shoujo Ai", value: "851" },
+                { label: "Shounen", value: "12" },
+                { label: "Shounen Ai", value: "1692" },
+                { label: "Slice of Life", value: "7" },
+                { label: "Smut", value: "281" },
+                { label: "Sports", value: "1357" },
+                { label: "Supernatural", value: "16" },
+                { label: "Tragedy", value: "132" },
+                { label: "Wuxia", value: "479" },
+                { label: "Xianxia", value: "480" },
+                { label: "Xuanhuan", value: "3954" },
+                { label: "Yaoi", value: "560" },
+                { label: "Yuri", value: "922" },
             ],
-            type: FilterTypes.CheckboxGroup,
-            value: [],
+        },
+        genre_operator: {
+            label: "Genre (AND/OR)",
+            value: "and",
+            options: [
+                { label: "AND", value: "and" },
+                { label: "OR", value: "or" },
+            ],
+            type: FilterTypes.Picker,
         },
     } satisfies Filters;
 }
 
-export default new NobleMTL();
+export default new NovelUpdates();
