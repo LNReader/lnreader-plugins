@@ -6,7 +6,7 @@ import { Plugin, isPlugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 const root = path.dirname(require?.main?.filename || "");
 
-export const fetchHeaders: Record<string, string> = {}
+export const fetchHeaders: Record<string, string> = {};
 
 export const all_plugins = (): PluginList => {
     const res: PluginList = {};
@@ -48,9 +48,12 @@ const getPlugin = async (
 ): Promise<Plugin.PluginBase | null> => {
     console.log("loading plugin", requirePath);
     const plugin = await require(requirePath).default;
-    console.log(plugin);
-    if (isPlugin(plugin)) return plugin;
-    console.log("Not a plugin!");
+    // console.log(plugin);
+    if (isPlugin(plugin)) {
+        console.log("loaded plugin", plugin.name);
+        return plugin;
+    }
+    console.error("Not a plugin!");
     return null;
 };
 
@@ -59,13 +62,15 @@ export const getFilter = async (pluginRequirePath: string) =>
 
 export const popularNovels = async (
     pluginRequirePath: string,
+    page: number,
     options: Plugin.PopularNovelsOptions<Filters>
-) => (await getPlugin(pluginRequirePath))?.popularNovels(1, options);
+) => (await getPlugin(pluginRequirePath))?.popularNovels(page, options);
 
 export const searchNovels = async (
     pluginRequirePath: string,
+    page: number,
     searchTerm: string
-) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, 1);
+) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, page);
 
 export const parseNovelAndChapters = async (
     pluginRequirePath: string,

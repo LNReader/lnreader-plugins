@@ -1,8 +1,13 @@
 type FetchInit = {
-    headers?: Record<string, string> | Headers;
+    headers?: Record<string, string | undefined> | Headers;
     method?: string;
     body?: FormData | string;
-    [x: string]: string | Record<string, string> | undefined | FormData | Headers;
+    [x: string]:
+        | string
+        | Record<string, string | undefined>
+        | undefined
+        | FormData
+        | Headers;
 };
 
 const makeInit = async (init?: FetchInit) => {
@@ -31,21 +36,19 @@ const makeInit = async (init?: FetchInit) => {
         };
     }
     return init;
-}
+};
 
 /**
  * Fetch with (Android) User Agent
- * @param url 
- * @param init 
+ * @param url
+ * @param init
  * @returns response as normal fetch
  */
-export async function fetchApi(
-    url: string,
-    init?: FetchInit
-) {
+export async function fetchApi(url: string, init?: FetchInit) {
     init = await makeInit(init);
-    console.log(url, init);
-    return await fetch(url, init);
+    // console.log(init.headers);
+    // console.log(url, init);
+    return await fetch(url, init as RequestInit);
 }
 
 /**
@@ -59,12 +62,12 @@ export const fetchFile = async function (url: string, init?: FetchInit) {
     init = await makeInit(init);
     console.log(url, init);
     try {
-        const res = await fetch(url, init);
-        if (!res.ok) return '';
+        const res = await fetch(url, init as RequestInit);
+        if (!res.ok) return "";
         const arrayBuffer = await res.arrayBuffer();
         return Buffer.from(arrayBuffer).toString("base64");
     } catch (e) {
-        return '';
+        return "";
     }
 };
 
@@ -79,17 +82,17 @@ export const fetchFile = async function (url: string, init?: FetchInit) {
 export const fetchText = async function (
     url: string,
     init?: FetchInit,
-    encoding?: string,
+    encoding?: string
 ): Promise<string> {
     init = await makeInit(init);
     console.log(url, init);
     try {
-        const res = await fetch(url, init);
-        if (!res.ok) return '';
+        const res = await fetch(url, init as RequestInit);
+        if (!res.ok) return "";
         const arrayBuffer = await res.arrayBuffer();
         const decoder = new TextDecoder(encoding);
         return decoder.decode(arrayBuffer);
     } catch (e) {
-        return '';
+        return "";
     }
 };
