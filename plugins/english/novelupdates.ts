@@ -6,20 +6,16 @@ import { Plugin } from "@typings/plugin";
 class NovelUpdates implements Plugin.PluginBase {
     id = "novelupdates";
     name = "Novel Updates";
-    version = "0.6.0";
+    version = "0.5.0";
     icon = "src/en/novelupdates/icon.png";
     site = "https://www.novelupdates.com/";
 
-    heads = { "User-Agent": undefined };
-
-    parseNovels(loadedCheerio: CheerioAPI) {
+    parseNovels(loadedCheerio: CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
 
         loadedCheerio("div.search_main_box_nu").each((idx, ele) => {
             const novelCover = loadedCheerio(ele).find("img").attr("src");
-            const novelName = loadedCheerio(ele)
-                .find(".search_title > a")
-                .text();
+            const novelName = loadedCheerio(ele).find(".search_title > a").text();
             const novelUrl = loadedCheerio(ele)
                 .find(".search_title > a")
                 .attr("href");
@@ -38,58 +34,48 @@ class NovelUpdates implements Plugin.PluginBase {
         return novels;
     }
 
-    async popularNovels(
-        page: number,
-        {
-            showLatestNovels,
-            filters,
-        }: Plugin.PopularNovelsOptions<typeof this.filters>
-    ): Promise<Plugin.NovelItem[]> {
+    async popularNovels(page: number, { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>): Promise<Plugin.NovelItem[]> {
         let link = `${this.site}`;
-        if (
-            filters.language.value.length ||
+        if (filters.language.value.length ||
             filters.novelType.value.length ||
             filters.genres.value.include?.length ||
             filters.genres.value.exclude?.length ||
-            filters.storyStatus.value.length
-        ) {
-            link += "series-finder/?sf=1";
-        } else if (showLatestNovels) {
-            link += "latest-series/?st=1";
-        } else {
-            link += "series-ranking/?rank=week";
-        }
-
+            filters.storyStatus.value.length ){
+        link += "series-finder/?sf=1"
+        } else if (showLatestNovels){
+            link += "latest-series/?st=1" 
+            } else {
+            link += "series-ranking/?rank=week"
+            };
+        
         if (filters.language.value.length)
-            link += "&org=" + filters.language.value.join(",");
-
+            link += '&org=' + filters.language.value.join(',');
+        
         if (filters.novelType.value.length)
-            link += "&nt=" + filters.novelType.value.join(",");
+            link += '&nt=' + filters.novelType.value.join(',');
 
         if (filters.genres.value.include?.length)
-            link += "&gi=" + filters.genres.value.include.join(",");
+            link += '&gi=' + filters.genres.value.include.join(',');
 
         if (filters.genres.value.exclude?.length)
-            link += "&ge=" + filters.genres.value.exclude.join(",");
+            link += '&ge=' + filters.genres.value.exclude.join(',');
 
-        if (
-            filters.genres.value.include?.length ||
-            filters.genres.value.exclude?.length
-        )
-            link += "&mgi=" + filters.genre_operator.value;
+        if (filters.genres.value.include?.length || filters.genres.value.exclude?.length)
+            link += '&mgi=' + filters.genre_operator.value;
 
         if (filters.storyStatus.value.length)
-            link += "&ss=" + filters.storyStatus.value;
+            link += '&ss=' + filters.storyStatus.value;
 
-        link += "&sort=" + filters.sort.value;
+        link += '&sort=' + filters.sort.value;
 
-        link += "&order=" + filters.order.value;
+        link += '&order=' + filters.order.value;
 
-        link += "&pg=" + page;
+        link += '&pg=' + page;
 
-        const body = await fetchApi(link, {
-            headers: this.heads,
-        }).then((result) => result.text());
+        const headers = new Headers();
+        const body = await fetchApi(link, { headers }).then((result) =>
+            result.text()
+        );
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
@@ -97,9 +83,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
     async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-        const result = await fetchApi(url, {
-            headers: this.heads,
-        });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
@@ -142,11 +126,13 @@ class NovelUpdates implements Plugin.PluginBase {
 
         let link = `${this.site}wp-admin/admin-ajax.php`;
 
-        const text = await fetchApi(link, {
-            method: "POST",
-            body: formData,
-            headers: { ...this.heads },
-        }).then((data) => data.text());
+        const text = await fetchApi(
+            link,
+            {
+                method: "POST",
+                body: formData,
+            },
+        ).then((data) => data.text());
 
         loadedCheerio = parseHTML(text);
 
@@ -178,7 +164,9 @@ class NovelUpdates implements Plugin.PluginBase {
     async parseChapter(chapterUrl: string): Promise<string> {
         let chapterText = "";
 
-        const result = await fetchApi(chapterUrl);
+        const result = await fetchApi(
+            chapterUrl,
+        );
         const body = await result.text();
 
         // console.log(result.chapterUrl);
@@ -335,14 +323,9 @@ class NovelUpdates implements Plugin.PluginBase {
 
         return chapterText;
     }
-    async searchNovels(
-        searchTerm: string,
-        page: number
-    ): Promise<Plugin.NovelItem[]> {
-        const url = `${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
-        const result = await fetchApi(url, {
-            headers: this.heads,
-        });
+    async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
+        const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
