@@ -12,7 +12,6 @@ class RNRF implements Plugin.PluginBase {
   site = "https://ранобэ.рф";
   version = "1.0.0";
   icon = "src/ru/ranoberf/icon.png";
-
 
   async popularNovels(
     pageNo: number,
@@ -69,12 +68,13 @@ class RNRF implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    book?.chapters?.forEach((chapter) => {
+    book?.chapters.forEach((chapter, chapterIndex) => {
       if (!chapter.isDonate || chapter.isUserPaid) {
         chapters.push({
           name: chapter.title,
-          releaseTime: dayjs(chapter.publishedAt).format("LLL"),
           url: this.site + chapter.url,
+          releaseTime: dayjs(chapter.publishedAt).format("LLL"),
+          chapterNumber: book.chapters.length - chapterIndex,
         });
       }
     });
@@ -84,10 +84,9 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(chapterUrl);
-    const body = await result.text();
+    const result = await fetchApi(chapterUrl).then((res) => res.text());
 
-    let loadedCheerio = parseHTML(body);
+    let loadedCheerio = parseHTML(result);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
     const json: response = JSON.parse(jsonRaw || "{}");
 
@@ -95,11 +94,10 @@ class RNRF implements Plugin.PluginBase {
       json.props.pageProps?.chapter?.content?.text || "",
     );
 
-    const baseUrl = this.site;
-    loadedCheerio("img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio("img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
 
@@ -133,7 +131,7 @@ class RNRF implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "popular",
       options: [
         { label: "Рейтинг", value: "popular" },
         { label: "Дате добавления", value: "new" },

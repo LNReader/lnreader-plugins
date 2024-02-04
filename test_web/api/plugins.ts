@@ -31,7 +31,7 @@ export const all_plugins = (): PluginList => {
             const { id, name, version, icon } = instance;
             const info: Plugin.PluginItem = {
                 id,
-                name,
+                name: name + (plugin.match(/(\[.+\])/)?.[1] || ''),
                 lang: languageNative,
                 version,
                 requirePath,

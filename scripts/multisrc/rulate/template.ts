@@ -22,9 +22,8 @@ class RulatePlugin implements Plugin.PluginBase {
 
   constructor(metadata: RulateMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[rulate]";
-    const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
-    this.icon = `multisrc/rulate/icons/${iconFileName}.png`;
+    this.name = metadata.sourceName;
+    this.icon = `multisrc/rulate/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
     this.filters = metadata.filters;
@@ -35,8 +34,7 @@ class RulatePlugin implements Plugin.PluginBase {
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const baseUrl = this.site;
-    let url = baseUrl + "/search?t=";
+    let url = this.site + "/search?t=";
     url += "&cat=" + (filters?.cat?.value || "0");
     url += "&s_lang=" + (filters?.s_lang?.value || "0");
     url += "&t_lang=" + (filters?.t_lang?.value || "0");
@@ -45,39 +43,13 @@ class RulatePlugin implements Plugin.PluginBase {
     url += "&atmosphere=" + (filters?.atmosphere?.value || "0");
     url += "&adult=" + (filters?.adult?.value || "0");
 
-    if (filters?.genres?.value instanceof Array) {
-      url += filters.genres.value.map((i) => "&genres[]=" + i).join("");
-    }
-
-    //if (filters?.genres?.value?.exclude instanceof Array) {
-    //  url += filters.genres.value.exclude
-    //    ?.map((i) => "&genres_ex[]=" + i)
-    //    .join("");
-    //}
-
-    if (filters?.tags?.value instanceof Array) {
-      url += filters.tags.value.map((i) => "&tags[]=" + i).join("");
-    }
-
-    //if (filters?.tags?.value?.exclude instanceof Array) {
-    //  url += filters.tags.value.exclude
-    //    ?.map((i) => "&tags_ex[]=" + i)
-    //    .join("");
-    //}
-
-    if (filters?.fandoms?.value instanceof Array) {
-      url += filters.fandoms.value.map((i) => "&fandoms[]=" + i).join("");
-    }
-
-    // if (filters?.fandoms?.value?.exclude instanceof Array) {
-    //   url += filters.fandoms.value.exclude
-    //     .map((i) => "&fandoms_ex[]=" + i)
-    //     .join("");
-    // }
-
-    if (filters?.trash?.value instanceof Array) {
-      url += filters.trash.value.map((i) => "&" + i + "=1").join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + value
+            .map((val) => (type == "extra" ? val + "=1" : type + "[]=" + val))
+            .join("&");
+      }
+    });
 
     url += "&Book_page=" + pageNo;
 
@@ -86,21 +58,20 @@ class RulatePlugin implements Plugin.PluginBase {
 
     loadedCheerio(
       'ul[class="search-results"] > li:not([class="ad_type_catalog"])',
-    ).each(function () {
-      loadedCheerio(this).find("p > a").text();
-      const name = loadedCheerio(this).find("p > a").text();
-      const cover = loadedCheerio(this).find("img").attr("src");
-      const url = loadedCheerio(this).find("p > a").attr("href");
+    ).each((index, element) => {
+      loadedCheerio(element).find("p > a").text();
+      const name = loadedCheerio(element).find("p > a").text();
+      const cover = loadedCheerio(element).find("img").attr("src");
+      const url = loadedCheerio(element).find("p > a").attr("href");
       if (!name || !url) return;
 
-      novels.push({ name, cover: baseUrl + cover, url: baseUrl + url });
+      novels.push({ name, cover: this.site + cover, url: this.site + url });
     });
 
     return novels;
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const baseUrl = this.site;
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
     };
@@ -129,7 +100,7 @@ class RulatePlugin implements Plugin.PluginBase {
       novel.name = novel.name.split("[")[0].trim();
     }
     novel.cover =
-      baseUrl + loadedCheerio('div[class="images"] > div img').attr("src");
+      this.site + loadedCheerio('div[class="images"] > div img').attr("src");
     novel.summary = 
       loadedCheerio("#Info > div:nth-child(3), .book-description").text().trim();
     novel.author = loadedCheerio(
@@ -172,27 +143,17 @@ class RulatePlugin implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio("table > tbody > tr.chapter_row").each(function () {
-      const chapterName = loadedCheerio(this)
-        .find('td[class="t"] > a')
-        .text()
-        .trim();
-      const releaseDate = loadedCheerio(this)
-        .find("td > span")
-        .attr("title")
-        ?.trim();
-      const chapterUrl = loadedCheerio(this)
-        .find('td[class="t"] > a')
-        .attr("href");
+    loadedCheerio("table > tbody > tr.chapter_row").each((chapterIndex, element) => {
+      const chapterName = loadedCheerio(element).find('td[class="t"] > a').text().trim();
+      const releaseDate = loadedCheerio(element).find("td > span").attr("title")?.trim();
+      const chapterUrl = loadedCheerio(element).find('td[class="t"] > a').attr("href");
 
-      if (
-        !loadedCheerio(this).find('td > span[class="disabled"]').length &&
-        releaseDate
-      ) {
+      if (!loadedCheerio(element).find('td > span[class="disabled"]').length && releaseDate) {
         chapters.push({
           name: chapterName,
+          url: this.site + chapterUrl,
           releaseTime: releaseDate,
-          url: baseUrl + chapterUrl,
+          chapterNumber: chapterIndex + 1,
         });
       }
     });
@@ -202,7 +163,6 @@ class RulatePlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterUrl: string): Promise<string> {
-    const baseUrl = this.site;
     let result = await fetchApi(chapterUrl);
     if (result.url.includes("mature?path=")) {
       const formData = new FormData();
@@ -218,10 +178,10 @@ class RulatePlugin implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio(".content-text img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio(".content-text img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
 

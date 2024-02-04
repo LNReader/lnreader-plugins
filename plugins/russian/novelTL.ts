@@ -12,11 +12,10 @@ class TL implements Plugin.PluginBase {
   site = "https://novel.tl";
   version = "1.0.0";
   icon = "src/ru/noveltl/icon.png";
-
 
   async popularNovels(
     page: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    { filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
@@ -104,20 +103,28 @@ class TL implements Plugin.PluginBase {
         novel.author =
           person.name.firstName + " " + (person.name?.lastName || "");
       }
+      if (person.role == "illustrator" && person.name.firstName) {
+        novel.artist =
+          person.name.firstName + " " + (person.name?.lastName || "");
+      }
     });
 
     const chapters: Plugin.ChapterItem[] = [];
+
     json.data.project?.subprojects?.content?.forEach((work) =>
-      work.volumes.content.forEach((volume) =>
-        volume.chapters.forEach(
-          (chapter) =>
-            chapter?.published &&
+      work.volumes.content.forEach((volume, volumeIndex) =>
+        volume.chapters.forEach((chapter, chapterIndex) => {
+          if (chapter.published) {
             chapters.push({
-              name: volume.shortName + " " + chapter.title,
+              name:
+                (volume.shortName || "Том " + (volumeIndex + 1)) + " " +
+                (chapter.title || "Глава " + (chapterIndex + 1)),
               url: "https://" + chapter.fullUrl,
               releaseTime: dayjs(chapter.publishDate).format("LLL"),
-            }),
-        ),
+              chapterNumber: chapters.length + 1,
+            });
+          }
+        }),
       ),
     );
 
@@ -138,22 +145,21 @@ class TL implements Plugin.PluginBase {
         query:
           "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
         variables: {
-          url: chapterUrl,
+          url: decodeURI(chapterUrl),
         },
       }),
     });
     const json = (await result.json()) as response;
 
-    const baseUrl = this.site;
     const loadedCheerio = parseHTML(json.data.chapter?.text?.text || "");
-    loadedCheerio("p > a[href]").each(function () {
-      let src = baseUrl + loadedCheerio(this).attr("href");
+    loadedCheerio("p > a[href]").each((index, element) => {
+      let src = loadedCheerio(element).attr("href") || "";
       if (!src.startsWith("http")) {
-        src = baseUrl + src;
+        src = this.site + src;
       }
-      loadedCheerio(this).find("picture").remove();
-      loadedCheerio(this).removeAttr("href");
-      loadedCheerio(`<img src="${src}">`).appendTo(this);
+      loadedCheerio(element).find("picture").remove();
+      loadedCheerio(element).removeAttr("href");
+      loadedCheerio(`<img src="${src}">`).appendTo(element);
     });
 
     const chapterText = loadedCheerio.html();
@@ -935,12 +941,12 @@ interface Volumes {
 }
 
 interface VolumesContent {
-  shortName: string;
+  shortName: null | string;
   chapters: ChapterElement[];
 }
 
 interface ChapterElement {
-  title: string;
+  title: null | string;
   publishDate: Date;
   fullUrl: string;
   published: boolean;

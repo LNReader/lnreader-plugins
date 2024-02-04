@@ -5,76 +5,47 @@ import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
+const statusKey = [
+  NovelStatus.Ongoing,
+  NovelStatus.Completed,
+  NovelStatus.OnHiatus,
+  NovelStatus.Cancelled,
+];
+
 class RLIB implements Plugin.PluginBase {
   id = "RLIB";
   name = "RanobeLib";
   site = "https://ranobelib.me";
   version = "1.0.0";
   icon = "src/ru/ranobelib/icon.png";
-  ui: string | number | undefined = undefined;
-
+  ui: string | undefined = undefined;
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = `${this.site}/manga-list?sort=`;
-    url += showLatestNovels
-      ? "last_chapter_at"
-      : filters?.sort?.value || "rate";
+    let url = this.site + "/manga-list?sort=";
+    url += showLatestNovels ? "last_chapter_at" : filters?.sort?.value || "rate";
     url += "&dir=" + (filters?.order?.value || "desc");
 
-    if (filters.type?.value?.length) {
-      url += filters.type.value.map((i) => "&types[]=" + i).join("");
-    }
-
-    if (filters.format?.value?.include?.length) {
-      url += filters.format.value.include
-        .map((i) => "&format[include][]=" + i).join("");
-    }
-
-    if (filters.format?.value?.exclude?.length) {
-      url += filters.format.value.exclude
-        .map((i) => "&format[exclude][]=" + i).join("");
-    }
-
-    if (filters.status?.value?.length) {
-      url += filters.status.value.map((i) => "&status[]=" + i).join("");
-    }
-
-    if (filters.statuss?.value?.length) {
-      url += filters.statuss.value.map((i) => "&manga_status[]=" + i).join("");
-    }
-
-    if (filters.genres?.value?.include?.length) {
-      url += filters.genres.value.include
-        .map((i) => "&genres[include][]=" + i).join("");
-    }
-
-    if (filters.genres?.value?.exclude?.length) {
-      url += filters.genres.value.exclude
-        .map((i) => "&genres[exclude][]=" + i).join("");
-    }
-
-    if (filters.tags?.value?.include?.length) {
-      url += filters.tags.value.include
-        .map((i) => "&tags[include][]=" + i).join("");
-    }
-
-    if (filters.tags?.value?.exclude?.length) {
-      url += filters.tags.value.exclude
-        .map((i) => "&tags[exclude][]=" + i).join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]: any) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + type + "[]=" + value.join("&" + type + "[]=");
+      }
+      if (value?.include instanceof Array && value.include.length) {
+        url += "&" + type + "[include][]=" + 
+          value.include.join("&" + type + "[include][]=");
+      } 
+      if (value?.exclude instanceof Array && value.exclude.length) {
+        url += "&" + type + "[exclude][]=" + 
+          value.exclude.join("&" + type + "[exclude][]=");
+      }
+    });
 
     url += "&page=" + pageNo;
 
-    const result = await fetchApi(url);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(url).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     this.ui = loadedCheerio("a.header-right-menu__item")
       .attr("href")
       ?.replace?.(/[^0-9]/g, "");
@@ -92,9 +63,7 @@ class RLIB implements Plugin.PluginBase {
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelUrl);
-    const body = await result.text();
-
+    const body = await fetchApi(novelUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
@@ -103,7 +72,7 @@ class RLIB implements Plugin.PluginBase {
 
     novel.name = loadedCheerio(".media-name__main").text().trim();
 
-    novel.cover = loadedCheerio(".media-sidebar__cover img").attr("src");
+    novel.cover = loadedCheerio(".container_responsive img").attr("src");
 
     novel.summary = loadedCheerio(".media-description__text").text().trim();
 
@@ -120,15 +89,14 @@ class RLIB implements Plugin.PluginBase {
         .find('div[class="media-info-list__title"]')
         .text();
 
-      if (name === "Статус перевода") {
-        novel.status =
-          loadedCheerio(this).find("div:nth-child(2)").text().trim() ===
-          "Продолжается"
-            ? NovelStatus.Ongoing
-            : NovelStatus.Completed;
-      } else if (name === "Автор") {
+      if (name === "Автор") {
         novel.author = loadedCheerio(this)
-          .find("div:nth-child(2)")
+          .find('div[class="media-info-list__value"]')
+          .text()
+          .trim();
+      } else if (name === "Художник") {
+        novel.artist = loadedCheerio(this)
+          .find('div[class="media-info-list__value"]')
           .text()
           .trim();
       }
@@ -146,16 +114,23 @@ class RLIB implements Plugin.PluginBase {
       ?.trim()
       ?.slice(0, -1);
 
-    let chaptersJson: responseBook = JSON.parse(chaptersRaw);
+    const chaptersJson: responseBook = JSON.parse(chaptersRaw);
+    const totalChapters = chaptersJson.chapters.list?.length || 0;
+    novel.status = statusKey[chaptersJson.manga.status - 1] || NovelStatus.Unknown;
     this.ui = chaptersJson?.user?.id;
 
-    chaptersJson.chapters?.list?.forEach((chapter) =>
+    chaptersJson.chapters?.list?.forEach((chapter, chapterIndex) =>
       chapters.push({
-        name: `Том ${chapter.chapter_volume} Глава ${chapter.chapter_number} ${chapter.chapter_name}`?.trim(),
-        releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
+        name:
+          "Том " + chapter.chapter_volume +
+          " Глава " + chapter.chapter_number +
+            (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
         url:
-          `${this.site}/${chaptersJson.manga.slug}/v${chapter.chapter_volume}/c${chapter.chapter_number}?bid=` +
-          (chapter?.branch_id || ""),
+          this.site + "/" + chaptersJson.manga.slug +
+          "/v" + chapter.chapter_volume + "/c" + chapter.chapter_number +
+          "?bid=" + (chapter.branch_id || ""),
+        releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
+        chapterNumber: totalChapters - chapterIndex,
       }),
     );
 
@@ -166,25 +141,22 @@ class RLIB implements Plugin.PluginBase {
   async parseChapter(chapterUrl: string): Promise<string> {
     const result = await fetchApi(
       chapterUrl + (this.ui ? "&ui=" + this.ui : ""),
-    );
-    const body = await result.text();
+    ).then((res) => res.text());
 
-    const loadedCheerio = parseHTML(body);
-
-    const baseUrl = this.site;
-    loadedCheerio(".reader-container img").each(function () {
+    const loadedCheerio = parseHTML(result);
+    loadedCheerio(".reader-container img").each((index, element) => {
       const src =
-        loadedCheerio(this).attr("data-src") || loadedCheerio(this).attr("src");
+        loadedCheerio(element).attr("data-src") ||
+        loadedCheerio(element).attr("src");
       if (!src?.startsWith("http")) {
-        loadedCheerio(this).attr("src", baseUrl + src);
+        loadedCheerio(element).attr("src", this.site + src);
       } else {
-        loadedCheerio(this).attr("src", src);
+        loadedCheerio(element).attr("src", src);
       }
-      loadedCheerio(this).removeAttr("data-src");
+      loadedCheerio(element).removeAttr("data-src");
     });
 
     const chapterText = loadedCheerio(".reader-container").html();
-
     return chapterText || "";
   }
 
@@ -214,7 +186,7 @@ class RLIB implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "rate",
       options: [
         { label: "Рейтинг", value: "rate" },
         { label: "Имя", value: "name" },
@@ -227,7 +199,7 @@ class RLIB implements Plugin.PluginBase {
     },
     order: {
       label: "Порядок",
-      value: "",
+      value: "desc",
       options: [
         { label: "По убыванию", value: "desc" },
         { label: "По возрастанию", value: "asc" },
@@ -272,7 +244,7 @@ class RLIB implements Plugin.PluginBase {
       ],
       type: FilterTypes.CheckboxGroup,
     },
-    statuss: {
+    manga_status: {
       label: "Статус тайтла",
       value: [],
       options: [
@@ -470,7 +442,7 @@ interface ListEntity {
   chapter_created_at: string;
   status?: null;
   price: number;
-  branch_id: number;
+  branch_id?: number;
   username: string;
 }
 interface TeamsEntity {
@@ -504,7 +476,7 @@ interface TeamsEntity1 {
   is_active: number;
 }
 interface User {
-  id: number;
+  id: string;
   avatar: string;
   access: boolean;
   isAdmin: boolean;

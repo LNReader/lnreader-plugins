@@ -11,25 +11,20 @@ class Bookriver implements Plugin.PluginBase {
   site = "https://bookriver.ru";
   version = "1.0.0";
   icon = "src/ru/bookriver/icon.png";
-
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + `/genre?page=${pageNo}&perPage=24&sortingType=`;
-    url += showLatestNovels
-      ? "last-update"
-      : filters?.sort?.value || "bestseller";
+    url += showLatestNovels ? "last-update" : filters?.sort?.value || "bestseller";
 
-    if (filters?.genres?.value instanceof Array && filters?.genres?.value.length) {
+    if (filters?.genres?.value?.length) {
       url += "&g=" + filters.genres.value.join(",");
     }
 
-    const result = await fetchApi(url);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(url).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
@@ -47,20 +42,20 @@ class Bookriver implements Plugin.PluginBase {
   }
 
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelUrl);
-    const body = await result.text();
+    const result = await fetchApi(novelUrl).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
 
-    const loadedCheerio = parseHTML(body);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
     const json: response = JSON.parse(jsonRaw || "{}");
     const book = json.props.pageProps.state.book?.bookPage;
+
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
       name: book?.name,
       cover: book?.coverImages[0].url,
       summary: book?.annotation,
       author: book?.author?.name,
-      genres: book?.tags?.map((item) => item.name).join(", "),
+      genres: book?.tags?.map((tag) => tag.name).join(", "),
       status:
         book?.statusComplete === "writing"
           ? NovelStatus.Ongoing
@@ -68,14 +63,13 @@ class Bookriver implements Plugin.PluginBase {
     };
 
     const chapters: Plugin.ChapterItem[] = [];
-    book?.ebook?.chapters?.forEach((chapter) => {
+    book?.ebook?.chapters?.forEach((chapter, chapterIndex) => {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
-          releaseTime: dayjs(
-            chapter?.firstPublishedAt || chapter.createdAt,
-          ).format("LLL"),
           url: this.site + "/reader/" + book?.slug + "/" + chapter.chapterId,
+          releaseTime: dayjs(chapter?.firstPublishedAt || chapter.createdAt).format("LLL"),
+          chapterNumber: chapterIndex + 1,
         });
       }
     });
@@ -105,7 +99,7 @@ class Bookriver implements Plugin.PluginBase {
     const json = (await result.json()) as responseSearch;
 
     const novels: Plugin.NovelItem[] = [];
-    json?.data?.books?.forEach((novel) =>
+    json.data?.books?.forEach((novel) =>
       novels.push({
         name: novel.name,
         cover: novel.coverImages[0].url,
@@ -120,7 +114,7 @@ class Bookriver implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "bestseller",
       options: [
         { label: "Бестселлеры", value: "bestseller" },
         { label: "Дате добавления", value: "newest" },

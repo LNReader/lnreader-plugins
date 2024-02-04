@@ -10,7 +10,6 @@ class freedlit implements Plugin.PluginBase {
   site = "https://freedlit.space";
   version = "1.0.0";
   icon = "src/ru/freedlit/icon.png";
-
 
   async popularNovels(
     page: number,
@@ -24,12 +23,14 @@ class freedlit implements Plugin.PluginBase {
 
     if (filters?.genre?.value?.include?.length) {
       url += filters.genre.value.include
-        .map(id => '&genres_included[]=' + id).join("");
+        .map((id) => "&genres_included[]=" + id)
+        .join("");
     }
 
     if (filters?.genre?.value?.exclude?.length) {
       url += filters.genre.value.exclude
-        .map(id => '&genres_excluded[]=' + id).join("");
+        .map((id) => "&genres_excluded[]=" + id)
+        .join("");
     }
 
     const body = await fetchApi(url).then((res) => res.text());
@@ -69,13 +70,13 @@ class freedlit implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio("a.chapter-line").each(function () {
-      const name = loadedCheerio(this).find("h6").text();
-      const releaseTime = loadedCheerio(this).find('span[class="date"]').text();
-      const url = loadedCheerio(this).attr("href");
+    loadedCheerio("a.chapter-line").each((chapterIndex, element) => {
+      const name = loadedCheerio(element).find("h6").text();
+      const url = loadedCheerio(element).attr("href");
       if (!name || !url) return;
 
-      chapters.push({ name, releaseTime, url });
+      const releaseTime = loadedCheerio(element).find('span[class="date"]').text();
+      chapters.push({ name, url, releaseTime, chapterNumber: chapterIndex + 1 });
     });
 
     novel.chapters = chapters;
@@ -85,10 +86,10 @@ class freedlit implements Plugin.PluginBase {
   async parseChapter(chapterUrl: string): Promise<string> {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
-  
+
     loadedCheerio("div.mobile-block").remove();
     loadedCheerio("div.standart-block").remove();
-  
+
     const chapterText = loadedCheerio('div[class="chapter"]').html() || "";
     return chapterText;
   }
@@ -115,7 +116,7 @@ class freedlit implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка:",
-      value: "",
+      value: "popular",
       options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству комментариев", value: "comments" },
@@ -208,7 +209,7 @@ class freedlit implements Plugin.PluginBase {
     },
     status: {
       label: "Статус:",
-      value: "",
+      value: "all",
       options: [
         { label: "Любой статус", value: "all" },
         { label: "В процессе", value: "in-process" },
@@ -218,7 +219,7 @@ class freedlit implements Plugin.PluginBase {
     },
     access: {
       label: "Доступ:",
-      value: "",
+      value: "all",
       options: [
         { label: "Любой доступ", value: "all" },
         { label: "Бесплатные", value: "free" },
@@ -228,7 +229,7 @@ class freedlit implements Plugin.PluginBase {
     },
     adult: {
       label: "Возрастные ограничения:",
-      value: "",
+      value: "hide",
       options: [
         { label: "Скрыть 18+", value: "hide" },
         { label: "Показать +18", value: "show" },
