@@ -112,23 +112,46 @@ class NobleMTL implements Plugin.PluginBase {
         loadedCheerio(".eplister")
             .find("li")
             .each(function () {
+                const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                if (!chapterUrl) return;
                 const chapterName =
                     loadedCheerio(this).find(".epl-num").text() +
                     " - " +
                     loadedCheerio(this).find(".epl-title").text();
-
                 const releaseDate = loadedCheerio(this)
                     .find(".epl-date")
                     .text()
-                    .trim();
+                    .trim(); // Feb 25, 2024
 
-                const chapterUrl = loadedCheerio(this).find("a").attr("href");
+                if (!releaseDate) return;
+                const months = [
+                    "jan",
+                    "feb",
+                    "mar",
+                    "apr",
+                    "may",
+                    "jun",
+                    "jul",
+                    "aug",
+                    "sep",
+                    "oct",
+                    "nov",
+                    "dec",
+                ];
+                const rx = new RegExp(
+                    `(${months.join("|")}).*? (\\d{2}).*?(\\d{4})`,
+                    "i"
+                ).exec(releaseDate);
+                if (!rx) return;
+                const year = +rx[3];
+                const month = months.indexOf(rx[1].toLowerCase());
+                const day = +rx[2];
 
-                if (!chapterUrl) return;
+                if (month < 0) return;
 
                 chapter.push({
                     name: chapterName,
-                    releaseTime: releaseDate,
+                    releaseTime: new Date(year, month, day).toISOString(),
                     url: chapterUrl,
                 });
             });
