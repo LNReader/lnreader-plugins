@@ -49,7 +49,7 @@ class MadaraPlugin implements Plugin.PluginBase {
 
   constructor(metadata: MadaraMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[madara]";
+    this.name = metadata.sourceName;
     const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
     this.icon = `multisrc/madara/icons/${iconFileName}.png`;
     this.site = metadata.sourceSite;

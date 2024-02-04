@@ -22,7 +22,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
 
   constructor(metadata: ReadwnMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[readwn]";
+    this.name = metadata.sourceName;
     this.icon = `multisrc/readwn/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";

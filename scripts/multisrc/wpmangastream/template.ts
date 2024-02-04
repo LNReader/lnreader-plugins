@@ -25,7 +25,7 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
 
   constructor(metadata: WPmangaStreamMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[wpmangastream]";
+    this.name = metadata.sourceName;
     this.icon = `multisrc/wpmangastream/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";

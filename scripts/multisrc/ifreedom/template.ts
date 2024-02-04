@@ -22,7 +22,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
   constructor(metadata: IfreedomMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[ifreedom]";
+    this.name = metadata.sourceName;
     this.icon = `multisrc/ifreedom/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
