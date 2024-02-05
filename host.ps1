@@ -16,7 +16,7 @@ if(-Not $?){
 }
 
 git reset
-rm -r .js
+rm -r -fo .js
 npm run clearMulti
 npm run generate
 npm run json
@@ -24,5 +24,5 @@ git add -f icons .dist .js/plugins
 git commit -m "Host plugins"
 git push -f origin $dist
 
-git checkout $current
+git checkout -f $current
 
