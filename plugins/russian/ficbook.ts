@@ -4,6 +4,7 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import { defaultCover } from "@libs/defaultCover";
+import dayjs from "dayjs";
 
 class ficbook implements Plugin.PluginBase {
   id = "ficbook";
@@ -97,9 +98,12 @@ class ficbook implements Plugin.PluginBase {
         const url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
         if (!name || !url) return;
 
-        const releaseTime = loadedCheerio(element).find("div > span").attr("title");
+        const releaseDate = loadedCheerio(element).find("div > span").attr("title");
         chapters.push({ 
-          name, url: this.site + url, releaseTime, chapterNumber: chapterIndex + 1,
+          name, 
+          url: this.site + url, 
+          releaseTime: this.parseDate(releaseDate), 
+          chapterNumber: chapterIndex + 1,
         });
       });
 
@@ -160,6 +164,48 @@ class ficbook implements Plugin.PluginBase {
 
     return novels;
   }
+
+  parseDate = (dateString: string | undefined = "") => {
+    const months: { [key: string]: number } = {
+      января: 1,
+      февраля: 2,
+      марта: 3,
+      апреля: 4,
+      мая: 5,
+      июня: 6,
+      июля: 7,
+      августа: 8,
+      сентября: 9,
+      октября: 10,
+      ноября: 11,
+      декабря: 12,
+    };
+
+    const regex = /(\d+) ([а-я]+) (\d{4}) г., (\d{2}):(\d{2})/i;
+    const match = dateString.match(regex);
+
+    if (
+      match instanceof Array &&
+      match[1] &&
+      months[match[2]] &&
+      match[3]
+    ) {
+      const day = parseInt(match[1]);
+      const month = months[match[2]];
+      const year = parseInt(match[3]);
+      const [hours, minutes] = match?.[5]?.split?.(":");
+
+      return new Date(
+        year,
+        month,
+        day,
+        parseInt(hours || "0"),
+        parseInt(minutes || "0"),
+      ).toISOString();
+    }
+    return dateString || null;
+  };
+
   fetchImage = fetchFile;
 
   filters = {
