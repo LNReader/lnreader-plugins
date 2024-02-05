@@ -17,7 +17,7 @@ if(-Not $?){
 
 git reset
 rm -r -fo .js
-npm run clearMulti
+npm run clearMultisrc
 npm run generate
 npm run json
 git add -f icons .dist .js/plugins

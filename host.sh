@@ -17,7 +17,7 @@ fi
 
 git reset
 rm -rf .js
-npm run clearMulti
+npm run clearMultisrc
 npm run generate
 npm run json
 git add -f icons .dist .js/plugins
