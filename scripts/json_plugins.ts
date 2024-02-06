@@ -19,7 +19,7 @@ try {
 }catch {
   //
 }
-const matched = REMOTE.match(/github\.com[:/](.+?)\/(.+?)\.git/);
+const matched = REMOTE.match(/([^:/]+?)\/([^/.]+)(\.git)?$/);
 if(!matched) throw Error("Cant parse git url");
 const USERNAME = matched[1];
 const REPO = matched[2];
