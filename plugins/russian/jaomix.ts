@@ -170,7 +170,7 @@ class Jaomix implements Plugin.PluginBase {
     };
 
     const [time, day, month, year] = dateString.split(" ");
-    if (time && day && isFinite(months[month]) && year) {
+    if (time && day && months[month] && year) {
       return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL");
     }
 

@@ -181,27 +181,9 @@ class ficbook implements Plugin.PluginBase {
       декабря: 12,
     };
 
-    const regex = /(\d+) ([а-я]+) (\d{4}) г., (\d{2}):(\d{2})/i;
-    const match = dateString.match(regex);
-
-    if (
-      match instanceof Array &&
-      match[1] &&
-      months[match[2]] &&
-      match[3]
-    ) {
-      const day = parseInt(match[1]);
-      const month = months[match[2]];
-      const year = parseInt(match[3]);
-      const [hours, minutes] = match?.[5]?.split?.(":");
-
-      return new Date(
-        year,
-        month,
-        day,
-        parseInt(hours || "0"),
-        parseInt(minutes || "0"),
-      ).toISOString();
+    const [day, month, year, , time] = dateString.split(" ");
+    if (day && month && year && months[month] && time) {
+      return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL") + '!';
     }
     return dateString || null;
   };
