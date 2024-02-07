@@ -18,10 +18,6 @@ class HakoPlugin implements Plugin.PluginBase {
                 .find("div.thumb_attr.series-title > a")
                 .attr("href");
 
-            if (url && !isUrlAbsolute(url)) {
-                url = this.site + url;
-            }
-
             if (url) {
                 const name = loadedCheerio(ele)
                     .find(".series-title")
@@ -35,7 +31,7 @@ class HakoPlugin implements Plugin.PluginBase {
                     cover = this.site + cover;
                 }
 
-                const novel = { name, url, cover };
+                const novel = { name, path: url.replace(this.site, ''), cover };
 
                 novels.push(novel);
             }
@@ -64,11 +60,12 @@ class HakoPlugin implements Plugin.PluginBase {
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+    async parseNovelAndChapters(novelPath: string): Promise<Plugin.SourceNovel> {
         const novel: Plugin.SourceNovel = {
-            url: novelUrl,
+            path: novelPath,
+            name: 'Không có tiêu đề',
         };
-        const result = await fetch(novelUrl);
+        const result = await fetch(this.site + novelPath);
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
@@ -142,18 +139,18 @@ class HakoPlugin implements Plugin.PluginBase {
                 .split('/')
                 .map(x => Number(x));
             return {
-                url: chapterUrl || '',
+                path: chapterUrl?.replace(this.site, ''),
                 name: chapterName,
                 releaseTime: new Date(chapterTime[2], chapterTime[1], chapterTime[0]).toISOString(),
                 chapterNumber: chapterNumber,
             };
-        }).filter(c => c.url);
+        }).filter(c => c.path);
 
         novel.chapters = chapters;
         return novel;
     }
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetch(chapterUrl);
+    async parseChapter(chapterPath: string): Promise<string> {
+        const result = await fetch(this.site + chapterPath);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);

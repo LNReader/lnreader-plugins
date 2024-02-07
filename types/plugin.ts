@@ -3,7 +3,7 @@ import { languages } from "@libs/languages";
 export namespace Plugin {
     export interface ChapterItem {
         name: string;
-        url: string;
+        path: string;
         /**
          * "YYYY-MM-DD" format or ISO string format
          * ```js
@@ -16,14 +16,10 @@ export namespace Plugin {
     }
     export interface NovelItem {
         name: string;
-        url: string;
+        path: string;
         cover?: string;
     }
-    export interface SourceNovel {
-        url: string;
-        name?: string;
-        /** Novel cover absolute URL */
-        cover?: string;
+    export interface SourceNovel extends NovelItem {
         /** Comma separated genre list */
         genres?: string;
         summary?: string;
@@ -64,8 +60,8 @@ export namespace Plugin {
             pageNo: number,
             options: PopularNovelsOptions<Filters>
         ): Promise<NovelItem[]>;
-        parseNovelAndChapters(novelUrl: string): Promise<SourceNovel>;
-        parseChapter(chapterUrl: string): Promise<string>;
+        parseNovelAndChapters(novelPath: string): Promise<SourceNovel>;
+        parseChapter(chapterPath: string): Promise<string>;
         searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
         /**
          *
