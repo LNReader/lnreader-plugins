@@ -4,7 +4,6 @@ import { Plugin } from "@typings/plugin";
 import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 import { NovelStatus } from "@libs/novelStatus";
 import { FilterTypes, Filters } from "@libs/filterInputs";
-import path from "path";
 
 class HakoPlugin implements Plugin.PluginBase {
     id = "ln.hako";
