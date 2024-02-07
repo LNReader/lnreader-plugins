@@ -16,11 +16,8 @@ class novelOvh implements Plugin.PluginBase {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/novel?page=" + (pageNo - 1);
-    url +=
-      "?sort=" +
-      (showLatestNovels
-        ? "updatedAt"
-        : filters?.sort?.value || "averageRating");
+    url += "&sort=" + 
+      (showLatestNovels ? "updatedAt" : filters?.sort?.value || "averageRating") + ",desc";
 
     const result = await fetchApi(url + "&_data=routes/reader/book/index");
     const body = (await result.json()) as { books: BooksEntity[] };
@@ -79,7 +76,7 @@ class novelOvh implements Plugin.PluginBase {
       }),
     );
 
-    novel.chapters = chapters;
+    novel.chapters = chapters.reverse();
     return novel;
   }
 
@@ -133,7 +130,7 @@ class novelOvh implements Plugin.PluginBase {
           break;
         case "horizontalRule":
         case "delimiter":
-          html += '<h3 style="text-align: center">***<h3/>';
+          html += '<h2 style="text-align: center">***</h2>';
           break;
         case "paragraph":
           html +=

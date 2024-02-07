@@ -98,11 +98,11 @@ class ficbook implements Plugin.PluginBase {
         const url = loadedCheerio(element).find("a:nth-child(1)").attr("href");
         if (!name || !url) return;
 
-        const releaseDate = loadedCheerio(element).find("div > span").attr("title");
+        const releaseTime = loadedCheerio(element).find("div > span").attr("title");
         chapters.push({ 
           name, 
           url: this.site + url, 
-          releaseTime: this.parseDate(releaseDate), 
+          releaseTime, 
           chapterNumber: chapterIndex + 1,
         });
       });
@@ -183,7 +183,7 @@ class ficbook implements Plugin.PluginBase {
 
     const [day, month, year, , time] = dateString.split(" ");
     if (day && month && year && months[month] && time) {
-      return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL") + '!';
+      return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL");
     }
     return dateString || null;
   };
