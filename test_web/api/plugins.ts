@@ -74,13 +74,13 @@ export const searchNovels = async (
 
 export const parseNovelAndChapters = async (
     pluginRequirePath: string,
-    novelUrl: string
-) => (await getPlugin(pluginRequirePath))?.parseNovelAndChapters(novelUrl);
+    novelPath: string
+) => (await getPlugin(pluginRequirePath))?.parseNovelAndChapters(novelPath);
 
 export const parseChapter = async (
     pluginRequirePath: string,
-    chapterUrl: string
-) => (await getPlugin(pluginRequirePath))?.parseChapter(chapterUrl);
+    chapterPath: string
+) => (await getPlugin(pluginRequirePath))?.parseChapter(chapterPath);
 
 export const fetchImage = async (pluginRequirePath: string, url: string) =>
     (await getPlugin(pluginRequirePath))?.fetchImage(url);
