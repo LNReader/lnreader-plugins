@@ -15,7 +15,6 @@ class AuthorToday implements Plugin.PluginBase {
   icon = "src/ru/authortoday/icon.png";
   site = "https://author.today";
   version = "1.0.0";
-
 
   async popularNovels(
     pageNo: number,
@@ -27,7 +26,8 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     url +=
-      "&sorting=" + (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
+      "&sorting=" +
+      (showLatestNovels ? "recent" : filters?.sort?.value || "popular");
 
     url += "&form=" + (filters?.form?.value || "any");
     url += "&state=" + (filters?.state?.value || "any");
@@ -43,14 +43,14 @@ class AuthorToday implements Plugin.PluginBase {
     const json = (await result.json()) as response;
     const novels: Plugin.NovelItem[] = [];
 
-    if (json?.code === "NotFound") {
+    if (json.code === "NotFound") {
       return novels;
     }
 
     json?.searchResults?.forEach((novel) =>
       novels.push({
         name: novel.title,
-        cover: novel?.coverUrl
+        cover: novel.coverUrl
           ? "https://cm.author.today/content/" + novel.coverUrl
           : defaultCover,
         url: this.site + "/work/" + novel.id,
@@ -67,27 +67,26 @@ class AuthorToday implements Plugin.PluginBase {
       },
     });
 
-    const json = (await result.json()) as responseBook;
+    const book = (await result.json()) as responseBook;
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      name: json.title,
-      cover: json?.coverUrl ? json.coverUrl.split("?")[0] : defaultCover,
+      name: book.title,
+      cover: book.coverUrl ? book.coverUrl.split("?")[0] : defaultCover,
+      genres: book.tags?.join(", "),
+      summary: "",
       author:
-        json?.originalAuthor ||
-        json?.authorFIO ||
-        json?.coAuthorFIO ||
-        json?.secondCoAuthorFIO ||
-        json?.translator ||
+        book.originalAuthor ||
+        book.authorFIO ||
+        book.coAuthorFIO ||
+        book.secondCoAuthorFIO ||
+        book.translator ||
         "",
-      genres: json?.tags?.join(", "),
-      status: json?.isFinished ? NovelStatus.Completed : NovelStatus.Ongoing,
+      status: book.isFinished ? NovelStatus.Completed : NovelStatus.Ongoing,
     };
 
-    novel.summary = "";
-    novel.summary += json?.annotation ? json.annotation + "\n" : "";
-    novel.summary += json?.authorNotes
-      ? "Примечания автора:\n" + json.authorNotes
-      : "";
+    if (book.annotation) novel.summary += book.annotation + "\n";
+    if (book.authorNotes) novel.summary += "Примечания автора:\n" + book.authorNotes;
+
     // all chapters
     const chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
       headers: {
@@ -97,14 +96,13 @@ class AuthorToday implements Plugin.PluginBase {
 
     const chaptersJSON = (await chaptersRaw.json()) as ChaptersEntity[];
     const chapters: Plugin.ChapterItem[] = [];
-    chaptersJSON?.forEach((chapter, index) => {
-      if (chapter?.isAvailable && !chapter?.isDraft) {
+    chaptersJSON.forEach((chapter, chapterIndex) => {
+      if (chapter.isAvailable && !chapter.isDraft) {
         chapters.push({
-          name: chapter?.title || `Глава ${index + 1}`,
-          releaseTime: dayjs(
-            chapter?.publishTime || chapter.lastModificationTime,
-          ).format("LLL"),
+          name: chapter.title || 'Глава ' + (chapterIndex + 1),
           url: `${apiUrl}v1/work/${workID}/chapter/${chapter.id}/text`,
+          releaseTime: dayjs(chapter.publishTime || chapter.lastModificationTime).format("LLL"),
+          chapterNumber: (chapter.sortOrder || chapterIndex) + 1,
         });
       }
     });
@@ -121,7 +119,7 @@ class AuthorToday implements Plugin.PluginBase {
     });
     const json = (await result.json()) as encryptedСhapter;
 
-    if (json?.code) {
+    if (json.code) {
       return json.code + "\n" + json?.message;
     }
 
@@ -135,11 +133,10 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     const loadedCheerio = parseHTML(text);
-    const baseUrl = this.site;
-    loadedCheerio("img").each(function () {
-      if (!loadedCheerio(this).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(this).attr("src");
-        loadedCheerio(this).attr("src", baseUrl + src);
+    loadedCheerio("img").each((index, element) => {
+      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
+        const src = loadedCheerio(element).attr("src");
+        loadedCheerio(element).attr("src", this.site + src);
       }
     });
     const chapterText = loadedCheerio.html();
@@ -148,36 +145,29 @@ class AuthorToday implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo?: number | undefined,
+    pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const baseUrl = this.site;
-    const url = baseUrl + "/search?category=works&q=" + searchTerm + "&page=";
-    const result = await fetchApi(url + (pageNo || 1));
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
+    const url =
+      this.site + "/search?category=works&q=" + searchTerm + "&page=" + pageNo;
+    const result = await fetchApi(url).then((res) => res.text());
+    const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio("div.book-row").each(function () {
-      const name = loadedCheerio(this)
+    loadedCheerio("div.book-row").each((index, element) => {
+      const name = loadedCheerio(element)
         .find('div[class="book-title"] a')
         .text()
         .trim();
-      let cover = loadedCheerio(this).find("img").attr("src");
-      const url =
-        baseUrl +
-        "/work/" +
-        loadedCheerio(this)
-          .find('div[class="book-title"] a')
-          .attr("href")
-          ?.split("/")[2];
+      let cover = loadedCheerio(element).find("img").attr("src");
+      const url = loadedCheerio(element)
+        .find('div[class="book-title"] a')
+        .attr("href")
+        ?.split("/")?.[2];
 
-      if (cover) {
-        cover = cover.split("?")[0];
-      } else {
-        cover = defaultCover;
-      }
+      cover = cover ? cover.split("?")[0] : defaultCover;
 
-      novels.push({ name, cover, url });
+      if (!url) return;
+      novels.push({ name, cover, url: this.site + "/work/" + url });
     });
 
     return novels;
@@ -188,7 +178,7 @@ class AuthorToday implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "popular",
       options: [
         { label: "По популярности", value: "popular" },
         { label: "По количеству лайков", value: "likes" },
@@ -203,6 +193,7 @@ class AuthorToday implements Plugin.PluginBase {
       label: "Жанры",
       value: "",
       options: [
+        { label: "Все", value:"" },
         { label: "Альтернативная история", value: "sf-history" },
         { label: "Антиутопия", value: "dystopia" },
         { label: "Бизнес-литература", value: "biznes-literatura" },
@@ -270,7 +261,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     form: {
       label: "Форма произведения",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой", value: "any" },
         { label: "Перевод", value: "translation" },
@@ -284,7 +275,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     state: {
       label: "Статус произведения",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой статус", value: "any" },
         { label: "В процессе", value: "in-progress" },
@@ -294,7 +285,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     series: {
       label: "Статус цикла",
-      value: "",
+      value: "any",
       options: [
         { label: "Не важно", value: "any" },
         { label: "Вне цикла", value: "out" },
@@ -305,7 +296,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     access: {
       label: "Тип доступа",
-      value: "",
+      value: "any",
       options: [
         { label: "Любой", value: "any" },
         { label: "Платный", value: "paid" },
@@ -315,7 +306,7 @@ class AuthorToday implements Plugin.PluginBase {
     },
     promo: {
       label: "Промо-фрагмент",
-      value: "",
+      value: "hide",
       options: [
         { label: "Скрывать", value: "hide" },
         { label: "Показывать", value: "show" },
@@ -483,7 +474,7 @@ interface ChaptersEntity {
   title: string;
   isDraft: boolean;
   sortOrder: number;
-  publishTime: string;
+  publishTime?: string;
   lastModificationTime: string;
   textLength: number;
   isAvailable: boolean;

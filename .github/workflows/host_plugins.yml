@@ -1,0 +1,27 @@
+name: Host Plugins
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  host:
+    if: github.repository == 'LNReader/lnreader-sources'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install dependencies
+        run: npm install
+
+      - name: Host plugins
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          npm run host-linux
+        shell: bash

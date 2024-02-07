@@ -3,7 +3,7 @@ import { Filters, FilterTypes } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
-// import { defaultCover } from "@libs/defaultCover";
+import dayjs from "dayjs";
 
 export interface IfreedomMetadata {
   id: string;
@@ -22,7 +22,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
   constructor(metadata: IfreedomMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[ifreedom]";
+    this.name = metadata.sourceName;
     this.icon = `multisrc/ifreedom/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
@@ -31,20 +31,17 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
+    { filters, showLatestNovels }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/vse-knigi/?sort=" +
       (showLatestNovels ? "По дате обновления" : filters?.sort?.value || "По рейтингу");
 
-    if (filters?.status?.value instanceof Array) {
-      url += filters.status.value.map((i) => "&status[]=" + i).join("");
-    }
-    if (filters?.lang?.value instanceof Array) {
-      url += filters.lang.value.map((i) => "&lang[]=" + i).join("");
-    }
-    if (filters?.genre?.value instanceof Array) {
-      url += filters.genre.value.map((i) => "&genre[]=" + i).join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + type + "[]=" + value.join("&" + type + "[]=");
+      }
+    });
+
     url += "&bpage=" + page;
 
     const body = await fetchApi(url).then((res) => res.text());
@@ -102,14 +99,19 @@ class IfreedomPlugin implements Plugin.PluginBase {
     if (novel.author == "Не указан") delete novel.author;
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio("div.li-ranobe").each(function () {
-      const name = loadedCheerio(this).find("a").text();
-      const url = loadedCheerio(this).find("a").attr("href");
-      if (!loadedCheerio(this).find("label.buy-ranobe").length && name && url) {
-        const releaseTime = loadedCheerio(this)
-          .find("div.li-col2-ranobe").text().trim();
+    const totalChapters = loadedCheerio("div.li-ranobe").length;
 
-        chapters.push({ name, releaseTime, url });
+    loadedCheerio("div.li-ranobe").each((chapterIndex, element) => {
+      const name = loadedCheerio(element).find("a").text();
+      const url = loadedCheerio(element).find("a").attr("href");
+      if (!loadedCheerio(element).find("label.buy-ranobe").length && name && url) {
+        const releaseDate = loadedCheerio(element).find("div.li-col2-ranobe").text().trim();
+        chapters.push({ 
+          name,
+          url,
+          releaseTime: this.parseDate(releaseDate),
+          chapterNumber: totalChapters - chapterIndex
+        });
       }
     });
 
@@ -121,11 +123,14 @@ class IfreedomPlugin implements Plugin.PluginBase {
     const body = await fetchApi(chapterUrl).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio(".entry-content img").each(function () {
-      const srcset = loadedCheerio(this).attr("srcset")?.split?.(" ");
+    loadedCheerio(".entry-content img").each((index, element) => {
+      const srcset = loadedCheerio(element).attr("srcset")?.split?.(" ");
       if (srcset?.length) {
-        const bestlink = srcset.filter((url) => url.startsWith("http")).unshift();
-        if (typeof bestlink == 'string') loadedCheerio(this).attr("src", bestlink);
+        loadedCheerio(element).removeAttr("srcset");
+        const bestlink: string[] = srcset.filter((url) => url.startsWith("http"));
+        if (bestlink[bestlink.length - 1]) {
+          loadedCheerio(element).attr("src", bestlink[bestlink.length - 1]);
+        }
       }
     });
 
@@ -155,6 +160,37 @@ class IfreedomPlugin implements Plugin.PluginBase {
 
     return novels;
   }
+
+  parseDate = (dateString: string | undefined = "") => {
+    const months: { [key: string]: number } = {
+      января: 1,
+      февраля: 2,
+      марта: 3,
+      апреля: 4,
+      мая: 5,
+      июня: 6,
+      июля: 7,
+      августа: 8,
+      сентября: 9,
+      октября: 10,
+      ноября: 11,
+      декабря: 12,
+    };
+
+    if (dateString.includes(".")) {
+      const [day, month, year] = dateString.split(".");
+      if (day && month && year) {
+        return dayjs(year + "-" + month + "-" + day).format("LL");
+      }
+    } else if (dateString.includes(" ")) {
+      const [day, month] = dateString.split(" ");
+      if (day && months[month]) {
+        const year = new Date().getFullYear();
+        return dayjs(year + "-" + months[month] + "-" + day).format("LL");
+      }
+    }
+    return dateString || null;
+  };
 
   fetchImage = fetchFile;
 }

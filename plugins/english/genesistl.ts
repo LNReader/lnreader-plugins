@@ -100,6 +100,7 @@ class Genesis implements Plugin.PluginBase {
                         .text()
                         .trim();
             
+
                         if (!releaseDate) return;
                         const months = [
                             "jan",
@@ -131,6 +132,7 @@ class Genesis implements Plugin.PluginBase {
                             releaseTime: new Date(year, month, day).toISOString(),
                             url: chapterUrl,
                         });
+
                 });
             novel.chapters = chapter.reverse();
         return novel;
