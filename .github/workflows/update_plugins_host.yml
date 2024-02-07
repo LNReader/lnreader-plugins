@@ -23,6 +23,5 @@ jobs:
               run: |
                 git config user.name rajarsheechatterjee
                 git config user.email rajarshee.adm@gmail.com
-                chmod +x ./host.sh
-                ./host.sh
+                npm run host-linux
               shell: bash
