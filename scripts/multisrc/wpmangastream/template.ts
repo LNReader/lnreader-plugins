@@ -25,7 +25,7 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
 
   constructor(metadata: WPmangaStreamMetadata) {
     this.id = metadata.id;
-    this.name = metadata.sourceName + "[wpmangastream]";
+    this.name = metadata.sourceName;
     this.icon = `multisrc/wpmangastream/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     this.version = "1.0.0";
@@ -93,13 +93,17 @@ class WPmangaStreamPlugin implements Plugin.PluginBase {
       novel.summary += loadedCheerio(p).text().trim() + "\\n\\n";
     }
 
+    const totalChapters = loadedCheerio(".eplister li").length;
     const chapters: Plugin.ChapterItem[] = loadedCheerio(".eplister li")
-      .map((index, element) => ({
+      .map((chapterIndex, element) => ({
         name:
           loadedCheerio(element).find(".epl-num").text() +
           loadedCheerio(element).find(".epl-title").text(),
-        releaseTime: loadedCheerio(element).find(".epl-date").text().trim(),
         url: loadedCheerio(element).find("a").attr("href") || "",
+        releaseTime: loadedCheerio(element).find(".epl-date").text().trim(),
+        chapterNumber: this.options?.reverseChapters
+          ? totalChapters - chapterIndex
+          : chapterIndex + 1,
       }))
       .get()
       .filter((chapter) => chapter.name && chapter.url);

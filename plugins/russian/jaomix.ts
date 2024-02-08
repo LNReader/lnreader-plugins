@@ -3,6 +3,7 @@ import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
+import dayjs from "dayjs";
 
 class Jaomix implements Plugin.PluginBase {
   id = "jaomix.ru";
@@ -10,36 +11,34 @@ class Jaomix implements Plugin.PluginBase {
   site = "https://jaomix.ru";
   version = "1.0.0";
   icon = "src/ru/jaomix/icon.png";
-
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/?searchrn";
 
     if (filters?.lang?.value?.length) {
       url += filters.lang.value
-        .map((lang, idx) => `&lang[${idx}]=${lang}`).join("");
+        .map((lang, idx) => `&lang[${idx}]=${lang}`)
+        .join("");
     }
 
     if (filters?.genre?.value?.include?.length) {
       url += filters.genre.value.include
-        .map((genre, idx) => `&genre[${idx}]=${genre}`).join("");
+        .map((genre, idx) => `&genre[${idx}]=${genre}`)
+        .join("");
     }
 
     if (filters?.genre?.value?.exclude?.length) {
       url += filters.genre.value.exclude
-        .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`).join("");
+        .map((genre, idx) => `&delgenre[${idx}]=del ${genre}`)
+        .join("");
     }
 
     url += "&sortcountchapt=" + (filters?.sortcountchapt?.value || "1");
     url += "&sortdaycreate=" + (filters?.sortdaycreate?.value || "1");
-    url +=
-      "&sortby=" + (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
+    url += "&sortby=" + (showLatestNovels ? "upd" : filters?.sortby?.value || "topweek");
     url += "&gpage=" + pageNo;
 
     const body = await fetchApi(url).then((res) => res.text());
@@ -76,7 +75,7 @@ class Jaomix implements Plugin.PluginBase {
       url: novelUrl,
       name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
       cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
-      summary: loadedCheerio('div[id="desc-tab"]').text().trim()
+      summary: loadedCheerio('div[id="desc-tab"]').text().trim(),
     };
 
     loadedCheerio("#info-book > p").each(function () {
@@ -93,14 +92,20 @@ class Jaomix implements Plugin.PluginBase {
     });
 
     const chapters: Plugin.ChapterItem[] = [];
+    const totalChapters = loadedCheerio(".download-chapter div.title").length;
 
-    loadedCheerio(".download-chapter div.title").each(function () {
-      const name = loadedCheerio(this).find("a").attr("title");
-      const releaseTime = loadedCheerio(this).find("time").text();
-      const url = loadedCheerio(this).find("a").attr("href");
+    loadedCheerio(".download-chapter div.title").each((chapterIndex, element) => {
+      const name = loadedCheerio(element).find("a").attr("title");
+      const url = loadedCheerio(element).find("a").attr("href");
       if (!name || !url) return;
 
-      chapters.push({ name, releaseTime, url });
+      const releaseDate = loadedCheerio(element).find("time").text();
+      chapters.push({ 
+        name, 
+        url, 
+        releaseTime: this.parseDate(releaseDate), 
+        chapterNumber: totalChapters - chapterIndex 
+      });
     });
 
     novel.chapters = chapters.reverse();
@@ -147,6 +152,31 @@ class Jaomix implements Plugin.PluginBase {
 
     return novels;
   }
+
+  parseDate = (dateString: string | undefined = "") => {
+    const months: { [key: string]: number } = {
+      Янв: 1,
+      Фев: 2,
+      Мар: 3,
+      Апр: 4,
+      Май: 5,
+      Июн: 6,
+      Июл: 7,
+      Авг: 8,
+      Сен: 9,
+      Окт: 10,
+      Ноя: 11,
+      Дек: 12,
+    };
+
+    const [time, day, month, year] = dateString.split(" ");
+    if (time && day && months[month] && year) {
+      return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL");
+    }
+
+    return dateString || null;
+  };
+
   fetchImage = fetchFile;
 
   filters = {

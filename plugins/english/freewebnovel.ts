@@ -9,7 +9,6 @@ class FreeWebNovel implements Plugin.PluginBase {
   site = "https://freewebnovel.com";
   version = "1.0.0";
   icon = "src/en/freewebnovel/icon.png";
-
 
   async popularNovels(
     page: number,
@@ -58,10 +57,11 @@ class FreeWebNovel implements Plugin.PluginBase {
     novel.summary = loadedCheerio(".inner").text().trim();
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio("#idData > li > a")
-      .map((index, element) => ({
-        name: loadedCheerio(element).attr("title") || "Chapter " + index,
-        releaseTime: null,
+      .map((chapterIndex, element) => ({
+        name: loadedCheerio(element).attr("title") || "Chapter " + (chapterIndex + 1),
         url: this.site + loadedCheerio(element).attr("href"),
+        releaseTime: null,
+        chapterNumber: chapterIndex + 1,
       }))
       .get();
 
@@ -78,18 +78,23 @@ class FreeWebNovel implements Plugin.PluginBase {
   }
 
   async searchNovels(
-    searchkey: string,
+    searchTerm: string,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site + "/search/", {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Referer: this.site,
+        Origin: this.site,
+      },
       method: "POST",
-      body: JSON.stringify({ searchkey }),
+      body: "searchkey=" + encodeURIComponent(searchTerm)
     }).then((res) => res.text());
 
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = loadedCheerio(".li-row > .li > .con")
       .map((index, element) => ({
         name: loadedCheerio(element).find(".tit").text(),
-        cover: loadedCheerio(element).find(".pic > a > img").attr("data-cfsrc"),
+        cover: loadedCheerio(element).find(".pic > a > img").attr("src"),
         url: this.site + loadedCheerio(element).find("h3 > a").attr("href"),
       }))
       .get();

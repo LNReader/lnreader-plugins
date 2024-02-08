@@ -11,6 +11,9 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
             /* This map is changing `type` from string to FilterTypes  */
             .map<MadaraMetadata>((p) => {
                 let d = false;
+                if (p?.filters?.genres?.options?.length) {
+                    p.filters.genres.options.unshift({ label: "NONE", value: "" })
+                }
                 const filters: Filters = {};
                 for (const k in p.filters) {
                     const f = p.filters[k as keyof typeof p.filters];

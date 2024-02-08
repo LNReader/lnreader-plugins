@@ -10,66 +10,40 @@ class ReN implements Plugin.PluginBase {
   site = "https://renovels.org";
   version = "1.0.0";
   icon = "src/ru/renovels/icon.png";
-
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search/catalog/?count=30&ordering=";
-    url += filters?.order?.value
-      ? (filters.order.value as string).replace("+", "")
-      : "-";
+    url += filters?.order?.value ? "-" : "";
     url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
-    if (filters?.genres?.value?.include?.length) {
-      url += filters.genres.value.include.map((i) => "&genres=" + i).join("");
-    }
-
-    if (filters?.genres?.value?.exclude?.length) {
-      url += filters.genres.value.exclude
-        .map((i) => "&exclude_genres=" + i).join("");
-    }
-
-    if (filters?.status?.value?.length) {
-      url += filters.status.value.map((i) => "&status=" + i).join("");
-    }
-
-    if (filters?.types?.value?.length) {
-      url += filters.types.value.map((i) => "&types=" + i).join("");
-    }
-
-    if (filters?.categories?.value?.include?.length) {
-      url += filters.categories.value.include
-        .map((i) => "&categories=" + i).join("");
-    }
-
-    if (filters?.categories?.value?.exclude?.length) {
-      url += filters.categories.value.exclude
-        .map((i) => "&exclude_categories=" + i).join("");
-    }
-
-    if (filters?.age_limit?.value?.length) {
-      url += filters.age_limit.value.map((i) => "&age_limit=" + i).join("");
-    }
+    Object.entries(filters || {}).forEach(([type, { value }]: any) => {
+      if (value instanceof Array && value.length) {
+        url += "&" + type + "=" +
+          value.join("&" + type + "=");
+      }
+      if (value?.include instanceof Array && value.include.length) {
+        url += "&" + type + "=" + 
+          value.include.join("&" + type + "=");
+      }
+      if (value?.exclude instanceof Array && value.exclude.length) {
+        url += "&exclude_" + type + "=" + 
+          value.exclude.join("&exclude_" + type + "=");
+      }
+    });
 
     url += "&page=" + pageNo;
 
     const result = await fetchApi(url);
     const body = (await result.json()) as { content: responseNovels[] };
 
-    const novels: Plugin.NovelItem[] = [];
-
-    body.content.forEach((novel) =>
-      novels.push({
-        name: novel.main_name || novel.secondary_name,
-        cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
-        url: this.site + "/novel/" + novel.dir,
-      }),
-    );
+    const novels: Plugin.NovelItem[] = body.content.map((novel) => ({
+      name: novel.main_name || novel.secondary_name,
+      cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
+      url: this.site + "/novel/" + novel.dir,
+    }));
 
     return novels;
   }
@@ -81,12 +55,12 @@ class ReN implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,
-      name: body.content.main_name || body.content.secondary_name,
+      name: body.content.main_name || body.content.secondary_name || body.content.another_name,
       summary: body.content.description,
       cover:
         this.site +
-        (body.content.img?.high ||
-          body.content.img?.mid ||
+        (body.content.img.high ||
+          body.content.img.mid ||
           body.content.img.low),
       status:
         body.content.status.name === "Продолжается"
@@ -103,17 +77,15 @@ class ReN implements Plugin.PluginBase {
       novel.genres = tags.join(",");
     }
 
-    const all = Math.floor(body.content.count_chapters / 100 + 1);
+    const all = body.content.count_chapters / 100 + 1;
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let i = 0; i < all; i++) {
       const chapterResult = await fetchApi(
         this.site +
-          "/api/titles/chapters/?branch_id=" +
-          branch_id +
-          "&count=100&page=" +
-          (i + 1),
+          "/api/titles/chapters/?branch_id=" + branch_id +
+          "&count=100&page=" + (i + 1),
       );
       const volumes = (await chapterResult.json()) as {
         content: responseСhapters[];
@@ -122,9 +94,13 @@ class ReN implements Plugin.PluginBase {
       volumes.content.forEach((chapter) => {
         if (!chapter.is_paid || chapter.is_bought) {
           chapters.push({
-            name: `Том ${chapter.tome} Глава ${chapter.chapter} ${chapter.name}`?.trim(),
-            releaseTime: dayjs(chapter.upload_date).format("LLL"),
+            name:
+              "Том " + chapter.tome + 
+              " Глава " + chapter.chapter + 
+                (chapter.name ? " " + chapter.name.trim() : ""),
             url: `${this.site}/novel/${novelID}/${chapter.id}/`,
+            releaseTime: dayjs(chapter.upload_date).format("LLL"),
+            chapterNumber: chapter.index,
           });
         }
       });
@@ -154,7 +130,7 @@ class ReN implements Plugin.PluginBase {
     body.content.forEach((novel) =>
       novels.push({
         name: novel.main_name || novel.secondary_name,
-        cover: this.site + (novel.img?.high || novel.img?.mid || novel.img.low),
+        cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
         url: this.site + "/novel/" + novel.dir,
       }),
     );
@@ -167,7 +143,7 @@ class ReN implements Plugin.PluginBase {
   filters = {
     sort: {
       label: "Сортировка",
-      value: "",
+      value: "rating",
       options: [
         { label: "Рейтинг", value: "rating" },
         { label: "Просмотры", value: "views" },
@@ -180,10 +156,10 @@ class ReN implements Plugin.PluginBase {
     },
     order: {
       label: "Порядок",
-      value: "",
+      value: "-",
       options: [
         { label: "По убыванию", value: "-" },
-        { label: "По возрастанию", value: "+" },
+        { label: "По возрастанию", value: "" },
       ],
       type: FilterTypes.Picker,
     },
