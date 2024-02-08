@@ -32,7 +32,7 @@ class TemplatePlugin implements Plugin.PluginBase {
         });
         return novels;
     }
-    async parseNovelAndChapters(novelPath: string): Promise<Plugin.SourceNovel> {
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
         const novel: Plugin.SourceNovel = {
             path: novelPath,
             name: 'Untitled'

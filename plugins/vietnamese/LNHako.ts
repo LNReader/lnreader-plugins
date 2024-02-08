@@ -60,7 +60,7 @@ class HakoPlugin implements Plugin.PluginBase {
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
-    async parseNovelAndChapters(novelPath: string): Promise<Plugin.SourceNovel> {
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
         const novel: Plugin.SourceNovel = {
             path: novelPath,
             name: 'Không có tiêu đề',
@@ -118,35 +118,44 @@ class HakoPlugin implements Plugin.PluginBase {
                 novel.status = NovelStatus.Unknown;
         }
 
-        let num = 0, part = 1;
-        const chapters: Plugin.ChapterItem[] = loadedCheerio('.list-chapters li').toArray().map((ele) => {
-            let chapterUrl = this.site + loadedCheerio(ele).find("a").attr("href");
-            const chapterName = loadedCheerio(ele)
-                .find(".chapter-name")
-                .text()
-                .trim();
-            let chapterNumber = Number(chapterName.match(/Chương\s*(\d+)/i)?.[1]);
-            if(chapterNumber){
-                num = chapterNumber;
-                part = 1;
-            }else{
-                chapterNumber = num + part / 10;
-                part ++;
-            }
-            const chapterTime = loadedCheerio(ele)
-                .find(".chapter-time")
-                .text()
-                .split('/')
-                .map(x => Number(x));
-            return {
-                path: chapterUrl?.replace(this.site, ''),
-                name: chapterName,
-                releaseTime: new Date(chapterTime[2], chapterTime[1], chapterTime[0]).toISOString(),
-                chapterNumber: chapterNumber,
-            };
-        }).filter(c => c.path);
-
-        novel.chapters = chapters;
+        novel.pageList = [];
+        novel.chapters = [];
+        loadedCheerio('.volume-list').each((idx, ele) => {
+            const customPage = loadedCheerio(ele).find('.sect-title').text().trim(); 
+            novel.pageList?.push(customPage);
+            let num = 0, part = 1;
+            loadedCheerio(ele).find('.list-chapters > li').each((idx, chapterEle) => {
+                const path = loadedCheerio(chapterEle).find("a").attr("href");
+                const chapterName = loadedCheerio(chapterEle)
+                    .find(".chapter-name")
+                    .text()
+                    .trim();
+                let chapterNumber = Number(chapterName.match(/Chương\s*(\d+)/i)?.[1]);
+                if(chapterNumber){
+                    num = chapterNumber;
+                    part = 1;
+                }else{
+                    chapterNumber = num + part / 10;
+                    part ++;
+                }
+                const chapterTime = loadedCheerio(chapterEle)
+                    .find(".chapter-time")
+                    .text()
+                    .split('/')
+                    .map(x => Number(x));
+                if(path){
+                    novel.chapters?.push(
+                        {
+                            page: customPage,
+                            path,
+                            name: chapterName,
+                            releaseTime: new Date(chapterTime[2], chapterTime[1], chapterTime[0]).toISOString(),
+                            chapterNumber: chapterNumber,
+                        }
+                    );
+                }
+            });
+        });
         return novel;
     }
     async parseChapter(chapterPath: string): Promise<string> {

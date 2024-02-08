@@ -10,9 +10,14 @@ export namespace Plugin {
          * chapter.releaseTime = '2023-12-02';
          * chapter.releaseTime = new Date(2023, 12, 02).toISOString();
          * ```
+         * or just a string
          */
         releaseTime?: string | null;
         chapterNumber?: number;
+        /**
+         * For novel without pages only
+         */
+        page?: string;
     }
     export interface NovelItem {
         name: string;
@@ -27,7 +32,21 @@ export namespace Plugin {
         artist?: string;
         status?: string;
         chapters?: ChapterItem[];
+        /**
+         * ```js
+         * default: ["1", "2", ..., `${totalPages}`]
+         * ```
+         */
+        pageList?: string[];
     }
+
+    export interface SourcePage {
+        chapters: ChapterItem[];
+        firstChapter?: ChapterItem;
+        totalPages?:number;
+        pageList?: string[];
+    }
+
     export interface PopularNovelsOptions<
         Q extends Filters | undefined = Filters | undefined
     > {
@@ -60,7 +79,12 @@ export namespace Plugin {
             pageNo: number,
             options: PopularNovelsOptions<Filters>
         ): Promise<NovelItem[]>;
-        parseNovelAndChapters(novelPath: string): Promise<SourceNovel>;
+        /**
+         * 
+         * @param novelPath 
+         * @returns novel metadata and its first page
+         */
+        parseNovel(novelPath: string): Promise<SourceNovel>;
         parseChapter(chapterPath: string): Promise<string>;
         searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
         /**
@@ -77,38 +101,15 @@ export namespace Plugin {
          */
         fetchImage(url: string): Promise<string | undefined>;
     }
+
+    export interface PagePlugin extends PluginBase {
+        parseNovel(novelPath: string): Promise<SourceNovel & {totolPages: number}>;
+        /**
+         * @param _firstChapter the first chapter in the first page of novel
+         * @returns If site doesn't have ascending order. return `chapters, firstChapter and totalPage`
+         * to let app decide the corresponding behavior.
+         * Otherwise, only `chapters` is enough
+         */
+        parsePage(novelPath: string, page: string, _firstChapter: ChapterItem): Promise<SourcePage>;
+    }
 }
-
-export const isPlugin = (p: any): p is Plugin.PluginBase => {
-    const pl = p as Plugin.PluginBase;
-
-    const errorOut = (key: string) => {
-        console.error(`Plugin ${pl.name} doesn't have ${key}!`);
-        return false;
-    };
-
-    const required_funcs: (keyof Plugin.PluginBase)[] = [
-        "popularNovels",
-        "parseNovelAndChapters",
-        "parseChapter",
-        "searchNovels",
-        "fetchImage",
-    ];
-    for (let i = 0; i < required_funcs.length; i++) {
-        const key = required_funcs[i];
-        if (!pl[key] || typeof pl[key] !== "function") return errorOut(key);
-    }
-    const requireds_fields: (keyof Plugin.PluginBase)[] = [
-        "id",
-        "name",
-        "version",
-        "icon",
-        "site",
-    ];
-    for (let i = 0; i < requireds_fields.length; i++) {
-        const key = requireds_fields[i];
-        if (pl[key] === undefined) return errorOut(key);
-    }
-
-    return true;
-};

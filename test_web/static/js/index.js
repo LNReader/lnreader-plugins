@@ -49,7 +49,7 @@ const searchNovels_fetch_btn = $("#searchNovels .fetch-btn");
 const searchNovels_searchbar = $("#searchNovels .searchbar input");
 
 /** @type {JQuery<AccordionBox>} */
-const parseNovelAndChapters = $("#parseNovelAndChapters");
+const parseNovel = $("#parseNovel");
 
 /** @type {JQuery<AccordionBox>} */
 const parseChapter = $("#parseChapter");
@@ -663,7 +663,7 @@ class PluginWrapper {
                     .on("click", () => {
                         // parsable.target.toggle();
                         /** @type {JQuery<AccordionBox>} */
-                        const pnc = $("#parseNovelAndChapters");
+                        const pnc = $("#parseNovel");
                         const box = pnc[0];
                         $("#parse-novel-path").val(novel.path);
                         $("#parse-novel-btn").trigger("click");
@@ -804,18 +804,18 @@ class PluginWrapper {
         }
     }
 
-    async getNovelAndChapters() {
+    async getNovel() {
         /** @type {JQuery<HTMLInputElement>} */
-        const novelPathInput = $("#parseNovelAndChapters input");
-        const novel_item = $("#parseNovelAndChapters .novel-item");
-        const chapter_list = $("#parseNovelAndChapters .chapter-list");
+        const novelPathInput = $("#parseNovel input");
+        const novel_item = $("#parseNovel .novel-item");
+        const chapter_list = $("#parseNovel .chapter-list");
         const novelPath = novelPathInput.val();
-        const spinner = $("#parseNovelAndChapters .spinner-border");
+        const spinner = $("#parseNovel .spinner-border");
         spinner.show();
         try {
             /** @type {SourceNovel  | {error:string}} */
             const sourceNovel = await (
-                await fetchFromAPI(`/parseNovelAndChapters/`, {
+                await fetchFromAPI(`/parseNovel/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -1482,8 +1482,8 @@ $(".searchNovels-btn").on("click", () =>
     state.current_plugin?.getSearchedNovels()
 );
 
-$(".parseNovelAndChapters-btn").on("click", () =>
-    state.current_plugin?.getNovelAndChapters()
+$(".parseNovel-btn").on("click", () =>
+    state.current_plugin?.getNovel()
 );
 
 $(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
