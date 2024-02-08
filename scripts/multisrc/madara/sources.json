@@ -5381,5 +5381,51 @@
       },
       "lang": "Portuguese"
     }
+  },
+  {
+    "id": "e-novel",
+    "sourceSite": "https://e-novel.online/",
+    "sourceName": "E-Novel",
+    "filters": {
+      "sort": {
+        "label": "Orden por",
+        "options": [
+          { "label": "Relevância", "value": "" },
+          {
+            "label": "A-Z",
+            "value": "alphabet"
+          },
+          {
+            "label": "Mais Antigo",
+            "value": "latest"
+          },
+          {
+            "label": "Mais vistos",
+            "value": "views"
+          },
+          {
+            "label": "Tendência",
+            "value": "trending"
+          },
+          {
+            "label": "Avaliação",
+            "value": "rating"
+          },
+          {
+            "label": "Novo",
+            "value": "new-manga"
+          }
+        ],
+        "value": "",
+        "type": "Picker"
+      }
+    },
+    "options": {
+      "path": {
+        "novels": "",
+        "genres": "genre"
+      },
+      "lang": "Portuguese"
+    }
   }
 ]
