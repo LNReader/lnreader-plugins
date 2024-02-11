@@ -103,7 +103,7 @@ export namespace Plugin {
     }
 
     export interface PagePlugin extends PluginBase {
-        parseNovel(novelPath: string): Promise<SourceNovel & {totolPages: number}>;
+        parseNovel(novelPath: string): Promise<SourceNovel & {totalPages: number}>;
         /**
          * @param _firstChapter the first chapter in the first page of novel
          * @returns If site doesn't have ascending order. return `chapters, firstChapter and totalPage`
