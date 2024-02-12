@@ -71,7 +71,7 @@ class TuNovelaLigera implements Plugin.PagePlugin {
 
     let loadedCheerio = parseHTML(body);
     let lastPage = 1;
-    loadedCheerio('ul.lcp_paginator > li').each(function() {
+    loadedCheerio('ul.lcp_paginator > li > a').each(function() {
         const page = Number(this.attribs['title']);
         if(page && page > lastPage) lastPage = page;      
     });
@@ -130,7 +130,7 @@ class TuNovelaLigera implements Plugin.PagePlugin {
 
     let loadedCheerio = parseHTML(body);
     let lastPage = 1;
-    loadedCheerio('ul.lcp_paginator > li').each(function() {
+    loadedCheerio('ul.lcp_paginator > li > a').each(function() {
         const page = Number(this.attribs['title']);
         if(page && page > lastPage) lastPage = page;      
     });
