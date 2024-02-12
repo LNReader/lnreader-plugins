@@ -88,9 +88,9 @@ app.post("/searchNovels/", async (req, res) => {
         res.json({ error: String(err) });
     }
 });
-app.post("/parseNovelAndChapters/", async (req, res) => {
+app.post("/parseNovel/", async (req, res) => {
     try {
-        const sourceNovel = await pluginApi.parseNovelAndChapters(
+        const sourceNovel = await pluginApi.parseNovel(
             req.body["pluginRequirePath"],
             req.body["novelPath"]
         );

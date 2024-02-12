@@ -2,7 +2,7 @@ import fs from "fs";
 import { languages } from "@libs/languages";
 import path from "path";
 import { PluginList } from "@typings/types";
-import { Plugin, isPlugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 const root = path.dirname(require?.main?.filename || "");
 
@@ -48,13 +48,7 @@ const getPlugin = async (
 ): Promise<Plugin.PluginBase | null> => {
     console.log("loading plugin", requirePath);
     const plugin = await require(requirePath).default;
-    // console.log(plugin);
-    if (isPlugin(plugin)) {
-        console.log("loaded plugin", plugin.name);
-        return plugin;
-    }
-    console.error("Not a plugin!");
-    return null;
+    return plugin;
 };
 
 export const getFilter = async (pluginRequirePath: string) =>
@@ -72,10 +66,10 @@ export const searchNovels = async (
     searchTerm: string
 ) => (await getPlugin(pluginRequirePath))?.searchNovels(searchTerm, page);
 
-export const parseNovelAndChapters = async (
+export const parseNovel = async (
     pluginRequirePath: string,
     novelPath: string
-) => (await getPlugin(pluginRequirePath))?.parseNovelAndChapters(novelPath);
+) => (await getPlugin(pluginRequirePath))?.parseNovel(novelPath);
 
 export const parseChapter = async (
     pluginRequirePath: string,
