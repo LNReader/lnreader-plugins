@@ -36,8 +36,7 @@ export namespace Plugin {
 
     export interface SourcePage {
         chapters: ChapterItem[];
-        firstChapter?: ChapterItem;
-        totalPages?: number;
+        latestChapter?: ChapterItem;
     }
 
     export interface PopularNovelsOptions<
@@ -99,7 +98,7 @@ export namespace Plugin {
         parseNovel(novelPath: string): Promise<SourceNovel & {totalPages: number}>;
         /**
          * @returns
-         * If site doesn't have ascending order. return `chapters, firstChapter and totalPage`
+         * If site doesn't have ascending order. return `chapters, latestChapter`
          * to let app decide the corresponding behavior.
          * Otherwise, only `chapters` is enough
          */

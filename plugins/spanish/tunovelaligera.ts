@@ -129,28 +129,22 @@ class TuNovelaLigera implements Plugin.PagePlugin {
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
-    let lastPage = 1;
-    loadedCheerio('ul.lcp_paginator > li > a').each(function() {
-        const page = Number(this.attribs['title']);
-        if(page && page > lastPage) lastPage = page;      
-    });
-    const firstChapterEle = loadedCheerio('#lcp_instance_0 li').first();
-    const firstChapterUrl = loadedCheerio(firstChapterEle).find("a").attr("href");
-    const firstChapterName = loadedCheerio(firstChapterEle).find("a")
+    const latestChapterEle = loadedCheerio('#lcp_instance_0 li').first();
+    const latestChapterUrl = loadedCheerio(latestChapterEle).find("a").attr("href");
+    const latestChapterName = loadedCheerio(latestChapterEle).find("a")
                               .text()
                               .replace(/[\t\n]/g, "")
                               .trim();
-    const firstChapter: Plugin.ChapterItem | undefined = firstChapterUrl ? {
-      path: firstChapterUrl.replace(this.site, ''),
-      name: firstChapterName
+    const latestChapter: Plugin.ChapterItem | undefined = latestChapterUrl ? {
+      path: latestChapterUrl.replace(this.site, ''),
+      name: latestChapterName
     } : undefined
     await this.sleep(1000);
     const pageText = await fetchApi(pageUrl).then(res => res.text());
     const chapters = this.parseChapters(parseHTML(pageText));
     return {
-      chapters: chapters,
-      totalPages: lastPage,
-      firstChapter
+      chapters,
+      latestChapter
     }
   }
   async parseChapter(chapterPath: string): Promise<string> {
