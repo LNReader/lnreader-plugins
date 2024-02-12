@@ -118,11 +118,9 @@ class HakoPlugin implements Plugin.PluginBase {
                 novel.status = NovelStatus.Unknown;
         }
 
-        novel.pageList = [];
         novel.chapters = [];
         loadedCheerio('.volume-list').each((idx, ele) => {
             const customPage = loadedCheerio(ele).find('.sect-title').text().trim(); 
-            novel.pageList?.push(customPage);
             let num = 0, part = 1;
             loadedCheerio(ele).find('.list-chapters > li').each((idx, chapterEle) => {
                 const path = loadedCheerio(chapterEle).find("a").attr("href");

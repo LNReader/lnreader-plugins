@@ -32,19 +32,12 @@ export namespace Plugin {
         artist?: string;
         status?: string;
         chapters?: ChapterItem[];
-        /**
-         * ```js
-         * default: ["1", "2", ..., `${totalPages}`]
-         * ```
-         */
-        pageList?: string[];
     }
 
     export interface SourcePage {
         chapters: ChapterItem[];
         firstChapter?: ChapterItem;
-        totalPages?:number;
-        pageList?: string[];
+        totalPages?: number;
     }
 
     export interface PopularNovelsOptions<
@@ -105,11 +98,11 @@ export namespace Plugin {
     export interface PagePlugin extends PluginBase {
         parseNovel(novelPath: string): Promise<SourceNovel & {totalPages: number}>;
         /**
-         * @param _firstChapter the first chapter in the first page of novel
-         * @returns If site doesn't have ascending order. return `chapters, firstChapter and totalPage`
+         * @returns
+         * If site doesn't have ascending order. return `chapters, firstChapter and totalPage`
          * to let app decide the corresponding behavior.
          * Otherwise, only `chapters` is enough
          */
-        parsePage(novelPath: string, page: string, _firstChapter: ChapterItem): Promise<SourcePage>;
+        parsePage(novelPath: string, page: string): Promise<SourcePage>;
     }
 }
