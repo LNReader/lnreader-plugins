@@ -25,15 +25,13 @@ class ReN implements Plugin.PluginBase {
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
       if (value instanceof Array && value.length) {
-        url += "&" + type + "=" +
-          value.join("&" + type + "=");
+        url += "&" + type + "=" + value.join("&" + type + "=");
       }
       if (value?.include instanceof Array && value.include.length) {
-        url += "&" + type + "=" + 
-          value.include.join("&" + type + "=");
+        url += "&" + type + "=" + value.include.join("&" + type + "=");
       }
       if (value?.exclude instanceof Array && value.exclude.length) {
-        url += "&exclude_" + type + "=" + 
+        url += "&exclude_" + type + "=" +
           value.exclude.join("&exclude_" + type + "=");
       }
     });
@@ -52,26 +50,29 @@ class ReN implements Plugin.PluginBase {
     return novels;
   }
 
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & { totalPages: number; }> {
+  async parseNovel(
+    novelPath: string,
+  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const novelID = novelPath.split("/")[2];
     const result = await fetchApi(this.site + "/api/titles/" + novelID);
     const body = (await result.json()) as { content: responseNovel };
 
-    const novel: Plugin.SourceNovel & { totalPages: number; } = {
+    const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
-      name: body.content.main_name || body.content.secondary_name || body.content.another_name,
+      name:
+        body.content.main_name ||
+        body.content.secondary_name ||
+        body.content.another_name,
       summary: body.content.description,
       cover:
         this.site +
-        (body.content.img.high ||
-          body.content.img.mid ||
-          body.content.img.low),
+        (body.content.img.high || body.content.img.mid || body.content.img.low),
       status:
         body.content.status.name === "Продолжается"
           ? NovelStatus.Ongoing
           : NovelStatus.Completed,
       chapters: [],
-      totalPages: Math.ceil(body.content.count_chapters / 100 + 1)
+      totalPages: Math.ceil(body.content.count_chapters / 100 + 1),
     };
 
     const tags = [body.content?.genres, body.content?.categories]
@@ -84,7 +85,7 @@ class ReN implements Plugin.PluginBase {
     }
 
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
-    cache[novelID] = branch_id
+    cache[novelID] = branch_id;
 
     return novel;
   }
@@ -119,7 +120,7 @@ class ReN implements Plugin.PluginBase {
         });
       }
     });
-    return { chapters };
+    return { chapters: chapters.reverse() };
   }
 
   async parseChapter(chapterPath: string): Promise<string> {

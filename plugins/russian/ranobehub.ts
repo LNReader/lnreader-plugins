@@ -14,10 +14,13 @@ class RNBH implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/api/search?page=" + pageNo + "&sort=";
-    url += showLatestNovels 
+    url += showLatestNovels
       ? "last_chapter_at"
       : filters?.sort?.value || "computed_rating";
     url += "&status=" + (filters?.status?.value ? filters?.status?.value : "0");
@@ -30,7 +33,9 @@ class RNBH implements Plugin.PluginBase {
       const includeTags = [
         filters.tags?.value?.include,
         filters.events?.value?.include,
-      ].flat().filter((t) => t);
+      ]
+        .flat()
+        .filter((t) => t);
 
       if (includeTags.length) {
         url += "&tags:positive=" + includeTags.join(",");
@@ -39,7 +44,9 @@ class RNBH implements Plugin.PluginBase {
       const excludeTags = [
         filters.tags?.value?.exclude,
         filters.events?.value?.exclude,
-      ].flat().filter((t) => t);
+      ]
+        .flat()
+        .filter((t) => t);
 
       if (excludeTags.length) {
         url += "&tags:negative=" + excludeTags.join(",");
@@ -54,20 +61,22 @@ class RNBH implements Plugin.PluginBase {
       novels.push({
         name: novel.names.rus || novel.names.eng || novel.names.original,
         cover: novel.poster.medium,
-        path: '/ranobe/' + novel.id,
+        path: "/ranobe/" + novel.id,
       }),
     );
 
     return novels;
   }
 
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & { totalPages: number; }> {
+  async parseNovel(
+    novelPath: string,
+  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const result = await fetchApi(this.site + "/api" + novelPath);
     const json = (await result.json()) as { data: responseNovel };
 
-    const novel: Plugin.SourceNovel & { totalPages: number; } = {
+    const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
-      name: json.data.names.rus || json.data.names.eng || '',
+      name: json.data.names.rus || json.data.names.eng || "",
       cover: json.data.posters.medium,
       summary: json.data.description.trim(),
       author: json.data?.authors?.[0]?.name_eng || "",
@@ -92,11 +101,15 @@ class RNBH implements Plugin.PluginBase {
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const chapters: Plugin.ChapterItem[] = [];
-    const chaptersRaw = await fetchApi(this.site + '/api' + novelPath + '/contents');
-    const chaptersJSON = (await chaptersRaw.json()) as { volumes: VolumesEntity[]; };
+    const chaptersRaw = await fetchApi(
+      this.site + "/api" + novelPath + "/contents",
+    );
+    const chaptersJSON = (await chaptersRaw.json()) as {
+      volumes: VolumesEntity[];
+    };
 
     chaptersJSON.volumes.forEach((volume) =>
-      volume.chapters?.forEach((chapter) => 
+      volume.chapters?.forEach((chapter) =>
         chapters.push({
           name: chapter.name,
           path:
@@ -106,7 +119,7 @@ class RNBH implements Plugin.PluginBase {
           releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
           chapterNumber: chapters.length + 1,
         })
-      ),
+      )
     );
 
     return { chapters };
@@ -135,9 +148,7 @@ class RNBH implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/api/fulltext/global?query=${searchTerm}&take=10`;
     const result = await fetchApi(url);
     const data = (await result.json()) as responseSearch[];
@@ -153,7 +164,7 @@ class RNBH implements Plugin.PluginBase {
             novel.name ||
             novel?.names?.original ||
             "",
-          path: '/ranobe/' + novel.id,
+          path: "/ranobe/" + novel.id,
           cover: novel?.image?.replace("/small", "/medium"),
         }),
       );

@@ -14,7 +14,10 @@ class Jaomix implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/?searchrn";
 
@@ -45,7 +48,8 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each((index, element) => {
+    loadedCheerio('div[class="block-home"] > div[class="one"]')
+      .each((index, element) => {
         const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
@@ -59,9 +63,8 @@ class Jaomix implements Plugin.PluginBase {
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, path: url.replace(this.site, '') });
-      },
-    );
+        novels.push({ name, cover, path: url.replace(this.site, "") });
+    });
 
     return novels;
   }
@@ -101,9 +104,9 @@ class Jaomix implements Plugin.PluginBase {
       const releaseDate = loadedCheerio(element).find("time").text();
       chapters.push({
         name,
-        path: url.replace(this.site, ''), 
-        releaseTime: this.parseDate(releaseDate), 
-        chapterNumber: totalChapters - chapterIndex 
+        path: url.replace(this.site, ""),
+        releaseTime: this.parseDate(releaseDate),
+        chapterNumber: totalChapters - chapterIndex,
       });
     });
 
@@ -130,7 +133,8 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each((index, element) => {
+    loadedCheerio('div[class="block-home"] > div[class="one"]')
+      .each((index, element) => {
         const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
@@ -144,9 +148,8 @@ class Jaomix implements Plugin.PluginBase {
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, path: url.replace(this.site, '') });
-      },
-    );
+        novels.push({ name, cover, path: url.replace(this.site, "") });
+      });
 
     return novels;
   }

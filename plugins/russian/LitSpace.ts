@@ -14,7 +14,10 @@ class freedlit implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/get-books/all/list/" + page + "?sort=";
     url += showLatestNovels ? "recent" : filters?.sort?.value || "popular";
@@ -44,10 +47,13 @@ class freedlit implements Plugin.PluginBase {
         .find("div > a > img")
         .attr("src")
         ?.trim();
-      const url = loadedCheerio(element).find("div > h4 > a").attr("href")?.trim();
+      const url = loadedCheerio(element)
+        .find("div > h4 > a")
+        .attr("href")
+        ?.trim();
       if (!name || !url) return;
 
-      novels.push({ name, cover, path: url.replace(this.site, '') });
+      novels.push({ name, cover, path: url.replace(this.site, "") });
     });
 
     return novels;
@@ -77,11 +83,11 @@ class freedlit implements Plugin.PluginBase {
       if (!name || !url) return;
 
       const releaseDate = loadedCheerio(element).find('span[class="date"]').text();
-      chapters.push({ 
-        name, 
-        path: url.replace(this.site, ''),  
-        releaseTime: this.parseDate(releaseDate), 
-        chapterNumber: chapterIndex + 1 
+      chapters.push({
+        name,
+        path: url.replace(this.site, ""),
+        releaseTime: this.parseDate(releaseDate),
+        chapterNumber: chapterIndex + 1,
       });
     });
 
@@ -112,7 +118,7 @@ class freedlit implements Plugin.PluginBase {
       const url = loadedCheerio(element).find("h4 > a").attr("href")?.trim();
       if (!name || !url) return;
 
-      novels.push({ name, cover, path: url.replace(this.site, '') });
+      novels.push({ name, cover, path: url.replace(this.site, "") });
     });
 
     return novels;

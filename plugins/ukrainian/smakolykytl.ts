@@ -68,7 +68,7 @@ class Smakolykytl implements Plugin.PluginBase {
       volume?.chapters?.forEach((chapter) =>
         chapters.push({
           name: volume.title + " " + chapter.title,
-          path: "read/" + chapter.id,,
+          path: "read/" + chapter.id,
           releaseTime: dayjs(chapter.modifiedAt).format("LLL"),
           chapterNumber: chapters.length + 1,
         }),
@@ -92,15 +92,15 @@ class Smakolykytl implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(
-      "https://api.smakolykytl.site/api/user/projects",
-    );
+    const result = await fetchApi("https://api.smakolykytl.site/api/user/projects");
     const json = (await result.json()) as response;
+    const searchTitle = searchTerm.toLowerCase();
     const novels: Plugin.NovelItem[] = [];
-
+    
     json?.projects
       ?.filter(
-        (novel) => novel.title.includes(searchTerm) || String(novel.id) === searchTerm,
+        ({ title, id }) =>
+          title.toLowerCase().includes(searchTitle) || String(id) == searchTerm,
       )
       ?.forEach((novel) =>
         novels.push({

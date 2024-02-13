@@ -78,7 +78,7 @@ class TL implements Plugin.PluginBase {
     const json = (await result.json()) as response;
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: json.data.project?.title || '',
+      name: json.data.project?.title || "",
       cover: json.data.project?.covers?.[0]?.url
         ? this.site + json.data.project.covers[0].url
         : defaultCover,

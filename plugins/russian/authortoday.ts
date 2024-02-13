@@ -208,7 +208,7 @@ class AuthorToday implements Plugin.PluginBase {
       label: "Жанры",
       value: "",
       options: [
-        { label: "Все", value:"" },
+        { label: "Все", value: "" },
         { label: "Альтернативная история", value: "sf-history" },
         { label: "Антиутопия", value: "dystopia" },
         { label: "Бизнес-литература", value: "biznes-literatura" },

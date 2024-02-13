@@ -22,7 +22,10 @@ class RLIB implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/manga-list?sort=";
     url += showLatestNovels ? "last_chapter_at" : filters?.sort?.value || "rate";
@@ -33,11 +36,11 @@ class RLIB implements Plugin.PluginBase {
         url += "&" + type + "[]=" + value.join("&" + type + "[]=");
       }
       if (value?.include instanceof Array && value.include.length) {
-        url += "&" + type + "[include][]=" + 
+        url += "&" + type + "[include][]=" +
           value.include.join("&" + type + "[include][]=");
-      } 
+      }
       if (value?.exclude instanceof Array && value.exclude.length) {
-        url += "&" + type + "[exclude][]=" + 
+        url += "&" + type + "[exclude][]=" +
           value.exclude.join("&" + type + "[exclude][]=");
       }
     });
@@ -56,7 +59,7 @@ class RLIB implements Plugin.PluginBase {
       const cover = loadedCheerio(element).find("a.media-card").attr("data-src");
       const url = loadedCheerio(element).find("a.media-card").attr("href");
       if (!url) return;
-      novels.push({ name, cover, path: url.replace(this.site, '') });
+      novels.push({ name, cover, path: url.replace(this.site, "") });
     });
 
     return novels;
@@ -68,7 +71,7 @@ class RLIB implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio(".media-name__main").text()?.trim?.()
+      name: loadedCheerio(".media-name__main").text()?.trim?.(),
     };
     novel.cover = loadedCheerio(".container_responsive img").attr("src");
 
@@ -158,11 +161,9 @@ class RLIB implements Plugin.PluginBase {
     return chapterText || "";
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(
-      `${this.site}/search?q=${searchTerm}&type=manga`,
+      this.site + "/search?q=" + searchTerm + "&type=manga",
     );
     const body = (await result.json()) as Manga[];
     const novels: Plugin.NovelItem[] = [];

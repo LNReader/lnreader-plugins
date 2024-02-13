@@ -98,14 +98,13 @@ class ficbook implements Plugin.PluginBase {
         if (!name || !url) return;
 
         const releaseTime = loadedCheerio(element).find("div > span").attr("title");
-        chapters.push({ 
+        chapters.push({
           name,
-          path: url.replace(this.site, ''),
-          releaseTime, 
+          path: url.replace(this.site, ""),
+          releaseTime,
           chapterNumber: chapterIndex + 1,
         });
       });
-
     }
 
     novel.chapters = chapters;
@@ -153,7 +152,7 @@ class ficbook implements Plugin.PluginBase {
 
     json.data?.data?.forEach((novel) => {
       const name = novel.title.trim();
-      const path =  "/readfic/" + novel.slug;
+      const path = "/readfic/" + novel.slug;
       const cover = novel.cover
         ? "https://images.ficbook.net/fanfic-covers/" + novel.cover
         : defaultCover;
