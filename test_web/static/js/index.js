@@ -5,7 +5,7 @@
 /** @typedef {import("@typings/plugin").Plugin.PluginItem} PluginItem */
 /** @typedef {import("@typings/plugin").Plugin.ChapterItem} ChapterItem */
 /** @typedef {import("@typings/plugin").Plugin.NovelItem} NovelItem */
-/** @typedef {import("@typings/plugin").Plugin.SourceNovel} SourceNovel */
+/** @typedef {import("@typings/plugin").Plugin.SourceNovel & {totalPages?: number}} SourceNovel */
 /** @typedef {import("@typings/plugin").Plugin.SourcePage} SourcePage */
 /** @typedef {import("@libs/filterInputs").FilterTypes} FilterTypes */
 /** @typedef {import("@libs/filterInputs").FilterTypes.CheckboxGroup} CheckboxGroup */
@@ -865,6 +865,13 @@ class PluginWrapper {
                     PluginWrapper.createInfoItem("status", sourceNovel.status),
                     PluginWrapper.createInfoItem("genres", sourceNovel.genres)
                 );
+            if(sourceNovel.totalPages){
+                novel_data
+                .children("div + div")
+                .append(
+                    PluginWrapper.createInfoItem("totalPages", sourceNovel.totalPages.toString())
+                )
+            }
             novel_item.replaceWith(novel_data);
 
             if (
