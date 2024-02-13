@@ -37,27 +37,27 @@ class freedlit implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio("#bookListBlock > div > div").each(function () {
-      const name = loadedCheerio(this).find("div > h4 > a").text()?.trim();
-      const cover = loadedCheerio(this)
+    loadedCheerio("#bookListBlock > div > div").each((index, element) => {
+      const name = loadedCheerio(element).find("div > h4 > a").text()?.trim();
+      const cover = loadedCheerio(element)
         .find("div > a > img")
         .attr("src")
         ?.trim();
-      const url = loadedCheerio(this).find("div > h4 > a").attr("href")?.trim();
+      const url = loadedCheerio(element).find("div > h4 > a").attr("href")?.trim();
       if (!name || !url) return;
 
-      novels.push({ name, cover, url });
+      novels.push({ name, cover, path: url.replace(this.site, '') });
     });
 
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(novelUrl).then((res) => res.text());
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    const body = await fetchApi(novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
-      url: novelUrl,
+      path: novelPath,
       name: loadedCheerio(".book-info h4").text(),
       cover: loadedCheerio(".book-cover > div > img").attr("src")?.trim(),
       summary: loadedCheerio("#nav-home").text()?.trim(),
@@ -76,15 +76,20 @@ class freedlit implements Plugin.PluginBase {
       if (!name || !url) return;
 
       const releaseTime = loadedCheerio(element).find('span[class="date"]').text();
-      chapters.push({ name, url, releaseTime, chapterNumber: chapterIndex + 1 });
+      chapters.push({ 
+        name, 
+        path: url.replace(this.site, ''), 
+        releaseTime, 
+        chapterNumber: chapterIndex + 1
+      });
     });
 
     novel.chapters = chapters;
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
-    const body = await fetchApi(chapterUrl).then((res) => res.text());
+  async parseChapter(chapterPath: string): Promise<string> {
+    const body = await fetchApi(this.site + chapterPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio("div.mobile-block").remove();
@@ -100,13 +105,13 @@ class freedlit implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio("#bookListBlock > div").each(function () {
-      const name = loadedCheerio(this).find("h4 > a").text()?.trim();
-      const cover = loadedCheerio(this).find("a > img").attr("src")?.trim();
-      const url = loadedCheerio(this).find("h4 > a").attr("href")?.trim();
+    loadedCheerio("#bookListBlock > div").each((index, element) => {
+      const name = loadedCheerio(element).find("h4 > a").text()?.trim();
+      const cover = loadedCheerio(element).find("a > img").attr("src")?.trim();
+      const url = loadedCheerio(element).find("h4 > a").attr("href")?.trim();
       if (!name || !url) return;
 
-      novels.push({ name, cover, url });
+      novels.push({ name, cover, path: url.replace(this.site, '') });
     });
 
     return novels;

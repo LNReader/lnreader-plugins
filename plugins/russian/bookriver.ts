@@ -14,10 +14,15 @@ class Bookriver implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + `/genre?page=${pageNo}&perPage=24&sortingType=`;
-    url += showLatestNovels ? "last-update" : filters?.sort?.value || "bestseller";
+    url += showLatestNovels
+      ? "last-update"
+      : filters?.sort?.value || "bestseller";
 
     if (filters?.genres?.value?.length) {
       url += "&g=" + filters.genres.value.join(",");
@@ -34,15 +39,15 @@ class Bookriver implements Plugin.PluginBase {
         novels.push({
           name: novel.name,
           cover: novel.coverImages[0].url,
-          url: this.site + "/book/" + novel.slug,
+          path: "/book/" + novel.slug,
         }),
       );
     }
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelUrl).then((res) => res.text());
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    const result = await fetchApi(novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(result);
 
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
@@ -50,8 +55,8 @@ class Bookriver implements Plugin.PluginBase {
     const book = json.props.pageProps.state.book?.bookPage;
 
     const novel: Plugin.SourceNovel = {
-      url: novelUrl,
-      name: book?.name,
+      path: novelPath,
+      name: book?.name || "",
       cover: book?.coverImages[0].url,
       summary: book?.annotation,
       author: book?.author?.name,
@@ -67,8 +72,10 @@ class Bookriver implements Plugin.PluginBase {
       if (chapter.available) {
         chapters.push({
           name: chapter.name,
-          url: this.site + "/reader/" + book?.slug + "/" + chapter.chapterId,
-          releaseTime: dayjs(chapter?.firstPublishedAt || chapter.createdAt).format("LLL"),
+          path: "/reader/" + book?.slug + "/" + chapter.chapterId,
+          releaseTime: dayjs(
+            chapter?.firstPublishedAt || chapter.createdAt,
+          ).format("LLL"),
           chapterNumber: chapterIndex + 1,
         });
       }
@@ -77,9 +84,9 @@ class Bookriver implements Plugin.PluginBase {
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
+  async parseChapter(chapterPath: string): Promise<string> {
     const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
-    const result = await fetchApi(url + chapterUrl.split("/").pop());
+    const result = await fetchApi(url + chapterPath.split("/").pop());
     const json = (await result.json()) as responseChapter;
 
     let chapterText = json.data.content || "Конец произведения";
@@ -103,12 +110,13 @@ class Bookriver implements Plugin.PluginBase {
       novels.push({
         name: novel.name,
         cover: novel.coverImages[0].url,
-        url: this.site + "/book/" + novel.slug,
+        path: "/book/" + novel.slug,
       }),
     );
 
     return novels;
   }
+
   fetchImage = fetchFile;
 
   filters = {

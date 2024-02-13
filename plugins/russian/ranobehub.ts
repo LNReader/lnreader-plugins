@@ -54,29 +54,28 @@ class RNBH implements Plugin.PluginBase {
       novels.push({
         name: novel.names.rus || novel.names.eng || novel.names.original,
         cover: novel.poster.medium,
-        url: novel.url,
+        path: '/ranobe/' + novel.id,
       }),
     );
 
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const novelId = novelUrl
-      .substring("https://ranobehub.org/ranobe/".length)
-      .split("-")[0];
-    const result = await fetchApi(this.site + "/api/ranobe/" + novelId);
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & { totalPages: number; }> {
+    const result = await fetchApi(this.site + "/api" + novelPath);
     const json = (await result.json()) as { data: responseNovel };
 
-    const novel: Plugin.SourceNovel = {
-      url: json.data.url,
-      name: json.data.names?.rus || json.data.names.eng,
+    const novel: Plugin.SourceNovel & { totalPages: number; } = {
+      path: novelPath,
+      name: json.data.names.rus || json.data.names.eng || '',
       cover: json.data.posters.medium,
-      summary: json.data.description,
+      summary: json.data.description.trim(),
       author: json.data?.authors?.[0]?.name_eng || "",
       status: json.data.status.title.includes("процессе")
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
+      totalPages: 1,
+      chapters: [],
     };
 
     const tags = [json.data.tags.events, json.data.tags.genres]
@@ -88,29 +87,33 @@ class RNBH implements Plugin.PluginBase {
       novel.genres = tags.join(", ");
     }
 
-    const chapters: Plugin.ChapterItem[] = [];
-    const chaptersRaw = await fetchApi(`${this.site}/api/ranobe/${novelId}/contents`);
-    const chaptersJSON = (await chaptersRaw.json()) as {
-      volumes: VolumesEntity[];
-    };
-
-    chaptersJSON.volumes.forEach((volume) =>
-        volume.chapters?.forEach((chapter) => {
-          chapters.push({
-            name: chapter.name,
-            url: chapter.url,
-            releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
-            chapterNumber: chapters.length + 1,
-          });
-        }),
-    );
-
-    novel.chapters = chapters;
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(chapterUrl);
+  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+    const chapters: Plugin.ChapterItem[] = [];
+    const chaptersRaw = await fetchApi(this.site + '/api' + novelPath + '/contents');
+    const chaptersJSON = (await chaptersRaw.json()) as { volumes: VolumesEntity[]; };
+
+    chaptersJSON.volumes.forEach((volume) =>
+      volume.chapters?.forEach((chapter) => 
+        chapters.push({
+          name: chapter.name,
+          path:
+            volume.num && chapter.num
+              ? novelPath + "/" + volume.num + "/" + chapter.num
+              : chapter.url.replace(this.site, ""),
+          releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format("LLL"),
+          chapterNumber: chapters.length + 1,
+        })
+      ),
+    );
+
+    return { chapters };
+  }
+
+  async parseChapter(chapterPath: string): Promise<string> {
+    const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -134,7 +137,6 @@ class RNBH implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    //pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/api/fulltext/global?query=${searchTerm}&take=10`;
     const result = await fetchApi(url);
@@ -151,11 +153,7 @@ class RNBH implements Plugin.PluginBase {
             novel.name ||
             novel?.names?.original ||
             "",
-          url:
-            "https://ranobehub.org/ranobe/" +
-            novel?.url?.match(
-              /https:\/\/ranobehub\.org\/ranobe\/(.*?)\?utm_source=search_name&utm_medium=search&utm_campaign=search_using/,
-            )?.[1],
+          path: '/ranobe/' + novel.id,
           cover: novel?.image?.replace("/small", "/medium"),
         }),
       );

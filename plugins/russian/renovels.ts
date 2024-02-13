@@ -4,19 +4,23 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
+const cache: { [key: string]: number } = {}; //branch_id
+
 class ReN implements Plugin.PluginBase {
   id = "ReN";
   name = "Renovels";
+  icon = "src/ru/renovels/icon.png";
   site = "https://renovels.org";
   version = "1.0.0";
-  icon = "src/ru/renovels/icon.png";
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + "/api/search/catalog/?count=30&ordering=";
-    url += filters?.order?.value ? "-" : "";
+    let url = this.site + "/api/search/catalog/?count=30&ordering=-";
     url += showLatestNovels ? "chapter_date" : filters?.sort?.value || "rating";
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
@@ -42,19 +46,19 @@ class ReN implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = body.content.map((novel) => ({
       name: novel.main_name || novel.secondary_name,
       cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
-      url: this.site + "/novel/" + novel.dir,
+      path: "/novel/" + novel.dir,
     }));
 
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const novelID = novelUrl.split("/")[4];
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & { totalPages: number; }> {
+    const novelID = novelPath.split("/")[2];
     const result = await fetchApi(this.site + "/api/titles/" + novelID);
     const body = (await result.json()) as { content: responseNovel };
 
-    const novel: Plugin.SourceNovel = {
-      url: novelUrl,
+    const novel: Plugin.SourceNovel & { totalPages: number; } = {
+      path: novelPath,
       name: body.content.main_name || body.content.secondary_name || body.content.another_name,
       summary: body.content.description,
       cover:
@@ -66,6 +70,8 @@ class ReN implements Plugin.PluginBase {
         body.content.status.name === "Продолжается"
           ? NovelStatus.Ongoing
           : NovelStatus.Completed,
+      chapters: [],
+      totalPages: Math.ceil(body.content.count_chapters / 100 + 1)
     };
 
     const tags = [body.content?.genres, body.content?.categories]
@@ -77,41 +83,47 @@ class ReN implements Plugin.PluginBase {
       novel.genres = tags.join(",");
     }
 
-    const all = body.content.count_chapters / 100 + 1;
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
-    const chapters: Plugin.ChapterItem[] = [];
+    cache[novelID] = branch_id
 
-    for (let i = 0; i < all; i++) {
-      const chapterResult = await fetchApi(
-        this.site +
-          "/api/titles/chapters/?branch_id=" + branch_id +
-          "&count=100&page=" + (i + 1),
-      );
-      const volumes = (await chapterResult.json()) as {
-        content: responseСhapters[];
-      };
-
-      volumes.content.forEach((chapter) => {
-        if (!chapter.is_paid || chapter.is_bought) {
-          chapters.push({
-            name:
-              "Том " + chapter.tome + 
-              " Глава " + chapter.chapter + 
-                (chapter.name ? " " + chapter.name.trim() : ""),
-            url: `${this.site}/novel/${novelID}/${chapter.id}/`,
-            releaseTime: dayjs(chapter.upload_date).format("LLL"),
-            chapterNumber: chapter.index,
-          });
-        }
-      });
-    }
-
-    novel.chapters = chapters.reverse();
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
-    const url = this.site + "/api/titles/chapters/" + chapterUrl.split("/")[5];
+  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+    const novelID = novelPath.split("/")[2];
+    if (!cache[novelID]) {
+      const result = await fetchApi(this.site + "/api/titles/" + novelID);
+      const body = (await result.json()) as { content: responseNovel };
+      cache[novelID] = body.content.branches?.[0]?.id || body.content.id;
+    }
+
+    const chapters: Plugin.ChapterItem[] = [];
+
+    const chapterResult = await fetchApi(
+      this.site +
+        "/api/titles/chapters/?branch_id=" + cache[novelID] +
+        "&count=100&page=" + (parseInt(page, 10) + 1),
+    );
+    const volumes = (await chapterResult.json()) as { content: responseСhapters[]; };
+
+    volumes.content.forEach((chapter) => {
+      if (!chapter.is_paid || chapter.is_bought) {
+        chapters.push({
+          name:
+            "Том " + chapter.tome +
+            " Глава " + chapter.chapter +
+              (chapter.name ? " " + chapter.name.trim() : ""),
+          path: `/novel/${novelID}/${chapter.id}/`,
+          releaseTime: dayjs(chapter.upload_date).format("LLL"),
+          chapterNumber: chapter.index,
+        });
+      }
+    });
+    return { chapters };
+  }
+
+  async parseChapter(chapterPath: string): Promise<string> {
+    const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[3];
     const result = await fetchApi(url);
     const body = (await result.json()) as { content: responseСhapter };
 
@@ -131,7 +143,7 @@ class ReN implements Plugin.PluginBase {
       novels.push({
         name: novel.main_name || novel.secondary_name,
         cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
-        url: this.site + "/novel/" + novel.dir,
+        path: "/novel/" + novel.dir,
       }),
     );
 
@@ -151,15 +163,6 @@ class ReN implements Plugin.PluginBase {
         { label: "Дате добавления", value: "id" },
         { label: "Дате обновления", value: "chapter_date" },
         { label: "Количество глав", value: "count_chapters" },
-      ],
-      type: FilterTypes.Picker,
-    },
-    order: {
-      label: "Порядок",
-      value: "",
-      options: [
-        { label: "По убыванию", value: "-" },
-        { label: "По возрастанию", value: "" },
       ],
       type: FilterTypes.Picker,
     },

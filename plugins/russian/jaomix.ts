@@ -44,34 +44,33 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each(
-      function () {
-        const name = loadedCheerio(this)
+    loadedCheerio('div[class="block-home"] > div[class="one"]').each((index, element) => {
+        const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
-        const cover = loadedCheerio(this)
+        const cover = loadedCheerio(element)
           .find('div[class="img-home"] > a > img')
           .attr("src")
           ?.replace("-150x150", "");
-        const url = loadedCheerio(this)
+        const url = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("href");
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, url });
+        novels.push({ name, cover, path: url.replace(this.site, '') });
       },
     );
 
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(novelUrl).then((res) => res.text());
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
-      url: novelUrl,
+      path: novelPath,
       name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
       cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
       summary: loadedCheerio('div[id="desc-tab"]').text().trim(),
@@ -99,15 +98,20 @@ class Jaomix implements Plugin.PluginBase {
       if (!name || !url) return;
 
       const releaseTime = loadedCheerio(element).find("time").text();
-      chapters.push({ name, url, releaseTime, chapterNumber: totalChapters - chapterIndex });
+      chapters.push({ 
+        name, 
+        path: url.replace(this.site, ''), 
+        releaseTime, 
+        chapterNumber: totalChapters - chapterIndex 
+      });
     });
 
     novel.chapters = chapters.reverse();
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
-    const body = await fetchApi(chapterUrl).then((res) => res.text());
+  async parseChapter(chapterPath: string): Promise<string> {
+    const body = await fetchApi(this.site + chapterPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div[class="adblock-service"]').remove();
@@ -125,22 +129,21 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each(
-      function () {
-        const name = loadedCheerio(this)
+    loadedCheerio('div[class="block-home"] > div[class="one"]').each((index, element) => {
+        const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
-        const cover = loadedCheerio(this)
+        const cover = loadedCheerio(element)
           .find('div[class="img-home"] > a > img')
           .attr("src")
           ?.replace("-150x150", "");
-        const url = loadedCheerio(this)
+        const url = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("href");
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, url });
+        novels.push({ name, cover, path: url.replace(this.site, '') });
       },
     );
 

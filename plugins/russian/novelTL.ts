@@ -47,7 +47,7 @@ class TL implements Plugin.PluginBase {
     json.data?.projects?.content?.forEach((novel) =>
       novels.push({
         name: novel.title,
-        url: "https://" + novel.fullUrl,
+        path: novel.fullUrl,
         cover: novel?.covers?.[0]?.url
           ? this.site + novel.covers[0].url
           : defaultCover,
@@ -57,7 +57,7 @@ class TL implements Plugin.PluginBase {
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
       headers: {
@@ -71,14 +71,14 @@ class TL implements Plugin.PluginBase {
         query:
           'query Book($url:String){project(project:{fullUrl:$url}){title translationStatus fullUrl covers{url}persons(langs:["ru","en","*"],roles:["author","illustrator"]){role name{firstName lastName}}genres{nameRu nameEng}tags{nameRu nameEng}annotation{text}subprojects{content{title volumes{content{shortName chapters{title publishDate fullUrl published}}}}}}}',
         variables: {
-          url: novelUrl,
+          url: novelPath,
         },
       }),
     });
     const json = (await result.json()) as response;
     const novel: Plugin.SourceNovel = {
-      url: novelUrl,
-      name: json.data.project?.title,
+      path: novelPath,
+      name: json.data.project?.title || '',
       cover: json.data.project?.covers?.[0]?.url
         ? this.site + json.data.project.covers[0].url
         : defaultCover,
@@ -119,7 +119,7 @@ class TL implements Plugin.PluginBase {
               name:
                 (volume.shortName || "Том " + (volumeIndex + 1)) + " " +
                 (chapter.title || "Глава " + (chapterIndex + 1)),
-              url: "https://" + chapter.fullUrl,
+              path: chapter.fullUrl,
               releaseTime: dayjs(chapter.publishDate).format("LLL"),
               chapterNumber: chapters.length + 1,
             });
@@ -132,7 +132,7 @@ class TL implements Plugin.PluginBase {
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
+  async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
       headers: {
@@ -145,7 +145,7 @@ class TL implements Plugin.PluginBase {
         query:
           "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
         variables: {
-          url: decodeURI(chapterUrl),
+          url: decodeURIComponent(chapterPath),
         },
       }),
     });
@@ -198,7 +198,7 @@ class TL implements Plugin.PluginBase {
     json?.data?.projects?.content?.forEach((novel) =>
       novels.push({
         name: novel.title,
-        url: "https://" + novel.fullUrl,
+        path: novel.fullUrl,
         cover: novel?.covers?.[0]?.url
           ? this.site + novel.covers[0].url
           : defaultCover,
