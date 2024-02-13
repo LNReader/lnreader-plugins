@@ -45,8 +45,7 @@ export const all_plugins = (): PluginList => {
 
 const getPlugin = async (
     requirePath: string
-): Promise<Plugin.PluginBase | null> => {
-    console.log("loading plugin", requirePath);
+): Promise<Plugin.PluginBase | Plugin.PagePlugin | null> => {
     const plugin = await require(requirePath).default;
     return plugin;
 };
@@ -70,6 +69,16 @@ export const parseNovel = async (
     pluginRequirePath: string,
     novelPath: string
 ) => (await getPlugin(pluginRequirePath))?.parseNovel(novelPath);
+
+export const hasParsePage = async (
+    pluginRequirePath: string,
+) => (await getPlugin(pluginRequirePath) as Plugin.PagePlugin | null)?.parsePage;
+
+export const parsePage = async(
+    pluginRequirePath: string,
+    novelPath: string,
+    page: string
+) => (await getPlugin(pluginRequirePath) as Plugin.PagePlugin | null)?.parsePage(novelPath, page);
 
 export const parseChapter = async (
     pluginRequirePath: string,
