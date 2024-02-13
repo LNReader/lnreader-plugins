@@ -88,11 +88,11 @@ app.post("/searchNovels/", async (req, res) => {
         res.json({ error: String(err) });
     }
 });
-app.post("/parseNovelAndChapters/", async (req, res) => {
+app.post("/parseNovel/", async (req, res) => {
     try {
-        const sourceNovel = await pluginApi.parseNovelAndChapters(
+        const sourceNovel = await pluginApi.parseNovel(
             req.body["pluginRequirePath"],
-            req.body["novelUrl"]
+            req.body["novelPath"]
         );
         res.json(sourceNovel);
     } catch (err: unknown) {
@@ -103,7 +103,7 @@ app.post("/parseChapter/", async (req, res) => {
     try {
         const chapterText = await pluginApi.parseChapter(
             req.body["pluginRequirePath"],
-            req.body["chapterUrl"]
+            req.body["chapterPath"]
         );
         res.send(chapterText);
     } catch (err: unknown) {

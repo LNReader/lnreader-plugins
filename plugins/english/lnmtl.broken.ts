@@ -1,47 +1,60 @@
 import { load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { Chapter, Novel, Plugin } from "@typings/plugin";
+import { FilterTypes, Filters } from "@libs/filterInputs";
+import { Plugin } from "@typings/plugin";
 
-const pluginId = "lnmtl";
-const baseUrl = "https://lnmtl.com/";
+class LnMTLPlugin implements Plugin.PluginBase {
+    id = "lnmtl";
+    name = "LnMTL";
+    icon = "src/en/lnmtl/icon.png";
+    site = "https://lnmtl.com/";
+    version = "1.0.0";
 
-export const popularNovels: Plugin.popularNovels = async function (page) {
-    let url = baseUrl + "novel?page=" + page;
+    async popularNovels(
+        page: number,
+        { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
+    ): Promise<Plugin.NovelItem[]> {    
+        let link = this.site + "novel?";
 
-    const body = await fetchApi(url, {}, pluginId).then((r) => r.text());
+        link += `orderBy=${filters.order.value}`;
+        link += `&order=${filters.sort.value}`;
+        link += `&filter=${filters.storyStatus.value}`;
+        link += `&page=${page}`;                         
 
-    const loadedCheerio = parseHTML(body);
+        const body = await fetchApi(link).then((result) =>
+            result.text()
+        );
 
-    let novels: Novel.Item[] = [];
+        const loadedCheerio = parseHTML(body);
+        const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio(".media").each(function () {
-        const novelName = loadedCheerio(this).find("h4").text();
-        const novelCover = loadedCheerio(this).find("img").attr("src");
-        const novelUrl = loadedCheerio(this).find("h4 > a").attr("href");
+        loadedCheerio(".media").each(function () {
+            const novelName = loadedCheerio(this).find("h4").text();
+            const novelCover = loadedCheerio(this).find("img").attr("src");
+            const novelUrl = loadedCheerio(this).find("h4 > a").attr("href");
 
-        if (!novelUrl) return;
+            if (!novelUrl) return;
 
-        const novel = {
-            name: novelName,
-            cover: novelCover,
-            url: novelUrl,
-        };
+            const novel = {
+                name: novelName,
+                cover: novelCover,
+                url: novelUrl,
+            };
 
-        novels.push(novel);
-    });
+            novels.push(novel);
+        });
 
-    return novels;
-};
+        return novels;
+    };
 
-export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
-    async function (novelUrl) {
+    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
         const url = novelUrl;
-
-        const body = await fetchApi(url, {}, pluginId).then((r) => r.text());
+        const result = await fetchApi(url);
+        const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
 
-        const novel: Novel.instance = {
+        const novel: Plugin.SourceNovel = {
             url,
             chapters: [],
         };
@@ -53,8 +66,8 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
         novel.summary = loadedCheerio("div.description").text().trim();
 
         loadedCheerio(".panel-body > dl").each(function () {
-            let detailName = loadedCheerio(this).find("dt").text().trim();
-            let detail = loadedCheerio(this).find("dd").text().trim();
+            const detailName = loadedCheerio(this).find("dt").text().trim();
+            const detail = loadedCheerio(this).find("dd").text().trim();
 
             switch (detailName) {
                 case "Authors":
@@ -68,113 +81,144 @@ export const parseNovelAndChapters: Plugin.parseNovelAndChapters =
 
         novel.genres = loadedCheerio('.panel-heading:contains(" Genres ")')
             .next()
-            .text()
-            .trim()
-            .replace(/\s\s/g, ",");
+            .find('a')
+            .map((i,el) => loadedCheerio(el).text())
+            .toArray()
+            .join(",");
 
+        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
         let volumes = JSON.parse(
             loadedCheerio("main")
                 .next()
                 .html()
-                .match(/lnmtl.volumes = \[(.*?)\]/).[0]
-                .replace("lnmtl.volumes = ", "")
+                ?.match(/lnmtl.volumes = \[(.*?)\]/)![0]
+                ?.replace("lnmtl.volumes = ", "") || ""
         );
 
-        let chapters: Chapter.Item[] = [];
+        const chapter: Plugin.ChapterItem[] = [];
 
-        volumes = volumes.map((volume) => volume.id);
+        volumes = volumes.map((volume: { id: number; }) => volume.id);
 
         for (const volume of volumes) {
-            let volumeData = await fetchApi(
-                `https://lnmtl.com/chapter?page=1&volumeId=${volume}`
+            const volumeData = await fetchApi(
+                `${this.site}chapter?page=1&volumeId=${volume}`
             );
-            volumeData = await volumeData.json();
+            const volumePage = await volumeData.json();
 
             // volumeData = volumeData.data.map((volume) => volume.slug);
 
-            for (let i = 1; i <= volumeData.last_page; i++) {
-                let chapterData = await fetchApi(
-                    `https://lnmtl.com/chapter?page=${i}&volumeId=${volume}`
+            for (let i = 1; i <= volumePage.last_page; i++) {
+                const chapterData = await fetchApi(
+                    `${this.site}chapter?page=${i}&volumeId=${volume}`
                 );
-                chapterData = await chapterData.json();
+                const chapterInfo = await chapterData.json();
 
-                chapterData = chapterData.data.map((chapter) => ({
+                const chapterDetails = chapterInfo.data.map(
+                (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
                     name: `#${chapter.number} ${chapter.title}`,
-                    url: `${baseUrl}chapter/${chapter.slug}`,
-                    releaseTime: chapter.created_at,
+                    url: `${this.site}chapter/${chapter.slug}`,
+                    releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
                 }));
 
-                chapters.push(...chapterData);
+                chapter.push(...chapterDetails);
             }
+            await delay(1000);
         }
 
-        novel.chapters = chapters;
+        novel.chapters = chapter;
 
         return novel;
     };
 
-export const parseChapter: Plugin.parseChapter = async function (chapterUrl) {
-    const body = await fetchApi(chapterUrl, {}, pluginId).then((r) => r.text());
+    async parseChapter(chapterUrl: string): Promise<string> {
+        const result = await fetchApi(chapterUrl);
+        const body = await result.text();
 
-    const loadedCheerio = parseHTML(body);
+        const loadedCheerio = parseHTML(body);
 
-    loadedCheerio(".original").replaceWith("<br><br>");
+        loadedCheerio('.original, script').remove();
+        loadedCheerio('sentence.translated').wrap('<p></p>');
 
-    let chapterText = loadedCheerio(".chapter-body").html();
+        let chapterText = loadedCheerio('.chapter-body').html()?.replace(/„/g, '“');
 
-    if (!chapterText) {
-        chapterText = loadedCheerio(".alert.alert-warning").text();
+        if (!chapterText) {
+            chapterText = loadedCheerio(".alert.alert-warning").text();
+        }
+
+        return chapterText;
+    };
+
+    async searchNovels(
+        searchTerm: string,
+        pageNo: number
+    ): Promise<Plugin.NovelItem[]> {
+        const body = await fetchApi(this.site).then((r) => r.text());
+        const loadedCheerio = parseHTML(body);
+
+        const list = loadedCheerio('footer')
+            .next()
+            .next()
+            .html()
+            ?.match(/prefetch: '\/(.*json)/)![1];
+
+        const search = await fetch(`${this.site}${list}`);
+        const data = await search.json();
+
+        const nov = data.filter((res: { name: string; }) =>
+            res.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+
+        const novels: Plugin.NovelItem[] = [];
+        nov.map((res: { name: string; slug: string; image: string; }) => {
+            const novelName = res.name;
+            const novelUrl = `${this.site}novel/${res.slug}`;
+            const novelCover = res.image;
+
+            const novel = {
+                url: novelUrl,
+                name: novelName,
+                cover: novelCover,
+            };
+            novels.push(novel);
+        });
+        return novels;
+    };
+
+    async fetchImage(url: string): Promise<string | undefined> {
+        return await fetchFile(url);
     }
 
-    return chapterText;
-};
+    filters = {
+        order: {
+            value: "favourites",
+            label: "Order by",
+            options: [
+                { label: "Favourites", value: "favourites" },
+                { label: "Name", value: "name" },
+                { label: "Addition Date", value: "date" },
+            ],
+            type: FilterTypes.Picker,
+        },
+        sort: {
+            value: "desc",
+            label: "Sort by",
+            options: [
+                { label: "Descending", value: "desc" },
+                { label: "Ascending", value: "asc" },
+            ],
+            type: FilterTypes.Picker,
+        },
+        storyStatus: {
+            value: "all",
+            label: "Status",
+            options: [
+                { label: "All", value: "all" },
+                { label: "Ongoing", value: "ongoing" },
+                { label: "Finished", value: "finished" },
+            ],
+            type: FilterTypes.Picker,
+        },
+    } satisfies Filters;
+}
 
-export const searchNovels: Plugin.searchNovels = async function (searchTerm) {
-    const url = "https://lnmtl.com/term";
-
-    const body = await fetchApi(url, {}, pluginId).then((r) => r.text());
-
-    const loadedCheerio = parseHTML(body);
-
-    let novels:Novel.Item[] = loadedCheerio("footer")
-        .next()
-        .next()
-        .html()
-        .match(/local: \[(.*?)\]/)[0]
-        .replace("local: ", "");
-
-    novels = JSON.parse(novels);
-
-    novels = novels.filter((novel) =>
-        novel.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    novels = novels.map((novel) => ({
-        name: novel.name,
-        url: novel.slug,
-        cover: novel.image,
-    }));
-
-    return novels;
-};
-
-export const fetchImage: Plugin.fetchImage = async function (url) {
-    const headers = {
-        Referer: baseUrl,
-    };
-    return await fetchFile(url, { headers: headers });
-};
-
-module.exports = {
-    id: pluginId,
-    name: "LNMTL",
-    version: "1.0.0",
-    icon: "src/en/lnmtl/icon.png",
-    site: baseUrl,
-    protected: true,
-    fetchImage,
-    popularNovels,
-    parseNovelAndChapters,
-    parseChapter,
-    searchNovels,
-};
+export default new LnMTLPlugin();

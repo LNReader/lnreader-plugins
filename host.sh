@@ -1,5 +1,5 @@
 current=`git rev-parse --abbrev-ref HEAD`
-dist=dist
+dist=beta-dist
 exists=`git show-ref refs/heads/$dist`
 
 if [ -n "$exists" ]; then

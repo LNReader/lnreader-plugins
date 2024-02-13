@@ -3,7 +3,7 @@ require("module-alias/register");
 import * as fs from "fs";
 import { languages } from "@libs/languages";
 import * as path from "path";
-import { Plugin, isPlugin } from "@typings/plugin";
+import { Plugin } from "@typings/plugin";
 
 const root = path.dirname(__dirname);
 const outRoot = path.join(root, "..");
@@ -11,7 +11,7 @@ const { execSync } = require("child_process");
 const REMOTE = execSync("git remote get-url origin")
   .toString()
   .replace(/[\s\n]/g, "");
-let CURRENT_BRANCH = 'dist';
+let CURRENT_BRANCH = 'beta-dist';
 try {
   CURRENT_BRANCH = execSync("git rev-parse --abbrev-ref HEAD")
     .toString()
@@ -54,15 +54,10 @@ for (let language in languages) {
   json[language] = [];
   plugins.forEach((plugin) => {
     if (plugin.startsWith(".")) return;
-    const instance: Plugin.PluginBase | unknown =
+    const instance: Plugin.PluginBase =
       require(`../plugins/${language.toLowerCase()}/${
         plugin.split(".")[0]
       }`).default;
-
-    if (!isPlugin(instance)) {
-      console.log(plugin);
-      return;
-    }
 
     const { id, name, site, version, icon } = instance;
     const normalisedName = name.replace(/\[.*\]/, "");

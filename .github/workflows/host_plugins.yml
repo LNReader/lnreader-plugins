@@ -3,7 +3,7 @@ name: Host Plugins
 on:
   push:
     branches:
-      - master
+      - beta
 
 jobs:
   host:
