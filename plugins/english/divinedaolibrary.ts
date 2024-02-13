@@ -65,6 +65,7 @@ class DDLPlugin implements Plugin.PluginBase {
             cover: 
             loadedCheerio(".entry-content").find("img").attr("data-ezsrc") ||
             defaultCover,
+            chapters: [],
         };
 
         novel.summary = loadedCheerio("#main > article > div > p:nth-child(6)")

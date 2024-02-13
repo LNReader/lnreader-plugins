@@ -69,6 +69,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
             name: loadedCheerio(".book > img").attr("alt") || 'Untitled',
             cover: this.site + loadedCheerio(".book > img").attr("src"),
             summary: loadedCheerio(".desc-text").text().trim(),
+            chapters: [],
         };
 
         loadedCheerio(".info > div").each((i,el) => {
