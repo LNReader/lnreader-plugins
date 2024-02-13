@@ -67,11 +67,9 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
         const novel: Plugin.SourceNovel = {
             path: novelPath,
             name: loadedCheerio(".book > img").attr("alt") || 'Untitled',
+            cover: this.site + loadedCheerio(".book > img").attr("src"),
+            summary: loadedCheerio(".desc-text").text().trim(),
         };
-
-        novel.cover = this.site + loadedCheerio(".book > img").attr("src");
-
-        novel.summary = loadedCheerio(".desc-text").text().trim();
 
         loadedCheerio(".info > div").each((i,el) => {
         	const detailName = loadedCheerio(el).find("h3").text();
