@@ -100,15 +100,39 @@ class Genesis implements Plugin.PluginBase {
                         .text()
                         .trim();
             
-                    if (!releaseDate) return;
-            
-                    chapter.push({
-                        name: chapterName,
 
-                        releaseTime: dayjs(releaseDate).toISOString(),
+                        if (!releaseDate) return;
+                        const months = [
+                            "jan",
+                            "feb",
+                            "mar",
+                            "apr",
+                            "may",
+                            "jun",
+                            "jul",
+                            "aug",
+                            "sep",
+                            "oct",
+                            "nov",
+                            "dec",
+                        ];
+                        const rx = new RegExp(
+                            `(${months.join("|")}).*? (\\d{1,2}).*?(\\d{4})`,
+                            "i"
+                        ).exec(releaseDate);
+                        if (!rx) return;
+                        const year = +rx[3];
+                        const month = months.indexOf(rx[1].toLowerCase());
+                        const day = +rx[2];
+        
+                        if (month < 0) return;
+        
+                        chapter.push({
+                            name: chapterName,
+                            releaseTime: new Date(year, month, day).toISOString(),
+                            url: chapterUrl,
+                        });
 
-                        url: chapterUrl,
-                    });
                 });
             novel.chapters = chapter.reverse();
         return novel;

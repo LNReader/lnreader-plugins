@@ -68,8 +68,9 @@ class Smakolykytl implements Plugin.PluginBase {
       volume?.chapters?.forEach((chapter) =>
         chapters.push({
           name: volume.title + " " + chapter.title,
+          path: "read/" + chapter.id,,
           releaseTime: dayjs(chapter.modifiedAt).format("LLL"),
-          path: "read/" + chapter.id,
+          chapterNumber: chapters.length + 1,
         }),
       ),
     );

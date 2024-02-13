@@ -74,7 +74,7 @@ class Bookriver implements Plugin.PluginBase {
           name: chapter.name,
           path: "/reader/" + book?.slug + "/" + chapter.chapterId,
           releaseTime: dayjs(
-            chapter?.firstPublishedAt || chapter.createdAt,
+            chapter.firstPublishedAt || chapter.createdAt || undefined,
           ).format("LLL"),
           chapterNumber: chapterIndex + 1,
         });
