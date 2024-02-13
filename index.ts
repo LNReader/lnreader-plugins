@@ -99,6 +99,28 @@ app.post("/parseNovel/", async (req, res) => {
         res.json({ error: String(err) });
     }
 });
+app.post("/hasParsePage", async (req, res) => {
+    try {
+        const parsePage = await pluginApi.hasParsePage(
+            req.body["pluginRequirePath"]
+        )
+        res.json({ hasParsePage: parsePage !== undefined });
+    } catch (err: unknown) {
+        res.json({ hasParsePage: false });
+    }
+});
+app.post("/parsePage/", async (req, res) => {
+    try {
+        const sourcePage = await pluginApi.parsePage(
+            req.body["pluginRequirePath"],
+            req.body["novelPath"],
+            req.body["page"]
+        );
+        res.json(sourcePage);
+    } catch (err: unknown) {
+        res.json({ error: String(err) });
+    }
+});
 app.post("/parseChapter/", async (req, res) => {
     try {
         const chapterText = await pluginApi.parseChapter(

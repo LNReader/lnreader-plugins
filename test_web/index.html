@@ -157,7 +157,7 @@
             </accordion-box>
             <accordion-box id="parseNovel" collapsed>
                 <accordion-header>
-                    parseNovel
+                    parseNovel (and first page)
                 </accordion-header>
                 <accordion-content>
                     <div class="input-group">
@@ -172,6 +172,32 @@
                     </div>
                     <div class="parsed-novel-info">
                         <div class="novel-item">
+                        </div>
+                        <div class="chapter-list-container">
+                            <div class="chapter-list">
+                            </div>
+                        </div>
+                    </div>
+                </accordion-content>
+            </accordion-box>
+            <accordion-box id="parsePage" class="d-none" collapsed>
+                <accordion-header>
+                    parsePage
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <input type="text" class="form-control w-75" placeholder="novel path" id="parse-page-novel-path">
+                        <input type="text" class="form-control w-25" placeholder="page" id="parse-page-index">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary parsePage-btn" type="button"
+                                id="parse-page-btn">fetch</button>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="parsed-page-info">
+                        <div class="latest-chapter-item">
                         </div>
                         <div class="chapter-list-container">
                             <div class="chapter-list">
