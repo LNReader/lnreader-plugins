@@ -196,8 +196,12 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
-    const chapterText = $(".epcontent p").map((i, el) => $(el)).toArray().join("\n") || "";
-    return chapterText;
+    if (this.id == "kolnovel") {
+      let ignore = $("article > style").text().trim().split(",");  
+      ignore.push(...(ignore.pop()?.match(/^\.\w+/) || []));  
+      ignore.map((tag) => $(`p${tag}`).remove());
+    }
+    return $(".epcontent p").map((i, el) => $(el)).toArray().join("\n") || "";
   }
 
   async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
