@@ -10,6 +10,10 @@ class LnMTLPlugin implements Plugin.PluginBase {
     site = "https://lnmtl.com/";
     version = "1.0.0";
 
+    async sleep (ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
     async popularNovels(
         page: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
@@ -28,17 +32,17 @@ class LnMTLPlugin implements Plugin.PluginBase {
         const loadedCheerio = parseHTML(body);
         const novels: Plugin.NovelItem[] = [];
 
-        loadedCheerio(".media").each(function () {
-            const novelName = loadedCheerio(this).find("h4").text();
-            const novelCover = loadedCheerio(this).find("img").attr("src");
-            const novelUrl = loadedCheerio(this).find("h4 > a").attr("href");
+        loadedCheerio(".media").each((i,el) => {
+            const novelName = loadedCheerio(el).find("h4").text();
+            const novelCover = loadedCheerio(el).find("img").attr("src");
+            const novelUrl = loadedCheerio(el).find("h4 > a").attr("href");
 
             if (!novelUrl) return;
 
             const novel = {
                 name: novelName,
                 cover: novelCover,
-                url: novelUrl,
+                path: novelUrl.replace(this.site, ''),
             };
 
             novels.push(novel);
@@ -47,23 +51,29 @@ class LnMTLPlugin implements Plugin.PluginBase {
         return novels;
     };
 
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const url = novelUrl;
-        const result = await fetchApi(url);
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & {totalPages: number}> {
+        const result = await fetchApi(this.site + novelPath);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
 
-        const novel: Plugin.SourceNovel = {
-            url,
+        let volumes = JSON.parse(
+            loadedCheerio("main")
+                .next()
+                .html()
+                ?.match(/lnmtl.volumes = \[(.*?)\]/)![0]
+                ?.replace("lnmtl.volumes = ", "") || ""
+        );
+        volumes = volumes.map((volume: { id: number; }) => volume.id);
+
+        const novel: Plugin.SourceNovel & {totalPages: number} = {
+            path: novelPath,
+            name: loadedCheerio(".novel-name").text() || 'Untitled',
+            cover: loadedCheerio("div.novel").find("img").attr("src"),
+            summary: loadedCheerio("div.description").text().trim(),
+            totalPages: volumes.length,
             chapters: [],
         };
-
-        novel.name = loadedCheerio(".novel-name").text();
-
-        novel.cover = loadedCheerio("div.novel").find("img").attr("src");
-
-        novel.summary = loadedCheerio("div.description").text().trim();
 
         loadedCheerio(".panel-body > dl").each(function () {
             const detailName = loadedCheerio(this).find("dt").text().trim();
@@ -86,52 +96,61 @@ class LnMTLPlugin implements Plugin.PluginBase {
             .toArray()
             .join(",");
 
-        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-        let volumes = JSON.parse(
+        return novel;
+    };
+
+    async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+        const result = await fetchApi(this.site + novelPath);
+        const body = await result.text();
+
+        const loadedCheerio = parseHTML(body);
+
+        const volumes = JSON.parse(
             loadedCheerio("main")
                 .next()
                 .html()
                 ?.match(/lnmtl.volumes = \[(.*?)\]/)![0]
                 ?.replace("lnmtl.volumes = ", "") || ""
-        );
+        )[+page-1];
 
         const chapter: Plugin.ChapterItem[] = [];
-
-        volumes = volumes.map((volume: { id: number; }) => volume.id);
-
-        for (const volume of volumes) {
-            const volumeData = await fetchApi(
-                `${this.site}chapter?page=1&volumeId=${volume}`
+        await this.sleep(1000);
+        const volumeData = await fetchApi(
+                `${this.site}chapter?page=1&volumeId=${volumes.id}`
             );
-            const volumePage = await volumeData.json();
+        const volumePage = await volumeData.json();
+        const firstPage = volumePage.data.map(
+            (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
+                page: `Volume ${volumes.number} - ${volumes.title}`,
+                name: `#${chapter.number} ${chapter.title}`,
+                path: `chapter/${chapter.slug}`,
+                releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
+        }))
+        chapter.push(...firstPage);
 
-            // volumeData = volumeData.data.map((volume) => volume.slug);
+        for (let i = 2; i <= volumePage.last_page; i++) {
+            await this.sleep(1000);
+            const chapterData = await fetchApi(
+                `${this.site}chapter?page=${i}&volumeId=${volumes.id}`
+            );
+            const chapterInfo = await chapterData.json();
 
-            for (let i = 1; i <= volumePage.last_page; i++) {
-                const chapterData = await fetchApi(
-                    `${this.site}chapter?page=${i}&volumeId=${volume}`
-                );
-                const chapterInfo = await chapterData.json();
+            const chapterDetails = chapterInfo.data.map(
+            (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
+                page: `Volume ${volumes.number} - ${volumes.title}`,
+                name: `#${chapter.number} ${chapter.title}`,
+                path: `chapter/${chapter.slug}`,
+                releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
+            }));
 
-                const chapterDetails = chapterInfo.data.map(
-                (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
-                    name: `#${chapter.number} ${chapter.title}`,
-                    url: `${this.site}chapter/${chapter.slug}`,
-                    releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
-                }));
-
-                chapter.push(...chapterDetails);
-            }
-            await delay(1000);
+            chapter.push(...chapterDetails);
         }
+        const chapters = chapter;
+        return {chapters};
+    }
 
-        novel.chapters = chapter;
-
-        return novel;
-    };
-
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetchApi(chapterUrl);
+    async parseChapter(chapterPath: string): Promise<string> {
+        const result = await fetchApi(this.site + chapterPath);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -171,11 +190,11 @@ class LnMTLPlugin implements Plugin.PluginBase {
         const novels: Plugin.NovelItem[] = [];
         nov.map((res: { name: string; slug: string; image: string; }) => {
             const novelName = res.name;
-            const novelUrl = `${this.site}novel/${res.slug}`;
+            const novelUrl = `novel/${res.slug}`;
             const novelCover = res.image;
 
             const novel = {
-                url: novelUrl,
+                path: novelUrl,
                 name: novelName,
                 cover: novelCover,
             };

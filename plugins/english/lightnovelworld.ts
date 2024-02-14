@@ -4,12 +4,12 @@ import { Plugin } from "@typings/plugin";
 import { Filters, FilterTypes } from "@libs/filterInputs";
 import dayjs from "dayjs";
 
-class LightNovelPub implements Plugin.PluginBase {
-    id = "lightnovelpub";
-    name = "LightNovelPub";
+class LightNovelWorld implements Plugin.PluginBase {
+    id = "lightnovelworld";
+    name = "LightNovelWorld";
+    site = "https://www.webnovelworld.org/";
     version = "1.0.0";
-    icon = "src/en/lightnovelpub/icon.png";
-    site = "https://www.lightnovelpub.com/";
+    icon = "src/en/lightnovelworld/icon.png";
     headers = {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -248,4 +248,4 @@ class LightNovelPub implements Plugin.PluginBase {
     } satisfies Filters;
 }
 
-export default new LightNovelPub();
+export default new LightNovelWorld();
