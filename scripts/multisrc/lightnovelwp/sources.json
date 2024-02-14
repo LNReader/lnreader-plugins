@@ -115,5 +115,14 @@
       "lang": "English",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "centralnovel",
+    "sourceSite": "https://centralnovel.com/",
+    "sourceName": "Central Novel",
+    "options": {
+      "lang": "Portuguese",
+      "reverseChapters": true
+    }
   }
 ]
