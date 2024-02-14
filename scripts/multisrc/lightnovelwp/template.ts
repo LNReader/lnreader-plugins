@@ -47,8 +47,9 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     if (!r.ok && search != true) throw new Error("You got banned ? (check in webview)");
     const body = await r.text();
     const $ = load(body);
+    const title = $("title").text().trim();
     if (this.getHostname(url) != this.getHostname(r.url) ||
-      $("title").text().trim() == "Bot Verification")
+      title == "Bot Verification" || title == "You are being redirected...")
       throw new Error("Captcha error, please open in webview");
 
     return ($);

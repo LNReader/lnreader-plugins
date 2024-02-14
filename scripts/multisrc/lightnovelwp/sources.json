@@ -106,5 +106,14 @@
       "lang": "English",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "novelsknight",
+    "sourceSite": "https://novelsknight.com/",
+    "sourceName": "NovelsKnight",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
+    }
   }
 ]
