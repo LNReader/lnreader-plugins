@@ -106,8 +106,29 @@ class BLN implements Plugin.PluginBase {
                 .find("span:last")
                 .text()
                 .trim();
-            const chapterUrl = loadedCheerio(el).find("a").attr("href");
 
+            const months = [
+                "jan",
+                "feb",
+                "mar",
+                "apr",
+                "may",
+                "jun",
+                "jul",
+                "aug",
+                "sep",
+                "oct",
+                "nov",
+                "dec",
+            ].join("|");
+            const rx = new RegExp(`(${months})-(\\d{2})-(\\d{2})`,'i')
+                .exec(releaseDate);
+            if (!rx) return;
+            const year = 2000 + +rx[3];
+            const month = months.indexOf(rx[1].toLowerCase());
+            const day = +rx[2];
+
+            const chapterUrl = loadedCheerio(el).find("a").attr("href");
             if (!chapterUrl) {
                 // TODO: Handle error
                 console.error("No chapter url!");
@@ -116,7 +137,7 @@ class BLN implements Plugin.PluginBase {
 
             chapter.push({
                 name: chapterName,
-                releaseTime: releaseDate,
+                releaseTime: new Date(year, month, day).toISOString(),
                 path: chapterUrl.replace(this.site, ''),
             });
         });

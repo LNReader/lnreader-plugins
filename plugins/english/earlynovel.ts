@@ -2,7 +2,6 @@ import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
-import { defaultCover } from "@libs/defaultCover";
 
 class EarlyNovelPlugin implements Plugin.PluginBase {
     id = "earlynovel";
@@ -34,7 +33,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
                 });
             }
         );
-    
         return novels;
     };
 
@@ -45,7 +43,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
                 .find(".chapter-text")
                 .text()
                 .trim();
-            const releaseDate = null;
             const chapterUrl = loadedCheerio(el)
                 .find("a")
                 .attr("href")
@@ -54,7 +51,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
 
             chapter.push({
                 name: chapterName,
-                releaseTime: releaseDate,
                 path: chapterUrl
             })});
         return chapter;
@@ -125,7 +121,7 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
 
     async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
         const url = this.site + novelPath + '?page=' + page;
-        const body = await fetch(url).then((res) => res.text());
+        const body = await fetchApi(url).then((res) => res.text());
         const loadedCheerio = parseHTML(body);
         await this.sleep(1000);
         const chapters = this.parseChapters(loadedCheerio);
@@ -148,8 +144,7 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
         pageNo: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}search?keyword=${searchTerm}`;
-        const headers = new Headers();
-        const result = await fetchApi(url, { headers });
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
