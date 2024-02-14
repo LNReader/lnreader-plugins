@@ -107,7 +107,7 @@ class freedlit implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}/search?query=${searchTerm}&type=all`;
+    const url = this.site + "/search?query=" + searchTerm + "&type=all";
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 

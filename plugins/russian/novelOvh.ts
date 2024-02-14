@@ -9,7 +9,7 @@ class novelOvh implements Plugin.PluginBase {
   name = "НовелОВХ";
   site = "https://novel.ovh";
   version = "1.0.0";
-  icon = "src/ru/novelOvh/icon.png";
+  icon = "src/ru/novelovh/icon.png";
 
   async popularNovels(
     pageNo: number,

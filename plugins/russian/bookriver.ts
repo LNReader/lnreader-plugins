@@ -19,7 +19,7 @@ class Bookriver implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + `/genre?page=${pageNo}&perPage=24&sortingType=`;
+    let url = this.site + "/genre?page=" + pageNo + "&perPage=24&sortingType=";
     url += showLatestNovels
       ? "last-update"
       : filters?.sort?.value || "bestseller";
@@ -101,7 +101,9 @@ class Bookriver implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `https://api.bookriver.ru/api/v1/search/autocomplete?keyword=${searchTerm}&page=${pageNo}&perPage=10`;
+    const url =
+      "https://api.bookriver.ru/api/v1/search/autocomplete?keyword=" + searchTerm +
+      "&page=" + pageNo + "&perPage=10";
     const result = await fetchApi(url);
     const json = (await result.json()) as responseSearch;
 

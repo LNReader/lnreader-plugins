@@ -103,7 +103,7 @@ class ReN implements Plugin.PluginBase {
     const chapterResult = await fetchApi(
       this.site +
         "/api/titles/chapters/?branch_id=" + cache[novelID] +
-        "&count=100&page=" + (parseInt(page, 10) + 1),
+        "&ordering=index&count=100&page=" + page,
     );
     const volumes = (await chapterResult.json()) as { content: responseСhapters[]; };
 
@@ -114,17 +114,17 @@ class ReN implements Plugin.PluginBase {
             "Том " + chapter.tome +
             " Глава " + chapter.chapter +
               (chapter.name ? " " + chapter.name.trim() : ""),
-          path: `/novel/${novelID}/${chapter.id}/`,
+          path: "/novel/" + novelID "/" + chapter.id,
           releaseTime: dayjs(chapter.upload_date).format("LLL"),
           chapterNumber: chapter.index,
         });
       }
     });
-    return { chapters: chapters.reverse() };
+    return { chapters };
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[3];
+    const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[2];
     const result = await fetchApi(url);
     const body = (await result.json()) as { content: responseСhapter };
 

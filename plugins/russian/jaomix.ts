@@ -128,7 +128,9 @@ class Jaomix implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd&gpage=${pageNo}`;
+    const url =
+      this.site + "/?searchrn=" + searchTerm +
+      "&but=Поиск по названию&sortby=upd&gpage=" + pageNo;
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
