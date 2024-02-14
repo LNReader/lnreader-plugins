@@ -9,7 +9,7 @@
     }
   },
   {
-    "id": "kol-novel",
+    "id": "kolnovel",
     "sourceSite": "https://kolnovel.me/",
     "sourceName": "ملوك الروايات",
     "options": {
@@ -27,7 +27,7 @@
     }
   },
   {
-    "id": "baca-lightnovel",
+    "id": "bacalightnovel",
     "sourceSite": "https://bacalightnovel.co/",
     "sourceName": "Baca Light Novel",
     "options": {
@@ -81,7 +81,7 @@
     }
   },
   {
-    "id": "noble-mtl",
+    "id": "noblemtl",
     "sourceSite": "https://noblemtl.com/",
     "sourceName": "NobleMTL",
     "options": {
@@ -90,12 +90,21 @@
     }
   },
   {
-    "id": "genesis-tls",
+    "id": "genesistls",
     "sourceSite": "https://genesistls.com/",
     "sourceName": "GenesisTls",
     "options": {
       "lang": "English",
       "reverseChapters": false
+    }
+  },
+  {
+    "id": "pandamtl",
+    "sourceSite": "https://pandamtl.com/",
+    "sourceName": "PandaMTL",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
     }
   }
 ]
