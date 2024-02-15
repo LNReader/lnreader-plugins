@@ -47,7 +47,7 @@ class Bookriver implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(novelPath).then((res) => res.text());
+    const result = await fetchApi(this.site + novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(result);
 
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();

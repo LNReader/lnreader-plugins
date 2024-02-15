@@ -6,7 +6,6 @@ import { defaultCover } from "@libs/defaultCover";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 const includesAny = (str: string, keywords: string[]) =>
   new RegExp(keywords.join("|")).test(str);
 

@@ -60,7 +60,7 @@ class freedlit implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(novelPath).then((res) => res.text());
+    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {

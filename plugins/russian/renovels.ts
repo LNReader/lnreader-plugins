@@ -4,6 +4,8 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
 class ReN implements Plugin.PluginBase {
   id = "ReN";
   name = "Renovels";
@@ -78,15 +80,18 @@ class ReN implements Plugin.PluginBase {
       novel.genres = tags.join(",");
     }
 
-    const all = body.content.count_chapters / 100 + 1;
+    const totalPages =
+      (body.content.branches?.[0]?.count_chapters ||
+        body.content.count_chapters) / 100;
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
-    for (let i = 0; i < all; i++) {
+    for (let page = 0; page < totalPages; page++) {
+      await delay(1000);
       const chapterResult = await fetchApi(
         this.site +
           "/api/titles/chapters/?branch_id=" + branch_id +
-          "&count=100&page=" + (i + 1),
+          "&count=100&page=" + (page + 1),
       );
       const volumes = (await chapterResult.json()) as {
         content: responseСhapters[];
@@ -112,7 +117,7 @@ class ReN implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[2];
+    const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[3];
     const result = await fetchApi(url);
     const body = (await result.json()) as { content: responseСhapter };
 
