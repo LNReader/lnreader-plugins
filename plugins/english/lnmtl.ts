@@ -19,7 +19,6 @@ class LnMTLPlugin implements Plugin.PluginBase {
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {    
         let link = this.site + "novel?";
-
         link += `orderBy=${filters.order.value}`;
         link += `&order=${filters.sort.value}`;
         link += `&filter=${filters.storyStatus.value}`;
@@ -114,15 +113,22 @@ class LnMTLPlugin implements Plugin.PluginBase {
         )[+page-1];
 
         const chapter: Plugin.ChapterItem[] = [];
+        interface ChapterEntry {
+            number: number;
+            title: string;
+            slug: string;
+            created_at: string;
+        }
+
         await this.sleep(1000);
         const volumeData = await fetchApi(
-                `${this.site}chapter?page=1&volumeId=${volumes.id}`
-            );
+            `${this.site}chapter?volumeId=${volumes.id}`
+        );
         const volumePage = await volumeData.json();
         const firstPage = volumePage.data.map(
-            (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
+            (chapter: ChapterEntry) => ({
                 page: `Volume ${volumes.number} - ${volumes.title}`,
-                name: `#${chapter.number} ${chapter.title}`,
+                name: `#${chapter.number} - ${chapter.title}`,
                 path: `chapter/${chapter.slug}`,
                 releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
         }))
@@ -136,7 +142,7 @@ class LnMTLPlugin implements Plugin.PluginBase {
             const chapterInfo = await chapterData.json();
 
             const chapterDetails = chapterInfo.data.map(
-            (chapter: { number: number; title: string; slug: string; created_at: string; }) => ({
+            (chapter: ChapterEntry) => ({
                 page: `Volume ${volumes.number} - ${volumes.title}`,
                 name: `#${chapter.number} ${chapter.title}`,
                 path: `chapter/${chapter.slug}`,
