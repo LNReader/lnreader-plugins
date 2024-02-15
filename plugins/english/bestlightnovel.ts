@@ -121,7 +121,7 @@ class BLN implements Plugin.PluginBase {
                 "nov",
                 "dec",
             ].join("|");
-            const rx = new RegExp(`(${months})-(\\d{2})-(\\d{2})`,'i')
+            const rx = new RegExp(`(${months})-(\\d{1,2})-(\\d{2})`,'i')
                 .exec(releaseDate);
             if (!rx) return;
             const year = 2000 + +rx[3];

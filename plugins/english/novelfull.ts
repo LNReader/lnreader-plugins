@@ -84,6 +84,7 @@ class NovelFull implements Plugin.PluginBase {
             .join(",");
 
         const novelId = loadedCheerio("#rating").attr("data-novel-id")!;
+        const chapter: Plugin.ChapterItem[] = [];
 
         const getChapters = async (id: string) => {
             const chapterListUrl = this.site + "ajax/chapter-option?novelId=" + id;
@@ -92,8 +93,6 @@ class NovelFull implements Plugin.PluginBase {
             const chapterlist = await data.text();
 
             loadedCheerio = parseHTML(chapterlist);
-
-            const chapter: Plugin.ChapterItem[] = [];
 
             loadedCheerio("select > option").each(function () {
                 const chapterName = loadedCheerio(this).text();
