@@ -5,12 +5,12 @@ import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
-const statusKey = [
-  NovelStatus.Ongoing,
-  NovelStatus.Completed,
-  NovelStatus.OnHiatus,
-  NovelStatus.Cancelled,
-];
+const statusKey: { [key: number]: string } = {
+  1: NovelStatus.Ongoing,
+  2: NovelStatus.Completed,
+  3: NovelStatus.OnHiatus,
+  4: NovelStatus.Cancelled,
+};
 
 class RLIB implements Plugin.PluginBase {
   id = "RLIB";
@@ -30,6 +30,7 @@ class RLIB implements Plugin.PluginBase {
     let url = this.site + "/manga-list?sort=";
     url += showLatestNovels ? "last_chapter_at" : filters?.sort?.value || "rate";
     url += "&dir=" + (filters?.order?.value || "desc");
+    url += "&chapters[min]=" + (filters?.require_chapters?.value ? "1" : "0");
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
       if (value instanceof Array && value.length) {
@@ -71,7 +72,7 @@ class RLIB implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio(".media-name__main").text()?.trim?.(),
+      name: loadedCheerio(".media-name__main").text()?.trim?.() || "",
     };
     novel.cover = loadedCheerio(".container_responsive img").attr("src");
 
@@ -115,7 +116,7 @@ class RLIB implements Plugin.PluginBase {
           chaptersJson.manga.engName ||
           chaptersJson.manga.name;
       novel.status =
-        statusKey[chaptersJson.manga.status - 1] || NovelStatus.Unknown;
+        statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
 
       this.ui = chaptersJson?.user?.id;
 
@@ -393,6 +394,11 @@ class RLIB implements Plugin.PluginBase {
         { label: "Якудза", value: "165" },
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
+    },
+    require_chapters: {
+      label: "Только проекты с главами",
+      value: true,
+      type: FilterTypes.Switch,
     },
   } satisfies Filters;
 }

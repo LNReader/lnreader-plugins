@@ -60,9 +60,7 @@ class AuthorToday implements Plugin.PluginBase {
     return novels;
   }
 
-  async parseNovel(
-    novelPath: string,
-  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const workID = novelPath.split("/")[2];
     const result = await fetchApi(`${apiUrl}v1/work/${workID}/details`, {
       headers: {
@@ -71,7 +69,7 @@ class AuthorToday implements Plugin.PluginBase {
     });
 
     const book = (await result.json()) as responseBook;
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: book.title,
       cover: book.coverUrl ? book.coverUrl.split("?")[0] : defaultCover,
@@ -85,8 +83,6 @@ class AuthorToday implements Plugin.PluginBase {
         book.translator ||
         "",
       status: book.isFinished ? NovelStatus.Completed : NovelStatus.Ongoing,
-      totalPages: 1,
-      chapters: [],
     };
 
     if (book.annotation) {
@@ -96,11 +92,6 @@ class AuthorToday implements Plugin.PluginBase {
       novel.summary += "Примечания автора:\n" + book.authorNotes;
     }
 
-    return novel;
-  }
-
-  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const workID = novelPath.split("/")[2];
     const chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
       headers: {
         Authorization: token,
@@ -122,9 +113,9 @@ class AuthorToday implements Plugin.PluginBase {
         });
       }
     });
-    return {
-      chapters,
-    };
+
+    novel.chapters = chapters;
+    return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {

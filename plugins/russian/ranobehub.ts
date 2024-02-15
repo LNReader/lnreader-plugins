@@ -5,6 +5,12 @@ import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
+const statusKey: { [key: number]: string } = {
+  1: NovelStatus.Ongoing,
+  2: NovelStatus.Completed,
+  3: NovelStatus.OnHiatus,
+};
+
 class RNBH implements Plugin.PluginBase {
   id = "RNBH.org";
   name = "RanobeHub";
@@ -68,23 +74,17 @@ class RNBH implements Plugin.PluginBase {
     return novels;
   }
 
-  async parseNovel(
-    novelPath: string,
-  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(this.site + "/api" + novelPath);
     const json = (await result.json()) as { data: responseNovel };
 
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: json.data.names.rus || json.data.names.eng || "",
       cover: json.data.posters.medium,
       summary: json.data.description.trim(),
       author: json.data?.authors?.[0]?.name_eng || "",
-      status: json.data.status.title.includes("процессе")
-        ? NovelStatus.Ongoing
-        : NovelStatus.Completed,
-      totalPages: 1,
-      chapters: [],
+      status: statusKey[json.data.status.id] || NovelStatus.Unknown,
     };
 
     const tags = [json.data.tags.events, json.data.tags.genres]
@@ -96,10 +96,6 @@ class RNBH implements Plugin.PluginBase {
       novel.genres = tags.join(", ");
     }
 
-    return novel;
-  }
-
-  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const chapters: Plugin.ChapterItem[] = [];
     const chaptersRaw = await fetchApi(
       this.site + "/api" + novelPath + "/contents",
@@ -122,7 +118,8 @@ class RNBH implements Plugin.PluginBase {
       )
     );
 
-    return { chapters };
+    novel.chapters = chapters;
+    return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {

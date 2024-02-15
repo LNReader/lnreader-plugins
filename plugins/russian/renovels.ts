@@ -4,8 +4,6 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import dayjs from "dayjs";
 
-const cache: { [key: string]: number } = {}; //branch_id
-
 class ReN implements Plugin.PluginBase {
   id = "ReN";
   name = "Renovels";
@@ -50,14 +48,12 @@ class ReN implements Plugin.PluginBase {
     return novels;
   }
 
-  async parseNovel(
-    novelPath: string,
-  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novelID = novelPath.split("/")[2];
     const result = await fetchApi(this.site + "/api/titles/" + novelID);
     const body = (await result.json()) as { content: responseNovel };
 
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name:
         body.content.main_name ||
@@ -71,8 +67,6 @@ class ReN implements Plugin.PluginBase {
         body.content.status.name === "Продолжается"
           ? NovelStatus.Ongoing
           : NovelStatus.Completed,
-      chapters: [],
-      totalPages: Math.ceil(body.content.count_chapters / 100 + 1),
     };
 
     const tags = [body.content?.genres, body.content?.categories]
@@ -84,43 +78,37 @@ class ReN implements Plugin.PluginBase {
       novel.genres = tags.join(",");
     }
 
+    const all = body.content.count_chapters / 100 + 1;
     const branch_id = body.content.branches?.[0]?.id || body.content.id;
-    cache[novelID] = branch_id;
-
-    return novel;
-  }
-
-  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const novelID = novelPath.split("/")[2];
-    if (!cache[novelID]) {
-      const result = await fetchApi(this.site + "/api/titles/" + novelID);
-      const body = (await result.json()) as { content: responseNovel };
-      cache[novelID] = body.content.branches?.[0]?.id || body.content.id;
-    }
-
     const chapters: Plugin.ChapterItem[] = [];
 
-    const chapterResult = await fetchApi(
-      this.site +
-        "/api/titles/chapters/?branch_id=" + cache[novelID] +
-        "&ordering=index&count=100&page=" + page,
-    );
-    const volumes = (await chapterResult.json()) as { content: responseСhapters[]; };
+    for (let i = 0; i < all; i++) {
+      const chapterResult = await fetchApi(
+        this.site +
+          "/api/titles/chapters/?branch_id=" + branch_id +
+          "&count=100&page=" + (i + 1),
+      );
+      const volumes = (await chapterResult.json()) as {
+        content: responseСhapters[];
+      };
 
-    volumes.content.forEach((chapter) => {
-      if (!chapter.is_paid || chapter.is_bought) {
-        chapters.push({
-          name:
-            "Том " + chapter.tome +
-            " Глава " + chapter.chapter +
-              (chapter.name ? " " + chapter.name.trim() : ""),
-          path: "/novel/" + novelID + "/" + chapter.id,
-          releaseTime: dayjs(chapter.upload_date).format("LLL"),
-          chapterNumber: chapter.index,
-        });
-      }
-    });
-    return { chapters };
+      volumes.content.forEach((chapter) => {
+        if (!chapter.is_paid || chapter.is_bought) {
+          chapters.push({
+            name:
+              "Том " + chapter.tome +
+              " Глава " + chapter.chapter +
+                (chapter.name ? " " + chapter.name.trim() : ""),
+            path: "/novel/" + novelID + "/" + chapter.id,
+            releaseTime: dayjs(chapter.upload_date).format("LLL"),
+            chapterNumber: chapter.index,
+          });
+        }
+      });
+    }
+
+    novel.chapters = chapters.reverse();
+    return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {

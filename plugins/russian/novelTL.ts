@@ -6,6 +6,13 @@ import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 import dayjs from "dayjs";
 
+const statusKey: { [key: string]: string } = {
+  "active": NovelStatus.Ongoing,
+  "completed": NovelStatus.Completed,
+  "freezed": NovelStatus.OnHiatus,
+  "unknown": NovelStatus.Unknown,
+};
+
 class TL implements Plugin.PluginBase {
   id = "TL";
   name = "NovelTL";
@@ -84,9 +91,7 @@ class TL implements Plugin.PluginBase {
         : defaultCover,
       summary: json.data.project?.annotation?.text,
       status:
-        json.data.project?.translationStatus === "active"
-          ? NovelStatus.Ongoing
-          : NovelStatus.Completed,
+        statusKey[json.data.project?.translationStatus || "unknown"] || NovelStatus.Unknown,
     };
 
     const genres = [json.data.project?.tags, json.data.project?.genres]
