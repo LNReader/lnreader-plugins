@@ -160,7 +160,7 @@ class NovelUpdates implements Plugin.PluginBase {
         let chapterText = "";
 
         const result = await fetchApi(
-            chapterPath,
+            this.site + chapterPath,
         );
         const body = await result.text();
 
