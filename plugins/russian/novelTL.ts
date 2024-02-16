@@ -150,7 +150,7 @@ class TL implements Plugin.PluginBase {
         query:
           "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
         variables: {
-          url: decodeURIComponent(chapterPath),
+          url: decodeURI(chapterPath),
         },
       }),
     });
