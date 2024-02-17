@@ -12,8 +12,8 @@ class ReadLiteNovel implements Plugin.PluginBase {
     icon = "src/en/readlitenovel/icon.png";
     site = "https://rln.app";
 
-    parseAgoDate(date: string){ //parseMadaraDate
-        if (date.includes("ago")) {
+    parseAgoDate(date: string | undefined){ //parseMadaraDate
+        if (date?.includes("ago")) {
             const dayJSDate = dayjs(new Date()); // today
             const timeAgo = date.match(/\d+/)?.[0] || "";
             const timeAgoInt = parseInt(timeAgo, 10);

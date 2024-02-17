@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from "cheerio";
-import { fetchFile } from "@libs/fetch";
+import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
@@ -50,7 +50,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
 
         link += `?page=${pageNo}`;
 
-        const result = await fetch(link);
+        const result = await fetchApi(link);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -59,7 +59,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
 
     async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
         const url = this.site + novelPath;
-        const result = await fetch(url);
+        const result = await fetchApi(url);
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
@@ -97,7 +97,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
         const getChapters = async (id: string) => {
             const chaptersUrl = this.site + "/ajax/chapter-option?novelId=" + id;
 
-            const data = await fetch(chaptersUrl);
+            const data = await fetchApi(chaptersUrl);
             const chapters = await data.text();
 
             loadedCheerio = parseHTML(chapters);
@@ -127,7 +127,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
     };
 
     async parseChapter(chapterPath: string): Promise<string> {
-        const result = await fetch(this.site + chapterPath);
+        const result = await fetchApi(this.site + chapterPath);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
@@ -142,7 +142,7 @@ class AllNovelFullPlugin implements Plugin.PluginBase {
         page: number
     ): Promise<Plugin.NovelItem[]> {
         const url = `${this.site}/search?keyword=${searchTerm}&page=${page}`;
-        const result = await fetch(url);
+        const result = await fetchApi(url);
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);

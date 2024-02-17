@@ -3,7 +3,7 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 
-class LnMTLPlugin implements Plugin.PluginBase {
+class LnMTLPlugin implements Plugin.PagePlugin {
     id = "lnmtl";
     name = "LnMTL";
     icon = "src/en/lnmtl/icon.png";

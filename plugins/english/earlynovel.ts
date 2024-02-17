@@ -3,7 +3,7 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 
-class EarlyNovelPlugin implements Plugin.PluginBase {
+class EarlyNovelPlugin implements Plugin.PagePlugin {
     id = "earlynovel";
     name = "Early Novel";
     version = "1.0.0";
@@ -19,7 +19,7 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
                 const novelName = loadedCheerio(el)
                     .find("h3.truyen-title > a")
                     .text();
-                const novelCover = loadedCheerio(el).find("img.cover").attr("src");
+                const novelCover = loadedCheerio(el).find('.lazyimg').attr("data-image");
     
                 if (!novelUrl) return;
                 novels.push({
@@ -68,6 +68,7 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
         const body = await fetchApi(link).then((res) => res.text());
 
         const loadedCheerio = parseHTML(body);
+        console.log(body);
         return this.parseNovels(loadedCheerio);
     }
 
@@ -76,9 +77,9 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
         const body = await result.text();
 
         let loadedCheerio = parseHTML(body);
-        const lastPageStr = loadedCheerio('a:contains("Last ")')
-            .attr("title")
-            ?.match(/(\d+)/g);
+        loadedCheerio('.glyphicon-menu-right').closest('li').remove();
+        const pagenav = loadedCheerio('.page-nav').prev().find('a');
+        const lastPageStr = pagenav.attr('title')?.match(/(\d+)/);
         const lastPage = Number(lastPageStr?.[1] || "0");
 
         const novel: Plugin.SourceNovel & {totalPages: number}= {

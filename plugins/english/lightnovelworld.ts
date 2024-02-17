@@ -4,7 +4,7 @@ import { Plugin } from "@typings/plugin";
 import { Filters, FilterTypes } from "@libs/filterInputs";
 import dayjs from "dayjs";
 
-class LightNovelWorld implements Plugin.PluginBase {
+class LightNovelWorld implements Plugin.PagePlugin {
     id = "lightnovelworld";
     name = "LightNovelWorld";
     site = "https://www.webnovelworld.org/";
@@ -58,7 +58,7 @@ class LightNovelWorld implements Plugin.PluginBase {
         return novels;
     }
 
-    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel & {totalPages: number}> {
         const body = await fetchApi(this.site + novelPath).then((r) => r.text());
 
         const loadedCheerio = parseHTML(body);
