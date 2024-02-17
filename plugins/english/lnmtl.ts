@@ -56,14 +56,13 @@ class LnMTLPlugin implements Plugin.PluginBase {
 
         const loadedCheerio = parseHTML(body);
 
-        let volumes = JSON.parse(
+        const volumes = JSON.parse(
             loadedCheerio("main")
                 .next()
                 .html()
                 ?.match(/lnmtl.volumes = \[(.*?)\]/)![0]
                 ?.replace("lnmtl.volumes = ", "") || ""
         );
-        volumes = volumes.map((volume: { id: number; }) => volume.id);
 
         const novel: Plugin.SourceNovel & {totalPages: number} = {
             path: novelPath,
@@ -127,7 +126,6 @@ class LnMTLPlugin implements Plugin.PluginBase {
         const volumePage = await volumeData.json();
         const firstPage = volumePage.data.map(
             (chapter: ChapterEntry) => ({
-                page: `Volume ${volumes.number} - ${volumes.title}`,
                 name: `#${chapter.number} - ${chapter.title}`,
                 path: `chapter/${chapter.slug}`,
                 releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert
@@ -143,7 +141,6 @@ class LnMTLPlugin implements Plugin.PluginBase {
 
             const chapterDetails = chapterInfo.data.map(
             (chapter: ChapterEntry) => ({
-                page: `Volume ${volumes.number} - ${volumes.title}`,
                 name: `#${chapter.number} ${chapter.title}`,
                 path: `chapter/${chapter.slug}`,
                 releaseTime: new Date (chapter.created_at).toISOString(), //converts time obtained to UTC +0, TODO: Make it not convert

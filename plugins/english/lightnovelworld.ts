@@ -15,10 +15,6 @@ class LightNovelWorld implements Plugin.PluginBase {
         "Content-Type": "application/json",
     };
 
-    async sleep (ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms))
-    }
-
     async popularNovels(
         page: number, 
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
@@ -91,7 +87,6 @@ class LightNovelWorld implements Plugin.PluginBase {
         const url = this.site + novelPath + '/chapters/page-' + page;
         const body = await fetchApi(url).then((res) => res.text());
         const loadedCheerio = parseHTML(body);
-        await this.sleep(1000);
         const chapter: Plugin.ChapterItem[] = [];
         loadedCheerio('.chapter-list li').each(function () {
             const chapterName =

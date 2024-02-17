@@ -5,11 +5,11 @@ import { Plugin } from "@typings/plugin";
 import { Filters, FilterTypes } from "@libs/filterInputs";
 import dayjs from "dayjs";
 
-class LightNovelReader implements Plugin.PluginBase {
-    id = "LNR.org";
-    name = "LightNovelReader";
+class ReadLiteNovel implements Plugin.PluginBase {
+    id = "rln.app";
+    name = "ReadLiteNovel";
     version = "1.0.0";
-    icon = "src/en/lightnovelreader/icon.png";
+    icon = "src/en/readlitenovel/icon.png";
     site = "https://rln.app";
 
     parseAgoDate(date: string){ //parseMadaraDate
@@ -186,4 +186,4 @@ class LightNovelReader implements Plugin.PluginBase {
     } satisfies Filters;
 }
 
-export default new LightNovelReader();
+export default new ReadLiteNovel();

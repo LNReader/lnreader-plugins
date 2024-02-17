@@ -10,10 +10,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
     icon = "multisrc/madara/icons/latestnovel.png";
     site = "https://earlynovel.net/";
 
-    async sleep (ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms))
-    }
-
     parseNovels(loadedCheerio: CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
 
@@ -123,7 +119,6 @@ class EarlyNovelPlugin implements Plugin.PluginBase {
         const url = this.site + novelPath + '?page=' + page;
         const body = await fetchApi(url).then((res) => res.text());
         const loadedCheerio = parseHTML(body);
-        await this.sleep(1000);
         const chapters = this.parseChapters(loadedCheerio);
         return {chapters}
     }
