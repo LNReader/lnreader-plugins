@@ -3,6 +3,7 @@ import { FilterTypes, Filters } from "@libs/filterInputs";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
+import dayjs from "dayjs";
 
 class Jaomix implements Plugin.PluginBase {
   id = "jaomix.ru";
@@ -13,7 +14,10 @@ class Jaomix implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + "/?searchrn";
 
@@ -44,34 +48,33 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each(
-      function () {
-        const name = loadedCheerio(this)
+    loadedCheerio('div[class="block-home"] > div[class="one"]')
+      .each((index, element) => {
+        const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
-        const cover = loadedCheerio(this)
+        const cover = loadedCheerio(element)
           .find('div[class="img-home"] > a > img')
           .attr("src")
           ?.replace("-150x150", "");
-        const url = loadedCheerio(this)
+        const url = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("href");
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, url });
-      },
-    );
+        novels.push({ name, cover, path: url.replace(this.site, "") });
+    });
 
     return novels;
   }
 
-  async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(novelUrl).then((res) => res.text());
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
-      url: novelUrl,
+      path: novelPath,
       name: loadedCheerio('div[class="desc-book"] > h1').text().trim(),
       cover: loadedCheerio('div[class="img-book"] > img').attr("src"),
       summary: loadedCheerio('div[id="desc-tab"]').text().trim(),
@@ -98,16 +101,21 @@ class Jaomix implements Plugin.PluginBase {
       const url = loadedCheerio(element).find("a").attr("href");
       if (!name || !url) return;
 
-      const releaseTime = loadedCheerio(element).find("time").text();
-      chapters.push({ name, url, releaseTime, chapterNumber: totalChapters - chapterIndex });
+      const releaseDate = loadedCheerio(element).find("time").text();
+      chapters.push({
+        name,
+        path: url.replace(this.site, ""),
+        releaseTime: this.parseDate(releaseDate),
+        chapterNumber: totalChapters - chapterIndex,
+      });
     });
 
     novel.chapters = chapters.reverse();
     return novel;
   }
 
-  async parseChapter(chapterUrl: string): Promise<string> {
-    const body = await fetchApi(chapterUrl).then((res) => res.text());
+  async parseChapter(chapterPath: string): Promise<string> {
+    const body = await fetchApi(this.site + chapterPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div[class="adblock-service"]').remove();
@@ -120,32 +128,58 @@ class Jaomix implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}/?searchrn=${searchTerm}&but=Поиск по названию&sortby=upd&gpage=${pageNo}`;
+    const url =
+      this.site + "/?searchrn=" + searchTerm +
+      "&but=Поиск по названию&sortby=upd&gpage=" + pageNo;
     const body = await fetchApi(url).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('div[class="block-home"] > div[class="one"]').each(
-      function () {
-        const name = loadedCheerio(this)
+    loadedCheerio('div[class="block-home"] > div[class="one"]')
+      .each((index, element) => {
+        const name = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("title");
-        const cover = loadedCheerio(this)
+        const cover = loadedCheerio(element)
           .find('div[class="img-home"] > a > img')
           .attr("src")
           ?.replace("-150x150", "");
-        const url = loadedCheerio(this)
+        const url = loadedCheerio(element)
           .find('div[class="img-home"] > a')
           .attr("href");
 
         if (!name || !url) return;
 
-        novels.push({ name, cover, url });
-      },
-    );
+        novels.push({ name, cover, path: url.replace(this.site, "") });
+      });
 
     return novels;
   }
+
+  parseDate = (dateString: string | undefined = "") => {
+    const months: { [key: string]: number } = {
+      Янв: 1,
+      Фев: 2,
+      Мар: 3,
+      Апр: 4,
+      Май: 5,
+      Июн: 6,
+      Июл: 7,
+      Авг: 8,
+      Сен: 9,
+      Окт: 10,
+      Ноя: 11,
+      Дек: 12,
+    };
+
+    const [time, day, month, year] = dateString.split(" ");
+    if (time && day && months[month] && year) {
+      return dayjs(year + "-" + months[month] + "-" + day + " " + time).format("LLL");
+    }
+
+    return dateString || null;
+  };
+
   fetchImage = fetchFile;
 
   filters = {
