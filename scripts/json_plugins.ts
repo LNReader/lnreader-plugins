@@ -44,6 +44,7 @@ if (!fs.existsSync(path.join(outRoot, ".dist"))) {
 }
 const jsonPath = path.join(outRoot, ".dist", "plugins.json");
 const jsonMinPath = path.join(outRoot, ".dist", "plugins.min.json");
+const terserCfg = path.join(outRoot, "terser.json");
 const pluginSet = new Set();
 
 for (let language in languages) {
@@ -79,7 +80,7 @@ for (let language in languages) {
       pluginSet.add(id);
     }
     const pluginPath = path.join(langPath, plugin);
-    execSync(`jsmin -l 3 --overwrite ${pluginPath}`);
+    execSync(`terser ${pluginPath} --config-file ${terserCfg} -o ${pluginPath}`);
     json[language].push(info);
     console.log(name, "✅");
   });

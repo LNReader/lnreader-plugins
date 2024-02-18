@@ -1,0 +1,15 @@
+{
+  "parse": "bare_returns",
+  "compress": {
+    "booleans_as_integers": true
+  },
+  "mangle": {},
+  "ecma": 5,
+  "enclose": false,
+  "keep_classnames": false,
+  "keep_fnames":false,
+  "ie8": false,
+  "module": true,
+  "safari10": false,
+  "toplevel": true
+}
