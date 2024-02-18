@@ -133,7 +133,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async searchNovels(key_search: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.site + "/search", {
+    const result = await fetchApi(this.apiSite + "/search", {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
         Referer: this.site,
