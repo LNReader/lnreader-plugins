@@ -78,7 +78,8 @@ for (let language in languages) {
     } else {
       pluginSet.add(id);
     }
-
+    const pluginPath = path.join(langPath, plugin);
+    execSync(`jsmin -l 3 --overwrite ${pluginPath}`);
     json[language].push(info);
     console.log(name, "✅");
   });
