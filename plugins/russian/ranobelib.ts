@@ -173,7 +173,7 @@ class RLIB implements Plugin.PluginBase {
       novels.push({
         name: novel.rus_name || novel.name,
         cover: novel.coverImage,
-        path: novel.slug,
+        path: "/" + novel.slug,
       }),
     );
 
