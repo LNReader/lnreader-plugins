@@ -110,17 +110,24 @@ class RLIB implements Plugin.PluginBase {
       const chaptersJson: responseBook = JSON.parse(chaptersRaw[1]);
       const totalChapters = chaptersJson.chapters.list?.length || 0;
 
-      novel.name = novel.name
-        ? novel.name
-        : chaptersJson.manga.rusName ||
+      if (!novel.name) {
+        novel.name =
+          chaptersJson.manga.rusName ||
           chaptersJson.manga.engName ||
           chaptersJson.manga.name;
-      novel.status =
-        statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
-
+      }
+      novel.status = statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
       this.ui = chaptersJson?.user?.id;
 
-      chaptersJson.chapters?.list?.forEach((chapter, chapterIndex) =>
+      const customPage: { [key: number]: string } = {};
+      chaptersJson.chapters.branches?.forEach(({ teams, id }) => {
+        if (teams?.length) {
+          customPage[id || 0] =
+            teams.find((team) => team.is_active)?.name || teams[0].name;
+        }
+      });
+
+      chaptersJson.chapters.list?.forEach((chapter, chapterIndex) =>
         chapters.push({
           name:
             "Том " + chapter.chapter_volume +
@@ -133,6 +140,7 @@ class RLIB implements Plugin.PluginBase {
             "?bid=" + (chapter.branch_id || ""),
           releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
           chapterNumber: totalChapters - chapterIndex,
+          page: customPage[chapter.branch_id || 0] || "",
         }),
       );
       novel.chapters = chapters.reverse();
