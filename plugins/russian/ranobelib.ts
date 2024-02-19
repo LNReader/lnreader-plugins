@@ -133,7 +133,7 @@ class RLIB implements Plugin.PluginBase {
         //fixes the chapter's position.
         chaptersJson.chapters.list.forEach((chapter) => {
           customOrder[chapter.branch_id || 0] =
-            (customOrder[chapter.branch_id || 0] || 1) + 1;
+            (customOrder[chapter.branch_id || 0] || 0) + 1;
           chapter.index = customOrder[chapter.branch_id || 0];
         });
       };
