@@ -3,7 +3,6 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters, FilterTypes } from "@libs/filterInputs";
 
-
 class NovelFull implements Plugin.PluginBase {
     id = "novelfull";
     name = "NovelFull";

@@ -34,37 +34,40 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
         page: number,
         { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {  
-        let link = `${this.site}`;
-        if (showLatestNovels)
-            link += "latest-series/"
-        else // if (filters.genres.value.include?.length ||
-                 // filters.genres.value.exclude?.length)
-            link += "series-finder/?sf=1"
-        // else
-            // link += "series-ranking/";
-        // TODO, series-ranking filters when hideOnSelect come out
+        let link = this.site;
 
-        if (filters.genres.value.include?.length)
-            link += '&gi=' + filters.genres.value.include.join(',');
+        const filterConditions = [
+            { check: (filters.genres.value.include?.length || 0) > 0, param: 'gi', value: filters.genres.value.include },
+            { check: (filters.genres.value.include?.length || 0) > 0, param: 'mgi', value: filters.genre_operator.value },
+            { check: (filters.genres.value.exclude?.length || 0) > 0, param: 'ge', value: filters.genres.value.exclude },
+            { check: (filters.content_warning.value.include?.length || 0) > 0, param: 'cti', value: filters.content_warning.value.include },
+            { check: (filters.content_warning.value.include?.length || 0) > 0, param: 'mct', value: filters.content_warning_operator.value },
+            { check: (filters.content_warning.value.exclude?.length || 0) > 0, param: 'cte', value: filters.content_warning.value.exclude },
+            { check: filters.storyStatus.value !== '', param: 'cp', value: filters.storyStatus.value }
+        ];
 
-        if (filters.genres.value.exclude?.length)
-            link += '&ge=' + filters.genres.value.exclude.join(',');
+        if (filterConditions.some(condition => condition.check)) {
+            link += "series-finder/?sf=1";
+            link += filterConditions
+                .filter(condition => condition.check)
+                .map(condition => {
+                    const filterValueString =
+                        Array.isArray(condition.value)
+                            ? condition.value.join(',')
+                            : condition.value;
+                    return `&${condition.param}=${filterValueString}`;
+                })
+                .join('');
 
-        if (filters.genres.value.include?.length || filters.genres.value.exclude?.length)
-            link += '&mgi=' + filters.genre_operator.value;
-
-        if (filters.content_warning.value.include?.length)
-            link += '&cti=' + filters.content_warning.value.include.join(',');
-
-        if (filters.content_warning.value.exclude?.length)
-            link += '&cte=' + filters.content_warning.value.exclude.join(',');
-
-        if (filters.content_warning.value.include?.length ||
-            filters.content_warning.value.exclude?.length)
-            link += '&mct' + filters.content_warning_operator.value;
-
-        link += '&sort=' + filters.sort.value;
-        link += '&order=' + filters.order.value;
+            link += '&sort=' + filters.sort.value;
+            link += '&order=' + filters.order.value;
+            link += '&pg=' + page;
+        } else if (showLatestNovels) {
+            link += `latest-series/?pg=${page}`;
+        } else {
+            link += "series-ranking/?sort=1&order=2"; // need hideOnSelect for ranking filters
+            link += '&pg=' + page;
+        }
 
         const body = await fetchApi(link).then((result) =>
             result.text()

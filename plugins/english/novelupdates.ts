@@ -34,38 +34,41 @@ class NovelUpdates implements Plugin.PluginBase {
         return novels;
     }
 
-    async popularNovels(page: number, { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>): Promise<Plugin.NovelItem[]> {
-        let link = `${this.site}`;
-        if (filters.language.value.length ||
-            filters.novelType.value.length ||
-            filters.genres.value.include?.length ||
-            filters.genres.value.exclude?.length ||
-            filters.storyStatus.value !== '' ){
-        link += "series-finder/?sf=1"
-        } else if (showLatestNovels){
-            link += "latest-series/?st=1" 
-            } else {
-            link += "series-ranking/?rank=week"
-            };
+    async popularNovels(
+        page: number,
+        { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>
+    ): Promise<Plugin.NovelItem[]> { 
+        let link = this.site;
+
+        const filterConditions = [
+            { check: filters.language.value.length > 0, param: 'org', value: filters.language.value },
+            { check: filters.novelType.value.length > 0, param: 'nt', value: filters.novelType.value },
+            { check: (filters.genres.value.include?.length || 0) > 0, param: 'gi', value: filters.genres.value.include },
+            { check: (filters.genres.value.include?.length || 0) > 0, param: 'mgi', value: filters.genre_operator.value },
+            { check: (filters.genres.value.exclude?.length || 0) > 0, param: 'ge', value: filters.genres.value.exclude },
+            { check: filters.storyStatus.value !== '', param: 'ss', value: filters.storyStatus.value }
+        ];
+
+        if (filterConditions.some(condition => condition.check)) {
+            link += "series-finder/?sf=1";
+        } else if (showLatestNovels) {
+            link += "latest-series/?st=1";
+        } else {
+            link += "series-ranking/?rank=week";
+        }
+
+        link += filterConditions
+            .filter(condition => condition.check)
+            .map(condition => {
+                const param = condition.value
+                const filterValueString =
+                    Array.isArray(param)
+                        ? param.join(',')
+                        : param;
+                return `&${condition.param}=${filterValueString}`;
+            })
+            .join('');
         
-        if (filters.language.value.length)
-            link += '&org=' + filters.language.value.join(',');
-        
-        if (filters.novelType.value.length)
-            link += '&nt=' + filters.novelType.value.join(',');
-
-        if (filters.genres.value.include?.length)
-            link += '&gi=' + filters.genres.value.include.join(',');
-
-        if (filters.genres.value.exclude?.length)
-            link += '&ge=' + filters.genres.value.exclude.join(',');
-
-        if (filters.genres.value.include?.length || filters.genres.value.exclude?.length)
-            link += '&mgi=' + filters.genre_operator.value;
-
-        if (filters.storyStatus.value.length)
-            link += '&ss=' + filters.storyStatus.value;
-
         link += '&sort=' + filters.sort.value;
 
         link += '&order=' + filters.order.value;
@@ -90,10 +93,15 @@ class NovelUpdates implements Plugin.PluginBase {
         const novel: Plugin.SourceNovel = {
             path: novelPath,
             name: loadedCheerio(".seriestitlenu").text() || "Untitled",
-            cover: loadedCheerio(".seriesimg > img").attr("src"),
-            author: loadedCheerio("#showauthors").text().trim(),
+            cover: loadedCheerio(".wpb_wrapper img").attr("src"),
             chapters: [],
         };
+
+        novel.author = loadedCheerio("#showauthors")
+            .find('a')
+            .map((i,el) => loadedCheerio(el).text())
+            .toArray()
+            .join(', ');
 
         novel.genres = loadedCheerio("#seriesgenre")
             .children("a")
