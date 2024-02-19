@@ -154,15 +154,17 @@ class RLIB implements Plugin.PluginBase {
           chapterNumber:
             customOrder[chapter.branch_id || 0] - (chapter.index || 0) ||
             totalChapters - chapterIndex,
-          page: customPage[chapter.branch_id || 0] || "основной перевод",
+          page: customPage[chapter.branch_id || 0] || "Основной перевод",
         }),
       );
       novel.chapters =
-        chaptersJson.chapters.branches?.length && chaptersJson.chapters.branches.length > 1
-          ? chapters.sort((a, b) =>
-              ((a.page || a.name) + (a.chapterNumber || a.path))
-              .localeCompare((b.page || b.name) + (b.chapterNumber || b.path)),
-            )
+        chaptersJson.chapters.branches?.length &&
+        chaptersJson.chapters.branches.length > 1
+          ? chapters.sort((a, b) => {
+              if ((a.page || 0) > (b.page || 0)) return 1;
+              if ((a.page || 0) < (b.page || 0)) return -1;
+              return (a.chapterNumber || 0) - (b.chapterNumber || 0);
+          })
           : chapters.reverse();
     }
     return novel;
