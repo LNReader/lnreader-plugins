@@ -3,7 +3,7 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
 
-class FreeWebNovel implements Plugin.PluginBase {
+class FaqWikiUs implements Plugin.PluginBase {
   id = "FWK.US";
   name = "Faq Wiki";
   site = "https://faqwiki.us/";
@@ -117,4 +117,4 @@ class FreeWebNovel implements Plugin.PluginBase {
   fetchImage = fetchFile;
 }
 
-export default new FreeWebNovel();
+export default new FaqWikiUs();
