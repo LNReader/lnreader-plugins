@@ -87,3 +87,14 @@ export const parseChapter = async (
 
 export const fetchImage = async (pluginRequirePath: string, url: string) =>
     (await getPlugin(pluginRequirePath))?.fetchImage(url);
+
+export const expandURL = async (
+    pluginRequirePath: string,
+    type: "novel" | "chapter",
+    slug: string,
+) => {
+    const plugin = await getPlugin(pluginRequirePath);
+    if (!plugin) return slug;
+    if (plugin.expandURL) return plugin.expandURL(type, slug);
+    return plugin.site + slug;
+};

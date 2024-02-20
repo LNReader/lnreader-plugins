@@ -357,6 +357,27 @@
                     <img src="" style="min-height: 300px; max-width: 450px;" alt="">
                 </accordion-content>
             </accordion-box>
+            <accordion-box id="expandURL" collapsed>
+                <accordion-header>
+                    expandURL
+                </accordion-header>
+                <accordion-content>
+                    <div class="input-group">
+                        <select class="form-control">
+                            <option>novel</option>
+                            <option>chapter</option>
+                        </select>
+                        <input type="slug" class="form-control" placeholder="slug">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary expandURL-btn" type="button">fetch</button>
+                        </div>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <input disabled readonly>
+                </accordion-content>
+            </accordion-box>
         </main-accordion>
 </body>
 

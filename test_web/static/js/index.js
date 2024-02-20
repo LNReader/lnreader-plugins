@@ -58,6 +58,8 @@ const parseChapter = $("#parseChapter");
 
 /** @type {JQuery<AccordionBox>} */
 const fetchImage = $("#fetchImage");
+/** @type {JQuery<AccordionBox>} */
+const expandURL = $("#expandURL");
 
 /** @type {JQuery<HTMLSelectElement>}*/
 const plugin_language_selection = $("#language");
@@ -1149,6 +1151,37 @@ class PluginWrapper {
             spinner.hide();
         }
     }
+
+    async expandURL() {
+        const type = $("#expandURL select").val();
+        const slug = $("#expandURL input").val();
+        const spinner = $("#expandURL .spinner-border");
+        spinner.show();
+        try {
+            const fullURL = await (
+                await fetchFromAPI("/expandURL/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        pluginRequirePath: this.requirePath,
+                        type,
+                        slug,
+                    }),
+                })
+            ).text();
+            $("#expandURL input[readonly]").val(fullURL)
+        } catch (e) {
+            console.error(e);
+            if (e)
+                $("#expandURL").text(
+                    `${typeof e === "object" && "message" in e ? e.message : e}`
+                );
+        } finally {
+            spinner.hide();
+        }
+    }
 }
 const currentWrapper = () => state.current_plugin || emptyPluginWrapper;
 const emptyPluginWrapper = new PluginWrapper("");
@@ -1566,6 +1599,7 @@ $(".parsePage-btn").on("click", () =>
 
 $(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
 $(".fetchImage-btn").on("click", () => state.current_plugin?.fetchImage());
+$(".expandURL-btn").on("click", () => state.current_plugin?.expandURL());
 
 // #endregion
 
