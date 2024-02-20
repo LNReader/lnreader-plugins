@@ -11,5 +11,5 @@
   "ie8": false,
   "module": false,
   "safari10": false,
-  "toplevel": false
+  "toplevel": true
 }
