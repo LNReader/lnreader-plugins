@@ -63,7 +63,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
         novels.push({
           name: novel.name,
           cover: this.site + novel.image,
-          path: novel.slug,
+          path: "/" + novel.slug,
         }),
       );
     }
@@ -71,7 +71,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.apiSite + "/book/" + novelPath, {
+    const result = await fetchApi(this.apiSite + "/book" + novelPath, {
       headers: {
         lang: this.lang,
       },
@@ -99,7 +99,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
       json.data.chapters.forEach((chapter, chapterIndex) =>
         chapters.push({
           name: chapter.title,
-          path: chapter.slug,
+          path: "/" + chapter.slug,
           releaseTime: undefined,
           chapterNumber: (chapter.index || chapterIndex) + 1,
         }),
@@ -111,7 +111,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + "/" + chapterPath).then((res) => res.text());
+    const body = await fetchApi(this.site + chapterPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     let chapterText = loadedCheerio("#content-item").html() || "";
@@ -132,7 +132,10 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     return chapterText.replace(/\.copy right hot novel pub/g, "");
   }
 
-  async searchNovels(key_search: string, pageNo: number): Promise<Plugin.NovelItem[]> {
+  async searchNovels(
+    searchTerm: string,
+    pageNo: number,
+  ): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.apiSite + "/search", {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
@@ -141,7 +144,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
         lang: this.lang,
       },
       method: "POST",
-      body: JSON.stringify({ key_search }),
+      body: JSON.stringify({ key_search: searchTerm }),
     });
     const json = (await result.json()) as responseSearch;
     const novels: Plugin.NovelItem[] = [];
@@ -151,7 +154,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
         novels.push({
           name: novel.name,
           cover: undefined,
-          path: novel.slug,
+          path: "/" + novel.slug,
         }),
       );
     }

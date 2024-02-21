@@ -4,6 +4,7 @@ import * as fs from "fs";
 import { languages } from "@libs/languages";
 import * as path from "path";
 import { Plugin } from "@typings/plugin";
+import { minify } from "./terser";
 
 const root = path.dirname(__dirname);
 const outRoot = path.join(root, "..");
@@ -11,16 +12,16 @@ const { execSync } = require("child_process");
 const REMOTE = execSync("git remote get-url origin")
   .toString()
   .replace(/[\s\n]/g, "");
-let CURRENT_BRANCH = 'beta-dist';
+let CURRENT_BRANCH = "beta-dist";
 try {
   CURRENT_BRANCH = execSync("git rev-parse --abbrev-ref HEAD")
     .toString()
     .replace(/[\s\n]/g, "");
-}catch {
+} catch {
   //
 }
 const matched = REMOTE.match(/([^:/]+?)\/([^/.]+)(\.git)?$/);
-if(!matched) throw Error("Cant parse git url");
+if (!matched) throw Error("Cant parse git url");
 const USERNAME = matched[1];
 const REPO = matched[2];
 const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
@@ -44,7 +45,6 @@ if (!fs.existsSync(path.join(outRoot, ".dist"))) {
 }
 const jsonPath = path.join(outRoot, ".dist", "plugins.json");
 const jsonMinPath = path.join(outRoot, ".dist", "plugins.min.json");
-const terserCfg = path.join(outRoot, "terser.json");
 const pluginSet = new Set();
 
 for (let language in languages) {
@@ -55,10 +55,10 @@ for (let language in languages) {
   json[language] = [];
   plugins.forEach((plugin) => {
     if (plugin.startsWith(".")) return;
-    const instance: Plugin.PluginBase =
-      require(`../plugins/${language.toLowerCase()}/${
-        plugin.split(".")[0]
-      }`).default;
+    minify(path.join(langPath, plugin));
+    const instance: Plugin.PluginBase = require(
+      `../plugins/${language.toLowerCase()}/${plugin.split(".")[0]}`,
+    ).default;
 
     const { id, name, site, version, icon } = instance;
     const normalisedName = name.replace(/\[.*\]/, "");
@@ -79,8 +79,6 @@ for (let language in languages) {
     } else {
       pluginSet.add(id);
     }
-    const pluginPath = path.join(langPath, plugin);
-    execSync(`terser ${pluginPath} --config-file ${terserCfg} -o ${pluginPath}`);
     json[language].push(info);
     console.log(name, "✅");
   });
