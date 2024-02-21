@@ -132,7 +132,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     return chapterText.replace(/\.copy right hot novel pub/g, "");
   }
 
-  async searchNovels(key_search: string): Promise<Plugin.NovelItem[]> {
+  async searchNovels(key_search: string, pageNo: number): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.apiSite + "/search", {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
