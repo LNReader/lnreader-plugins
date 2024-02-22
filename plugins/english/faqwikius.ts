@@ -79,10 +79,14 @@ class FaqWikiUs implements Plugin.PluginBase {
 
     let chapterContent; // Variable to store the result
 
-    if (chapterParagraphs.length === 1) {
-        // Single paragraph case
-        chapterContent = loadedCheerio(chapterParagraphs[0]).html() || ""; // Get HTML content directly
-    } else {
+    if (chapterParagraphs.length < 5) { //some chapter in this site store their whole text in 1-4 <p>,  
+        chapterContent = chapterParagraphs.map((index, element) => {
+          const text = loadedCheerio(element).html()
+          return text; 
+      }).get().join('\n\n'); 
+    } 
+    
+    else {
          // Multiple paragraphs case
         chapterContent = chapterParagraphs.map((index, element) => {
             const text = loadedCheerio(element).text().trim();
