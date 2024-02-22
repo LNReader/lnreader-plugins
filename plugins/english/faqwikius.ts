@@ -110,7 +110,7 @@ class FaqWikiUs implements Plugin.PluginBase {
              cover = cover.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
         }
 
-        const path = "" + loadedCheerio(element).find("a").attr("href");
+        const path = "" + loadedCheerio(element).find("a").attr("href")?.toString().replace(this.site, "").trim();
 
         return { name, cover, path }; 
     })
