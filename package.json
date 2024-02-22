@@ -24,6 +24,7 @@
         "express": "^4.18.2",
         "less": "^4.2.0",
         "module-alias": "^2.2.2",
+        "puppeteer": "^22.1.0",
         "sanitize-html": "^2.11.0",
         "ts-node": "^10.9.1",
         "tsc-alias": "^1.8.6",
