@@ -14,16 +14,13 @@ class FaqWikiUs implements Plugin.PluginBase {
     page: number,
     { showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const sort = showLatestNovels
-      ? ""
-      : "";
-
-    const body = await fetchApi(this.site + sort).then((res) => res.text());
+    
+    const body = await fetchApi(this.site).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = loadedCheerio(".wp-block-table > table > tbody > tr")
       .map((index, element) => {
-        const name = loadedCheerio(element).find("strong").first().text();
+        const name = loadedCheerio(element).find('a').text().replace(/–\s+Chapter\s+List\s+–.*$/i,'');
         let cover = loadedCheerio(element).find("img").attr("data-ezsrc"); 
 
         // Remove the appended query string 
@@ -31,7 +28,8 @@ class FaqWikiUs implements Plugin.PluginBase {
              cover = cover.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
         }
 
-        const path = "" + loadedCheerio(element).find("a").attr("href");
+        const path = "" + loadedCheerio(element).find("a").attr("href")?.toString().replace(this.site, "").trim();
+
 
         return { name, cover, path }; 
     })
@@ -42,7 +40,7 @@ class FaqWikiUs implements Plugin.PluginBase {
   }
 
   async parseNovel(path: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(path).then((res) => res.text());
+    const body = await fetchApi(this.site + path).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
@@ -64,7 +62,7 @@ class FaqWikiUs implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = loadedCheerio(".lcp_catlist > li > a")
       .map((chapterIndex, element) => ({
         name: loadedCheerio(element).text().replace(novel.name + "", "").replace("Novel" + "", "").trim(),
-        path: ""+loadedCheerio(element).attr("href"),
+        path: ""+loadedCheerio(element).attr("href")?.toString().replace(this.site, "").trim(),
         releaseTime: null,
         chapterNumber: chapterIndex + 1,
       }))
@@ -75,19 +73,28 @@ class FaqWikiUs implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(chapterPath).then((res) => res.text());
+    const body = await fetchApi(this.site + chapterPath).then((res) => res.text());
     const loadedCheerio = parseHTML(body);
     loadedCheerio("span").remove();
-    // Target only <p> tags within .entry-content 
+
     const chapterParagraphs = loadedCheerio(".entry-content p");
 
-   // Extract text from individual paragraphs and join 
-    const chapterText = chapterParagraphs.map((index, element) => {
-        return loadedCheerio(element).text().trim();
-    }).get().join('\n\n'); // Add newlines between paragraphs
+    let chapterContent; // Variable to store the result
 
-    return chapterText;
-  }
+    if (chapterParagraphs.length === 1) {
+        // Single paragraph case
+        chapterContent = loadedCheerio(chapterParagraphs[0]).html() || ""; // Get HTML content directly
+    } else {
+         // Multiple paragraphs case
+        chapterContent = chapterParagraphs.map((index, element) => {
+            const text = loadedCheerio(element).text().trim();
+            return `<p>${text}</p>`; 
+        }).get().join('\n\n'); 
+    }
+
+    return chapterContent;
+}
+
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then((res) => res.text());
@@ -95,7 +102,7 @@ class FaqWikiUs implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = loadedCheerio(".wp-block-table > table > tbody > tr")
       .map((index, element) => {
-        const name = loadedCheerio(element).find("strong").first().text();
+        const name = loadedCheerio(element).find('a').text().replace(/–\s+Chapter\s+List\s+–.*$/i,'');
         let cover = loadedCheerio(element).find("img").attr("data-ezsrc"); 
 
         // Remove the appended query string 
