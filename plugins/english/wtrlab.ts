@@ -9,7 +9,7 @@ class WTRLAB implements Plugin.PluginBase {
   site = "https://wtr-lab.com/";
   version = "1.0.0";
   icon = "src/en/wtrlab/icon.png";
-  lang = "en/"
+  sourceLang = "en/"
 
   async sleep (ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -18,7 +18,7 @@ class WTRLAB implements Plugin.PluginBase {
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = this.site + this.lang + "novel-list?"; 
+    let link = this.site + this.sourceLang + "novel-list?"; 
         link += `orderBy=${filters.order.value}`;
         link += `&order=${filters.sort.value}`;
         link += `&filter=${filters.storyStatus.value}`;
@@ -39,7 +39,7 @@ class WTRLAB implements Plugin.PluginBase {
       const novels: Plugin.NovelItem[] = recentNovel.data.map((datum: Datum) => ({
         name: datum.serie.data.title || "",
         cover: datum.serie.data.image,
-        path: this.lang + "serie-" + datum.serie.raw_id + "/" + datum.serie.slug || "", 
+        path: this.sourceLang + "serie-" + datum.serie.raw_id + "/" + datum.serie.slug || "", 
       }));
 
       return novels;
@@ -97,7 +97,7 @@ class WTRLAB implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = jsonData.props.pageProps.serie.chapters.map((jsonChapter, chapterIndex) => ({
       name: "Chapter " + jsonChapter.slug + " " + jsonChapter.title, 
-      path: this.lang + "serie-" +jsonData.props.pageProps.serie.serie_data.raw_id + "/" + jsonData.props.pageProps.serie.serie_data.slug + "/chapter-" + jsonChapter.slug, // Assuming 'slug' is the intended path
+      path: this.sourceLang + "serie-" +jsonData.props.pageProps.serie.serie_data.raw_id + "/" + jsonData.props.pageProps.serie.serie_data.slug + "/chapter-" + jsonChapter.slug, // Assuming 'slug' is the intended path
       releaseTime: jsonChapter.created_at.substring(0, 10),  
       chapterNumber: chapterIndex + 1 
     }));
@@ -135,7 +135,7 @@ class WTRLAB implements Plugin.PluginBase {
     const response = await fetch(this.site + "api/search", {
       headers: {
         "Content-Type": "application/json",
-        Referer: this.site + this.lang,
+        Referer: this.site + this.sourceLang,
         Origin: this.site,
       },
       method: "POST",
@@ -149,7 +149,7 @@ class WTRLAB implements Plugin.PluginBase {
       const novels: Plugin.NovelItem[] = recentNovel.data.map((datum: Datum) => ({
         name: datum.data.title || "",
         cover: datum.data.image,
-        path: this.lang + "serie-" + datum.raw_id + "/" + datum.slug || "", 
+        path: this.sourceLang + "serie-" + datum.raw_id + "/" + datum.slug || "", 
       }));
 
     return novels;
