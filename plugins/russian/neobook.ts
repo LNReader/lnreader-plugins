@@ -77,7 +77,7 @@ class Neobook implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.site + novelPath)
+    const body = await fetchApi(this.expandURL(true, novelPath))
       .then((res) => res.text());
 
     const novel: Plugin.SourceNovel = {
@@ -120,7 +120,7 @@ class Neobook implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath)
+    const body = await fetchApi(this.expandURL(false, chapterPath))
       .then((res) => res.text());
 
     const bookRaw = body.match(/var data = ({.*?});/);
