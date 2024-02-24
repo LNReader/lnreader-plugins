@@ -79,7 +79,7 @@ class WTRLAB implements Plugin.PluginBase {
             .find('a')
             .map((i,el) => loadedCheerio(el).text())
             .toArray()
-            .join(" ");
+            .join(",");
 
     novel.author = loadedCheerio('td:contains("Author")')
       .next()
