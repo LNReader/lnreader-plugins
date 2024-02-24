@@ -11,9 +11,6 @@ class WTRLAB implements Plugin.PluginBase {
   icon = "src/en/wtrlab/icon.png";
   sourceLang = "en/"
 
-  async sleep (ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
   async popularNovels(
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
