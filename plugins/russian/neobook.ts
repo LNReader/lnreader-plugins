@@ -37,7 +37,8 @@ class Neobook implements Plugin.PluginBase {
     formData.append("filter_completed", "-1");
     formData.append("filter_search", searchTerm || "");
     formData.append("filter_tags", filters?.tags?.value || "");
-    formData.append("filter_sort",
+    formData.append(
+      "filter_sort",
       showLatestNovels ? "new" : filters?.sort?.value || "popular",
     );
     formData.append("filter_timeread", filters?.timeread?.value || "0-999999");
@@ -54,7 +55,7 @@ class Neobook implements Plugin.PluginBase {
         novels.push({
           name: novel.title,
           cover: novel?.attachment?.image?.m || defaultCover,
-          path: novel.link_path || "/book/" + novel.token + "/",
+          path: novel.token + "/",
         }),
       );
     }
@@ -106,7 +107,7 @@ class Neobook implements Plugin.PluginBase {
         if (chapter.access == "1" && chapter.status == "1") {
           chapters.push({
             name: chapter.title || "Глава " + (chapterIndex + 1),
-            path: `/reader/?book=${book.token}&chapter=${chapter.token}`,
+            path: `?book=${book.token}&chapter=${chapter.token}`,
             releaseTime: null,
             chapterNumber: Number(chapter.sort) || chapterIndex + 1,
           });
@@ -138,6 +139,9 @@ class Neobook implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
+  expandURL = (isNovel: boolean, slug: string) =>
+    this.site + (isNovel ? "/book/" : "/reader/") + slug;
+
   filters = {
     sort: {
       label: "Сортировка:",
@@ -198,7 +202,7 @@ class Neobook implements Plugin.PluginBase {
       label: "Тэги:",
       value: "",
       type: FilterTypes.TextInput,
-    }
+    },
   } satisfies Filters;
 }
 

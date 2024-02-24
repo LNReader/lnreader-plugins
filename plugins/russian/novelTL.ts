@@ -212,7 +212,7 @@ class TL implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  expandURL = (type: string, slug: string) => "https://" + slug;
+  expandURL = (isNovel: boolean, slug: string) => "https://" + slug;
 
   filters = {
     tags: {

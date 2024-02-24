@@ -90,11 +90,11 @@ export const fetchImage = async (pluginRequirePath: string, url: string) =>
 
 export const expandURL = async (
     pluginRequirePath: string,
-    type: "novel" | "chapter",
+    isNovel: boolean,
     slug: string,
 ) => {
     const plugin = await getPlugin(pluginRequirePath);
     if (!plugin) return slug;
-    if (plugin.expandURL) return plugin.expandURL(type, slug);
+    if (plugin.expandURL) return plugin.expandURL(isNovel, slug);
     return plugin.site + slug;
 };

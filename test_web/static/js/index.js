@@ -1166,7 +1166,7 @@ class PluginWrapper {
                     },
                     body: JSON.stringify({
                         pluginRequirePath: this.requirePath,
-                        type,
+                        isNovel: type === 'novel',
                         slug,
                     }),
                 })

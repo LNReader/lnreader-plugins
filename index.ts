@@ -147,7 +147,7 @@ app.post("/expandURL/", async (req, res) => {
     try {
         const fullURL = await pluginApi.expandURL(
             req.body["pluginRequirePath"],
-            req.body["type"],
+            req.body["isNovel"],
             req.body["slug"]
         );
         res.send(fullURL);
