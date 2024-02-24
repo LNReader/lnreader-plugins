@@ -31,9 +31,8 @@ class TL implements Plugin.PluginBase {
         "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
         "Content-Type": "application/json",
       },
-      referrer: this.site,
+      Referer: this.site,
       body: JSON.stringify({
-        operationName: "Projects",
         query:
           "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
         variables: {
@@ -72,9 +71,8 @@ class TL implements Plugin.PluginBase {
         "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
         "Content-Type": "application/json",
       },
-      referrer: this.site,
+      Referer: this.site,
       body: JSON.stringify({
-        operationName: "Book",
         query:
           'query Book($url:String){project(project:{fullUrl:$url}){title translationStatus fullUrl covers{url}persons(langs:["ru","en","*"],roles:["author","illustrator"]){role name{firstName lastName}}genres{nameRu nameEng}tags{nameRu nameEng}annotation{text}subprojects{content{title volumes{content{shortName chapters{title publishDate fullUrl published}}}}}}}',
         variables: {
@@ -127,6 +125,7 @@ class TL implements Plugin.PluginBase {
               path: chapter.fullUrl,
               releaseTime: dayjs(chapter.publishDate).format("LLL"),
               chapterNumber: chapters.length + 1,
+              page: work.title || "Основная серия",
             });
           }
         }),
@@ -145,7 +144,7 @@ class TL implements Plugin.PluginBase {
         "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
         "Content-Type": "application/json",
       },
-      referrer: this.site,
+      Referer: this.site,
       body: JSON.stringify({
         query:
           "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
@@ -182,9 +181,8 @@ class TL implements Plugin.PluginBase {
         "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
         "Content-Type": "application/json",
       },
-      referrer: this.site,
+      Referer: this.site,
       body: JSON.stringify({
-        operationName: "Projects",
         query:
           "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
         variables: {
