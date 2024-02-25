@@ -181,8 +181,8 @@ class AuthorToday implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  expandURL = (isNovel: boolean, slug: string) =>
-    isNovel ? this.site + "/work/" + slug : this.site + "/reader/" + slug;
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    isNovel ? this.site + "/work/" + path : this.site + "/reader/" + path;
 
   filters = {
     sort: {

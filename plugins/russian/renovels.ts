@@ -144,7 +144,7 @@ class ReN implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  expandURL = (isNovel: boolean, slug: string) => this.site + "/novel/" + slug;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + "/novel/" + path;
 
   filters = {
     sort: {

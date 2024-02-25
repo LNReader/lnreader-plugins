@@ -59,7 +59,7 @@ const parseChapter = $("#parseChapter");
 /** @type {JQuery<AccordionBox>} */
 const fetchImage = $("#fetchImage");
 /** @type {JQuery<AccordionBox>} */
-const expandURL = $("#expandURL");
+const resolveUrl = $("#resolveUrl");
 
 /** @type {JQuery<HTMLSelectElement>}*/
 const plugin_language_selection = $("#language");
@@ -1152,14 +1152,14 @@ class PluginWrapper {
         }
     }
 
-    async expandURL() {
-        const type = $("#expandURL select").val();
-        const slug = $("#expandURL input").val();
-        const spinner = $("#expandURL .spinner-border");
+    async resolveUrl() {
+        const type = $("#resolveUrl select").val();
+        const path = $("#resolveUrl input").val();
+        const spinner = $("#resolveUrl .spinner-border");
         spinner.show();
         try {
             const fullURL = await (
-                await fetchFromAPI("/expandURL/", {
+                await fetchFromAPI("/resolveUrl/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -1167,15 +1167,15 @@ class PluginWrapper {
                     body: JSON.stringify({
                         pluginRequirePath: this.requirePath,
                         isNovel: type === 'novel',
-                        slug,
+                        path,
                     }),
                 })
             ).text();
-            $("#expandURL input[readonly]").val(fullURL)
+            $("#resolveUrl input[readonly]").val(fullURL)
         } catch (e) {
             console.error(e);
             if (e)
-                $("#expandURL").text(
+                $("#resolveUrl").text(
                     `${typeof e === "object" && "message" in e ? e.message : e}`
                 );
         } finally {
@@ -1599,7 +1599,7 @@ $(".parsePage-btn").on("click", () =>
 
 $(".parseChapter-btn").on("click", () => state.current_plugin?.getChapter());
 $(".fetchImage-btn").on("click", () => state.current_plugin?.fetchImage());
-$(".expandURL-btn").on("click", () => state.current_plugin?.expandURL());
+$(".resolveUrl-btn").on("click", () => state.current_plugin?.resolveUrl());
 
 // #endregion
 

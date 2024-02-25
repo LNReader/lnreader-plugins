@@ -143,12 +143,12 @@ app.post("/fetchImage/", async (req, res) => {
         res.json({ error: String(err) });
     }
 });
-app.post("/expandURL/", async (req, res) => {
+app.post("/resolveUrl/", async (req, res) => {
     try {
-        const fullURL = await pluginApi.expandURL(
+        const fullURL = await pluginApi.resolveUrl(
             req.body["pluginRequirePath"],
+            req.body["path"],
             req.body["isNovel"],
-            req.body["slug"]
         );
         res.send(fullURL);
     } catch (err: unknown) {

@@ -47,7 +47,7 @@ class Bookriver implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.expandURL(true, novelPath))
+    const result = await fetchApi(this.resolveUrl(novelPath, true))
       .then((res) => res.text());
     const loadedCheerio = parseHTML(result);
 
@@ -121,8 +121,8 @@ class Bookriver implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  expandURL = (isNovel: boolean, slug: string) =>
-    this.site + (isNovel ? "/book/" : "/reader/") + slug;
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? "/book/" : "/reader/") + path;
 
   filters = {
     sort: {

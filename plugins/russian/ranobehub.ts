@@ -123,7 +123,7 @@ class RNBH implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.expandURL(false, chapterPath));
+    const result = await fetchApi(this.resolveUrl(chapterPath));
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -170,7 +170,7 @@ class RNBH implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  expandURL = (isNovel: boolean, slug: string) => this.site + "/ranobe/" + slug;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + "/ranobe/" + path;
 
   filters = {
     sort: {

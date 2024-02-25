@@ -92,7 +92,7 @@ export namespace Plugin {
          * ```
          */
         fetchImage(url: string): Promise<string | undefined>;
-        expandURL?(isNovel: boolean, slug: string): string;
+        resolveUrl?(path: string, isNovel?: boolean): string;
     }
 
     export interface PagePlugin extends PluginBase {

@@ -36,7 +36,7 @@ class novelOvh implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(
-      this.expandURL(true, novelPath) + "?_data=routes/reader/book/$slug/index",
+      this.resolveUrl(novelPath, true) + "?_data=routes/reader/book/$slug/index",
     );
     const json = (await result.json()) as responseNovel;
 
@@ -154,7 +154,7 @@ class novelOvh implements Plugin.PluginBase {
   };
 
   fetchImage = fetchFile;
-  expandURL = (isNovel: boolean, slug: string) => this.site + "/novel/" + slug;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + "/novel/" + path;
 
   filters = {
     sort: {
