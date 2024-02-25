@@ -12,7 +12,7 @@ const { execSync } = require("child_process");
 const REMOTE = execSync("git remote get-url origin")
   .toString()
   .replace(/[\s\n]/g, "");
-let CURRENT_BRANCH = "beta-dist";
+let CURRENT_BRANCH = "dist";
 try {
   CURRENT_BRANCH = execSync("git rev-parse --abbrev-ref HEAD")
     .toString()
