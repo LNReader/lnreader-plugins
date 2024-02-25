@@ -146,7 +146,7 @@ class RLIB implements Plugin.PluginBase {
             " Глава " + chapter.chapter_number +
               (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
           path:
-            "/" + chaptersJson.manga.slug +
+            novelPath +
             "/v" + chapter.chapter_volume +
             "/c" + chapter.chapter_number +
             "?bid=" + (chapter.branch_id || ""),

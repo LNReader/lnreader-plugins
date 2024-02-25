@@ -163,15 +163,13 @@ class AuthorToday implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio("div.book-row").each((index, element) => {
+    loadedCheerio("a.work-row").each((index, element) => {
       const name = loadedCheerio(element)
-        .find('h4[class="bookcard-title"] a')
+        .find('h4[class="work-title"]')
         .text()
         .trim();
-      let cover = loadedCheerio(element).find("img").attr("src");
-      const path = loadedCheerio(element)
-        .find('h4[class="bookcard-title"] a')
-        .attr("href");
+      let cover = loadedCheerio(element).find("img").attr("data-src");
+      const path = loadedCheerio(element).attr("href");
 
       cover = cover ? cover.split("?")[0] : defaultCover;
 
