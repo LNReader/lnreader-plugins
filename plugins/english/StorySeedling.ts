@@ -1,12 +1,7 @@
 import { Plugin } from "@typings/plugin";
-import puppeteer from 'puppeteer';
 import { fetchApi, fetchFile } from "@libs/fetch";
-import { load, load as parseHTML } from "cheerio";
+import { load as parseHTML } from "cheerio";
 import { defaultCover } from "@libs/defaultCover";
-import { NovelStatus } from "@libs/novelStatus";
-import { log } from "console";
-// import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
 
 class StorySeedlingPlugin implements Plugin.PluginBase {
     id = "storyseedling";
@@ -14,41 +9,35 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     icon = "src/en/storyseedling/icon.png";
     site = "https://storyseedling.com/";
     version = "1.0.0";
-    baseUrl = this.site;
 
     async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-      const url = `${this.baseUrl}browse/?curpage=${pageNo}`;
+        let novels: Plugin.NovelItem[] = [];
+        let url = "https://storyseedling.com/ajax";
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-        // Wait for some time to let dynamic content load
-        await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1000)));
-        const body = await page.content();
+        const postUrl = `https://storyseedling.com/browse/`;
+        const body = await fetchApi(postUrl).then((r) => r.text());
 
         const loadedCheerio = parseHTML(body);
 
-        let novels: Plugin.NovelItem[] = [];
+        var postValue = loadedCheerio("div[ax-load][x-data]").attr("x-data")?.replace("browse('","").replace("')", "") as string;
 
-        loadedCheerio(".bg-accent").each(function () {
-            const novelName = loadedCheerio(this).find(".grid-in-title").text();
-            const novelCover = loadedCheerio(this).find(".grid-in-art img").attr("src");
-            const novelUrl = loadedCheerio(this).find(".grid-in-title").attr("href");
+        var data = new FormData();
+        data.set("search", "");
+        data.set("orderBy", "recent");
+        data.set("curpage", pageNo.toString());
+        data.set("post", postValue);
+        data.set("action", "fetch_browse");
 
-            if (!novelUrl) return;
+        var response = await(await fetchApi(url, {body: data, method: "POST"})).json();
 
+        response.data.posts.forEach((element: any) => {
             const novel = {
-                name: novelName,
-                cover: novelCover,
-                url: novelUrl,
+                name: element.title,
+                cover: element.thumbnail,
+                url: element.permalink,
             };
-
             novels.push(novel);
         });
-
-        await browser.close();
 
         return novels;
     }
@@ -105,7 +94,6 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
 
         const loadedCheerio = parseHTML(body);
         let t = loadedCheerio("div.justify-center > div.mb-4");
-        log(t);
         let chapterText = t.html() || '';
 
         return chapterText;
@@ -115,11 +103,18 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
         let novels: Plugin.NovelItem[] = [];
         let url = "https://storyseedling.com/ajax";
 
+        const postUrl = `https://storyseedling.com/browse/`;
+        const body = await fetchApi(postUrl).then((r) => r.text());
+
+        const loadedCheerio = parseHTML(body);
+
+        var postValue = loadedCheerio("div[ax-load][x-data]").attr("x-data")?.replace("browse('","").replace("')", "") as string;
+
         var data = new FormData();
         data.set("search", searchTerm);
         data.set("orderBy", "recent");
         data.set("curpage", pageNo.toString());
-        data.set("post", "496e529f01");
+        data.set("post", postValue);
         data.set("action", "fetch_browse");
 
         var response = await(await fetchApi(url, {body: data, method: "POST"})).json();
