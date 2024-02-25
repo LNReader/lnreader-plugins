@@ -34,7 +34,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
             const novel = {
                 name: element.title,
                 cover: element.thumbnail,
-                url: element.permalink,
+                path: element.permalink.replace(this.site, ""),
             };
             novels.push(novel);
         });
@@ -42,12 +42,14 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
         return novels;
     }
 
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        var site = this.site;
         const novel: Plugin.SourceNovel = {
-            url: novelUrl,
+            path: novelPath,
+            name: ""
         };
 
-        const body = await fetchApi(novelUrl).then((r) => r.text());
+        const body = await fetchApi(this.site+novelPath).then((r) => r.text());
 
 
         const loadedCheerio = parseHTML(body);
@@ -80,7 +82,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
             let chapterNumber = name.split("-")[0].trim().split(" ")[1];
             const chapter: Plugin.ChapterItem = {
                 name: name,
-                url: url,
+                path: url.replace(site, ""),
                 releaseTime: releaseTime,
                 chapterNumber: parseInt(chapterNumber),
             };
@@ -89,8 +91,8 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
         novel.chapters = chapters;
         return novel;
     }
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const body = await fetchApi(chapterUrl).then((r) => r.text());
+    async parseChapter(chapterPath: string): Promise<string> {
+        const body = await fetchApi(this.site+chapterPath).then((r) => r.text());
 
         const loadedCheerio = parseHTML(body);
         let t = loadedCheerio("div.justify-center > div.mb-4");
@@ -123,7 +125,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
             const novel = {
                 name: element.title,
                 cover: element.thumbnail,
-                url: element.permalink,
+                path: element.permalink.replace(this.site, ""),
             };
             novels.push(novel);
         });
