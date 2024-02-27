@@ -216,7 +216,7 @@ class RLIB implements Plugin.PluginBase {
 
   fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + path + (this.ui ? "&ui=" + this.ui : "");
+    this.site + path + (this.ui ? (isNovel ? "?" : "&") + "ui=" + this.ui : "");
 
   filters = {
     sort: {
