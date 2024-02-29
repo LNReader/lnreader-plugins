@@ -1,17 +1,14 @@
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
-import { load as loadCheerio } from "cheerio";
 import { load as parseHTML } from "cheerio";
-// import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
 
 class NovelkiPL implements Plugin.PluginBase {
     id = "novelki.pl";
     name = "Novelki";
     icon = "src/pl/novelki/icon.png";
     site = "https://novelki.pl";
-    version = "1.0.0";
+    version = "1.0.1";
     filters: Filters | undefined = undefined;
 
     async popularNovels(
