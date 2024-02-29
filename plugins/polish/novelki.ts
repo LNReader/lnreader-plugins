@@ -1,7 +1,6 @@
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
-import puppeteer from "puppeteer"
 import { load as loadCheerio } from "cheerio";
 import { load as parseHTML } from "cheerio";
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
@@ -58,9 +57,13 @@ class NovelkiPL implements Plugin.PluginBase {
         let chapters: Plugin.ChapterItem[] = [];
 
         loadedCheerio(".chapters > .col-md-3 > div").get().reverse().forEach((e, i) => {
+            var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
+            let urlChapters = loadedCheerio(e).find("a").attr("href") || "";
+            let codeChapter = pattern.exec(urlChapters) || "";
+
             const chapter: Plugin.ChapterItem = {
                 name: loadedCheerio(e).find("a")?.text().trim(),
-                path: loadedCheerio(e).find("a").attr("href") || "", 
+                path: codeChapter[2],
                 releaseTime: loadedCheerio(e).find(".card-footer > span").text().trim(),
                 chapterNumber: i+1,
             };
@@ -71,17 +74,9 @@ class NovelkiPL implements Plugin.PluginBase {
         return novel;
     }
     async parseChapter(chapterPath: string): Promise<string> {
+        const body = await fetchApi(`${this.site}/api/reader/chapters/${chapterPath}`).then((res) => res.json());
 
-        // const browser = await puppeteer.launch();
-        // const page = await browser.newPage();
-
-        // await page.setCookie({ name: "novelki_session", value: "eyJpdiI6ImgzZ2Fxd0FVNWRcLzBLU1BEZkQxVVhRPT0iLCJ2YWx1ZSI6IjBSN3VhM3Z5d3Q5RFwvaG1kTlNFOFpLOXpmY1BmTHJsKzU2SnFCcnpzblZmT0EyVDBQR3VFM0pCd2R6SkRHYnpVIiwibWFjIjoiMmYyNDUyZWNmMTM1OTZkZTg3N2E3NDhmMGY1ZDIyMTZjNzc0ZmVlZDgwNWQ1ODI4NzA3MGFlN2I3MzJhZGUyOCJ9", domain: "novelki.pl"})
-
-        // await page.goto(this.site + chapterPath)
-        // await page.waitForSelector('div.reader-content');
-        
-        // const chapterText = await page.$eval('div.reader-content', element => element.innerHTML)
-        const chapterText = "null"
+        const chapterText = body.data.content
         return chapterText;
     }
     async searchNovels(
