@@ -14,7 +14,7 @@ export const minify = function (path: string) {
     keep_classnames: false,
     keep_fnames: false,
     ie8: false,
-    module: false,
+    module: true,
     safari10: false,
     toplevel: true,
   });
