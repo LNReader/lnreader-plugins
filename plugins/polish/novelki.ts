@@ -2,13 +2,14 @@ import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters } from "@libs/filterInputs";
 import { load as parseHTML } from "cheerio";
+import { NovelStatus } from "@libs/novelStatus";
 
 class NovelkiPL implements Plugin.PluginBase {
     id = "novelki.pl";
     name = "Novelki";
     icon = "src/pl/novelki/icon.png";
     site = "https://novelki.pl";
-    version = "1.0.1";
+    version = "1.0.2";
     filters: Filters | undefined = undefined;
 
     async popularNovels(
@@ -41,7 +42,28 @@ class NovelkiPL implements Plugin.PluginBase {
         loadedCheerio("p.h5").each((i, e) => {
             const text = loadedCheerio(e).text().trim()
             if(text.includes('Autor:')) novel.author = text.split(':')[1].trim()
-            if(text.includes("Status projektu:")) novel.status = text.split(':')[1].trim()
+            if(text.includes("Status projektu:")) {
+                switch (`${text.split(':')[1].trim()}`.toLowerCase()) {
+                    case "wstrzymany":
+                        novel.status = NovelStatus.OnHiatus;
+                        break;
+                    case "zakończony":
+                        novel.status = NovelStatus.Completed;
+                        break;
+                    case "aktywny":
+                        novel.status = NovelStatus.Ongoing;
+                        break;
+                    case "porzucony":
+                        novel.status = NovelStatus.Cancelled;
+                        break;
+                    case "zlicencjonowany":
+                        novel.status = NovelStatus.Licensed;
+                        break;
+                    default:
+                        novel.status = NovelStatus.Unknown;
+                        break;
+                }
+            }
             
         })
         novel.name = loadedCheerio("div").find("h3").text().trim();
@@ -49,7 +71,7 @@ class NovelkiPL implements Plugin.PluginBase {
 
         novel.genres = loadedCheerio("span.badge").map((i, e) => loadedCheerio(e).text()).get().join(", ")
         
-        novel.summary = loadedCheerio("p > em").text().trim()
+        novel.summary = loadedCheerio('.h5:contains("Opis:")').next("p").next("p").text().trim()
 
         let chapters: Plugin.ChapterItem[] = [];
 
@@ -57,11 +79,11 @@ class NovelkiPL implements Plugin.PluginBase {
             var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
             let urlChapters = loadedCheerio(e).find("a").attr("href") || "";
             let codeChapter = pattern.exec(urlChapters) || "";
-
+           
             const chapter: Plugin.ChapterItem = {
                 name: loadedCheerio(e).find("a")?.text().trim(),
                 path: codeChapter[2],
-                releaseTime: loadedCheerio(e).find(".card-footer > span").text().trim(),
+                releaseTime: loadedCheerio(e).find(".card-footer > span").text().trim().split('-').reverse().join('-'), 
                 chapterNumber: i+1,
             };
             chapters.push(chapter);
