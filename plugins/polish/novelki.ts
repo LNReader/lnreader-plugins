@@ -19,7 +19,10 @@ class NovelkiPL implements Plugin.PluginBase {
         const body = await fetchApi(`${this.site}/projekty?page=${page}`).then((res) => res.text());
         const loadedCheerio = parseHTML(body);
 
-        const novels: Plugin.NovelItem[] = loadedCheerio("#projects > div")
+        const load = loadedCheerio("#projects > div")
+        if(load.length == 0) throw new Error("Failed to load page (open in web view and login)");
+
+        const novels: Plugin.NovelItem[] = load
         .map((index, element) => ({
             name: loadedCheerio(element).find(".card-title").attr('title') as string,
             cover: this.site+loadedCheerio(element).find(".card-img-top").attr("src"),
