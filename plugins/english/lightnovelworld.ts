@@ -8,7 +8,7 @@ class LightNovelWorld implements Plugin.PagePlugin {
     id = "lightnovelworld";
     name = "LightNovelWorld";
     site = "https://www.webnovelworld.org/";
-    version = "1.0.0";
+    version = "1.0.1";
     icon = "src/en/lightnovelworld/icon.png";
     headers = {
         Accept: "application/json",

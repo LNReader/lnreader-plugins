@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 class LightNovelPub implements Plugin.PagePlugin {
     id = "lightnovelpub";
     name = "LightNovelPub";
-    version = "1.0.0";
+    version = "1.0.1";
     icon = "src/en/lightnovelpub/icon.png";
     site = "https://www.lightnovelpub.com/";
     headers = {
