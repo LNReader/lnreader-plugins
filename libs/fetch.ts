@@ -13,7 +13,7 @@ type FetchInit = {
 };
 
 const makeInit = async (url: string, init?: FetchInit) => {
-    const cookies = await cookieManager.get(url);
+    const cookies = Object.values(await cookieManager.get(url));
     let defaultHeaders: Record<string, string> = {
         Connection: 'keep-alive',
         Accept: '*/*',

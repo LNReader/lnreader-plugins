@@ -1,15 +1,18 @@
 import { CookieJar, Cookie } from "tough-cookie";
 
+interface Cookies {
+  [key: string]: CookieObject;
+}
+
 interface CookieObject {
   name: string;
   value: string;
   path?: string;
   domain?: string;
   version?: string;
-  expires?: string | Date;
+  expires?: string;
   secure?: boolean;
   httpOnly?: boolean;
-  key?: string;
 }
 
 class CookieManager {
@@ -22,17 +25,16 @@ class CookieManager {
   /**
    * Gets cookies for the specified URL.
    * @param url - The URL for which to retrieve cookies.
-   * @returns An array of Cookie objects.
+   * @returns Cookie objects.
    */
-  async get(url: string): Promise<CookieObject[]> {
-    const cookies = (await this.cookieJar.getCookies(url)).map((cookie) => {
-      const item = cookie.toJSON();
-      item.name = item.key;
-      delete item.key;
-
-      return item as CookieObject;
-    });
-    return cookies;
+  async get(url: string): Promise<Cookies> {
+    const cookies = await this.cookieJar.getCookies(url);
+    const result: Cookies = {};
+    cookies.forEach(
+      (cookie) =>
+        result[cookie.key] = { ...cookie.toJSON(), name: cookie.key } as CookieObject
+    );
+    return result;
   }
 
   /**
@@ -41,8 +43,7 @@ class CookieManager {
    * @param cookieObject - The cookie object to set.
    */
   async set(url: string, cookieObject: CookieObject): Promise<void> {
-    cookieObject.key = cookieObject.name;
-    const cookie = Cookie.fromJSON(cookieObject);
+    const cookie = Cookie.fromJSON({ ...cookieObject, key: cookieObject.name });
     if (cookie && cookie.key && cookie.value) {
       await this.cookieJar.setCookie(cookie, url);
     }
@@ -77,8 +78,8 @@ class CookieManager {
    */
   async clearAll(url: string): Promise<void> {
     const allCookies = await this.cookieJar.getCookies(url);
-    allCookies.forEach((cookie) =>
-      cookie.expires = new Date(0) // Expire each cookie to delete it
+    allCookies.forEach(
+      (cookie) => (cookie.expires = new Date(0)), // Expire each cookie to delete it
     );
   }
 }

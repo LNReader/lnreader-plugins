@@ -193,10 +193,10 @@ class AuthorToday implements Plugin.PluginBase {
     isNovel ? this.site + "/work/" + path : this.site + "/reader/" + path;
 
   getUser = async () => {
-    const isLoginCookie = await cookieManager.get(this.site);
+    const cookies = await cookieManager.get(this.site);
     const user = storage.get(this.id, "user") || { userId: "", token: "guest" };
 
-    if (isLoginCookie[0]?.value) {//authorized user
+    if (cookies.LoginCookie?.value) {//authorized user
       if (user && user.userId && user.token) return user;
 
       const result = await fetchApi(this.site + "/account/bearer-token");
