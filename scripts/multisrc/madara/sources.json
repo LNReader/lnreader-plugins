@@ -2102,7 +2102,8 @@
         "genres": "home/novel-genre"
       },
       "useNewChapterEndpoint": true,
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "versionIncrements": 1
     }
   },
   {
@@ -3308,7 +3309,8 @@
         "genres": "manga-genre"
       },
       "useNewChapterEndpoint": true,
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "versionIncrements": 1
     }
   },
   {

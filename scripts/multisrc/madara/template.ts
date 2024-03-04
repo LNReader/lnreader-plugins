@@ -28,6 +28,7 @@ interface MadaraOptions {
   path?: MadaraOptionPath;
   lang?: string;
   orderBy?: string;
+  versionIncrements?: number;
 }
 
 export interface MadaraMetadata {
@@ -53,7 +54,8 @@ class MadaraPlugin implements Plugin.PluginBase {
     const iconFileName = metadata.sourceName.replace(/\s+/g, "").toLowerCase();
     this.icon = `multisrc/madara/icons/${iconFileName}.png`;
     this.site = metadata.sourceSite;
-    this.version = "1.0.0";
+    const versionIncrements = metadata.options?.versionIncrements || 0;
+    this.version = `1.0.${0 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
