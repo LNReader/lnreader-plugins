@@ -78,12 +78,10 @@ class RulatePlugin implements Plugin.PluginBase {
       formData.append("path", novelPath);
       formData.append("ok", "Да");
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: "POST",
         body: formData,
       });
-
-      result = await fetchApi(this.site + novelPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
@@ -181,14 +179,13 @@ class RulatePlugin implements Plugin.PluginBase {
     let result = await fetchApi(this.site + chapterPath);
     if (result.url.includes("mature?path=")) {
       const formData = new FormData();
+      formData.append("path", chapterPath.split("/").slice(0, 3).join("/"));
       formData.append("ok", "Да");
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: "POST",
         body: formData,
       });
-
-      result = await fetchApi(this.site + chapterPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);

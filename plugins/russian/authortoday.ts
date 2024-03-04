@@ -4,10 +4,11 @@ import { defaultCover } from "@libs/defaultCover";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
 import { load as parseHTML } from "cheerio";
+import { cookieManager } from "@libs/сookie";
+import { storage } from "@libs/storage";
 import dayjs from "dayjs";
 
 const apiUrl = "https://api.author.today/";
-const token = "Bearer guest";
 
 class AuthorToday implements Plugin.PluginBase {
   id = "AT";
@@ -37,7 +38,7 @@ class AuthorToday implements Plugin.PluginBase {
 
     const result = await fetchApi(url, {
       headers: {
-        Authorization: token,
+        Authorization: "Bearer guest",
       },
     });
     const json = (await result.json()) as response;
@@ -61,13 +62,17 @@ class AuthorToday implements Plugin.PluginBase {
   }
 
   async parseNovel(workID: string): Promise<Plugin.SourceNovel> {
+    const user = await this.getUser();
     const result = await fetchApi(`${apiUrl}v1/work/${workID}/details`, {
       headers: {
-        Authorization: token,
+        Authorization: "Bearer " + user.token,
       },
     });
 
     const book = (await result.json()) as responseBook;
+    if (book.message) {
+      storage.delete(this.id, "user");
+    }
     const novel: Plugin.SourceNovel = {
       path: workID,
       name: book.title,
@@ -93,7 +98,7 @@ class AuthorToday implements Plugin.PluginBase {
 
     const chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
       headers: {
-        Authorization: token,
+        Authorization: "Bearer " + user.token,
       },
     });
 
@@ -119,21 +124,24 @@ class AuthorToday implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const [workID, chapterID] = chapterPath.split("/");
+    const user = await this.getUser();
     const result = await fetchApi(
       apiUrl + `v1/work/${workID}/chapter/${chapterID}/text`,
       {
         headers: {
-          Authorization: token,
+          Authorization: "Bearer " + user.token,
         },
       },
     );
     const json = (await result.json()) as encryptedСhapter;
-
+    if (json.message) {
+      storage.delete(this.id, "user");
+    }
     if (json.code) {
       return json.code + "\n" + json?.message;
     }
 
-    const key = json.key.split("").reverse().join("") + "@_@";
+    const key = json.key.split("").reverse().join("") + "@_@" + user.userId;
     let text = "";
 
     for (let i = 0; i < json.text.length; i++) {
@@ -183,6 +191,37 @@ class AuthorToday implements Plugin.PluginBase {
   fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     isNovel ? this.site + "/work/" + path : this.site + "/reader/" + path;
+
+  getUser = async () => {
+    const isLoginCookie = await cookieManager.get(this.site);
+    const user = storage.get(this.id, "user") || { userId: "", token: "guest" };
+
+    if (isLoginCookie[0]?.value) {//authorized user
+      if (user && user.userId && user.token) return user;
+
+      const result = await fetchApi(this.site + "/account/bearer-token");
+      if (result.url.includes("Login?ReturnUrl=")) {
+        return user; //It looks like the user has lost the session
+      }
+
+      const loginUser = (await result.json()) as authorization;
+      storage.set(
+        this.id,
+        "user",
+        loginUser, //for some reason they're ending an hour early.
+        new Date(loginUser.expires).getTime() - 1 * 60 * 60 * 1000,
+      );
+      return loginUser; //user authorized successfully
+    } else {
+      if (user && user.userId && user.token) {
+        //user logged out
+        storage.delete(this.id, "user");
+        user.userId = "";
+        user.token = "guest";
+      }
+    }
+    return user; //user is not authorized, guest account is used
+  };
 
   filters = {
     sort: {
@@ -327,6 +366,13 @@ class AuthorToday implements Plugin.PluginBase {
 
 export default new AuthorToday();
 
+interface authorization {
+  userId: number;
+  token: string;
+  issued: string;
+  expires: string;
+}
+
 interface response {
   searchResults?: SearchResultsEntity[] | null;
   realTotalCount: number;
@@ -394,6 +440,7 @@ interface Duration {
 }
 
 interface responseBook {
+  message?: string;
   chapters?: ChaptersEntity[] | null;
   allowDownloads: boolean;
   downloadErrorCode: string;

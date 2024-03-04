@@ -4,7 +4,7 @@ import path from "path";
 const dbPath = path.join(__dirname, "..", "..", "db.json");
 
 class Storage {
-  db: Record<
+  private db: Record<
     string,
     Record<string, { created: Date; value: any; expires?: Date }>
   >;
@@ -26,7 +26,7 @@ class Storage {
     key: string,
     value: any,
     expires?: Date | number,
-  ): boolean {
+  ): void {
     if (!this.db[pluginID]) this.db[pluginID] = {};
     this.db[pluginID][key] = {
       created: new Date(),
@@ -39,7 +39,6 @@ class Storage {
           : undefined,
     };
     this.saveDB();
-    return true;
   }
 
   /**
@@ -73,10 +72,9 @@ class Storage {
    * @param key - The key of the value to delete
    * @returns true if successful
    */
-  delete(pluginID: string, key: string): boolean {
+  delete(pluginID: string, key: string): void {
     delete this.db[pluginID]?.[key];
     this.saveDB();
-    return true;
   }
 
   /**
@@ -84,10 +82,9 @@ class Storage {
    * @param pluginID - The ID of the plugin
    * @returns true if successful
    */
-  clearAll(pluginID: string): boolean {
+  clearAll(pluginID: string): void {
     delete this.db[pluginID];
     this.saveDB();
-    return true;
   }
 
   private saveDB() {

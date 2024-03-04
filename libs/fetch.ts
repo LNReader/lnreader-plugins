@@ -1,3 +1,5 @@
+import { cookieManager } from '@libs/сookie';
+
 type FetchInit = {
     headers?: Record<string, string | undefined> | Headers;
     method?: string;
@@ -10,20 +12,26 @@ type FetchInit = {
         | Headers;
 };
 
-const makeInit = async (init?: FetchInit) => {
+const makeInit = async (url: string, init?: FetchInit) => {
+    const cookies = await cookieManager.get(url);
     let defaultHeaders: Record<string, string> = {
-        'Connection': 'keep-alive',
-        'Accept': '*/*',
+        Connection: 'keep-alive',
+        Accept: '*/*',
         'Accept-Language': '*',
         'Sec-Fetch-Mode': 'cors',
         'Accept-Encoding': 'gzip, deflate',
         'Cache-Control': 'max-age=0',
     };
+    if (cookies.length) {
+        defaultHeaders.Cookie = cookies
+            .map(({ name, value }) => name + '=' + value)
+            .join('; ');
+    }
     try {
-        const { getHeaders } = await import("../index.js");
+        const { getHeaders } = await import('../index.js');
         defaultHeaders = {
             ...defaultHeaders,
-            ...getHeaders()
+            ...getHeaders(),
         };
     } catch {
         // nothing to do
@@ -48,6 +56,11 @@ const makeInit = async (init?: FetchInit) => {
     return init;
 };
 
+const addCookies = async (url: string, cookies: string[]) =>
+    Promise.all(
+        cookies.map((cookie) => cookieManager.setFromResponse(url, cookie)),
+    );
+
 /**
  * Fetch with (Android) User Agent
  * @param url
@@ -55,10 +68,14 @@ const makeInit = async (init?: FetchInit) => {
  * @returns response as normal fetch
  */
 export async function fetchApi(url: string, init?: FetchInit) {
-    init = await makeInit(init);
+    init = await makeInit(url, init);
     // console.log(init.headers);
     console.log(url, init);
-    return await fetch(url, init as RequestInit);
+    const res = await fetch(url, init as RequestInit);
+    if (res.headers.has('set-cookie')) {
+        await addCookies(url, res.headers.getSetCookie());
+    }
+    return res;
 }
 
 /**
@@ -69,15 +86,18 @@ export async function fetchApi(url: string, init?: FetchInit) {
  * @example fetchFile('https://avatars.githubusercontent.com/u/81222734?s=48&v=4');
  */
 export const fetchFile = async function (url: string, init?: FetchInit) {
-    init = await makeInit(init);
+    init = await makeInit(url, init);
     console.log(url, init);
     try {
         const res = await fetch(url, init as RequestInit);
-        if (!res.ok) return "";
+        if (res.headers.has('set-cookie')) {
+            await addCookies(url, res.headers.getSetCookie());
+        }
+        if (!res.ok) return '';
         const arrayBuffer = await res.arrayBuffer();
-        return Buffer.from(arrayBuffer).toString("base64");
+        return Buffer.from(arrayBuffer).toString('base64');
     } catch (e) {
-        return "";
+        return '';
     }
 };
 
@@ -92,17 +112,20 @@ export const fetchFile = async function (url: string, init?: FetchInit) {
 export const fetchText = async function (
     url: string,
     init?: FetchInit,
-    encoding?: string
+    encoding?: string,
 ): Promise<string> {
-    init = await makeInit(init);
+    init = await makeInit(url, init);
     console.log(url, init);
     try {
         const res = await fetch(url, init as RequestInit);
-        if (!res.ok) return "";
+        if (res.headers.has('set-cookie')) {
+            await addCookies(url, res.headers.getSetCookie());
+        }
+        if (!res.ok) return '';
         const arrayBuffer = await res.arrayBuffer();
         const decoder = new TextDecoder(encoding);
         return decoder.decode(arrayBuffer);
     } catch (e) {
-        return "";
+        return '';
     }
 };
