@@ -9,7 +9,7 @@ class NovelkiPL implements Plugin.PluginBase {
     name = "Novelki";
     icon = "src/pl/novelki/icon.png";
     site = "https://novelki.pl";
-    version = "1.0.2";
+    version = "1.0.3";
     filters: Filters | undefined = undefined;
 
     async popularNovels(
@@ -79,13 +79,11 @@ class NovelkiPL implements Plugin.PluginBase {
         let chapters: Plugin.ChapterItem[] = [];
 
         loadedCheerio(".chapters > .col-md-3 > div").get().reverse().forEach((e, i) => {
-            var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
-            let urlChapters = loadedCheerio(e).find("a").attr("href") || "";
-            let codeChapter = pattern.exec(urlChapters) || "";
-           
+            let urlChapters = loadedCheerio(e).find("a").attr("href") || "";   
+
             const chapter: Plugin.ChapterItem = {
                 name: loadedCheerio(e).find("a")?.text().trim(),
-                path: codeChapter[2],
+                path: urlChapters, 
                 releaseTime: loadedCheerio(e).find(".card-footer > span").text().trim().split('-').reverse().join('-'), 
                 chapterNumber: i+1,
             };
@@ -96,7 +94,11 @@ class NovelkiPL implements Plugin.PluginBase {
         return novel;
     }
     async parseChapter(chapterPath: string): Promise<string> {
-        const body = await fetchApi(`${this.site}/api/reader/chapters/${chapterPath}`).then((res) => res.json());
+        var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
+        let codeChapter = pattern.exec(chapterPath) || "";
+        const body = await fetchApi(`${this.site}/api/reader/chapters/${codeChapter[2]}`).then((res) => res.json()); 
+
+        //Dodać tutaj jakoś errorka jeśli trzeba sie zalogowac to pokazać errorka ze zaloguj sie w webview.
 
         const chapterText = body.data.content
         return chapterText;
