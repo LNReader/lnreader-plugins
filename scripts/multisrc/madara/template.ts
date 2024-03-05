@@ -87,7 +87,6 @@ class MadaraPlugin implements Plugin.PluginBase {
     if (!filters) filters = {};
     if (showLatestNovels) url += "&m_orderby=latest";
     for (const key in filters) {
-      console.log(key, filters[key].value);
       if (typeof filters[key].value === "object")
         for (const value of filters[key].value as string[])
           url += `&${key}=${value}`;
