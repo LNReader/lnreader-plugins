@@ -117,7 +117,7 @@ function getFilters(name: string, html: string) {
 		filters.filters["status[]"].options.length == 0 ||
 		filters.filters["adult"].options.length == 0 ||
 		filters.filters["genre[]"].options.length == 0) {
-		console.error(`⚠️Error in filters for ${name} please fix manually (${path.join(__dirname, 'filters', name + ".json")})⚠️`);
+		console.error(`🚨Error in filters for ${name} please fix manually (${path.join(__dirname, 'filters', name + ".json")})🚨`);
 	}
 
 	fs.writeFileSync(
