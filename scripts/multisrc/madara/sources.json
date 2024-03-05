@@ -308,5 +308,47 @@
     "options": {
       "lang": "Portuguese"
     }
+  },
+  {
+    "id": "panchotranslations",
+    "sourceSite": "https://panchotranslations.com/",
+    "sourceName": "Pancho Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "salmonlatte",
+    "sourceSite": "https://salmonlatte.com/",
+    "sourceName": "Salmon Latte",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "asuralightnovel",
+    "sourceSite": "https://asuralightnovel.com/",
+    "sourceName": "Asura Light Novel",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "novel-lucky",
+    "sourceSite": "https://novel-lucky.com/",
+    "sourceName": "Novel Lucky",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Thai"
+    }
+  },
+  {
+    "id": "fanstranslations",
+    "sourceSite": "https://fanstranslations.com/",
+    "sourceName": "Fans Translations",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
   }
 ]
