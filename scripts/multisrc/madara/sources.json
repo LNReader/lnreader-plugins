@@ -213,14 +213,6 @@
     }
   },
   {
-    "id": "fanTLS",
-    "sourceSite": "https://fanstranslations.com/",
-    "sourceName": "Fans Translations",
-    "options": {
-      "useNewChapterEndpoint": true
-    }
-  },
-  {
     "id": "novelstic",
     "sourceSite": "https://novelstic.com/",
     "sourceName": "Novelstic",
