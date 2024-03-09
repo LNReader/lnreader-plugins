@@ -112,11 +112,7 @@ class freedlit implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
-<<<<<<< HEAD
-    loadedCheerio("#bookListBlock > div").each((index, element) => {
-=======
     loadedCheerio("#bookGridBlock > div").each((index, element) => {
->>>>>>> origin
       const name = loadedCheerio(element).find("h4 > a").text()?.trim();
       const cover = loadedCheerio(element).find("a > img").attr("src")?.trim();
       const url = loadedCheerio(element).find("h4 > a").attr("href")?.trim();
