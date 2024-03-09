@@ -124,5 +124,23 @@
       "lang": "Portuguese",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "whitemoonlightnovels",
+    "sourceSite": "https://whitemoonlightnovels.com/",
+    "sourceName": "White Moonlight Novels",
+    "options": {
+      "lang": "English",
+      "reverseChapters": false
+    }
+  },
+  {
+    "id": "systemtranslation",
+    "sourceSite": "https://systemtranslation.com/",
+    "sourceName": "System Translation",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
+    }
   }
 ]

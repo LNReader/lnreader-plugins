@@ -175,7 +175,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
                         {
                             try {
                                 const [day, month, year] = releaseDate.split(" ");
-                                releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").toDate().toString();
+                                releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").format("YYYY-MM-DD");
                             } catch (e) {}
                         }
                         const chapterUrl = cheerio.find("a").attr("href");
@@ -218,13 +218,13 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
                                 let releaseDate = date;
                                 try {
                                     const [day, month, year] = date.split(" ");
-                                    releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").toDate().toString();
+                                    releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").format("YYYY-MM-DD");
                                 } catch (e) {}
-                                const chapter = {
+                                const chapter: Plugin.ChapterItem = {
                                     name: newChapterName + " (" + (index + 1) + ")",
                                     releaseTime: releaseDate,
                                     path: hrefs[index].replace(site, ""),
-                                    chapterNumber: chapterIndex + index / 100,
+                                    chapterNumber: chapterIndex + (index + 1) / 1000,
                                 };
                                 novelChapters.push(chapter);
                             }
@@ -243,8 +243,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
         if (!$)
             throw new Error("Failed to load page (open in web view)");
     
-        $(".mistape_caption")
-            .remove();
+        $(".mistape_caption").remove();
         let chapterText = $(".chapter-content").html()
             || $(".entry-content").html()
             || "";
@@ -265,11 +264,13 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
                 .toLowerCase()
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
+                .trim()
                 .includes(
                     searchTerm
                     .toLowerCase()
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
+                    .trim()
                     )
         );
     

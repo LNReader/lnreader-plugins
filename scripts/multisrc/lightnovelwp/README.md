@@ -19,7 +19,7 @@ To add a new source you need to add it to sources.json:
   - lang: the language of the source (default: "English") (check that the language
    exists in the languages (check folder names in "plugins/"))
   - reverseChapter: if the chapters are in reverse order
-   (if the first chapter of the list is 1 set it to true)
+   (if the first chapter of the list is 1 set it to false)
 
 To add an icon to the source you need to find the icon of the site \
 (try the favicon of the site (https://site.com/favicon.ico) most of the times it redirects you to an image named something like "cropped-site-32x32.png" try to access "cropped-site.png" or "site.png" if that did not work you can try to access "https://site.com/wp-json/" at the end of this very long file there should be a "site_icon_url" value
@@ -28,5 +28,5 @@ and add it to the folder "icons/multisrc/lightnovelwp" named as the id of the so
 
 To add filters to a source you need to run the script "get_filters.ts" \
 (./node_modules/.bin/ts-node scripts/multisrc/lightnovelwp/get_filters.ts
-(if you are in the root of the project) (and you have run "npm install" before))
+(if you are at the root of the project) (and you have ran "npm install" before))
 and follow the instructions (url is easier and faster but sometimes it doesn't work)

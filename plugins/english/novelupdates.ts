@@ -26,6 +26,7 @@ class NovelUpdates implements Plugin.PluginBase {
                 name: novelName,
                 cover: novelCover,
                 path: novelUrl.replace(this.site, ''),
+                path: novelUrl.replace(this.site, ''),
             };
 
             novels.push(novel);
@@ -69,12 +70,45 @@ class NovelUpdates implements Plugin.PluginBase {
             })
             .join('');
         
+    async popularNovels(page: number, { showLatestNovels, filters }: Plugin.PopularNovelsOptions<typeof this.filters>): Promise<Plugin.NovelItem[]> {
+        let link = `${this.site}`;
+        if (filters.language.value.length ||
+            filters.novelType.value.length ||
+            filters.genres.value.include?.length ||
+            filters.genres.value.exclude?.length ||
+            filters.storyStatus.value !== '' ){
+        link += "series-finder/?sf=1"
+        } else if (showLatestNovels){
+            link += "latest-series/?st=1" 
+            } else {
+            link += "series-ranking/?rank=week"
+            };
+        
+        if (filters.language.value.length)
+            link += '&org=' + filters.language.value.join(',');
+        
+        if (filters.novelType.value.length)
+            link += '&nt=' + filters.novelType.value.join(',');
+
+        if (filters.genres.value.include?.length)
+            link += '&gi=' + filters.genres.value.include.join(',');
+
+        if (filters.genres.value.exclude?.length)
+            link += '&ge=' + filters.genres.value.exclude.join(',');
+
+        if (filters.genres.value.include?.length || filters.genres.value.exclude?.length)
+            link += '&mgi=' + filters.genre_operator.value;
+
+        if (filters.storyStatus.value.length)
+            link += '&ss=' + filters.storyStatus.value;
+
         link += '&sort=' + filters.sort.value;
 
         link += '&order=' + filters.order.value;
 
         link += '&pg=' + page;
 
+        const body = await fetchApi(link).then((result) =>
         const body = await fetchApi(link).then((result) =>
             result.text()
         );
@@ -83,6 +117,8 @@ class NovelUpdates implements Plugin.PluginBase {
         return this.parseNovels(loadedCheerio);
     }
 
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        const url = this.site + novelPath;
     async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
         const url = this.site + novelPath;
         const result = await fetchApi(url);
@@ -94,6 +130,10 @@ class NovelUpdates implements Plugin.PluginBase {
             path: novelPath,
             name: loadedCheerio(".seriestitlenu").text() || "Untitled",
             cover: loadedCheerio(".wpb_wrapper img").attr("src"),
+            path: novelPath,
+            name: loadedCheerio(".seriestitlenu").text() || "Untitled",
+            cover: loadedCheerio(".seriesimg > img").attr("src"),
+            author: loadedCheerio("#showauthors").text().trim(),
             chapters: [],
         };
 
@@ -114,20 +154,25 @@ class NovelUpdates implements Plugin.PluginBase {
             : "Completed";
 
         const type = loadedCheerio("#showtype").text().trim();
+        const type = loadedCheerio("#showtype").text().trim();
 
+        const summary = loadedCheerio("#editdescription").text().trim();
         const summary = loadedCheerio("#editdescription").text().trim();
 
         novel.summary = summary + `\n\nType: ${type}`;
 
         const chapter: Plugin.ChapterItem[] = [];
+        const chapter: Plugin.ChapterItem[] = [];
 
         const novelId = loadedCheerio("input#mypostid").attr("value")!;
 
+        const formData = new FormData();
         const formData = new FormData();
         formData.append("action", "nd_getchapters");
         formData.append("mygrr", "0");
         formData.append("mypostid", novelId);
 
+        const link = `${this.site}wp-admin/admin-ajax.php`;
         const link = `${this.site}wp-admin/admin-ajax.php`;
 
         const text = await fetchApi(
@@ -142,12 +187,16 @@ class NovelUpdates implements Plugin.PluginBase {
 
         loadedCheerio("li.sp_li_chp").each((i,el) => {
             const chapterName = loadedCheerio(el).text().trim();
+        loadedCheerio("li.sp_li_chp").each((i,el) => {
+            const chapterName = loadedCheerio(el).text().trim();
             const chapterUrl =
                 "https:" +
+                loadedCheerio(el).find("a").first().next().attr("href");
                 loadedCheerio(el).find("a").first().next().attr("href");
 
             chapter.push({
                 name: chapterName,
+                path: chapterUrl.replace(this.site, ''),
                 path: chapterUrl.replace(this.site, ''),
             });
         });
@@ -157,6 +206,7 @@ class NovelUpdates implements Plugin.PluginBase {
         return novel;
     }
 
+
     getLocation(href: string) {
         var match = href.match(
             /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/
@@ -165,9 +215,11 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     async parseChapter(chapterPath: string): Promise<string> {
+    async parseChapter(chapterPath: string): Promise<string> {
         let chapterText = "";
 
         const result = await fetchApi(
+            this.site + chapterPath,
             this.site + chapterPath,
         );
         const body = await result.text();
@@ -179,27 +231,36 @@ class NovelUpdates implements Plugin.PluginBase {
         const loadedCheerio = parseHTML(body);
 
         let isWuxiaWorld = result.url.toLowerCase().includes("wuxiaworld");
+        let isWuxiaWorld = result.url.toLowerCase().includes("wuxiaworld");
 
+        let isBlogspot = result.url.toLowerCase().includes("blogspot");
         let isBlogspot = result.url.toLowerCase().includes("blogspot");
 
         let isTumblr = result.url.toLowerCase().includes("tumblr");
+        let isTumblr = result.url.toLowerCase().includes("tumblr");
 
+        let isWattpad = result.url.toLowerCase().includes("wattpad");
         let isWattpad = result.url.toLowerCase().includes("wattpad");
 
         let isAnomalously = result.url.toLowerCase().includes('anotivereads');
+        let isAnomalously = result.url.toLowerCase().includes('anotivereads');
 
+        let isBlossomTranslation = result.url
         let isBlossomTranslation = result.url
             .toLowerCase()
             .includes('blossomtranslation');
 
         let isLightNovelsTls = result.url
+        let isLightNovelsTls = result.url
             .toLowerCase()
             .includes("lightnovelstranslations");
 
         let isiNovelTranslation = result.url
+        let isiNovelTranslation = result.url
             .toLowerCase()
             .includes("inoveltranslation");
 
+        let isTravisTranslation = result.url
         let isTravisTranslation = result.url
             .toLowerCase()
             .includes("travistranslations");
@@ -224,11 +285,15 @@ class NovelUpdates implements Plugin.PluginBase {
         }
 
         let isRainOfSnow = result.url.toLowerCase().includes("rainofsnow");
+        let isRainOfSnow = result.url.toLowerCase().includes("rainofsnow");
 
+        let isWebNovel = result.url.toLowerCase().includes("webnovel");
         let isWebNovel = result.url.toLowerCase().includes("webnovel");
 
         let isHostedNovel = result.url.toLowerCase().includes("hostednovel");
+        let isHostedNovel = result.url.toLowerCase().includes("hostednovel");
 
+        let isScribbleHub = result.url.toLowerCase().includes("scribblehub");
         let isScribbleHub = result.url.toLowerCase().includes("scribblehub");
 
         if (isWuxiaWorld) {
@@ -257,6 +322,7 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (isAnomalously) {
             chapterText = loadedCheerio('#comic').html()!;
         } else if (isiNovelTranslation) {
+            const link = 'https://api.' + result.url.slice(8);
             const link = 'https://api.' + result.url.slice(8);
             const json = await fetchApi(link).then(r => r.json());
             chapterText = json.content.replace(/\n/g, '<br>');
@@ -321,11 +387,13 @@ class NovelUpdates implements Plugin.PluginBase {
             chapterText = chapterText.replace(
                 /href="\//g,
                 `href="${this.getLocation(result.url)}/`
+                `href="${this.getLocation(result.url)}/`
             );
         }
 
         return chapterText;
     }
+
 
     async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
         const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;

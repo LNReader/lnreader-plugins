@@ -4,7 +4,6 @@ import { Plugin } from "@typings/plugin";
 import { NovelStatus } from "@libs/novelStatus";
 import { defaultCover } from "@libs/defaultCover";
 import { Filters } from "@libs/filterInputs";
-import dayjs from "dayjs";
 
 interface LightNovelWPOptions {
   reverseChapters?: boolean;
@@ -33,7 +32,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = `multisrc/lightnovelwp/${metadata.id}.png`;
     this.site = metadata.sourceSite;
-    this.version = "1.0.2";
+    this.version = "1.0.3";
     this.options = metadata.options;
     this.filters = metadata.filters satisfies Filters;
   }
@@ -44,12 +43,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
     const r = await fetchApi(url);
-    if (!r.ok && search != true) throw new Error("You got banned ? (check in webview)");
-    const body = await r.text();
-    const $ = load(body);
+    if (!r.ok && search != true) throw new Error("Could not reach site (" + r.status + ") try to open in webview.");
+    const $ = load(await r.text());
     const title = $("title").text().trim();
     if (this.getHostname(url) != this.getHostname(r.url) ||
-      title == "Bot Verification" || title == "You are being redirected...")
+      title == "Bot Verification" || title == "You are being redirected..." || title == "Un instant..." || title == "Just a moment..." || title == "Redirecting...")
       throw new Error("Captcha error, please open in webview");
 
     return ($);
@@ -112,7 +110,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         break;
     }
 
-    let details = $("div.serl > span")
+    let details = $("div.serl");
     if (!details.length) details = $("div.spe > span");
     details.each(function () {
       const detailName = $(this).contents().first().text().replace(":", "").trim().toLowerCase();
@@ -122,21 +120,39 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         case "الكاتب":
         case "author":
         case "auteur":
+        case "autor":
+        case "yazar":
           novel.author = detail;
           break;
         case "الحالة":
         case "status":
+        case "statut":
+        case "estado":
+        case "durum":
           switch (detail) {
             case "مكتملة":
             case "completed":
+            case "complété":
+            case "completo":
+            case "completado":
+            case "tamamlandı":
               novel.status = NovelStatus.Completed;
               break;
             case "مستمرة":
             case "ongoing":
+            case "en cours":
+            case "em andamento":
+            case "en progreso":
+            case "devam ediyor":
               novel.status = NovelStatus.Ongoing;
               break;
             case "متوقفة":
             case "hiatus":
+            case "en pause":
+            case "hiato":
+            case "pausa":
+            case "pausado":
+            case "duraklatıldı":
               novel.status = NovelStatus.OnHiatus;
               break;
             default:
@@ -147,6 +163,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         case "الفنان":
         case "artist":
         case "artiste":
+        case "artista":
+        case "çizer":
           novel.artist = detail;
           break;
       }
@@ -174,6 +192,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         case "free":
         case "gratuit":
         case "مجاني":
+        case "livre":
         case "":
           isFreeChapter = true;
           break;

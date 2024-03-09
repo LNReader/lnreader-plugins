@@ -67,7 +67,8 @@ class RLIB implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
+    const body = await fetchApi(this.resolveUrl(novelPath, true))
+      .then((res) => res.text());
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
@@ -104,46 +105,79 @@ class RLIB implements Plugin.PluginBase {
       }
     });
 
+    this.ui = loadedCheerio("a.header-right-menu__item")
+      .attr("href")
+      ?.replace?.(/[^0-9]/g, "");
+
     const chaptersRaw = body.match(/window\.__DATA__ = ({.*?});/);
     if (chaptersRaw instanceof Array && chaptersRaw.length >= 2) {
-      const chapters: Plugin.ChapterItem[] = [];
       const chaptersJson: responseBook = JSON.parse(chaptersRaw[1]);
-      const totalChapters = chaptersJson.chapters.list?.length || 0;
 
-      novel.name = novel.name
-        ? novel.name
-        : chaptersJson.manga.rusName ||
+      if (!novel.name) {
+        novel.name =
+          chaptersJson.manga.rusName ||
           chaptersJson.manga.engName ||
           chaptersJson.manga.name;
-      novel.status =
-        statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
-
+      }
+      novel.status = statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
       this.ui = chaptersJson?.user?.id;
 
-      chaptersJson.chapters?.list?.forEach((chapter, chapterIndex) =>
+      if (!chaptersJson.chapters.list?.length) return novel;
+      const totalChapters = chaptersJson.chapters.list.length;
+
+      const customPage: { [key: number]: string } = {};
+      const customOrder: { [key: number]: number } = {};
+      if (chaptersJson.chapters.branches?.length && chaptersJson.chapters.branches.length > 1) {
+        //if the novel is being translated by more than one team
+        chaptersJson.chapters.branches.forEach(({ teams, id }) => {
+          if (teams?.length) {
+            customPage[id || 0] =
+              teams.find((team) => team.is_active)?.name || teams[0].name;
+          }
+        });
+        //fixes the chapter's position.
+        chaptersJson.chapters.list.forEach((chapter) => {
+          chapter.index = customOrder[chapter.branch_id || 0] || 1;
+          customOrder[chapter.branch_id || 0] =
+            (customOrder[chapter.branch_id || 0] || 1) + 1;
+        });
+      }
+
+      const chapters: Plugin.ChapterItem[] = [];
+      chaptersJson.chapters.list.forEach((chapter, chapterIndex) =>
         chapters.push({
           name:
             "Том " + chapter.chapter_volume +
             " Глава " + chapter.chapter_number +
               (chapter.chapter_name ? " " + chapter.chapter_name.trim() : ""),
           path:
-            "/" + chaptersJson.manga.slug +
+            novelPath +
             "/v" + chapter.chapter_volume +
             "/c" + chapter.chapter_number +
             "?bid=" + (chapter.branch_id || ""),
           releaseTime: dayjs(chapter.chapter_created_at).format("LLL"),
-          chapterNumber: totalChapters - chapterIndex,
+          chapterNumber:
+            customOrder[chapter.branch_id || 0] - (chapter.index || 0) ||
+            totalChapters - chapterIndex,
+          page: customPage[chapter.branch_id || 0] || "Основной перевод",
         }),
       );
-      novel.chapters = chapters.reverse();
+      novel.chapters =
+        chaptersJson.chapters.branches?.length &&
+        chaptersJson.chapters.branches.length > 1
+          ? chapters.sort((a, b) => {
+              if ((a.page || 0) > (b.page || 0)) return 1;
+              if ((a.page || 0) < (b.page || 0)) return -1;
+              return (a.chapterNumber || 0) - (b.chapterNumber || 0);
+            })
+          : chapters.reverse();
     }
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(
-      this.site + chapterPath + (this.ui ? "&ui=" + this.ui : ""),
-    ).then((res) => res.text());
+    const result = await fetchApi(this.resolveUrl(chapterPath))
+      .then((res) => res.text());
 
     const loadedCheerio = parseHTML(result);
     loadedCheerio(".reader-container img").each((index, element) => {
@@ -173,7 +207,7 @@ class RLIB implements Plugin.PluginBase {
       novels.push({
         name: novel.rus_name || novel.name,
         cover: novel.coverImage,
-        path: novel.slug,
+        path: "/" + novel.slug,
       }),
     );
 
@@ -181,6 +215,8 @@ class RLIB implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + path + (this.ui ? (isNovel ? "?" : "&") + "ui=" + this.ui : "");
 
   filters = {
     sort: {
@@ -428,12 +464,13 @@ interface Manga {
   href?: string;
 }
 interface Chapters {
-  list?: ListEntity[] | null;
-  teams?: TeamsEntity[] | null;
-  branches?: BranchesEntity[] | null;
-  is_paid?: null[] | null;
+  list?: ListEntity[];
+  teams?: TeamsEntity[];
+  branches?: BranchesEntity[];
+  is_paid?: string[] | null;
 }
 interface ListEntity {
+  index?: number; //crutch
   chapter_id: number;
   chapter_slug: string;
   chapter_name: string;

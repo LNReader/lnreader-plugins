@@ -1,158 +1,157 @@
-import { load as parseHTML } from "cheerio";
-import { fetchApi, fetchFile } from "@libs/fetch";
-import { Plugin } from "@typings/plugin";
+import { fetchFile, fetchApi } from "@libs/fetch";
 import { Filters } from "@libs/filterInputs";
-
-export const id = "agit.xyz";
-export const name = "Agitoon";
-export const site = "https://agit501.xyz/";
-export const version = "1.0.0";
-export const icon = "src/kr/agitoon/agit.png";
-
-const baseUrl = site;
+import { Plugin } from "@typings/plugin";
+import { load as parseHTML } from "cheerio";
+import qs from "qs";
 
 class Agitoon implements Plugin.PluginBase {
-    id = "agit.xyz";
-    name = "Agitoon";
-    icon = "src/kr/agitoon/agit.png";
-    site = "https://agit501.xyz/";
-    filters?: Filters | undefined;
-    version = "1.0.0";
-    async popularNovels(pageNo: number, options: Plugin.PopularNovelsOptions<Filters>): Promise<Plugin.NovelItem[]> {
-        const list_limit = 20 * (pageNo - 1);
-        const day = new Date().getDay();
+  id = "agit.xyz";
+  name = "Agitoon";
+  icon = "src/kr/agitoon/agit.png";
+  site = "https://agit501.xyz";
+  version = "1.0.0";
 
-        const res = await fetchApi(baseUrl + "novel/index.update.php", {
-            headers: {
-                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: `mode=get_data_novel_list_p&novel_menu=3&np_day=${day}&np_rank=1&np_distributor=0&np_genre=00&np_order=1&np_genre_ex_1=00&np_genre_ex_2=00&list_limit=${list_limit}&is_query_first=true`,
-            method: "POST",
-        });
-        const resJson = await res.json() as response;
+  async popularNovels(
+    pageNo: number,
+    { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
+  ): Promise<Plugin.NovelItem[]> {
+    const res = await fetchApi(this.site + "/novel/index.update.php", {
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      method: "POST",
+      body: qs.stringify({
+        mode: "get_data_novel_list_p",
+        novel_menu: showLatestNovels ? "1" : "3",
+        np_day: new Date().getDay(),
+        np_rank: "1",
+        np_distributor: "0",
+        np_genre: "00",
+        np_order: "1",
+        np_genre_ex_1: "00",
+        np_genre_ex_2: "00",
+        list_limit: 20 * (pageNo - 1),
+        is_query_first: pageNo == 1,
+      }),
+    });
+    const resJson = (await res.json()) as response;
+    const novels: Plugin.NovelItem[] = [];
 
-        const novels: Plugin.NovelItem[] = []
+    resJson?.list?.forEach((novel) =>
+      novels.push({
+        name: novel.wr_subject,
+        cover: this.site + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
+        path: novel.wr_id,
+      }),
+    );
 
-        resJson?.list?.forEach((novel) => {
-            novels.push({
-                url: baseUrl + "novel/list/" + novel.wr_id,
-                name: novel.wr_subject,
-                cover: baseUrl + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
-            });
-        });
+    return novels;
+  }
 
-        return novels;
-    }
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const novelId = novelUrl.split("/").reverse()[0];
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    const result = await fetchApi(this.resolveUrl(novelPath, true))
+      .then((res) => res.text());
+    const loadedCheerio = parseHTML(result, { decodeEntities: false });
 
-        // cheerio
-        const result = await fetchApi(novelUrl);
-        const body = await result.text();
+    const novel: Plugin.SourceNovel = {
+      path: novelPath,
+      name: loadedCheerio("h5.pt-2").text(),
+      cover: this.site + loadedCheerio("div.col-5.pr-0.pl-0 img").attr("src"),
+      summary: loadedCheerio(".pt-1.mt-1.pb-1.mb-1").text(),
+    };
 
-        const loadedCheerio = parseHTML(body, { decodeEntities: false });
-        const name = loadedCheerio("h5.pt-2").text();
-        const summary = loadedCheerio(".pt-1.mt-1.pb-1.mb-1").text();
-        const author = loadedCheerio(".post-item-list-cate-v")
-            .first()
-            .text()
-            .split(" : ")
-            .reverse()[0];
-        const cover =
-            baseUrl.slice(0, baseUrl.length - 1) +
-            loadedCheerio("div.col-5.pr-0.pl-0 img").attr("src");
-        const genresTag = loadedCheerio(".col-7 > .post-item-list-cate > span");
-        let genres = "";
+    novel.author = loadedCheerio(".post-item-list-cate-v")
+      .first()
+      .text()
+      .split(" : ")[1];
 
-        genresTag.each((_, element) => {
-            genres += loadedCheerio(element).text();
-            genres += ", ";
-        });
-        genres = genres.slice(0, genres.length - 2);
+    const genres = loadedCheerio(".col-7 > .post-item-list-cate > span")
+      .map((index, element) => loadedCheerio(element).text().trim())
+      .get();
 
-        // normal REST HTTP requests
-        let chapters: Plugin.ChapterItem[] = [];
-
-        const res = await fetchApi(baseUrl + "novel/list.update.php", {
-            headers: {
-                "content-type":
-                    "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: `mode=get_data_novel_list_c&wr_id_p=${novelId}&page_no=1&cnt_list=10000&order_type=Asc`,
-            method: "POST",
-        });
-
-        const resJson = await res.json() as responseBook
-
-        resJson?.list?.forEach((chapter) => {
-            chapters.push({
-                name: chapter.wr_subject,
-                url: baseUrl + `novel/view/${chapter.wr_id}/2`,
-                releaseTime: chapter.wr_datetime,
-            });
-        });
-
-        const novel: Plugin.SourceNovel = {
-            url: novelUrl,
-            name,
-            cover,
-            summary,
-            author,
-            status: "",
-            genres: genres,
-            chapters,
-        };
-        return novel;
-    }
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetchApi(chapterUrl);
-        const body = await result.text();
-
-        const loadedCheerio = parseHTML(body);
-
-        let content = loadedCheerio("#id_wr_content").html() || '';
-
-        // gets rid of the popup thingy
-        content = content.replace(
-            "팝업메뉴는 빈공간을 더치하거나 스크룰시 사라집니다",
-            ""
-        );
-
-        return content;
-    }
-    async searchNovels(searchTerm: string, pageNo: number): Promise<Plugin.NovelItem[]> {
-        const rawResults = await fetchApi("https://agit501.xyz/novel/search.php", {
-            headers: {
-                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: `mode=get_data_novel_list_p_sch&search_novel=${searchTerm}&list_limit=0`,
-            method: "POST",
-        });
-        const resJson = await rawResults.json() as response;
-
-        const novels: Plugin.NovelItem[] = []
-
-        resJson?.list?.forEach((novel) => {
-            novels.push({
-                url: baseUrl + "novel/list/" + novel.wr_id,
-                name: novel.wr_subject,
-                cover: baseUrl + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
-            });
-        });
-
-        return novels;
-    }
-    async fetchImage(url: string): Promise<string | undefined> {
-        return fetchFile(url);
+    if (genres.length) {
+      novel.genres = genres.join(", ");
     }
 
+    const chapters: Plugin.ChapterItem[] = [];
+    const res = await fetchApi(this.site + "/novel/list.update.php", {
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      method: "POST",
+      body: qs.stringify({
+        mode: "get_data_novel_list_c",
+        wr_id_p: novelPath,
+        page_no: "1",
+        cnt_list: "10000",
+        order_type: "Asc",
+      }),
+    });
+
+    const resJson = (await res.json()) as responseBook;
+    resJson?.list?.forEach((chapter) =>
+      chapters.push({
+        name: chapter.wr_subject,
+        path: chapter.wr_id + "/2",
+        releaseTime: chapter.wr_datetime,
+      }),
+    );
+
+    novel.chapters = chapters;
+    return novel;
+  }
+
+  async parseChapter(chapterPath: string): Promise<string> {
+    const result = await fetchApi(this.resolveUrl(chapterPath))
+      .then((res) => res.text());
+
+    const loadedCheerio = parseHTML(result);
+    let content = loadedCheerio("#id_wr_content").html() || "";
+
+    // gets rid of the popup thingy
+    content = content
+      .replace("팝업메뉴는 빈공간을 더치하거나 스크룰시 사라집니다", "")
+      .trim();
+
+    return content;
+  }
+
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    const rawResults = await fetchApi("https://agit501.xyz/novel/search.php", {
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      method: "POST",
+      body: qs.stringify({
+        mode: "get_data_novel_list_p_sch",
+        search_novel: searchTerm,
+        list_limit: 0,
+      }),
+    });
+    const resJson = (await rawResults.json()) as response;
+    const novels: Plugin.NovelItem[] = [];
+
+    resJson?.list?.forEach((novel) =>
+      novels.push({
+        name: novel.wr_subject,
+        cover: this.site + "/" + novel.np_dir + "/thumbnail/" + novel.np_thumbnail,
+        path: novel.wr_id,
+      }),
+    );
+
+    return novels;
+  }
+
+  fetchImage = fetchFile;
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? "/novel/list/" : "/novel/view/") + path;
 }
 
 export default new Agitoon();
 
 interface response {
   list_limit: number;
-  list?: (ListEntity)[] | null;
+  list?: ListEntity[] | null;
   list_count: number;
 }
 interface ListEntity {
@@ -172,7 +171,7 @@ interface ListEntity {
 }
 
 interface responseBook {
-  list?: (ListEntity2)[] | null;
+  list?: ListEntity2[] | null;
   download_time: string;
 }
 interface ListEntity2 {
