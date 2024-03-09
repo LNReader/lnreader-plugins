@@ -53,7 +53,6 @@ class PawRead implements Plugin.PluginBase {
         
         link += filters.sort.value;
         link += `/?page=${page}`;
-        console.log(link);
 
         const body = await fetchApi(link).then((r) => r.text());        
 
