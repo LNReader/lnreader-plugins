@@ -38,10 +38,9 @@ class ReN implements Plugin.PluginBase {
 
     url += "&page=" + pageNo;
 
-    const result = await fetchApi(url);
-    const body = (await result.json()) as { content: responseNovels[] };
-
-    const novels: Plugin.NovelItem[] = body.content.map((novel) => ({
+    const { content }: { content: responseNovels[] } = await fetchApi(url)
+      .then((res) => res.json());
+    const novels: Plugin.NovelItem[] = content.map((novel) => ({
       name: novel.main_name || novel.secondary_name,
       cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
       path: novel.dir,
@@ -51,26 +50,27 @@ class ReN implements Plugin.PluginBase {
   }
 
   async parseNovel(novelID: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.site + "/api/titles/" + novelID);
-    const body = (await result.json()) as { content: responseNovel };
+    const { content }: { content: responseNovel } = await fetchApi(
+      this.site + "/api/titles/" + novelID,
+    ).then((res) => res.json());
 
     const novel: Plugin.SourceNovel = {
       path: novelID,
       name:
-        body.content.main_name ||
-        body.content.secondary_name ||
-        body.content.another_name,
-      summary: body.content.description,
+        content.main_name ||
+        content.secondary_name ||
+        content.another_name,
+      summary: content.description,
       cover:
         this.site +
-        (body.content.img.high || body.content.img.mid || body.content.img.low),
+        (content.img.high || content.img.mid || content.img.low),
       status:
-        body.content.status.name === "Продолжается"
+        content.status.name === "Продолжается"
           ? NovelStatus.Ongoing
           : NovelStatus.Completed,
     };
 
-    const tags = [body.content?.genres, body.content?.categories]
+    const tags = [content?.genres, content?.categories]
       .flat()
       .map((tags) => tags?.name)
       .filter((tags) => tags);
@@ -80,21 +80,20 @@ class ReN implements Plugin.PluginBase {
     }
 
     const totalPages =
-      (body.content.branches?.[0]?.count_chapters ||
-        body.content.count_chapters) / 100;
-    const branch_id = body.content.branches?.[0]?.id || body.content.id;
+      (content.branches?.[0]?.count_chapters ||
+        content.count_chapters) / 100;
+    const branch_id = content.branches?.[0]?.id || content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let page = 0; page < totalPages; page++) {
       await delay(1000);
-      const chapterResult = await fetchApi(
-        this.site +
+      const volumes: {
+        content: responseСhapters[];
+      } = await fetchApi(
+        this.site + 
           "/api/titles/chapters/?branch_id=" + branch_id +
           "&count=100&page=" + (page + 1),
-      );
-      const volumes = (await chapterResult.json()) as {
-        content: responseСhapters[];
-      };
+      ).then((res) => res.json());
 
       volumes.content.forEach((chapter) => {
         if (!chapter.is_paid || chapter.is_bought) {
@@ -117,10 +116,10 @@ class ReN implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + "/api/titles/chapters/" + chapterPath.split("/")[1];
-    const result = await fetchApi(url);
-    const body = (await result.json()) as { content: responseСhapter };
+    const result: { content: responseСhapter } = await fetchApi(url)
+      .then((res) => res.json());
 
-    return body.content.content;
+    return result.content.content || "";
   }
 
   async searchNovels(
@@ -128,11 +127,11 @@ class ReN implements Plugin.PluginBase {
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/api/search/?query=${searchTerm}&count=100&field=titles&page=${pageNo}`;
-    const result = await fetchApi(url);
-    const body = (await result.json()) as { content: responseNovels[] };
+    const { content }: { content: responseNovels[] } = await fetchApi(url)
+      .then((res) => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    body.content.forEach((novel) =>
+    content.forEach((novel) =>
       novels.push({
         name: novel.main_name || novel.secondary_name,
         cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),

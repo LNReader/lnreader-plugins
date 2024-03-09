@@ -8,20 +8,19 @@ import { cookieManager } from "@libs/сookie";
 import { storage } from "@libs/storage";
 import dayjs from "dayjs";
 
-const apiUrl = "https://api.author.today/";
-
 class AuthorToday implements Plugin.PluginBase {
   id = "AT";
   name = "Автор Тудей";
   icon = "src/ru/authortoday/icon.png";
   site = "https://author.today";
+  apiUrl = "https://api.author.today/";
   version = "1.0.0";
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = apiUrl + "v1/catalog/search?page=" + pageNo;
+    let url = this.apiUrl + "v1/catalog/search?page=" + pageNo;
     if (filters?.genre?.value) {
       url += "&genre=" + filters.genre.value;
     }
@@ -36,19 +35,18 @@ class AuthorToday implements Plugin.PluginBase {
     url += "&access=" + (filters?.access?.value || "any");
     url += "&promo=" + (filters?.promo?.value || "hide");
 
-    const result = await fetchApi(url, {
+    const result: response = await fetchApi(url, {
       headers: {
         Authorization: "Bearer guest",
       },
-    });
-    const json = (await result.json()) as response;
+    }).then((res) => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    if (json.code === "NotFound") {
+    if (result.code === "NotFound") {
       return novels;
     }
 
-    json?.searchResults?.forEach((novel) =>
+    result?.searchResults?.forEach((novel) =>
       novels.push({
         name: novel.title,
         cover: novel.coverUrl
@@ -63,13 +61,15 @@ class AuthorToday implements Plugin.PluginBase {
 
   async parseNovel(workID: string): Promise<Plugin.SourceNovel> {
     const user = await this.getUser();
-    const result = await fetchApi(`${apiUrl}v1/work/${workID}/details`, {
-      headers: {
-        Authorization: "Bearer " + user.token,
+    const book: responseBook = await fetchApi(
+      this.apiUrl + "v1/work/" + workID + "/details",
+      {
+        headers: {
+          Authorization: "Bearer " + user.token,
+        },
       },
-    });
+    ).then((res) => res.json());
 
-    const book = (await result.json()) as responseBook;
     if (book.message) {
       storage.delete(this.id, "user");
     }
@@ -96,15 +96,16 @@ class AuthorToday implements Plugin.PluginBase {
       novel.summary += "Примечания автора:\n" + book.authorNotes;
     }
 
-    const chaptersRaw = await fetchApi(`${apiUrl}v1/work/${workID}/content`, {
-      headers: {
-        Authorization: "Bearer " + user.token,
+    const chaptersJSON: ChaptersEntity[] = await fetchApi(
+      this.apiUrl + "v1/work/" + workID + "/content",
+      {
+        headers: {
+          Authorization: "Bearer " + user.token,
+        },
       },
-    });
+    ).then((res) => res.json());
 
-    const chaptersJSON = (await chaptersRaw.json()) as ChaptersEntity[];
     const chapters: Plugin.ChapterItem[] = [];
-
     chaptersJSON.forEach((chapter, chapterIndex) => {
       if (chapter.isAvailable && !chapter.isDraft) {
         chapters.push({
@@ -125,28 +126,28 @@ class AuthorToday implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const [workID, chapterID] = chapterPath.split("/");
     const user = await this.getUser();
-    const result = await fetchApi(
-      apiUrl + `v1/work/${workID}/chapter/${chapterID}/text`,
+    const result: encryptedСhapter = await fetchApi(
+      this.apiUrl + `v1/work/${workID}/chapter/${chapterID}/text`,
       {
         headers: {
           Authorization: "Bearer " + user.token,
         },
       },
-    );
-    const json = (await result.json()) as encryptedСhapter;
-    if (json.message) {
+    ).then((res) => res.json());
+
+    if (result.message) {
       storage.delete(this.id, "user");
     }
-    if (json.code) {
-      return json.code + "\n" + json?.message;
+    if (result.code) {
+      return result.code + "\n" + result?.message;
     }
 
-    const key = json.key.split("").reverse().join("") + "@_@" + user.userId;
+    const key = result.key.split("").reverse().join("") + "@_@" + user.userId;
     let text = "";
 
-    for (let i = 0; i < json.text.length; i++) {
+    for (let i = 0; i < result.text.length; i++) {
       text += String.fromCharCode(
-        json.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)),
+        result.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)),
       );
     }
 
@@ -204,7 +205,7 @@ class AuthorToday implements Plugin.PluginBase {
         return user; //It looks like the user has lost the session
       }
 
-      const loginUser = (await result.json()) as authorization;
+      const loginUser: authorization = await result.json();
       storage.set(
         this.id,
         "user",

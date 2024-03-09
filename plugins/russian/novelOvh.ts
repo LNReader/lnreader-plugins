@@ -19,11 +19,12 @@ class novelOvh implements Plugin.PluginBase {
     url += "&sort=" + 
       (showLatestNovels ? "updatedAt" : filters?.sort?.value || "averageRating") + ",desc";
 
-    const result = await fetchApi(url + "&_data=routes/reader/book/index");
-    const body = (await result.json()) as { books: BooksEntity[] };
+    const { books }: { books: BooksEntity[] } = await fetchApi(
+      url + "&_data=routes/reader/book/index",
+    ).then((res) => res.json());
 
     const novels: Plugin.NovelItem[] = [];
-    body.books.forEach((novel) =>
+    books.forEach((novel) =>
       novels.push({
         name: novel.name.ru,
         cover: novel.poster,
@@ -35,24 +36,21 @@ class novelOvh implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(
+    const { book, chapters }: responseNovel = await fetchApi(
       this.resolveUrl(novelPath, true) + "?_data=routes/reader/book/$slug/index",
-    );
-    const json = (await result.json()) as responseNovel;
+    ).then((res) => res.json());
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: json.book.name.ru,
-      cover: json.book.poster,
-      genres: json.book.labels?.map?.((label) => label.name).join(","),
-      summary: json.book.description,
+      name: book.name.ru,
+      cover: book.poster,
+      genres: book.labels?.map?.((label) => label.name).join(","),
+      summary: book.description,
       status:
-        json.book.status == "ONGOING"
-          ? NovelStatus.Ongoing
-          : NovelStatus.Completed,
+        book.status == "ONGOING" ? NovelStatus.Ongoing : NovelStatus.Completed,
     };
 
-    json.book.relations?.forEach((person) => {
+    book.relations?.forEach((person) => {
       switch (person.type) {
         case "AUTHOR":
           novel.author = person.publisher.name;
@@ -61,30 +59,30 @@ class novelOvh implements Plugin.PluginBase {
       }
     });
 
-    const chapters: Plugin.ChapterItem[] = [];
+    const chaptersRes: Plugin.ChapterItem[] = [];
 
-    json.chapters.forEach((chapter, chapterIndex) =>
-      chapters.push({
+    chapters.forEach((chapter, chapterIndex) =>
+      chaptersRes.push({
         name:
           chapter.title ||
           "Том " + (chapter.volume || 0) + " " +
           (chapter.name || "Глава " +
-          (chapter.number || json.chapters.length - chapterIndex)),
+          (chapter.number || chapters.length - chapterIndex)),
         path: novelPath + "/" + chapter.id + "/0",
         releaseTime: dayjs(chapter.createdAt).format("LLL"),
-        chapterNumber: json.chapters.length - chapterIndex,
+        chapterNumber: chapters.length - chapterIndex,
       }),
     );
 
-    novel.chapters = chapters.reverse();
+    novel.chapters = chaptersRes.reverse();
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(
+    const book: responseChapter = await fetchApi(
       "https://api.novel.ovh/v2/chapters/" + chapterPath.split("/")[1],
-    );
-    const book = (await result.json()) as responseChapter;
+    ).then((res) => res.json());
+
     const image = Object.fromEntries(
       book?.pages?.map(({ id, image }) => [id, image]) || [],
     );
@@ -98,11 +96,12 @@ class novelOvh implements Plugin.PluginBase {
     page: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/novel?search=${searchTerm}&page=${page - 1}`;
-    const result = await fetchApi(url + "&_data=routes/reader/book/index");
-    const body = (await result.json()) as { books: BooksEntity[] };
+    const { books }: { books: BooksEntity[] } = await fetchApi(
+      url + "&_data=routes/reader/book/index",
+    ).then((res) => res.json());
 
     const novels: Plugin.NovelItem[] = [];
-    body.books.forEach((novel) =>
+    books.forEach((novel) =>
       novels.push({
         name: novel.name.ru,
         cover: novel.poster,

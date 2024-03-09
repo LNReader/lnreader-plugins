@@ -203,12 +203,11 @@ class RulatePlugin implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetchApi(
+    const result: response[] = await fetchApi(
       this.site + "/search/autocomplete?query=" + searchTerm,
-    );
-    const json = (await result.json()) as response[];
+    ).then((res) => res.json());
 
-    json.forEach((novel) => {
+    result.forEach((novel) => {
       const name = novel.title_one + " / " + novel.title_two;
       if (!novel.url) return;
 

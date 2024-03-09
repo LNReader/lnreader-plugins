@@ -20,11 +20,12 @@ class TL implements Plugin.PluginBase {
   version = "1.0.0";
   icon = "src/ru/noveltl/icon.png";
 
-  async popularNovels(
+  async fetchNovels(
     page: number,
-    { filters }: Plugin.PopularNovelsOptions,
+    { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    searchTerm?: string,
   ): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.site + "/api/site/v2/graphql", {
+    const { data }: response = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
       headers: {
         Accept: "application/json, text/plain, */*",
@@ -37,20 +38,19 @@ class TL implements Plugin.PluginBase {
           "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
         variables: {
           filter: {
-            tags: filters?.tags?.value || [],
-            genres: filters?.genres?.value || [],
+            query: searchTerm || undefined,
+            tags: filters.tags?.value?.length ? filters.tags.value : undefined,
+            genres: filters.genres?.value?.length ? filters.genres.value : undefined,
           },
           hostname: "novel.tl",
           limit: 40,
           page,
         },
       }),
-    });
+    }).then((res) => res.json());
 
-    const json = (await result.json()) as response;
     const novels: Plugin.NovelItem[] = [];
-
-    json.data?.projects?.content?.forEach((novel) =>
+    data?.projects?.content?.forEach((novel) =>
       novels.push({
         name: novel.title,
         path: novel.fullUrl,
@@ -63,8 +63,20 @@ class TL implements Plugin.PluginBase {
     return novels;
   }
 
+  popularNovels = this.fetchNovels;
+
+  async searchNovels(
+    searchTerm: string,
+    page: number,
+  ): Promise<Plugin.NovelItem[]> {
+    const defaultOptions: any = {
+      filters: {},
+    };
+    return this.fetchNovels(page, defaultOptions, searchTerm);
+  }
+
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.site + "/api/site/v2/graphql", {
+    const { data }: response = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
       headers: {
         Accept: "application/json, text/plain, */*",
@@ -79,20 +91,20 @@ class TL implements Plugin.PluginBase {
           url: novelPath,
         },
       }),
-    });
-    const json = (await result.json()) as response;
+    }).then((res) => res.json());
+
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: json.data.project?.title || "",
-      cover: json.data.project?.covers?.[0]?.url
-        ? this.site + json.data.project.covers[0].url
+      name: data.project?.title || "",
+      cover: data.project?.covers?.[0]?.url
+        ? this.site + data.project.covers[0].url
         : defaultCover,
-      summary: json.data.project?.annotation?.text,
+      summary: data.project?.annotation?.text,
       status:
-        statusKey[json.data.project?.translationStatus || "unknown"] || NovelStatus.Unknown,
+        statusKey[data.project?.translationStatus || "unknown"] || NovelStatus.Unknown,
     };
 
-    const genres = [json.data.project?.tags, json.data.project?.genres]
+    const genres = [data.project?.tags, data.project?.genres]
       .flat()
       .map((item) => item?.nameRu || item?.nameEng)
       .filter((item) => item);
@@ -101,7 +113,7 @@ class TL implements Plugin.PluginBase {
       novel.genres = genres.join(", ");
     }
 
-    json.data.project?.persons?.forEach((person) => {
+    data.project?.persons?.forEach((person) => {
       if (person.role == "author" && person.name.firstName) {
         novel.author =
           person.name.firstName + " " + (person.name?.lastName || "");
@@ -114,7 +126,7 @@ class TL implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    json.data.project?.subprojects?.content?.forEach((work) =>
+    data.project?.subprojects?.content?.forEach((work) =>
       work.volumes.content.forEach((volume, volumeIndex) =>
         volume.chapters.forEach((chapter, chapterIndex) => {
           if (chapter.published) {
@@ -137,7 +149,7 @@ class TL implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + "/api/site/v2/graphql", {
+    const { data } = await fetchApi(this.site + "/api/site/v2/graphql", {
       method: "post",
       headers: {
         Accept: "application/json, text/plain, */*",
@@ -146,16 +158,14 @@ class TL implements Plugin.PluginBase {
       },
       Referer: this.site,
       body: JSON.stringify({
-        query:
-          "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
+        query: "query($url:String){chapter(chapter:{fullUrl:$url}){text{text}}}",
         variables: {
           url: decodeURI(chapterPath),
         },
       }),
-    });
-    const json = (await result.json()) as response;
+    }).then((res) => res.json());
 
-    const loadedCheerio = parseHTML(json.data.chapter?.text?.text || "");
+    const loadedCheerio = parseHTML(data.chapter?.text?.text || "");
     loadedCheerio("p > a[href]").each((index, element) => {
       let src = loadedCheerio(element).attr("href") || "";
       if (!src.startsWith("http")) {
@@ -168,47 +178,6 @@ class TL implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio.html();
     return chapterText;
-  }
-
-  async searchNovels(
-    searchTerm: string,
-    page: number | undefined = 1,
-  ): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.site + "/api/site/v2/graphql", {
-      method: "post",
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-        "Content-Type": "application/json",
-      },
-      Referer: this.site,
-      body: JSON.stringify({
-        query:
-          "query Projects($hostname:String! $filter:SearchFilter $page:Int $limit:Int){projects(section:{fullUrl:$hostname}filter:$filter page:{pageSize:$limit,pageNumber:$page}){content{title fullUrl covers{url}}}}",
-        variables: {
-          filter: {
-            query: searchTerm,
-          },
-          hostname: "novel.tl",
-          limit: 40,
-          page,
-        },
-      }),
-    });
-    const json = (await result.json()) as response;
-    const novels: Plugin.NovelItem[] = [];
-
-    json?.data?.projects?.content?.forEach((novel) =>
-      novels.push({
-        name: novel.title,
-        path: novel.fullUrl,
-        cover: novel?.covers?.[0]?.url
-          ? this.site + novel.covers[0].url
-          : defaultCover,
-      }),
-    );
-
-    return novels;
   }
 
   fetchImage = fetchFile;

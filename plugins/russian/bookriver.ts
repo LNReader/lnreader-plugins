@@ -52,8 +52,8 @@ class Bookriver implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(result);
 
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-    const json: response = JSON.parse(jsonRaw || "{}");
-    const book = json.props.pageProps.state.book?.bookPage;
+    const book = (JSON.parse(jsonRaw || "{}") as response)
+      .props.pageProps.state.book?.bookPage;
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -87,12 +87,13 @@ class Bookriver implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const url = "https://api.bookriver.ru/api/v1/books/chapter/text/";
-    const result = await fetchApi(url + chapterPath.split("/").pop());
-    const json = (await result.json()) as responseChapter;
+    const { data }: responseChapter = await fetchApi(
+      url + chapterPath.split("/").pop(),
+    ).then((res) => res.json());
 
-    let chapterText = json.data.content || "Конец произведения";
-    if (json.data?.audio?.available) {
-      chapterText += "\n" + json.data.audio.url;
+    let chapterText = data.content || "Конец произведения";
+    if (data?.audio?.available) {
+      chapterText += "\n" + data.audio.url;
     }
 
     return chapterText;
@@ -105,11 +106,10 @@ class Bookriver implements Plugin.PluginBase {
     const url =
       "https://api.bookriver.ru/api/v1/search/autocomplete?keyword=" + searchTerm +
       "&page=" + pageNo + "&perPage=10";
-    const result = await fetchApi(url);
-    const json = (await result.json()) as responseSearch;
+    const { data }: responseSearch = await fetchApi(url).then((res) => res.json());
 
     const novels: Plugin.NovelItem[] = [];
-    json.data?.books?.forEach((novel) =>
+    data?.books?.forEach((novel) =>
       novels.push({
         name: novel.name,
         cover: novel.coverImages[0].url,

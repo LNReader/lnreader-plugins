@@ -23,8 +23,7 @@ class RNRF implements Plugin.PluginBase {
       : filters?.sort?.value || "popular";
     url += "&page=" + pageNo;
 
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const body = await fetchApi(url).then((res) => res.text());
 
     const loadedCheerio = parseHTML(body);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
@@ -45,8 +44,7 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.site + novelPath);
-    const body = await result.text();
+    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
 
     const loadedCheerio = parseHTML(body);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
@@ -84,9 +82,8 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + chapterPath).then((res) =>
-      res.text(),
-    );
+    const result = await fetchApi(this.site + chapterPath)
+      .then((res) => res.text());
 
     let loadedCheerio = parseHTML(result);
     const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
@@ -109,11 +106,10 @@ class RNRF implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
-    const result = await fetchApi(url);
-    const body = (await result.json()) as { items: Item[] };
+    const { items }: { items: Item[] } = await fetchApi(url).then((res) => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    body.items.forEach((novel) =>
+    items.forEach((novel) =>
       novels.push({
         name: novel.title,
         cover: novel?.verticalImage?.url
