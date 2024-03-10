@@ -3,6 +3,7 @@ import { FilterTypes, Filters } from "@libs/filterInputs";
 import { defaultCover } from "@libs/defaultCover";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { NovelStatus } from "@libs/novelStatus";
+import { storage, localStorage } from "@libs/storage";
 import dayjs from "dayjs";
 
 const statusKey: { [key: number]: string } = {
@@ -19,46 +20,59 @@ class RLIB implements Plugin.PluginBase {
   apiSite = "https://api.lib.social/api/manga/";
   version = "2.0.0";
   icon = "src/ru/ranobelib/icon.png";
-  ui: string | undefined = undefined;
 
   async fetchNovels(
     page: number,
     {
       filters,
       showLatestNovels,
-    }: Plugin.PopularNovelsOptions,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    console.log(filters);
-    let url = this.apiSite + "?site_id[0]=3";
+    let url = this.apiSite + "?site_id[0]=3&page=" + page;
+    url += "&sort_by=" +
+      (showLatestNovels ? "last_chapter_at" : filters?.sort_by?.value || "rate_avg");
+    url += "&sort_type=" + (filters?.sort_type?.value || "desc");
 
-    if (showLatestNovels) {
-      if (filters?.sort_by?.value) filters.sort_by.value = "last_chapter_at";
+    if (filters?.require_chapters?.value) {
+      url += "&chapters[min]=1";
+    }
+    if (filters?.types?.value?.length) {
+      url += "&types[]=" +
+        filters.types.value.join("&types[]=");
+    }
+    if (filters?.scanlateStatus?.value?.length) {
+      url += "&scanlateStatus[]=" +
+        filters.scanlateStatus.value.join("&scanlateStatus[]=");
+    }
+    if (filters?.manga_status?.value?.length) {
+      url += "&manga_status[]=" +
+        filters.manga_status.value.join("&manga_status[]=");
     }
 
-    for (const key in filters) {
-      if (filters[key].type === FilterTypes.Picker) {
-        url += "&" + key + "=" + filters[key].value;
-      } else if (filters[key].type === FilterTypes.Switch) {
-        url += "&" + key + "=1";
-      } else if (
-        filters[key].type === FilterTypes.CheckboxGroup &&
-        (filters[key].value as string[]).length
-      ) {
-        url += "&" + key + "[]=" +
-          (filters[key].value as string[]).join("&" + key + "[]=");
-      } else if (filters[key].type === FilterTypes.ExcludableCheckboxGroup) {
-        if ((filters[key] as any).include.length) {
-          url += "&" + key + "[]=" +
-            (filters[key] as any).include.join("&" + key + "[]=");
-        }
-        if ((filters[key] as any).exclude.length) {
-          url += "&" + key + "_exclude[]=" +
-            (filters[key] as any).exclude.join("&" + key + "_exclude[]=");
-        }
+    if (filters?.genres) {
+      if (filters.genres.value?.include?.length) {
+        url += "&genres[]=" +
+          filters.genres.value.include.join("&genres[]=");
+      }
+      if (filters.genres.value?.exclude?.length) {
+        url += "&genres_exclude[]=" +
+          filters.genres.value.exclude.join("&genres_exclude[]=");
+      }
+    }
+    if (filters?.tags) {
+      if (filters.tags.value?.include?.length) {
+        url += "&tags[]=" +
+          filters.tags.value.include.join("&tags[]=");
+      }
+      if (filters.tags.value?.exclude?.length) {
+        url += "&tags_exclude[]=" +
+          filters.tags.value.exclude.join("&tags_exclude[]=");
       }
     }
 
-    const result: TopLevel = await fetchApi(url).then((res) => res.json());
+    const result: TopLevel = await fetchApi(url, { headers: this.user })
+      .then((res) => res.json());
+
     const novels: Plugin.NovelItem[] = [];
     if (result.data instanceof Array) {
       result.data.forEach((novel) =>
@@ -92,6 +106,7 @@ class RLIB implements Plugin.PluginBase {
       this.apiSite +
         novelPath +
         "?fields[]=summary&fields[]=genres&fields[]=tags&fields[]=teams&fields[]=authors&fields[]=status_id&fields[]=artists",
+      { headers: this.user },
     ).then((res) => res.json());
 
     const novel: Plugin.SourceNovel = {
@@ -161,6 +176,7 @@ class RLIB implements Plugin.PluginBase {
           (branch_id ? "branch_id=" + branch_id + "&" : "") +
           "volume=" + volume +
           "&number=" + number,
+        { headers: this.user },
       ).then((res) => res.json());
       chapterText = result?.data?.content || "";
     }
@@ -178,10 +194,29 @@ class RLIB implements Plugin.PluginBase {
     return this.site + "/ru/" + chapterPath;
   };
 
+  getUser = () => {
+    const user = storage.get(this.id, "user");
+    if (!user) {
+      const dataRaw = localStorage.get(this.id)?.auth
+      if (!dataRaw) return;
+      const data = JSON.parse(dataRaw) as authorization;
+
+      if (!data?.token?.access_token) return;
+      storage.set(this.id, "user", {
+          id: data.auth.id,
+          token: data.token.access_token,
+        },
+        data.token.timestamp + data.token.expires_in - 1 * 60 * 60 * 1000,
+      );
+      return { Authorization: "Bearer " + data.token.access_token };
+    }
+  }
+  user = this.getUser();
+
   filters = {
     sort_by: {
       label: "Сортировка", 
-      value: "rate",
+      value: "rate_avg",
       options: [
         { label: "По рейтингу", value: "rate_avg" },
         { label: "По популярности", value: "rating_score" },
@@ -194,9 +229,9 @@ class RLIB implements Plugin.PluginBase {
       ],
       type: FilterTypes.Picker,
     },
-    order: {
+    sort_type: {
       label: "Порядок",
-      value: "sort_type",
+      value: "desc",
       options: [
         { label: "По убыванию", value: "desc" },
         { label: "По возрастанию", value: "asc" },
@@ -207,7 +242,6 @@ class RLIB implements Plugin.PluginBase {
       label: "Тип",
       value: [],
       options: [
-        { label: "Неизвестный", value: "0" },
         { label: "Япония", value: "10" },
         { label: "Корея", value: "11" },
         { label: "Китай", value: "12" },
@@ -381,7 +415,7 @@ class RLIB implements Plugin.PluginBase {
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
     },
-    "chapters[min]": {
+    require_chapters: {
       label: "Только проекты с главами",
       value: true,
       type: FilterTypes.Switch,
@@ -390,6 +424,29 @@ class RLIB implements Plugin.PluginBase {
 }
 
 export default new RLIB();
+
+interface authorization {
+  token: Token;
+  auth: Auth;
+  timestamp: number;
+}
+interface Token {
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
+  timestamp: number;
+}
+interface Auth {
+  id: number;
+  username: string;
+  avatar: Cover;
+  last_online_at: string;
+  metadata: Metadata;
+}
+interface Metadata {
+  auth_domains: string;
+}
 
 interface TopLevel {
   data: DataClass | DataClass[];

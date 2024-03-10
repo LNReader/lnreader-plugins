@@ -146,7 +146,7 @@ class LocalStorage {
    * Initializes a new instance of the LocalStorage class.
    */
   constructor() {
-    this.db = { RLIB: { token: "sha256" } };
+    this.db = {};
   }
 
   /**
@@ -156,7 +156,7 @@ class LocalStorage {
    * @returns The storage object associated with the plugin ID.
    */
   get(pluginID: string): StorageObject | undefined {
-    return this.db[pluginID];
+    return this.db[pluginID] || {};
   }
 }
 
