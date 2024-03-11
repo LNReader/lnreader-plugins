@@ -20,6 +20,7 @@ class RLIB implements Plugin.PluginBase {
   apiSite = "https://api.lib.social/api/manga/";
   version = "2.0.0";
   icon = "src/ru/ranobelib/icon.png";
+  webStorageUtilized = true;
 
   async fetchNovels(
     page: number,
@@ -30,7 +31,7 @@ class RLIB implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let url = this.apiSite + "?site_id[0]=3&page=" + page;
     url += "&sort_by=" +
-      (showLatestNovels ? "last_chapter_at" : filters?.sort_by?.value || "rate_avg");
+      (showLatestNovels ? "last_chapter_at" : filters?.sort_by?.value || "rating_score");
     url += "&sort_type=" + (filters?.sort_type?.value || "desc");
 
     if (filters?.require_chapters?.value) {
@@ -70,7 +71,7 @@ class RLIB implements Plugin.PluginBase {
       }
     }
 
-    const result: TopLevel = await fetchApi(url, { headers: this.user })
+    const result: TopLevel = await fetchApi(url, { headers: this.user?.token })
       .then((res) => res.json());
 
     const novels: Plugin.NovelItem[] = [];
@@ -106,7 +107,7 @@ class RLIB implements Plugin.PluginBase {
       this.apiSite +
         novelPath +
         "?fields[]=summary&fields[]=genres&fields[]=tags&fields[]=teams&fields[]=authors&fields[]=status_id&fields[]=artists",
-      { headers: this.user },
+      { headers: this.user?.token },
     ).then((res) => res.json());
 
     const novel: Plugin.SourceNovel = {
@@ -127,9 +128,12 @@ class RLIB implements Plugin.PluginBase {
       novel.artist = data.artists[0].name;
     }
 
-    const genres = [data.genres || [], data.tags || []].flat();
+    const genres = [data.genres || [], data.tags || []]
+      .flat()
+      .map((genres) => genres?.name)
+      .filter((genres) => genres);
     if (genres.length) {
-      novel.genres = genres.map((genres) => genres.name).join(", ");
+      novel.genres = genres.join(", ");
     }
 
     const branch_id: { [key: number]: string } = {};
@@ -139,8 +143,11 @@ class RLIB implements Plugin.PluginBase {
       );
     }
 
-    const chaptersRaw = await fetchApi(this.apiSite + novelPath + "/chapters");
-    const chaptersJSON = (await chaptersRaw.json()) as any;
+    const chaptersJSON: { data: DataClass[] } = await fetchApi(
+    this.apiSite + novelPath + "/chapters", {
+      headers: this.user?.token,
+    }).then((res) => res.json());
+
     if (chaptersJSON.data.length) {
       const chapters: Plugin.ChapterItem[] = [];
 
@@ -160,7 +167,8 @@ class RLIB implements Plugin.PluginBase {
           page: branch_id[chapter.branches[0].branch_id || "0"],
         }),
       );
-      novel.chapters = chapters.reverse();
+
+      novel.chapters = chapters;
     }
 
     return novel;
@@ -174,9 +182,9 @@ class RLIB implements Plugin.PluginBase {
       const result: { data: DataClass } = await fetchApi(
         this.apiSite + slug + "/chapter?" +
           (branch_id ? "branch_id=" + branch_id + "&" : "") +
-          "volume=" + volume +
-          "&number=" + number,
-        { headers: this.user },
+          "number=" + number +
+          "&volume=" + volume,
+        { headers: this.user?.token },
       ).then((res) => res.json());
       chapterText = result?.data?.content || "";
     }
@@ -185,38 +193,49 @@ class RLIB implements Plugin.PluginBase {
 
   fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) => {
-    if (isNovel) return this.site + "/ru/manga/" + path;
-    const [slug, volume, number, branch_id] = path.split("/");
+    const ui = this.user?.ui ? "ui=" + this.user.ui : "";
 
-    const chapterPath = slug + "/read/v" + volume + "/c" + number +
+    if (isNovel)
+      return (this.site + "/ru/manga/" + path + (ui ? "?" + ui : ""));
+
+    const [slug, volume, number, branch_id] = path.split("/");
+    const chapterPath = slug + "/read/v" + volume + "/c" + number  +
       (branch_id ? "?bid=" + branch_id : "");
 
-    return this.site + "/ru/" + chapterPath;
+    return (
+      this.site + "/ru/" + chapterPath + (ui ? (branch_id ? "&" : "?") + ui : "")
+    ); 
   };
 
   getUser = () => {
     const user = storage.get(this.id, "user");
-    if (!user) {
-      const dataRaw = localStorage.get(this.id)?.auth
-      if (!dataRaw) return;
-      const data = JSON.parse(dataRaw) as authorization;
-
-      if (!data?.token?.access_token) return;
-      storage.set(this.id, "user", {
-          id: data.auth.id,
-          token: data.token.access_token,
-        },
-        data.token.timestamp + data.token.expires_in - 1 * 60 * 60 * 1000,
-      );
-      return { Authorization: "Bearer " + data.token.access_token };
+    if (user) {
+      return { token: { Authorization: "Bearer " + user?.token }, ui: user.id };
     }
-  }
-  user = this.getUser();
+    const dataRaw = localStorage.get(this.id)?.auth;
+    if (!dataRaw) {
+      return {};
+    }
+
+    const data = JSON.parse(dataRaw) as authorization;
+    if (!data?.token?.access_token) return;
+    storage.set(this.id, "user", {
+        id: data.auth.id,
+        token: data.token.access_token,
+      },
+      data.token.timestamp + data.token.expires_in, //the token is valid for about 7 days
+    );
+    return {
+      token: { Authorization: "Bearer " + data.token.access_token },
+      ui: data.auth.id,
+    };
+  };
+  user = this.getUser(); //To change the account, you need to restart the application
 
   filters = {
     sort_by: {
       label: "Сортировка", 
-      value: "rate_avg",
+      value: "rating_score",
       options: [
         { label: "По рейтингу", value: "rate_avg" },
         { label: "По популярности", value: "rating_score" },
