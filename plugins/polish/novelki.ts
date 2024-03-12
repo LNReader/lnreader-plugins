@@ -15,13 +15,13 @@ class NovelkiPL implements Plugin.PluginBase {
         page: number,
         { filters }: Plugin.PopularNovelsOptions<typeof this.filters>
     ): Promise<Plugin.NovelItem[]> {
+        //So far is working, If the author of the site changes it, it will have to be changed.
         let link = this.site + "/projekty?filter=t"
         link += '&genre=' + filters.genres.value;
         link += '&status=' + filters.status.value;
         link += '&type=' + filters.type.value;
         link += '&page=' + page;
 
-        console.log(link)
 
         const body = await fetchApi(link).then((res) => {
             if(res.redirected) throw new Error("Failed to load novels (open in web view and login)")
