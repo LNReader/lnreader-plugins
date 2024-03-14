@@ -24,7 +24,7 @@ class NovelkiPL implements Plugin.PluginBase {
 
 
         const body = await fetchApi(link).then((res) => {
-            if(res.redirected) throw new Error("Failed to load novels (open in web view and login)")
+            if(res.url == `${this.site}/guest`) throw new Error("Failed to load novels (open in web view and login)")
             return res.text()
         });
         const loadedCheerio = parseHTML(body);
@@ -110,7 +110,7 @@ class NovelkiPL implements Plugin.PluginBase {
         var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
         let codeChapter = pattern.exec(chapterPath) || "";
         const body = await fetchApi(`${this.site}/api/reader/chapters/${codeChapter[2]}`).then((res) => { 
-            if(res.redirected) throw new Error("Failed to load chapter (open in web view and login)")
+            if(res.url == `${this.site}/guest`) throw new Error("Failed to load chapter (open in web view and login)")
             return res.json()
         }); 
 
@@ -122,7 +122,7 @@ class NovelkiPL implements Plugin.PluginBase {
         page: number
     ): Promise<Plugin.NovelItem[]> {
         const body = await fetchApi(`${this.site}/projekty?filter=t&title=${searchTerm}+&page=${page}`).then((res) => {
-            if(res.redirected) throw new Error("Failed to search novels (open in web view and login)")
+            if(res.url == `${this.site}/guest`) throw new Error("Failed to search novels (open in web view and login)")
             return res.text()
         });
         const loadedCheerio = parseHTML(body);
