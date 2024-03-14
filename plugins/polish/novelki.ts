@@ -90,19 +90,20 @@ class NovelkiPL implements Plugin.PluginBase {
 
         let chapters: Plugin.ChapterItem[] = [];
 
-        loadedCheerio(".chapters > .col-md-3 > div").get().reverse().forEach((e, i) => {
+        let chaptersList = loadedCheerio(".chapters > .col-md-3 > div").get()
+        chaptersList.forEach((e, i) => {
             let urlChapters = loadedCheerio(e).find("a").attr("href") || "";   
 
             const chapter: Plugin.ChapterItem = {
                 name: loadedCheerio(e).find("a")?.text().trim(),
                 path: urlChapters, 
                 releaseTime: loadedCheerio(e).find(".card-footer > span").text().trim().split('-').reverse().join('-'), 
-                chapterNumber: i+1,
+                chapterNumber: chaptersList.length-i,
             };
             chapters.push(chapter);
         })
 
-        novel.chapters = chapters;
+        novel.chapters = chapters.reverse();
         return novel;
     }
     async parseChapter(chapterPath: string): Promise<string> {
