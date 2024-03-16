@@ -6,7 +6,7 @@ import { Plugin } from "@typings/plugin";
 class NovelUpdates implements Plugin.PluginBase {
     id = "novelupdates";
     name = "Novel Updates";
-    version = "0.5.0";
+    version = "0.6.0";
     icon = "src/en/novelupdates/icon.png";
     site = "https://www.novelupdates.com/";
 
@@ -90,10 +90,14 @@ class NovelUpdates implements Plugin.PluginBase {
         const novel: Plugin.SourceNovel = {
             path: novelPath,
             name: loadedCheerio(".seriestitlenu").text() || "Untitled",
-            cover: loadedCheerio(".seriesimg > img").attr("src"),
-            author: loadedCheerio("#showauthors").text().trim(),
+            cover: loadedCheerio('.wpb_wrapper img').attr('src'),
             chapters: [],
         };
+
+        novel.author = loadedCheerio('#authtag')
+          .map((i, el) => loadedCheerio(el).text().trim())
+          .toArray()
+          .join(', ');
 
         novel.genres = loadedCheerio("#seriesgenre")
             .children("a")
@@ -180,6 +184,8 @@ class NovelUpdates implements Plugin.PluginBase {
 
         let isAnomalously = result.url.toLowerCase().includes('anotivereads');
 
+        let kofi = result.url.toLowerCase().includes('ko-fi');
+
         let isBlossomTranslation = result.url
             .toLowerCase()
             .includes('blossomtranslation');
@@ -248,6 +254,10 @@ class NovelUpdates implements Plugin.PluginBase {
             chapterText = loadedCheerio('.manga-child-content').html()!;
         } else if (isAnomalously) {
             chapterText = loadedCheerio('#comic').html()!;
+        } else if (kofi) {
+            chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
+              .html()
+              ?.match(/shadowDom\.innerHTML \+= '(<div.*?)';/)![1]!;
         } else if (isiNovelTranslation) {
             const link = 'https://api.' + result.url.slice(8);
             const json = await fetchApi(link).then(r => r.json());
@@ -320,10 +330,9 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     async searchNovels(searchTerm: string, page: number): Promise<Plugin.NovelItem[]> {
-        const url =`${this.site}page/${page}/?s=${searchTerm}&post_type=seriesplans`;
+        const url = this.site + '?s=' + searchTerm.replace(/\s+/g, '+') + '&post_type=seriesplans';
         const result = await fetchApi(url);
         const body = await result.text();
-
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
     }
