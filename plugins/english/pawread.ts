@@ -1,4 +1,4 @@
-import { CheerioAPI, load, load as parseHTML } from "cheerio";
+import { CheerioAPI, load as parseHTML } from "cheerio";
 import { fetchApi, fetchFile } from "@libs/fetch";
 import { Plugin } from "@typings/plugin";
 import { Filters, FilterTypes } from "@libs/filterInputs";
@@ -6,7 +6,7 @@ import { Filters, FilterTypes } from "@libs/filterInputs";
 class PawRead implements Plugin.PluginBase {
     id = "pawread";
     name = "PawRead";
-    version = "1.1.0";
+    version = "2.1.0";
     icon = "src/en/pawread/icon.png";
     site = "https://m.pawread.com/";
 
@@ -15,7 +15,7 @@ class PawRead implements Plugin.PluginBase {
 
         loadedCheerio(".list-comic, .itemBox").each((idx, ele) => {
             loadedCheerio(ele).find('.serialise').remove();
-            const novelName = loadedCheerio(ele).find('a').text();
+            const novelName = loadedCheerio(ele).find('a').text().trim();
             const novelCover = loadedCheerio(ele).find('img').attr('src');
             const novelUrl = loadedCheerio(ele).find('a').attr('href')?.slice(1);
 
@@ -55,7 +55,7 @@ class PawRead implements Plugin.PluginBase {
         link += filters.sort.value;
         link += `/?page=${page}`;
 
-        const body = await fetchApi(link).then((r) => r.text());        
+        const body = await fetchApi(link).then((r) => r.text());      
 
         const loadedCheerio = parseHTML(body);
         return this.parseNovels(loadedCheerio);
@@ -91,16 +91,17 @@ class PawRead implements Plugin.PluginBase {
         const chapter: Plugin.ChapterItem[] = [];
 
         loadedCheerio(".item-box").each((idx, ele) => {
-        	const releaseDate = loadedCheerio(ele).find('span:last').text().trim();
-        	if (releaseDate === "Advanced Chapter") return;
+        	const smallText = loadedCheerio(ele).find('span:last').text().trim();
+        	if (smallText === "Advanced Chapter") return;
+            const releaseDate = smallText.split('.').map(x => Number(x));
             const chapterName = loadedCheerio(ele).find("span:first").text().trim();
-            const chapterUrl = loadedCheerio(ele).attr("onclick")?.match(/\d+/);
+            const chapterUrl = loadedCheerio(ele).attr("onclick")?.match(/\d+/)![0];
             if (!chapterUrl) return;
 
             chapter.push({
                 name: chapterName,
-                path: `${novelPath}${chapterUrl[0]}.html`,
-                releaseTime: new Date(releaseDate).toISOString(),
+                path: `${novelPath}${chapterUrl}.html`,
+                releaseTime: new Date(releaseDate[0], releaseDate[1], releaseDate[2]).toISOString(),
             });
         });
 
