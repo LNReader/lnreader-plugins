@@ -24,6 +24,7 @@
         "express": "^4.18.2",
         "less": "^4.2.0",
         "module-alias": "^2.2.3",
+        "protobufjs": "^7.2.6",
         "qs": "^6.11.2",
         "sanitize-html": "^2.12.1",
         "terser": "^5.28.1",
