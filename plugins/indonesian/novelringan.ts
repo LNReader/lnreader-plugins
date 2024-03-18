@@ -64,7 +64,6 @@ class NovelRingan implements Plugin.PluginBase {
         const body = await result.text();
 
         const loadedCheerio = parseHTML(body);
-        console.log(body);
 
         const styletag = Array.from(
             (
