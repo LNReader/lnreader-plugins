@@ -9,7 +9,7 @@ class XinShu69 implements Plugin.PluginBase {
     id = "69xinshu";
     name = "69书吧";
     icon = "src/cn/69xinshu/icon.png";
-    site = "https://www.69xinshu.com";
+    site = "https://www.69shu.pro";
     version = "0.1.1";
 
     async popularNovels(
@@ -31,19 +31,19 @@ class XinShu69 implements Plugin.PluginBase {
         const novels: Plugin.NovelItem[] = [];
 
         const novelsList = pageNo === 1 ? loadedCheerio('div.newbox > ul > li') : loadedCheerio('li');
-        novelsList.each(function () {
-            const novelUrl = loadedCheerio(this).find('li > div > h3 > a:nth-child(2)').attr('href');
+        novelsList.each((i, e) => {
+            const novelUrl = loadedCheerio(e).find('li > div > h3 > a:nth-child(2)').attr('href');
 
             if (novelUrl) {
-                const novelName = loadedCheerio(this).find('li > div > h3 > a:nth-child(2)').text();
-                const novelCover = loadedCheerio(this)
+                const novelName = loadedCheerio(e).find('li > div > h3 > a:nth-child(2)').text();
+                const novelCover = loadedCheerio(e)
                     .find('li > a > img')
                     .attr('data-src');
 
                 const novel = {
                     name: novelName,
                     cover: novelCover,
-                    url: novelUrl,
+                    path: novelUrl.replace(this.site, ''),
                 };
 
                 novels.push(novel);
@@ -53,8 +53,8 @@ class XinShu69 implements Plugin.PluginBase {
         return novels;
     }
 
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const url = novelUrl;
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        const url = this.site + novelPath;
 
         const body = await fetchText(url, {}, 'gbk');
         if (body === '') throw Error('无法获取小说内容，请检查网络');
@@ -62,11 +62,10 @@ class XinShu69 implements Plugin.PluginBase {
         let loadedCheerio = parseHTML(body);
 
         const novel: Plugin.SourceNovel = {
-            url,
+            path: novelPath,
             chapters: [],
+            name: loadedCheerio('h1 > a').text()
         };
-
-        novel.name = loadedCheerio('h1 > a').text();
 
         novel.cover = loadedCheerio('div.bookimg2 > img').attr(
             'src',
@@ -99,15 +98,15 @@ class XinShu69 implements Plugin.PluginBase {
 
             const chaptersLoadedCheerio = parseHTML(chaptersBody);
 
-            chaptersLoadedCheerio('li').each(function () {
-                const chapterUrl = chaptersLoadedCheerio(this).find('a').attr('href');
+            chaptersLoadedCheerio('li').each((i, e) => {
+                const chapterUrl = chaptersLoadedCheerio(e).find('a').attr('href');
 
                 if (chapterUrl?.startsWith("https://")) {
-                    const chapterName = chaptersLoadedCheerio(this).find('a').text().trim();
+                    const chapterName = chaptersLoadedCheerio(e).find('a').text().trim();
 
                     chapters.push({
                         name: chapterName,
-                        url: chapterUrl,
+                        path: chapterUrl.replace(this.site, ''),
                     });
                 }
             });
@@ -118,8 +117,8 @@ class XinShu69 implements Plugin.PluginBase {
         return novel;
     }
 
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const body = await fetchText(chapterUrl, {}, 'gbk');
+    async parseChapter(chapterPath: string): Promise<string> {
+        const body = await fetchText(this.site + chapterPath, {}, 'gbk');
 
         const loadedCheerio = parseHTML(body);
 
@@ -154,14 +153,14 @@ class XinShu69 implements Plugin.PluginBase {
 
         const novels: Plugin.NovelItem[] = [];
 
-        loadedCheerio('div.newbox > ul > li').each(function () {
-            const novelUrl = loadedCheerio(this).find('a').attr('href')!;
-            const novelName = loadedCheerio(this).find('div.newnav > h3').text();
-            const novelCover = loadedCheerio(this).find('img').attr('data-src');
+        loadedCheerio('div.newbox > ul > li').each((i, e) => {
+            const novelUrl = loadedCheerio(e).find('a').attr('href')!;
+            const novelName = loadedCheerio(e).find('div.newnav > h3').text();
+            const novelCover = loadedCheerio(e).find('img').attr('data-src');
 
             const novel = {
                 name: novelName,
-                url: novelUrl,
+                path: novelUrl.replace(this.site, ''),
                 cover: novelCover,
             };
 
