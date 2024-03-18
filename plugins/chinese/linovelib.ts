@@ -35,14 +35,12 @@ class Linovelib implements Plugin.PluginBase {
             const novelCover = loadedCheerio(el)
                 .find("div.book-cover > img")
                 .attr("data-src");
-            const novelUrl = this.site + url;
-
             if (!url) return;
 
             const novel = {
                 name: novelName,
                 cover: novelCover,
-                url: novelUrl,
+                path: url,
             };
 
             novels.push(novel);
@@ -51,8 +49,8 @@ class Linovelib implements Plugin.PluginBase {
         return novels;
     }
 
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const url = novelUrl;
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        const url = this.site + novelPath;
 
         const body = await fetchText(url);
         if (body === '') throw Error('无法获取小说内容，请检查网络');
@@ -60,11 +58,10 @@ class Linovelib implements Plugin.PluginBase {
         let loadedCheerio = parseHTML(body);
 
         const novel: Plugin.SourceNovel = {
-            url,
+            path: novelPath,
             chapters: [],
+            name: loadedCheerio("#bookDetailWrapper .book-title").text()
         };
-
-        novel.name = loadedCheerio("#bookDetailWrapper .book-title").text();
 
         novel.cover = loadedCheerio("#bookDetailWrapper img.book-cover").attr(
             "src"
@@ -118,7 +115,7 @@ class Linovelib implements Plugin.PluginBase {
                 }
             }
 
-            const chapterUrl = `${this.site}/novel/${novelId}/${chapterId}.html`;
+            const chapterUrl = `/novel/${novelId}/${chapterId}.html`;
             const chapterName =
                 volumeName +
                 " — " +
@@ -130,7 +127,7 @@ class Linovelib implements Plugin.PluginBase {
             chapter.push({
                 name: chapterName,
                 releaseTime: releaseDate,
-                url: chapterUrl,
+                path: chapterUrl,
             });
         });
 
@@ -139,7 +136,7 @@ class Linovelib implements Plugin.PluginBase {
         return novel;
     }
 
-    async parseChapter(chapterUrl: string): Promise<string> {
+    async parseChapter(chapterPath: string): Promise<string> {
         let chapterName,
             chapterText = "",
             hasNextPage,
@@ -423,13 +420,13 @@ class Linovelib implements Plugin.PluginBase {
             return { pageCheerio, pageHasNextPage };
         };
 
-        let url = chapterUrl;
+        let url = this.site + chapterPath;
         do {
             const page = await loadPage(url);
             hasNextPage = page.pageHasNextPage;
             if (hasNextPage === true) {
                 pageNumber++;
-                url = chapterUrl.replace(
+                url = url.replace(
                     /\.html/gi,
                     `_${pageNumber}` + ".html"
                 );
@@ -516,13 +513,12 @@ class Linovelib implements Plugin.PluginBase {
             const novelCover = pageCheerio(el)
                 .find("div.book-cover > img")
                 .attr("data-src");
-            const novelUrl = this.site + nUrl;
 
             if (!nUrl) return;
 
             novels.push({
                 name: novelName,
-                url: novelUrl,
+                path: nUrl,
                 cover: novelCover,
             });
         });

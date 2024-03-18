@@ -39,14 +39,12 @@ class Shu69 implements Plugin.PluginBase {
 
             const novelName = loadedCheerio(el).find('h4.name').text().trim();
             const novelCover = loadedCheerio(el).find('a.cover > img').attr('src');
-            const novelUrl = this.site + url;
-
             if (!url) return;
 
             const novel = {
                 name: novelName,
                 cover: novelCover,
-                url: novelUrl,
+                path: url,
             };
 
             novels.push(novel);
@@ -55,8 +53,8 @@ class Shu69 implements Plugin.PluginBase {
         return novels;
     }
 
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
-        const url = novelUrl;
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        const url = this.site + novelPath;
 
         const body = await fetchText(url);
         if (body === '') throw Error('无法获取小说内容，请检查网络');
@@ -64,11 +62,10 @@ class Shu69 implements Plugin.PluginBase {
         let loadedCheerio = parseHTML(body);
 
         const novel: Plugin.SourceNovel = {
-            url,
+            path: novelPath,
             chapters: [],
+            name: loadedCheerio('h1').text().trim()
         };
-
-        novel.name = loadedCheerio('h1').text().trim();
 
         novel.cover = loadedCheerio('div.cover > img').attr('src');
 
@@ -95,23 +92,25 @@ class Shu69 implements Plugin.PluginBase {
             const chaptersLoadedCheerio = parseHTML(chaptersBody);
 
             chaptersLoadedCheerio('dd').each((i, el) => {
-                const chapterUrl = this.site + chaptersLoadedCheerio(el).find('a').attr('href');
+                const chapterUrl = chaptersLoadedCheerio(el).find('a').attr('href');
                 const chapterName = chaptersLoadedCheerio(el).find('a').text().trim();
-
-                chapters.push({
-                    name: chapterName,
-                    url: chapterUrl,
-                });
+                if(chapterUrl){
+                    chapters.push({
+                        name: chapterName,
+                        path: chapterUrl,
+                    });
+                }
             });
         } else {
             loadedCheerio('div.panel.hidden-xs > dl.panel-chapterlist:nth-child(2) > dd').each((i, el) => {
-                const chapterUrl = this.site + loadedCheerio(el).find('a').attr('href');
+                const chapterUrl = loadedCheerio(el).find('a').attr('href');
                 const chapterName = loadedCheerio(el).find('a').text().trim();
-
-                chapters.push({
-                    name: chapterName,
-                    url: chapterUrl,
-                });
+                if(chapterUrl){
+                    chapters.push({
+                        name: chapterName,
+                        path: chapterUrl,
+                    });
+                }
             });
         }
 
@@ -120,8 +119,8 @@ class Shu69 implements Plugin.PluginBase {
         return novel;
     }
 
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const body = await fetchText(chapterUrl);
+    async parseChapter(chapterPath: string): Promise<string> {
+        const body = await fetchText(this.site + chapterPath);
 
         const loadedCheerio = parseHTML(body);
 
@@ -162,14 +161,13 @@ class Shu69 implements Plugin.PluginBase {
 
             const novelName = loadedCheerio(el).find('h4.name').text().trim();
             const novelCover = loadedCheerio(el).find('a.cover > img').attr('src');
-            const novelUrl = this.site + url;
 
             if (!url) return;
 
             const novel = {
                 name: novelName,
                 cover: novelCover,
-                url: novelUrl,
+                path: url,
             };
 
             novels.push(novel);
