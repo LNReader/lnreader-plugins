@@ -13,6 +13,7 @@ class Syosetu implements Plugin.PluginBase {
     name = "Syosetu";
     icon = "src/jp/syosetu/icon.png";
     site = "https://yomou.syosetu.com/";
+    novelPrefix = "https://ncode.syosetu.com";
     version = "1.1.0";
     headers = {
         "User-Agent":
@@ -67,7 +68,7 @@ class Syosetu implements Plugin.PluginBase {
                 if (!url) return;
                 const name = anchor.text();
                 const novel: NovelItem = {
-                    url,
+                    path: url.replace(this.novelPrefix, ''),
                     name,
                     cover: defaultCover,
                 };
@@ -78,15 +79,15 @@ class Syosetu implements Plugin.PluginBase {
         const novels = await getNovelsFromPage(pageNo);
         return novels;
     }
-    async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
         let chapters: Plugin.ChapterItem[] = [];
-        const result = await fetch(novelUrl, { headers: this.headers });
+        const result = await fetch(this.novelPrefix + novelPath, { headers: this.headers });
         const body = await result.text();
         const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
         // create novel object
         let novel: Plugin.SourceNovel = {
-            url: novelUrl,
+            path: novelPath,
             name: loadedCheerio(".novel_title").text(),
             author: loadedCheerio(".novel_writername")
                 .text()
@@ -111,13 +112,15 @@ class Syosetu implements Plugin.PluginBase {
                         .text() // get text
                         .replace(/（.）/g, "") // remove "(edited)" mark
                         .trim(), // trim spaces
-                    "https://ncode.syosetu.com" + chapterA.attr("href"),
+                    chapterA.attr("href"),
                 ];
-                chapters.push({
-                    name: chapterName,
-                    releaseTime: releaseDate,
-                    url: chapterUrl,
-                });
+                if(chapterUrl) {
+                    chapters.push({
+                        name: chapterName,
+                        releaseTime: releaseDate,
+                        path: chapterUrl,
+                    });
+                }
             });
         } else {
             /**
@@ -148,14 +151,14 @@ class Syosetu implements Plugin.PluginBase {
                 releaseTime: loadedCheerio("head")
                     .find("meta[name='WWWC']")
                     .attr("content"), // get date from metadata
-                url: novelUrl, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot,
+                path: novelPath, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot,
             });
         }
         novel.chapters = chapters;
         return novel;
     }
-    async parseChapter(chapterUrl: string): Promise<string> {
-        const result = await fetch(chapterUrl, { headers: this.headers });
+    async parseChapter(chapterPath: string): Promise<string> {
+        const result = await fetch(this.novelPrefix + chapterPath, { headers: this.headers });
         const body = await result.text();
 
         // create cheerioQuery
@@ -178,7 +181,6 @@ class Syosetu implements Plugin.PluginBase {
         const getNovelsFromPage = async (pagenumber: number) => {
             // load page
             const url = this.searchUrl(pagenumber) + `&word=${searchTerm}`;
-            console.log(url);
             const result = await fetch(url, { headers: this.headers });
             const body = await result.text();
             // Cheerio it!
@@ -186,17 +188,20 @@ class Syosetu implements Plugin.PluginBase {
 
             let pageNovels: Plugin.NovelItem[] = [];
             // find class=searchkekka_box
-            cheerioQuery(".searchkekka_box").each(function (i, e) {
+            cheerioQuery(".searchkekka_box").each((i, e) => {
                 // get div with link and name
-                const novelDIV = cheerioQuery(this).find(".novel_h");
+                const novelDIV = cheerioQuery(e).find(".novel_h");
                 // get link element
                 const novelA = novelDIV.children()[0];
                 // add new novel to array
-                pageNovels.push({
-                    name: novelDIV.text(), // get the name
-                    url: novelA.attribs.href, // get last part of the link
-                    cover: defaultCover,
-                });
+                const novelPath = novelA.attribs.href.replace(this.novelPrefix, '');
+                if(novelPath){
+                    pageNovels.push({
+                        name: novelDIV.text(), // get the name
+                        path: novelPath, // get last part of the link
+                        cover: defaultCover,
+                    });
+                }
             });
             // return all novels from this page
             return pageNovels;
@@ -222,6 +227,9 @@ class Syosetu implements Plugin.PluginBase {
     }
     async fetchImage(url: string): Promise<string | undefined> {
         return fetchFile(url);
+    }
+    resolveUrl(path: string, isNovel?: boolean | undefined): string {
+        return this.novelPrefix + path;
     }
     filters = {
         ranking: {
