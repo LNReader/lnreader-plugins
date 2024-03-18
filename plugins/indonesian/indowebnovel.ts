@@ -8,7 +8,7 @@ class IndoWebNovel implements Plugin.PluginBase {
     name = "IndoWebNovel";
     icon = "src/id/indowebnovel/icon.png";
     site = "https://indowebnovel.id/id/";
-    version = "1.0.0";
+    version = "1.1.0";
 
     parseNovels(loadedCheerio:CheerioAPI){
         const novels: Plugin.NovelItem[] = [];
