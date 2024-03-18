@@ -6,7 +6,7 @@ import { Filters, FilterTypes } from "@libs/filterInputs";
 class PawRead implements Plugin.PluginBase {
     id = "pawread";
     name = "PawRead";
-    version = "2.1.0";
+    version = "2.0.0";
     icon = "src/en/pawread/icon.png";
     site = "https://m.pawread.com/";
 
