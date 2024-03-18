@@ -3,7 +3,6 @@ import { fetchText, fetchFile } from "@libs/fetch";
 import { FilterTypes, Filters } from "@libs/filterInputs";
 import { Plugin } from "@typings/plugin";
 import { NovelStatus } from "@libs/novelStatus";
-import path from "path";
 
 class Shu69 implements Plugin.PluginBase {
     id = "69shu";
