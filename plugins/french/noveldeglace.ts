@@ -21,6 +21,12 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
         return (loadedCheerio);
       }
 
+    parseDate(date: string): string {
+        const monthMapping: { [key: string]: string } = { janvier: "January", fevrier: "February", mars: "March", avril: "April", mai: "May", juin: "June", juillet: "July", aout: "August", septembre: "September", octobre: "October", novembre: "November", decembre: "December"};
+        const [day, month, year] = date.split(" ");
+        return dayjs(`${day} ${monthMapping[month.normalize('NFD').replace(/[\u0300-\u036f]/g, '')]} ${year}`, "D MMMM YYYY").format("YYYY-MM-DD");
+    }
+
     parseNovels($: CheerioAPI, showLatestNovels: boolean | undefined): Plugin.NovelItem[] {
         let novels: Plugin.NovelItem[] = [];
     
@@ -155,7 +161,6 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
     
         let chapterName = ""
         let site = this.site;
-        const monthMapping: { [key: string]: string } = { janvier: "January", fevrier: "February", mars: "March", avril: "April", mai: "May", juin: "June", juillet: "July", aout: "August", septembre: "September", octobre: "October", novembre: "November", decembre: "December"};
         volumes.each((volumeIndex: number, el) => {
             if (hasMultipleVolumes)
                 chapterName = "T." + (volumeIndex + 1) + " ";
@@ -172,12 +177,9 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
                         const dateHtml = cheerio.html()?.substring(cheerio.html()?.indexOf("</a>") || 0) || "";
                         let releaseDate = dateHtml?.substring(dateHtml.indexOf("(") + 1, dateHtml.indexOf(")")) || undefined;
                         if (releaseDate)
-                        {
                             try {
-                                const [day, month, year] = releaseDate.split(" ");
-                                releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").format("YYYY-MM-DD");
+                                releaseDate = this.parseDate(releaseDate);
                             } catch (e) {}
-                        }
                         const chapterUrl = cheerio.find("a").attr("href");
                         if (chapterUrl)
                         {   
@@ -217,8 +219,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase{
                             dates.forEach((date, index) => {
                                 let releaseDate = date;
                                 try {
-                                    const [day, month, year] = date.split(" ");
-                                    releaseDate = dayjs(`${day} ${monthMapping[month.normalize("NFD").replace(/[\u0300-\u036f]/g, "")]} ${year}`, "DD MMMM YYYY").format("YYYY-MM-DD");
+                                    releaseDate = this.parseDate(date);
                                 } catch (e) {}
                                 const chapter: Plugin.ChapterItem = {
                                     name: newChapterName + " (" + (index + 1) + ")",
