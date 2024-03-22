@@ -125,23 +125,23 @@ class Zelluloza implements Plugin.PluginBase {
       .replace(/\[\*]([\s\S]*?)\[\/]/g, "<b>$1</b>")
       .replace(/\[_]([\s\S]*?)\[\/]/g, "<u>$1</u>")
       .replace(/\[-]([\s\S]*?)\[\/]/g, "<s>$1</s>")
-      .replace(/\[~]([\s\S]*?)\[\/]/g, "<i>$1</i>")
-      .replace(/\[!]([\s\S]*?)\[\/]/g, '<span style="font-family: Times New Roman;>$1</span>')
+      .replace(/\[~]([\s\S]*?)\[\/]/g, "<i>$1</i>"); /*
+      .replace(/\[!]([\s\S]*?)\[\/]/g, '<span style="font-family: Times New Roman">$1</span>')
       .replace(/\[ctr]([\s\S]*?)\[\/]/g, "<center>$1</center>")
-      .replace(/\[rht]([\s\S]*?)\[\/]/g, '<span style="text-align: right;">$1</span>')
+      .replace(/\[rht]([\s\S]*?)\[\/]/g, '<span style="text-align: right">$1</span>')
       .replace(/\[grn]([\s\S]*?)\[\/]/g, '<span style="color: #019208">$1</span>')
       .replace(/\[red]([\s\S]*?)\[\/]/g, '<span style="color: #E84040">$1</span>')
       .replace(/\[blu]([\s\S]*?)\[\/]/g, '<span style="color: #354FA3">$1</span>')
       .replace(/\[gry]([\s\S]*?)\[\/]/g, '<span style="color: #909090">$1</span>')
-      .replace(/\[geo]([\s\S]*?)\[\/]/g, '<span style="font-family: Georgia;>$1</span>')
-      .replace(/\[gld]([\s\S]*?)\[\/]/g, '<span style="color: #988c07">$1</span>');
+      .replace(/\[geo]([\s\S]*?)\[\/]/g, '<span style="font-family: Georgia">$1</span>')
+      .replace(/\[gld]([\s\S]*?)\[\/]/g, '<span style="color: #988c07">$1</span>');*/
 
     return chapterText;
   }
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number | undefined = 1,
+    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site + "/ajaxcall/", {
       headers: {
