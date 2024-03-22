@@ -46,11 +46,12 @@
   },
   {
     "id": "daotranslate",
-    "sourceSite": "https://daotranslate.com/",
+    "sourceSite": "https://daotranslate.us/",
     "sourceName": "DaoTranslate",
     "options": {
       "lang": "English",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {

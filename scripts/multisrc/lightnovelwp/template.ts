@@ -8,6 +8,7 @@ import { Filters } from "@libs/filterInputs";
 interface LightNovelWPOptions {
   reverseChapters?: boolean;
   lang?: string;
+  versionIncrements?: number;
 }
 
 export interface LightNovelWPMetadata {
@@ -32,7 +33,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = `multisrc/lightnovelwp/${metadata.id}.png`;
     this.site = metadata.sourceSite;
-    this.version = "1.0.4";
+    const versionIncrements = metadata.options?.versionIncrements || 0;
+    this.version = `1.0.${4 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters satisfies Filters;
   }
