@@ -58,7 +58,10 @@ class FaqWikiUs implements Plugin.PluginBase {
 
         novel.name = loadedCheerio(".entry-title").text().replace("Novel – All Chapters", "").trim();
 
-        novel.cover = loadedCheerio(".wp-block-image").find("img").attr("src");  
+        novel.cover = loadedCheerio(".wp-block-image")
+    .find("img")
+    .attr("data-ezsrc")
+    .replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!  
 
         novel.summary = loadedCheerio(".book-review-block__meta-item-value").text().trim();
 
