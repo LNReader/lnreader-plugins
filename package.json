@@ -12,6 +12,7 @@
         "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
         "host-linux": "chmod +x ./host.sh && ./host.sh",
         "host-windows": "powershell ./host.ps1",
+        "prettier": "prettier --write \"./**/*.{js,ts}\"",
         "prepare": "husky install"
     },
     "author": "LNReader",
