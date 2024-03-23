@@ -19,7 +19,9 @@ class FaqWikiUs implements Plugin.PluginBase {
 
             // Remove the appended query string 
             if (cover) {
-              cover = cover.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
+                cover = cover.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
+            } else {
+                cover = loadedCheerio(element).find("img").attr("src");
             }
 
             const path = loadedCheerio(element).find("a").attr("href")?.replace('tp:', 'tps:')?.slice(this.site.length);
