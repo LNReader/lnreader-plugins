@@ -10,7 +10,7 @@ class TuNovelaLigera implements Plugin.PagePlugin {
   name = 'TuNovelaLigera';
   icon = 'src/es/tunovelaligera/icon.png';
   site = 'https://tunovelaligera.com';
-  version = '1.0.0';
+  version = '1.1.0';
 
   async sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

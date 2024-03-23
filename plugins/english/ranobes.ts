@@ -16,7 +16,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
   icon = 'src/en/ranobes/icon.png';
   site = 'https://ranobes.top';
   filters?: Filters | undefined;
-  version = '1.0.0';
+  version = '1.1.0';
 
   async sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
