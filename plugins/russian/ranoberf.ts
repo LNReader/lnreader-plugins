@@ -1,42 +1,42 @@
-import { Plugin } from "@typings/plugin";
-import { FilterTypes, Filters } from "@libs/filterInputs";
-import { defaultCover } from "@libs/defaultCover";
-import { fetchApi, fetchFile } from "@libs/fetch";
-import { NovelStatus } from "@libs/novelStatus";
-import { load as parseHTML } from "cheerio";
-import dayjs from "dayjs";
+import { Plugin } from '@typings/plugin';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
+import { fetchApi, fetchFile } from '@libs/fetch';
+import { NovelStatus } from '@libs/novelStatus';
+import { load as parseHTML } from 'cheerio';
+import dayjs from 'dayjs';
 
 class RNRF implements Plugin.PluginBase {
-  id = "RNRF";
-  name = "РанобэРФ";
-  site = "https://ранобэ.рф";
-  version = "1.0.0";
-  icon = "src/ru/ranoberf/icon.png";
+  id = 'RNRF';
+  name = 'РанобэРФ';
+  site = 'https://ранобэ.рф';
+  version = '1.0.0';
+  icon = 'src/ru/ranoberf/icon.png';
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + "/books?order=";
+    let url = this.site + '/books?order=';
     url += showLatestNovels
-      ? "lastPublishedChapter"
-      : filters?.sort?.value || "popular";
-    url += "&page=" + pageNo;
+      ? 'lastPublishedChapter'
+      : filters?.sort?.value || 'popular';
+    url += '&page=' + pageNo;
 
-    const body = await fetchApi(url).then((res) => res.text());
+    const body = await fetchApi(url).then(res => res.text());
 
     const loadedCheerio = parseHTML(body);
-    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-    const json: response = JSON.parse(jsonRaw || "{}");
+    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
+    const json: response = JSON.parse(jsonRaw || '{}');
 
     const novels: Plugin.NovelItem[] = [];
-    json.props.pageProps?.totalData?.items?.forEach((novel) =>
+    json.props.pageProps?.totalData?.items?.forEach(novel =>
       novels.push({
         name: novel.title,
         cover: novel?.verticalImage?.url
           ? this.site + novel.verticalImage.url
           : defaultCover,
-        path: "/" + novel.slug,
+        path: '/' + novel.slug,
       }),
     );
 
@@ -44,22 +44,22 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.site + novelPath).then((res) => res.text());
+    const body = await fetchApi(this.site + novelPath).then(res => res.text());
 
     const loadedCheerio = parseHTML(body);
-    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-    const book = (JSON.parse(jsonRaw || "{}") as response).props.pageProps.book;
+    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
+    const book = (JSON.parse(jsonRaw || '{}') as response).props.pageProps.book;
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: book?.title || "",
+      name: book?.title || '',
       cover: book?.verticalImage?.url
         ? this.site + book.verticalImage.url
         : defaultCover,
       summary: book?.description,
-      author: book?.author || "",
-      genres: book?.genres.map((item) => item.title).join(", "),
-      status: book?.additionalInfo.includes("Активен")
+      author: book?.author || '',
+      genres: book?.genres.map(item => item.title).join(', '),
+      status: book?.additionalInfo.includes('Активен')
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
     };
@@ -71,7 +71,7 @@ class RNRF implements Plugin.PluginBase {
         chapters.push({
           name: chapter.title,
           path: chapter.url,
-          releaseTime: dayjs(chapter.publishedAt).format("LLL"),
+          releaseTime: dayjs(chapter.publishedAt).format('LLL'),
           chapterNumber: book.chapters.length - chapterIndex,
         });
       }
@@ -82,21 +82,22 @@ class RNRF implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + chapterPath)
-      .then((res) => res.text());
-
-    let loadedCheerio = parseHTML(result);
-    const jsonRaw = loadedCheerio("#__NEXT_DATA__").html();
-    const json: response = JSON.parse(jsonRaw || "{}");
-
-    loadedCheerio = parseHTML(
-      json.props.pageProps?.chapter?.content?.text || "",
+    const result = await fetchApi(this.site + chapterPath).then(res =>
+      res.text(),
     );
 
-    loadedCheerio("img").each((index, element) => {
-      if (!loadedCheerio(element).attr("src")?.startsWith("http")) {
-        const src = loadedCheerio(element).attr("src");
-        loadedCheerio(element).attr("src", this.site + src);
+    let loadedCheerio = parseHTML(result);
+    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
+    const json: response = JSON.parse(jsonRaw || '{}');
+
+    loadedCheerio = parseHTML(
+      json.props.pageProps?.chapter?.content?.text || '',
+    );
+
+    loadedCheerio('img').each((index, element) => {
+      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
+        const src = loadedCheerio(element).attr('src');
+        loadedCheerio(element).attr('src', this.site + src);
       }
     });
 
@@ -106,16 +107,18 @@ class RNRF implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/v3/books?filter[or][0][title][like]=${searchTerm}&filter[or][1][titleEn][like]=${searchTerm}&filter[or][2][fullTitle][like]=${searchTerm}&filter[status][]=active&filter[status][]=abandoned&filter[status][]=completed&expand=verticalImage`;
-    const { items }: { items: Item[] } = await fetchApi(url).then((res) => res.json());
+    const { items }: { items: Item[] } = await fetchApi(url).then(res =>
+      res.json(),
+    );
     const novels: Plugin.NovelItem[] = [];
 
-    items.forEach((novel) =>
+    items.forEach(novel =>
       novels.push({
         name: novel.title,
         cover: novel?.verticalImage?.url
           ? this.site + novel.verticalImage.url
           : defaultCover,
-        path: "/" + novel.slug,
+        path: '/' + novel.slug,
       }),
     );
 
@@ -126,13 +129,13 @@ class RNRF implements Plugin.PluginBase {
 
   filters = {
     sort: {
-      label: "Сортировка",
-      value: "popular",
+      label: 'Сортировка',
+      value: 'popular',
       options: [
-        { label: "Рейтинг", value: "popular" },
-        { label: "Дате добавления", value: "new" },
-        { label: "Дате обновления", value: "lastPublishedChapter" },
-        { label: "Законченные", value: "completed" },
+        { label: 'Рейтинг', value: 'popular' },
+        { label: 'Дате добавления', value: 'new' },
+        { label: 'Дате обновления', value: 'lastPublishedChapter' },
+        { label: 'Законченные', value: 'completed' },
       ],
       type: FilterTypes.Picker,
     },

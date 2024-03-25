@@ -1,8 +1,5 @@
-import fs from "fs";
-import path from "path";
-
-// Define the path to the JSON storage file
-const dbPath = path.join(__dirname, "..", "..", "db.json");
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Represents a storage system with methods for setting, getting, and deleting key-value pairs.
@@ -10,14 +7,14 @@ const dbPath = path.join(__dirname, "..", "..", "db.json");
 class Storage {
   private db: Record<
     string,
-    Record<string, { created: Date; value: any; expires?: Date }>
+    Record<string, { created: Date; value: any; expires?: number }>
   >;
 
   /**
    * Initializes a new instance of the Storage class.
    */
   constructor() {
-    this.db = this.loadDB();
+    this.db = {};
   }
 
   /**
@@ -38,14 +35,8 @@ class Storage {
     this.db[pluginID][key] = {
       created: new Date(),
       value,
-      expires:
-        expires instanceof Date
-          ? expires
-          : typeof expires === "number"
-          ? new Date(expires)
-          : undefined,
+      expires: expires instanceof Date ? expires.getTime() : expires,
     };
-    this.saveDB();
   }
 
   /**
@@ -58,7 +49,7 @@ class Storage {
    */
   get(pluginID: string, key: string, raw?: boolean): any {
     const item = this.db[pluginID]?.[key];
-    if (item?.expires && Date.now() > item.expires.getTime()) {
+    if (item?.expires && Date.now() > item.expires) {
       this.delete(pluginID, key);
       return undefined;
     }
@@ -83,7 +74,6 @@ class Storage {
    */
   delete(pluginID: string, key: string): void {
     delete this.db[pluginID]?.[key];
-    this.saveDB();
   }
 
   /**
@@ -93,27 +83,6 @@ class Storage {
    */
   clearAll(pluginID: string): void {
     delete this.db[pluginID];
-    this.saveDB();
-  }
-
-  /**
-   * Saves the storage data to the JSON file.
-   */
-  private saveDB() {
-    fs.writeFileSync(dbPath, JSON.stringify(this.db, null, 2));
-  }
-
-  /**
-   * Loads the storage data from the JSON file.
-   */
-  private loadDB() {
-    try {
-      const data = fs.readFileSync(dbPath, "utf8");
-      return JSON.parse(data);
-    } catch (error) {
-      console.error("Error loading storage file:", error);
-      return Object();
-    }
   }
 }
 

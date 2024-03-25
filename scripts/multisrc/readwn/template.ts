@@ -10,7 +10,7 @@ export interface ReadwnMetadata {
   id: string;
   sourceSite: string;
   sourceName: string;
-  filters?: Filters;
+  filters?: any;
 }
 
 class ReadwnPlugin implements Plugin.PluginBase {

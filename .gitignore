@@ -9,4 +9,3 @@ plugins/*/*\[*\]*.ts
 # ignore dist stuffs
 .js
 .dist
-db.json
