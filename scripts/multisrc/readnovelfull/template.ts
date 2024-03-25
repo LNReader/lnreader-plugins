@@ -30,7 +30,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readnovelfull/${metadata.id}.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.0.${4 + versionIncrements}`;
+    this.version = `1.0.${0 + versionIncrements}`;
     this.options = metadata.options;
   }
 
