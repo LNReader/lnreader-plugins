@@ -1,5 +1,6 @@
 current=`git rev-parse --abbrev-ref HEAD`
-dist=dist
+version=`node -e "console.log(require('./package.json').version);"`
+dist="plugins/v$version"
 exists=`git show-ref refs/heads/$dist`
 
 if [ -n "$exists" ]; then
@@ -20,7 +21,7 @@ rm -rf .js
 npm run clearMultisrc
 npm run generate
 npm run json
-git add -f icons .dist .js/plugins
+git add -f icons .dist .js/plugins total.svg
 git commit -m "Host plugins"
 git push -f origin $dist
 

@@ -10,7 +10,7 @@
   },
   {
     "id": "kolnovel",
-    "sourceSite": "https://kolnovel.me/",
+    "sourceSite": "https://kolnovel.org/",
     "sourceName": "ملوك الروايات",
     "options": {
       "lang": "Arabic",
@@ -46,11 +46,12 @@
   },
   {
     "id": "daotranslate",
-    "sourceSite": "https://daotranslate.com/",
+    "sourceSite": "https://daotranslate.us/",
     "sourceName": "DaoTranslate",
     "options": {
       "lang": "English",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {
