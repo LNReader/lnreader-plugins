@@ -62,7 +62,7 @@ for (let language in languages) {
       id,
       name: normalisedName,
       site,
-      lang: language,
+      lang: languages[language as keyof typeof languages],
       version,
       url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
       iconUrl: `${ICON_LINK}/${icon}`,
