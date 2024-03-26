@@ -30,7 +30,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   constructor(metadata: HotNovelPubMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/hotnovelpub/icons/${metadata.id}.png`;
+    this.icon = `multisrc/hotnovelpub/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     this.apiSite = metadata.sourceSite.replace('://', '://api.');
     this.version = '1.0.0';
