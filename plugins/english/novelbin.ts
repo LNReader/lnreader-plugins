@@ -8,13 +8,13 @@ class NovelBin implements Plugin.PluginBase {
   name = 'Novel Bin';
   icon = 'src/en/novelbin/icon.png';
   site = 'https://binnovel.com/';
-  version = '1.0.0';
+  version = '1.0.1';
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.col-novel-main .list-novel .row').each((i, el) => {
       const novelName = loadedCheerio(el).find('h3.novel-title > a').text();
-      const novelCover = loadedCheerio(el).find('img.cover').attr('src');
+      const novelCover = loadedCheerio(el).find('img.cover').attr('data-src');
       const novelUrl = loadedCheerio(el)
         .find('h3.novel-title > a')
         .attr('href');
@@ -59,7 +59,7 @@ class NovelBin implements Plugin.PluginBase {
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('div.book > img').attr('alt') || 'Untitled',
-      cover: loadedCheerio('div.book > img').attr('src'),
+      cover: loadedCheerio('div.book > img').attr('data-src'),
       summary: loadedCheerio('div.desc-text').text().trim(),
       chapters: [],
     };
@@ -141,7 +141,11 @@ class NovelBin implements Plugin.PluginBase {
   }
 
   async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
+    return fetchFile(url, {
+      headers: {
+        'referrer': this.site,
+      }
+    });
   }
 
   filters = {
