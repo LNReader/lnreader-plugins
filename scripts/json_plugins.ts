@@ -82,7 +82,7 @@ for (let language in languages) {
 
 json.sort((a, b) => {
   if (a.lang === b.lang) return a.id.localeCompare(b.id);
-  return a.lang.localeCompare(b.lang);
+  return 0;
 });
 
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
