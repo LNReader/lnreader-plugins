@@ -14,7 +14,9 @@ class NovelBin implements Plugin.PluginBase {
 
     loadedCheerio('.col-novel-main .list-novel .row').each((i, el) => {
       const novelName = loadedCheerio(el).find('h3.novel-title > a').text();
-      const novelCover = loadedCheerio(el).find('img.cover').attr('data-src');
+      const novelCover = loadedCheerio(el).find('img.cover')
+        .attr('data-src')
+        ?.replace('_200_89', '');
       const novelUrl = loadedCheerio(el)
         .find('h3.novel-title > a')
         .attr('href');
