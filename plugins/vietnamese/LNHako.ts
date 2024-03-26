@@ -1,7 +1,6 @@
-import { CheerioAPI, load as parseHTML } from 'cheerio';
+import { Parser } from 'htmlparser2';
 import { fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 import { NovelStatus } from '@libs/novelStatus';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 
@@ -11,29 +10,43 @@ class HakoPlugin implements Plugin.PluginBase {
   icon = 'src/vi/hakolightnovel/icon.png';
   site = 'https://ln.hako.vn';
   version = '1.0.1';
-  parseNovels(loadedCheerio: CheerioAPI) {
-    const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('#mainpart .row .thumb-item-flow').each((index, ele) => {
-      let url = loadedCheerio(ele)
-        .find('div.thumb_attr.series-title > a')
-        .attr('href');
-
-      if (url) {
-        const name = loadedCheerio(ele).find('.series-title').text().trim();
-        let cover = loadedCheerio(ele).find('.img-in-ratio').attr('data-bg');
-
-        if (cover && !isUrlAbsolute(cover)) {
-          cover = this.site + cover;
-        }
-
-        const novel = { name, path: url.replace(this.site, ''), cover };
-
-        novels.push(novel);
-      }
-    });
-    return novels;
+  parseNovels(url: string) {
+    return fetch(url)
+      .then(res => res.text())
+      .then(html => {
+        const novels: Plugin.NovelItem[] = [];
+        let tempNovel = {} as Plugin.NovelItem;
+        let isGettingUrl = false;
+        let isParsingNovel = false;
+        const parser = new Parser({
+          onopentag(name, attribs) {
+            if (attribs['class']?.includes('thumb-item-flow')) {
+              isParsingNovel = true;
+            }
+            if (isParsingNovel) {
+              if (attribs['class']?.includes('series-title')) {
+                isGettingUrl = true;
+              }
+              if (attribs['class']?.includes('img-in-ratio')) {
+                tempNovel.cover = attribs['data-bg'];
+              }
+              if (isGettingUrl && name === 'a') {
+                tempNovel.name = attribs['title'];
+                tempNovel.path = attribs['href'];
+                novels.push(tempNovel);
+                tempNovel = {} as Plugin.NovelItem; // re-assign new reference
+                isGettingUrl = false;
+                isParsingNovel = false;
+              }
+            }
+          },
+        });
+        parser.write(html);
+        parser.end();
+        return novels;
+      });
   }
-  async popularNovels(
+  popularNovels(
     pageNo: number,
     {
       showLatestNovels,
@@ -41,156 +54,228 @@ class HakoPlugin implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = this.site + '/danh-sach';
-    if (filters.alphabet.value) {
-      link += '/' + filters.alphabet.value;
+    if (filters) {
+      if (filters.alphabet.value) {
+        link += '/' + filters.alphabet.value;
+      }
+      const params = new URLSearchParams();
+      for (const novelType of filters.type.value) {
+        params.append(novelType, '1');
+      }
+      for (const status of filters.status.value) {
+        params.append(status, '1');
+      }
+      params.append('sapxep', filters.sort.value);
+      link += '?' + params.toString() + '&page=' + pageNo;
+    } else {
+      link += '?page=' + pageNo;
     }
-    const params = new URLSearchParams();
-    for (const novelType of filters.type.value) {
-      params.append(novelType, '1');
-    }
-    for (const status of filters.status.value) {
-      params.append(status, '1');
-    }
-    params.append('sapxep', filters.sort.value);
-    link += '?' + params.toString() + '&page=' + pageNo;
-    const result = await fetch(link);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
-    return this.parseNovels(loadedCheerio);
+    return this.parseNovels(link);
   }
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novel: Plugin.SourceNovel = {
-      path: novelPath,
-      name: 'Không có tiêu đề',
-    };
-    const result = await fetch(this.site + novelPath);
-    const body = await result.text();
-
-    let loadedCheerio = parseHTML(body);
-
-    novel.name = loadedCheerio('.series-name').text().trim();
-
-    const background =
-      loadedCheerio('.series-cover > .a6-ratio > div').attr('style') || '';
-    const novelCover = background.substring(
-      background.indexOf('http'),
-      background.length - 2,
-    );
-
-    novel.cover = novelCover
-      ? isUrlAbsolute(novelCover)
-        ? novelCover
-        : this.site + novelCover
-      : '';
-
-    novel.summary = loadedCheerio('.summary-content').text().trim();
-
-    novel.genres = loadedCheerio('.series-information > div:nth-child(1)')
-      .text()
-      .trim()
-      .split(/\n[\s\n]*/)
-      .join(',');
-
-    novel.author = loadedCheerio(
-      '.series-information > div:nth-child(2) > .info-value',
-    )
-      .text()
-      .trim();
-    novel.artist = loadedCheerio(
-      '.series-information > div:nth-child(3) > .info-value',
-    )
-      .text()
-      .trim();
-
-    novel.status = loadedCheerio(
-      '.series-information > div:nth-child(4) > .info-value',
-    )
-      .text()
-      .trim();
-
-    switch (novel.status) {
-      case 'Đang tiến hành':
-        novel.status = NovelStatus.Ongoing;
-        break;
-      case 'Tạm ngưng':
-        novel.status = NovelStatus.OnHiatus;
-        break;
-      case 'Completed':
-        novel.status = NovelStatus.Completed;
-        break;
-      default:
-        novel.status = NovelStatus.Unknown;
-    }
-
-    novel.chapters = [];
-    loadedCheerio('.volume-list').each((idx, ele) => {
-      const customPage = loadedCheerio(ele).find('.sect-title').text().trim();
-      let num = 0,
-        part = 1;
-      loadedCheerio(ele)
-        .find('.list-chapters > li')
-        .each((idx, chapterEle) => {
-          const path = loadedCheerio(chapterEle).find('a').attr('href');
-          const chapterName = loadedCheerio(chapterEle)
-            .find('.chapter-name')
-            .text()
-            .trim();
-          let chapterNumber = Number(chapterName.match(/Chương\s*(\d+)/i)?.[1]);
-          if (chapterNumber) {
-            num = chapterNumber;
-            part = 1;
-          } else {
-            chapterNumber = num + part / 10;
-            part++;
-          }
-          const chapterTime = loadedCheerio(chapterEle)
-            .find('.chapter-time')
-            .text()
-            .split('/')
-            .map(x => Number(x));
-          if (path) {
-            novel.chapters?.push({
-              page: customPage,
-              path,
-              name: chapterName,
-              releaseTime: new Date(
+  parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    return fetch(this.site + novelPath)
+      .then(res => res.text())
+      .then(html => {
+        const novel: Plugin.SourceNovel = {
+          path: novelPath,
+          name: '',
+          author: '',
+          artist: '',
+          summary: '',
+          genres: '',
+          status: '',
+        };
+        let isReadingName = 0;
+        let isReadingSummary = 0;
+        let isReadingGenre = 0;
+        let isReadingInfo = 0;
+        let isReadingInfoValue = 0;
+        let isParsingVolume = false;
+        let isReadingVolume = false;
+        let currentVolume = '';
+        let isParsingChapterList = false;
+        let num = 0,
+          part = 0;
+        let isReadingChapterTime = false;
+        const chapters: Plugin.ChapterItem[] = [];
+        let tempChapter = {} as Plugin.ChapterItem;
+        const parser = new Parser({
+          onopentag(name, attribs) {
+            if (attribs['class'] === 'series-name') {
+              isReadingName = 1;
+            } else if (
+              !novel.cover &&
+              attribs['class']?.includes('img-in-ratio')
+            ) {
+              const background = attribs['style'];
+              if (background) {
+                novel.cover = background.substring(
+                  background.indexOf('http'),
+                  background.length - 2,
+                );
+              }
+            } else if (attribs['class'] === 'summary-content') {
+              isReadingSummary = 1;
+            } else if (attribs['class'] === 'series-gerne-item') {
+              isReadingGenre = 1;
+            } else if (attribs['class'] === 'info-item') {
+              isReadingInfo += 1;
+            } else if (attribs['class']?.includes('volume-list')) {
+              isParsingVolume = true;
+              num = 0;
+              part = 1;
+            } else if (isParsingVolume && attribs['class'] === 'sect-title') {
+              isReadingVolume = true;
+              currentVolume = '';
+            } else if (isParsingVolume && name === 'ul') {
+              isParsingChapterList = true;
+            } else if (
+              isParsingChapterList &&
+              name === 'a' &&
+              attribs['title'] !== null
+            ) {
+              const chapterName = attribs['title'];
+              let chapterNumber = Number(
+                chapterName.match(/Chương\s*(\d+)/i)?.[1],
+              );
+              if (chapterNumber) {
+                if (num === chapterNumber) {
+                  chapterNumber = num + part / 10;
+                  part += 1;
+                } else {
+                  num = chapterNumber;
+                  part = 1;
+                }
+              } else {
+                chapterNumber = num + part / 10;
+                part++;
+              }
+              tempChapter = {
+                path: attribs['href'],
+                name: chapterName,
+                page: currentVolume,
+                chapterNumber: chapterNumber,
+              };
+            } else if (
+              isParsingChapterList &&
+              attribs['class'] === 'chapter-time'
+            ) {
+              isReadingChapterTime = true;
+            }
+            if (isReadingName === 1 && name === 'a') {
+              isReadingName = 2;
+            }
+            if (isReadingInfo !== 0 && name === 'a') {
+              isReadingInfoValue = 1;
+            }
+          },
+          ontext(data) {
+            if (isReadingName === 2) {
+              novel.name += data;
+            } else if (isReadingSummary !== 0) {
+              if (isReadingSummary === 2) {
+                novel.summary += '\n' + data;
+                isReadingSummary = 1;
+              } else {
+                novel.summary += data;
+              }
+            } else if (isReadingGenre === 1) {
+              novel.genres += data;
+            } else if (isReadingInfoValue === 1 && isReadingInfo <= 3) {
+              if (isReadingInfo === 1) {
+                novel.author += data;
+              } else if (isReadingInfo === 2) {
+                novel.artist += data;
+              } else if (isReadingInfo === 3) {
+                novel.status += data;
+              }
+            } else if (isReadingVolume) {
+              currentVolume += data.trim();
+            } else if (isReadingChapterTime) {
+              const chapterTime = data.split('/').map(x => Number(x));
+              tempChapter.releaseTime = new Date(
                 chapterTime[2],
                 chapterTime[1],
                 chapterTime[0],
-              ).toISOString(),
-              chapterNumber: chapterNumber,
-            });
-          }
+              ).toISOString();
+              chapters.push(tempChapter);
+              isReadingChapterTime = false;
+              tempChapter = {} as Plugin.ChapterItem;
+            }
+          },
+          onclosetag(name) {
+            if (isReadingName === 2) {
+              isReadingName = 0;
+            } else if (isReadingSummary !== 0) {
+              if (name !== 'div') {
+                isReadingSummary = 2;
+              } else {
+                isReadingSummary = 0;
+              }
+            } else if (isReadingGenre === 1) {
+              isReadingGenre = 0;
+              novel.genres += ',';
+            } else if (isReadingVolume) {
+              isReadingVolume = false;
+            } else if (isReadingChapterTime) isReadingChapterTime = false;
+            if (name === 'ul') {
+              isParsingChapterList = false;
+            }
+            if (isReadingInfoValue === 1) {
+              isReadingInfoValue = 0;
+              if (isReadingInfo === 3) {
+                isReadingInfo = 0;
+              }
+            }
+            if (name === 'section') {
+              isParsingVolume = false;
+            }
+          },
         });
-    });
-    return novel;
+
+        parser.write(html);
+        parser.end();
+        novel.chapters = chapters;
+        switch (novel.status?.trim()) {
+          case 'Đang tiến hành':
+            novel.status = NovelStatus.Ongoing;
+            break;
+          case 'Tạm ngưng':
+            novel.status = NovelStatus.OnHiatus;
+            break;
+          case 'Completed':
+            novel.status = NovelStatus.Completed;
+            break;
+          default:
+            novel.status = NovelStatus.Unknown;
+        }
+        novel.genres = novel.genres?.replace(/,*\s*$/, '');
+        return novel;
+      });
   }
-  async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.site + chapterPath);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
-
-    const chapterText = loadedCheerio('#chapter-content').html() || '';
-
-    return chapterText;
+  parseChapter(chapterPath: string): Promise<string> {
+    return fetch(this.site + chapterPath)
+      .then(res => res.text())
+      .then(
+        html =>
+          html.match(
+            /(<div id="chapter-content".+?>[^]+)<div style="text-align: center;/,
+          )?.[1] || 'Không tìm thấy nội dung',
+      );
   }
-  async searchNovels(
+  searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url =
       this.site + '/tim-kiem?keywords=' + searchTerm + '&page=' + pageNo;
-    const result = await fetch(url);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
-    return this.parseNovels(loadedCheerio);
+    return this.parseNovels(url);
   }
-  async fetchImage(url: string): Promise<string | undefined> {
+  fetchImage(url: string): Promise<string | undefined> {
     const headers = {
       Referer: 'https://ln.hako.vn',
     };
-    return await fetchFile(url, { headers: headers });
+    return fetchFile(url, { headers: headers });
   }
   filters = {
     alphabet: {
