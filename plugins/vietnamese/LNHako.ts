@@ -1,8 +1,6 @@
-import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { Parser } from 'htmlparser2';
 import { fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 import { NovelStatus } from '@libs/novelStatus';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 
@@ -48,7 +46,7 @@ class HakoPlugin implements Plugin.PluginBase {
         return novels;
       });
   }
-  async popularNovels(
+  popularNovels(
     pageNo: number,
     {
       showLatestNovels,
@@ -74,7 +72,7 @@ class HakoPlugin implements Plugin.PluginBase {
     }
     return this.parseNovels(link);
   }
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+  parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     return fetch(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
@@ -255,17 +253,17 @@ class HakoPlugin implements Plugin.PluginBase {
         return novel;
       });
   }
-  async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.site + chapterPath);
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
-
-    const chapterText = loadedCheerio('#chapter-content').html() || '';
-
-    return chapterText;
+  parseChapter(chapterPath: string): Promise<string> {
+    return fetch(this.site + chapterPath)
+      .then(res => res.text())
+      .then(
+        html =>
+          html.match(
+            /(<div id="chapter-content".+?>[^]+)<div style="text-align: center;/,
+          )?.[1] || 'Không tìm thấy nội dung',
+      );
   }
-  async searchNovels(
+  searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
@@ -273,11 +271,11 @@ class HakoPlugin implements Plugin.PluginBase {
       this.site + '/tim-kiem?keywords=' + searchTerm + '&page=' + pageNo;
     return this.parseNovels(url);
   }
-  async fetchImage(url: string): Promise<string | undefined> {
+  fetchImage(url: string): Promise<string | undefined> {
     const headers = {
       Referer: 'https://ln.hako.vn',
     };
-    return await fetchFile(url, { headers: headers });
+    return fetchFile(url, { headers: headers });
   }
   filters = {
     alphabet: {
