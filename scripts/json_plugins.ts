@@ -24,17 +24,7 @@ const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}
 const ICON_LINK = `${USER_CONTENT_LINK}/icons`;
 const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/plugins`;
 
-const json: {
-  [key: string]: {
-    id: string;
-    name: string;
-    site: string;
-    lang: string;
-    version: string;
-    url: string;
-    iconUrl: string;
-  }[];
-} = {};
+const json: HostedPluginItem[] = [];
 if (!fs.existsSync(path.join(outRoot, '.dist'))) {
   fs.mkdirSync(path.join(outRoot, '.dist'));
 }
@@ -43,12 +33,21 @@ const jsonMinPath = path.join(outRoot, '.dist', 'plugins.min.json');
 const pluginSet = new Set();
 let totalPlugins = 0;
 
+interface HostedPluginItem {
+  id: string;
+  name: string;
+  site: string;
+  lang: string;
+  version: string;
+  url: string;
+  iconUrl: string;
+}
+
 for (let language in languages) {
   // language with English name
   const langPath = path.join(root, 'plugins', language.toLowerCase());
   if (!fs.existsSync(langPath)) continue;
   const plugins = fs.readdirSync(langPath);
-  json[language] = [];
   plugins.forEach(plugin => {
     if (plugin.startsWith('.')) return;
     minify(path.join(langPath, plugin));
@@ -59,7 +58,7 @@ for (let language in languages) {
     const { id, name, site, version, icon } = instance;
     const normalisedName = name.replace(/\[.*\]/, '');
 
-    const info = {
+    const info: HostedPluginItem = {
       id,
       name: normalisedName,
       site,
@@ -67,7 +66,7 @@ for (let language in languages) {
       version,
       url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
       iconUrl: `${ICON_LINK}/${icon}`,
-    } as const;
+    };
 
     if (pluginSet.has(id)) {
       console.log("There's already a plugin with id:", id);
@@ -75,13 +74,16 @@ for (let language in languages) {
     } else {
       pluginSet.add(id);
     }
-    json[language].push(info);
+    json.push(info);
     totalPlugins += 1;
     console.log(name, '✅');
   });
 }
 
-for (let lang in json) json[lang].sort((a, b) => a.id.localeCompare(b.id));
+json.sort((a, b) => {
+  if (a.lang === b.lang) return a.id.localeCompare(b.id);
+  return a.lang.localeCompare(b.lang);
+});
 
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
