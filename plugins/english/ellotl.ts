@@ -11,39 +11,37 @@ class ElloTL implements Plugin.PluginBase {
   site = 'https://ellotl.com';
   version = '1.0.0';
 
-  parseNovels(url: string) {
-    return fetch(url)
-      .then(res => res.text())
-      .then(html => {
-        let isParsingNovel = false;
-        let tempNovel = {} as Plugin.NovelItem;
-        const novels: Plugin.NovelItem[] = [];
-        const parser = new Parser({
-          onopentag(name, attribs) {
-            if (attribs['class']?.includes('mdthumb')) {
-              isParsingNovel = true;
-            }
-            if (isParsingNovel) {
-              switch (name) {
-                case 'a':
-                  tempNovel.path = attribs['href'];
-                  break;
-                case 'img':
-                  tempNovel.name = attribs['alt'];
-                  tempNovel.cover = attribs['src'];
-                  break;
-              }
-              if (tempNovel.path && tempNovel.name) {
-                novels.push(tempNovel);
-                tempNovel = {} as Plugin.NovelItem;
-              }
-            }
-          },
-        });
-        parser.write(html);
-        parser.end();
-        return novels;
-      });
+  async parseNovels(url: string) {
+    const res = await fetch(url);
+    const html = await res.text();
+    let isParsingNovel = false;
+    let tempNovel = {} as Plugin.NovelItem;
+    const novels: Plugin.NovelItem[] = [];
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        if (attribs['class']?.includes('mdthumb')) {
+          isParsingNovel = true;
+        }
+        if (isParsingNovel) {
+          switch (name) {
+            case 'a':
+              tempNovel.path = attribs['href'];
+              break;
+            case 'img':
+              tempNovel.name = attribs['alt'];
+              tempNovel.cover = attribs['src'];
+              break;
+          }
+          if (tempNovel.path && tempNovel.name) {
+            novels.push(tempNovel);
+            tempNovel = {} as Plugin.NovelItem;
+          }
+        }
+      },
+    });
+    parser.write(html);
+    parser.end();
+    return novels;
   }
 
   popularNovels(
@@ -73,173 +71,158 @@ class ElloTL implements Plugin.PluginBase {
     return this.parseNovels(link);
   }
 
-  parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return fetch(this.site + novelPath)
-      .then(res => res.text())
-      .then(html => {
-        const novel: Plugin.SourceNovel = {
-          path: novelPath,
-          name: '',
-          genres: '',
-          summary: '',
-          author: '',
-          status: '',
-          chapters: [] as Plugin.ChapterItem[],
-          latestChapter: {} as Plugin.ChapterItem,
-        };
-        let isReadingName = 0;
-        let isParsingGenreList = false;
-        let isReadingGenre = false;
-        let isReadingSummary = 0;
-        let isParsingInfo = false;
-        let isReadingInfo = false;
-        let isReadingInfoValue = 0;
-        let isReadingChapterList = false;
-        let isReadingChapterInfo = 0;
-        const chapters: Plugin.ChapterItem[] = [];
-        let tempChapter = {} as Plugin.ChapterItem;
-        const parser = new Parser({
-          onopentag(name, attribs) {
-            console.log('Open tag:', name, attribs);
-            if (attribs['class'] === 'infox') {
-              console.log('Is in:', attribs['class']);
-              isReadingName = 1; // start reading name
-            } else if (
-              !novel.cover &&
-              attribs['class']?.includes('wp-post-image')
-            ) {
-              console.log('Is in:', attribs['class']);
-              novel.cover = attribs['src']; // get cover image
-            } else if (attribs['class']?.includes('genxed')) {
-              console.log('Is in:', attribs['class']);
-              isParsingGenreList = true; // start parsing genre list
-            } else if (isParsingGenreList && name === 'a') {
-              console.log('Is in: genxed ->', name);
-              isReadingGenre = true; // start reading genre
-            } else if (attribs['class'].includes('entry-content')) {
-              console.log('Is in:', attribs['class']);
-              isReadingSummary = 1; // start reading summary
-            } else if (isReadingSummary === 1 && name === 'br') {
-              console.log('Is in: entry-content ->', name);
-              isReadingSummary = 2; // add a newline
-            } else if (attribs['class'].includes('spe')) {
-              console.log('Is in:', attribs['class']);
-              isParsingInfo = true; // start parsing info
-            } else if (isParsingInfo && name === 'span') {
-              console.log('Is in: spe ->', name);
-              isReadingInfo = true; // start reading info
-            } else if (isReadingInfo && name === 'b') {
-              console.log('Is in: spe -> span ->', name);
-              isReadingInfoValue = 1; // start reading info value
-            } else if (name === 'ul') {
-              console.log('Is in:', name);
-              isReadingChapterList = true; // start reading chapter list
-            } else if (isReadingChapterList && name === 'div') {
-              console.log('Is in: ul ->', name);
-              if (attribs['class'].includes('epl-title')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 1; // start reading chapter title
-              } else if (attribs['class'].includes('epl-date')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 2; // start reading chapter date
-              } else if (attribs['class'].includes('epl-num')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 3; // start reading chapter number
-              } else {
-                console.log('No if gets triggered.');
-              }
-              if (isReadingName === 1 && attribs['class'] === 'entry-title') {
-                isReadingName = 2;
-              }
-            }
-          },
-          ontext(data) {
-            if (isReadingName === 2) {
-              console.log('isReadingName:', isReadingName);
-              novel.name += data;
-              console.log('Novel name:', novel.name);
-            } else if (isReadingGenre) {
-              novel.genres += data;
-            } else if (isReadingSummary === 1) {
-              novel.summary += data;
-            } else if (isReadingInfoValue === 1) {
-              if (data === 'Author:') {
-                isReadingInfoValue = 2;
-              } else if (data === 'Status:') {
-                isReadingInfoValue = 3;
-              }
-            } else if (isReadingInfoValue >= 2) {
-              if (isReadingInfoValue === 2) {
-                novel.author += data;
-              } else if (isReadingInfoValue === 3) {
-                novel.status = data;
-              }
-            } else if (isReadingChapterInfo !== 0) {
-              if (isReadingChapterInfo === 1) {
-                tempChapter.name = data;
-              } else if (isReadingChapterInfo === 2) {
-                tempChapter.releaseTime = new Date(data).toISOString();
-              } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
-                tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
-              }
-            }
-          },
-          onclosetag(name) {
-            if (isReadingName === 2) {
-              console.log('Close tag:', name);
-              isReadingName = 0; // stop reading name
-            } else if (isReadingGenre) {
-              isReadingGenre = false; // stop reading genre
-              novel.genres += ',';
-            } else if (isParsingGenreList) {
-              isParsingGenreList = false; // stop parsing genre list
-            } else if (isReadingSummary !== 0) {
-              if (isReadingSummary === 2) {
-                isReadingSummary = 1;
-                novel.summary += '\n';
-              } else if (isReadingSummary === 1 && name === 'div') {
-                isReadingSummary = 0;
-              }
-            } else if (isReadingInfo && name === 'span') {
-              isReadingInfo = false;
-              isReadingInfoValue = 0;
-            } else if (isParsingInfo && name === 'div') {
-              isParsingInfo = false;
-            } else if (isReadingChapterInfo >= 1 && name === 'div') {
-              isReadingChapterInfo = 0;
-            } else if (isReadingChapterList && name === 'li') {
-              isReadingChapterInfo = 0;
-              chapters.push(tempChapter);
-              tempChapter = {} as Plugin.ChapterItem;
-            } else if (isReadingChapterList && name === 'ul') {
-              isReadingChapterList = false;
-            }
-          },
-        });
-        parser.write(html);
-        parser.end();
-        novel.latestChapter = chapters[0];
-        switch (novel.status?.trim()) {
-          case 'Ongoing':
-            novel.status = NovelStatus.Ongoing;
-            break;
-          case 'Hiatus':
-            novel.status = NovelStatus.OnHiatus;
-            break;
-          case 'Completed':
-            novel.status = NovelStatus.Completed;
-            break;
-          default:
-            novel.status = NovelStatus.Unknown;
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    console.log('Novel path:', novelPath);
+    const res = await fetch(novelPath);
+    const html = await res.text();
+    const novel: Plugin.SourceNovel = {
+      path: novelPath,
+      name: '',
+      genres: '',
+      summary: '',
+      author: '',
+      status: '',
+      chapters: [] as Plugin.ChapterItem[],
+      latestChapter: {} as Plugin.ChapterItem,
+    };
+    let isParsingGenreList = false;
+    let isReadingGenre = false;
+    let isReadingSummary = 0;
+    let isParsingInfo = false;
+    let isReadingInfo = false;
+    let isReadingInfoValue = 0;
+    let isReadingChapterList = false;
+    let isReadingChapterInfo = 0;
+    const chapters: Plugin.ChapterItem[] = [];
+    let tempChapter = {} as Plugin.ChapterItem;
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        console.log('Open tag:', name, attribs);
+        if (
+          !novel.cover &&
+          attribs['class']?.includes('ts-post-image' || 'wp-post-image')
+        ) {
+          console.log('Is in:', attribs['class']);
+          novel.cover = attribs['src']; // get cover image
+          novel.name = attribs['title']; // get novel name
+        } else if (attribs['class'].includes('spe')) {
+          console.log('Is in:', attribs['class']);
+          isParsingInfo = true; // start parsing info
+        } else if (isParsingInfo && name === 'span') {
+          console.log('Is in: spe ->', name);
+          isReadingInfo = true; // start reading info
+        } else if (isReadingInfo && name === 'b') {
+          console.log('Is in: spe -> span ->', name);
+          isReadingInfoValue = 1; // start reading info value
+        } else if (attribs['class']?.includes('genxed')) {
+          console.log('Is in:', attribs['class']);
+          isParsingGenreList = true; // start parsing genre list
+        } else if (isParsingGenreList && name === 'a') {
+          console.log('Is in: genxed ->', name);
+          isReadingGenre = true; // start reading genre
+        } else if (attribs['class'].includes('entry-content')) {
+          console.log('Is in:', attribs['class']);
+          isReadingSummary = 1; // start reading summary
+        } else if (isReadingSummary === 1 && name === 'br') {
+          console.log('Is in: entry-content ->', name);
+          isReadingSummary = 2; // add a newline
+        } else if (name === 'ul') {
+          console.log('Is in:', name);
+          isReadingChapterList = true; // start reading chapter list
+        } else if (isReadingChapterList && name === 'div') {
+          console.log('Is in: ul ->', name);
+          if (attribs['class'].includes('epl-title')) {
+            console.log('Is in: ul -> div ->', attribs['class']);
+            isReadingChapterInfo = 1; // start reading chapter title
+          } else if (attribs['class'].includes('epl-date')) {
+            console.log('Is in: ul -> div ->', attribs['class']);
+            isReadingChapterInfo = 2; // start reading chapter date
+          } else if (attribs['class'].includes('epl-num')) {
+            console.log('Is in: ul -> div ->', attribs['class']);
+            isReadingChapterInfo = 3; // start reading chapter number
+          } else {
+            console.log('No if gets triggered.');
+          }
         }
-        novel.genres = novel.genres?.replace(/,*\s*$/, '');
-        console.log('Komm ich bis zum Schluss?');
-        return novel;
-      });
+      },
+      ontext(data) {
+        if (isReadingGenre) {
+          novel.genres += data;
+        } else if (isReadingSummary === 1) {
+          novel.summary += data;
+        } else if (isReadingInfoValue === 1) {
+          if (data === 'Author:') {
+            isReadingInfoValue = 2;
+          } else if (data === 'Status:') {
+            isReadingInfoValue = 3;
+          }
+        } else if (isReadingInfoValue >= 2) {
+          if (isReadingInfoValue === 2) {
+            novel.author += data;
+          } else if (isReadingInfoValue === 3) {
+            novel.status = data;
+          }
+        } else if (isReadingChapterInfo !== 0) {
+          if (isReadingChapterInfo === 1) {
+            tempChapter.name = data;
+          } else if (isReadingChapterInfo === 2) {
+            tempChapter.releaseTime = new Date(data).toISOString();
+          } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
+            tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
+          }
+        }
+      },
+      onclosetag(name_1) {
+        if (isReadingGenre) {
+          isReadingGenre = false; // stop reading genre
+          novel.genres += ',';
+        } else if (isParsingGenreList) {
+          isParsingGenreList = false; // stop parsing genre list
+        } else if (isReadingSummary !== 0) {
+          if (isReadingSummary === 2) {
+            isReadingSummary = 1;
+            novel.summary += '\n';
+          } else if (isReadingSummary === 1 && name_1 === 'div') {
+            isReadingSummary = 0;
+          }
+        } else if (isReadingInfo && name_1 === 'span') {
+          isReadingInfo = false;
+          isReadingInfoValue = 0;
+        } else if (isParsingInfo && name_1 === 'div') {
+          isParsingInfo = false;
+        } else if (isReadingChapterInfo >= 1 && name_1 === 'div') {
+          isReadingChapterInfo = 0;
+        } else if (isReadingChapterList && name_1 === 'li') {
+          isReadingChapterInfo = 0;
+          chapters.push(tempChapter);
+          tempChapter = {} as Plugin.ChapterItem;
+        } else if (isReadingChapterList && name_1 === 'ul') {
+          isReadingChapterList = false;
+        }
+      },
+    });
+    parser.write(html);
+    parser.end();
+    novel.latestChapter = chapters[0];
+    switch (novel.status?.trim()) {
+      case 'Ongoing':
+        novel.status = NovelStatus.Ongoing;
+        break;
+      case 'Hiatus':
+        novel.status = NovelStatus.OnHiatus;
+        break;
+      case 'Completed':
+        novel.status = NovelStatus.Completed;
+        break;
+      default:
+        novel.status = NovelStatus.Unknown;
+    }
+    novel.genres = novel.genres?.replace(/,*\s*$/, '');
+    console.log('Komm ich bis zum Schluss?');
+    return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    console.log('Chapter Path:', chapterPath);
     return fetch(chapterPath)
       .then(res => res.text())
       .then(html => {
@@ -258,7 +241,6 @@ class ElloTL implements Plugin.PluginBase {
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + '/?s=' + searchTerm + '&page=' + pageNo;
-    console.log('Search URL:', url);
     return this.parseNovels(url);
   }
 
