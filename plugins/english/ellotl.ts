@@ -2,7 +2,7 @@ import { Parser } from 'htmlparser2';
 import { fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class ElloTL implements Plugin.PluginBase {
   id = 'ellotl';
@@ -54,7 +54,9 @@ class ElloTL implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = this.site + '/series';
-    if (filters) {
+    if (showLatestNovels) {
+      link += '/?order=update&page=' + pageNo;
+    } else if (filters) {
       const params = new URLSearchParams();
       for (const genre of filters.genres.value) {
         params.append('genre[]', genre);
@@ -72,7 +74,7 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return fetch(novelPath)
+    return fetch(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
         const novel: Plugin.SourceNovel = {
@@ -147,15 +149,15 @@ class ElloTL implements Plugin.PluginBase {
                 console.log('No if gets triggered.');
               }
               if (isReadingName === 1 && attribs['class'] === 'entry-title') {
-                console.log('Is in: infox ->', name);
                 isReadingName = 2;
               }
             }
           },
           ontext(data) {
             if (isReadingName === 2) {
-              console.log('Read text:', data);
+              console.log('isReadingName:', isReadingName);
               novel.name += data;
+              console.log('Novel name:', novel.name);
             } else if (isReadingGenre) {
               novel.genres += data;
             } else if (isReadingSummary === 1) {
@@ -237,24 +239,27 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    return fetch(this.site + chapterPath)
+    console.log('Chapter Path:', chapterPath);
+    return fetch(chapterPath)
       .then(res => res.text())
-      .then(
-        html =>
+      .then(html => {
+        // Zwischenspeichern des gefundenen Inhalts
+        const matchedContent =
           html.match(
-            /(<div id="chapter-content".+?>[^]+)<div style="text-align: center;/,
-          )?.[1] || 'Không tìm thấy nội dung',
-      );
+            /(<div class="epcontent.+?>[^]+)<div class="bottomnav"/,
+          )?.[1] || 'Content not found';
+
+        // Entfernen aller Zeilen, die mit <span beginnen
+        return matchedContent.replace(/<span[^]*?<\/span>/g, '');
+      });
   }
   async searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
-
-    // get novels using the search term
-
-    return novels;
+    const url = this.site + '/?s=' + searchTerm + '&page=' + pageNo;
+    console.log('Search URL:', url);
+    return this.parseNovels(url);
   }
 
   async fetchImage(url: string): Promise<string | undefined> {
