@@ -11,43 +11,48 @@ class ElloTL implements Plugin.PluginBase {
   site = 'https://ellotl.com';
   version = '1.0.0';
 
-  async parseNovels(url: string) {
-    const res = await fetch(url);
-    const html = await res.text();
-    const novels: Plugin.NovelItem[] = [];
-    let tempNovel = {} as Plugin.NovelItem;
-    let isGettingUrl = false;
-    let isParsingNovel = false;
-    const parser = new Parser({
-      onopentag(name, attribs) {
-        if (attribs['class']?.includes('maindet')) {
-          isParsingNovel = true;
-        }
-        if (isParsingNovel) {
-          if (name === 'a' && attribs['class']?.includes('tip')) {
-            isGettingUrl = true;
-          }
-          if (isGettingUrl && name === 'a') {
-            if (attribs['title'] !== '') {
-              tempNovel.name = attribs['title'];
-            } else {
-              tempNovel.name = attribs['oldtitle'];
+  parseNovels(url: string) {
+    return fetch(url)
+      .then(res => res.text())
+      .then(html => {
+        const novels: Plugin.NovelItem[] = [];
+        let tempNovel = {} as Plugin.NovelItem;
+        let isGettingUrl = false;
+        let isParsingNovel = false;
+        const parser = new Parser({
+          onopentag(name, attribs) {
+            if (attribs['class']?.includes('maindet')) {
+              isParsingNovel = true;
             }
-            tempNovel.path = attribs['href'];
-          }
-          if (name === 'img' && attribs['class']?.includes('wp-post-image')) {
-            tempNovel.cover = attribs['src'];
-            novels.push(tempNovel);
-            tempNovel = {} as Plugin.NovelItem;
-            isGettingUrl = false;
-            isParsingNovel = false;
-          }
-        }
-      },
-    });
-    parser.write(html);
-    parser.end();
-    return novels;
+            if (isParsingNovel) {
+              if (name === 'a' && attribs['class']?.includes('tip')) {
+                isGettingUrl = true;
+              }
+              if (isGettingUrl && name === 'a') {
+                if (attribs['title'] !== '') {
+                  tempNovel.name = attribs['title'];
+                } else {
+                  tempNovel.name = attribs['oldtitle'];
+                }
+                tempNovel.path = attribs['href'];
+              }
+              if (
+                name === 'img' &&
+                attribs['class']?.includes('wp-post-image')
+              ) {
+                tempNovel.cover = attribs['src'];
+                novels.push(tempNovel);
+                tempNovel = {} as Plugin.NovelItem;
+                isGettingUrl = false;
+                isParsingNovel = false;
+              }
+            }
+          },
+        });
+        parser.write(html);
+        parser.end();
+        return novels;
+      });
   }
 
   popularNovels(
@@ -75,7 +80,7 @@ class ElloTL implements Plugin.PluginBase {
     return this.parseNovels(link);
   }
 
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+  parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     return fetch(novelPath)
       .then(res => res.text())
       .then(html => {
