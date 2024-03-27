@@ -245,7 +245,7 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   async fetchImage(url: string): Promise<string | undefined> {
-    // if your plugin has images and they won't load
+    // if your plugin has images, and they won't load
     // this is the function to fiddle with
     return fetchFile(url);
   }
