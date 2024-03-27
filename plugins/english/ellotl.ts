@@ -15,36 +15,27 @@ class ElloTL implements Plugin.PluginBase {
     return fetch(url)
       .then(res => res.text())
       .then(html => {
-        const novels: Plugin.NovelItem[] = [];
-        let tempNovel = {} as Plugin.NovelItem;
-        let isGettingUrl = false;
         let isParsingNovel = false;
+        let tempNovel = {} as Plugin.NovelItem;
+        const novels: Plugin.NovelItem[] = [];
         const parser = new Parser({
           onopentag(name, attribs) {
-            if (attribs['class']?.includes('maindet')) {
+            if (attribs['class']?.includes('mdthumb')) {
               isParsingNovel = true;
             }
             if (isParsingNovel) {
-              if (name === 'a' && attribs['class']?.includes('tip')) {
-                isGettingUrl = true;
+              switch (name) {
+                case 'a':
+                  tempNovel.path = attribs['href'];
+                  break;
+                case 'img':
+                  tempNovel.name = attribs['alt'];
+                  tempNovel.cover = attribs['src'];
+                  break;
               }
-              if (isGettingUrl && name === 'a') {
-                if (attribs['title'] !== '') {
-                  tempNovel.name = attribs['title'];
-                } else {
-                  tempNovel.name = attribs['oldtitle'];
-                }
-                tempNovel.path = attribs['href'];
-              }
-              if (
-                name === 'img' &&
-                attribs['class']?.includes('wp-post-image')
-              ) {
-                tempNovel.cover = attribs['src'];
+              if (tempNovel.path && tempNovel.name) {
                 novels.push(tempNovel);
                 tempNovel = {} as Plugin.NovelItem;
-                isGettingUrl = false;
-                isParsingNovel = false;
               }
             }
           },
