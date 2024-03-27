@@ -85,7 +85,7 @@ class ElloTL implements Plugin.PluginBase {
           chapters: [] as Plugin.ChapterItem[],
           latestChapter: {} as Plugin.ChapterItem,
         };
-        let isReadingName = false;
+        let isReadingName = 0;
         let isParsingGenreList = false;
         let isReadingGenre = false;
         let isReadingSummary = 0;
@@ -99,47 +99,63 @@ class ElloTL implements Plugin.PluginBase {
         const parser = new Parser({
           onopentag(name, attribs) {
             console.log('Open tag:', name, attribs);
-            console.log('Attribute class:', attribs['class']);
-            if (attribs['class'] === 'entry-title') {
-              console.log('Tag mit class="entry-title" gefunden');
-              isReadingName = true; // start reading name
+            if (attribs['class'] === 'infox') {
+              console.log('Is in:', attribs['class']);
+              isReadingName = 1; // start reading name
             } else if (
               !novel.cover &&
               attribs['class']?.includes('wp-post-image')
             ) {
+              console.log('Is in:', attribs['class']);
               novel.cover = attribs['src']; // get cover image
-              console.log('Das Cover gibts nun auch:', novel.cover);
             } else if (attribs['class']?.includes('genxed')) {
+              console.log('Is in:', attribs['class']);
               isParsingGenreList = true; // start parsing genre list
             } else if (isParsingGenreList && name === 'a') {
+              console.log('Is in: genxed ->', name);
               isReadingGenre = true; // start reading genre
             } else if (attribs['class'].includes('entry-content')) {
+              console.log('Is in:', attribs['class']);
               isReadingSummary = 1; // start reading summary
             } else if (isReadingSummary === 1 && name === 'br') {
+              console.log('Is in: entry-content ->', name);
               isReadingSummary = 2; // add a newline
             } else if (attribs['class'].includes('spe')) {
+              console.log('Is in:', attribs['class']);
               isParsingInfo = true; // start parsing info
             } else if (isParsingInfo && name === 'span') {
+              console.log('Is in: spe ->', name);
               isReadingInfo = true; // start reading info
             } else if (isReadingInfo && name === 'b') {
+              console.log('Is in: spe -> span ->', name);
               isReadingInfoValue = 1; // start reading info value
             } else if (name === 'ul') {
+              console.log('Is in:', name);
               isReadingChapterList = true; // start reading chapter list
             } else if (isReadingChapterList && name === 'div') {
+              console.log('Is in: ul ->', name);
               if (attribs['class'].includes('epl-title')) {
+                console.log('Is in: ul -> div ->', attribs['class']);
                 isReadingChapterInfo = 1; // start reading chapter title
               } else if (attribs['class'].includes('epl-date')) {
+                console.log('Is in: ul -> div ->', attribs['class']);
                 isReadingChapterInfo = 2; // start reading chapter date
               } else if (attribs['class'].includes('epl-num')) {
+                console.log('Is in: ul -> div ->', attribs['class']);
                 isReadingChapterInfo = 3; // start reading chapter number
+              } else {
+                console.log('No if gets triggered.');
+              }
+              if (isReadingName === 1 && attribs['class'] === 'entry-title') {
+                console.log('Is in: infox ->', name);
+                isReadingName = 2;
               }
             }
-            console.log('Gehts bis hier durch?');
           },
           ontext(data) {
-            if (isReadingName) {
+            if (isReadingName === 2) {
+              console.log('Read text:', data);
               novel.name += data;
-              console.log('Der novel name lautet:', novel.name);
             } else if (isReadingGenre) {
               novel.genres += data;
             } else if (isReadingSummary === 1) {
@@ -167,9 +183,9 @@ class ElloTL implements Plugin.PluginBase {
             }
           },
           onclosetag(name) {
-            console.log('Close tag:', name);
-            if (isReadingName) {
-              isReadingName = false; // stop reading name
+            if (isReadingName === 2) {
+              console.log('Close tag:', name);
+              isReadingName = 0; // stop reading name
             } else if (isReadingGenre) {
               isReadingGenre = false; // stop reading genre
               novel.genres += ',';
