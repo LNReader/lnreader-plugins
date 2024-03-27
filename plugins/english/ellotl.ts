@@ -11,48 +11,43 @@ class ElloTL implements Plugin.PluginBase {
   site = 'https://ellotl.com';
   version = '1.0.0';
 
-  parseNovels(url: string) {
-    return fetch(url)
-      .then(res => res.text())
-      .then(html => {
-        const novels: Plugin.NovelItem[] = [];
-        let tempNovel = {} as Plugin.NovelItem;
-        let isGettingUrl = false;
-        let isParsingNovel = false;
-        const parser = new Parser({
-          onopentag(name, attribs) {
-            if (attribs['class']?.includes('maindet')) {
-              isParsingNovel = true;
+  async parseNovels(url: string) {
+    const res = await fetch(url);
+    const html = await res.text();
+    const novels: Plugin.NovelItem[] = [];
+    let tempNovel = {} as Plugin.NovelItem;
+    let isGettingUrl = false;
+    let isParsingNovel = false;
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        if (attribs['class']?.includes('maindet')) {
+          isParsingNovel = true;
+        }
+        if (isParsingNovel) {
+          if (name === 'a' && attribs['class']?.includes('tip')) {
+            isGettingUrl = true;
+          }
+          if (isGettingUrl && name === 'a') {
+            if (attribs['title'] !== '') {
+              tempNovel.name = attribs['title'];
+            } else {
+              tempNovel.name = attribs['oldtitle'];
             }
-            if (isParsingNovel) {
-              if (name === 'a' && attribs['class']?.includes('tip')) {
-                isGettingUrl = true;
-              }
-              if (isGettingUrl && name === 'a') {
-                if (attribs['title'] !== '') {
-                  tempNovel.name = attribs['title'];
-                } else {
-                  tempNovel.name = attribs['oldtitle'];
-                }
-                tempNovel.path = attribs['href'];
-              }
-              if (
-                name === 'img' &&
-                attribs['class']?.includes('wp-post-image')
-              ) {
-                tempNovel.cover = attribs['src'];
-                novels.push(tempNovel);
-                tempNovel = {} as Plugin.NovelItem;
-                isGettingUrl = false;
-                isParsingNovel = false;
-              }
-            }
-          },
-        });
-        parser.write(html);
-        parser.end();
-        return novels;
-      });
+            tempNovel.path = attribs['href'];
+          }
+          if (name === 'img' && attribs['class']?.includes('wp-post-image')) {
+            tempNovel.cover = attribs['src'];
+            novels.push(tempNovel);
+            tempNovel = {} as Plugin.NovelItem;
+            isGettingUrl = false;
+            isParsingNovel = false;
+          }
+        }
+      },
+    });
+    parser.write(html);
+    parser.end();
+    return novels;
   }
 
   popularNovels(
@@ -80,14 +75,13 @@ class ElloTL implements Plugin.PluginBase {
     return this.parseNovels(link);
   }
 
-  parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return fetch(this.site + novelPath)
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    return fetch(novelPath)
       .then(res => res.text())
       .then(html => {
         const novel: Plugin.SourceNovel = {
           path: novelPath,
           name: '',
-          cover: '',
           genres: '',
           summary: '',
           author: '',
@@ -108,13 +102,17 @@ class ElloTL implements Plugin.PluginBase {
         let tempChapter = {} as Plugin.ChapterItem;
         const parser = new Parser({
           onopentag(name, attribs) {
-            if (!novel.name && attribs['class']?.includes('entry-title')) {
+            console.log('Open tag:', name, attribs);
+            console.log('Attribute class:', attribs['class']);
+            if (attribs['class'] === 'entry-title') {
+              console.log('Tag mit class="entry-title" gefunden');
               isReadingName = true; // start reading name
             } else if (
               !novel.cover &&
               attribs['class']?.includes('wp-post-image')
             ) {
               novel.cover = attribs['src']; // get cover image
+              console.log('Das Cover gibts nun auch:', novel.cover);
             } else if (attribs['class']?.includes('genxed')) {
               isParsingGenreList = true; // start parsing genre list
             } else if (isParsingGenreList && name === 'a') {
@@ -140,11 +138,12 @@ class ElloTL implements Plugin.PluginBase {
                 isReadingChapterInfo = 3; // start reading chapter number
               }
             }
+            console.log('Gehts bis hier durch?');
           },
           ontext(data) {
             if (isReadingName) {
               novel.name += data;
-              console.log(novel.name);
+              console.log('Der novel name lautet:', novel.name);
             } else if (isReadingGenre) {
               novel.genres += data;
             } else if (isReadingSummary === 1) {
@@ -172,6 +171,7 @@ class ElloTL implements Plugin.PluginBase {
             }
           },
           onclosetag(name) {
+            console.log('Close tag:', name);
             if (isReadingName) {
               isReadingName = false; // stop reading name
             } else if (isReadingGenre) {
@@ -219,6 +219,7 @@ class ElloTL implements Plugin.PluginBase {
             novel.status = NovelStatus.Unknown;
         }
         novel.genres = novel.genres?.replace(/,*\s*$/, '');
+        console.log('Komm ich bis zum Schluss?');
         return novel;
       });
   }
