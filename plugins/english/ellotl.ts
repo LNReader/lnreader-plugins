@@ -127,7 +127,9 @@ class ElloTL implements Plugin.PluginBase {
             } else if (isParsingChapterList && name === 'li') {
               isReadingChapter = true;
             } else if (isReadingChapter) {
-              if (attribs['class'] === 'epl-title') {
+              if (name === 'a') {
+                tempChapter.path = attribs['href'];
+              } else if (attribs['class'] === 'epl-title') {
                 isReadingChapterInfo = 1;
               } else if (attribs['class'] === 'epl-date') {
                 isReadingChapterInfo = 2;
@@ -254,7 +256,9 @@ class ElloTL implements Plugin.PluginBase {
           )?.[1] || 'Content not found';
 
         // Entfernen aller Zeilen, die mit <span beginnen
-        return matchedContent.replace(/<span[^]*?<\/span>/g, '');
+        return matchedContent
+          .replace(/<(span|div)[^]*?<\/(span|div)>/g, '')
+          .trim();
       });
   }
 
