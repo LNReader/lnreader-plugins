@@ -74,7 +74,6 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    console.log('\nPath:', novelPath);
     return fetch(novelPath)
       .then(res => res.text())
       .then(html => {
@@ -108,9 +107,7 @@ class ElloTL implements Plugin.PluginBase {
               attribs['class']?.includes('ts-post-image' || 'wp-post-image')
             ) {
               novel.name = attribs['title'];
-              console.log('Name:', novel.name);
               novel.cover = attribs['src'];
-              console.log('Cover:', novel.cover);
             } // genres
             else if (attribs['class'] === 'genxed') {
               isParsingGenres = true;
@@ -182,7 +179,6 @@ class ElloTL implements Plugin.PluginBase {
               } else {
                 isParsingGenres = false; // stop parsing genres
                 novel.genres = novel.genres?.replace(/,*\s*$/, ''); // remove trailing comma
-                console.log('Genres:', novel.genres);
               }
             } // summary
             else if (isReadingSummary) {
@@ -190,7 +186,6 @@ class ElloTL implements Plugin.PluginBase {
                 novel.summary += '\n';
               } else if (name === 'div') {
                 isReadingSummary = false;
-                console.log('Summary:', novel.summary?.length);
               }
             } // author and status
             else if (isParsingInfo) {
@@ -207,8 +202,6 @@ class ElloTL implements Plugin.PluginBase {
                 isParsingInfo = false;
                 novel.author = novel.author?.trim();
                 novel.status = novel.status?.trim();
-                console.log('Author:', novel.author);
-                console.log('Status:', novel.status);
               }
             } // chapters
             else if (isParsingChapterList) {
@@ -226,7 +219,6 @@ class ElloTL implements Plugin.PluginBase {
                 }
               } else if (name === 'ul') {
                 isParsingChapterList = false;
-                console.log('Chapters:', chapters.length);
               }
             }
           },
@@ -234,7 +226,6 @@ class ElloTL implements Plugin.PluginBase {
         parser.write(html);
         parser.end();
         novel.latestChapter = chapters[0];
-        console.log('Latest chapter:', novel.latestChapter);
         switch (novel.status?.trim()) {
           case 'Ongoing':
             novel.status = NovelStatus.Ongoing;
