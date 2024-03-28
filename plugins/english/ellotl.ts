@@ -74,8 +74,8 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    console.log('Novel path:', novelPath);
-    return fetch(this.site + novelPath)
+    console.log('\nPath:', novelPath);
+    return fetch(novelPath)
       .then(res => res.text())
       .then(html => {
         const novel: Plugin.SourceNovel = {
@@ -88,125 +88,153 @@ class ElloTL implements Plugin.PluginBase {
           chapters: [] as Plugin.ChapterItem[],
           latestChapter: {} as Plugin.ChapterItem,
         };
-        let isParsingGenreList = false;
+        let isParsingGenres = false;
         let isReadingGenre = false;
-        let isReadingSummary = 0;
+        let isReadingSummary = false;
         let isParsingInfo = false;
         let isReadingInfo = false;
-        let isReadingInfoValue = 0;
-        let isReadingChapterList = false;
+        let isReadingAuthor = false;
+        let isReadingStatus = false;
+        let isParsingChapterList = false;
+        let isReadingChapter = false;
         let isReadingChapterInfo = 0;
         const chapters: Plugin.ChapterItem[] = [];
         let tempChapter = {} as Plugin.ChapterItem;
         const parser = new Parser({
           onopentag(name, attribs) {
-            console.log('Open tag:', name, attribs);
+            // name and cover
             if (
               !novel.cover &&
               attribs['class']?.includes('ts-post-image' || 'wp-post-image')
             ) {
-              console.log('Is in:', attribs['class']);
-              novel.cover = attribs['src']; // get cover image
-              novel.name = attribs['title']; // get novel name
-            } else if (attribs['class'].includes('spe')) {
-              console.log('Is in:', attribs['class']);
-              isParsingInfo = true; // start parsing info
+              novel.name = attribs['title'];
+              console.log('Name:', novel.name);
+              novel.cover = attribs['src'];
+              console.log('Cover:', novel.cover);
+            } // genres
+            else if (attribs['class'] === 'genxed') {
+              isParsingGenres = true;
+            } else if (isParsingGenres && name === 'a') {
+              isReadingGenre = true;
+            } // summary
+            else if (attribs['class'] === 'entry-content') {
+              isReadingSummary = true;
+            } // author and status
+            else if (attribs['class'] === 'spe') {
+              isParsingInfo = true;
             } else if (isParsingInfo && name === 'span') {
-              console.log('Is in: spe ->', name);
-              isReadingInfo = true; // start reading info
-            } else if (isReadingInfo && name === 'b') {
-              console.log('Is in: spe -> span ->', name);
-              isReadingInfoValue = 1; // start reading info value
-            } else if (attribs['class']?.includes('genxed')) {
-              console.log('Is in:', attribs['class']);
-              isParsingGenreList = true; // start parsing genre list
-            } else if (isParsingGenreList && name === 'a') {
-              console.log('Is in: genxed ->', name);
-              isReadingGenre = true; // start reading genre
-            } else if (attribs['class'].includes('entry-content')) {
-              console.log('Is in:', attribs['class']);
-              isReadingSummary = 1; // start reading summary
-            } else if (isReadingSummary === 1 && name === 'br') {
-              console.log('Is in: entry-content ->', name);
-              isReadingSummary = 2; // add a newline
-            } else if (name === 'ul') {
-              console.log('Is in:', name);
-              isReadingChapterList = true; // start reading chapter list
-            } else if (isReadingChapterList && name === 'div') {
-              console.log('Is in: ul ->', name);
-              if (attribs['class'].includes('epl-title')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 1; // start reading chapter title
-              } else if (attribs['class'].includes('epl-date')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 2; // start reading chapter date
-              } else if (attribs['class'].includes('epl-num')) {
-                console.log('Is in: ul -> div ->', attribs['class']);
-                isReadingChapterInfo = 3; // start reading chapter number
-              } else {
-                console.log('No if gets triggered.');
+              isReadingInfo = true;
+            } // chapters
+            else if (attribs['class'] === 'eplister eplisterfull') {
+              isParsingChapterList = true;
+            } else if (isParsingChapterList && name === 'li') {
+              isReadingChapter = true;
+            } else if (isReadingChapter) {
+              if (attribs['class'] === 'epl-title') {
+                isReadingChapterInfo = 1;
+              } else if (attribs['class'] === 'epl-date') {
+                isReadingChapterInfo = 2;
+              } else if (attribs['class'] === 'epl-num') {
+                isReadingChapterInfo = 3;
               }
             }
           },
           ontext(data) {
-            if (isReadingGenre) {
-              novel.genres += data;
-            } else if (isReadingSummary === 1) {
+            // genres
+            if (isParsingGenres) {
+              if (isReadingGenre) {
+                novel.genres += data + ', ';
+              }
+            } // summary
+            else if (isReadingSummary) {
               novel.summary += data;
-            } else if (isReadingInfoValue === 1) {
-              if (data === 'Author:') {
-                isReadingInfoValue = 2;
-              } else if (data === 'Status:') {
-                isReadingInfoValue = 3;
+            } // author and status
+            else if (isParsingInfo) {
+              if (isReadingInfo) {
+                if (data === 'Author:') {
+                  isReadingAuthor = true;
+                } else if (data === 'Status:') {
+                  isReadingStatus = true;
+                } else if (isReadingAuthor) {
+                  novel.author += data;
+                } else if (isReadingStatus) {
+                  novel.status = data;
+                }
               }
-            } else if (isReadingInfoValue >= 2) {
-              if (isReadingInfoValue === 2) {
-                novel.author += data;
-              } else if (isReadingInfoValue === 3) {
-                novel.status = data;
-              }
-            } else if (isReadingChapterInfo !== 0) {
-              if (isReadingChapterInfo === 1) {
-                tempChapter.name = data;
-              } else if (isReadingChapterInfo === 2) {
-                tempChapter.releaseTime = new Date(data).toISOString();
-              } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
-                tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
+            } // chapters
+            else if (isParsingChapterList) {
+              if (isReadingChapter) {
+                if (isReadingChapterInfo === 1) {
+                  tempChapter.name = data;
+                } else if (isReadingChapterInfo === 2) {
+                  tempChapter.releaseTime = new Date(data).toISOString();
+                } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
+                  tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
+                }
               }
             }
           },
-          onclosetag(name_1) {
-            if (isReadingGenre) {
-              isReadingGenre = false; // stop reading genre
-              novel.genres += ',';
-            } else if (isParsingGenreList) {
-              isParsingGenreList = false; // stop parsing genre list
-            } else if (isReadingSummary !== 0) {
-              if (isReadingSummary === 2) {
-                isReadingSummary = 1;
-                novel.summary += '\n';
-              } else if (isReadingSummary === 1 && name_1 === 'div') {
-                isReadingSummary = 0;
+          onclosetag(name) {
+            // genres
+            if (isParsingGenres) {
+              if (isReadingGenre) {
+                isReadingGenre = false; // stop reading genre
+              } else {
+                isParsingGenres = false; // stop parsing genres
+                novel.genres = novel.genres?.replace(/,*\s*$/, ''); // remove trailing comma
+                console.log('Genres:', novel.genres);
               }
-            } else if (isReadingInfo && name_1 === 'span') {
-              isReadingInfo = false;
-              isReadingInfoValue = 0;
-            } else if (isParsingInfo && name_1 === 'div') {
-              isParsingInfo = false;
-            } else if (isReadingChapterInfo >= 1 && name_1 === 'div') {
-              isReadingChapterInfo = 0;
-            } else if (isReadingChapterList && name_1 === 'li') {
-              isReadingChapterInfo = 0;
-              chapters.push(tempChapter);
-              tempChapter = {} as Plugin.ChapterItem;
-            } else if (isReadingChapterList && name_1 === 'ul') {
-              isReadingChapterList = false;
+            } // summary
+            else if (isReadingSummary) {
+              if (name === 'br') {
+                novel.summary += '\n';
+              } else if (name === 'div') {
+                isReadingSummary = false;
+                console.log('Summary:', novel.summary?.length);
+              }
+            } // author and status
+            else if (isParsingInfo) {
+              if (isReadingInfo) {
+                if (name === 'span') {
+                  isReadingInfo = false;
+                  if (isReadingAuthor) {
+                    isReadingAuthor = false;
+                  } else if (isReadingStatus) {
+                    isReadingStatus = false;
+                  }
+                }
+              } else if (name === 'div') {
+                isParsingInfo = false;
+                novel.author = novel.author?.trim();
+                novel.status = novel.status?.trim();
+                console.log('Author:', novel.author);
+                console.log('Status:', novel.status);
+              }
+            } // chapters
+            else if (isParsingChapterList) {
+              if (isReadingChapter) {
+                if (isReadingChapterInfo === 1) {
+                  isReadingChapterInfo = 0;
+                } else if (isReadingChapterInfo === 2) {
+                  isReadingChapterInfo = 0;
+                } else if (isReadingChapterInfo === 3) {
+                  isReadingChapterInfo = 0;
+                } else if (name === 'li') {
+                  isReadingChapter = false;
+                  chapters.push(tempChapter);
+                  tempChapter = {} as Plugin.ChapterItem;
+                }
+              } else if (name === 'ul') {
+                isParsingChapterList = false;
+                console.log('Chapters:', chapters.length);
+              }
             }
           },
         });
         parser.write(html);
         parser.end();
         novel.latestChapter = chapters[0];
+        console.log('Latest chapter:', novel.latestChapter);
         switch (novel.status?.trim()) {
           case 'Ongoing':
             novel.status = NovelStatus.Ongoing;
@@ -220,8 +248,6 @@ class ElloTL implements Plugin.PluginBase {
           default:
             novel.status = NovelStatus.Unknown;
         }
-        novel.genres = novel.genres?.replace(/,*\s*$/, '');
-        console.log('Komm ich bis zum Schluss?');
         return novel;
       });
   }
