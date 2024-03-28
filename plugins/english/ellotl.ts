@@ -250,15 +250,11 @@ class ElloTL implements Plugin.PluginBase {
       .then(res => res.text())
       .then(html => {
         // Zwischenspeichern des gefundenen Inhalts
-        const matchedContent =
-          html.match(
-            /(<div class="epcontent.+?>[^]+)<div class="bottomnav"/,
-          )?.[1] || 'Content not found';
-
-        // Entfernen aller Zeilen, die mit <span beginnen
-        return matchedContent
-          .replace(/<(span|div)[^]*?<\/(span|div)>/g, '')
-          .trim();
+        return (
+          html
+            .match(/(<div class="epcontent.+?>[^]+)<div class="bottomnav"/)?.[1]
+            .trim() || 'Content not found'
+        );
       });
   }
 
