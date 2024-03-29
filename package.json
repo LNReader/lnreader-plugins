@@ -1,6 +1,6 @@
 {
     "name": "lnreader-plugins",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Plugins repo for LNReader",
     "main": "index.js",
     "scripts": {
@@ -24,6 +24,7 @@
         "cli-color": "^2.0.3",
         "dayjs": "^1.11.10",
         "express": "^4.18.2",
+        "htmlparser2": "^9.1.0",
         "less": "^4.2.0",
         "module-alias": "^2.2.3",
         "protobufjs": "^7.2.6",
