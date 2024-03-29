@@ -77,6 +77,15 @@ class ElloTL implements Plugin.PluginBase {
     return fetch(novelPath)
       .then(res => res.text())
       .then(html => {
+        function extractChapterNumber(
+          data: string,
+          tempChapter: Plugin.ChapterItem,
+        ) {
+          let tempChapterNumber = data.match(/(\d+)$/);
+          if (tempChapterNumber !== null) {
+            tempChapter.chapterNumber = parseInt(tempChapterNumber[0]);
+          }
+        }
         const novel: Plugin.SourceNovel = {
           path: novelPath,
           name: '',
@@ -129,11 +138,11 @@ class ElloTL implements Plugin.PluginBase {
             } else if (isReadingChapter) {
               if (name === 'a') {
                 tempChapter.path = attribs['href'];
-              } else if (attribs['class'] === 'epl-title') {
-                isReadingChapterInfo = 1;
-              } else if (attribs['class'] === 'epl-date') {
-                isReadingChapterInfo = 2;
               } else if (attribs['class'] === 'epl-num') {
+                isReadingChapterInfo = 1;
+              } else if (attribs['class'] === 'epl-title') {
+                isReadingChapterInfo = 2;
+              } else if (attribs['class'] === 'epl-date') {
                 isReadingChapterInfo = 3;
               }
             }
@@ -164,11 +173,14 @@ class ElloTL implements Plugin.PluginBase {
             else if (isParsingChapterList) {
               if (isReadingChapter) {
                 if (isReadingChapterInfo === 1) {
-                  tempChapter.name = data;
+                  extractChapterNumber(data, tempChapter);
                 } else if (isReadingChapterInfo === 2) {
-                  tempChapter.releaseTime = new Date(data).toISOString();
-                } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
-                  tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
+                  tempChapter.name = data;
+                  if (!tempChapter.chapterNumber) {
+                    extractChapterNumber(data, tempChapter);
+                  }
+                } else if (isReadingChapterInfo === 3) {
+                  tempChapter.releaseTime = data; //new Date(data).toISOString();
                 }
               }
             }
