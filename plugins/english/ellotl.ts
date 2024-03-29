@@ -166,7 +166,7 @@ class ElloTL implements Plugin.PluginBase {
                 if (isReadingChapterInfo === 1) {
                   tempChapter.name = data;
                 } else if (isReadingChapterInfo === 2) {
-                  tempChapter.releaseTime = new Date(data).toISOString();
+                  tempChapter.releaseTime = data; //new Date(data).toISOString();
                 } else if (isReadingChapterInfo === 3 && /\d/.test(data)) {
                   tempChapter.chapterNumber = parseInt(data.split(' ')[1]);
                 }
