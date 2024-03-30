@@ -4,6 +4,7 @@ import { Plugin } from '@typings/plugin';
 import { languages } from '@libs/languages';
 import * as path from 'path';
 
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 const root = path.dirname(__dirname);
 const size = 96;
 
@@ -29,6 +30,9 @@ const skip: { [key: string]: boolean } = {
   'mtl-novel': true,
   'novelroom': true,
   'zinnovel': true,
+  'novelr18': true,
+  'novelstic': true,
+  'readwebnovels': true
 };
 
 const used = new Set();
@@ -70,6 +74,7 @@ used.add(path.join(root, '..', 'icons', 'coverNotAvailable.jpg'));
       } else {
         console.log(name, '❌');
       }
+      await delay(2500)
     }
   }
   console.log('\nDeleting unused icons  ⌛');
