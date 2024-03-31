@@ -8,7 +8,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
   name = 'LnMTL';
   icon = 'src/en/lnmtl/icon.png';
   site = 'https://lnmtl.com/';
-  version = '1.0.1';
+  version = '2.0.0';
 
   async sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
