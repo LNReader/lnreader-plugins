@@ -11,8 +11,7 @@ class RoyalRoad implements Plugin.PluginBase {
   icon = 'src/en/royalroad/icon.png';
   site = 'https://www.royalroad.com/';
 
-  async parseNovels(url: string) {
-    const html = await fetchApi(url).then(r => r.text());
+  parseNovels(html: string) {
     const novels: Plugin.NovelItem[] = [];
     let tempNovel = {} as Plugin.NovelItem;
     tempNovel.name = '';
@@ -65,8 +64,10 @@ class RoyalRoad implements Plugin.PluginBase {
     link += `?page=${page}`;
 
     if (filters.genre.value !== '') link += `&genre=${filters.genre.value}`;
-
-    return await this.parseNovels(link);
+  
+    const body = await fetchApi(link).then(r => r.text());
+  
+    return this.parseNovels(body);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -334,7 +335,8 @@ class RoyalRoad implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const searchUrl = `${this.site}fictions/search?page=${page}&title=${searchTerm}`;
 
-    return await this.parseNovels(searchUrl);
+    const body = await fetchApi(searchUrl).then(r => r.text());
+    return this.parseNovels(body);
   }
 
   async fetchImage(url: string): Promise<string | undefined> {

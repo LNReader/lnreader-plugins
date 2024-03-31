@@ -26,6 +26,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
 
     const body = await fetchApi(link);
     const html = await body.text();
+    const baseUrl = this.site;
     let isParsingNovel = false;
     let tempNovel = {} as Plugin.NovelItem; 
     const novels: Plugin.NovelItem[] = [];
@@ -37,7 +38,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
         if (isParsingNovel) {
           switch (name){
             case 'a':
-              tempNovel.path = attribs['href'].slice(18);
+              tempNovel.path = attribs['href'].slice(baseUrl.length);
               break;
             case 'img':
               tempNovel.name = attribs['alt'];
@@ -48,6 +49,11 @@ class LnMTLPlugin implements Plugin.PagePlugin {
             novels.push(tempNovel);
             tempNovel = {} as Plugin.NovelItem;
           }
+        }
+      },
+      onclosetag(name){
+        if (name === 'div'){
+          isParsingNovel = false;
         }
       },
     });

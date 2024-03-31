@@ -15,12 +15,11 @@ class RanobesPlugin implements Plugin.PagePlugin {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async parseNovels(url: string) {
-    const html = await fetchApi(url).then(r => r.text());
+  parseNovels(html: string) {
     const novels: Plugin.NovelItem[] = [];
     let tempNovel = {} as Plugin.NovelItem;
     tempNovel.name = '';
-    let baseUrl = this.site
+    const baseUrl = this.site
     let isParsingNovel = false;
     let isTitleTag = false;
     let isNovelName = false;
@@ -88,8 +87,9 @@ class RanobesPlugin implements Plugin.PagePlugin {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}/novels/page/${page}/`;
+    const body = await fetchApi(link).then(r => r.text());
 
-    return await this.parseNovels(link);
+    return this.parseNovels(body);
   }
 
   async parseNovel(
@@ -376,8 +376,9 @@ class RanobesPlugin implements Plugin.PagePlugin {
     page: number,
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}/search/${searchTerm}/page/${page}`;
+    const body = await fetchApi(link).then(r => r.text());
 
-    return await this.parseNovels(link);
+    return this.parseNovels(body);
   }
 
 
