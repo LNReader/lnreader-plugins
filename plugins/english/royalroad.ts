@@ -389,7 +389,6 @@ class RoyalRoad implements Plugin.PluginBase {
 export default new RoyalRoad();
 
 interface ChapterEntry {
-  push(chapterItem: { name: string; path: string; releaseTime: string; chapterNumber: number; page: string | null; }): unknown;
   id: number;
   volumeId: number;
   title: string;

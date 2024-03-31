@@ -192,7 +192,6 @@ class LightNovelPub implements Plugin.PagePlugin {
         if(isChapterList){
           if (name === 'li'){
             isChapterItem = true;
-            tempChapter.page = attribs['data-volumeno'];
             tempChapter.chapterNumber = Number(attribs['data-orderno']);
           }
           if (isChapterItem){
