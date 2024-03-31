@@ -36,6 +36,7 @@ class ElloTL implements Plugin.PluginBase {
               if (tempNovel.path && tempNovel.name) {
                 novels.push(tempNovel);
                 tempNovel = {} as Plugin.NovelItem;
+                isParsingNovel = false;
               }
             }
           },
@@ -94,7 +95,6 @@ class ElloTL implements Plugin.PluginBase {
           author: '',
           status: '',
           chapters: [] as Plugin.ChapterItem[],
-          latestChapter: {} as Plugin.ChapterItem,
         };
         let isParsingGenres = false;
         let isReadingGenre = false;
@@ -228,18 +228,19 @@ class ElloTL implements Plugin.PluginBase {
                   isReadingChapterInfo = 0;
                 } else if (name === 'li') {
                   isReadingChapter = false;
+                  if (!tempChapter.chapterNumber) tempChapter.chapterNumber = 0;
                   chapters.push(tempChapter);
                   tempChapter = {} as Plugin.ChapterItem;
                 }
               } else if (name === 'ul') {
                 isParsingChapterList = false;
+                novel.chapters = chapters.reverse();
               }
             }
           },
         });
         parser.write(html);
         parser.end();
-        novel.latestChapter = chapters[0];
         switch (novel.status?.trim()) {
           case 'Ongoing':
             novel.status = NovelStatus.Ongoing;
@@ -253,6 +254,7 @@ class ElloTL implements Plugin.PluginBase {
           default:
             novel.status = NovelStatus.Unknown;
         }
+        console.log(novel.chapters);
         return novel;
       });
   }
@@ -336,14 +338,13 @@ class ElloTL implements Plugin.PluginBase {
     sort: {
       type: FilterTypes.Picker,
       label: 'Sort',
-      value: '',
+      value: 'popular',
       options: [
-        { label: 'Default', value: '' },
+        { label: 'Popular', value: 'popular' },
         { label: 'A-Z', value: 'title' },
         { label: 'Z-A', value: 'titlereverse' },
         { label: 'Latest Update', value: 'update' },
         { label: 'Latest Added', value: 'latest' },
-        { label: 'Popular', value: 'popular' },
         { label: 'Rating', value: 'rating' },
       ],
     },
