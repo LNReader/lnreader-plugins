@@ -254,7 +254,6 @@ class ElloTL implements Plugin.PluginBase {
           default:
             novel.status = NovelStatus.Unknown;
         }
-        console.log(novel.chapters);
         return novel;
       });
   }
