@@ -87,7 +87,7 @@ class RoyalRoad implements Plugin.PluginBase {
     let isGenres = false;
     let genreArray: string[] = []
     let isFooter = false;
-    let isScript = 0;
+    let isScript = false;
     let chapterJson: ChapterEntry[] = [];
     let volumeJson: VolumeEntry[] = [];
     const parser = new Parser ({
@@ -117,7 +117,7 @@ class RoyalRoad implements Plugin.PluginBase {
           isTags = false;
         }
         if (isFooter && name === 'script'){
-          isScript++;
+          isScript = true;
         }
       },
       onattribute(name,value){
@@ -145,20 +145,15 @@ class RoyalRoad implements Plugin.PluginBase {
         }
         if (isGenres){
           genreArray.push(data);
-          novel.genres = genreArray.join(', ');
         }
-        if (isScript === 5){
-          const cJson = Array.from(
-            data.matchAll(/window.chapters = (.+])(?=;)/g)
-          ).map(match => JSON.parse(match[1]));
-          const vJson = Array.from(
-            data.matchAll(/window.volumes = (.+])(?=;)/g)
-          ).map(match => JSON.parse(match[1]));
-          if (cJson.length > 0){
-            chapterJson = cJson[0];
-          }
-          if (vJson.length > 0){
-            volumeJson = vJson[0];
+        if (isScript){
+          if (data.includes('window.chapters =')){
+            chapterJson = JSON.parse(
+              data.match(/window.chapters = (.+])(?=;)/)![1]
+            )
+            volumeJson = JSON.parse(
+              data.match(/window.volumes = (.+])(?=;)/)![1]
+            )
           }
         }
       },
@@ -173,6 +168,9 @@ class RoyalRoad implements Plugin.PluginBase {
         if (name === 'a'){
           isGenres = false;
         }
+        if (name === 'script'){
+          isScript = false;
+        }
         if (name === 'body'){
           isFooter = false;
         }
@@ -181,6 +179,7 @@ class RoyalRoad implements Plugin.PluginBase {
     parser.write(html);
     parser.end();
     novel.summary = novel.summary?.trim();
+    novel.genres = genreArray.join(', ');
     switch(novel.status){
       case 'ONGOING':
         novel.status = NovelStatus.Ongoing;
