@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.1';
+  version = '0.5.2';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -171,7 +171,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
 
-    // console.log(result.chapterUrl);
+    // console.log(result.url);
 
     // console.log('Redirected URL: ', result.chapterUrl);
 
@@ -205,6 +205,9 @@ class NovelUpdates implements Plugin.PluginBase {
       .toLowerCase()
       .includes('travistranslations');
 
+    let isRaeiTranslation = result.url
+      .toLowerCase()
+      .includes('raeitranslations');
     /**
      * Checks if its a wordpress site
      */
@@ -254,6 +257,17 @@ class NovelUpdates implements Plugin.PluginBase {
       chapterText = loadedCheerio('.manga-child-content').html()!;
     } else if (isAnomalously) {
       chapterText = loadedCheerio('#comic').html()!;
+    } else if (isRaeiTranslation) {
+      const parts = result.url.split('/');
+      const link = `${parts[0]}//api.${parts[2]}/api/chapters/?id=${parts[3]}&num=${parts[4]}`;
+      const json = await fetchApi(link).then(r => r.json());
+      chapterText = 
+        json.currentChapter.head +
+        `<br><hr><br>` +
+        json.currentChapter.body +
+        `<br><hr><br>Translator's Note:<br>` +
+        json.currentChapter.note;
+      chapterText = chapterText.replace(/\n/g, '<br>');
     } else if (kofi) {
       chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
         .html()
