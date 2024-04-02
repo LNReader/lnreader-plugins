@@ -19,7 +19,7 @@ class HakoPlugin implements Plugin.PluginBase {
   name = 'Hako';
   icon = 'src/vi/hakolightnovel/icon.png';
   site = 'https://ln.hako.vn';
-  version = '1.0.1';
+  version = '1.1.0';
   parseNovels(url: string) {
     return fetch(url)
       .then(res => res.text())
