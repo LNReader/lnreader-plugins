@@ -185,8 +185,10 @@ class HakoPlugin implements Plugin.PluginBase {
         }
       },
       onclosetag(name) {
-        this.isStarted = false;
-        if (this.info === InfoItem.Status) {
+        if (this.isStarted) {
+          this.isStarted = false;
+        }
+        if (name === 'a' && this.info === InfoItem.Status) {
           this.isDone = true;
         }
       },
@@ -242,15 +244,17 @@ class HakoPlugin implements Plugin.PluginBase {
           }
         },
         ontext(data) {
-          const chapterTime = data.split('/').map(x => Number(x));
-          this.tempChapter.releaseTime = new Date(
-            chapterTime[2],
-            chapterTime[1],
-            chapterTime[0],
-          ).toISOString();
-          chapters.push(this.tempChapter);
-          this.readingTime = false;
-          this.tempChapter = {} as Plugin.ChapterItem;
+          if (this.readingTime) {
+            const chapterTime = data.split('/').map(x => Number(x));
+            this.tempChapter.releaseTime = new Date(
+              chapterTime[2],
+              chapterTime[1],
+              chapterTime[0],
+            ).toISOString();
+            chapters.push(this.tempChapter);
+            this.readingTime = false;
+            this.tempChapter = {} as Plugin.ChapterItem;
+          }
         },
         onclosetag() {
           if (this.readingTime) this.readingTime = false;
@@ -274,13 +278,11 @@ class HakoPlugin implements Plugin.PluginBase {
         }
         this.getChapterListHandler.ontext?.(data);
       },
-      onclosetag(name) {
+      onclosetag(name, isImplied) {
+        this.getChapterListHandler.onclosetag?.(name, isImplied);
         this.isStarted = false;
         if (name === 'ul') {
           this.getChapterListHandler.isStarted = false;
-        }
-        if (name === 'section') {
-          this.isDone = true;
         }
       },
     };
@@ -349,7 +351,6 @@ class HakoPlugin implements Plugin.PluginBase {
     return fetch(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
-        let isReadingChapterTime = false;
         const parser = new Parser({
           onopentag(name, attributes) {
             parseNovelRouter.onopentag?.(name, attributes);
