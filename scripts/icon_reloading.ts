@@ -32,7 +32,7 @@ const skip: { [key: string]: boolean } = {
   'zinnovel': true,
   'novelr18': true,
   'novelstic': true,
-  'readwebnovels': true
+  'readwebnovels': true,
 };
 
 const used = new Set();
@@ -74,7 +74,7 @@ used.add(path.join(root, '..', 'icons', 'coverNotAvailable.jpg'));
       } else {
         console.log(name, '❌');
       }
-      await delay(2500)
+      await delay(2500);
     }
   }
   console.log('\nDeleting unused icons  ⌛');

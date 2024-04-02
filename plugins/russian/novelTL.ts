@@ -3,7 +3,6 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 const statusKey: { [key: string]: string } = {
@@ -178,18 +177,18 @@ class TL implements Plugin.PluginBase {
       }),
     }).then(res => res.json());
 
-    const loadedCheerio = parseHTML(data.chapter?.text?.text || '');
-    loadedCheerio('p > a[href]').each((index, element) => {
-      let src = loadedCheerio(element).attr('href') || '';
-      if (!src.startsWith('http')) {
-        src = this.site + src;
-      }
-      loadedCheerio(element).find('picture').remove();
-      loadedCheerio(element).removeAttr('href');
-      loadedCheerio(`<img src="${src}">`).appendTo(element);
-    });
+    let chapterText = data.chapter?.text?.text || '';
+    const images = chapterText.match(/<img.*?src="(.*?)".*?>/g);
 
-    const chapterText = loadedCheerio.html();
+    if (images instanceof Array && images.length) {
+      images.forEach(image => {
+        const src = image.match(/src="(.*?)"/)?.[1] || '';
+        if (!src.startsWith('http')) {
+          chapterText = chapterText.replace(src, this.site + src);
+        }
+      });
+    }
+
     return chapterText;
   }
 

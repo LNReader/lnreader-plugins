@@ -93,7 +93,7 @@ class Neobook implements Plugin.PluginBase {
     };
 
     const bookRaw = body.match(/var postData = ({.*?});/);
-    if (bookRaw instanceof Array && bookRaw.length >= 2) {
+    if (bookRaw instanceof Array && bookRaw[1]) {
       const book: Novels = JSON.parse(bookRaw[1]);
 
       novel.name = book.title;
@@ -133,7 +133,7 @@ class Neobook implements Plugin.PluginBase {
     const bookRaw = body.match(/var data = ({.*?});/);
     let chapterText = '';
 
-    if (bookRaw instanceof Array && bookRaw.length >= 2) {
+    if (bookRaw instanceof Array && bookRaw[1]) {
       const book: Novels = JSON.parse(bookRaw[1]);
       const token = chapterPath.split('=')[2];
       const chapter = book.chapters?.find?.(chapter => chapter.token == token);

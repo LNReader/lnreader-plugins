@@ -12,14 +12,14 @@ class AuthorToday implements Plugin.PluginBase {
   name = 'Автор Тудей';
   icon = 'src/ru/authortoday/icon.png';
   site = 'https://author.today';
-  apiUrl = 'https://api.author.today/';
+  apiUrl = 'https://api.author.today/v1/';
   version = '1.0.0';
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.apiUrl + 'v1/catalog/search?page=' + pageNo;
+    let url = this.apiUrl + 'catalog/search?page=' + pageNo;
     if (filters?.genre?.value) {
       url += '&genre=' + filters.genre.value;
     }
@@ -61,7 +61,7 @@ class AuthorToday implements Plugin.PluginBase {
   async parseNovel(workID: string): Promise<Plugin.SourceNovel> {
     if (!this.user) this.user = await this.getUser();
     const book: responseBook = await fetchApi(
-      this.apiUrl + 'v1/work/' + workID + '/details',
+      this.apiUrl + 'work/' + workID + '/details',
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -69,9 +69,6 @@ class AuthorToday implements Plugin.PluginBase {
       },
     ).then(res => res.json());
 
-    if (book.message) {
-      storage.delete(this.id, 'user');
-    }
     const novel: Plugin.SourceNovel = {
       path: workID,
       name: book.title,
@@ -96,7 +93,7 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     const chaptersJSON: ChaptersEntity[] = await fetchApi(
-      this.apiUrl + 'v1/work/' + workID + '/content',
+      this.apiUrl + 'work/' + workID + '/content',
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -126,7 +123,7 @@ class AuthorToday implements Plugin.PluginBase {
     const [workID, chapterID] = chapterPath.split('/');
     if (!this.user) this.user = await this.getUser();
     const result: encryptedСhapter = await fetchApi(
-      this.apiUrl + `v1/work/${workID}/chapter/${chapterID}/text`,
+      this.apiUrl + `work/${workID}/chapter/${chapterID}/text`,
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -134,9 +131,6 @@ class AuthorToday implements Plugin.PluginBase {
       },
     ).then(res => res.json());
 
-    if (result.message) {
-      storage.delete(this.id, 'user');
-    }
     if (result.code) {
       return result.code + '\n' + result?.message;
     }
@@ -197,23 +191,37 @@ class AuthorToday implements Plugin.PluginBase {
 
   user: authorization | undefined;
   getUser = async () => {
-    const user = storage.get(this.id, 'user') || { userId: '', token: 'guest' };
+    let user = storage.get(this.id, 'user') || { userId: '', token: 'guest' };
+    if (user && user.userId && user.token) {
+      const currentUser: currentUser = await fetchApi(
+        this.apiUrl + 'account/current-user',
+        {
+          headers: {
+            Authorization: 'Bearer ' + user.token || 'guest',
+          },
+        },
+      ).then(res => res.json());
+      if (currentUser?.id && !currentUser.isDisabled) return user;
 
-    if (user && user.userId && user.token) return user;
+      storage.delete(this.id, 'user');
+      user = { userId: '', token: 'guest' };
+    }
+
     const result = await fetchApi(this.site + '/account/bearer-token');
     if (result.url.includes('Login?ReturnUrl=')) {
       return user; //It looks like the user has lost the session
     }
-    return user; //user is not authorized, guest account is used
 
     const loginUser: authorization = await result.json();
+    user = { userId: loginUser.userId, token: loginUser.token };
+
     storage.set(
       this.id,
       'user',
-      loginUser, //for some reason they're ending an hour early.
+      user, //for some reason they're ending an hour early.
       new Date(loginUser.expires).getTime() - 1 * 60 * 60 * 1000,
     );
-    return loginUser; //user authorized successfully
+    return user; //user authorized successfully
   };
 
   filters = {
@@ -370,6 +378,24 @@ interface authorization {
   token: string;
   issued: string;
   expires: string;
+}
+
+export interface currentUser {
+  id: number;
+  userName: string;
+  fio: string;
+  email: string;
+  avatarUrl?: null;
+  backgroundUrl?: null;
+  status?: null;
+  hideDislike: boolean;
+  hideFinished: boolean;
+  isBanned: boolean;
+  banReason?: null;
+  banEnd?: null;
+  emailConfirmed: boolean;
+  isDeleted: boolean;
+  isDisabled: boolean;
 }
 
 interface response {

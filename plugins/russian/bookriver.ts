@@ -2,8 +2,10 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
+
+const regex =
+  /<script id="__NEXT_DATA__" type="application\/json">(\{.*?\})<\/script>/;
 
 class Bookriver implements Plugin.PluginBase {
   id = 'bookriver';
@@ -29,12 +31,12 @@ class Bookriver implements Plugin.PluginBase {
     }
 
     const result = await fetchApi(url).then(res => res.text());
-    const loadedCheerio = parseHTML(result);
     const novels: Plugin.NovelItem[] = [];
 
-    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
-    if (jsonRaw) {
-      const json: response = JSON.parse(jsonRaw);
+    const jsonRaw = result.match(regex);
+    if (jsonRaw instanceof Array && jsonRaw[1]) {
+      const json: response = JSON.parse(jsonRaw[1]);
+
       json.props.pageProps.state.pagesFilter?.genre?.books?.forEach(novel =>
         novels.push({
           name: novel.name,
@@ -43,6 +45,7 @@ class Bookriver implements Plugin.PluginBase {
         }),
       );
     }
+
     return novels;
   }
 
@@ -50,39 +53,48 @@ class Bookriver implements Plugin.PluginBase {
     const result = await fetchApi(this.resolveUrl(novelPath, true)).then(res =>
       res.text(),
     );
-    const loadedCheerio = parseHTML(result);
-
-    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
-    const book = (JSON.parse(jsonRaw || '{}') as response).props.pageProps.state
-      .book?.bookPage;
-
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: book?.name || '',
-      cover: book?.coverImages[0].url,
-      summary: book?.annotation,
-      author: book?.author?.name,
-      genres: book?.tags?.map(tag => tag.name).join(', '),
-      status:
-        book?.statusComplete === 'writing'
-          ? NovelStatus.Ongoing
-          : NovelStatus.Completed,
+      name: '',
     };
 
-    const chapters: Plugin.ChapterItem[] = [];
-    book?.ebook?.chapters?.forEach((chapter, chapterIndex) => {
-      if (chapter.available) {
-        chapters.push({
-          name: chapter.name,
-          path: book?.slug + '/' + chapter.chapterId,
-          releaseTime: dayjs(
-            chapter.firstPublishedAt || chapter.createdAt || undefined,
-          ).format('LLL'),
-          chapterNumber: chapterIndex + 1,
+    const jsonRaw = result.match(regex);
+    if (jsonRaw instanceof Array && jsonRaw[1]) {
+      const book: BooksEntity = JSON.parse(jsonRaw[1]).props.pageProps.state
+        .book.bookPage;
+
+      novel.name = book.name || '';
+      novel.cover = book.coverImages[0].url;
+      novel.summary = book.annotation;
+      novel.author = book.author?.name;
+
+      novel.status =
+        book?.statusComplete === 'writing'
+          ? NovelStatus.Ongoing
+          : NovelStatus.Completed;
+
+      if (book.tags?.length)
+        novel.genres = book.tags?.map(tag => tag.name).join(',');
+
+      if (book?.ebook?.chapters?.length) {
+        const chapters: Plugin.ChapterItem[] = [];
+
+        book.ebook.chapters.forEach((chapter, chapterIndex) => {
+          if (chapter.available) {
+            chapters.push({
+              name: chapter.name,
+              path: book.slug + '/' + chapter.chapterId,
+              releaseTime: dayjs(
+                chapter.firstPublishedAt || chapter.createdAt || undefined,
+              ).format('LLL'),
+              chapterNumber: chapterIndex + 1,
+            });
+          }
         });
+
+        novel.chapters = chapters;
       }
-    });
-    novel.chapters = chapters;
+    }
     return novel;
   }
 

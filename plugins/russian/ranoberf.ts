@@ -3,8 +3,10 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
+
+const regex =
+  /<script id="__NEXT_DATA__" type="application\/json">(\{.*?\})<\/script>/;
 
 class RNRF implements Plugin.PluginBase {
   id = 'RNRF';
@@ -24,85 +26,98 @@ class RNRF implements Plugin.PluginBase {
     url += '&page=' + pageNo;
 
     const body = await fetchApi(url).then(res => res.text());
-
-    const loadedCheerio = parseHTML(body);
-    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
-    const json: response = JSON.parse(jsonRaw || '{}');
-
     const novels: Plugin.NovelItem[] = [];
-    json.props.pageProps?.totalData?.items?.forEach(novel =>
-      novels.push({
-        name: novel.title,
-        cover: novel?.verticalImage?.url
-          ? this.site + novel.verticalImage.url
-          : defaultCover,
-        path: '/' + novel.slug,
-      }),
-    );
+
+    const jsonRaw = body.match(regex);
+    if (jsonRaw instanceof Array && jsonRaw[1]) {
+      const json: response = JSON.parse(jsonRaw[1]);
+
+      json.props.pageProps?.totalData?.items?.forEach(novel =>
+        novels.push({
+          name: novel.title,
+          cover: novel?.verticalImage?.url
+            ? this.site + novel.verticalImage.url
+            : defaultCover,
+          path: '/' + novel.slug,
+        }),
+      );
+    }
 
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const body = await fetchApi(this.site + novelPath).then(res => res.text());
-
-    const loadedCheerio = parseHTML(body);
-    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
-    const book = (JSON.parse(jsonRaw || '{}') as response).props.pageProps.book;
-
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: book?.title || '',
-      cover: book?.verticalImage?.url
-        ? this.site + book.verticalImage.url
-        : defaultCover,
-      summary: book?.description,
-      author: book?.author || '',
-      genres: book?.genres.map(item => item.title).join(', '),
-      status: book?.additionalInfo.includes('Активен')
-        ? NovelStatus.Ongoing
-        : NovelStatus.Completed,
+      name: '',
     };
 
-    const chapters: Plugin.ChapterItem[] = [];
+    const jsonRaw = body.match(regex);
+    if (jsonRaw instanceof Array && jsonRaw[1]) {
+      const book: PagePropsBook = JSON.parse(jsonRaw[1]).props.pageProps.book;
 
-    book?.chapters.forEach((chapter, chapterIndex) => {
-      if (!chapter.isDonate || chapter.isUserPaid) {
-        chapters.push({
-          name: chapter.title,
-          path: chapter.url,
-          releaseTime: dayjs(chapter.publishedAt).format('LLL'),
-          chapterNumber: book.chapters.length - chapterIndex,
+      novel.name = book.title;
+      novel.summary = book.description;
+
+      novel.cover = book.verticalImage?.url
+        ? this.site + book.verticalImage.url
+        : defaultCover;
+      novel.status = book?.additionalInfo.includes('Активен')
+        ? NovelStatus.Ongoing
+        : NovelStatus.Completed;
+
+      if (book.author) novel.author = book.author;
+      if (book.genres?.length)
+        novel.genres = book?.genres.map(item => item.title).join(',');
+
+      if (book.chapters?.length) {
+        const chapters: Plugin.ChapterItem[] = [];
+        book.chapters.forEach((chapter, chapterIndex) => {
+          if (!chapter.isDonate || chapter.isUserPaid) {
+            chapters.push({
+              name: chapter.title,
+              path: chapter.url,
+              releaseTime: dayjs(chapter.publishedAt).format('LLL'),
+              chapterNumber: book.chapters.length - chapterIndex,
+            });
+          }
         });
-      }
-    });
 
-    novel.chapters = chapters.reverse();
+        novel.chapters = chapters.reverse();
+      }
+    }
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + chapterPath).then(res =>
+    const body = await fetchApi(this.site + chapterPath).then(res =>
       res.text(),
     );
 
-    let loadedCheerio = parseHTML(result);
-    const jsonRaw = loadedCheerio('#__NEXT_DATA__').html();
-    const json: response = JSON.parse(jsonRaw || '{}');
+    const jsonRaw = body.match(regex);
+    if (jsonRaw instanceof Array && jsonRaw[1]) {
+      let chapter =
+        JSON.parse(jsonRaw[1])?.props?.pageProps?.chapter?.content?.text || '';
 
-    loadedCheerio = parseHTML(
-      json.props.pageProps?.chapter?.content?.text || '',
-    );
+      if (chapter) {
+        if (chapter.includes('<img')) {
+          const images = chapter.match(/<img.*?src="(.*?)".*?>/g);
 
-    loadedCheerio('img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const src = loadedCheerio(element).attr('src');
-        loadedCheerio(element).attr('src', this.site + src);
+          if (images instanceof Array && images.length) {
+            images.forEach(image => {
+              const src = image.match(/src="(.*?)"/)?.[1] || '';
+              if (!src.startsWith('http')) {
+                chapter = chapter.replace(src, this.site + src);
+              }
+            });
+          }
+        }
+        return chapter;
       }
-    });
+    }
 
-    const chapterText = loadedCheerio.html();
-    return chapterText;
+    return '';
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
@@ -141,6 +156,7 @@ class RNRF implements Plugin.PluginBase {
     },
   } satisfies Filters;
 }
+
 export default new RNRF();
 
 interface response {
