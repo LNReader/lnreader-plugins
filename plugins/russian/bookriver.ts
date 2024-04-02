@@ -83,7 +83,7 @@ class Bookriver implements Plugin.PluginBase {
           if (chapter.available) {
             chapters.push({
               name: chapter.name,
-              path: book.slug + '/' + chapter.chapterId,
+              path: novelPath + '/' + chapter.chapterId,
               releaseTime: dayjs(
                 chapter.firstPublishedAt || chapter.createdAt || undefined,
               ).format('LLL'),

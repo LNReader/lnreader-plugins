@@ -177,16 +177,19 @@ class TL implements Plugin.PluginBase {
       }),
     }).then(res => res.json());
 
-    let chapterText = data.chapter?.text?.text || '';
-    const images = chapterText.match(/<img.*?src="(.*?)".*?>/g);
-
-    if (images instanceof Array && images.length) {
-      images.forEach(image => {
-        const src = image.match(/src="(.*?)"/)?.[1] || '';
-        if (!src.startsWith('http')) {
-          chapterText = chapterText.replace(src, this.site + src);
-        }
-      });
+    const chapterText = data.chapter?.text?.text || '';
+    if (chapterText.includes('<img')) {
+      return chapterText.replace(
+        /src="(.*?)"|href="(.*?)"/g,
+        (match: string, src: string, href: string) => {
+          if (src && !src.startsWith('http')) {
+            return `src="${this.site + src}"`;
+          } else if (href && !href.startsWith('http')) {
+            return `href="${this.site + href}"`;
+          }
+          return match;
+        },
+      );
     }
 
     return chapterText;

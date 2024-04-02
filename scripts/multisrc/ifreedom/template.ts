@@ -12,6 +12,9 @@ export interface IfreedomMetadata {
   filters?: Filters;
 }
 
+const imgTagsRegex = /<img[^>]+>/g;
+const srcsetRegex = /srcset="([^"]+)"/;
+
 class IfreedomPlugin implements Plugin.PluginBase {
   id: string;
   name: string;
@@ -139,21 +142,28 @@ class IfreedomPlugin implements Plugin.PluginBase {
     const body = await fetchApi(this.site + chapterPath).then(res =>
       res.text(),
     );
-    const loadedCheerio = parseHTML(body);
+    let chapterText =
+      body.match(/<article id="([\s\S]*?)<\/article>/g)?.[0] || '';
+    chapterText = chapterText.replace(/<script[^>]*>[\s\S]*?<\/script>/gim, '');
 
-    loadedCheerio('.entry-content img').each((index, element) => {
-      const srcset = loadedCheerio(element).attr('srcset')?.split?.(' ');
-      if (srcset?.length) {
-        loadedCheerio(element).removeAttr('srcset');
-        const bestlink: string[] = srcset.filter(url => url.startsWith('http'));
+    if (!chapterText.includes('<img')) return chapterText;
+
+    return chapterText.replace(imgTagsRegex, imgTag => {
+      const srcsetMatch = imgTag.match(srcsetRegex);
+      if (srcsetMatch instanceof Array && srcsetMatch[1]) {
+        const bestlink: string[] = srcsetMatch[1]
+          .split(' ')
+          .filter(url => url.startsWith('http'));
+
         if (bestlink[bestlink.length - 1]) {
-          loadedCheerio(element).attr('src', bestlink[bestlink.length - 1]);
+          const newImgTag = imgTag
+            .replace(srcsetRegex, '')
+            .replace('>', ` src="${bestlink[bestlink.length - 1]}">`);
+          return newImgTag;
         }
       }
+      return imgTag;
     });
-
-    const chapterText = loadedCheerio('.entry-content').html() || '';
-    return chapterText;
   }
 
   async searchNovels(

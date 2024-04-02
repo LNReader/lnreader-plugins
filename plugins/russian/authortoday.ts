@@ -147,15 +147,17 @@ class AuthorToday implements Plugin.PluginBase {
       );
     }
 
-    const loadedCheerio = parseHTML(text);
-    loadedCheerio('img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const src = loadedCheerio(element).attr('src');
-        loadedCheerio(element).attr('src', this.site + src);
-      }
-    });
-    const chapterText = loadedCheerio.html();
-    return chapterText;
+    const images = text.match(/<img.*?src="(.*?)".*?>/g);
+    if (images instanceof Array && images.length) {
+      images.forEach(image => {
+        const src = image.match(/src="(.*?)"/)?.[1] || '';
+        if (!src.startsWith('http')) {
+          text = text.replace(src, this.site + src);
+        }
+      });
+    }
+
+    return text;
   }
 
   async searchNovels(

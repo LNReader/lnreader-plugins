@@ -2,7 +2,6 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 const statusKey: { [key: number]: string } = {
@@ -106,10 +105,7 @@ class RNBH implements Plugin.PluginBase {
       volume.chapters?.forEach(chapter =>
         chapters.push({
           name: chapter.name,
-          path:
-            volume.num && chapter.num
-              ? novelPath + '/' + volume.num + '/' + chapter.num
-              : chapter.url.replace(this.site, ''),
+          path: novelPath + '/' + volume.num + '/' + chapter.num,
           releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format(
             'LLL',
           ),
@@ -126,27 +122,29 @@ class RNBH implements Plugin.PluginBase {
     const body = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
       res.text(),
     );
+    const chaptersRaw = body.split('\n');
+    const chapterText = chaptersRaw
+      .slice(
+        chaptersRaw.indexOf(
+          //beginning
+          '<div class="ads-desktop" style="margin-bottom: 20px">',
+        ),
+        chaptersRaw.indexOf(
+          //end
+          '<div data-custom-interactive-b="game1" data-class="cm-a--fs-b" class="display-none">',
+        ),
+      )
+      .join('');
 
-    const loadedCheerio = parseHTML(body);
-    loadedCheerio('.chapter-hoticons').remove();
-    loadedCheerio('div.text:nth-child(1)  img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const dataMediaId = loadedCheerio(element).attr('data-media-id');
-        loadedCheerio(element).attr(
-          'src',
-          this.site + '/api/media/' + dataMediaId,
-        );
-      }
-    });
-
-    let chapterText = loadedCheerio('div.text:nth-child(1)').html() || '';
-
-    // Remove script tags
-    chapterText = chapterText?.replace(
-      /<\s*script[^>]*>[\s\S]*?<\/script>/gim,
-      '',
+    return chapterText.replace(
+      /<img data-media-id="(.*?)".*>/g,
+      (match: string, id: string) => {
+        if (id) {
+          return `<img src="${this.site}/api/media/${id}"/>`;
+        }
+        return match;
+      },
     );
-    return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
