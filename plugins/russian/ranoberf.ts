@@ -97,24 +97,18 @@ class RNRF implements Plugin.PluginBase {
 
     const jsonRaw = body.match(regex);
     if (jsonRaw instanceof Array && jsonRaw[1]) {
-      let chapter =
+      let chapter: string =
         JSON.parse(jsonRaw[1])?.props?.pageProps?.chapter?.content?.text || '';
 
-      if (chapter) {
-        if (chapter.includes('<img')) {
-          const images = chapter.match(/<img.*?src="(.*?)".*?>/g);
-
-          if (images instanceof Array && images.length) {
-            images.forEach(image => {
-              const src = image.match(/src="(.*?)"/)?.[1] || '';
-              if (!src.startsWith('http')) {
-                chapter = chapter.replace(src, this.site + src);
-              }
-            });
+      if (chapter.includes('<img')) {
+        return chapter.replace(/src="(.*?)"/g, (match, url) => {
+          if (!url.startsWith('http')) {
+            return `src="${this.site}${url}"`;
           }
-        }
-        return chapter;
+          return `src="${url}"`;
+        });
       }
+      return chapter;
     }
 
     return '';

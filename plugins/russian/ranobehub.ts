@@ -122,29 +122,21 @@ class RNBH implements Plugin.PluginBase {
     const body = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
       res.text(),
     );
-    const chaptersRaw = body.split('\n');
-    const chapterText = chaptersRaw
-      .slice(
-        chaptersRaw.indexOf(
-          //beginning
-          '<div class="ads-desktop" style="margin-bottom: 20px">',
-        ),
-        chaptersRaw.indexOf(
-          //end
-          '<div data-custom-interactive-b="game1" data-class="cm-a--fs-b" class="display-none">',
-        ),
-      )
-      .join('');
 
-    return chapterText.replace(
-      /<img data-media-id="(.*?)".*>/g,
-      (match: string, id: string) => {
-        if (id) {
-          return `<img src="${this.site}/api/media/${id}"/>`;
-        }
-        return match;
-      },
+    const indexA = body.indexOf('<div class="title-wrapper">');
+    const indexB = body.indexOf(
+      '<div class="ui text container" style>',
+      indexA,
     );
+
+    const chapterText = body
+      .substring(indexA, indexB)
+      .replace(
+        /<img data-media-id="(.*?)".*?>/g,
+        `<img src="${this.site}/api/media/$1"/>`,
+      );
+
+    return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {

@@ -12,9 +12,6 @@ export interface IfreedomMetadata {
   filters?: Filters;
 }
 
-const imgTagsRegex = /<img[^>]+>/g;
-const srcsetRegex = /srcset="([^"]+)"/;
-
 class IfreedomPlugin implements Plugin.PluginBase {
   id: string;
   name: string;
@@ -146,24 +143,23 @@ class IfreedomPlugin implements Plugin.PluginBase {
       body.match(/<article id="([\s\S]*?)<\/article>/g)?.[0] || '';
     chapterText = chapterText.replace(/<script[^>]*>[\s\S]*?<\/script>/gim, '');
 
-    if (!chapterText.includes('<img')) return chapterText;
-
-    return chapterText.replace(imgTagsRegex, imgTag => {
-      const srcsetMatch = imgTag.match(srcsetRegex);
-      if (srcsetMatch instanceof Array && srcsetMatch[1]) {
-        const bestlink: string[] = srcsetMatch[1]
+    if (chapterText.includes('<img')) {
+      return chapterText.replace(/srcset="([^"]+)"/g, (match, src) => {
+        if (!src) return match;
+        const bestlink = src
           .split(' ')
-          .filter(url => url.startsWith('http'));
+          .filter((url: string) => url.startsWith('http'))
+          .pop();
 
-        if (bestlink[bestlink.length - 1]) {
-          const newImgTag = imgTag
-            .replace(srcsetRegex, '')
-            .replace('>', ` src="${bestlink[bestlink.length - 1]}">`);
-          return newImgTag;
+        if (bestlink) {
+          if (bestlink.startsWith('http')) return `src="${bestlink}"`;
+          return `src="${this.site}${bestlink}"`;
         }
-      }
-      return imgTag;
-    });
+        return match;
+      });
+    }
+
+    return chapterText;
   }
 
   async searchNovels(

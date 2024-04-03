@@ -147,13 +147,12 @@ class AuthorToday implements Plugin.PluginBase {
       );
     }
 
-    const images = text.match(/<img.*?src="(.*?)".*?>/g);
-    if (images instanceof Array && images.length) {
-      images.forEach(image => {
-        const src = image.match(/src="(.*?)"/)?.[1] || '';
-        if (!src.startsWith('http')) {
-          text = text.replace(src, this.site + src);
+    if (text.includes('<img')) {
+      return text.replace(/src="(.*?)"/g, (match, url) => {
+        if (!url.startsWith('http')) {
+          return `src="${this.site}${url}"`;
         }
+        return `src="${url}"`;
       });
     }
 

@@ -134,8 +134,8 @@ class Neobook implements Plugin.PluginBase {
     let chapterText = '';
 
     if (bookRaw instanceof Array && bookRaw[1]) {
-      const book: Novels = JSON.parse(bookRaw[1]);
       const token = chapterPath.split('=')[2];
+      const book: Novels = JSON.parse(bookRaw[1]);
       const chapter = book.chapters?.find?.(chapter => chapter.token == token);
       chapterText = (chapter?.data?.html || '').replace(/<br>/g, '');
     }
