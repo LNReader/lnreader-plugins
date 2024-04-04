@@ -94,7 +94,7 @@ class HakoPlugin implements Plugin.PluginBase {
       status: '',
     };
     const chapters: Plugin.ChapterItem[] = [];
-    const getNameHandler: HTMLParser2Util.HandlerBase = {
+    const getNameHandler: HTMLParser2Util.Handler = {
       isDone: false,
       isStarted: false,
       onopentag(name, attribs) {
@@ -111,7 +111,7 @@ class HakoPlugin implements Plugin.PluginBase {
         }
       },
     };
-    const getSummaryHandler: HTMLParser2Util.HandlerBase & {
+    const getSummaryHandler: HTMLParser2Util.Handler & {
       newLine: boolean;
     } = {
       newLine: false,
@@ -127,7 +127,7 @@ class HakoPlugin implements Plugin.PluginBase {
         this.newLine = true;
       },
     };
-    const getGenresHandler: HTMLParser2Util.HandlerBase = {
+    const getGenresHandler: HTMLParser2Util.Handler = {
       ontext(data) {
         novel.genres += data;
       },
@@ -138,7 +138,7 @@ class HakoPlugin implements Plugin.PluginBase {
       Status,
       Unknown,
     }
-    const getInfosHandler: HTMLParser2Util.HandlerBase & { info: InfoItem } = {
+    const getInfosHandler: HTMLParser2Util.Handler & { info: InfoItem } = {
       isStarted: false,
       info: InfoItem.Unknown,
       onopentag(name, attribs) {
@@ -193,96 +193,95 @@ class HakoPlugin implements Plugin.PluginBase {
         }
       },
     };
-    const getVolumesHandler: HTMLParser2Util.HandlerBase & {
+    const getChapterListHandler: HTMLParser2Util.Handler & {
+      currentVolume: string;
+      num: number;
+      part: number;
+      readingTime: boolean;
+      tempChapter: Plugin.ChapterItem;
+    } = {
+      currentVolume: '',
+      num: 0,
+      part: 1,
+      isStarted: false,
+      readingTime: false,
+      tempChapter: {} as Plugin.ChapterItem,
+      onopentag(name, attribs) {
+        if (this.isStarted) {
+          if (name === 'a' && attribs['title'] !== null) {
+            const chapterName = attribs['title'];
+            let chapterNumber = Number(
+              chapterName.match(/Chương\s*(\d+)/i)?.[1],
+            );
+            if (chapterNumber) {
+              if (this.num === chapterNumber) {
+                chapterNumber = this.num + this.part / 10;
+                this.part += 1;
+              } else {
+                this.num = chapterNumber;
+                this.part = 1;
+              }
+            } else {
+              chapterNumber = this.num + this.part / 10;
+              this.part++;
+            }
+            this.tempChapter = {
+              path: attribs['href'],
+              name: chapterName,
+              page: this.currentVolume,
+              chapterNumber: chapterNumber,
+            };
+          } else if (attribs['class'] === 'chapter-time') {
+            this.readingTime = true;
+          }
+        }
+      },
+      ontext(data) {
+        if (this.readingTime) {
+          const chapterTime = data.split('/').map(x => Number(x));
+          this.tempChapter.releaseTime = new Date(
+            chapterTime[2],
+            chapterTime[1],
+            chapterTime[0],
+          ).toISOString();
+          chapters.push(this.tempChapter);
+          this.readingTime = false;
+          this.tempChapter = {} as Plugin.ChapterItem;
+        }
+      },
+      onclosetag() {
+        if (this.readingTime) this.readingTime = false;
+      },
+    };
+    const getVolumesHandler: HTMLParser2Util.Handler & {
       isParsingChapterList: boolean;
-      getChapterListHandler: HTMLParser2Util.HandlerBase & {
-        currentVolume: string;
-        num: number;
-        part: number;
-        readingTime: boolean;
-        tempChapter: Plugin.ChapterItem;
-      };
     } = {
       isStarted: false,
       isDone: false,
       isParsingChapterList: false,
-      getChapterListHandler: {
-        currentVolume: '',
-        num: 0,
-        part: 1,
-        isStarted: false,
-        readingTime: false,
-        tempChapter: {} as Plugin.ChapterItem,
-        onopentag(name, attribs) {
-          if (this.isStarted) {
-            if (name === 'a' && attribs['title'] !== null) {
-              const chapterName = attribs['title'];
-              let chapterNumber = Number(
-                chapterName.match(/Chương\s*(\d+)/i)?.[1],
-              );
-              if (chapterNumber) {
-                if (this.num === chapterNumber) {
-                  chapterNumber = this.num + this.part / 10;
-                  this.part += 1;
-                } else {
-                  this.num = chapterNumber;
-                  this.part = 1;
-                }
-              } else {
-                chapterNumber = this.num + this.part / 10;
-                this.part++;
-              }
-              this.tempChapter = {
-                path: attribs['href'],
-                name: chapterName,
-                page: this.currentVolume,
-                chapterNumber: chapterNumber,
-              };
-            } else if (attribs['class'] === 'chapter-time') {
-              this.readingTime = true;
-            }
-          }
-        },
-        ontext(data) {
-          if (this.readingTime) {
-            const chapterTime = data.split('/').map(x => Number(x));
-            this.tempChapter.releaseTime = new Date(
-              chapterTime[2],
-              chapterTime[1],
-              chapterTime[0],
-            ).toISOString();
-            chapters.push(this.tempChapter);
-            this.readingTime = false;
-            this.tempChapter = {} as Plugin.ChapterItem;
-          }
-        },
-        onclosetag() {
-          if (this.readingTime) this.readingTime = false;
-        },
-      },
       onopentag(name, attribs) {
         if (attribs['class'] === 'sect-title') {
           this.isStarted = true;
-          this.getChapterListHandler.currentVolume = '';
+          getChapterListHandler.currentVolume = '';
         }
         if (name === 'ul') {
-          this.getChapterListHandler.isStarted = true;
-          this.getChapterListHandler.num = 0;
-          this.getChapterListHandler.part = 1;
+          getChapterListHandler.isStarted = true;
+          getChapterListHandler.num = 0;
+          getChapterListHandler.part = 1;
         }
-        this.getChapterListHandler.onopentag?.(name, attribs);
+        getChapterListHandler.onopentag?.(name, attribs);
       },
       ontext(data) {
         if (this.isStarted) {
-          this.getChapterListHandler.currentVolume += data.trim();
+          getChapterListHandler.currentVolume += data.trim();
         }
-        this.getChapterListHandler.ontext?.(data);
+        getChapterListHandler.ontext?.(data);
       },
       onclosetag(name, isImplied) {
-        this.getChapterListHandler.onclosetag?.(name, isImplied);
+        getChapterListHandler.onclosetag?.(name, isImplied);
         this.isStarted = false;
         if (name === 'ul') {
-          this.getChapterListHandler.isStarted = false;
+          getChapterListHandler.isStarted = false;
         }
       },
     };
