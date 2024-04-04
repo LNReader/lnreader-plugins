@@ -36,7 +36,7 @@ const skip: { [key: string]: boolean } = {
 };
 
 const used = new Set();
-used.add(path.join(root, '..', 'icons', 'coverNotAvailable.jpg'));
+used.add(path.join(root, '..', 'icons', 'coverNotAvailable.webp'));
 
 (async () => {
   console.log('\nDownloading icons ⌛');
@@ -50,29 +50,28 @@ used.add(path.join(root, '..', 'icons', 'coverNotAvailable.jpg'));
       ).default;
 
       const { id, name, site, icon } = instance;
-      if (icon) used.add(path.join(root, '..', 'icons', icon));
+      try {
+        if (icon) used.add(path.join(root, '..', 'icons', icon));
 
-      if (!skip?.[id] && icon && site) {
-        try {
+        if (!skip[id] && icon && site) {
           const image = await fetch(
             `https://www.google.com/s2/favicons?domain=${site}&sz=${size}`,
           )
             .then(res => res.arrayBuffer())
             .then(res => Buffer.from(res));
 
-          const dir = path.join(root, '..', 'icons', icon);
-          if (!fs.existsSync(dir.match(/^.*[\\\/]/)?.[0] || dir)) {
-            fs.mkdirSync(dir.match(/^.*[\\\/]/)?.[0] || dir, {
-              recursive: true,
-            });
+          const fullPath = path.join(root, '..', 'icons', icon);
+          const dir = fullPath.match(/^.*[\\\/]/)?.[0] || fullPath;
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
           }
-          fs.writeFileSync(dir, image);
+          fs.writeFileSync(fullPath, image);
           console.log(name, '✅');
-        } catch (err) {
-          console.log(name, '❌', err);
+        } else {
+          console.log(name, '❌');
         }
-      } else {
-        console.log(name, '❌');
+      } catch (err) {
+        console.log(name, '❌', err);
       }
       await delay(2500);
     }
