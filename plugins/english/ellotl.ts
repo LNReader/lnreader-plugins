@@ -269,12 +269,55 @@ class ElloTL implements Plugin.PluginBase {
     return fetch(chapterPath)
       .then(res => res.text())
       .then(html => {
-        // Zwischenspeichern des gefundenen Inhalts
-        return (
-          html
-            .match(/(<div class="epcontent.+?>[^]+)<div class="bottomnav"/)?.[1]
-            .trim() || 'Content not found'
-        );
+        let isParsingContent = false;
+        let chapterContent = '';
+        let notContent = false;
+        const parser = new Parser({
+          onopentag(name, attribs) {
+            if (attribs['class']?.includes('epcontent' || 'entry-content')) {
+              isParsingContent = true;
+              chapterContent += '<' + name;
+              for (let attrib in attribs) {
+                chapterContent += ` ${attrib}="${attribs[attrib]}"`;
+              }
+              chapterContent += '>';
+            }
+            if (
+              attribs['class']?.includes(
+                'wp-block-buttons' || 'wp-block-spacer' || 'wp-element-button',
+              )
+            ) {
+              notContent = true;
+            }
+            if (isParsingContent && !notContent) {
+              chapterContent += '<' + name;
+              for (let attrib in attribs) {
+                chapterContent += ` ${attrib}="${attribs[attrib]}"`;
+              }
+              chapterContent += '>';
+            }
+          },
+          ontext(data) {
+            if (isParsingContent && !notContent) {
+              chapterContent += data;
+            }
+          },
+          onclosetag(name) {
+            if (isParsingContent && !notContent) {
+              chapterContent += `</${name}>`;
+            }
+            if (isParsingContent && name === 'div') {
+              if (notContent) {
+                notContent = false;
+              } else {
+                isParsingContent = false;
+              }
+            }
+          },
+        });
+        parser.write(html);
+        parser.end();
+        return chapterContent.trim();
       });
   }
 
