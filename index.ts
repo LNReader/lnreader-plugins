@@ -155,7 +155,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, host, () => {
-  console.log(`Testing plugins web listening on http://localhost:${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
 });
 
 //Dayjs localization
