@@ -289,6 +289,9 @@ class ElloTL implements Plugin.PluginBase {
             ) {
               notContent = true;
             }
+            if (name === 'span' && attribs['class']?.includes('maxbutton')) {
+              notContent = true;
+            }
             if (isParsingContent && !notContent) {
               chapterContent += '<' + name;
               for (let attrib in attribs) {
@@ -306,12 +309,11 @@ class ElloTL implements Plugin.PluginBase {
             if (isParsingContent && !notContent) {
               chapterContent += `</${name}>`;
             }
-            if (isParsingContent && name === 'div') {
-              if (notContent) {
-                notContent = false;
-              } else {
-                isParsingContent = false;
-              }
+            if (notContent) {
+              notContent = false;
+            }
+            if (isParsingContent && !notContent && name === 'div') {
+              isParsingContent = false;
             }
           },
         });
