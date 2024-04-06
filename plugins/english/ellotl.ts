@@ -175,7 +175,14 @@ class ElloTL implements Plugin.PluginBase {
                 if (isReadingChapterInfo === 1) {
                   extractChapterNumber(data, tempChapter);
                 } else if (isReadingChapterInfo === 2) {
-                  tempChapter.name = data;
+                  tempChapter.name =
+                    data
+                      .match(
+                        RegExp(
+                          `^${novel.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*(.+)`,
+                        ),
+                      )?.[1]
+                      ?.trim() || data.trim();
                   if (!tempChapter.chapterNumber) {
                     extractChapterNumber(data, tempChapter);
                   }
