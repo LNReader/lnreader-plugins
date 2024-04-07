@@ -155,7 +155,7 @@ class ElloTL implements Plugin.PluginBase {
               }
             } // summary
             else if (isReadingSummary) {
-              novel.summary += data;
+              novel.summary += data.trim();
             } // author and status
             else if (isParsingInfo) {
               if (isReadingInfo) {
