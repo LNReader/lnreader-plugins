@@ -36,9 +36,10 @@ class IndoWebNovel implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    page: number,
+    page: number = 1,
     { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    /*
     let link = `${this.site}advanced-search/page/${page}/?title=&author=&yearx=`;
     link += `&status=${filters.status.value}`;
     link += `&type=${filters.type.value}`;
@@ -48,7 +49,8 @@ class IndoWebNovel implements Plugin.PluginBase {
       link += filters.lang.value.map(i => `&country[]=${i}`).join('');
     if (filters.genre.value.length)
       link += filters.genre.value.map(i => `&genre[]=${i}`).join('');
-
+    */
+    let link = '${this.site}page/${page}/?s'
     const result = await fetchApi(link);
     const body = await result.text();
 
@@ -112,14 +114,16 @@ class IndoWebNovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    page: number,
+    page: number = 1,
   ): Promise<Plugin.NovelItem[]> {
+    /*
     let link = `${this.site}advanced-search/page/${page}/?title=${searchTerm}&author=&yearx=`;
     link += `&status=${this.filters.status.value}`;
     link += `&type=${this.filters.type.value}`;
     link += `&order=${this.filters.sort.value}`;
     link += this.filters.lang.value.map(i => `&country[]=${i}`).join('');
-
+    */
+    let link = '{this.site}page/${page}/?s=${searchTerm}'
     const result = await fetchApi(link);
     const body = await result.text();
 
