@@ -105,7 +105,7 @@ class IndoWebNovel implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    const chapterText = loadedCheerio('.entry-content').html() || '';
+    const chapterText = loadedCheerio('.readersss').html() || '';
 
     return chapterText;
   }
