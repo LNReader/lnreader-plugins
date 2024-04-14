@@ -18,7 +18,7 @@ jobs:
 
           duplicate-check-enabled: true
           duplicate-check-labels: |
-            ["Source request", "Domain changed"]
+            ["Source Request", "Domain Changed"]
 
           existing-check-enabled: false
             
