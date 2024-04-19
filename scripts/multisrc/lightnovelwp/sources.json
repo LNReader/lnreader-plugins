@@ -60,7 +60,8 @@
     "sourceName": "جنة الروايات",
     "options": {
       "lang": "Arabic",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {
