@@ -67,12 +67,12 @@ class IndoWebNovel implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('.series-title').text().trim() || 'Untitled',
+      name: loadedCheerio('.series-title h2').text().trim() || 'Untitled',
       cover: loadedCheerio('.series-thumb img').attr('src'),
-      author: loadedCheerio("ul.series-infolist b:contains('Author') +")
+      author: loadedCheerio(".series-infolist li:contains('Author') span")
         .text()
         .trim(),
-      status: loadedCheerio('.status').text().trim(),
+      // status: loadedCheerio('.status').text().trim(),
       summary: loadedCheerio('.series-synops').text().trim(),
       chapters: [],
     };
@@ -107,7 +107,7 @@ class IndoWebNovel implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    const chapterText = loadedCheerio('.readersss').html() || '';
+    const chapterText = loadedCheerio('.readersss .text-left ').html() || '';
 
     return chapterText;
   }
