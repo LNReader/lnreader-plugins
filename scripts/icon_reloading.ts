@@ -11,6 +11,7 @@ const size = 96;
 const skip: { [key: string]: boolean } = {
   //custom icons
   'ReN': true,
+  'sektenovel': true,
 
   //low quality
   'BLN': true,
