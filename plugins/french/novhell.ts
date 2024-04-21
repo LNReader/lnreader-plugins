@@ -80,14 +80,14 @@ class NovhellPlugin implements Plugin.PluginBase {
       .replace('Ecrit par ', '')
       .trim();
 
-    if (!novel.author || novel.author.trim() === '') {
+    if (!novel.author) {
       novel.author = $("div p:contains('Auteur')")
         .text()
         .replace('Auteur', '')
         .replace(':', '')
         .trim();
     }
-    if (!novel.author || novel.author.trim() === '') {
+    if (!novel.author) {
       novel.author = $("div p:contains('Ecrit par :')")
         .text()
         .replace('Ecrit par :', '')
@@ -99,7 +99,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       .replace('Genre', '')
       .replace(':', '')
       .trim();
-    if (novel.genres == null) {
+    if (!novel.genres) {
       novel.genres = $("div p:contains('Genre')")
         .text()
         .replace('Genre', '')
@@ -139,6 +139,7 @@ class NovhellPlugin implements Plugin.PluginBase {
     );
 
     // Sort the chapters array based on the chapter numbers.
+    // We retrieve the chapters in the order 1-6-11-16-21-......
     novel.chapters = chapters.sort((chapterA, chapterB) => {
       if (
         chapterA.chapterNumber !== undefined &&
@@ -154,6 +155,7 @@ class NovhellPlugin implements Plugin.PluginBase {
     });
     return novel;
   }
+
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(chapterPath);
     const sections = $('main article div div section');
@@ -167,6 +169,7 @@ class NovhellPlugin implements Plugin.PluginBase {
     }
     return '';
   }
+
   async searchNovels(
     searchTerm: string,
     pageNo: number,
@@ -195,6 +198,7 @@ class NovhellPlugin implements Plugin.PluginBase {
 
     return novels;
   }
+
   async fetchImage(url: string): Promise<string | undefined> {
     // if your plugin has images and they won't load
     // this is the function to fiddle with
