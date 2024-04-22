@@ -16,20 +16,20 @@ const statusKey: { [key: number]: string } = {
 class RLIB implements Plugin.PluginBase {
   id = 'RLIB';
   name = 'RanobeLib';
-  site = 'https://test-front.ranobelib.me';
+  site = 'https://ranobelib.me';
   apiSite = 'https://api.lib.social/api/manga/';
   version = '2.0.0';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
 
-  async fetchNovels(
-    page: number,
+  async popularNovels(
+    pageNo: number,
     {
-      filters,
       showLatestNovels,
+      filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.apiSite + '?site_id[0]=3&page=' + page;
+    let url = this.apiSite + '?site_id[0]=3&page=' + pageNo;
     url +=
       '&sort_by=' +
       (showLatestNovels
@@ -90,21 +90,6 @@ class RLIB implements Plugin.PluginBase {
       );
     }
     return novels;
-  }
-
-  popularNovels = this.fetchNovels;
-
-  async searchNovels(
-    searchTerm: string,
-    page: number,
-  ): Promise<Plugin.NovelItem[]> {
-    const defaultOptions: any = {
-      filters: {
-        q: { value: searchTerm, type: FilterTypes.Picker },
-      },
-      showLatestNovels: false,
-    };
-    return this.fetchNovels(page, defaultOptions);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -207,11 +192,31 @@ class RLIB implements Plugin.PluginBase {
     return chapterText;
   }
 
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    const url = this.apiSite + '?site_id[0]=3&q=' + searchTerm;
+    const result: TopLevel = await fetchApi(url, {
+      headers: this.user?.token,
+    }).then(res => res.json());
+
+    const novels: Plugin.NovelItem[] = [];
+    if (result.data instanceof Array) {
+      result.data.forEach(novel =>
+        novels.push({
+          name: novel.rus_name || novel.eng_name || novel.name,
+          cover: novel.cover?.default || defaultCover,
+          path: novel.slug_url || novel.id + '--' + novel.slug,
+        }),
+      );
+    }
+
+    return novels;
+  }
+
   fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) => {
     const ui = this.user?.ui ? 'ui=' + this.user.ui : '';
 
-    if (isNovel) return this.site + '/ru/manga/' + path + (ui ? '?' + ui : '');
+    if (isNovel) return this.site + '/ru/book/' + path + (ui ? '?' + ui : '');
 
     const [slug, volume, number, branch_id] = path.split('/');
     const chapterPath =
