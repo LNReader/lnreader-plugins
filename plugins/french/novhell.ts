@@ -51,7 +51,7 @@ class NovhellPlugin implements Plugin.PluginBase {
         novel = {
           name: novelName,
           cover: novelCover,
-          path: novelUrl,
+          path: novelUrl.replace(this.site, ''),
         };
         novels.push(novel);
       }
@@ -65,7 +65,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(novelPath);
+    let $ = await this.getCheerio(this.site + novelPath);
 
     novel.name =
       $('meta[property="og:title"]')
@@ -118,7 +118,11 @@ class NovhellPlugin implements Plugin.PluginBase {
 
     $('main div article div div section div div div div div p a').each(
       (i, elem) => {
-        const chapterName = $(elem).text().trim();
+        // Replace non-breaking spaces with a 'normal' space.
+        const chapterName = $(elem)
+          .text()
+          .replace(/\u00A0/g, ' ')
+          .trim();
         const chapterUrl = $(elem).attr('href');
         // Check if the chapter URL exists and contains the site name.
         if (chapterUrl && chapterUrl.includes(this.site)) {
@@ -131,7 +135,7 @@ class NovhellPlugin implements Plugin.PluginBase {
           }
           chapters.push({
             name: chapterName,
-            path: chapterUrl,
+            path: chapterUrl.replace(this.site, ''),
             chapterNumber: chapterNumber,
           });
         }
@@ -157,7 +161,7 @@ class NovhellPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const $ = await this.getCheerio(chapterPath);
+    const $ = await this.getCheerio(this.site + chapterPath);
     const sections = $('main article div div section');
     if (sections) {
       const numberOfSection = sections.length;
