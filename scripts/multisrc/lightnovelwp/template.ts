@@ -9,6 +9,7 @@ interface LightNovelWPOptions {
   reverseChapters?: boolean;
   lang?: string;
   versionIncrements?: number;
+  seriesPath?: string;
   customJs?: string;
 }
 
@@ -91,7 +92,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
       showLatestNovels,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/series/?page=' + pageNo;
+    const seriesPath = this.options?.seriesPath ?? '/series/';
+    let url = this.site + seriesPath + '?page=' + pageNo;
     if (!filters) filters = {};
     if (showLatestNovels) url += '&order=latest';
     for (const key in filters) {
