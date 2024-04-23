@@ -14,7 +14,7 @@ const statusKey: { [key: number]: string } = {
 class RLIB implements Plugin.PluginBase {
   id = 'RLIB';
   name = 'RanobeLib (OLD)';
-  site = 'https://old.ranobelib.me/';
+  site = 'https://old.ranobelib.me/old/';
   version = '1.1.0';
   icon = 'src/ru/ranobelib/icon.png';
   ui: string | undefined = undefined;
@@ -26,7 +26,7 @@ class RLIB implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'old/manga-list?sort=';
+    let url = this.site + 'manga-list?sort=';
     url += showLatestNovels
       ? 'last_chapter_at'
       : filters?.sort?.value || 'rate';
@@ -57,20 +57,23 @@ class RLIB implements Plugin.PluginBase {
 
     const result = await fetchApi(url).then(res => res.text());
     const loadedCheerio = parseHTML(result);
+    const novels: Plugin.NovelItem[] = [];
+
     this.ui = loadedCheerio('a.header-right-menu__item')
       .attr('href')
       ?.replace?.(/[^0-9]/g, '');
 
-    const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('.media-card-wrap').each((index, element) => {
-      const name = loadedCheerio(element).find('.media-card__title').text();
-      const cover = loadedCheerio(element)
-        .find('a.media-card')
-        .attr('data-src');
-      const url = loadedCheerio(element).find('a.media-card').attr('href');
-      if (!url) return;
-      novels.push({ name, cover, path: url.replace(this.site, '') });
-    });
+    const novelsRaw = result.match(/window\.__CATALOG_ITEMS__ = (\[.*?\]);/);
+    if (novelsRaw instanceof Array && novelsRaw.length >= 2) {
+      const novelsJson: any = JSON.parse(novelsRaw[1]);
+      novelsJson.forEach((novel: any) => {
+        novels.push({
+          name: novel.rus_name,
+          cover: novel.cover.default,
+          path: novel.slug_url,
+        });
+      });
+    }
 
     return novels;
   }
@@ -96,7 +99,7 @@ class RLIB implements Plugin.PluginBase {
       .replace(/  /g, '');
 
     loadedCheerio(
-      'div[class="media-info-list paper"] > [class="media-info-list__item"]',
+      'div.media-info-list > div[class="media-info-list__item"]',
     ).each(function () {
       let name = loadedCheerio(this)
         .find('div[class="media-info-list__title"]')
@@ -119,15 +122,16 @@ class RLIB implements Plugin.PluginBase {
       .attr('href')
       ?.replace?.(/[^0-9]/g, '');
 
-    const chaptersRaw = body.match(/window.__CHAPTERS__ = ({.*?});/);
+    const chaptersRaw = body.match(/window\.__CHAPTERS__ = (\[.*?\]);/);
     if (chaptersRaw instanceof Array && chaptersRaw.length >= 2) {
       const chaptersJson: any = JSON.parse(chaptersRaw[1]);
 
       if (!chaptersJson?.length) return novel;
-      const totalChapters = chaptersJson.length;
+      novel.status =
+        statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
 
       const chapters: Plugin.ChapterItem[] = [];
-      chaptersJson.forEach((chapter: any, chapterIndex: any) =>
+      chaptersJson.forEach((chapter: any) =>
         chapters.push({
           name:
             'Том ' +
@@ -146,7 +150,7 @@ class RLIB implements Plugin.PluginBase {
           chapterNumber: chapter.index + 1,
         }),
       );
-      novel.chapters = chapters.reverse();
+      novel.chapters = chapters;
     }
     return novel;
   }
@@ -174,15 +178,15 @@ class RLIB implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.site + '/old/api/manga?q=' + searchTerm);
+    const result = await fetchApi(this.site + 'api/manga?q=' + searchTerm);
     const body: any = await result.json();
     const novels: Plugin.NovelItem[] = [];
 
     body.data.forEach((novel: any) =>
       novels.push({
         name: novel.rus_name || novel.name,
-        cover: novel.coverImage,
-        path: 'old/' + novel.slug_url,
+        cover: novel?.cover?.default || '',
+        path: novel.slug_url,
       }),
     );
 
