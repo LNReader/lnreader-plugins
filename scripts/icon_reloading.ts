@@ -12,6 +12,7 @@ const skip: { [key: string]: boolean } = {
   //custom icons
   'ReN': true,
   'sektenovel': true,
+  'FWK.US': true,
 
   //low quality
   'BLN': true,
@@ -90,7 +91,7 @@ used.add(path.join(root, '..', 'icons', 'coverNotAvailable.webp'));
   fileList(path.join(root, '..', 'icons')).forEach(path => {
     if (!used.has(path)) {
       console.log('🗑️', path);
-      fs.rmSync(path, { recursive: true, force: true });
+      fs.rmSync(path, { force: true });
     }
   });
   console.log('\nDone ✅');
