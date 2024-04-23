@@ -252,13 +252,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
-    if (this.options && this.options.customJs) {
-      try {
-        eval(this.options.customJs);
-      } catch (error) {
-        console.error('Error executing customJs:', error);
-        throw error;
-      }
+    try {
+      // CustomJS HERE
+    } catch (error) {
+      console.error('Error executing customJs:', error);
+      throw error;
     }
     return (
       $('.epcontent p')
