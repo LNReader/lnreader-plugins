@@ -149,14 +149,17 @@ class ficbook implements Plugin.PluginBase {
     formData.append('term', searchTerm);
     formData.append('page', pageNo.toString());
 
-    const result = await fetchApi(this.site + '/search/fanfic', {
-      method: 'POST',
-      body: formData,
-    });
-    const json = (await result.json()) as { data: Data };
+    const { data }: { data: Data } = await fetchApi(
+      this.site + '/search/fanfic',
+      {
+        method: 'POST',
+        body: formData,
+      },
+    ).then(res => res.json());
+
     const novels: Plugin.NovelItem[] = [];
 
-    json.data?.data?.forEach(novel => {
+    data?.data?.forEach(novel => {
       const name = novel.title.trim();
       const path = '/readfic/' + novel.slug;
       const cover = novel.cover

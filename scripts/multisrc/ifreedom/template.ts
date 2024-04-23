@@ -25,7 +25,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = `multisrc/ifreedom/icons/${metadata.id}.png`;
     this.site = metadata.sourceSite;
-    this.version = '1.0.0';
+    this.version = '1.0.1';
     this.filters = metadata.filters;
   }
 
@@ -139,20 +139,26 @@ class IfreedomPlugin implements Plugin.PluginBase {
     const body = await fetchApi(this.site + chapterPath).then(res =>
       res.text(),
     );
-    const loadedCheerio = parseHTML(body);
+    let chapterText =
+      body.match(/<article id="([\s\S]*?)<\/article>/g)?.[0] || '';
+    chapterText = chapterText.replace(/<script[^>]*>[\s\S]*?<\/script>/gim, '');
 
-    loadedCheerio('.entry-content img').each((index, element) => {
-      const srcset = loadedCheerio(element).attr('srcset')?.split?.(' ');
-      if (srcset?.length) {
-        loadedCheerio(element).removeAttr('srcset');
-        const bestlink: string[] = srcset.filter(url => url.startsWith('http'));
-        if (bestlink[bestlink.length - 1]) {
-          loadedCheerio(element).attr('src', bestlink[bestlink.length - 1]);
+    if (chapterText.includes('<img')) {
+      return chapterText.replace(/srcset="([^"]+)"/g, (match, src) => {
+        if (!src) return match;
+        const bestlink = src
+          .split(' ')
+          .filter((url: string) => url.startsWith('http'))
+          .pop();
+
+        if (bestlink) {
+          if (bestlink.startsWith('http')) return `src="${bestlink}"`;
+          return `src="${this.site}${bestlink}"`;
         }
-      }
-    });
+        return match;
+      });
+    }
 
-    const chapterText = loadedCheerio('.entry-content').html() || '';
     return chapterText;
   }
 

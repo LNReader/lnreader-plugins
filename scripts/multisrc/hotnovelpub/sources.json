@@ -1,7 +1,7 @@
 [
   {
     "id": "hotnovelpub",
-    "sourceSite": "https://hotnovelpub.com",
+    "sourceSite": "https://hotnovelpub.com/",
     "sourceName": "HotNovelPub",
     "filters": {
       "sort": {
@@ -78,7 +78,7 @@
   },
   {
     "id": "eznovels",
-    "sourceSite": "https://eznovels.com",
+    "sourceSite": "https://eznovels.com/",
     "sourceName": "EzNovels",
     "filters": {
       "sort": {
@@ -158,7 +158,7 @@
   },
   {
     "id": "lightnoveldaily",
-    "sourceSite": "https://lightnoveldaily.com",
+    "sourceSite": "https://lightnoveldaily.com/",
     "sourceName": "LightNovelDaily",
     "filters": {
       "sort": {
@@ -238,7 +238,7 @@
   },
   {
     "id": "lanovels",
-    "sourceSite": "https://lanovels.com",
+    "sourceSite": "https://lanovels.com/",
     "sourceName": "LaNovels",
     "filters": {
       "sort": {
@@ -318,7 +318,7 @@
   },
   {
     "id": "thnovels",
-    "sourceSite": "https://thnovels.com",
+    "sourceSite": "https://thnovels.com/",
     "sourceName": "ThNovels",
     "filters": {
       "sort": {

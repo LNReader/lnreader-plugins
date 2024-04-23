@@ -80,12 +80,10 @@ class RulatePlugin implements Plugin.PluginBase {
       formData.append('path', novelPath);
       formData.append('ok', 'Да');
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: 'POST',
         body: formData,
       });
-
-      result = await fetchApi(this.site + novelPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
@@ -183,14 +181,13 @@ class RulatePlugin implements Plugin.PluginBase {
     let result = await fetchApi(this.site + chapterPath);
     if (result.url.includes('mature?path=')) {
       const formData = new FormData();
+      formData.append('path', chapterPath.split('/').slice(0, 3).join('/'));
       formData.append('ok', 'Да');
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: 'POST',
         body: formData,
       });
-
-      result = await fetchApi(this.site + chapterPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
@@ -208,12 +205,11 @@ class RulatePlugin implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetchApi(
+    const result: response[] = await fetchApi(
       this.site + '/search/autocomplete?query=' + searchTerm,
-    );
-    const json = (await result.json()) as response[];
+    ).then(res => res.json());
 
-    json.forEach(novel => {
+    result.forEach(novel => {
       const name = novel.title_one + ' / ' + novel.title_two;
       if (!novel.url) return;
 

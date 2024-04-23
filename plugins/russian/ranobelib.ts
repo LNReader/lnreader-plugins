@@ -15,8 +15,8 @@ const statusKey: { [key: number]: string } = {
 class RLIB implements Plugin.PluginBase {
   id = 'RLIB';
   name = 'RanobeLib';
-  site = 'https://ranobelib.me';
-  version = '1.0.0';
+  site = 'https://old.ranobelib.me/old';
+  version = '1.1.0';
   icon = 'src/ru/ranobelib/icon.png';
   ui: string | undefined = undefined;
 
