@@ -7,7 +7,7 @@ class EarlyNovelPlugin implements Plugin.PagePlugin {
   id = 'earlynovel';
   name = 'Early Novel';
   version = '1.0.0';
-  icon = 'multisrc/madara/latestnovel.png';
+  icon = 'src/en/earlynovel/icon.png';
   site = 'https://earlynovel.net/';
 
   parseNovels(loadedCheerio: CheerioAPI) {
