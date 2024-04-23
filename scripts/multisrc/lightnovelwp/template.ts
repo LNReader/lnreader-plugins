@@ -9,6 +9,7 @@ interface LightNovelWPOptions {
   reverseChapters?: boolean;
   lang?: string;
   versionIncrements?: number;
+  customJs?: string;
 }
 
 export interface LightNovelWPMetadata {
@@ -35,7 +36,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
     this.version = `1.0.${4 + versionIncrements}`;
-    this.options = metadata.options;
+    this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
 
@@ -249,10 +250,13 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
-    if (this.id == 'kolnovel') {
-      let ignore = $('article > style').text().trim().split(',');
-      ignore.push(...(ignore.pop()?.match(/^\.\w+/) || []));
-      ignore.map(tag => $(`p${tag}`).remove());
+    if (this.options && this.options.customJs) {
+      try {
+        eval(this.options.customJs);
+      } catch (error) {
+        console.error('Error executing customJs:', error);
+        throw error;
+      }
     }
     return (
       $('.epcontent p')

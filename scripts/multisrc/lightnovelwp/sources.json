@@ -14,7 +14,8 @@
     "sourceName": "ملوك الروايات",
     "options": {
       "lang": "Arabic",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());"
     }
   },
   {
@@ -97,7 +98,9 @@
     "sourceName": "GenesisTls",
     "options": {
       "lang": "English",
-      "reverseChapters": false
+      "reverseChapters": false,
+      "versionIncrements": 1,
+      "customJs": "$('.genesistls-watermark').remove();$('.epcontent p').each((i, el) => { if ($(el).html() === '&nbsp;') $(el).remove(); });"
     }
   },
   {
