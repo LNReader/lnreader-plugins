@@ -860,7 +860,20 @@ class PluginWrapper {
         sourceNovel?.chapters?.length !==
         new Set(sourceNovel?.chapters?.map(r => r.path) || []).size
       ) {
-        alert('Chapter paths are the same!');
+        // Identifies duplicate chapter paths.
+        const chapterPaths = sourceNovel?.chapters?.map(r => r.path) || [];
+        const pathCountMap = Object.create(null);
+        chapterPaths.forEach(path => {
+          pathCountMap[path] = (pathCountMap[path] || 0) + 1;
+        });
+
+        const duplicatePaths = Object.keys(pathCountMap).filter(
+          path => pathCountMap[path] > 1,
+        );
+
+        if (duplicatePaths.length > 0) {
+          alert('Duplicate chapter paths found: ' + duplicatePaths.join(', '));
+        }
       }
 
       chapter_list.html('');
