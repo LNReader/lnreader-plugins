@@ -10,7 +10,7 @@ class ficbook implements Plugin.PluginBase {
   id = 'ficbook';
   name = 'ficbook';
   site = 'https://ficbook.net';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ru/ficbook/icon.png';
 
   async popularNovels(

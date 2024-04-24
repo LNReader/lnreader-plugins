@@ -127,8 +127,6 @@ class RLIB implements Plugin.PluginBase {
       const chaptersJson: any = JSON.parse(chaptersRaw[1]);
 
       if (!chaptersJson?.length) return novel;
-      novel.status =
-        statusKey[chaptersJson.manga.status] || NovelStatus.Unknown;
 
       const chapters: Plugin.ChapterItem[] = [];
       chaptersJson.forEach((chapter: any) =>

@@ -41,10 +41,10 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.apiSite + 'books/';
+    let url = this.apiSite + '/books/';
     url += showLatestNovels ? 'new' : filters?.sort?.value || 'hot';
     if (filters?.category?.value) {
-      url = this.apiSite + 'category/' + filters.category.value;
+      url = this.apiSite + '/category/' + filters.category.value;
     }
 
     url += '/?page=' + (pageNo - 1) + '&limit=20';
@@ -70,7 +70,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const json: responseNovel = await fetchApi(
-      this.apiSite + 'book/' + novelPath,
+      this.apiSite + '/book/' + novelPath,
       {
         headers: {
           lang: this.lang,
@@ -111,7 +111,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(res =>
+    const body = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
       res.text(),
     );
 
@@ -120,7 +120,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
 
     if (chapterText) {
       const result = await fetchApi(
-        this.site + 'server/getContent?slug=' + chapterPath,
+        this.site + '/server/getContent?slug=' + chapterPath,
       );
       const json = (await result.json()) as ChapterType;
 
@@ -139,7 +139,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const result: responseSearch = await fetchApi(this.apiSite + 'search', {
+    const result: responseSearch = await fetchApi(this.apiSite + '/search', {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         Referer: this.site,
@@ -164,6 +164,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + '/' + path;
 }
 
 interface responseNovels {
