@@ -27,7 +27,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   constructor(metadata: ReadNovelFullMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/readnovelfull/${metadata.id}.png`;
+    this.icon = `multisrc/readnovelfull/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
     this.version = `1.0.${0 + versionIncrements}`;
