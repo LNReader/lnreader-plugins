@@ -7,7 +7,7 @@ import qs from 'qs';
 class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
   name = 'Agitoon';
-  icon = 'src/kr/agitoon/agit.png';
+  icon = 'src/kr/agitoon/icon.png';
   site = 'https://agit501.xyz';
   version = '1.0.0';
 
