@@ -36,7 +36,7 @@ class MadaraPlugin implements Plugin.PluginBase {
   constructor(metadata: MadaraMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/madara/${metadata.id.toLowerCase()}.png`;
+    this.icon = `multisrc/madara/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
     this.version = `1.0.${1 + versionIncrements}`;
