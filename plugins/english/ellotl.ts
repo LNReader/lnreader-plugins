@@ -20,16 +20,19 @@ class ElloTL implements Plugin.PluginBase {
         const novels: Plugin.NovelItem[] = [];
         const parser = new Parser({
           onopentag(name, attribs) {
-            if (attribs['class']?.includes('mdthumb')) {
+            if (attribs['class']?.includes('maindet')) {
               isParsingNovel = true;
             }
             if (isParsingNovel) {
               switch (name) {
                 case 'a':
-                  tempNovel.path = attribs['href'];
+                  tempNovel.path = attribs['href'].replace(
+                    'https://ellotl.com',
+                    '',
+                  );
                   break;
                 case 'img':
-                  tempNovel.name = attribs['alt'];
+                  tempNovel.name = attribs['title'];
                   tempNovel.cover = attribs['src'];
                   break;
               }
@@ -75,7 +78,7 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return fetch(novelPath)
+    return fetch(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
         function extractChapterNumber(
@@ -137,7 +140,10 @@ class ElloTL implements Plugin.PluginBase {
               isReadingChapter = true;
             } else if (isReadingChapter) {
               if (name === 'a') {
-                tempChapter.path = attribs['href'];
+                tempChapter.path = attribs['href'].replace(
+                  'https://ellotl.com',
+                  '',
+                );
               } else if (attribs['class'] === 'epl-num') {
                 isReadingChapterInfo = 1;
               } else if (attribs['class'] === 'epl-title') {
