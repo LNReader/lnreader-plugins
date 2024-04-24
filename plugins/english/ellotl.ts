@@ -20,16 +20,19 @@ class ElloTL implements Plugin.PluginBase {
         const novels: Plugin.NovelItem[] = [];
         const parser = new Parser({
           onopentag(name, attribs) {
-            if (attribs['class']?.includes('mdthumb')) {
+            if (attribs['class']?.includes('maindet')) {
               isParsingNovel = true;
             }
             if (isParsingNovel) {
               switch (name) {
                 case 'a':
-                  tempNovel.path = attribs['href'];
+                  tempNovel.path = attribs['href'].replace(
+                    'https://ellotl.com',
+                    '',
+                  );
                   break;
                 case 'img':
-                  tempNovel.name = attribs['alt'];
+                  tempNovel.name = attribs['title'];
                   tempNovel.cover = attribs['src'];
                   break;
               }
@@ -75,7 +78,7 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return fetch(novelPath)
+    return fetch(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
         function extractChapterNumber(
@@ -137,7 +140,10 @@ class ElloTL implements Plugin.PluginBase {
               isReadingChapter = true;
             } else if (isReadingChapter) {
               if (name === 'a') {
-                tempChapter.path = attribs['href'];
+                tempChapter.path = attribs['href'].replace(
+                  'https://ellotl.com',
+                  '',
+                );
               } else if (attribs['class'] === 'epl-num') {
                 isReadingChapterInfo = 1;
               } else if (attribs['class'] === 'epl-title') {
@@ -175,7 +181,14 @@ class ElloTL implements Plugin.PluginBase {
                 if (isReadingChapterInfo === 1) {
                   extractChapterNumber(data, tempChapter);
                 } else if (isReadingChapterInfo === 2) {
-                  tempChapter.name = data;
+                  tempChapter.name =
+                    data
+                      .match(
+                        RegExp(
+                          `^${novel.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*(.+)`,
+                        ),
+                      )?.[1]
+                      ?.trim() || data.trim();
                   if (!tempChapter.chapterNumber) {
                     extractChapterNumber(data, tempChapter);
                   }
@@ -262,12 +275,57 @@ class ElloTL implements Plugin.PluginBase {
     return fetch(chapterPath)
       .then(res => res.text())
       .then(html => {
-        // Zwischenspeichern des gefundenen Inhalts
-        return (
-          html
-            .match(/(<div class="epcontent.+?>[^]+)<div class="bottomnav"/)?.[1]
-            .trim() || 'Content not found'
-        );
+        let isParsingContent = false;
+        let chapterContent = '';
+        let notContent = false;
+        const parser = new Parser({
+          onopentag(name, attribs) {
+            if (attribs['class']?.includes('epcontent' || 'entry-content')) {
+              isParsingContent = true;
+              chapterContent += '<' + name;
+              for (let attrib in attribs) {
+                chapterContent += ` ${attrib}="${attribs[attrib]}"`;
+              }
+              chapterContent += '>';
+            }
+            if (
+              attribs['class']?.includes(
+                'wp-block-buttons' || 'wp-block-spacer' || 'wp-element-button',
+              )
+            ) {
+              notContent = true;
+            }
+            if (name === 'span' && attribs['class']?.includes('maxbutton')) {
+              notContent = true;
+            }
+            if (isParsingContent && !notContent) {
+              chapterContent += '<' + name;
+              for (let attrib in attribs) {
+                chapterContent += ` ${attrib}="${attribs[attrib]}"`;
+              }
+              chapterContent += '>';
+            }
+          },
+          ontext(data) {
+            if (isParsingContent && !notContent) {
+              chapterContent += data;
+            }
+          },
+          onclosetag(name) {
+            if (isParsingContent && !notContent) {
+              chapterContent += `</${name}>`;
+            }
+            if (notContent) {
+              notContent = false;
+            }
+            if (isParsingContent && !notContent && name === 'div') {
+              isParsingContent = false;
+            }
+          },
+        });
+        parser.write(html);
+        parser.end();
+        return chapterContent.trim();
       });
   }
 
