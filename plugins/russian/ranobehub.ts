@@ -2,7 +2,6 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 const statusKey: { [key: number]: string } = {
@@ -14,7 +13,7 @@ const statusKey: { [key: number]: string } = {
 class RNBH implements Plugin.PluginBase {
   id = 'RNBH.org';
   name = 'RanobeHub';
-  version = '1.0.0';
+  version = '1.0.1';
   site = 'https://ranobehub.org';
   icon = 'src/ru/ranobehub/icon.png';
 
@@ -58,12 +57,12 @@ class RNBH implements Plugin.PluginBase {
         url += '&tags:negative=' + excludeTags.join(',');
       }
     }
-    url += '&take=40';
-    const result = await fetchApi(url);
-    const body = (await result.json()) as { resource: responseNovels[] };
+    const { resource }: { resource: responseNovels[] } = await fetchApi(
+      url + '&take=40',
+    ).then(res => res.json());
 
     const novels: Plugin.NovelItem[] = [];
-    body.resource.forEach(novel =>
+    resource.forEach(novel =>
       novels.push({
         name: novel.names.rus || novel.names.eng || novel.names.original,
         cover: novel.poster.medium,
@@ -75,19 +74,20 @@ class RNBH implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.site + '/api/ranobe/' + novelPath);
-    const json = (await result.json()) as { data: responseNovel };
+    const { data }: { data: responseNovel } = await fetchApi(
+      this.site + '/api/ranobe/' + novelPath,
+    ).then(res => res.json());
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: json.data.names.rus || json.data.names.eng || '',
-      cover: json.data.posters.medium,
-      summary: json.data.description.trim(),
-      author: json.data?.authors?.[0]?.name_eng || '',
-      status: statusKey[json.data.status.id] || NovelStatus.Unknown,
+      name: data.names.rus || data.names.eng || '',
+      cover: data.posters.medium,
+      summary: data.description.trim(),
+      author: data?.authors?.[0]?.name_eng || '',
+      status: statusKey[data.status.id] || NovelStatus.Unknown,
     };
 
-    const tags = [json.data.tags.events, json.data.tags.genres]
+    const tags = [data.tags.events, data.tags.genres]
       .flat()
       .map(tags => tags?.names?.rus || tags?.names?.eng || tags?.title)
       .filter(tags => tags);
@@ -97,21 +97,15 @@ class RNBH implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const chaptersRaw = await fetchApi(
+    const chaptersJSON: { volumes: VolumesEntity[] } = await fetchApi(
       this.site + '/api/ranobe/' + novelPath + '/contents',
-    );
-    const chaptersJSON = (await chaptersRaw.json()) as {
-      volumes: VolumesEntity[];
-    };
+    ).then(res => res.json());
 
     chaptersJSON.volumes.forEach(volume =>
       volume.chapters?.forEach(chapter =>
         chapters.push({
           name: chapter.name,
-          path:
-            volume.num && chapter.num
-              ? novelPath + '/' + volume.num + '/' + chapter.num
-              : chapter.url.replace(this.site, ''),
+          path: novelPath + '/' + volume.num + '/' + chapter.num,
           releaseTime: dayjs(parseInt(chapter.changed_at, 10) * 1000).format(
             'LLL',
           ),
@@ -125,38 +119,34 @@ class RNBH implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.resolveUrl(chapterPath));
-    const body = await result.text();
-
-    const loadedCheerio = parseHTML(body);
-    loadedCheerio('.chapter-hoticons').remove();
-    loadedCheerio('div.text:nth-child(1)  img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const dataMediaId = loadedCheerio(element).attr('data-media-id');
-        loadedCheerio(element).attr(
-          'src',
-          this.site + '/api/media/' + dataMediaId,
-        );
-      }
-    });
-
-    let chapterText = loadedCheerio('div.text:nth-child(1)').html() || '';
-
-    // Remove script tags
-    chapterText = chapterText?.replace(
-      /<\s*script[^>]*>[\s\S]*?<\/script>/gim,
-      '',
+    const body = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
+      res.text(),
     );
+
+    const indexA = body.indexOf('<div class="title-wrapper">');
+    const indexB = body.indexOf(
+      '<div class="ui text container" style>',
+      indexA,
+    );
+
+    const chapterText = body
+      .substring(indexA, indexB)
+      .replace(
+        /<img data-media-id="(.*?)".*?>/g,
+        `<img src="${this.site}/api/media/$1"/>`,
+      );
+
     return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/api/fulltext/global?query=${searchTerm}&take=10`;
-    const result = await fetchApi(url);
-    const data = (await result.json()) as responseSearch[];
+    const result: responseSearch[] = await fetchApi(url).then(res =>
+      res.json(),
+    );
     const novels: Plugin.NovelItem[] = [];
 
-    data
+    result
       ?.find(item => item?.meta?.key === 'ranobe')
       ?.data?.forEach(novel =>
         novels.push({

@@ -10,7 +10,7 @@ export interface ReadwnMetadata {
   id: string;
   sourceSite: string;
   sourceName: string;
-  filters?: Filters;
+  filters?: any;
 }
 
 class ReadwnPlugin implements Plugin.PluginBase {
@@ -26,7 +26,7 @@ class ReadwnPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = `multisrc/readwn/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
-    this.version = '1.0.0';
+    this.version = '1.0.1';
     this.filters = metadata.filters;
   }
 
