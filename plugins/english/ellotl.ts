@@ -26,10 +26,9 @@ class ElloTL implements Plugin.PluginBase {
             if (isParsingNovel) {
               switch (name) {
                 case 'a':
-                  tempNovel.path = attribs['href'].replace(
-                    'https://ellotl.com',
-                    '',
-                  );
+                  tempNovel.path = attribs['href']
+                    .replace('https://ellotl.com', '')
+                    .trim();
                   break;
                 case 'img':
                   tempNovel.name = attribs['title'];
@@ -140,10 +139,9 @@ class ElloTL implements Plugin.PluginBase {
               isReadingChapter = true;
             } else if (isReadingChapter) {
               if (name === 'a') {
-                tempChapter.path = attribs['href'].replace(
-                  'https://ellotl.com',
-                  '',
-                );
+                tempChapter.path = attribs['href']
+                  .replace('https://ellotl.com', '')
+                  .trim();
               } else if (attribs['class'] === 'epl-num') {
                 isReadingChapterInfo = 1;
               } else if (attribs['class'] === 'epl-title') {
@@ -272,7 +270,7 @@ class ElloTL implements Plugin.PluginBase {
   }
 
   parseChapter(chapterPath: string): Promise<string> {
-    return fetch(chapterPath)
+    return fetch(this.site + chapterPath)
       .then(res => res.text())
       .then(html => {
         let isParsingContent = false;
