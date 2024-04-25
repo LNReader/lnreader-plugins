@@ -16,7 +16,7 @@ class Neobook implements Plugin.PluginBase {
   id = 'neobook';
   name = 'Neobook';
   site = 'https://neobook.org';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ru/neobook/icon.png';
 
   async fetchNovels(
@@ -46,15 +46,17 @@ class Neobook implements Plugin.PluginBase {
     );
     formData.append('filter_timeread', filters?.timeread?.value || '0-999999');
 
-    const result = await fetchApi('https://api.neobook.org/', {
-      method: 'post',
-      body: formData,
-    });
-    const json = (await result.json()) as { bundle_books: BundleBooks };
+    const { bundle_books }: { bundle_books: BundleBooks } = await fetchApi(
+      'https://api.neobook.org/',
+      {
+        method: 'post',
+        body: formData,
+      },
+    ).then(res => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    if (json.bundle_books.feed?.length) {
-      json.bundle_books.feed?.forEach(novel =>
+    if (bundle_books.feed?.length) {
+      bundle_books.feed?.forEach(novel =>
         novels.push({
           name: novel.title,
           cover: novel?.attachment?.image?.m || defaultCover,
@@ -91,8 +93,8 @@ class Neobook implements Plugin.PluginBase {
     };
 
     const bookRaw = body.match(/var postData = ({.*?});/);
-    if (bookRaw instanceof Array && bookRaw.length >= 2) {
-      const book = JSON.parse(bookRaw[1]) as Novels;
+    if (bookRaw instanceof Array && bookRaw[1]) {
+      const book: Novels = JSON.parse(bookRaw[1]);
 
       novel.name = book.title;
       novel.summary = book.text?.replace?.(/<br>/g, '\n') || book.text_fix;
@@ -131,9 +133,9 @@ class Neobook implements Plugin.PluginBase {
     const bookRaw = body.match(/var data = ({.*?});/);
     let chapterText = '';
 
-    if (bookRaw instanceof Array && bookRaw.length >= 2) {
-      const book = JSON.parse(bookRaw[1]) as Novels;
+    if (bookRaw instanceof Array && bookRaw[1]) {
       const token = chapterPath.split('=')[2];
+      const book: Novels = JSON.parse(bookRaw[1]);
       const chapter = book.chapters?.find?.(chapter => chapter.token == token);
       chapterText = (chapter?.data?.html || '').replace(/<br>/g, '');
     }
