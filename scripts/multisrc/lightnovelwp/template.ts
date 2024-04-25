@@ -33,7 +33,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   constructor(metadata: LightNovelWPMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/lightnovelwp/${metadata.id}.png`;
+    this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
     this.version = `1.0.${4 + versionIncrements}`;
