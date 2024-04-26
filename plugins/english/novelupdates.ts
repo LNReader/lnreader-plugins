@@ -178,147 +178,155 @@ class NovelUpdates implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
+    let isAnomalously = url.includes('anotivereads');
+
+    let isBlogspot = url.includes('blogspot');
+
+    let isBlossomTranslation = url.includes('blossomtranslation');
+
+    let isGemNovels = url.includes('gemnovels');
+
+    let isHostedNovel = url.includes('hostednovel');
+
+    let isIppoTranslations = url.includes('ippotranslations');
+
+    let isINovelTranslation = url.includes('inoveltranslation');
+
+    let isLightNovelsTls = url.includes('lightnovelstranslations');
+
+    let isRaeiTranslation = url.includes('raeitranslations');
+
+    let isRainOfSnow = url.includes('rainofsnow');
+
+    let isScribbleHub = url.includes('scribblehub');
+
+    let isShanghaiFantasy = url.includes('shanghaifantasy');
+
+    let isStabbingWithASyringe = url.includes('stabbingwithasyringe');
+
+    let isTravisTranslation = url.includes('travistranslations');
+
+    let isTumblr = url.includes('tumblr');
+
+    let isWattpad = url.includes('wattpad');
+
+    let isWebNovel = url.includes('webnovel');
+
     let isWordPressStr =
       loadedCheerio('meta[name="generator"]').attr('content') ||
       loadedCheerio('footer').text();
+
+    let isWuxiaWorld = url.includes('wuxiaworld');
+
+    let isKofi = url.includes('ko-fi');
+
     let isWordPress = false;
     if (isWordPressStr) {
       isWordPress =
         isWordPressStr.toLowerCase().includes('wordpress') ||
         isWordPressStr.includes('Site Kit by Google') ||
         loadedCheerio('.powered-by').text().toLowerCase().includes('wordpress');
+      console.log('isWordPress: ', isWordPress);
     }
 
-    switch (true) {
-      case url.includes('anotivereads'):
-        chapterText = loadedCheerio('#comic').html()!;
-        break;
-      case url.includes('blogspot'):
-        loadedCheerio('.post-share-buttons').remove();
-        chapterText =
-          loadedCheerio('.entry-content').html() ||
-          loadedCheerio('.post-body').html()!;
-        break;
-      case url.includes('blossomtranslation'):
-        chapterText = loadedCheerio('.manga-child-content').html()!;
-        break;
-      case url.includes('gemnovels'):
-        chapterText = loadedCheerio('.prevent-select').html()!;
-        break;
-      case url.includes('hostednovel'):
-        chapterText = loadedCheerio('.chapter').html()!;
-        break;
-      case url.includes('inoveltranslation'):
-        const link_inovel = 'https://api.' + result.url.slice(8);
-        const json_inovel = await fetchApi(link_inovel).then(r => r.json());
-        chapterText = json_inovel.content.replace(/\n/g, '<br>');
-        if (json_inovel.notes) {
-          chapterText +=
-            '<br><hr><br>TL Notes:<br>' +
-            json_inovel.notes.replace(/\n/g, '<br>');
-        }
-        break;
-      case url.includes('ippotranslations'):
-        chapterText = loadedCheerio('.entry-content').html()!;
-        break;
-      case url.includes('ko-fi'):
-        chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
-          .html()
-          ?.match(/shadowDom\.innerHTML \+= '(<div.*?)';/)![1]!;
-        break;
-      case url.includes('lightnovelstranslations'):
-        chapterText = loadedCheerio('.text_story').html()!;
-        break;
-      case url.includes('raeitranslations'):
-        const parts = result.url.split('/');
-        const link_raei = `${parts[0]}//api.${parts[2]}/api/chapters/?id=${parts[3]}&num=${parts[4]}`;
-        const json_raei = await fetchApi(link_raei).then(r => r.json());
-        chapterText =
-          json_raei.currentChapter.head +
-          '<br><hr><br>' +
-          json_raei.currentChapter.body +
-          "<br><hr><br>Translator's Note:<br>" +
-          json_raei.currentChapter.note;
-        chapterText = chapterText.replace(/\n/g, '<br>');
-        break;
-      case url.includes('rainofsnow'):
-        chapterText = loadedCheerio('div.content').html()!;
-        break;
-      case url.includes('scribblehub'):
-        chapterText = loadedCheerio('div.chp_raw').html()!;
-        break;
-      case url.includes('shanghaifantasy'):
-        chapterText = loadedCheerio('.contenta').html()!;
-        break;
-      case url.includes('stabbingwithasyringe'):
-        /**
-         * Get the chapter link from the main page
-         */
-        const link_syringe = loadedCheerio('.entry-content a').attr('href')!;
-        const result_syringe = await fetchApi(link_syringe);
-        const body_syringe = await result_syringe.text();
-        const loadedCheerio_syringe = parseHTML(body_syringe);
-        chapterText = loadedCheerio_syringe('.entry-content').html()!;
-        break;
-      case url.includes('travistranslations'):
-        chapterText = loadedCheerio('.reader-content').html()!;
-        break;
-      case url.includes('tumblr'):
-        chapterText = loadedCheerio('.post').html()!;
-        break;
-      case url.includes('wattpad'):
-        chapterText = loadedCheerio('.container  pre').html()!;
-        break;
-      case url.includes('webnovel'):
-        chapterText = loadedCheerio('.cha-words').html()!;
-        if (!chapterText) {
-          chapterText = loadedCheerio('._content').html()!;
-        }
-        break;
-      case isWordPress:
-        /**
-         * Remove wordpress bloat tags
-         */
-        const bloatClasses = [
-          '#comments',
-          '#madara-comments',
-          '.author-avatar',
-          '.c-ads',
-          '.content-comments',
-          '.ezoic-ad',
-          '.post-cats',
-          '.sharedaddy',
-          '.sidebar',
-          '.wp-block-buttons',
-          '.wp-block-columns',
-          '.wp-dark-mode-switcher',
-          '.wp-next-post-navi',
-        ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
-        chapterText =
-          loadedCheerio('.entry-content').html() ||
-          loadedCheerio('.single_post').html() ||
-          loadedCheerio('.post-entry').html() ||
-          loadedCheerio('.main-content').html() ||
-          loadedCheerio('article.post').html() ||
-          loadedCheerio('.content').html() ||
-          loadedCheerio('#content').html() ||
-          loadedCheerio('.page-body').html() ||
-          loadedCheerio('.td-page-content').html()!;
-        break;
-      case url.includes('wuxiaworld'):
-        chapterText = loadedCheerio('#chapter-content').html()!;
-        break;
-      default:
-        /**
-         * Remove unnecessary tags
-         */
-        const tags = ['nav', 'header', 'footer', '.hidden'];
-
-        tags.map(tag => loadedCheerio(tag).remove());
-
-        chapterText = loadedCheerio('body').html()!;
-        break;
+    if (isAnomalously) {
+      chapterText = loadedCheerio('#comic').html()!;
+    } else if (isBlogspot) {
+      loadedCheerio('.post-share-buttons').remove();
+      chapterText =
+        loadedCheerio('.entry-content').html() ||
+        loadedCheerio('.post-body').html()!;
+    } else if (isBlossomTranslation) {
+      chapterText = loadedCheerio('.manga-child-content').html()!;
+    } else if (isGemNovels) {
+      chapterText = loadedCheerio('.prevent-select').html()!;
+    } else if (isHostedNovel) {
+      chapterText = loadedCheerio('.chapter').html()!;
+    } else if (isIppoTranslations) {
+      chapterText = loadedCheerio('.entry-content').html()!;
+    } else if (isINovelTranslation) {
+      const link = 'https://api.' + result.url.slice(8);
+      const json = await fetchApi(link).then(r => r.json());
+      chapterText = json.content.replace(/\n/g, '<br>');
+      if (json.notes) {
+        chapterText +=
+          '<br><hr><br>TL Notes:<br>' + json.notes.replace(/\n/g, '<br>');
+      }
+    } else if (isKofi) {
+      chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
+        .html()
+        ?.match(/shadowDom\.innerHTML \+= '(<div.*?)';/)![1]!;
+    } else if (isLightNovelsTls) {
+      chapterText = loadedCheerio('.text_story').html()!;
+    } else if (isRaeiTranslation) {
+      const parts = result.url.split('/');
+      const link = `${parts[0]}//api.${parts[2]}/api/chapters/?id=${parts[3]}&num=${parts[4]}`;
+      const json = await fetchApi(link).then(r => r.json());
+      chapterText =
+        json.currentChapter.head +
+        `<br><hr><br>` +
+        json.currentChapter.body +
+        `<br><hr><br>Translator's Note:<br>` +
+        json.currentChapter.note;
+      chapterText = chapterText.replace(/\n/g, '<br>');
+    } else if (isRainOfSnow) {
+      chapterText = loadedCheerio('div.content').html()!;
+    } else if (isScribbleHub) {
+      chapterText = loadedCheerio('div.chp_raw').html()!;
+    } else if (isStabbingWithASyringe) {
+      /**
+       * Get the chapter link from the main page
+       */
+      const link = loadedCheerio('.entry-content a').attr('href')!;
+      const result = await fetchApi(link);
+      const body = await result.text();
+      const loadedCheerio_syringe = parseHTML(body);
+      chapterText = loadedCheerio_syringe('.entry-content').html()!;
+    } else if (isShanghaiFantasy) {
+      chapterText = loadedCheerio('.contenta').html()!;
+    } else if (isTravisTranslation) {
+      chapterText = loadedCheerio('.reader-content').html()!;
+    } else if (isTumblr) {
+      chapterText = loadedCheerio('.post').html()!;
+    } else if (isWattpad) {
+      chapterText = loadedCheerio('.container  pre').html()!;
+    } else if (isWebNovel) {
+      chapterText = loadedCheerio('.cha-words').html()!;
+      if (!chapterText) {
+        chapterText = loadedCheerio('._content').html()!;
+      }
+    } else if (isWordPress) {
+      const bloatClasses = [
+        '#madara-comments',
+        '#comments',
+        '.author-avatar',
+        '.c-ads',
+        '.content-comments',
+        '.ezoic-ad',
+        '.post-cats',
+        '.sharedaddy',
+        '.sidebar',
+        '.wp-block-buttons',
+        '.wp-dark-mode-switcher',
+        '.wp-next-post-navi',
+      ];
+      bloatClasses.map(tag => loadedCheerio(tag).remove());
+      chapterText =
+        loadedCheerio('.entry-content').html() ||
+        loadedCheerio('.single_post').html() ||
+        loadedCheerio('.post-entry').html() ||
+        loadedCheerio('.main-content').html() ||
+        loadedCheerio('article.post').html() ||
+        loadedCheerio('.content').html() ||
+        loadedCheerio('#content').html() ||
+        loadedCheerio('.page-body').html() ||
+        loadedCheerio('.td-page-content').html()!;
+    } else if (isWuxiaWorld) {
+      chapterText = loadedCheerio('#chapter-content').html()!;
+    } else {
+      const tags = ['nav', 'header', 'footer', '.hidden'];
+      tags.map(tag => loadedCheerio(tag).remove());
+      chapterText = loadedCheerio('body').html()!;
     }
 
     if (chapterText) {
