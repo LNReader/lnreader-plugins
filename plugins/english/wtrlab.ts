@@ -7,7 +7,7 @@ class WTRLAB implements Plugin.PluginBase {
   id = 'WTRLAB';
   name = 'WTR-LAB';
   site = 'https://wtr-lab.com/';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/wtrlab/icon.png';
   sourceLang = 'en/';
 
