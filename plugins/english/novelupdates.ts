@@ -280,19 +280,19 @@ class NovelUpdates implements Plugin.PluginBase {
          * Remove wordpress bloat tags
          */
         const bloatClasses = [
-          '.c-ads',
-          '#madara-comments',
           '#comments',
+          '#madara-comments',
+          '.author-avatar',
+          '.c-ads',
           '.content-comments',
+          '.ezoic-ad',
+          '.post-cats',
           '.sharedaddy',
-          '.wp-dark-mode-switcher',
-          '.wp-next-post-navi',
+          '.sidebar',
           '.wp-block-buttons',
           '.wp-block-columns',
-          '.post-cats',
-          '.sidebar',
-          '.author-avatar',
-          '.ezoic-ad',
+          '.wp-dark-mode-switcher',
+          '.wp-next-post-navi',
         ];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterText =
