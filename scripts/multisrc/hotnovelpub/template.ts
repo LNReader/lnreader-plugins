@@ -2,7 +2,6 @@ import { fetchFile, fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 export interface HotNovelPubMetadata {
@@ -30,10 +29,10 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   constructor(metadata: HotNovelPubMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/hotnovelpub/icons/${metadata.id}.png`;
+    this.icon = `multisrc/hotnovelpub/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     this.apiSite = metadata.sourceSite.replace('://', '://api.');
-    this.version = '1.0.0';
+    this.version = '1.0.1';
     this.filters = metadata.filters;
     this.lang = metadata.options?.lang || 'en';
   }
@@ -50,20 +49,19 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
 
     url += '/?page=' + (pageNo - 1) + '&limit=20';
 
-    const result = await fetchApi(url, {
+    const result: responseNovels = await fetchApi(url, {
       headers: {
         lang: this.lang,
       },
-    });
-    const json = (await result.json()) as responseNovels;
+    }).then(res => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    if (json.status && json.data.books.data?.length) {
-      json.data.books.data.forEach(novel =>
+    if (result.status && result.data.books.data?.length) {
+      result.data.books.data.forEach(novel =>
         novels.push({
           name: novel.name,
           cover: this.site + novel.image,
-          path: '/' + novel.slug,
+          path: novel.slug,
         }),
       );
     }
@@ -71,12 +69,14 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.apiSite + '/book' + novelPath, {
-      headers: {
-        lang: this.lang,
+    const json: responseNovel = await fetchApi(
+      this.apiSite + '/book/' + novelPath,
+      {
+        headers: {
+          lang: this.lang,
+        },
       },
-    });
-    const json = (await result.json()) as responseNovel;
+    ).then(res => res.json());
 
     const novel: Plugin.SourceNovel = {
       name: json.data.book.name,
@@ -99,7 +99,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
       json.data.chapters.forEach((chapter, chapterIndex) =>
         chapters.push({
           name: chapter.title,
-          path: '/' + chapter.slug,
+          path: chapter.slug,
           releaseTime: undefined,
           chapterNumber: (chapter.index || chapterIndex) + 1,
         }),
@@ -111,12 +111,13 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(res =>
+    const body = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
       res.text(),
     );
-    const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('#content-item').html() || '';
+    let chapterText =
+      body.match(/<div id="content-item" ([\s\S]*?)<\/div>/g)?.[0] || '';
+
     if (chapterText) {
       const result = await fetchApi(
         this.site + '/server/getContent?slug=' + chapterPath,
@@ -138,7 +139,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.apiSite + '/search', {
+    const result: responseSearch = await fetchApi(this.apiSite + '/search', {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         Referer: this.site,
@@ -147,16 +148,14 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
       },
       method: 'POST',
       body: JSON.stringify({ key_search: searchTerm }),
-    });
-    const json = (await result.json()) as responseSearch;
+    }).then(res => res.json());
     const novels: Plugin.NovelItem[] = [];
 
-    if (json.status && json.data.books?.length) {
-      json.data.books.forEach(novel =>
+    if (result.status && result.data.books?.length) {
+      result.data.books.forEach(novel =>
         novels.push({
           name: novel.name,
-          cover: undefined,
-          path: '/' + novel.slug,
+          path: novel.slug,
         }),
       );
     }
@@ -165,6 +164,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + '/' + path;
 }
 
 interface responseNovels {

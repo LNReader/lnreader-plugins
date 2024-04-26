@@ -143,7 +143,7 @@ class RLIB implements Plugin.PluginBase {
     if (chaptersJSON.data.length) {
       const chapters: Plugin.ChapterItem[] = [];
 
-      chaptersJSON.data.forEach((chapter: any) =>
+      chaptersJSON.data.forEach(chapter =>
         chapters.push({
           name:
             'Том ' +

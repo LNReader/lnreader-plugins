@@ -261,7 +261,7 @@ class NovelUpdates implements Plugin.PluginBase {
       const parts = result.url.split('/');
       const link = `${parts[0]}//api.${parts[2]}/api/chapters/?id=${parts[3]}&num=${parts[4]}`;
       const json = await fetchApi(link).then(r => r.json());
-      chapterText = 
+      chapterText =
         json.currentChapter.head +
         `<br><hr><br>` +
         json.currentChapter.body +
