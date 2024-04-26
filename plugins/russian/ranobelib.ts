@@ -133,7 +133,7 @@ class RLIB implements Plugin.PluginBase {
       );
     }
 
-    const chaptersJSON: { data: DataClass[] } = await fetchApi(
+    const chaptersJSON: { data: DataChapter[] } = await fetchApi(
       this.apiSite + novelPath + '/chapters',
       {
         headers: this.user?.token,
@@ -649,4 +649,23 @@ interface Meta {
   has_next_page?: boolean;
   seed?: string;
   country?: string;
+}
+
+interface DataChapter {
+  id: number;
+  index: number;
+  item_number: number;
+  volume: string;
+  number: string;
+  number_secondary: string;
+  name: string;
+  branches_count: number;
+  branches: Branch[];
+}
+interface BranchesEntity {
+  id: number;
+  branch_id?: number;
+  created_at: string;
+  teams?: (BranchTeam)[];
+  user: User;
 }

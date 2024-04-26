@@ -9,6 +9,7 @@
         "json": "tsc && node ./.js/scripts/json_plugins.js",
         "generate": "ts-node ./scripts/multisrc/generate.ts",
         "clearMultisrc": "find . -type f -wholename \"*plugins*\\[*\\]*.[t,j]s\" -delete",
+        "icon": "tsc && node ./.js/scripts/icon_reloading.js",
         "less": "npx less ./test_web/static/css/index.less ./test_web/static/css/index.css",
         "host-linux": "chmod +x ./host.sh && ./host.sh",
         "host-windows": "powershell ./host.ps1",
