@@ -169,8 +169,8 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterText = '';
 
     const result = await fetchApi(this.site + chapterPath);
-    const url = result.url.toLowerCase();
     const body = await result.text();
+    const url = result.url.toLowerCase();
 
     // console.log(result.url);
 
@@ -218,6 +218,9 @@ class NovelUpdates implements Plugin.PluginBase {
             json_inovel.notes.replace(/\n/g, '<br>');
         }
         break;
+      case url.includes('ippotranslations'):
+        chapterText = loadedCheerio('.entry-content').html()!;
+        break;
       case url.includes('ko-fi'):
         chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
           .html()
@@ -232,9 +235,9 @@ class NovelUpdates implements Plugin.PluginBase {
         const json_raei = await fetchApi(link_raei).then(r => r.json());
         chapterText =
           json_raei.currentChapter.head +
-          `<br><hr><br>` +
+          '<br><hr><br>' +
           json_raei.currentChapter.body +
-          `<br><hr><br>Translator's Note:<br>` +
+          "<br><hr><br>Translator's Note:<br>" +
           json_raei.currentChapter.note;
         chapterText = chapterText.replace(/\n/g, '<br>');
         break;
@@ -243,6 +246,9 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       case url.includes('scribblehub'):
         chapterText = loadedCheerio('div.chp_raw').html()!;
+        break;
+      case url.includes('shanghaifantasy'):
+        chapterText = loadedCheerio('.contenta').html()!;
         break;
       case url.includes('stabbingwithasyringe'):
         /**
