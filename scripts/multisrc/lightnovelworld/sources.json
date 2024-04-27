@@ -13,5 +13,10 @@
         "id": "lightnovelpubvip",
         "sourceName": "LightNovelPub Vip",
         "sourceSite": "https://lightnovelpub.vip/"
+    },
+    {
+        "id": "lightnovelcave",
+        "sourceName": "LightNovelCave",
+        "sourceSite": "https://www.lightnovelcave.com/"
     }
 ]
