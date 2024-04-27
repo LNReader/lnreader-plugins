@@ -23,5 +23,10 @@
     "id": "fannovel",
     "sourceSite": "https://www.fannovel.com",
     "sourceName": "FanNovel"
+  },
+  {
+    "id": "wuxiaspace",
+    "sourceSite": "https://www.wuxiaspace.com",
+    "sourceName": "Wuxia Space"
   }
 ]
