@@ -166,6 +166,9 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
+    let chapterTitle = '';
+    let chapterSubtitle = '';
+    let chapterContent = '';
     let chapterText = '';
 
     const result = await fetchApi(this.site + chapterPath);
@@ -180,17 +183,21 @@ class NovelUpdates implements Plugin.PluginBase {
 
     let isAnomalously = url.includes('anotivereads');
 
-    let isBlogspot = url.includes('blogspot');
+    let isAssedTL = url.includes('one-fourthassed');
 
     let isBlossomTranslation = url.includes('blossomtranslation');
 
-    let isGemNovels = url.includes('gemnovels');
+    let isGenesisTranslations = url.includes('genesistls');
+
+    let isHiraethTranslations = url.includes('hiraethtranslation');
 
     let isHostedNovel = url.includes('hostednovel');
 
     let isIppoTranslations = url.includes('ippotranslations');
 
     let isINovelTranslation = url.includes('inoveltranslation');
+
+    let isKofi = url.includes('ko-fi');
 
     let isLightNovelsTls = url.includes('lightnovelstranslations');
 
@@ -199,8 +206,6 @@ class NovelUpdates implements Plugin.PluginBase {
     let isRainOfSnow = url.includes('rainofsnow');
 
     let isScribbleHub = url.includes('scribblehub');
-
-    let isShanghaiFantasy = url.includes('shanghaifantasy');
 
     let isStabbingWithASyringe = url.includes('stabbingwithasyringe');
 
@@ -212,13 +217,17 @@ class NovelUpdates implements Plugin.PluginBase {
 
     let isWebNovel = url.includes('webnovel');
 
-    let isWordPressStr =
-      loadedCheerio('meta[name="generator"]').attr('content') ||
-      loadedCheerio('footer').text();
-
     let isWuxiaWorld = url.includes('wuxiaworld');
 
-    let isKofi = url.includes('ko-fi');
+    /**
+     * Generators are last
+     */
+    let isBlogspot = url.includes('blogspot');
+
+    let isWordPressStr =
+      loadedCheerio('#dcl_comments-js-extra').html()! ||
+      loadedCheerio('meta[name="generator"]').attr('content') ||
+      loadedCheerio('footer').text();
 
     let isWordPress = false;
     if (isWordPressStr) {
@@ -226,20 +235,54 @@ class NovelUpdates implements Plugin.PluginBase {
         isWordPressStr.toLowerCase().includes('wordpress') ||
         isWordPressStr.includes('Site Kit by Google') ||
         loadedCheerio('.powered-by').text().toLowerCase().includes('wordpress');
-      console.log('isWordPress: ', isWordPress);
     }
+    /**
+     * Blogspot Novels:
+     * - AsuraTls
+     * - Novel World Translations
+     * - SacredText Translation
+     *
+     * WordPress Novels:
+     * - A Novel Reader Attempts Translating
+     * - Arcane Translations
+     * - Dumah's Translations
+     * - ElloTL
+     * - Gem Novels Translations
+     * - Genesis Translations (modified)
+     * - Goblinslate
+     * - Hel Scans
+     * - JATranslations
+     * - Neosekai Translations
+     * - Shanghai Fantasy
+     * - Soafp Translations
+     * - Stone Scape
+     * - Tiny Translation
+     * - Yong Library
+     * - Zetro Translation
+     */
 
     if (isAnomalously) {
-      chapterText = loadedCheerio('#comic').html()!;
-    } else if (isBlogspot) {
-      loadedCheerio('.post-share-buttons').remove();
-      chapterText =
-        loadedCheerio('.entry-content').html() ||
-        loadedCheerio('.post-body').html()!;
+      chapterTitle = loadedCheerio('#comic-nav-name').html()!;
+      chapterContent = loadedCheerio('#spliced-comic').html()!;
+      chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+    } else if (isAssedTL) {
+      chapterTitle = loadedCheerio('h1.entry-title').text()!;
+      chapterContent = loadedCheerio('.entry-content').html()!;
+      chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
     } else if (isBlossomTranslation) {
       chapterText = loadedCheerio('.manga-child-content').html()!;
-    } else if (isGemNovels) {
-      chapterText = loadedCheerio('.prevent-select').html()!;
+    } else if (isGenesisTranslations) {
+      chapterTitle = loadedCheerio('.entry-title').text()!;
+      chapterContent = loadedCheerio('.entry-content').html()!;
+      chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+    } else if (isHiraethTranslations) {
+      chapterTitle = loadedCheerio('li.active').text()!;
+      chapterContent = loadedCheerio('.text-left').html()!;
+      let firstH2Element = loadedCheerio('.text-left h2').first();
+      if (firstH2Element.length) {
+        firstH2Element.remove();
+      }
+      chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
     } else if (isHostedNovel) {
       chapterText = loadedCheerio('.chapter').html()!;
     } else if (isIppoTranslations) {
@@ -280,10 +323,18 @@ class NovelUpdates implements Plugin.PluginBase {
       const link = loadedCheerio('.entry-content a').attr('href')!;
       const result = await fetchApi(link);
       const body = await result.text();
-      const loadedCheerio_syringe = parseHTML(body);
-      chapterText = loadedCheerio_syringe('.entry-content').html()!;
-    } else if (isShanghaiFantasy) {
-      chapterText = loadedCheerio('.contenta').html()!;
+      const loadedCheerioChapter = parseHTML(body);
+      chapterContent = loadedCheerioChapter('.entry-content').html()!;
+      let loadedCheerioSyringe = parseHTML(chapterContent);
+      let titleElement = loadedCheerioSyringe('h3').first();
+      if (titleElement.length) {
+        chapterTitle = titleElement.text();
+        titleElement.remove();
+        chapterContent = loadedCheerioSyringe.html()!;
+        chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+      } else {
+        chapterText = chapterContent;
+      }
     } else if (isTravisTranslation) {
       chapterText = loadedCheerio('.reader-content').html()!;
     } else if (isTumblr) {
@@ -295,23 +346,67 @@ class NovelUpdates implements Plugin.PluginBase {
       if (!chapterText) {
         chapterText = loadedCheerio('._content').html()!;
       }
+    } else if (isWuxiaWorld) {
+      chapterText = loadedCheerio('#chapter-content').html()!;
+    } /**
+     * Generators are last
+     */ else if (isBlogspot) {
+      const bloatClasses = ['.post-share-buttons', '.separator'];
+      bloatClasses.map(tag => loadedCheerio(tag).remove());
+      chapterTitle =
+        loadedCheerio('.entry-title').html() ||
+        loadedCheerio('.post-title').html() ||
+        '';
+      chapterContent =
+        loadedCheerio('.entry-content').html() ||
+        loadedCheerio('.post-body').html()!;
+      if (chapterTitle) {
+        chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+      } else {
+        let loadedCheerioBlogspot = parseHTML(chapterContent);
+        let titleElement = loadedCheerioBlogspot('b').first();
+        if (titleElement.length) {
+          chapterTitle = titleElement.text();
+          titleElement.remove();
+          chapterContent = loadedCheerioBlogspot.html()!;
+          chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+        } else {
+          chapterText = chapterContent;
+        }
+      }
     } else if (isWordPress) {
       const bloatClasses = [
-        '#madara-comments',
-        '#comments',
         '.author-avatar',
         '.c-ads',
+        '.code-block',
         '.content-comments',
         '.ezoic-ad',
+        '.mb-center',
         '.post-cats',
+        '.pre-bar',
         '.sharedaddy',
         '.sidebar',
         '.wp-block-buttons',
         '.wp-dark-mode-switcher',
         '.wp-next-post-navi',
+        '#madara-comments',
+        '#comments',
+        '#google_translate_element',
       ];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
-      chapterText =
+      chapterTitle =
+        loadedCheerio('.entry-title').html() ||
+        loadedCheerio('.entry-title-main').html() ||
+        loadedCheerio('.sp-title').html() ||
+        loadedCheerio('.title-content').html() ||
+        loadedCheerio('.wp-block-post-title').html() ||
+        loadedCheerio('li.active').html() ||
+        loadedCheerio('.border-teal-600.dark\\:border-rose-700').html() ||
+        '';
+      chapterSubtitle = loadedCheerio('.cat-series').html() || '';
+      chapterContent =
+        loadedCheerio('.rdminimal').html() ||
+        loadedCheerio('.text-left').html() ||
         loadedCheerio('.entry-content').html() ||
         loadedCheerio('.single_post').html() ||
         loadedCheerio('.post-entry').html() ||
@@ -319,10 +414,25 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('article.post').html() ||
         loadedCheerio('.content').html() ||
         loadedCheerio('#content').html() ||
+        loadedCheerio('.contenta').html() ||
         loadedCheerio('.page-body').html() ||
-        loadedCheerio('.td-page-content').html()!;
-    } else if (isWuxiaWorld) {
-      chapterText = loadedCheerio('#chapter-content').html()!;
+        loadedCheerio('.td-page-content').html() ||
+        loadedCheerio('.prevent-select').html()!;
+      let loadedCheerioWordPress = parseHTML(chapterContent);
+      let titleElement = loadedCheerioWordPress('h2').first();
+      if (chapterTitle && !titleElement.length) {
+        if (chapterSubtitle) {
+          chapterText = `<div style="text-align:center"><h1>${chapterTitle} – ${chapterSubtitle}</h1></div><br>${chapterContent}`;
+        } else {
+          chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+        }
+      } else if (chapterTitle && titleElement.length) {
+        titleElement.remove();
+        chapterContent = loadedCheerioWordPress.html()!;
+        chapterText = `<div style="text-align:center"><h1>${chapterTitle}</h1></div><br>${chapterContent}`;
+      } else {
+        chapterText = chapterContent;
+      }
     } else {
       const tags = ['nav', 'header', 'footer', '.hidden'];
       tags.map(tag => loadedCheerio(tag).remove());
