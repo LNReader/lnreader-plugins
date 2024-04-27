@@ -187,8 +187,12 @@ class RLIB implements Plugin.PluginBase {
           volume,
         { headers: this.user?.token },
       ).then(res => res.json());
-      chapterText = result?.data?.content || '';
+      chapterText =
+        result?.data?.content?.type == 'doc'
+          ? jsonToHtml(result.data.content.content)
+          : result?.data?.content;
     }
+
     return chapterText;
   }
 
@@ -238,7 +242,7 @@ class RLIB implements Plugin.PluginBase {
   getUser = () => {
     const user = storage.get(this.id, 'user');
     if (user) {
-      return { token: { Authorization: 'Bearer ' + user?.token }, ui: user.id };
+      return { token: { Authorization: 'Bearer ' + user.token }, ui: user.id };
     }
     const dataRaw = localStorage.get(this.id)?.auth;
     if (!dataRaw) {
@@ -475,6 +479,53 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
+function jsonToHtml(json: HTML[], html: string = '') {
+  json.forEach(element => {
+    switch (element.type) {
+      case 'hardBreak':
+        html += '<br>';
+        break;
+      case 'horizontalRule':
+        html += '<hr>';
+        break;
+      case 'image':
+        if (element.attrs) {
+          const attrs = Object.entries(element.attrs)
+            .filter(attr => attr?.[1])
+            .map(attr => `${attr[0]}="${attr[1]}"`);
+          html += '<img ' + attrs.join('; ') + '>';
+        }
+        break;
+      case 'paragraph':
+        html +=
+          '<p>' +
+          (element.content ? jsonToHtml(element.content) : '<br>') +
+          '</p>';
+        break;
+      case 'text':
+        html += element.text;
+        break;
+      default:
+        html += JSON.stringify(element, null, '\t'); //maybe I missed something.
+        break;
+    }
+  });
+  return html;
+}
+
+interface HTML {
+  type: string;
+  content?: HTML[];
+  attrs?: Attrs;
+  text?: string;
+}
+
+interface Attrs {
+  src: string;
+  alt: string | null;
+  title: string | null;
+}
+
 interface authorization {
   token: Token;
   auth: Auth;
@@ -553,7 +604,7 @@ interface DataClass {
   cover?: Cover;
   ageRestriction?: AgeRestriction;
   site?: number;
-  type: AgeRestriction | string;
+  type: string;
   summary?: string;
   is_licensed?: boolean;
   teams: DataTeam[];
@@ -573,7 +624,7 @@ interface DataClass {
   created_at?: string;
   moderated?: AgeRestriction;
   likes_count?: number;
-  content?: string;
+  content?: any;
   attachments?: Attachment[];
 }
 
@@ -666,6 +717,6 @@ interface BranchesEntity {
   id: number;
   branch_id?: number;
   created_at: string;
-  teams?: (BranchTeam)[];
+  teams?: BranchTeam[];
   user: User;
 }
