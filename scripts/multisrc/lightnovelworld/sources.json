@@ -3,5 +3,10 @@
         "id": "webnovelworld",
         "sourceName": "Web Novel Pub",
         "sourceSite": "https://www.webnovelworld.org/"
+    }, 
+    {
+        "id": "lightnovelworld",
+        "sourceName": "LightNovelWord",
+        "sourceSite": "https://www.lightnovelworld.com/"
     }
 ]
