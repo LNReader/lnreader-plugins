@@ -426,26 +426,26 @@ class NovelUpdates implements Plugin.PluginBase {
           .text() ||
         '';
       chapterContent =
-        (loadedCheerio('.entry-content h2.wp-block-heading').first().remove() &&
-          loadedCheerio('.text_story h2').first().remove() &&
-          loadedCheerio('.title-content').first().remove() &&
-          loadedCheerio('.text-left h2 em span').first().remove() &&
-          loadedCheerio('.rdminimal').html()) ||
-        loadedCheerio('.text_story').html() ||
-        loadedCheerio('.text-left').html() ||
-        loadedCheerio('.entry-content').html() ||
-        loadedCheerio('.single_post').html() ||
-        loadedCheerio('.post-entry').html() ||
-        loadedCheerio('.main-content').html() ||
-        loadedCheerio('article.post').html() ||
-        loadedCheerio('.content').html() ||
-        loadedCheerio('#content').html() ||
-        loadedCheerio('.reader-content').html() ||
-        loadedCheerio('.contenta').html() ||
-        loadedCheerio('.page-body').html() ||
-        loadedCheerio('.td-page-content').html() ||
-        loadedCheerio('.prevent-select').html() ||
-        loadedCheerio('.chapter__content').html()!;
+        loadedCheerio('.entry-content h2.wp-block-heading').first().remove() &&
+        loadedCheerio('.text_story h2').first().remove() &&
+        loadedCheerio('.title-content').first().remove() &&
+        loadedCheerio('.text-left h2 em span').first().remove() &&
+        (loadedCheerio('.rdminimal').html() ||
+          loadedCheerio('.text_story').html() ||
+          loadedCheerio('.text-left').html() ||
+          loadedCheerio('.entry-content').html() ||
+          loadedCheerio('.single_post').html() ||
+          loadedCheerio('.post-entry').html() ||
+          loadedCheerio('.main-content').html() ||
+          loadedCheerio('article.post').html() ||
+          loadedCheerio('.content').html() ||
+          loadedCheerio('#content').html() ||
+          loadedCheerio('.reader-content').html() ||
+          loadedCheerio('.contenta').html() ||
+          loadedCheerio('.page-body').html() ||
+          loadedCheerio('.td-page-content').html() ||
+          loadedCheerio('.prevent-select').html() ||
+          loadedCheerio('.chapter__content').html()!);
       if (chapterSubtitle) {
         chapterTitle = `${chapterTitle} | ${chapterSubtitle}`;
       }
