@@ -171,7 +171,7 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const result = await fetchApi(chapterPath);
+    const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
     const url = result.url.toLowerCase();
 
