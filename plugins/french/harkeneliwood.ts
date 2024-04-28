@@ -64,8 +64,8 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
     novel.name = $('#content h1.entry-title').text().trim();
     novel.cover =
       $('#content .entry-content p img').first().attr('src') || defaultCover;
-    novel.summary = await this.getSummary($('#content .entry-content').text());
-    novel.author = await this.getAuthor($('#content .entry-content').text());
+    novel.summary = this.getSummary($('#content .entry-content').text());
+    novel.author = this.getAuthor($('#content .entry-content').text());
     novel.status = NovelStatus.Ongoing;
     let chapters: Plugin.ChapterItem[] = [];
     $('#content .entry-content p a').each((i, elem) => {
@@ -87,7 +87,7 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
     return novel;
   }
 
-  async getSummary(text: string): Promise<string> {
+  getSummary(text: string) {
     let resume: string = '';
     const regexResume1: RegExp = /Synopsis :([\s\S]*)Traduction anglaise/i;
     const regexResume2: RegExp = /Synopsis :([\s\S]*)Raw :/i;
@@ -127,7 +127,7 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
     return resume.trim();
   }
 
-  async getAuthor(text: string): Promise<string> {
+  getAuthor(text: string) {
     const regexAuteur = /Auteur\s*:\s*(.*?)\s*(?:\r?\n|$)/i;
     const match = regexAuteur.exec(text);
 
