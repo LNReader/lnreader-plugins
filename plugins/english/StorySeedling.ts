@@ -8,7 +8,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   name = 'StorySeedling';
   icon = 'src/en/storyseedling/icon.png';
   site = 'https://storyseedling.com/';
-  version = '1.0.0';
+  version = '1.0.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     let novels: Plugin.NovelItem[] = [];
