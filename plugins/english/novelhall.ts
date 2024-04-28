@@ -7,7 +7,7 @@ import { defaultCover } from '@libs/defaultCover';
 class NovelHall implements Plugin.PluginBase {
   id = 'novelhall';
   name = 'Novel Hall';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/novelhall/icon.png';
   filters?: Filters | undefined; //TODO: Filters Requires hideOnSelect
   site = 'https://novelhall.com/';
