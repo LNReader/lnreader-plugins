@@ -27,7 +27,10 @@ const generator = function generator(source: LightNovelWPMetadata) {
   );
 
   const pluginScript = `
-${LightNovelWPTemplate}
+${LightNovelWPTemplate.replace(
+  '// CustomJS HERE',
+  source.options?.customJs || '',
+)}
 const plugin = new LightNovelWPPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();

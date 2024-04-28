@@ -1,0 +1,296 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        {
+          "label": "Adult",
+          "value": "adult"
+        },
+        {
+          "label": "Adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "Amnesia",
+          "value": "amnesia"
+        },
+        {
+          "label": "Childcare",
+          "value": "childcare"
+        },
+        {
+          "label": "Comedy",
+          "value": "comedy"
+        },
+        {
+          "label": "Drama",
+          "value": "drama"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "fantasy of",
+          "value": "fantasy-of"
+        },
+        {
+          "label": "Fate",
+          "value": "fate"
+        },
+        {
+          "label": "Fiction",
+          "value": "fiction"
+        },
+        {
+          "label": "Gender Bender",
+          "value": "gender-bender"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "Historical",
+          "value": "historical"
+        },
+        {
+          "label": "Horror",
+          "value": "horror"
+        },
+        {
+          "label": "Idol",
+          "value": "idol"
+        },
+        {
+          "label": "Josei",
+          "value": "josei"
+        },
+        {
+          "label": "Magic",
+          "value": "magic"
+        },
+        {
+          "label": "Martial Arts",
+          "value": "martial-arts"
+        },
+        {
+          "label": "Mature",
+          "value": "mature"
+        },
+        {
+          "label": "Mecha",
+          "value": "mecha"
+        },
+        {
+          "label": "Modern",
+          "value": "modern"
+        },
+        {
+          "label": "Mystery",
+          "value": "mystery"
+        },
+        {
+          "label": "Psychological",
+          "value": "psychological"
+        },
+        {
+          "label": "Rebirth",
+          "value": "rebirth"
+        },
+        {
+          "label": "Revenge",
+          "value": "revenge"
+        },
+        {
+          "label": "Rofan",
+          "value": "rofan"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "Romance Fantasy",
+          "value": "romance-fantasy"
+        },
+        {
+          "label": "Romantic Comedy",
+          "value": "romantic-comedy"
+        },
+        {
+          "label": "Royalty",
+          "value": "royalty"
+        },
+        {
+          "label": "School Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "sci-fi"
+        },
+        {
+          "label": "Shoujo",
+          "value": "shoujo"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Shounen Ai",
+          "value": "shounen-ai"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
+        },
+        {
+          "label": "Smut",
+          "value": "smut"
+        },
+        {
+          "label": "Supernatural",
+          "value": "supernatural"
+        },
+        {
+          "label": "Suspense",
+          "value": "suspense"
+        },
+        {
+          "label": "Tragedy",
+          "value": "tragedy"
+        },
+        {
+          "label": "Transmigration",
+          "value": "transmigration"
+        },
+        {
+          "label": "Xianxia",
+          "value": "xianxia"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "xuanhuan"
+        },
+        {
+          "label": "Yaoi",
+          "value": "yaoi"
+        },
+        {
+          "label": "Younger Man",
+          "value": "younger-man"
+        },
+        {
+          "label": "Yuri",
+          "value": "yuri"
+        }
+      ]
+    },
+    "type[]": {
+      "type": "Checkbox",
+      "label": "Type",
+      "value": [],
+      "options": [
+        {
+          "label": "Chinese",
+          "value": "chinese"
+        },
+        {
+          "label": "Indonesian",
+          "value": "indonesian"
+        },
+        {
+          "label": "Japanese",
+          "value": "japanese"
+        },
+        {
+          "label": "Korean",
+          "value": "korean"
+        },
+        {
+          "label": "Original",
+          "value": "original"
+        },
+        {
+          "label": "Web Novel",
+          "value": "web-novel"
+        },
+        {
+          "label": "Web Novel (KR)",
+          "value": "web-novel-kr"
+        },
+        {
+          "label": "Webnovel",
+          "value": "webnovel"
+        }
+      ]
+    },
+    "status": {
+      "type": "Picker",
+      "label": "Status",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "Ongoing",
+          "value": "ongoing"
+        },
+        {
+          "label": "Hiatus",
+          "value": "hiatus"
+        },
+        {
+          "label": "Completed",
+          "value": "completed"
+        }
+      ]
+    },
+    "order": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Default",
+          "value": ""
+        },
+        {
+          "label": "A-Z",
+          "value": "title"
+        },
+        {
+          "label": "Z-A",
+          "value": "titlereverse"
+        },
+        {
+          "label": "Latest Update",
+          "value": "update"
+        },
+        {
+          "label": "Latest Added",
+          "value": "latest"
+        },
+        {
+          "label": "Popular",
+          "value": "popular"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
+        }
+      ]
+    }
+  }
+}

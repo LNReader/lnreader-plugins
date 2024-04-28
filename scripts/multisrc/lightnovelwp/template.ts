@@ -9,6 +9,8 @@ interface LightNovelWPOptions {
   reverseChapters?: boolean;
   lang?: string;
   versionIncrements?: number;
+  seriesPath?: string;
+  customJs?: string;
 }
 
 export interface LightNovelWPMetadata {
@@ -35,12 +37,15 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
     this.version = `1.0.${4 + versionIncrements}`;
-    this.options = metadata.options;
+    this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
 
   getHostname(url: string): string {
-    return url.split('/')[2];
+    url = url.split('/')[2];
+    let url_parts = url.split('.');
+    url_parts.pop(); // remove TLD
+    return url_parts.join('.');
   }
 
   async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
@@ -90,7 +95,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
       showLatestNovels,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/series/?page=' + pageNo;
+    const seriesPath = this.options?.seriesPath ?? '/series/';
+    let url = this.site + seriesPath + '?page=' + pageNo;
     if (!filters) filters = {};
     if (showLatestNovels) url += '&order=latest';
     for (const key in filters) {
@@ -249,10 +255,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
-    if (this.id == 'kolnovel') {
-      let ignore = $('article > style').text().trim().split(',');
-      ignore.push(...(ignore.pop()?.match(/^\.\w+/) || []));
-      ignore.map(tag => $(`p${tag}`).remove());
+    try {
+      // CustomJS HERE
+    } catch (error) {
+      console.error('Error executing customJs:', error);
+      throw error;
     }
     return (
       $('.epcontent p')
