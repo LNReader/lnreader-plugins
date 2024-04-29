@@ -315,6 +315,8 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h1>${chapterTitle}</h1><br>${chapterContent}`;
         break;
       case 'wuxiaworld':
+        bloatClasses = ['.MuiLink-root'];
+        bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterTitle = loadedCheerio('h4 span').first().text()!;
         chapterContent = loadedCheerio('.chapter-content').html()!;
         chapterText = `<h1>${chapterTitle}</h1><br>${chapterContent}`;
@@ -365,6 +367,7 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     const outliers = [
+      'anotivereads',
       'asuratls',
       'novelworldtranslations',
       'sacredtexttranslations',
@@ -384,6 +387,7 @@ class NovelUpdates implements Plugin.PluginBase {
      *
      * WordPress Novels:
      * - A Novel Reader Attempts Translating
+     * - Anomalously Creative (Outlier)
      * - Arcane Translations
      * - Blossom Translation
      * - Dumah's Translations
