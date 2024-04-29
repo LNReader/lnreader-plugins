@@ -84,7 +84,10 @@ class MadaraPlugin implements Plugin.PluginBase {
           '';
         if (!novelName || !novelUrl) return;
         const image = loadedCheerio(element).find('img');
-        const novelCover = image.attr('data-src') || image.attr('src');
+        const novelCover =
+          image.attr('data-src') ||
+          image.attr('src') ||
+          image.attr('data-lazy-srcset');
         const novel: Plugin.NovelItem = {
           name: novelName,
           cover: novelCover,
@@ -132,7 +135,6 @@ class MadaraPlugin implements Plugin.PluginBase {
     novel.cover =
       loadedCheerio('.summary_image > a > img').attr('data-lazy-src') ||
       loadedCheerio('.summary_image > a > img').attr('data-src') ||
-      loadedCheerio('.summary_image > a > img').attr('src') ||
       loadedCheerio('.summary_image > a > img').attr('src') ||
       defaultCover;
 

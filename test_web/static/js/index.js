@@ -856,11 +856,23 @@ class PluginWrapper {
       }
       novel_item.replaceWith(novel_data);
 
-      if (
-        sourceNovel?.chapters?.length !==
-        new Set(sourceNovel?.chapters?.map(r => r.path) || []).size
-      ) {
-        alert('Chapter paths are the same!');
+      const chapterPaths = new Set();
+      const duplicatePaths = new Set();
+
+      sourceNovel?.chapters?.forEach(chapter => {
+        const path = chapter.path;
+        if (chapterPaths.has(path)) {
+          duplicatePaths.add(path);
+        } else {
+          chapterPaths.add(path);
+        }
+      });
+
+      if (duplicatePaths.size > 0) {
+        alert(
+          'Duplicate chapter paths found: ' +
+            Array.from(duplicatePaths).join(', '),
+        );
       }
 
       chapter_list.html('');
