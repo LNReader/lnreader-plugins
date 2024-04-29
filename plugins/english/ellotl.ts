@@ -283,7 +283,7 @@ class ElloTL implements Plugin.PluginBase {
         const parser = new Parser({
           onopentag(name, attribs) {
             if (attribs['class']?.includes('epheader')) {
-              chapterContent += '<' + 'h2' + '>';
+              chapterContent += `<h2>`;
               isParsingTitleBlock = true;
               isParsingTitle = true;
             }
@@ -294,11 +294,11 @@ class ElloTL implements Plugin.PluginBase {
               isParsingContent = true;
             }
             if (isParsingContent && !notContent) {
-              chapterContent += '<' + name;
+              chapterContent += `<${name}`;
               for (let attrib in attribs) {
                 chapterContent += ` ${attrib}="${attribs[attrib]}"`;
               }
-              chapterContent += '>';
+              chapterContent += `>`;
             }
             if (attribs['class']?.includes('mb-center')) {
               notContent = true;
@@ -324,11 +324,11 @@ class ElloTL implements Plugin.PluginBase {
               isParsingSubtitle = false;
             }
             if (isParsingTitleBlock && !isParsingTitle && !isParsingSubtitle) {
-              chapterContent += '</h2><br>';
+              chapterContent += `</h2><br>`;
               isParsingTitleBlock = false;
             }
             if (isParsingContent && !notContent) {
-              chapterContent += '</' + name + '>';
+              chapterContent += `</${name}>`;
             }
             if (notContent && name === 'span') {
               notContent = false;
