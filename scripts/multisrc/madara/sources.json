@@ -415,15 +415,6 @@
     }
   },
   {
-    "id": "meownovel",
-    "sourceSite": "https://meownovel.com/",
-    "sourceName": "Meownovel",
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
     "id": "galaxytranslations",
     "sourceSite": "https://galaxytranslations97.com/",
     "sourceName": "Galaxy Translations",
