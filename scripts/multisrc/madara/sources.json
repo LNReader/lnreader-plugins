@@ -386,5 +386,14 @@
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
+  },
+  {
+    "id": "dragontea",
+    "sourceSite": "https://dragontea.ink/",
+    "sourceName": "Dragon Tea",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
   }
 ]
