@@ -377,5 +377,14 @@
       "useNewChapterEndpoint": true,
       "lang": "Arabic"
     }
+  },
+  {
+    "id": "translatinotaku",
+    "sourceSite": "https://translatinotaku.net/",
+    "sourceName": "Translation Otaku",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
   }
 ]
