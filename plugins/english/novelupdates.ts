@@ -408,9 +408,9 @@ class NovelUpdates implements Plugin.PluginBase {
     if (!isWordPress && !isBlogspot) {
       chapterText = await this.getChapterBody(loadedCheerio, domain, url);
     } else if (isBlogspot) {
-    /**
-     * Generators are last
-     */
+      /**
+       * Generators are last
+       */
       bloatClasses = ['.button-container', '.separator'];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
       chapterTitle =
@@ -423,15 +423,22 @@ class NovelUpdates implements Plugin.PluginBase {
     } else if (isWordPress) {
       bloatClasses = [
         '.ad',
+        '.author-avatar',
         '.chapter-warning',
         '.entry-content .has-text-align-center',
         '.entry-meta',
+        '.ezoic-ad',
         '.mb-center',
         '.patreon-widget',
+        '.post-cats',
         '.pre-bar',
         '.sharedaddy',
+        '.sidebar',
         '.wp-block-buttons',
+        '.wp-block-columns',
         '.wp-block-image',
+        '.wp-dark-mode-switcher',
+        '.wp-next-post-navi',
         '#jp-post-flair',
         '#textbox',
       ];
@@ -453,7 +460,15 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.chapter__content').html() ||
         loadedCheerio('.prevent-select').html() ||
         loadedCheerio('.text_story').html() ||
-        loadedCheerio('.contenta').html()!;
+        loadedCheerio('.contenta').html() ||
+        loadedCheerio('.single_post').html() ||
+        loadedCheerio('.post-entry').html() ||
+        loadedCheerio('.main-content').html() ||
+        loadedCheerio('.content').html() ||
+        loadedCheerio('.page-body').html() ||
+        loadedCheerio('.td-page-content').html() ||
+        loadedCheerio('#content').html() ||
+        loadedCheerio('article.post').html()!;
       if (chapterSubtitle) {
         chapterTitle = `${chapterTitle} | ${chapterSubtitle}`;
       }
@@ -461,6 +476,9 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     if (!chapterText) {
+      /**
+       * Remove unnecessary tags
+       */
       const tags = ['nav', 'header', 'footer', '.hidden'];
       tags.map(tag => loadedCheerio(tag).remove());
       chapterText = loadedCheerio('body').html()!;
