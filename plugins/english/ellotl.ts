@@ -273,50 +273,67 @@ class ElloTL implements Plugin.PluginBase {
     return fetch(this.site + chapterPath)
       .then(res => res.text())
       .then(html => {
+        let isParsingTitleBlock = false;
+        let isParsingTitle = false;
+        let isParsingSubtitle = false;
         let isParsingContent = false;
         let chapterContent = '';
         let notContent = false;
+
         const parser = new Parser({
           onopentag(name, attribs) {
-            if (attribs['class']?.includes('epcontent' || 'entry-content')) {
+            if (attribs['class']?.includes('epheader')) {
+              chapterContent += `<h2>`;
+              isParsingTitleBlock = true;
+              isParsingTitle = true;
+            }
+            if (isParsingSubtitle) {
+              chapterContent += ' | ';
+            }
+            if (attribs['class']?.includes('entry-content')) {
               isParsingContent = true;
-              chapterContent += '<' + name;
-              for (let attrib in attribs) {
-                chapterContent += ` ${attrib}="${attribs[attrib]}"`;
-              }
-              chapterContent += '>';
-            }
-            if (
-              attribs['class']?.includes(
-                'wp-block-buttons' || 'wp-block-spacer' || 'wp-element-button',
-              )
-            ) {
-              notContent = true;
-            }
-            if (name === 'span' && attribs['class']?.includes('maxbutton')) {
-              notContent = true;
             }
             if (isParsingContent && !notContent) {
-              chapterContent += '<' + name;
+              chapterContent += `<${name}`;
               for (let attrib in attribs) {
                 chapterContent += ` ${attrib}="${attribs[attrib]}"`;
               }
-              chapterContent += '>';
+              chapterContent += `>`;
+            }
+            if (attribs['class']?.includes('mb-center')) {
+              notContent = true;
             }
           },
           ontext(data) {
+            if (isParsingTitle) {
+              chapterContent += data;
+            }
+            if (isParsingSubtitle) {
+              chapterContent += data;
+            }
             if (isParsingContent && !notContent) {
               chapterContent += data;
             }
           },
           onclosetag(name) {
+            if (isParsingTitle && name === 'h1') {
+              isParsingTitle = false;
+              isParsingSubtitle = true;
+            }
+            if (isParsingSubtitle && name === 'div') {
+              isParsingSubtitle = false;
+            }
+            if (isParsingTitleBlock && !isParsingTitle && !isParsingSubtitle) {
+              chapterContent += `</h2><br>`;
+              isParsingTitleBlock = false;
+            }
             if (isParsingContent && !notContent) {
               chapterContent += `</${name}>`;
             }
-            if (notContent) {
+            if (notContent && name === 'span') {
               notContent = false;
             }
-            if (isParsingContent && !notContent && name === 'div') {
+            if (isParsingContent && name === 'div') {
               isParsingContent = false;
             }
           },
