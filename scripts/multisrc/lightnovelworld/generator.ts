@@ -1,11 +1,11 @@
 import { ScrpitGeneratorFunction } from '../generate';
-import { LightNovelWPMetadata } from './template';
+import { LightNovelWorldMetadata } from './template';
 import list from './sources.json';
 import { readFileSync } from 'fs';
 import path from 'path';
 
 export const generateAll: ScrpitGeneratorFunction = function (name) {
-  return list.map((source: LightNovelWPMetadata) => {
+  return list.map((source: LightNovelWorldMetadata) => {
     let filters: any = {};
     try {
       filters = require(`./filters/${source.id}`);
@@ -18,7 +18,7 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
   });
 };
 
-const generator = function generator(source: LightNovelWPMetadata) {
+const generator = function generator(source: LightNovelWorldMetadata) {
   const LightNovelWPTemplate = readFileSync(
     path.join(__dirname, 'template.ts'),
     {
@@ -27,11 +27,8 @@ const generator = function generator(source: LightNovelWPMetadata) {
   );
 
   const pluginScript = `
-${LightNovelWPTemplate.replace(
-  '// CustomJS HERE',
-  source.options?.customJs || '',
-)}
-const plugin = new LightNovelWPPlugin(${JSON.stringify(source)});
+${LightNovelWPTemplate}
+const plugin = new LightNovelWorld(${JSON.stringify(source)});
 export default plugin;
     `.trim();
 

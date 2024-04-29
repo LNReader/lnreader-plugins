@@ -20,6 +20,12 @@ To add a new source you need to add it to sources.json:
    exists in the languages (check folder names in "plugins/"))
   - reverseChapter: if the chapters are in reverse order
    (if the first chapter of the list is 1 set it to false)
+  - versionIncrements: needs to be incremented if the url is changed or customJS
+   is changed or a change to the template affects only this source
+  - seriesPath: the path to the series page (if the "Novels"/"All Series" button
+   doesn't go to /series/ (ex: https://site.com/novels/ set it to "/novels/"))
+  - customJS: custom javascript that will be excuted when getting the text (if
+   the site has a custom copyright that need to be removed (the cherrio is $))
 
 To add an icon to the source you need to find the icon of the site \
 (try the favicon of the site (https://site.com/favicon.ico) most of the times it redirects you to an image named something like "cropped-site-32x32.png" try to access "cropped-site.png" or "site.png" if that did not work you can try to access "https://site.com/wp-json/" at the end of this very long file there should be a "site_icon_url" value

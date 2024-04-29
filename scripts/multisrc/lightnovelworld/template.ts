@@ -4,16 +4,40 @@ import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
 
+interface LightNovelWorldOptions {
+  lang?: string;
+  versionIncrements?: number;
+}
+
+export interface LightNovelWorldMetadata {
+  id: string;
+  sourceSite: string;
+  sourceName: string;
+  options?: LightNovelWorldOptions;
+  filters?: any;
+}
+
 class LightNovelWorld implements Plugin.PagePlugin {
-  id = 'lightnovelworld';
-  name = 'LightNovelWorld';
-  site = 'https://www.webnovelworld.org/';
-  version = '1.0.1';
-  icon = 'src/en/lightnovelworld/icon.png';
+  id: string;
+  name: string;
+  site: string;
+  version: string;
+  icon: string;
   headers = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };
+  options?: LightNovelWorldOptions;
+
+  constructor(metadata: LightNovelWorldMetadata) {
+    this.id = metadata.id;
+    this.name = metadata.sourceName;
+    this.icon = `multisrc/lightnovelworld/${metadata.id.toLowerCase()}/icon.png`;
+    this.site = metadata.sourceSite;
+    const versionIncrements = metadata.options?.versionIncrements || 0;
+    this.version = `1.0.${1 + versionIncrements}`;
+    this.options = metadata.options;
+  }
 
   async popularNovels(
     page: number,
@@ -139,19 +163,15 @@ class LightNovelWorld implements Plugin.PagePlugin {
     let formData = new FormData();
     formData.append('inputContent', searchTerm);
 
-    const body = await fetchApi(url, {
+    const results = await fetchApi(url, {
       method: 'POST',
       headers: { LNRequestVerifyToken: verifytoken! },
       body: formData,
-    }).then(r => r.text());
-
-    let loadedCheerio = parseHTML(body);
+    }).then(r => r.json());
 
     let novels: Plugin.NovelItem[] = [];
 
-    let results = JSON.parse(loadedCheerio('body').text());
-
-    loadedCheerio = parseHTML(results.resultview);
+    const loadedCheerio = parseHTML(results.resultview);
 
     loadedCheerio('.novel-item').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('h4.novel-title').text().trim();
@@ -244,5 +264,3 @@ class LightNovelWorld implements Plugin.PagePlugin {
     },
   } satisfies Filters;
 }
-
-export default new LightNovelWorld();
