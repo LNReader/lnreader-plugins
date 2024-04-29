@@ -395,5 +395,14 @@
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
+  },
+  {
+    "id": "novelbookid",
+    "sourceSite": "https://www.novelbook.id/",
+    "sourceName": "NovelBookID",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Indonesian"
+    }
   }
 ]
