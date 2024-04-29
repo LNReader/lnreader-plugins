@@ -448,5 +448,14 @@
     "options": {
       "lang": "English"
     }
+  },
+  {
+    "id": "citrusaurora",
+    "sourceSite": "https://citrusaurora.com/",
+    "sourceName": "Citrus Aurora",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
   }
 ]
