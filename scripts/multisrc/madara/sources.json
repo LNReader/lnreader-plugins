@@ -368,5 +368,14 @@
       "useNewChapterEndpoint": true,
       "lang": "Thai"
     }
+  },
+  {
+    "id": "azora",
+    "sourceSite": "https://azorago.com/",
+    "sourceName": "Azora",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic"
+    }
   }
 ]
