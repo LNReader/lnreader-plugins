@@ -413,5 +413,40 @@
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
+  },
+  {
+    "id": "meownovel",
+    "sourceSite": "https://meownovel.com/",
+    "sourceName": "Meownovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "galaxytranslations",
+    "sourceSite": "https://galaxytranslations97.com/",
+    "sourceName": "Galaxy Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "olaoe",
+    "sourceSite": "https://olaoe.cyou/",
+    "sourceName": "Olaoe.cyou",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic"
+    }
+  },
+  {
+    "id": "wordexcerpt",
+    "sourceSite": "https://wordexcerpt.com/",
+    "sourceName": "WordExcerpt",
+    "options": {
+      "lang": "English"
+    }
   }
 ]
