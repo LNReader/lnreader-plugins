@@ -404,5 +404,14 @@
       "useNewChapterEndpoint": true,
       "lang": "Indonesian"
     }
+  },
+  {
+    "id": "meownovel",
+    "sourceSite": "https://meownovel.com/",
+    "sourceName": "Meownovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
   }
 ]
