@@ -1,7 +1,7 @@
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import { CheerioAPI, load as parseHTML } from 'cheerio';
+import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
@@ -44,13 +44,43 @@ class MadaraPlugin implements Plugin.PluginBase {
     this.filters = metadata.filters;
   }
 
-  getHostname(url: string): string {
-    return url.split('/')[2];
+  translateDragontea(text: Cheerio<AnyNode>): Cheerio<AnyNode> {
+    if (this.id === 'dragontea') {
+      const $ = parseHTML(text.html() || '');
+      text.find(':not(:has(*))').each((i, el) => {
+        // Select only the deepest elements to avoid reversing the text twice
+        const $el = $(el);
+        const alphabet =
+          'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const reversedAlphabet =
+          'zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA'.split('');
+        const text = $el.text().normalize('NFD'); // Normalize the string to separate the accents
+        const reversedText = text.split('');
+        const reversedLetters = [...reversedText]
+          .map(letter => {
+            const baseLetter = letter.normalize('NFC');
+            const index = alphabet.indexOf(baseLetter);
+            return index !== -1
+              ? reversedAlphabet[index] + letter.slice(baseLetter.length)
+              : letter;
+          })
+          .join('');
+        $el.html($el.html()?.replace($el.text(), reversedLetters) || '');
+      });
+    }
+    return text;
   }
 
-  async getCheerio(url: string): Promise<CheerioAPI> {
+  getHostname(url: string): string {
+    url = url.split('/')[2];
+    let url_parts = url.split('.');
+    url_parts.pop(); // remove TLD
+    return url_parts.join('.');
+  }
+
+  async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
     const r = await fetchApi(url);
-    if (!r.ok)
+    if (!r.ok && search != true)
       throw new Error(
         'Could not reach site (' + r.status + ') try to open in webview.',
       );
@@ -108,7 +138,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + '/page/' + pageNo + '/?s=&post_type=wp-manga';
-    if (!filters) filters = {};
+    if (!filters) filters = this.filters || {};
     if (showLatestNovels) url += '&m_orderby=latest';
     for (const key in filters) {
       if (typeof filters[key].value === 'object')
@@ -116,13 +146,12 @@ class MadaraPlugin implements Plugin.PluginBase {
           url += `&${key}=${value}`;
       else if (filters[key].value) url += `&${key}=${filters[key].value}`;
     }
-    const loadedCheerio = await this.getCheerio(url);
+    const loadedCheerio = await this.getCheerio(url, false);
     return this.parseNovels(loadedCheerio);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.site + novelPath).then(res => res.text());
-    let loadedCheerio = parseHTML(body);
+    let loadedCheerio = await this.getCheerio(this.site + novelPath, false);
 
     loadedCheerio('.manga-title-badges, #manga-title span').remove();
     const novel: Plugin.SourceNovel = {
@@ -165,13 +194,11 @@ class MadaraPlugin implements Plugin.PluginBase {
     });
 
     loadedCheerio('div.summary__content .code-block,script').remove();
-    novel.summary =
-      loadedCheerio('div.summary__content').text().trim() ||
-      loadedCheerio('#tab-manga-about').text().trim() ||
-      loadedCheerio('.post-content_item h5:contains("Summary")')
-        .next()
-        .text()
-        .trim();
+    let summary =
+      loadedCheerio('div.summary__content') ||
+      loadedCheerio('#tab-manga-about') ||
+      loadedCheerio('.post-content_item h5:contains("Summary")').next();
+    novel.summary = this.translateDragontea(summary).text().trim();
     const chapters: Plugin.ChapterItem[] = [];
     let html = '';
 
@@ -229,19 +256,18 @@ class MadaraPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(res =>
-      res.text(),
-    );
-
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = await this.getCheerio(this.site + chapterPath, false);
     const chapterText =
-      loadedCheerio('.text-left').html() ||
-      loadedCheerio('.text-right').html() ||
-      loadedCheerio('.entry-content').html() ||
-      loadedCheerio('.c-blog-post > div > div:nth-child(2)').html() ||
-      '';
+      loadedCheerio('.text-left') ||
+      loadedCheerio('.text-right') ||
+      loadedCheerio('.entry-content') ||
+      loadedCheerio('.c-blog-post > div > div:nth-child(2)');
 
-    return chapterText;
+    if (this.id === 'riwyat') {
+      chapterText.find('span[style*="opacity: 0; position: fixed;"]').remove();
+    }
+    chapterText.find('div.text-right').attr('style', 'text-align: right;');
+    return this.translateDragontea(chapterText).html() || '';
   }
 
   async searchNovels(
@@ -250,12 +276,12 @@ class MadaraPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const url =
       this.site +
-      'page/' +
+      '/page/' +
       pageNo +
       '/?s=' +
       searchTerm +
       '&post_type=wp-manga';
-    const loadedCheerio = await this.getCheerio(url);
+    const loadedCheerio = await this.getCheerio(url, true);
     return this.parseNovels(loadedCheerio);
   }
 

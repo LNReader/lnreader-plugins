@@ -51,10 +51,23 @@ function getFilters(name: string, html: string) {
         });
       });
   });
+
+  if (
+    filters.filters['m_orderby'].options.length == 0 ||
+    filters.filters['status[]'].options.length == 0 ||
+    filters.filters['adult'].options.length == 0 ||
+    filters.filters['genre[]'].options.length == 0
+  ) {
+    console.error(
+      `🚨Error in filters for ${name} please fix manually (${path.join(__dirname, 'filters', name + '.json')})🚨`,
+    );
+  }
+
   fs.writeFileSync(
     path.join(__dirname, 'filters', name + '.json'),
     JSON.stringify(filters, null, 2),
   );
+  console.log(`✅Filters created successfully for ${name}✅`);
 }
 
 async function getFiltersFromURL(name: string, url: string) {
@@ -87,19 +100,37 @@ async function askGetFilter() {
           "Do you want to get the filters from a URL or the html text? (if url dosen't work try html) (url/html): ",
         async (method: string) => {
           if (method.toLowerCase() === 'url') {
-            await readline.question(
-              EREASE_PREV_LINE +
-                'Enter the URL (same one as in sources.json): ',
-              async (url: string) => {
-                try {
-                  await getFiltersFromURL(name, url);
-                } catch (e: any) {
-                  console.error('Error while getting filters from', url);
-                  console.log(e.message || e);
-                }
-                readline.close();
-              },
+            const sources = JSON.parse(
+              fs.readFileSync(path.join(__dirname, 'sources.json'), 'utf-8'),
             );
+            const source = sources.find((s: any) => s.id === name);
+            if (source && source.sourceSite) {
+              console.log('Getting filters from', source.sourceSite);
+              try {
+                await getFiltersFromURL(name, source.sourceSite);
+              } catch (e: any) {
+                console.error(
+                  'Error while getting filters from',
+                  source.sourceSite,
+                );
+                console.log(e.message || e);
+              }
+              readline.close();
+            } else {
+              await readline.question(
+                EREASE_PREV_LINE +
+                  'Enter the URL (same one as in sources.json): ',
+                async (url: string) => {
+                  readline.close();
+                  try {
+                    await getFiltersFromURL(name, url);
+                  } catch (e: any) {
+                    console.error('Error while getting filters from', url);
+                    console.log(e.message || e);
+                  }
+                },
+              );
+            }
           } else {
             process.stdout.write(
               EREASE_PREV_LINE +
@@ -108,7 +139,7 @@ async function askGetFilter() {
             );
             let html = '';
             readline.on('SIGINT', () => {
-              console.log('Creating filters file');
+              console.log('Stopeed reading input, creating filters file');
               getFilters(name, html);
               readline.close();
             });

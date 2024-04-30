@@ -1,0 +1,268 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "18+",
+          "value": "18"
+        },
+        {
+          "label": "กาว",
+          "value": "กาว"
+        },
+        {
+          "label": "กำลังภายใน",
+          "value": "กำลังภายใน"
+        },
+        {
+          "label": "ของวิเศษ",
+          "value": "ของวิเศษ"
+        },
+        {
+          "label": "คลั่งรัก",
+          "value": "คลั่งรัก"
+        },
+        {
+          "label": "คอเมดี้",
+          "value": "คอเมดี้"
+        },
+        {
+          "label": "ค้าขาย",
+          "value": "ค้าขาย"
+        },
+        {
+          "label": "จบ",
+          "value": "จบ"
+        },
+        {
+          "label": "จอมมาร",
+          "value": "จอมมาร"
+        },
+        {
+          "label": "จีนโบราณ",
+          "value": "จีนโบราณ"
+        },
+        {
+          "label": "ชายาอ๋อง",
+          "value": "ชายาอ๋อง"
+        },
+        {
+          "label": "ซุปเปอร์สตาร์",
+          "value": "ซุปเปอร์สตาร์"
+        },
+        {
+          "label": "ดราม่า",
+          "value": "ดราม่า"
+        },
+        {
+          "label": "ต่างโลก",
+          "value": "ต่างโลก"
+        },
+        {
+          "label": "ทะลุมิติ",
+          "value": "ทะลุมิติ"
+        },
+        {
+          "label": "ทายาทเศรษฐี",
+          "value": "ทายาทเศรษฐี"
+        },
+        {
+          "label": "ทำอาหาร",
+          "value": "ทำอาหาร"
+        },
+        {
+          "label": "นักปรุงยา",
+          "value": "นักปรุงยา"
+        },
+        {
+          "label": "นางเอกเก่ง",
+          "value": "นางเอกเก่ง"
+        },
+        {
+          "label": "นิยายจีน",
+          "value": "นิยายจีน"
+        },
+        {
+          "label": "นิยายรัก",
+          "value": "นิยายรัก"
+        },
+        {
+          "label": "นิยายแปล",
+          "value": "นิยายแปล"
+        },
+        {
+          "label": "ผจญภัย",
+          "value": "ผจญภัย"
+        },
+        {
+          "label": "ย้อนยุค",
+          "value": "ย้อนยุค"
+        },
+        {
+          "label": "ย้อนเวลา",
+          "value": "ย้อนเวลา"
+        },
+        {
+          "label": "ระบบ",
+          "value": "ระบบ"
+        },
+        {
+          "label": "สงครามอวกาศ",
+          "value": "สงครามอวกาศ"
+        },
+        {
+          "label": "สัตวเลี้ยง",
+          "value": "สัตวเลี้ยง"
+        },
+        {
+          "label": "สโลไลฟ์",
+          "value": "สโลไลฟ์"
+        },
+        {
+          "label": "เกิดใหม่",
+          "value": "เกิดใหม่"
+        },
+        {
+          "label": "เทพอสูร",
+          "value": "เทพอสูร"
+        },
+        {
+          "label": "เวทมนต์",
+          "value": "เวทมนต์"
+        },
+        {
+          "label": "แก้แค้น",
+          "value": "แก้แค้น"
+        },
+        {
+          "label": "แฟนตาซี",
+          "value": "แฟนตาซี"
+        },
+        {
+          "label": "แอ๊คชัน",
+          "value": "แอ๊คชัน"
+        },
+        {
+          "label": "แอคชั่น",
+          "value": "แอคชั่น"
+        },
+        {
+          "label": "โรแมนติก",
+          "value": "โรแมนติก"
+        },
+        {
+          "label": "ใช้ชีวิต",
+          "value": "ใช้ชีวิต"
+        },
+        {
+          "label": "ไซไฟ",
+          "value": "ไซไฟ"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "having all selected genres",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Author",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Artist",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Year of Released",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Status",
+      "value": [],
+      "options": [
+        {
+          "label": "OnGoing",
+          "value": "on-going"
+        },
+        {
+          "label": "Completed",
+          "value": "end"
+        },
+        {
+          "label": "Canceled",
+          "value": "canceled"
+        },
+        {
+          "label": "On Hold",
+          "value": "on-hold"
+        },
+        {
+          "label": "Upcoming",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Relevance",
+          "value": ""
+        },
+        {
+          "label": "Latest",
+          "value": "latest"
+        },
+        {
+          "label": "A-Z",
+          "value": "alphabet"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
+        },
+        {
+          "label": "Trending",
+          "value": "trending"
+        },
+        {
+          "label": "Most Views",
+          "value": "views"
+        },
+        {
+          "label": "New",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}
