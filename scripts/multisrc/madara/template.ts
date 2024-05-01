@@ -47,6 +47,10 @@ class MadaraPlugin implements Plugin.PluginBase {
   translateDragontea(text: Cheerio<AnyNode>): Cheerio<AnyNode> {
     if (this.id === 'dragontea') {
       const $ = parseHTML(text.html() || '');
+      let sanitizedText = $.html() || '';
+      sanitizedText = sanitizedText.replace('\n', '');
+      sanitizedText = sanitizedText.replace(/<br\s*\/?>/g, '\n');
+      text.html(sanitizedText);
       text.find(':not(:has(*))').each((i, el) => {
         // Select only the deepest elements to avoid reversing the text twice
         const $el = $(el);
@@ -65,7 +69,7 @@ class MadaraPlugin implements Plugin.PluginBase {
               : letter;
           })
           .join('');
-        $el.html($el.html()?.replace($el.text(), reversedLetters) || '');
+        $el.html($el.html()?.replace($el.text(), reversedLetters).replace('\n', '<br>') || '');
       });
     }
     return text;
