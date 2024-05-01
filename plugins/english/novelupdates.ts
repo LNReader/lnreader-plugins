@@ -143,23 +143,18 @@ class NovelUpdates implements Plugin.PluginBase {
     loadedCheerio = parseHTML(text);
 
     const nameReplacements: { [key: string]: string } = {
-      'v': 'Volume ',
-      'c': 'Chapter ',
-      'part': 'Part ',
+      'v': 'volume ',
+      'c': ' chapter ',
+      'part': 'part ',
       'ss': 'SS',
-      'side story': 'Side Story',
-      'special': 'Special',
-      'illustrations': 'Illustrations',
-      'prologue': 'Prologue',
-      'interlude': 'Interlude',
-      'epilogue': 'Epilogue',
     };
 
     loadedCheerio('li.sp_li_chp').each((i, el) => {
-      let chapterName = loadedCheerio(el).text().trim();
+      let chapterName = loadedCheerio(el).text();
       for (let name in nameReplacements) {
-        chapterName = chapterName.replace(name, nameReplacements[name]);
+        chapterName = chapterName.replace(name, nameReplacements[name]).trim();
       }
+      chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase());
       const chapterUrl =
         'https:' + loadedCheerio(el).find('a').first().next().attr('href');
 
