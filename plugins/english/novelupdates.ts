@@ -342,7 +342,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const resultSyringe = await fetchApi(linkSyringe);
         const bodySyringe = await resultSyringe.text();
         const loadedCheerioSyringe = parseHTML(bodySyringe);
-        bloatClasses = ['.wp-block-buttons', '#jp-post-flair'];
+        bloatClasses = ['.wp-block-buttons', '#jp-post-flair', '.wpcnt'];
         bloatClasses.map(tag => loadedCheerioSyringe(tag).remove());
         chapterContent = loadedCheerioSyringe('.entry-content').html()!;
         let titleElementSyringe =
