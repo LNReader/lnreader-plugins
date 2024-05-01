@@ -556,7 +556,7 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('head title').first().text()!;
       let chapterSubtitle = loadedCheerio('.cat-series').first().text() || '';
       if (chapterSubtitle) {
-        chapterTitle = `${chapterTitle} | ${chapterSubtitle}`;
+        chapterTitle = chapterSubtitle;
       }
       chapterContent =
         loadedCheerio('.rdminimal').html() ||
