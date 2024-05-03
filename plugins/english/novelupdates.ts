@@ -615,11 +615,17 @@ class NovelUpdates implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url =
-      this.site +
-      '?s=' +
-      searchTerm.replace(/\s+/g, '+') +
-      '&post_type=seriesplans';
+    /**
+     * Split searchTerm by specific special characters and find the longest split
+     */
+    const splits = searchTerm.split('*');
+    const longestSearchTerm = splits.reduce(
+      (a, b) => (a.length > b.length ? a : b),
+      '',
+    );
+    searchTerm = longestSearchTerm.replace(/[‘’]/g, "'").replace(/\s+/g, '+');
+
+    const url = this.site + '?s=' + searchTerm + '&post_type=seriesplans';
     const result = await fetchApi(url);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
