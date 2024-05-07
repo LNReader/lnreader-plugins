@@ -542,7 +542,6 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       }
     } else if (isWordPress) {
-      console.log('WordPress');
       bloatClasses = [
         '.ad',
         '.author-avatar',
