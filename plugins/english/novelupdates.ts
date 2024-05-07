@@ -334,6 +334,13 @@ class NovelUpdates implements Plugin.PluginBase {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
         break;
+      case 'skydemonorder':
+        chapterTitle = loadedCheerio('.pl-4').first().text()!;
+        chapterContent = loadedCheerio('#chapter-body').html()!;
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
       case 'stabbingwithasyringe':
         /**
          * Get the chapter link from the main page
@@ -535,6 +542,7 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       }
     } else if (isWordPress) {
+      console.log('WordPress');
       bloatClasses = [
         '.ad',
         '.author-avatar',
