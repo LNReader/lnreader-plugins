@@ -330,7 +330,16 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'scribblehub':
         chapterTitle = loadedCheerio('.chapter-title').first().text()!;
         chapterContent = loadedCheerio('div.chp_raw').html()!;
-        chapterText = `<h2>${chapterTitle}</h2><br>${chapterContent}`;
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
+      case 'skydemonorder':
+        chapterTitle = `${loadedCheerio('.pl-4 h1').first().text()!} | ${loadedCheerio('.pl-4 div').first().text()!}`;
+        chapterContent = loadedCheerio('#chapter-body').html()!;
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
         break;
       case 'stabbingwithasyringe':
         /**
