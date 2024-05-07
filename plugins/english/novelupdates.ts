@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.3';
+  version = '0.5.4';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -335,7 +335,7 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'skydemonorder':
-        chapterTitle = loadedCheerio('.pl-4').first().text()!;
+        chapterTitle = `${loadedCheerio('.pl-4 h1').first().text()!} | ${loadedCheerio('.pl-4 div').first().text()!}`;
         chapterContent = loadedCheerio('#chapter-body').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
