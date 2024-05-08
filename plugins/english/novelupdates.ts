@@ -445,6 +445,25 @@ class NovelUpdates implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     /**
+     * Check for Captcha
+     */
+    if (!result.url) {
+      throw new Error(
+        `Could not reach site (${result.status}), try to open in webview.`,
+      );
+    }
+    const title = loadedCheerio('title').text().toLowerCase().trim();
+    if (
+      title == 'bot verification' ||
+      title == 'just a moment...' ||
+      title == 'redirecting...' ||
+      title == 'un instant...' ||
+      title == 'you are being redirected...'
+    ) {
+      throw new Error('Captcha error, please open in webview');
+    }
+
+    /**
      * Detect if the site is a Blogspot site
      */
     let isBlogspotStr = loadedCheerio(
