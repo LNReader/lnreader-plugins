@@ -37,7 +37,6 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
     let url = this.site;
     let $ = await this.getCheerio(url);
     $('#menu-item-2210 ul li').each((i, elem) => {
-      console.log($(elem).html());
       const novelName = $(elem).first().text().trim();
       const novelUrl = $(elem).find('a').attr('href');
 
