@@ -78,14 +78,18 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).find('a').attr('href');
       if (chapterUrl && chapterUrl.includes(this.site) && chapterName) {
-        const releaseDate = dayjs(
-          chapterUrl?.substring(this.site.length + 1, this.site.length + 11),
-        ).format('DD MMMM YYYY');
-        chapters.push({
-          name: chapterName,
-          path: chapterUrl.replace(this.site, ''),
-          releaseTime: releaseDate,
-        });
+        const pathchapter = chapterUrl.replace(this.site, '');
+        // we do not take the paths already present
+        if (!chapters.some(chap => chap.path === pathchapter)) {
+          const releaseDate = dayjs(
+            chapterUrl?.substring(this.site.length + 1, this.site.length + 11),
+          ).format('DD MMMM YYYY');
+          chapters.push({
+            name: chapterName,
+            path: pathchapter,
+            releaseTime: releaseDate,
+          });
+        }
       }
     });
     novel.chapters = chapters;
