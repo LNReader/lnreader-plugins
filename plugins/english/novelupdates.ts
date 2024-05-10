@@ -335,6 +335,13 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'skydemonorder':
+        /**
+         * Check for age verification
+         */
+        const ageVerification = loadedCheerio('main').text().toLowerCase()!;
+        if (ageVerification.includes('age verification required')) {
+          throw new Error('Age verification required, please open in webview');
+        }
         chapterTitle = `${loadedCheerio('.pl-4 h1').first().text()!} | ${loadedCheerio('.pl-4 div').first().text()!}`;
         chapterContent = loadedCheerio('#chapter-body').html()!;
         if (chapterTitle && chapterContent) {
@@ -447,11 +454,6 @@ class NovelUpdates implements Plugin.PluginBase {
     /**
      * Check for Captcha
      */
-    if (!result.url) {
-      throw new Error(
-        `Could not reach site (${result.status}), try to open in webview.`,
-      );
-    }
     const title = loadedCheerio('title').text().toLowerCase().trim();
     if (
       title == 'bot verification' ||
@@ -460,7 +462,12 @@ class NovelUpdates implements Plugin.PluginBase {
       title == 'un instant...' ||
       title == 'you are being redirected...'
     ) {
-      throw new Error('Captcha error, please open in webview');
+      throw new Error('Captcha error, please open in webview.');
+    }
+    if (!result.ok) {
+      throw new Error(
+        `Could not reach site (${result.status}), try to open in webview.`,
+      );
     }
 
     /**
