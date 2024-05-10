@@ -192,7 +192,7 @@ class AuthorToday implements Plugin.PluginBase {
 
   user: authorization | undefined;
   getUser = async () => {
-    let user = storage.get(this.id, 'user') || { userId: '', token: 'guest' };
+    let user = storage.get('user') || { userId: '', token: 'guest' };
     if (user && user.userId && user.token) {
       const currentUser: currentUser = await fetchApi(
         this.apiUrl + 'account/current-user',
@@ -204,7 +204,7 @@ class AuthorToday implements Plugin.PluginBase {
       ).then(res => res.json());
       if (currentUser?.id && !currentUser.isDisabled) return user;
 
-      storage.delete(this.id, 'user');
+      storage.delete('user');
       user = { userId: '', token: 'guest' };
     }
 
@@ -217,7 +217,6 @@ class AuthorToday implements Plugin.PluginBase {
     user = { userId: loginUser.userId, token: loginUser.token };
 
     storage.set(
-      this.id,
       'user',
       user, //for some reason they're ending an hour early.
       new Date(loginUser.expires).getTime() - 1 * 60 * 60 * 1000,

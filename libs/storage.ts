@@ -1,14 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-/**
- * Represents a storage system with methods for setting, getting, and deleting key-value pairs.
- */
 class Storage {
-  private db: Record<
-    string,
-    Record<string, { created: Date; value: any; expires?: number }>
-  >;
+  private db: Record<string, { created: Date; value: any; expires?: number }>;
 
   /**
    * Initializes a new instance of the Storage class.
@@ -18,21 +12,14 @@ class Storage {
   }
 
   /**
-   * Sets a key-value pair in the storage.
+   * Sets a key-value pair in storage.
    *
-   * @param pluginID - The ID of the plugin.
-   * @param key - The key to set.
-   * @param value - The value to set.
-   * @param expires - Optional. The expiration date for the key-value pair.
+   * @param {string} key - The key to set.
+   * @param {any} value - The value to set.
+   * @param {Date | number} [expires] - Optional expiry date or time in milliseconds.
    */
-  set(
-    pluginID: string,
-    key: string,
-    value: any,
-    expires?: Date | number,
-  ): void {
-    if (!this.db[pluginID]) this.db[pluginID] = {};
-    this.db[pluginID][key] = {
+  set(key: string, value: any, expires?: Date | number): void {
+    this.db[key] = {
       created: new Date(),
       value,
       expires: expires instanceof Date ? expires.getTime() : expires,
@@ -40,30 +27,28 @@ class Storage {
   }
 
   /**
-   * Gets the value associated with a key from the storage.
+   * Retrieves the value for a given key from storage.
    *
-   * @param pluginID - The ID of the plugin.
-   * @param key - The key to retrieve.
-   * @param raw - Optional. If true, returns the raw storage item object.
-   * @returns The value associated with the key or undefined if not found or expired.
+   * @param {string} key - The key to retrieve the value for.
+   * @param {boolean} [raw] - Optional flag to return the raw stored item.
+   * @returns {any} The stored value or undefined if key is not found.
    */
-  get(pluginID: string, key: string, raw?: boolean): any {
-    const item = this.db[pluginID]?.[key];
+  get(key: string, raw?: boolean): any {
+    const item = this.db[key];
     if (item?.expires && Date.now() > item.expires) {
-      this.delete(pluginID, key);
+      this.delete(key);
       return undefined;
     }
     return raw ? item : item?.value;
   }
 
   /**
-   * Gets all keys associated with a plugin from the storage.
+   * Retrieves all keys set by the `set` method.
    *
-   * @param pluginID - The ID of the plugin.
-   * @returns An array of keys associated with the plugin.
+   * @returns {string[]} An array of keys.
    */
-  getAllKeys(pluginID: string): string[] {
-    return Object.keys(this.db[pluginID] || {});
+  getAllKeys(): string[] {
+    return Object.keys(this.db);
   }
 
   /**
@@ -72,17 +57,15 @@ class Storage {
    * @param pluginID - The ID of the plugin.
    * @param key - The key to delete.
    */
-  delete(pluginID: string, key: string): void {
-    delete this.db[pluginID]?.[key];
+  delete(key: string): void {
+    delete this.db[key];
   }
 
   /**
-   * Clears all keys associated with a plugin from the storage.
-   *
-   * @param pluginID - The ID of the plugin.
+   * Clears all stored items from storage.
    */
   clearAll(pluginID: string): void {
-    delete this.db[pluginID];
+    this.db = {};
   }
 }
 
@@ -102,30 +85,21 @@ https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
  * Represents the structure of a storage object with string keys and values.
  */
 interface StorageObject {
-  [key: string]: string | undefined;
+  [key: string]: any;
 }
 
 /**
  * Represents a simplified version of the browser's localStorage.
  */
 class LocalStorage {
-  db: Record<string, StorageObject>;
+  private db: StorageObject;
 
-  /**
-   * Initializes a new instance of the LocalStorage class.
-   */
   constructor() {
     this.db = {};
   }
 
-  /**
-   * Gets the storage object associated with a plugin ID.
-   *
-   * @param pluginID - The ID of the plugin.
-   * @returns The storage object associated with the plugin ID.
-   */
-  get(pluginID: string): StorageObject | undefined {
-    return this.db[pluginID] || {};
+  get(): StorageObject | undefined {
+    return this.db;
   }
 }
 

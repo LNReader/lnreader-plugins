@@ -240,11 +240,11 @@ class RLIB implements Plugin.PluginBase {
   };
 
   getUser = () => {
-    const user = storage.get(this.id, 'user');
+    const user = storage.get('user');
     if (user) {
       return { token: { Authorization: 'Bearer ' + user.token }, ui: user.id };
     }
-    const dataRaw = localStorage.get(this.id)?.auth;
+    const dataRaw = localStorage.get()?.auth;
     if (!dataRaw) {
       return {};
     }
@@ -252,7 +252,6 @@ class RLIB implements Plugin.PluginBase {
     const data = JSON.parse(dataRaw) as authorization;
     if (!data?.token?.access_token) return;
     storage.set(
-      this.id,
       'user',
       {
         id: data.auth.id,
