@@ -14,7 +14,8 @@
     "sourceName": "ملوك الروايات",
     "options": {
       "lang": "Arabic",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());"
     }
   },
   {
@@ -46,12 +47,12 @@
   },
   {
     "id": "daotranslate",
-    "sourceSite": "https://daotranslate.us/",
+    "sourceSite": "https://daotranslate.net/",
     "sourceName": "DaoTranslate",
     "options": {
       "lang": "English",
       "reverseChapters": true,
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
@@ -97,7 +98,9 @@
     "sourceName": "GenesisTls",
     "options": {
       "lang": "English",
-      "reverseChapters": false
+      "reverseChapters": false,
+      "versionIncrements": 1,
+      "customJs": "$('.genesistls-watermark').remove();$('.epcontent p').each((i, el) => { if ($(el).html() === '&nbsp;') $(el).remove(); });"
     }
   },
   {
@@ -137,15 +140,6 @@
     }
   },
   {
-    "id": "bacalightnovel",
-    "sourceSite": "https://bacalightnovel.co/",
-    "sourceName": "Baca Light Novel",
-    "options": {
-      "lang": "Indonesian",
-      "reverseChapters": true
-    }
-  },
-  {
     "id": "sektenovel",
     "sourceSite": "https://sektenovel.web.id/",
     "sourceName": "Sekte Novel",
@@ -160,6 +154,25 @@
     "sourceName": "System Translation",
     "options": {
       "lang": "English",
+      "reverseChapters": true
+    }
+  },
+  {
+    "id": "moonlightnovel",
+    "sourceSite": "https://moonlightnovel.com/",
+    "sourceName": "Moonlight Novels",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true,
+      "seriesPath": "/novels/"
+    }
+  },
+  {
+    "id": "lightnovelbrasil",
+    "sourceSite": "https://lightnovelbrasil.com/",
+    "sourceName": "Light Novel Brasil",
+    "options": {
+      "lang": "Portuguese",
       "reverseChapters": true
     }
   }
