@@ -1,4 +1,4 @@
-import { CheerioAPI, load } from 'cheerio';
+import { Cheerio, CheerioAPI, load, Element } from 'cheerio';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
@@ -10,50 +10,72 @@ class XiaowazPlugin implements Plugin.PluginBase {
   name = 'Xiaowaz';
   icon = 'src/fr/xiaowaz/icon.png';
   site = 'https://xiaowaz.fr';
-  version = '1.0.0';
+  version = '1.0.1';
   filters: Filters | undefined = undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
-    const r = await fetchApi(url, {
-      headers: { 'Accept-Encoding': 'deflate' },
-    });
+    const r = await fetchApi(url);
     const body = await r.text();
     const $ = load(body);
     return $;
   }
 
-  async popularNovels(
-    pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
-  ): Promise<Plugin.NovelItem[]> {
-    if (pageNo > 1) return [];
-
-    const novels: Plugin.NovelItem[] = [];
+  async getAllNovels(): Promise<Plugin.NovelItem[]> {
+    let novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url);
-    $('li.page_item.page-item-866.page_item_has_children ul.children li').each(
-      (i, elem) => {
-        let novelName = $(elem).first().text().trim();
-        if (novelName.charAt(novelName.length - 1) === '✔') {
-          novelName = novelName.slice(0, -1);
-        }
+    let $ = await this.getCheerio(this.site);
+
+    const categories: Cheerio<Element>[] = [
+      $('li.page_item').find('a:contains("Séries")').parent(),
+      $('li.page_item').find('a:contains("Créations")').parent(),
+      $('li.page_item').find('a:contains("†")').parent(),
+    ];
+
+    categories.forEach(cheerio => {
+      cheerio.find('ul.children li').each((i, elem) => {
+        const novelName = $(elem).first().text().trim().replace('✔', '');
         const novelUrl = $(elem).find('a').attr('href');
 
-        if (novelUrl && novelName) {
+        // Douluo Dalu is no good
+        if (novelUrl && novelName && novelName !== 'Douluo Dalu') {
           novel = {
             name: novelName,
-            cover: defaultCover,
             path: novelUrl.replace(this.site, ''),
           };
           novels.push(novel);
         }
-      },
-    );
+      });
+    });
     return novels;
+  }
+
+  async getNovelsCovers(
+    novels: Plugin.NovelItem[],
+  ): Promise<Plugin.NovelItem[]> {
+    for (const novel of novels) {
+      const $novel = await this.getCheerio(this.site + novel.path);
+      novel.cover =
+        $novel('img[fetchpriority = "high"]').first().attr('src') ||
+        $novel('img.aligncenter').first().attr('src') ||
+        defaultCover;
+    }
+    return novels;
+  }
+
+  async popularNovels(pageNo: number, {}: any): Promise<Plugin.NovelItem[]> {
+    const maxPages = 4;
+    if (pageNo > maxPages) return [];
+
+    let novels: Plugin.NovelItem[] = await this.getAllNovels();
+
+    // splitting novel list to make fewer requests for getting images
+    const novelsLength = novels.length;
+    novels = novels.slice(
+      (novelsLength / maxPages) * (pageNo - 1),
+      (novelsLength / maxPages) * pageNo,
+    );
+
+    return await this.getNovelsCovers(novels);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -66,8 +88,8 @@ class XiaowazPlugin implements Plugin.PluginBase {
 
     novel.name = $('.card_title').text().trim();
     novel.cover =
-      $('.entry-content p img').first().attr('src') ||
-      $('.entry-content h4 img').first().attr('src') ||
+      $('img[fetchpriority = "high"]').first().attr('src') ||
+      $('img.aligncenter').first().attr('src') ||
       defaultCover;
 
     novel.status = NovelStatus.Ongoing;
@@ -85,35 +107,35 @@ class XiaowazPlugin implements Plugin.PluginBase {
     const PARAGRAPH_EXCLUDE_LIST = [
       'Écrit par',
       'Ecrit par',
-      'Sorties régulières le mardi et vendredi\u00A0!',
+      'Sorties régulières',
       'Auteur\u00A0:',
       'Statut VO\u00A0:',
       'Nom utilisé\u00A0:',
       'Auteur original\u00A0:',
       'Auteur original de l’oeuvre',
       '851 chapitres en',
+      'Index\u00A0:',
     ];
 
-    $('.entry-content p').each((index, element) => {
+    $('.entry-content > p').each((index, element) => {
+      // remove chapter links
+      if ($(element).find('a[href*="xiaowaz.fr/articles"]').length !== 0)
+        return;
+
       const balise = $(element);
       const textbalise = balise.text();
-      if (
-        PARAGRAPH_EXCLUDE_LIST.some(keyword => textbalise.includes(keyword))
-      ) {
-        return false;
-      }
+
+      if (PARAGRAPH_EXCLUDE_LIST.some(keyword => textbalise.includes(keyword)))
+        return;
+
       if (
         !textbalise.includes('Genre') &&
         !textbalise.includes('Synopsis') &&
-        //Managing the novel 'Rebirth of The Thief Who Roamed The World' to remove these three fields.
-        !textbalise.includes('重生之賊行天下') &&
-        !textbalise.includes('Rebirth of The Thief Who Roamed The World') &&
         !textbalise.includes(
           'Romance, Comédie, Action, VRMMO, Réincarnation, Futuriste',
         )
-      ) {
+      )
         listeParagraphe.push(textbalise);
-      }
     });
     novel.summary = listeParagraphe.join('\n').trim();
 
@@ -224,12 +246,11 @@ class XiaowazPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
-      showLatestNovels: true,
-      filters: undefined,
-    });
+    let popularNovels = await this.getAllNovels();
 
-    let novels = (await popularNovels).filter(novel =>
+    // Normalize the text to remove accents and other special characters
+    // This ensures that the search term and novel names are compared accurately
+    let novels = popularNovels.filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')
@@ -244,7 +265,7 @@ class XiaowazPlugin implements Plugin.PluginBase {
         ),
     );
 
-    return novels;
+    return await this.getNovelsCovers(novels);
   }
 
   async fetchImage(url: string): Promise<string | undefined> {
