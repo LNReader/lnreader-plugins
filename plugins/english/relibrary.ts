@@ -13,7 +13,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   name = 'Re:Library';
   icon = 'src/en/relibrary/icon.png';
   site = 'https://re-library.com';
-  version = '0.0.0';
+  version = '1.0.0';
   filters: Filters | undefined = undefined;
 
   async popularNovels(
