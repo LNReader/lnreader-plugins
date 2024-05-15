@@ -9,7 +9,7 @@ import { NovelItem } from '../../test_web/static/js';
 // import { parseMadaraDate } from "@libs/parseMadaraDate";
 
 class ReLibraryPlugin implements Plugin.PluginBase {
-  id = 'RLIB';
+  id = 'ReLib';
   name = 'Re:Library';
   icon = 'src/en/relibrary/icon.png';
   site = 'https://re-library.com';
