@@ -118,19 +118,22 @@ class XiaowazPlugin implements Plugin.PluginBase {
     ];
 
     $('.entry-content > p').each((index, element) => {
-      // remove chapter links
-      if ($(element).find('a[href*="xiaowaz.fr/articles"]').length !== 0)
-        return;
-
       const balise = $(element);
-      const textbalise = balise.text();
 
+      // remove chapter links
+      if (balise.find('a[href*="xiaowaz.fr/articles"]').length !== 0)
+        return false;
+
+      const textbalise = balise.text();
       if (PARAGRAPH_EXCLUDE_LIST.some(keyword => textbalise.includes(keyword)))
-        return;
+        return false;
 
       if (
         !textbalise.includes('Genre') &&
         !textbalise.includes('Synopsis') &&
+        //Managing the novel 'Rebirth of The Thief Who Roamed The World' to remove these three fields.
+        !textbalise.includes('重生之賊行天下') &&
+        !textbalise.includes('Rebirth of The Thief Who Roamed The World') &&
         !textbalise.includes(
           'Romance, Comédie, Action, VRMMO, Réincarnation, Futuriste',
         )
@@ -165,11 +168,13 @@ class XiaowazPlugin implements Plugin.PluginBase {
   getAuthor(text: string) {
     const regexAuthors = [
       /Écrit par([^\n]*). Traduction/i,
+      /Écrit par([^\n]*)./i,
       /Auteur original de l’œuvre\u00A0:([^\n]*)VO/i,
       /Auteur\u00A0:([^\n]*)sur/,
       /Auteur\u00A0:([^\n]*)/,
       /Auteure\u00A0:\u00A0([^\n]*)/,
       /Auteur original de l’oeuvre\u00A0:([^\n]*)/i,
+      /Auteur original\u00A0:([^\n]*)/i,
     ];
 
     for (const regex of regexAuthors) {
