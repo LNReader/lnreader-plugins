@@ -9,7 +9,7 @@ class Linovelib implements Plugin.PluginBase {
   name = 'Linovelib';
   icon = 'src/cn/linovelib/icon.png';
   site = 'https://www.bilinovel.com';
-  version = '1.1.1';
+  version = '1.1.2';
 
   async popularNovels(
     pageNo: number,
@@ -413,20 +413,23 @@ class Linovelib implements Plugin.PluginBase {
       const pageCheerio = parseHTML(body);
       await addPage(pageCheerio);
       pageHasNextPage =
-        pageCheerio('#footlink a:last').text() === '下一页' ? true : false;
+        pageCheerio('#footlink a:last').text() === '下一页' ||
+        pageCheerio('#footlink a:last').text() === '下一頁'
+          ? true
+          : false;
       return { pageCheerio, pageHasNextPage };
     };
 
     let url = this.site + chapterPath;
+    let baseUrl = url;
     do {
       const page = await loadPage(url);
       hasNextPage = page.pageHasNextPage;
       if (hasNextPage === true) {
         pageNumber++;
-        url = url.replace(/\.html/gi, `_${pageNumber}` + '.html');
+        url = baseUrl.replace(/\.html/gi, `_${pageNumber}` + '.html');
       }
     } while (hasNextPage === true);
-
     return chapterText;
   }
 
