@@ -12,12 +12,26 @@ class XiaowazPlugin implements Plugin.PluginBase {
   site = 'https://xiaowaz.fr';
   version = '1.0.1';
   filters: Filters | undefined = undefined;
+  static novels: Plugin.NovelItem[] | undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
-    const r = await fetchApi(url);
-    const body = await r.text();
-    const $ = load(body);
-    return $;
+    let retries = 5; // when fetching for images the sites sometimes terminates the connection
+    let returnError: any;
+    while (retries > 0) {
+      try {
+        const r = await fetchApi(url);
+        const body = await r.text();
+        const $ = load(body);
+        return $;
+      } catch (error) {
+        console.error(error);
+        returnError = error;
+        retries--;
+        // wait 1 second before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+    throw new Error(returnError ? returnError : 'Error fetching the page');
   }
 
   async getAllNovels(): Promise<Plugin.NovelItem[]> {
@@ -52,28 +66,29 @@ class XiaowazPlugin implements Plugin.PluginBase {
   async getNovelsCovers(
     novels: Plugin.NovelItem[],
   ): Promise<Plugin.NovelItem[]> {
-    for (const novel of novels) {
-      const $novel = await this.getCheerio(this.site + novel.path);
-      novel.cover =
-        $novel('img[fetchpriority = "high"]').first().attr('src') ||
-        $novel('img.aligncenter').first().attr('src') ||
-        defaultCover;
-    }
+    await Promise.all(
+      novels.map(async novel => {
+        const $novel = await this.getCheerio(this.site + novel.path);
+        novel.cover =
+          $novel('img[fetchpriority = "high"]').first().attr('src') ||
+          $novel('img.aligncenter').first().attr('src') ||
+          defaultCover;
+      }),
+    );
     return novels;
   }
 
   async popularNovels(pageNo: number, {}: any): Promise<Plugin.NovelItem[]> {
-    const maxPages = 4;
-    if (pageNo > maxPages) return [];
+    const PAGE_SIZE = 5;
 
-    let novels: Plugin.NovelItem[] = await this.getAllNovels();
+    if (!XiaowazPlugin.novels) XiaowazPlugin.novels = await this.getAllNovels();
+    let novels: Plugin.NovelItem[] = XiaowazPlugin.novels;
+
+    const totalPages = Math.ceil(novels.length / PAGE_SIZE);
+    if (pageNo > totalPages) return [];
 
     // splitting novel list to make fewer requests for getting images
-    const novelsLength = novels.length;
-    novels = novels.slice(
-      (novelsLength / maxPages) * (pageNo - 1),
-      (novelsLength / maxPages) * pageNo,
-    );
+    novels = novels.slice(PAGE_SIZE * (pageNo - 1), PAGE_SIZE * pageNo);
 
     return await this.getNovelsCovers(novels);
   }
@@ -96,11 +111,16 @@ class XiaowazPlugin implements Plugin.PluginBase {
     if (novel.name.charAt(novel.name.length - 1) === '✔') {
       novel.status = NovelStatus.Completed;
       novel.name = novel.name.slice(0, -1);
+    } else if (novelPath.startsWith('/series-abandonnees')) {
+      novel.status = NovelStatus.Cancelled;
     }
 
     const entryContentText = $('.entry-content').text();
     novel.author = this.getAuthor(entryContentText);
     novel.genres = this.getGenres(entryContentText);
+    if (novelPath.startsWith('/oeuvres-originales')) {
+      novel.genres += novel.genres ? ', Oeuvre originale' : 'Oeuvre originale';
+    }
 
     const listeParagraphe: string[] = [];
 
@@ -251,7 +271,8 @@ class XiaowazPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = await this.getAllNovels();
+    if (!XiaowazPlugin.novels) XiaowazPlugin.novels = await this.getAllNovels();
+    let popularNovels = XiaowazPlugin.novels;
 
     // Normalize the text to remove accents and other special characters
     // This ensures that the search term and novel names are compared accurately
