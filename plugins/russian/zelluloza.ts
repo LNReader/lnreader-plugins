@@ -40,15 +40,14 @@ class Zelluloza implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div[style="display: flex"]').each((index, element) => {
+    loadedCheerio('div[style="display: flex;"]').each((index, element) => {
       novels.push({
         name: loadedCheerio(element).find('span[itemprop="name"]').text() || '',
         cover:
           this.site +
           loadedCheerio(element).find('img[class="shadow"]').attr('src'),
         path: (
-          loadedCheerio(element).find('img[class="shadow"]').attr('onclick') ||
-          ''
+          loadedCheerio(element).find('a[class="txt"]').attr('href') || ''
         ).replace(/\D/g, ''),
       });
     });
@@ -64,7 +63,7 @@ class Zelluloza implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('span[itemprop="name"]').text(),
+      name: loadedCheerio('h2[class="bookname"]').text(),
       cover: this.site + loadedCheerio('img[class="shadow"]').attr('src'),
       genres: loadedCheerio('.gnres').text()?.split?.(': ')?.[1],
       summary:
@@ -163,15 +162,14 @@ class Zelluloza implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div[style="display: flex"]').each((index, element) => {
+    loadedCheerio('div[style="display: flex;"]').each((index, element) => {
       novels.push({
         name: loadedCheerio(element).find('span[itemprop="name"]').text() || '',
         cover:
           this.site +
           loadedCheerio(element).find('img[class="shadow"]').attr('src'),
         path: (
-          loadedCheerio(element).find('img[class="shadow"]').attr('onclick') ||
-          ''
+          loadedCheerio(element).find('a[class="txt"]').attr('href') || ''
         ).replace(/\D/g, ''),
       });
     });
