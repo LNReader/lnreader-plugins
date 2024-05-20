@@ -10,7 +10,7 @@ class Zelluloza implements Plugin.PluginBase {
   id = 'zelluloza';
   name = 'Целлюлоза';
   site = 'https://zelluloza.ru';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ru/zelluloza/icon.png';
 
   async popularNovels(
@@ -63,7 +63,7 @@ class Zelluloza implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('h2[class="bookname"]').text(),
+      name: loadedCheerio('h2[class="bookname"]').text().trim(),
       cover: this.site + loadedCheerio('img[class="shadow"]').attr('src'),
       genres: loadedCheerio('.gnres').text()?.split?.(': ')?.[1],
       summary:

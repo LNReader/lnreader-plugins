@@ -8,7 +8,7 @@ class novelOvh implements Plugin.PluginBase {
   id = 'novelovh';
   name = 'НовелОВХ';
   site = 'https://novel.ovh';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/ru/novelovh/icon.png';
 
   async popularNovels(
