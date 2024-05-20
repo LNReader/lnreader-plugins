@@ -79,9 +79,9 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       loadedCheerio(
         '.entry-content > table > tbody > tr > td > p > span > a',
       ).each((_i, el) => {
-        genres.push(loadedCheerio(el).text().trim().replace(' ', '-'));
+        genres.push(loadedCheerio(el).text().trim());
       });
-      return genres.join(' ');
+      return genres.join(',');
     })();
     novel.status =
       (() => {
@@ -148,16 +148,38 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       });
     return text.join('');
   }
+
+  // TODO: This search sucks and doesn't really works.
+  // for example do search "Hero", you'll only find a single result, but Hero King isn't shown (at least at the time of writing this)
+  // The issue is that I need to filter out junk from the search page, and it may happen that a page has zero element in it (as in nothing valuable)
+  // thus the app thinks it has reached the end of the pages, while it hasn't...
+  // it may be possible to hook into an direct wordpress api, but I haven't looked into it right now...
+  // It also lacks the covers, because the search pages doesn't show them. But the website does host them
   async searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     let novels: Plugin.NovelItem[] = [];
+    const req = await fetch(
+      `${this.site}/category/translations/page/${pageNo}/?s=${encodeURIComponent(searchTerm)}&post_types=page`,
+    );
+    const body = await req.text();
 
-    // get novels using the search term
+    const loadedCheerio = loadCheerio(body);
 
+    loadedCheerio('.site-content > .category-translations').each((_i, el) => {
+      let url = loadedCheerio(el).find('.entry-title > a').attr('href');
+      let name = loadedCheerio(el).find('.entry-title > a').text();
+      if (url === undefined || name == undefined) return;
+      let novel: any = {};
+      novel.path = url;
+      novel.name = name;
+      novel.cover = defaultCover;
+      novels.push(novel);
+    });
     return novels;
   }
+
   async fetchImage(url: string): Promise<string | undefined> {
     // if your plugin has images and they won't load
     // this is the function to fiddle with
