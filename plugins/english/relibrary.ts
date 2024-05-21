@@ -25,55 +25,60 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
 
-    const result = await fetch(this.site + '/translations/most-popular/');
-    const body = await result.text();
+    /// This check is because there isn't any page system for their most popular section, so force to return an empty array for page != 0
+    // same for the latest novels, it isn't implemented (or I haven't seen the page yet ...)
+    if (pageNo == 1 && !showLatestNovels) {
+      const result = await fetch(`${this.site}/translations/most-popular/`);
+      const body = await result.text();
 
-    const loadedCheerio = loadCheerio(body);
-    loadedCheerio('.entry-content > ol > li').each((_i, el) => {
-      let novel: NovelItem = { name: '', path: '' };
-      novel.name = loadedCheerio(el).find('h3 > a').text();
-      novel.path =
-        loadedCheerio(el).find('table > tbody > tr > td > a').attr('href') ||
-        '';
-      novel.cover = loadedCheerio(el)
-        .find('table > tbody > tr > td > a > img')
-        .attr('src');
-      if (novel.name.startsWith(this.site)) {
-        novel.name = novel.name.slice(this.site.length);
-      }
-      novels.push(novel);
-    });
+      const loadedCheerio = loadCheerio(body);
+      loadedCheerio('.entry-content > ol > li').each((_i, el) => {
+        let novel: NovelItem = { name: '', path: '' };
+        novel.name = loadedCheerio(el).find('h3 > a').text();
+        novel.path =
+          loadedCheerio(el).find('table > tbody > tr > td > a').attr('href') ||
+          '';
+        novel.cover =
+          loadedCheerio(el)
+            .find('table > tbody > tr > td > a > img')
+            .attr('src') || defaultCover;
+        if (novel.path.startsWith(this.site)) {
+          novel.path = novel.path.slice(this.site.length);
+        }
+        novels.push(novel);
+      });
+    }
 
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novel: Plugin.SourceNovel = {
-      path: novelPath,
-      name: 'Untitled',
+    let novel: Plugin.SourceNovel = {
+      name: 'Broken Scraping',
+      path: 'Broken Scraping',
     };
     // title:		.entry-content > header.entry-header > .entry-title
     // img:			.entry-content > table > tbody > tr > td > img
     // tags:		.entry-content > table > tbody > tr > td > p > span > a[]
     // synopis:		.entry-content > div.su-box > div.su-box-content
     // chapters:	.entry-content > div.su-accordion <then> li.page_item[]
-    //
-    // TODO: get here data from the site and
-    // un-comment and fill-in the relevant fields
 
-    const result = await fetch(this.site + '/' + novelPath);
+    const result = await fetch(`${this.site}/${novelPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
 
+    // If it doesn't find the name I should just throw an error (or early return) since the scraping is broken
     novel.name =
       loadedCheerio('header.entry-header > .entry-title').text().trim() || '';
-    // novel.artist = "";
-    // novel.author = "";
+
+    // Find the cover
     novel.cover =
       loadedCheerio('.entry-content > table > tbody > tr > td > img').attr(
         'src',
       ) || defaultCover;
+
+    // Genres in comma separated "list"
     novel.genres = (() => {
       let genres: string[] = [];
       loadedCheerio(
@@ -83,26 +88,28 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       });
       return genres.join(',');
     })();
-    novel.status =
-      (() => {
-        let status: any = NovelStatus.Unknown;
-        loadedCheerio('.entry-content > table > tbody > tr > td > p').each(
-          function (_i, el) {
-            if (
-              loadedCheerio(el)
-                .find('strong')
-                .text()
-                .toLowerCase()
-                .trim()
-                .startsWith('status')
-            ) {
-              loadedCheerio(el).find('strong').remove();
-              status = loadedCheerio(el).text();
-            }
-          },
-        );
-        return status;
-      })() || NovelStatus.Unknown;
+
+    // Handle the novel status
+    // Sadly some novels just state the status inside the summary...
+    // I don't even know if the snippet here works for *most* of the novels preset, or only for a few
+    {
+      loadedCheerio('.entry-content > table > tbody > tr > td > p').each(
+        function (_i, el) {
+          if (
+            loadedCheerio(el)
+              .find('strong')
+              .text()
+              .toLowerCase()
+              .trim()
+              .startsWith('status')
+          ) {
+            loadedCheerio(el).find('strong').remove();
+            novel.status = loadedCheerio(el).text();
+          }
+        },
+      );
+    }
+
     novel.summary =
       loadedCheerio(
         '.entry-content > div.su-box > div.su-box-content',
@@ -110,7 +117,6 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
     let chapters: Plugin.ChapterItem[] = [];
 
-    // TODO: here parse the chapter list
     let chapter_idx = 0;
     loadedCheerio('.entry-content > div.su-accordion').each((_i1, el) => {
       loadedCheerio(el)
@@ -134,7 +140,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   }
   async parseChapter(chapterPath: string): Promise<string> {
     // parse chapter text here
-    const result = await fetch(this.site + '/' + chapterPath);
+    const result = await fetch(`${this.site}/${chapterPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -173,6 +179,9 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       if (url === undefined || name == undefined) return;
       let novel: any = {};
       novel.path = url;
+      if (novel.path.startsWith(this.site)) {
+        novel.path = novel.path.slice(this.site.length);
+      }
       novel.name = name;
       novel.cover = defaultCover;
       novels.push(novel);
