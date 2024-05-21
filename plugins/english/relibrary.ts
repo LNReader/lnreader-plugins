@@ -128,8 +128,10 @@ class ReLibraryPlugin implements Plugin.PluginBase {
             chap_path = chap_path.slice(this.site.length);
           }
           chapters.push({
-            name: loadedCheerio(chap_el).text() || '',
-            path: chap_path || '',
+            name:
+              loadedCheerio(chap_el).text() ||
+              `Unknown Chapter Name ${chapter_idx}`,
+            path: chap_path || `Invalid-Chapter-URL-${chapter_idx}`,
             chapterNumber: chapter_idx,
           });
         });
