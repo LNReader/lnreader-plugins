@@ -343,7 +343,7 @@ class NovelUpdates implements Plugin.PluginBase {
           throw new Error('Age verification required, please open in webview.');
         }
         chapterTitle = `${loadedCheerio('.pl-4 h1').first().text()!} | ${loadedCheerio('.pl-4 div').first().text()!}`;
-        chapterContent = loadedCheerio('#chapter-body').html()!;
+        chapterContent = loadedCheerio('.text-left').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
