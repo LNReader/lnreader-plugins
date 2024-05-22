@@ -8,6 +8,160 @@ import { NovelItem } from '../../test_web/static/js';
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 // import { parseMadaraDate } from "@libs/parseMadaraDate";
 
+interface FuzzySearchOptions {
+  caseSensitive: boolean;
+  sort: boolean;
+}
+
+// Shamelessly stolen from 'https://raw.githubusercontent.com/wouterrutgers/fuzzy-search/master/src/FuzzySearch.mjs'
+// I did modify the code a fair bit, but the algorithm is still the same under the hood.
+// The original code is under ISC, which stipluate that it needs to retain the copyright notice, so here it is.
+//
+// It only applies to the code in the FuzzySearch Class, even though I did modify it a fair bit
+
+/*
+Copyright (c) 2016, Wouter Rutgers
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+
+class FuzzySearch<Item> {
+  private haystack: Item[];
+  private options: FuzzySearchOptions;
+  private getItems: (item: Item) => string[];
+
+  constructor(
+    getItems: (item: Item) => string[],
+    options: Partial<FuzzySearchOptions>,
+  ) {
+    this.haystack = [];
+    this.options = Object.assign(
+      {
+        caseSensitive: false,
+        sort: false,
+      },
+      options,
+    );
+    this.getItems = getItems;
+  }
+
+  getOptions(): FuzzySearchOptions {
+    return this.options;
+  }
+
+  setOptions(options: Partial<FuzzySearchOptions>) {
+    this.options = Object.assign(this.options, options);
+  }
+
+  setHaystack(items: Item[]) {
+    this.haystack = items;
+  }
+
+  getHaystack(): Item[] {
+    return this.haystack;
+  }
+
+  search(query: string): Item[] {
+    if (query.length === 0) {
+      return this.haystack;
+    }
+    const results: { item: Item; score: number }[] = [];
+
+    for (let item of this.haystack) {
+      for (let value of this.getItems(item)) {
+        const score = this.isMatch(value, query);
+        if (score !== undefined) {
+          console.log(`${value} == ${score}`);
+          results.push({ item, score });
+          /// We don't want to have multiple occurence of the same item, so only take one if it is found
+          break;
+        }
+      }
+    }
+
+    if (this.options.sort) {
+      results.sort((a, b) => a.score - b.score);
+    }
+
+    return results.map(result => result.item);
+  }
+
+  isMatch(item: string, query: string): number | undefined {
+    if (!this.options.caseSensitive) {
+      item = item.toLocaleLowerCase();
+      query = query.toLocaleLowerCase();
+    }
+
+    const indexes = this.nearestIndexesFor(item, query);
+
+    if (indexes === undefined) {
+      return;
+    }
+    // Exact matches should be first.
+    if (item === query) {
+      return 1;
+    }
+    // If we have more than 2 letters, matches close to each other should be first.
+    if (indexes.length > 1) {
+      return 2 + (indexes[indexes.length - 1] - indexes[0]);
+    }
+    // Matches closest to the start of the string should be first.
+    return 2 + indexes[0];
+  }
+
+  nearestIndexesFor(item: string, query: string): number[] | undefined {
+    const letters = query.split('');
+    let indexes: number[][] = [];
+
+    const idxFL = this.idxFirstLetter(item, query);
+
+    for (let idx of idxFL) {
+      indexes.push([idx]);
+      for (let i = 1; i < letters.length; i++) {
+        const letter = letters[i];
+        let index = item.indexOf(letter, idx + 1);
+        if (index === -1) {
+          indexes.pop();
+          break;
+        }
+        indexes[indexes.length - 1].push(index);
+        index++;
+      }
+    }
+
+    if (indexes.length === 0) {
+      return;
+    }
+
+    return indexes.sort((a, b) => {
+      if (a.length === 1) {
+        return a[0] - b[0];
+      }
+
+      let res_a = a[a.length - 1] - a[0];
+      let res_b = b[b.length - 1] - b[0];
+
+      return res_a - res_b;
+    })[0];
+  }
+
+  idxFirstLetter(item: string, query: string): number[] {
+    const match = query[0];
+
+    return item
+      .split('')
+      .map((letter, index) => {
+        if (letter !== match) {
+          return;
+        }
+        return index;
+      })
+      .filter(index => index !== undefined) as number[];
+  }
+}
+
 class ReLibraryPlugin implements Plugin.PluginBase {
   id = 'ReLib';
   name = 'Re:Library';
@@ -16,6 +170,62 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   version = '1.0.0';
   filters: Filters | undefined = undefined;
 
+  private searchFunc: FuzzySearch<Plugin.NovelItem> = new FuzzySearch(
+    item => [item.name],
+    { sort: true, caseSensitive: false },
+  );
+
+  private async popularNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
+    const novels: Plugin.NovelItem[] = [];
+    const result = await fetch(url);
+    const body = await result.text();
+
+    const loadedCheerio = loadCheerio(body);
+    loadedCheerio('.entry-content > ol > li').each((_i, el) => {
+      let novel: NovelItem = { name: '', path: '' };
+      novel.name = loadedCheerio(el).find('h3 > a').text();
+      novel.path =
+        loadedCheerio(el).find('table > tbody > tr > td > a').attr('href') ||
+        '';
+      novel.cover =
+        loadedCheerio(el)
+          .find('table > tbody > tr > td > a > img')
+          .attr('src') || defaultCover;
+      if (novel.path.startsWith(this.site)) {
+        novel.path = novel.path.slice(this.site.length);
+      }
+      novels.push(novel);
+    });
+    return novels;
+  }
+
+  private async lastestNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
+    const novels: Plugin.NovelItem[] = [];
+    const result = await fetch(url);
+    const body = await result.text();
+
+    const loadedCheerio = loadCheerio(body);
+    loadedCheerio('article.type-page.page').each((i, el) => {
+      let novel: NovelItem = {
+        name: 'Broken Scraping',
+        path: 'Broken Scraping!',
+      };
+      novel.name = loadedCheerio(el).find('.entry-title').text();
+      novel.path =
+        loadedCheerio(el).find('.entry-title a').attr('href') ||
+        `Invalid-novel-URL-${i}`;
+      novel.cover =
+        loadedCheerio(el)
+          .find('.entry-content > table > tbody > tr > td > img')
+          .attr('src') || defaultCover;
+      if (novel.path.startsWith(this.site)) {
+        novel.path = novel.path.slice(this.site.length);
+      }
+      novels.push(novel);
+    });
+    return novels;
+  }
+
   async popularNovels(
     pageNo: number,
     {
@@ -23,33 +233,15 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    const novels: Plugin.NovelItem[] = [];
-
-    /// This check is because there isn't any page system for their most popular section, so force to return an empty array for page != 0
-    // same for the latest novels, it isn't implemented (or I haven't seen the page yet ...)
-    if (pageNo == 1 && !showLatestNovels) {
-      const result = await fetch(`${this.site}/translations/most-popular/`);
-      const body = await result.text();
-
-      const loadedCheerio = loadCheerio(body);
-      loadedCheerio('.entry-content > ol > li').each((_i, el) => {
-        let novel: NovelItem = { name: '', path: '' };
-        novel.name = loadedCheerio(el).find('h3 > a').text();
-        novel.path =
-          loadedCheerio(el).find('table > tbody > tr > td > a').attr('href') ||
-          '';
-        novel.cover =
-          loadedCheerio(el)
-            .find('table > tbody > tr > td > a > img')
-            .attr('src') || defaultCover;
-        if (novel.path.startsWith(this.site)) {
-          novel.path = novel.path.slice(this.site.length);
-        }
-        novels.push(novel);
-      });
-    }
-
-    return novels;
+    // The most-popular page only has a single page, so we return an empty array in case you ask for the impossible
+    // the lastest page do have paginated result, so we support that.
+    if (showLatestNovels)
+      return this.lastestNovelsInner(
+        `${this.site}/tag/translations/page/${pageNo}`,
+      );
+    else if (pageNo == 1)
+      return this.popularNovelsInner(`${this.site}/translations/most-popular/`);
+    else return [];
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -86,29 +278,27 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       ).each((_i, el) => {
         genres.push(loadedCheerio(el).text().trim());
       });
-      return genres.join(',');
+      return genres.join(', ');
     })();
 
     // Handle the novel status
     // Sadly some novels just state the status inside the summary...
     // I don't even know if the snippet here works for *most* of the novels preset, or only for a few
-    {
-      loadedCheerio('.entry-content > table > tbody > tr > td > p').each(
-        function (_i, el) {
-          if (
-            loadedCheerio(el)
-              .find('strong')
-              .text()
-              .toLowerCase()
-              .trim()
-              .startsWith('status')
-          ) {
-            loadedCheerio(el).find('strong').remove();
-            novel.status = loadedCheerio(el).text();
-          }
-        },
-      );
-    }
+    loadedCheerio('.entry-content > table > tbody > tr > td > p').each(
+      function (_i, el) {
+        if (
+          loadedCheerio(el)
+            .find('strong')
+            .text()
+            .toLowerCase()
+            .trim()
+            .startsWith('status')
+        ) {
+          loadedCheerio(el).find('strong').remove();
+          novel.status = loadedCheerio(el).text();
+        }
+      },
+    );
 
     novel.summary =
       loadedCheerio(
@@ -157,43 +347,34 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     return text.join('');
   }
 
-  // TODO: This search sucks and doesn't really works.
-  // for example do search "Hero", you'll only find a single result, but Hero King isn't shown (at least at the time of writing this)
-  // The issue is that I need to filter out junk from the search page, and it may happen that a page has zero element in it (as in nothing valuable)
-  // thus the app thinks it has reached the end of the pages, while it hasn't...
-  // it may be possible to hook into an direct wordpress api, but I haven't looked into it right now...
-  // It also lacks the covers, because the search pages doesn't show them. But the website does host them
   async searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
+    // We only want to serve a single "page" since we do the search client side.
+    if (pageNo !== 1) return [];
+
     let novels: Plugin.NovelItem[] = [];
-    const req = await fetch(
-      `${this.site}/category/translations/page/${pageNo}/?s=${encodeURIComponent(searchTerm)}&post_types=page`,
-    );
+    const req = await fetch(`${this.site}/translations/`);
     const body = await req.text();
 
     const loadedCheerio = loadCheerio(body);
 
-    loadedCheerio('.site-content > .category-translations').each((_i, el) => {
-      let url = loadedCheerio(el).find('.entry-title > a').attr('href');
-      let name = loadedCheerio(el).find('.entry-title > a').text();
-      if (url === undefined || name == undefined) return;
-      let novel: any = {};
-      novel.path = url;
-      if (novel.path.startsWith(this.site)) {
-        novel.path = novel.path.slice(this.site.length);
+    loadedCheerio('.entry-content table a').each((_i, el) => {
+      let e = loadedCheerio(el);
+      if (e && e.attr('href') && e.text()) {
+        let path = e.attr('href')!;
+        if (path.startsWith(this.site)) {
+          path = path.slice(this.site.length);
+        }
+        novels.push({ name: e.text(), path: path, cover: defaultCover });
       }
-      novel.name = name;
-      novel.cover = defaultCover;
-      novels.push(novel);
     });
-    return novels;
+    this.searchFunc.setHaystack(novels);
+    return this.searchFunc.search(searchTerm);
   }
 
   async fetchImage(url: string): Promise<string | undefined> {
-    // if your plugin has images and they won't load
-    // this is the function to fiddle with
     return fetchFile(url, { headers: { referer: this.site } });
   }
 }
