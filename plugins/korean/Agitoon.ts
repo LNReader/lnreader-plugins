@@ -8,8 +8,8 @@ class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
   name = 'Agitoon';
   icon = 'src/kr/agitoon/icon.png';
-  site = 'https://agit501.xyz';
-  version = '1.0.0';
+  site = 'https://agit655.xyz';
+  version = '2.0.0';
 
   async popularNovels(
     pageNo: number,
