@@ -13,7 +13,7 @@ class AuthorToday implements Plugin.PluginBase {
   icon = 'src/ru/authortoday/icon.png';
   site = 'https://author.today';
   apiUrl = 'https://api.author.today/v1/';
-  version = '1.0.1';
+  version = '1.1.0';
 
   async popularNovels(
     pageNo: number,
@@ -135,20 +135,9 @@ class AuthorToday implements Plugin.PluginBase {
       return result.code + '\n' + result?.message;
     }
 
-    const key =
-      result.key.split('').reverse().join('') +
-      '@_@' +
-      (this.user?.userId || '');
-    let text = '';
-
-    for (let i = 0; i < result.text.length; i++) {
-      text += String.fromCharCode(
-        result.text.charCodeAt(i) ^ key.charCodeAt(Math.floor(i % key.length)),
-      );
-    }
-
-    if (text.includes('<img')) {
-      return text.replace(/src="(.*?)"/g, (match, url) => {
+    const chapterText = decrypt(result.text, result.key, this.user?.userId);
+    if (chapterText.includes('<img')) {
+      return chapterText.replace(/src="(.*?)"/g, (match, url) => {
         if (!url.startsWith('http')) {
           return `src="${this.site}${url}"`;
         }
@@ -156,7 +145,7 @@ class AuthorToday implements Plugin.PluginBase {
       });
     }
 
-    return text;
+    return chapterText;
   }
 
   async searchNovels(
@@ -373,6 +362,23 @@ class AuthorToday implements Plugin.PluginBase {
 
 export default new AuthorToday();
 
+function decrypt(
+  encrypt: string,
+  encryptedKey: string,
+  userId: number | string = '',
+) {
+  const key = encryptedKey.split('').reverse().join('') + '@_@' + userId;
+  let text = '';
+
+  for (let i = 0; i < encrypt.length; i++) {
+    text += String.fromCharCode(
+      encrypt.charCodeAt(i) ^ key.charCodeAt(i % key.length),
+    );
+  }
+
+  return text;
+}
+
 interface authorization {
   userId: number;
   token: string;
@@ -380,7 +386,7 @@ interface authorization {
   expires: string;
 }
 
-export interface currentUser {
+interface currentUser {
   id: number;
   userName: string;
   fio: string;
