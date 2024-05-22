@@ -73,7 +73,6 @@ class FuzzySearch<Item> {
       for (let value of this.getItems(item)) {
         const score = this.isMatch(value, query);
         if (score !== undefined) {
-          console.log(`${value} == ${score}`);
           results.push({ item, score });
           /// We don't want to have multiple occurence of the same item, so only take one if it is found
           break;
