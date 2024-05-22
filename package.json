@@ -14,7 +14,8 @@
         "host-linux": "chmod +x ./host.sh && ./host.sh",
         "host-windows": "powershell ./host.ps1",
         "prettier": "prettier --write \"./**/*.{js,ts}\"",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "icons": "npm run clearMultisrc && npm run generate && npm run json && ts-node ./scripts/icon_reloading.ts"
     },
     "author": "LNReader",
     "license": "MIT",
