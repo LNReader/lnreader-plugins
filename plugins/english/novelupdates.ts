@@ -180,6 +180,7 @@ class NovelUpdates implements Plugin.PluginBase {
     loadedCheerio: CheerioAPI,
     domain: string[],
     url: string,
+    result: Response,
   ) {
     let bloatClasses = [];
     let chapterTitle = '';
@@ -202,6 +203,54 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterTitle = titleElementAsura.text()!;
         titleElementAsura.remove();
         chapterContent = loadedCheerio('.post-body').html()!;
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
+      case 'helscans':
+        /**
+         * Check for old Novel Updates url
+         */
+        const urlFixesHelScans = [
+          ['academys-genius-swordmaster', '1716630765'],
+        ];
+        if (!result.ok) {
+          for (let element in urlFixesHelScans) {
+            if (url.includes(urlFixesHelScans[element][0])) {
+              const urlHelScans = url.replace(
+                urlFixesHelScans[element][0],
+                `${urlFixesHelScans[element][1]}-${urlFixesHelScans[element][0]}`,
+              );
+              const resultHelScans = await fetchApi(urlHelScans);
+              const bodyHelScans = await resultHelScans.text();
+
+              loadedCheerio = parseHTML(bodyHelScans);
+              /**
+               * Check if new url is working
+               */
+              if (!resultHelScans.ok) {
+                throw new Error(
+                  `Could not reach site (${result.status}), try to open in webview.`,
+                );
+              }
+              break;
+            }
+          }
+        }
+        chapterTitle = loadedCheerio('.entry-title-main').first().text()!;
+        let chapterStringHelScans =
+          'Chapter ' + chapterTitle.split('Chapter')[1].trim();
+        loadedCheerio('#readerarea.rdminimal')
+          .children()
+          .each((idx, ele) => {
+            let elementText = loadedCheerio(ele).text();
+            if (elementText.includes(chapterStringHelScans)) {
+              chapterTitle = elementText;
+              loadedCheerio(ele).remove();
+              return false;
+            }
+          });
+        chapterContent = loadedCheerio('#readerarea.rdminimal').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
@@ -443,6 +492,14 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterText;
   }
 
+  /**
+   * Check if the provided chapter url is wrong
+   */
+  wrongChapterUrl(domain: string[]) {
+    const checks = ['helscans'];
+    return !!domain.find(d => checks.includes(d));
+  }
+
   async parseChapter(chapterPath: string): Promise<string> {
     let bloatClasses = [];
     let chapterTitle = '';
@@ -470,9 +527,14 @@ class NovelUpdates implements Plugin.PluginBase {
       throw new Error('Captcha error, please open in webview.');
     }
     if (!result.ok) {
-      throw new Error(
-        `Could not reach site (${result.status}), try to open in webview.`,
-      );
+      /**
+       * Check if the chapter url is wrong or the site is genuinely down
+       */
+      if (!this.wrongChapterUrl(domain)) {
+        throw new Error(
+          `Could not reach site (${result.status}), try to open in webview.`,
+        );
+      }
     }
 
     /**
@@ -515,6 +577,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const outliers = [
       'anotivereads',
       'asuratls',
+      'helscans',
       'mirilu',
       'novelworldtranslations',
       'sacredtexttranslations',
@@ -543,7 +606,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Gem Novels
      * - Genesis Translations (Manually added)
      * - Goblinslate
-     * - Hel Scans
+     * - Hel Scans (Outlier)
      * - ippotranslations
      * - JATranslations
      * - Light Novels Translations
@@ -559,7 +622,12 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Zetro Translation (Outlier)
      */
     if (!isWordPress && !isBlogspot) {
-      chapterText = await this.getChapterBody(loadedCheerio, domain, url);
+      chapterText = await this.getChapterBody(
+        loadedCheerio,
+        domain,
+        url,
+        result,
+      );
     } else if (isBlogspot) {
       bloatClasses = ['.button-container', '.separator'];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
