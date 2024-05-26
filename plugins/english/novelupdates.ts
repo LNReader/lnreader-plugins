@@ -323,7 +323,12 @@ class NovelUpdates implements Plugin.PluginBase {
         bloatClasses.map(tag => loadedCheerio(tag).remove());
         loadedCheerio('.entry-content a')
           .filter((_, el) => {
-            return loadedCheerio(el).attr('href')?.includes(this.site) || false;
+            return (
+              loadedCheerio(el)
+                .attr('href')
+                ?.includes('https://novelworldtranslations.blogspot.com/') ||
+              false
+            );
           })
           .remove();
         chapterTitle = loadedCheerio('.entry-title').first().text()!;
