@@ -654,6 +654,7 @@ class NovelUpdates implements Plugin.PluginBase {
         '.chapter-warning',
         '.entry-meta',
         '.ezoic-ad',
+        '.genesistls-watermark',
         '.mb-center',
         '.patreon-widget',
         '.post-cats',
