@@ -326,11 +326,13 @@ class NovelUpdates implements Plugin.PluginBase {
             return (
               loadedCheerio(el)
                 .attr('href')
-                ?.includes('https://novelworldtranslations.blogspot.com/') ||
+                ?.includes('https://novelworldtranslations.blogspot.com') ||
               false
             );
           })
-          .remove();
+          .each((_, el) => {
+            loadedCheerio(el).parent().remove();
+          });
         chapterTitle = loadedCheerio('.entry-title').first().text()!;
         chapterContent = loadedCheerio('.entry-content')
           .html()!
