@@ -656,6 +656,7 @@ class NovelUpdates implements Plugin.PluginBase {
         '.ezoic-ad',
         '.genesistls-watermark',
         '.mb-center',
+        '.modern-footnotes-footnote__note',
         '.patreon-widget',
         '.post-cats',
         '.pre-bar',
