@@ -212,14 +212,21 @@ class NovelUpdates implements Plugin.PluginBase {
          * Check for old Novel Updates url
          */
         const urlFixesHelScans = [
-          ['academys-genius-swordmaster', '1716630765'],
+          [
+            '1713359548-academys-genius-swordmaster',
+            '1716630765-academys-genius-swordmaster',
+          ],
+          [
+            'academys-genius-swordmaster',
+            '1716630765-academys-genius-swordmaster',
+          ],
         ];
         if (!result.ok) {
           for (let element in urlFixesHelScans) {
             if (url.includes(urlFixesHelScans[element][0])) {
               const urlHelScans = url.replace(
                 urlFixesHelScans[element][0],
-                `${urlFixesHelScans[element][1]}-${urlFixesHelScans[element][0]}`,
+                urlFixesHelScans[element][1],
               );
               const resultHelScans = await fetchApi(urlHelScans);
               const bodyHelScans = await resultHelScans.text();
