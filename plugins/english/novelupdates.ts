@@ -321,6 +321,7 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'novelworldtranslations':
         bloatClasses = ['.separator span'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
+        loadedCheerio('.entry-content div div p span').last().remove();
         chapterTitle = loadedCheerio('.entry-title').first().text()!;
         chapterContent = loadedCheerio('.entry-content')
           .html()!
