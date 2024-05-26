@@ -176,5 +176,32 @@
       "lang": "Portuguese",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "ellotl",
+    "sourceSite": "https://ellotl.com/",
+    "sourceName": "ElloTL",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true,
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "ippotranslations",
+    "sourceSite": "https://ippotranslations.com/",
+    "sourceName": "Ippotranslations",
+    "options": {
+      "lang": "English",
+    }
+  },
+  {
+    "id": "cpunovel",
+    "sourceSite": "https://cpunovel.com/",
+    "sourceName": "CPUnovel",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
+    }
   }
 ]
