@@ -346,6 +346,9 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterContent = loadedCheerio('#startContainer + * > *')
           .first()
           .html()!;
+        if (!chapterContent) {
+          chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><br>There could be missing content, please check in webview.`;
+        }
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
