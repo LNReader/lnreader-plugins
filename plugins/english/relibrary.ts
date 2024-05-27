@@ -181,11 +181,12 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
     const loadedCheerio = loadCheerio(body);
     loadedCheerio('.entry-content > ol > li').each((_i, el) => {
-      let novel: NovelItem = { name: '', path: '' };
+      let novel: Partial<NovelItem> = {};
       novel.name = loadedCheerio(el).find('h3 > a').text();
-      novel.path =
-        loadedCheerio(el).find('table > tbody > tr > td > a').attr('href') ||
-        '';
+      novel.path = loadedCheerio(el)
+        .find('table > tbody > tr > td > a')
+        .attr('href');
+      if (novel.name === undefined || novel.path === undefined) return;
       novel.cover =
         loadedCheerio(el)
           .find('table > tbody > tr > td > a > img')
@@ -193,7 +194,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
       }
-      novels.push(novel);
+      novels.push(novel as Plugin.NovelItem);
     });
     return novels;
   }
@@ -204,15 +205,11 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
-    loadedCheerio('article.type-page.page').each((i, el) => {
-      let novel: NovelItem = {
-        name: 'Broken Scraping',
-        path: 'Broken Scraping!',
-      };
+    loadedCheerio('article.type-page.page').each((_i, el) => {
+      let novel: Partial<Plugin.NovelItem> = {};
       novel.name = loadedCheerio(el).find('.entry-title').text();
-      novel.path =
-        loadedCheerio(el).find('.entry-title a').attr('href') ||
-        `Invalid-novel-URL-${i}`;
+      novel.path = loadedCheerio(el).find('.entry-title a').attr('href');
+      if (novel.path === undefined || novel.name === undefined) return;
       novel.cover =
         loadedCheerio(el)
           .find('.entry-content > table > tbody > tr > td > img')
@@ -220,7 +217,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
       }
-      novels.push(novel);
+      novels.push(novel as Plugin.NovelItem);
     });
     return novels;
   }
@@ -238,15 +235,14 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       return this.lastestNovelsInner(
         `${this.site}/tag/translations/page/${pageNo}`,
       );
-    else if (pageNo == 1)
+    else if (pageNo === 1)
       return this.popularNovelsInner(`${this.site}/translations/most-popular/`);
     else return [];
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let novel: Plugin.SourceNovel = {
-      name: 'Broken Scraping',
-      path: 'Broken Scraping',
+    let novel: Partial<Plugin.SourceNovel> = {
+      path: novelPath,
     };
     // title:		.entry-content > header.entry-header > .entry-title
     // img:			.entry-content > table > tbody > tr > td > img
@@ -260,8 +256,12 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     const loadedCheerio = loadCheerio(body);
 
     // If it doesn't find the name I should just throw an error (or early return) since the scraping is broken
-    novel.name =
-      loadedCheerio('header.entry-header > .entry-title').text().trim() || '';
+    novel.name = loadedCheerio('header.entry-header > .entry-title')
+      .text()
+      .trim();
+
+    if (novel.name === undefined || novel.name === '404 – Page not found')
+      throw new Error(`Invalid novel for url ${novelPath}`);
 
     // Find the cover
     novel.cover =
@@ -299,10 +299,9 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       },
     );
 
-    novel.summary =
-      loadedCheerio(
-        '.entry-content > div.su-box > div.su-box-content',
-      ).text() || '';
+    novel.summary = loadedCheerio(
+      '.entry-content > div.su-box > div.su-box-content',
+    ).text();
 
     let chapters: Plugin.ChapterItem[] = [];
 
@@ -313,22 +312,28 @@ class ReLibraryPlugin implements Plugin.PluginBase {
         .each((_i2, chap_el) => {
           chapter_idx += 1;
           let chap_path = loadedCheerio(chap_el).attr('href')?.trim();
-          if (chap_path?.startsWith(this.site)) {
+          if (
+            loadedCheerio(chap_el).text() === undefined ||
+            chap_path === undefined
+          )
+            return;
+          if (chap_path.startsWith(this.site)) {
             chap_path = chap_path.slice(this.site.length);
           }
           chapters.push({
-            name:
-              loadedCheerio(chap_el).text() ||
-              `Unknown Chapter Name ${chapter_idx}`,
-            path: chap_path || `Invalid-Chapter-URL-${chapter_idx}`,
+            name: loadedCheerio(chap_el).text(),
+            path: chap_path,
             chapterNumber: chapter_idx,
+            // we KNOW that we can't get the released time (at least without any additional fetches), so set it to null purposfully
+            releaseTime: null,
           });
         });
     });
 
     novel.chapters = chapters;
-    return novel;
+    return novel as Plugin.NovelItem;
   }
+
   async parseChapter(chapterPath: string): Promise<string> {
     // parse chapter text here
     const result = await fetch(`${this.site}/${chapterPath}`);
@@ -341,8 +346,13 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       .each((_i, el) => {
         loadedCheerio(el).find('span').remove();
         let t = loadedCheerio(el).html();
-        text.push('<p>' + (t || '') + '</p>');
+        if (t === undefined) return;
+        text.push(`<p>${t}</p>`);
       });
+    if (text.length == 0)
+      throw new Error(
+        `Invalid Parsing of chapter, couldn't find any text for url "${this.site}/${chapterPath}"`,
+      );
     return text.join('');
   }
 
