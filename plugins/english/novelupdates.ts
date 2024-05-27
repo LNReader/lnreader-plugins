@@ -208,44 +208,8 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'helscans':
-        /**
-         * Check for old Novel Updates url
-         */
-        const urlFixesHelScans = [
-          [
-            '1713359548-academys-genius-swordmaster',
-            '1716630765-academys-genius-swordmaster',
-          ],
-          [
-            'academys-genius-swordmaster',
-            '1716630765-academys-genius-swordmaster',
-          ],
-        ];
-        if (!result.ok) {
-          for (let element in urlFixesHelScans) {
-            if (url.includes(urlFixesHelScans[element][0])) {
-              const urlHelScans = url.replace(
-                urlFixesHelScans[element][0],
-                urlFixesHelScans[element][1],
-              );
-              const resultHelScans = await fetchApi(urlHelScans);
-              const bodyHelScans = await resultHelScans.text();
-
-              loadedCheerio = parseHTML(bodyHelScans);
-              /**
-               * Check if new url is working
-               */
-              if (!resultHelScans.ok) {
-                throw new Error(
-                  `Could not reach site (${result.status}), try to open in webview.`,
-                );
-              }
-              break;
-            }
-          }
-        }
         chapterTitle = loadedCheerio('.entry-title-main').first().text()!;
-        let chapterStringHelScans =
+        const chapterStringHelScans =
           'Chapter ' + chapterTitle.split('Chapter')[1].trim();
         loadedCheerio('#readerarea.rdminimal')
           .children()
@@ -511,14 +475,6 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterText;
   }
 
-  /**
-   * Check if the provided chapter url is wrong
-   */
-  wrongChapterUrl(domain: string[]) {
-    const checks = ['helscans'];
-    return !!domain.find(d => checks.includes(d));
-  }
-
   async parseChapter(chapterPath: string): Promise<string> {
     let bloatClasses = [];
     let chapterTitle = '';
@@ -549,11 +505,9 @@ class NovelUpdates implements Plugin.PluginBase {
       /**
        * Check if the chapter url is wrong or the site is genuinely down
        */
-      if (!this.wrongChapterUrl(domain)) {
-        throw new Error(
-          `Could not reach site (${result.status}), try to open in webview.`,
-        );
-      }
+      throw new Error(
+        `Could not reach site (${result.status}), try to open in webview.`,
+      );
     }
 
     /**
