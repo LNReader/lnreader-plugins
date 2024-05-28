@@ -124,12 +124,12 @@
   },
   {
     "id": "hizomanga",
-    "sourceSite": "https://hizomanga.me/",
+    "sourceSite": "https://hizomanga.net/",
     "sourceName": "HizoManga",
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
