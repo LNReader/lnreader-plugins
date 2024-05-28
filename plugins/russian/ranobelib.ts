@@ -1,16 +1,26 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
+import { storage, localStorage } from '@libs/storage';
+import dayjs from 'dayjs';
+
+const statusKey: { [key: number]: string } = {
+  1: NovelStatus.Ongoing,
+  2: NovelStatus.Completed,
+  3: NovelStatus.OnHiatus,
+  4: NovelStatus.Cancelled,
+};
 
 class RLIB implements Plugin.PluginBase {
   id = 'RLIB';
-  name = 'RanobeLib (OLD)';
-  site = 'https://old.ranobelib.me/old/';
-  version = '1.1.0';
+  name = 'RanobeLib';
+  site = 'https://ranobelib.me';
+  apiSite = 'https://api.lib.social/api/manga/';
+  version = '2.0.0';
   icon = 'src/ru/ranobelib/icon.png';
-  ui: string | undefined = undefined;
+  webStorageUtilized = true;
 
   async popularNovels(
     pageNo: number,
@@ -19,7 +29,7 @@ class RLIB implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'manga-list?page=' + pageNo;
+    let url = this.apiSite + '?site_id[0]=3&page=' + pageNo;
     url +=
       '&sort_by=' +
       (showLatestNovels
@@ -65,138 +75,196 @@ class RLIB implements Plugin.PluginBase {
       }
     }
 
-    const result = await fetchApi(url).then(res => res.text());
-    const loadedCheerio = parseHTML(result);
+    const result: TopLevel = await fetchApi(url, {
+      headers: this.user?.token,
+    }).then(res => res.json());
+
     const novels: Plugin.NovelItem[] = [];
-
-    this.ui = loadedCheerio('a.header-right-menu__item')
-      .attr('href')
-      ?.replace?.(/[^0-9]/g, '');
-
-    const novelsRaw = result.match(/window\.__CATALOG_ITEMS__ = (\[.*?\]);/);
-    if (novelsRaw instanceof Array && novelsRaw.length >= 2) {
-      const novelsJson: resNovels[] = JSON.parse(novelsRaw[1]);
-      novelsJson.forEach(novel => {
+    if (result.data instanceof Array) {
+      result.data.forEach(novel =>
         novels.push({
-          name: novel.rus_name,
-          cover: novel.cover.default,
-          path: novel.slug_url,
-        });
-      });
+          name: novel.rus_name || novel.eng_name || novel.name,
+          cover: novel.cover?.default || defaultCover,
+          path: novel.slug_url || novel.id + '--' + novel.slug,
+        }),
+      );
     }
-
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.resolveUrl(novelPath, true)).then(res =>
-      res.text(),
-    );
-    const loadedCheerio = parseHTML(body);
+    const { data }: { data: DataClass } = await fetchApi(
+      this.apiSite +
+        novelPath +
+        '?fields[]=summary&fields[]=genres&fields[]=tags&fields[]=teams&fields[]=authors&fields[]=status_id&fields[]=artists',
+      { headers: this.user?.token },
+    ).then(res => res.json());
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('.media-name__main').text()?.trim?.() || '',
+      name: data.rus_name || data.name,
+      cover: data.cover?.default || defaultCover,
+      summary: data.summary,
     };
-    novel.cover = loadedCheerio('.container_responsive img').attr('src');
 
-    novel.summary = loadedCheerio('.media-description__text').text().trim();
+    if (data.status?.id) {
+      novel.status = statusKey[data.status.id] || NovelStatus.Unknown;
+    }
 
-    novel.genres = loadedCheerio('div[class="media-tags"]')
-      .text()
-      .trim()
-      .replace(/[\n\r]+/g, ', ')
-      .replace(/  /g, '');
+    if (data.authors?.length) {
+      novel.author = data.authors[0].name;
+    }
+    if (data.artists?.length) {
+      novel.artist = data.artists[0].name;
+    }
 
-    loadedCheerio(
-      'div.media-info-list > div[class="media-info-list__item"]',
-    ).each(function () {
-      let name = loadedCheerio(this)
-        .find('div[class="media-info-list__title"]')
-        .text();
+    const genres = [data.genres || [], data.tags || []]
+      .flat()
+      .map(genres => genres?.name)
+      .filter(genres => genres);
+    if (genres.length) {
+      novel.genres = genres.join(', ');
+    }
 
-      if (name === 'Автор') {
-        novel.author = loadedCheerio(this)
-          .find('div[class="media-info-list__value"]')
-          .text()
-          .trim();
-      } else if (name === 'Художник') {
-        novel.artist = loadedCheerio(this)
-          .find('div[class="media-info-list__value"]')
-          .text()
-          .trim();
-      }
-    });
+    const branch_id: { [key: number]: string } = {};
+    if (data.teams.length) {
+      data.teams.forEach(
+        ({ name, details }) => (branch_id[details?.branch_id || '0'] = name),
+      );
+    }
 
-    this.ui = loadedCheerio('a.header-right-menu__item')
-      .attr('href')
-      ?.replace?.(/[^0-9]/g, '');
+    const chaptersJSON: { data: DataChapter[] } = await fetchApi(
+      this.apiSite + novelPath + '/chapters',
+      {
+        headers: this.user?.token,
+      },
+    ).then(res => res.json());
 
-    const chaptersRaw = body.match(/window\.__CHAPTERS__ = (\[.*?\]);/);
-    if (chaptersRaw instanceof Array && chaptersRaw.length >= 2) {
-      const chaptersJson: resChapters[] = JSON.parse(chaptersRaw[1]);
-
-      if (!chaptersJson?.length) return novel;
-
+    if (chaptersJSON.data.length) {
       const chapters: Plugin.ChapterItem[] = [];
-      chaptersJson.forEach(chapter =>
+
+      chaptersJSON.data.forEach(chapter =>
         chapters.push({
           name:
             'Том ' +
             chapter.volume +
             ' Глава ' +
             chapter.number +
-            (chapter.name ? ' ' + chapter.name.trim() : ''),
-          path: novelPath + '/v' + chapter.volume + '/c' + chapter.number,
-          chapterNumber: chapter.index + 1,
+            (chapter.name ? ' ' + chapter.name : ''),
+          path:
+            novelPath +
+            '/' +
+            chapter.volume +
+            '/' +
+            chapter.number +
+            '/' +
+            (chapter.branches[0]?.branch_id || ''),
+          releaseTime: dayjs(chapter.branches[0].created_at).format('LLL'),
+          chapterNumber: chapter.index,
+          page: branch_id[chapter.branches[0].branch_id || '0'],
         }),
       );
+
       novel.chapters = chapters;
     }
+
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
-      res.text(),
-    );
+    const [slug, volume, number, branch_id] = chapterPath.split('/');
+    let chapterText = '';
 
-    const loadedCheerio = parseHTML(result);
-    loadedCheerio('.reader-container img').each((index, element) => {
-      const src =
-        loadedCheerio(element).attr('data-src') ||
-        loadedCheerio(element).attr('src');
-      if (!src?.startsWith('http')) {
-        loadedCheerio(element).attr('src', this.site + src);
-      } else {
-        loadedCheerio(element).attr('src', src);
-      }
-      loadedCheerio(element).removeAttr('data-src');
-    });
+    if (slug && volume && number) {
+      const result: { data: DataClass } = await fetchApi(
+        this.apiSite +
+          slug +
+          '/chapter?' +
+          (branch_id ? 'branch_id=' + branch_id + '&' : '') +
+          'number=' +
+          number +
+          '&volume=' +
+          volume,
+        { headers: this.user?.token },
+      ).then(res => res.json());
+      chapterText =
+        result?.data?.content?.type == 'doc'
+          ? jsonToHtml(result.data.content.content)
+          : result?.data?.content;
+    }
 
-    const chapterText = loadedCheerio('.reader-container').html();
-    return chapterText || '';
+    return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(this.site + 'api/manga?q=' + searchTerm);
-    const { data }: { data: resNovels[] } = await result.json();
-    const novels: Plugin.NovelItem[] = [];
+    const url = this.apiSite + '?site_id[0]=3&q=' + searchTerm;
+    const result: TopLevel = await fetchApi(url, {
+      headers: this.user?.token,
+    }).then(res => res.json());
 
-    data.forEach(novel =>
-      novels.push({
-        name: novel.rus_name || novel.name,
-        cover: novel?.cover?.default || '',
-        path: novel.slug_url,
-      }),
-    );
+    const novels: Plugin.NovelItem[] = [];
+    if (result.data instanceof Array) {
+      result.data.forEach(novel =>
+        novels.push({
+          name: novel.rus_name || novel.eng_name || novel.name,
+          cover: novel.cover?.default || defaultCover,
+          path: novel.slug_url || novel.id + '--' + novel.slug,
+        }),
+      );
+    }
 
     return novels;
   }
 
   fetchImage = fetchFile;
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + path + (this.ui ? '?ui=' + this.ui : '');
+  resolveUrl = (path: string, isNovel?: boolean) => {
+    const ui = this.user?.ui ? 'ui=' + this.user.ui : '';
+
+    if (isNovel) return this.site + '/ru/book/' + path + (ui ? '?' + ui : '');
+
+    const [slug, volume, number, branch_id] = path.split('/');
+    const chapterPath =
+      slug +
+      '/read/v' +
+      volume +
+      '/c' +
+      number +
+      (branch_id ? '?bid=' + branch_id : '');
+
+    return (
+      this.site +
+      '/ru/' +
+      chapterPath +
+      (ui ? (branch_id ? '&' : '?') + ui : '')
+    );
+  };
+
+  getUser = () => {
+    const user = storage.get('user');
+    if (user) {
+      return { token: { Authorization: 'Bearer ' + user.token }, ui: user.id };
+    }
+    const dataRaw = localStorage.get()?.auth;
+    if (!dataRaw) {
+      return {};
+    }
+
+    const data = JSON.parse(dataRaw) as authorization;
+    if (!data?.token?.access_token) return;
+    storage.set(
+      'user',
+      {
+        id: data.auth.id,
+        token: data.token.access_token,
+      },
+      data.token.timestamp + data.token.expires_in, //the token is valid for about 7 days
+    );
+    return {
+      token: { Authorization: 'Bearer ' + data.token.access_token },
+      ui: data.auth.id,
+    };
+  };
+  user = this.getUser(); //To change the account, you need to restart the application
 
   filters = {
     sort_by: {
@@ -410,41 +478,230 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
-interface resNovels {
+function jsonToHtml(json: HTML[], html: string = '') {
+  json.forEach(element => {
+    switch (element.type) {
+      case 'hardBreak':
+        html += '<br>';
+        break;
+      case 'horizontalRule':
+        html += '<hr>';
+        break;
+      case 'image':
+        if (element.attrs) {
+          const attrs = Object.entries(element.attrs)
+            .filter(attr => attr?.[1])
+            .map(attr => `${attr[0]}="${attr[1]}"`);
+          html += '<img ' + attrs.join('; ') + '>';
+        }
+        break;
+      case 'paragraph':
+        html +=
+          '<p>' +
+          (element.content ? jsonToHtml(element.content) : '<br>') +
+          '</p>';
+        break;
+      case 'text':
+        html += element.text;
+        break;
+      default:
+        html += JSON.stringify(element, null, '\t'); //maybe I missed something.
+        break;
+    }
+  });
+  return html;
+}
+
+interface HTML {
+  type: string;
+  content?: HTML[];
+  attrs?: Attrs;
+  text?: string;
+}
+
+interface Attrs {
+  src: string;
+  alt: string | null;
+  title: string | null;
+}
+
+interface authorization {
+  token: Token;
+  auth: Auth;
+  timestamp: number;
+}
+interface Token {
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
+  timestamp: number;
+}
+interface Auth {
   id: number;
-  name: string;
-  rus_name: string;
-  eng_name: string;
-  slug: string;
-  slug_url: string;
-  cover: Cover;
-  ageRestriction: AgeRestrictionOrTypeOrStatus;
-  site: number;
-  type: AgeRestrictionOrTypeOrStatus;
-  rating: Rating;
-  is_licensed: boolean;
-  model: string;
-  status: AgeRestrictionOrTypeOrStatus;
-  releaseDateString: string;
+  username: string;
+  avatar: Cover;
+  last_online_at: string;
+  metadata: Metadata;
 }
-interface Cover {
-  filename: string;
-  thumbnail: string;
-  default: string;
+interface Metadata {
+  auth_domains: string;
 }
-interface AgeRestrictionOrTypeOrStatus {
+
+interface TopLevel {
+  data: DataClass | DataClass[];
+  links?: Links;
+  meta?: Meta;
+}
+
+interface AgeRestriction {
   id: number;
   label: string;
 }
-interface Rating {
-  average: string;
-  averageFormated: string;
-  votes: number;
-  votesFormated: string;
-  user: number;
+
+interface Branch {
+  id: number;
+  branch_id: null;
+  created_at: string;
+  teams: BranchTeam[];
+  user: User;
 }
 
-interface resChapters {
+interface BranchTeam {
+  id: number;
+  slug: string;
+  slug_url: string;
+  model: string;
+  name: string;
+  cover: Cover;
+}
+
+interface Cover {
+  filename: null | string;
+  thumbnail: string;
+  default: string;
+}
+
+interface User {
+  username: string;
+  id: number;
+}
+
+interface Rating {
+  average: string;
+  votes: number;
+  votesFormated: string;
+}
+
+interface DataClass {
+  id: number;
+  name: string;
+  rus_name?: string;
+  eng_name?: string;
+  slug: string;
+  slug_url?: string;
+  cover?: Cover;
+  ageRestriction?: AgeRestriction;
+  site?: number;
+  type: string;
+  summary?: string;
+  is_licensed?: boolean;
+  teams: DataTeam[];
+  genres?: Genre[];
+  tags?: Genre[];
+  authors?: Artist[];
+  model?: string;
+  status?: AgeRestriction;
+  scanlateStatus?: AgeRestriction;
+  artists?: Artist[];
+  releaseDateString?: string;
+  volume?: string;
+  number?: string;
+  number_secondary?: string;
+  branch_id?: null;
+  manga_id?: number;
+  created_at?: string;
+  moderated?: AgeRestriction;
+  likes_count?: number;
+  content?: any;
+  attachments?: Attachment[];
+}
+
+interface Artist {
+  id: number;
+  slug: string;
+  slug_url: string;
+  model: string;
+  name: string;
+  rus_name: null;
+  alt_name: null;
+  cover: Cover;
+  subscription: Subscription;
+  confirmed: null;
+  user_id: number;
+  titles_count_details: null;
+}
+
+interface Subscription {
+  is_subscribed: boolean;
+  source_type: string;
+  source_id: number;
+  relation: null;
+}
+
+interface Attachment {
+  id: null;
+  filename: string;
+  name: string;
+  extension: string;
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface DataTeam {
+  id: number;
+  slug: string;
+  slug_url: string;
+  model: string;
+  name: string;
+  cover: Cover;
+  details?: Details;
+  vk?: string;
+  discord?: null;
+}
+
+interface Details {
+  branch_id: null;
+  is_active: boolean;
+  subscriptions_count: null;
+}
+
+interface Links {
+  first: string;
+  last: null;
+  prev: null;
+  next: string;
+}
+
+interface Meta {
+  current_page?: number;
+  from?: number;
+  path?: string;
+  per_page?: number;
+  to?: number;
+  page?: number;
+  has_next_page?: boolean;
+  seed?: string;
+  country?: string;
+}
+
+interface DataChapter {
   id: number;
   index: number;
   item_number: number;
@@ -452,4 +709,13 @@ interface resChapters {
   number: string;
   number_secondary: string;
   name: string;
+  branches_count: number;
+  branches: Branch[];
+}
+interface BranchesEntity {
+  id: number;
+  branch_id?: number;
+  created_at: string;
+  teams?: BranchTeam[];
+  user: User;
 }
