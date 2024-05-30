@@ -1,4 +1,5 @@
 import { CheerioAPI, load } from 'cheerio';
+import { Parser } from 'htmlparser2';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -36,7 +37,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.0.${5 + versionIncrements}`;
+    this.version = `1.1.${versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
@@ -48,43 +49,49 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     return url_parts.join('.');
   }
 
-  async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
+  async safeFecth(url: string, search: boolean): Promise<string> {
     const r = await fetchApi(url);
     if (!r.ok && search != true)
       throw new Error(
         'Could not reach site (' + r.status + ') try to open in webview.',
       );
-    const $ = load(await r.text());
-    const title = $('title').text().trim();
+    const data = await r.text();
+    const title = data.match(/<title>(.*?)<\/title>/)?.[1]?.trim();
+
     if (
       this.getHostname(url) != this.getHostname(r.url) ||
-      title == 'Bot Verification' ||
-      title == 'You are being redirected...' ||
-      title == 'Un instant...' ||
-      title == 'Just a moment...' ||
-      title == 'Redirecting...'
+      (title &&
+        (title == 'Bot Verification' ||
+          title == 'You are being redirected...' ||
+          title == 'Un instant...' ||
+          title == 'Just a moment...' ||
+          title == 'Redirecting...'))
     )
       throw new Error('Captcha error, please open in webview');
 
-    return $;
+    return data;
   }
 
-  parseNovels($: CheerioAPI): Plugin.NovelItem[] {
+  parseNovels(html: string): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
 
-    $('div.listupd > article').each((i, elem) => {
-      const novelName = $(elem).find('h2').text();
-      const image = $(elem).find('img');
-      const novelUrl = $(elem).find('a').attr('href');
+    const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
+    articles.forEach(article => {
+      const novelName = article.match(/<a.*title="(.*?)"/)?.[1];
+      const novelUrl = article.match(/<a href="(.*?)"/)?.[1];
 
-      if (novelUrl) {
+      if (novelName && novelUrl) {
+        const novelCover =
+          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/>/) || [];
+
         novels.push({
           name: novelName,
-          cover: image.attr('data-src') || image.attr('src') || defaultCover,
+          cover: novelCover[2] || novelCover[1] || defaultCover,
           path: novelUrl.replace(this.site, ''),
         });
       }
     });
+
     return novels;
   }
 
@@ -105,168 +112,271 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           url += `&${key}=${value}`;
       else if (filters[key].value) url += `&${key}=${filters[key].value}`;
     }
-    const $ = await this.getCheerio(url, false);
-    return this.parseNovels($);
+    const html = await this.safeFecth(url, false);
+    return this.parseNovels(html);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const $ = await this.getCheerio(this.site + novelPath, false);
+    const baseURL = this.site;
+    const html = await this.safeFecth(baseURL + novelPath, false);
 
     const novel: Plugin.SourceNovel = {
-      path: novelPath.replace(this.site, ''),
-      name: 'Untitled',
+      path: novelPath,
+      name: '',
+      genres: '',
+      summary: '',
+      author: '',
+      artist: '',
+      status: '',
+      chapters: [] as Plugin.ChapterItem[],
     };
+    let isParsingGenres = false;
+    let isReadingGenre = false;
+    let isReadingSummary = false;
+    let isParsingInfo = false;
+    let isReadingInfo = false;
+    let isReadingAuthor = false;
+    let isReadingArtist = false;
+    let isReadingStatus = false;
+    let isParsingChapterList = false;
+    let isReadingChapter = false;
+    let isReadingChapterInfo = 0;
+    let isReadingChapterPrice = false;
+    let isPaidChapter = false;
+    const chapters: Plugin.ChapterItem[] = [];
+    let tempChapter = {} as Plugin.ChapterItem;
 
-    novel.name = $('h1.entry-title').text().trim();
-    const image = $('img.wp-post-image');
-    novel.cover = image.attr('data-src') || image.attr('src') || defaultCover;
-    switch ($('div.sertostat > span').attr('class')?.toLowerCase() || '') {
-      case 'completed':
-        novel.status = NovelStatus.Completed;
-        break;
-      case 'ongoing':
-        novel.status = NovelStatus.Ongoing;
-        break;
-      case 'hiatus':
-        novel.status = NovelStatus.OnHiatus;
-        break;
-      default:
-        novel.status = NovelStatus.Unknown;
-        break;
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        // name and cover
+        if (
+          !novel.cover &&
+          attribs['class']?.includes('ts-post-image' || 'wp-post-image')
+        ) {
+          novel.name = attribs['title'];
+          novel.cover = attribs['data-src'] || attribs['src'] || defaultCover;
+        } // genres
+        else if (attribs['class'] === 'genxed') {
+          isParsingGenres = true;
+        } else if (isParsingGenres && name === 'a') {
+          isReadingGenre = true;
+        } // summary
+        else if (attribs['class'] === 'entry-content') {
+          isReadingSummary = true;
+        } // author and status
+        else if (attribs['class'] === 'spe') {
+          isParsingInfo = true;
+        } else if (isParsingInfo && name === 'span') {
+          isReadingInfo = true;
+        } // chapters
+        else if (attribs['class'] === 'eplister eplisterfull') {
+          isParsingChapterList = true;
+        } else if (isParsingChapterList && name === 'li') {
+          isReadingChapter = true;
+        } else if (isReadingChapter) {
+          if (name === 'a') {
+            tempChapter.path = attribs['href'].replace(baseURL, '').trim();
+          } else if (attribs['class'] === 'epl-num') {
+            isReadingChapterInfo = 1;
+          } else if (attribs['class'] === 'epl-title') {
+            isReadingChapterInfo = 2;
+          } else if (attribs['class'] === 'epl-date') {
+            isReadingChapterInfo = 3;
+          }
+          if (attribs['class'] === 'epl-price') {
+            isReadingChapterPrice = true;
+          }
+        }
+      },
+      ontext(data) {
+        // genres
+        if (isParsingGenres) {
+          if (isReadingGenre) {
+            novel.genres += data + ', ';
+          }
+        } // summary
+        else if (isReadingSummary) {
+          novel.summary += data.trim();
+        } // author and status
+        else if (isParsingInfo) {
+          if (isReadingInfo) {
+            const detailName = data.toLowerCase().replace(':', '').trim();
+
+            if (isReadingAuthor) {
+              novel.author += data;
+            } else if (isReadingArtist) {
+              novel.artist += data;
+            } else if (isReadingStatus) {
+              switch (detailName) {
+                case 'مكتملة':
+                case 'completed':
+                case 'complété':
+                case 'completo':
+                case 'completado':
+                case 'tamamlandı':
+                  novel.status = NovelStatus.Completed;
+                  break;
+                case 'مستمرة':
+                case 'ongoing':
+                case 'en cours':
+                case 'em andamento':
+                case 'en progreso':
+                case 'devam ediyor':
+                  novel.status = NovelStatus.Ongoing;
+                  break;
+                case 'متوقفة':
+                case 'hiatus':
+                case 'en pause':
+                case 'hiato':
+                case 'pausa':
+                case 'pausado':
+                case 'duraklatıldı':
+                  novel.status = NovelStatus.OnHiatus;
+                  break;
+                default:
+                  novel.status = NovelStatus.Unknown;
+                  break;
+              }
+            }
+
+            switch (detailName) {
+              case 'الكاتب':
+              case 'author':
+              case 'auteur':
+              case 'autor':
+              case 'yazar':
+                isReadingAuthor = true;
+                break;
+              case 'الحالة':
+              case 'status':
+              case 'statut':
+              case 'estado':
+              case 'durum':
+                isReadingStatus = true;
+                break;
+              case 'الفنان':
+              case 'artist':
+              case 'artiste':
+              case 'artista':
+              case 'çizer':
+                isReadingArtist = true;
+                break;
+            }
+          }
+        } // chapters
+        else if (isParsingChapterList) {
+          if (isReadingChapter) {
+            if (isReadingChapterPrice) {
+              const detailName = data.toLowerCase().trim();
+              switch (detailName) {
+                case 'free':
+                case 'gratuit':
+                case 'مجاني':
+                case 'livre':
+                case '':
+                  isPaidChapter = false;
+                  break;
+                default:
+                  isPaidChapter = true;
+                  break;
+              }
+            }
+
+            if (isReadingChapterInfo === 1) {
+              extractChapterNumber(data, tempChapter);
+            } else if (isReadingChapterInfo === 2) {
+              tempChapter.name =
+                data
+                  .match(
+                    RegExp(
+                      `^${novel.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*(.+)`,
+                    ),
+                  )?.[1]
+                  ?.trim() || data.trim();
+              if (!tempChapter.chapterNumber) {
+                extractChapterNumber(data, tempChapter);
+              }
+            } else if (isReadingChapterInfo === 3) {
+              tempChapter.releaseTime = data; //new Date(data).toISOString();
+            }
+          }
+        }
+      },
+      onclosetag(name) {
+        // genres
+        if (isParsingGenres) {
+          if (isReadingGenre) {
+            isReadingGenre = false; // stop reading genre
+          } else {
+            isParsingGenres = false; // stop parsing genres
+            novel.genres = novel.genres?.replace(/,*\s*$/, ''); // remove trailing comma
+          }
+        } // summary
+        else if (isReadingSummary) {
+          if (name === 'br') {
+            novel.summary += '\n';
+          } else if (name === 'div') {
+            isReadingSummary = false;
+          }
+        } // author and status
+        else if (isParsingInfo) {
+          if (isReadingInfo) {
+            if (name === 'span') {
+              isReadingInfo = false;
+              if (isReadingAuthor) {
+                isReadingAuthor = false;
+              } else if (isReadingArtist) {
+                isReadingArtist = false;
+              } else if (isReadingStatus) {
+                isReadingStatus = false;
+              }
+            }
+          } else if (name === 'div') {
+            isParsingInfo = false;
+            novel.author = novel.author?.trim();
+            novel.artist = novel.artist?.trim();
+          }
+        } // chapters
+        else if (isParsingChapterList) {
+          if (isReadingChapter) {
+            if (isReadingChapterInfo === 1) {
+              isReadingChapterInfo = 0;
+            } else if (isReadingChapterInfo === 2) {
+              isReadingChapterInfo = 0;
+            } else if (isReadingChapterInfo === 3) {
+              isReadingChapterInfo = 0;
+            } else if (name === 'li') {
+              isReadingChapter = false;
+              isReadingChapterPrice = false;
+              if (!tempChapter.chapterNumber) tempChapter.chapterNumber = 0;
+              if (!isPaidChapter) chapters.push(tempChapter);
+              tempChapter = {} as Plugin.ChapterItem;
+            }
+          } else if (name === 'ul') {
+            isParsingChapterList = false;
+          }
+        }
+      },
+    });
+
+    parser.write(html);
+    parser.end();
+
+    if (chapters.length) {
+      if (this.options?.reverseChapters) chapters.reverse();
+      novel.chapters = chapters;
     }
 
-    let details = $('div.serl');
-    if (!details.length) details = $('div.spe > span');
-    details.each(function () {
-      const detailName = $(this)
-        .contents()
-        .first()
-        .text()
-        .replace(':', '')
-        .trim()
-        .toLowerCase();
-      const detail = $(this).contents().last().text().trim().toLowerCase();
-
-      switch (detailName) {
-        case 'الكاتب':
-        case 'author':
-        case 'auteur':
-        case 'autor':
-        case 'yazar':
-          novel.author = detail;
-          break;
-        case 'الحالة':
-        case 'status':
-        case 'statut':
-        case 'estado':
-        case 'durum':
-          switch (detail) {
-            case 'مكتملة':
-            case 'completed':
-            case 'complété':
-            case 'completo':
-            case 'completado':
-            case 'tamamlandı':
-              novel.status = NovelStatus.Completed;
-              break;
-            case 'مستمرة':
-            case 'ongoing':
-            case 'en cours':
-            case 'em andamento':
-            case 'en progreso':
-            case 'devam ediyor':
-              novel.status = NovelStatus.Ongoing;
-              break;
-            case 'متوقفة':
-            case 'hiatus':
-            case 'en pause':
-            case 'hiato':
-            case 'pausa':
-            case 'pausado':
-            case 'duraklatıldı':
-              novel.status = NovelStatus.OnHiatus;
-              break;
-            default:
-              novel.status = NovelStatus.Unknown;
-              break;
-          }
-          break;
-        case 'الفنان':
-        case 'artist':
-        case 'artiste':
-        case 'artista':
-        case 'çizer':
-          novel.artist = detail;
-          break;
-      }
-    });
-
-    let genres = $('.sertogenre');
-    if (!genres.length) genres = $('.genxed');
-    novel.genres = genres
-      .children('a')
-      .map((i, el) => $(el).text())
-      .toArray()
-      .join(',');
-
-    let summary = $('.sersys > p')
-      .map((i, el) => $(el).text().trim())
-      .toArray();
-    if (!summary.length)
-      summary = $('.entry-content > p')
-        .map((i, el) => $(el).text().trim())
-        .toArray();
-    novel.summary = summary.join('\n');
-
-    const chapters: Plugin.ChapterItem[] = [];
-    $('.eplister li').each((i, elem) => {
-      const chapterName =
-        $(elem).find('.epl-num').text() +
-        ' ' +
-        $(elem).find('.epl-title').text();
-      const chapterUrl = $(elem).find('a').attr('href') || '';
-      const releaseTime = $(elem).find('.epl-date').text().trim();
-      let isFreeChapter: boolean;
-      switch ($(elem).find('.epl-price').text().trim().toLowerCase()) {
-        case 'free':
-        case 'gratuit':
-        case 'مجاني':
-        case 'livre':
-        case '':
-          isFreeChapter = true;
-          break;
-        default:
-          isFreeChapter = false;
-          break;
-      }
-      if (isFreeChapter)
-        chapters.push({
-          name: chapterName,
-          path: chapterUrl.replace(this.site, ''),
-          releaseTime: releaseTime,
-        });
-    });
-
-    if (this.options?.reverseChapters && chapters.length) chapters.reverse();
-
-    novel.chapters = chapters;
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const $ = await this.getCheerio(this.site + chapterPath, false);
-    try {
-      // CustomJS HERE
-    } catch (error) {
-      console.error('Error executing customJs:', error);
-      throw error;
-    }
-    return (
-      $('.epcontent p')
-        .map((i, el) => $(el))
-        .toArray()
-        .join('\n') || ''
-    );
+    const data = await this.safeFecth(this.site + chapterPath, false);
+    const chapterText = data.match(
+      /<div class="epcontent ([\s\S]*?)<\/p><\/div>/g,
+    )?.[0];
+
+    return chapterText || '';
   }
 
   async searchNovels(
@@ -274,9 +384,16 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     page: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'page/' + page + '/?s=' + searchTerm;
-    const $ = await this.getCheerio(url, true);
-    return this.parseNovels($);
+    const html = await this.safeFecth(url, true);
+    return this.parseNovels(html);
   }
 
   fetchImage = fetchFile;
+}
+
+function extractChapterNumber(data: string, tempChapter: Plugin.ChapterItem) {
+  const tempChapterNumber = data.match(/(\d+)$/);
+  if (tempChapterNumber && tempChapterNumber[0]) {
+    tempChapter.chapterNumber = parseInt(tempChapterNumber[0]);
+  }
 }
