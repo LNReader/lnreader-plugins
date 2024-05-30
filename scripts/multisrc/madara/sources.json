@@ -184,7 +184,8 @@
     "sourceSite": "https://mtl-novel.com/",
     "sourceName": "MTL-Novel",
     "options": {
-      "useNewChapterEndpoint": true
+      "useNewChapterEndpoint": false,
+      "versionIncrements": 1
     }
   },
   {
