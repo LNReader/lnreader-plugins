@@ -501,6 +501,12 @@ function jsonToHtml(json: HTML[], html: string = '') {
           (element.content ? jsonToHtml(element.content) : '<br>') +
           '</p>';
         break;
+      case 'heading':
+        html +=
+          '<h2>' +
+          (element.content ? jsonToHtml(element.content) : '<br>') +
+          '</h2>';
+        break;
       case 'text':
         html += element.text;
         break;
