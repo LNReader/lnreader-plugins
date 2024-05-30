@@ -1,12 +1,12 @@
 import * as fs from 'fs';
-import { Plugin } from '@typings/plugin';
-import { languages } from '@libs/languages';
 import * as path from 'path';
+import sizeOf from 'image-size';
 
 const root = path.join(__dirname, '..');
 const size = 96;
+const minSize = 16;
 
-const skip: string[] = [
+const skip = new Set([
   //custom icons
   'FWK.US',
   'ReN',
@@ -23,19 +23,14 @@ const skip: string[] = [
   'sektenovel',
   'sonicmtl',
   'translatinotaku',
+  'warriorlegendtrad',
   'wuxiaworld.site',
+]);
 
-  //low quality
-  'BLN',
-  'NO.net',
-  'novelbookid',
-  'novelhall',
-  'olaoe',
-];
-
-const used = new Set();
-used.add(path.join(root, 'icons', 'coverNotAvailable.webp'));
-used.add(path.join(root, 'icons', 'siteNotAvailable.png'));
+const used = new Set([
+  path.join(root, 'icons', 'coverNotAvailable.webp'),
+  path.join(root, 'icons', 'siteNotAvailable.png'),
+]);
 
 const notAvailableImage = fs.readFileSync(
   path.join(root, 'icons', 'siteNotAvailable.png'),
@@ -54,6 +49,8 @@ const notAvailableImage = fs.readFileSync(
   let language;
   for (let plugin in plugins) {
     const { id, name, site, iconUrl, lang } = plugins[plugin];
+    const icon = iconUrl && 'icons/' + iconUrl.split('icons/')[1];
+
     if (language !== lang) {
       language = lang;
       console.log(
@@ -62,12 +59,10 @@ const notAvailableImage = fs.readFileSync(
           .padEnd(30, '='),
       );
     }
-    let icon;
-    if (iconUrl) icon = 'icons/' + iconUrl.split('icons/')[1];
+
     try {
       if (icon) used.add(path.join(root, icon));
-
-      if (!skip.includes(id) && icon && site) {
+      if (!skip.has(id) && icon && site) {
         const image = await fetch(
           `https://www.google.com/s2/favicons?domain=${site}&sz=${size}&type=png`,
         )
@@ -85,8 +80,30 @@ const notAvailableImage = fs.readFileSync(
           continue;
         }
 
-        fs.writeFileSync(icon, image);
-        console.log('  ', name.padEnd(26), `(${id})`, '\r✅');
+        const imageSize = sizeOf(image);
+        const exist = fs.existsSync(icon);
+
+        if (!exist) {
+          const dir = icon.match(/^.*[\\\/]/)[0] as string;
+          fs.mkdirSync(dir, { recursive: true });
+        }
+
+        if (
+          ((imageSize?.width || size) > minSize &&
+            (imageSize?.height || size) > minSize) ||
+          !exist
+        ) {
+          fs.writeFileSync(icon, image);
+          console.log('  ', name.padEnd(26), `(${id})`, '\r✅');
+        } else {
+          console.log(
+            '  ',
+            name.padEnd(26),
+            `(${id})`.padEnd(20),
+            'Low quality',
+            '\r🔄',
+          );
+        }
       } else {
         console.log('  ', `Skipping ${name}`.padEnd(26), `(${id})`, '\r🔄');
       }

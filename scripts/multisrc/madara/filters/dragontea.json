@@ -1,0 +1,360 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": ["novels"],
+      "options": [
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        {
+          "label": "Adult",
+          "value": "adult"
+        },
+        {
+          "label": "Adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "BL/ boy love",
+          "value": "bl-boy-love"
+        },
+        {
+          "label": "Children",
+          "value": "children"
+        },
+        {
+          "label": "Comedy",
+          "value": "comedy"
+        },
+        {
+          "label": "COMICS",
+          "value": "comics"
+        },
+        {
+          "label": "COMPLETE",
+          "value": "complete"
+        },
+        {
+          "label": "Contemporary",
+          "value": "contemporary"
+        },
+        {
+          "label": "Cooking",
+          "value": "cooking"
+        },
+        {
+          "label": "Cultivation",
+          "value": "cultivation"
+        },
+        {
+          "label": "Detective",
+          "value": "detective"
+        },
+        {
+          "label": "Doomsday crisis",
+          "value": "doomsday-crisis"
+        },
+        {
+          "label": "Drama",
+          "value": "drama"
+        },
+        {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Face slapping",
+          "value": "face-slapping"
+        },
+        {
+          "label": "Fanfiction",
+          "value": "fanfiction"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "Game",
+          "value": "game"
+        },
+        {
+          "label": "Gender Bender",
+          "value": "gender-bender"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "High School",
+          "value": "high-school"
+        },
+        {
+          "label": "Historical",
+          "value": "historical"
+        },
+        {
+          "label": "Horror",
+          "value": "horror"
+        },
+        {
+          "label": "INDONESIAN",
+          "value": "indonesian"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Josei",
+          "value": "josei"
+        },
+        {
+          "label": "Love",
+          "value": "love"
+        },
+        {
+          "label": "Magic",
+          "value": "magic"
+        },
+        {
+          "label": "Martial Arts",
+          "value": "martial-arts"
+        },
+        {
+          "label": "Mature",
+          "value": "mature"
+        },
+        {
+          "label": "Military",
+          "value": "military"
+        },
+        {
+          "label": "Monster",
+          "value": "monster"
+        },
+        {
+          "label": "MTL",
+          "value": "mtl"
+        },
+        {
+          "label": "Mystery",
+          "value": "mystery"
+        },
+        {
+          "label": "NOVELS",
+          "value": "novels"
+        },
+        {
+          "label": "ORIGINAL",
+          "value": "original"
+        },
+        {
+          "label": "Powerful",
+          "value": "powerful"
+        },
+        {
+          "label": "Psychological",
+          "value": "psychological"
+        },
+        {
+          "label": "Rebirth",
+          "value": "rebirth"
+        },
+        {
+          "label": "Reincarnation",
+          "value": "reincarnation"
+        },
+        {
+          "label": "Revenge",
+          "value": "revenge"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "School",
+          "value": "school"
+        },
+        {
+          "label": "School Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Shorts",
+          "value": "shorts"
+        },
+        {
+          "label": "Shoujo",
+          "value": "shoujo"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "shounen ai",
+          "value": "shounen-ai"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
+        },
+        {
+          "label": "Smut",
+          "value": "smut"
+        },
+        {
+          "label": "Supernatural",
+          "value": "supernatural"
+        },
+        {
+          "label": "System",
+          "value": "system"
+        },
+        {
+          "label": "Thriller",
+          "value": "thriller"
+        },
+        {
+          "label": "Time Travel",
+          "value": "time-travel"
+        },
+        {
+          "label": "Tragedy",
+          "value": "tragedy"
+        },
+        {
+          "label": "Transmigration",
+          "value": "transmigration"
+        },
+        {
+          "label": "Urban abilities",
+          "value": "urban-abilities"
+        },
+        {
+          "label": "Yaoi",
+          "value": "yaoi"
+        },
+        {
+          "label": "Yuri",
+          "value": "yuri"
+        },
+        {
+          "label": "Zombie",
+          "value": "zombie"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "having all selected genres",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Author",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Artist",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Year of Released",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Status",
+      "value": [],
+      "options": [
+        {
+          "label": "Completed",
+          "value": "complete"
+        },
+        {
+          "label": "Ongoing",
+          "value": "on-going"
+        },
+        {
+          "label": "Canceled",
+          "value": "canceled"
+        },
+        {
+          "label": "On Hold",
+          "value": "on-hold"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Relevance",
+          "value": "novels&op&author&artist&release&adult&m_orderby"
+        },
+        {
+          "label": "Latest",
+          "value": ""
+        },
+        {
+          "label": "A-Z",
+          "value": ""
+        },
+        {
+          "label": "Rating",
+          "value": ""
+        },
+        {
+          "label": "Trending",
+          "value": ""
+        },
+        {
+          "label": "Most Views",
+          "value": ""
+        },
+        {
+          "label": "New",
+          "value": ""
+        }
+      ]
+    }
+  }
+}

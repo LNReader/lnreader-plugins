@@ -104,7 +104,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const seriesPath = this.options?.seriesPath ?? 'series/';
     let url = this.site + seriesPath + '?page=' + pageNo;
-    if (!filters) filters = {};
+    if (!filters) filters = this.filters || {};
     if (showLatestNovels) url += '&order=latest';
     for (const key in filters) {
       if (typeof filters[key].value === 'object')

@@ -1,0 +1,204 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        {
+          "label": "Arts martiaux",
+          "value": "arts-martiaux"
+        },
+        {
+          "label": "Aventure",
+          "value": "aventure"
+        },
+        {
+          "label": "Comédie",
+          "value": "comedie"
+        },
+        {
+          "label": "Drame",
+          "value": "drame"
+        },
+        {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Fantaisie",
+          "value": "fantaisie"
+        },
+        {
+          "label": "Horreur",
+          "value": "horreur"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Light Novel",
+          "value": "light-novel"
+        },
+        {
+          "label": "Mystère",
+          "value": "mystere"
+        },
+        {
+          "label": "Novel Originaux",
+          "value": "novel-originaux"
+        },
+        {
+          "label": "Novel Publié",
+          "value": "novel-publie"
+        },
+        {
+          "label": "Psychologique",
+          "value": "psychologique"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "School Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "sci-fi"
+        },
+        {
+          "label": "Sport",
+          "value": "sport"
+        },
+        {
+          "label": "Surnaturel",
+          "value": "surnaturel"
+        },
+        {
+          "label": "Thriller",
+          "value": "thriller"
+        },
+        {
+          "label": "Tragédie",
+          "value": "tragedie"
+        },
+        {
+          "label": "Tranche de vie",
+          "value": "tranche-de-vie"
+        },
+        {
+          "label": "Web Novel",
+          "value": "web-novel"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "ET avoir tous les genres sélectionnés",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Auteur",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Artiste",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Année de sortie",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Contenu pour adultes",
+      "value": "",
+      "options": [
+        {
+          "label": "Tous",
+          "value": ""
+        },
+        {
+          "label": "Aucun contenu adulte",
+          "value": "0"
+        },
+        {
+          "label": "Contenu pour adultes uniquement",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Statut",
+      "value": [],
+      "options": [
+        {
+          "label": "OnGoing",
+          "value": "on-going"
+        },
+        {
+          "label": "Completed",
+          "value": "end"
+        },
+        {
+          "label": "Canceled",
+          "value": "canceled"
+        },
+        {
+          "label": "On Hold",
+          "value": "on-hold"
+        },
+        {
+          "label": "Upcoming",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Trier par",
+      "value": "",
+      "options": [
+        {
+          "label": "Pertinence",
+          "value": ""
+        },
+        {
+          "label": "Les plus récents",
+          "value": "latest"
+        },
+        {
+          "label": "A-Z",
+          "value": "alphabet"
+        },
+        {
+          "label": "Classement",
+          "value": "rating"
+        },
+        {
+          "label": "Tendance",
+          "value": "trending"
+        },
+        {
+          "label": "La plupart des vues",
+          "value": "views"
+        },
+        {
+          "label": "Nouveau",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}

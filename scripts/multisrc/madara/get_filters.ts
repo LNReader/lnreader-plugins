@@ -53,62 +53,74 @@ function getFilters(name: string, html: string) {
     },
   };
 
-  const divs = $('form.search-advanced-form > div');
+  const form = $('form.search-advanced-form');
 
   // ==================== Genre ====================
-  const genreDiv = divs.eq(0);
-  genreDiv.find('label').each((i, el) => {
+  form.find('input[name="genre[]"]').each((i, el) => {
     const option = {
-      label: $(el).text().trim(),
-      value: decodeURI($(el).attr('for') || ''),
+      label: $(el).next('label').text().trim(),
+      value: decodeURI($(el).attr('value') || ''),
     };
     filters.filters['genre[]'].options.push(option);
   });
 
   // ===================== Op ======================
-  const statusDiv = divs.eq(1);
-  filters.filters['op'].label = statusDiv
-    .find('option')
-    .eq(1)
-    .text()
-    .replace('AND', '')
-    .replace('(', '')
-    .replace(')', '')
-    .trim();
+  filters.filters['op'].label =
+    form
+      .find('select[name="op"] > option')
+      .eq(1)
+      .text()
+      .replace('AND', '')
+      .replace('(', '')
+      .replace(')', '')
+      .trim() || 'Having ALL selected genres';
 
   // ==================== Author ====================
-  const authorDiv = divs.eq(2);
-  filters.filters['author'].label = authorDiv.find('span').text().trim();
+  filters.filters['author'].label =
+    form.find('input[name="author"]').prev('span').text().trim() || 'Author';
 
   // ==================== Artist ====================
-  const artistDiv = divs.eq(3);
-  filters.filters['artist'].label = artistDiv.find('span').text().trim();
+  filters.filters['artist'].label =
+    form.find('input[name="artist"]').prev('span').text().trim() || 'Artist';
 
   // ==================== Release ====================
-  const releaseDiv = divs.eq(4);
-  filters.filters['release'].label = releaseDiv.find('span').text().trim();
+  filters.filters['release'].label =
+    form.find('input[name="release"]').prev('span').text().trim() ||
+    'Year of Released';
 
   // ==================== Adult ====================
-  const adultDiv = divs.eq(5);
-  filters.filters['adult'].label = adultDiv.find('span').text().trim();
-  adultDiv.find('option').each((i, el) => {
+  filters.filters['adult'].label =
+    form.find('select[name="adult"]').prev('span').text().trim() ||
+    'Adult content';
+  form.find('select[name="adult"] > option').each((i, el) => {
     const option = {
       label: $(el).text().trim(),
       value: decodeURI($(el).attr('value') || ''),
     };
     filters.filters['adult'].options.push(option);
   });
+  if (filters.filters['adult'].options.length == 0) {
+    filters.filters['adult'].options = [
+      { label: 'All', value: '' },
+      { label: 'None adult content', value: '0' },
+      { label: 'Only adult content', value: '1' },
+    ];
+  }
 
   // ==================== Status ====================
-  const statusDiv2 = divs.eq(6);
-  filters.filters['status[]'].label = statusDiv2.find('span').text().trim();
-  statusDiv2.find('label').each((i, el) => {
-    const option = {
-      label: $(el).text().trim(),
-      value: $(el).attr('for'),
-    };
-    filters.filters['status[]'].options.push(option);
-  });
+  filters.filters['status[]'].label =
+    form.find('input[name="status[]"]').parent().prev('span').text().trim() ||
+    'Status';
+  form
+    .find('input[name="status[]"]')
+    .next('label')
+    .each((i, el) => {
+      const option = {
+        label: $(el).text().trim(),
+        value: $(el).attr('for'),
+      };
+      filters.filters['status[]'].options.push(option);
+    });
 
   // ==================== Order by ====================
   const orderByDiv = $('div.c-nav-tabs').eq(0);
@@ -173,19 +185,37 @@ async function askGetFilter() {
           "Do you want to get the filters from a URL or the html text? (if url dosen't work try html) (url/html): ",
         async (method: string) => {
           if (method.toLowerCase() === 'url') {
-            await readline.question(
-              EREASE_PREV_LINE +
-                'Enter the URL (same one as in sources.json): ',
-              async (url: string) => {
-                try {
-                  await getFiltersFromURL(name, url);
-                } catch (e: any) {
-                  console.error('Error while getting filters from', url);
-                  console.log(e.message || e);
-                }
-                readline.close();
-              },
+            const sources = JSON.parse(
+              fs.readFileSync(path.join(__dirname, 'sources.json'), 'utf-8'),
             );
+            const source = sources.find((s: any) => s.id === name);
+            if (source && source.sourceSite) {
+              console.log('Getting filters from', source.sourceSite);
+              try {
+                await getFiltersFromURL(name, source.sourceSite);
+              } catch (e: any) {
+                console.error(
+                  'Error while getting filters from',
+                  source.sourceSite,
+                );
+                console.log(e.message || e);
+              }
+              readline.close();
+            } else {
+              await readline.question(
+                EREASE_PREV_LINE +
+                  'Enter the URL (same one as in sources.json): ',
+                async (url: string) => {
+                  readline.close();
+                  try {
+                    await getFiltersFromURL(name, url);
+                  } catch (e: any) {
+                    console.error('Error while getting filters from', url);
+                    console.log(e.message || e);
+                  }
+                },
+              );
+            }
           } else {
             process.stdout.write(
               EREASE_PREV_LINE +

@@ -1,0 +1,516 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "+13",
+          "value": "13"
+        },
+        {
+          "label": "+16",
+          "value": "16"
+        },
+        {
+          "label": "+17",
+          "value": "17"
+        },
+        {
+          "label": "أكشن",
+          "value": "أكشن"
+        },
+        {
+          "label": "إنتقام",
+          "value": "إنتقام"
+        },
+        {
+          "label": "إيتشي",
+          "value": "إيتشي"
+        },
+        {
+          "label": "اثارة",
+          "value": "اثارة"
+        },
+        {
+          "label": "اثاره",
+          "value": "اثاره"
+        },
+        {
+          "label": "اشباح",
+          "value": "اشباح"
+        },
+        {
+          "label": "اقتباس مانهوا",
+          "value": "اقتباس-مانهوا"
+        },
+        {
+          "label": "اقتباس مانهوا",
+          "value": "اقتباس-مانهوا-انمي"
+        },
+        {
+          "label": "اكشن",
+          "value": "اكشن"
+        },
+        {
+          "label": "الحياة المدرسيه",
+          "value": "الحياة-المدرسيه"
+        },
+        {
+          "label": "الحياة اليومية",
+          "value": "الحياة-اليومية"
+        },
+        {
+          "label": "العاب فيديو",
+          "value": "العاب-فيديو"
+        },
+        {
+          "label": "النجاة",
+          "value": "النجاة"
+        },
+        {
+          "label": "امرأة شريرة",
+          "value": "امرأة-شريرة"
+        },
+        {
+          "label": "انتقام",
+          "value": "انتقام"
+        },
+        {
+          "label": "انمي",
+          "value": "انمي"
+        },
+        {
+          "label": "انمي ياباني",
+          "value": "انمي-ياباني"
+        },
+        {
+          "label": "ايسكاى",
+          "value": "ايسكاى"
+        },
+        {
+          "label": "بالغ",
+          "value": "بالغ"
+        },
+        {
+          "label": "بطل خارق",
+          "value": "بطل-خارق"
+        },
+        {
+          "label": "تاريخى",
+          "value": "تاريخى"
+        },
+        {
+          "label": "تاريخي",
+          "value": "تاريخي"
+        },
+        {
+          "label": "تجسيد",
+          "value": "تجسيد"
+        },
+        {
+          "label": "تراجيدي",
+          "value": "تراجيدي"
+        },
+        {
+          "label": "ترجمة جوجل",
+          "value": "ترجمة-جوجل"
+        },
+        {
+          "label": "جريمة",
+          "value": "جريمة"
+        },
+        {
+          "label": "جريمه",
+          "value": "جريمه"
+        },
+        {
+          "label": "جندر اسواب",
+          "value": "جندر-اسواب"
+        },
+        {
+          "label": "جوسى",
+          "value": "جوسى"
+        },
+        {
+          "label": "جوسيه",
+          "value": "جوسيه"
+        },
+        {
+          "label": "حائز على جائزة",
+          "value": "حائز-على-جائزة"
+        },
+        {
+          "label": "حائز علي جائزة",
+          "value": "حائز-علي-جائزة"
+        },
+        {
+          "label": "حديث",
+          "value": "حديث"
+        },
+        {
+          "label": "حربى",
+          "value": "حربى"
+        },
+        {
+          "label": "حربي",
+          "value": "حربي"
+        },
+        {
+          "label": "حريم",
+          "value": "حريم"
+        },
+        {
+          "label": "حياة",
+          "value": "حياة"
+        },
+        {
+          "label": "حياة مدرسية",
+          "value": "حياة-مدرسية"
+        },
+        {
+          "label": "حياة يومية",
+          "value": "حياة-يومية"
+        },
+        {
+          "label": "خارق لطبيعية",
+          "value": "خارق-لطبيعية"
+        },
+        {
+          "label": "خارق للطبيعة",
+          "value": "خارق-للطبيعة"
+        },
+        {
+          "label": "خارق للطبيعه",
+          "value": "خارق-للطبيعه"
+        },
+        {
+          "label": "خيال",
+          "value": "خيال"
+        },
+        {
+          "label": "خيال علمى",
+          "value": "خيال-علمى"
+        },
+        {
+          "label": "خيال علمي",
+          "value": "خيال-علمي"
+        },
+        {
+          "label": "دراما",
+          "value": "دراما"
+        },
+        {
+          "label": "دموى",
+          "value": "دموى"
+        },
+        {
+          "label": "راشد",
+          "value": "راشد"
+        },
+        {
+          "label": "رعب",
+          "value": "رعب"
+        },
+        {
+          "label": "رومانسى",
+          "value": "رومانسى"
+        },
+        {
+          "label": "رومانسي",
+          "value": "رومانسي"
+        },
+        {
+          "label": "رياضة",
+          "value": "رياضة"
+        },
+        {
+          "label": "رياضه",
+          "value": "رياضه"
+        },
+        {
+          "label": "زمكانى",
+          "value": "زمكانى"
+        },
+        {
+          "label": "زمكاني",
+          "value": "زمكاني"
+        },
+        {
+          "label": "زمنكاني",
+          "value": "زمنكاني"
+        },
+        {
+          "label": "زومبي",
+          "value": "زومبي"
+        },
+        {
+          "label": "ساموراي",
+          "value": "ساموراي"
+        },
+        {
+          "label": "سحر",
+          "value": "سحر"
+        },
+        {
+          "label": "سينين",
+          "value": "سينين"
+        },
+        {
+          "label": "شريحة من الحياة",
+          "value": "شريحة-من-الحياة"
+        },
+        {
+          "label": "شوجو",
+          "value": "شوجو"
+        },
+        {
+          "label": "شونين",
+          "value": "شونين"
+        },
+        {
+          "label": "شياطين",
+          "value": "شياطين"
+        },
+        {
+          "label": "طبخ",
+          "value": "طبخ"
+        },
+        {
+          "label": "ّعامل مكتبي",
+          "value": "ّعامل-مكتبي"
+        },
+        {
+          "label": "عسكري",
+          "value": "عسكري"
+        },
+        {
+          "label": "علم نفس",
+          "value": "علم-نفس"
+        },
+        {
+          "label": "عنف",
+          "value": "عنف"
+        },
+        {
+          "label": "غموض",
+          "value": "غموض"
+        },
+        {
+          "label": "فنتازيا",
+          "value": "فنتازيا"
+        },
+        {
+          "label": "فنون قتال",
+          "value": "فنون-قتال"
+        },
+        {
+          "label": "فنون قتاليه",
+          "value": "فنون-قتاليه"
+        },
+        {
+          "label": "قوة خارقة",
+          "value": "قوة-خارقة"
+        },
+        {
+          "label": "قوى خارقة",
+          "value": "قوى-خارقة"
+        },
+        {
+          "label": "كوميدى",
+          "value": "كوميدى"
+        },
+        {
+          "label": "كوميديا",
+          "value": "كوميديا"
+        },
+        {
+          "label": "لعبه",
+          "value": "لعبه"
+        },
+        {
+          "label": "مأساة",
+          "value": "مأساة"
+        },
+        {
+          "label": "ماساة",
+          "value": "ماساة"
+        },
+        {
+          "label": "مافيا",
+          "value": "مافيا"
+        },
+        {
+          "label": "مانجا",
+          "value": "مانجا"
+        },
+        {
+          "label": "مانجا على الانترنت",
+          "value": "مانجا-على-الانترنت"
+        },
+        {
+          "label": "مانها",
+          "value": "مانها"
+        },
+        {
+          "label": "مانهوا",
+          "value": "مانهوا"
+        },
+        {
+          "label": "مجموعة قصص",
+          "value": "مجموعة-قصص"
+        },
+        {
+          "label": "محاكاة ساخرة",
+          "value": "محاكاة-ساخرة"
+        },
+        {
+          "label": "مدرسي",
+          "value": "مدرسي"
+        },
+        {
+          "label": "مصاصى الدماء",
+          "value": "مصاصى-الدماء"
+        },
+        {
+          "label": "مغامرات",
+          "value": "مغامرات"
+        },
+        {
+          "label": "مغامرة",
+          "value": "مغامرة"
+        },
+        {
+          "label": "مقتبسة",
+          "value": "مقتبسة"
+        },
+        {
+          "label": "نظام",
+          "value": "نظام"
+        },
+        {
+          "label": "نفسى",
+          "value": "نفسى"
+        },
+        {
+          "label": "نفسي",
+          "value": "نفسي"
+        },
+        {
+          "label": "نينجا",
+          "value": "نينجا"
+        },
+        {
+          "label": "وحوش",
+          "value": "وحوش"
+        },
+        {
+          "label": "ويب تون",
+          "value": "ويب-تون"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "having all selected genres",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Author",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Artist",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Year of Released",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Status",
+      "value": [],
+      "options": [
+        {
+          "label": "مستمر",
+          "value": "on-going"
+        },
+        {
+          "label": "مكتمل",
+          "value": "end"
+        },
+        {
+          "label": "ملغى",
+          "value": "canceled"
+        },
+        {
+          "label": "في الانتظار",
+          "value": "on-hold"
+        },
+        {
+          "label": "قادم قريبا",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Relevance",
+          "value": ""
+        },
+        {
+          "label": "Latest",
+          "value": "latest"
+        },
+        {
+          "label": "A-Z",
+          "value": "alphabet"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
+        },
+        {
+          "label": "Trending",
+          "value": "trending"
+        },
+        {
+          "label": "Most Views",
+          "value": "views"
+        },
+        {
+          "label": "New",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}
