@@ -15,8 +15,7 @@
     "options": {
       "lang": "Arabic",
       "reverseChapters": true,
-      "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());",
-      "versionIncrements": 1
+      "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());"
     }
   },
   {
@@ -52,8 +51,7 @@
     "sourceName": "DaoTranslate",
     "options": {
       "lang": "English",
-      "reverseChapters": true,
-      "versionIncrements": 2
+      "reverseChapters": true
     }
   },
   {
@@ -62,8 +60,7 @@
     "sourceName": "جنة الروايات",
     "options": {
       "lang": "Arabic",
-      "reverseChapters": true,
-      "versionIncrements": 1
+      "reverseChapters": true
     }
   },
   {
@@ -80,8 +77,7 @@
     "sourceSite": "https://noveltr.com/",
     "sourceName": "NovelTR",
     "options": {
-      "lang": "Turkish",
-      "reverseChapters": true
+      "lang": "Turkish"
     }
   },
   {
@@ -100,7 +96,6 @@
     "options": {
       "lang": "English",
       "reverseChapters": false,
-      "versionIncrements": 1,
       "customJs": "$('.genesistls-watermark').remove();$('.epcontent p').each((i, el) => { if ($(el).html() === '&nbsp;') $(el).remove(); });"
     }
   },
@@ -183,8 +178,7 @@
     "sourceName": "ElloTL",
     "options": {
       "lang": "English",
-      "reverseChapters": true,
-      "versionIncrements": 1
+      "reverseChapters": true
     }
   },
   {

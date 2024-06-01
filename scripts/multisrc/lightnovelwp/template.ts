@@ -1,4 +1,4 @@
-import { CheerioAPI, load } from 'cheerio';
+import { load } from 'cheerio';
 import { Parser } from 'htmlparser2';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
@@ -141,7 +141,6 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     let isParsingChapterList = false;
     let isReadingChapter = false;
     let isReadingChapterInfo = 0;
-    let isReadingChapterPrice = false;
     let isPaidChapter = false;
     const chapters: Plugin.ChapterItem[] = [];
     let tempChapter = {} as Plugin.ChapterItem;
@@ -156,19 +155,31 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           novel.name = attribs['title'];
           novel.cover = attribs['data-src'] || attribs['src'] || defaultCover;
         } // genres
-        else if (attribs['class'] === 'genxed') {
+        else if (
+          attribs['class'] === 'genxed' ||
+          attribs['class'] === 'sertogenre'
+        ) {
           isParsingGenres = true;
         } else if (isParsingGenres && name === 'a') {
           isReadingGenre = true;
         } // summary
-        else if (attribs['class'] === 'entry-content') {
+        else if (
+          name === 'div' &&
+          (attribs['class'] === 'entry-content' ||
+            attribs['itemprop'] === 'description')
+        ) {
           isReadingSummary = true;
         } // author and status
-        else if (attribs['class'] === 'spe') {
+        else if (attribs['class'] === 'spe' || attribs['class'] === 'serl') {
           isParsingInfo = true;
         } else if (isParsingInfo && name === 'span') {
           isReadingInfo = true;
-        } // chapters
+        } else if (name === 'div' && attribs['class'] === 'sertostat') {
+          isParsingInfo = true;
+          isReadingInfo = true;
+          isReadingStatus = true;
+        }
+        // chapters
         else if (attribs['class'] === 'eplister eplisterfull') {
           isParsingChapterList = true;
         } else if (isParsingChapterList && name === 'li') {
@@ -182,9 +193,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
             isReadingChapterInfo = 2;
           } else if (attribs['class'] === 'epl-date') {
             isReadingChapterInfo = 3;
-          }
-          if (attribs['class'] === 'epl-price') {
-            isReadingChapterPrice = true;
+          } else if (attribs['class'] === 'epl-price') {
+            isReadingChapterInfo = 4;
           }
         }
       },
@@ -203,9 +213,9 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
             const detailName = data.toLowerCase().replace(':', '').trim();
 
             if (isReadingAuthor) {
-              novel.author += data;
+              novel.author += data || 'Unknown';
             } else if (isReadingArtist) {
-              novel.artist += data;
+              novel.artist += data || 'Unknown';
             } else if (isReadingStatus) {
               switch (detailName) {
                 case 'مكتملة':
@@ -266,22 +276,6 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         } // chapters
         else if (isParsingChapterList) {
           if (isReadingChapter) {
-            if (isReadingChapterPrice) {
-              const detailName = data.toLowerCase().trim();
-              switch (detailName) {
-                case 'free':
-                case 'gratuit':
-                case 'مجاني':
-                case 'livre':
-                case '':
-                  isPaidChapter = false;
-                  break;
-                default:
-                  isPaidChapter = true;
-                  break;
-              }
-            }
-
             if (isReadingChapterInfo === 1) {
               extractChapterNumber(data, tempChapter);
             } else if (isReadingChapterInfo === 2) {
@@ -298,6 +292,20 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
               }
             } else if (isReadingChapterInfo === 3) {
               tempChapter.releaseTime = data; //new Date(data).toISOString();
+            } else if (isReadingChapterInfo === 4) {
+              const detailName = data.toLowerCase().trim();
+              switch (detailName) {
+                case 'free':
+                case 'gratuit':
+                case 'مجاني':
+                case 'livre':
+                case '':
+                  isPaidChapter = false;
+                  break;
+                default:
+                  isPaidChapter = true;
+                  break;
+              }
             }
           }
         }
@@ -309,7 +317,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
             isReadingGenre = false; // stop reading genre
           } else {
             isParsingGenres = false; // stop parsing genres
-            novel.genres = novel.genres?.replace(/,*\s*$/, ''); // remove trailing comma
+            novel.genres = novel.genres?.slice(0, -2); // remove trailing comma
           }
         } // summary
         else if (isReadingSummary) {
@@ -323,11 +331,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           if (isReadingInfo) {
             if (name === 'span') {
               isReadingInfo = false;
-              if (isReadingAuthor) {
+              if (isReadingAuthor && novel.author) {
                 isReadingAuthor = false;
-              } else if (isReadingArtist) {
+              } else if (isReadingArtist && novel.artist) {
                 isReadingArtist = false;
-              } else if (isReadingStatus) {
+              } else if (isReadingStatus && novel.status !== '') {
                 isReadingStatus = false;
               }
             }
@@ -345,9 +353,10 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
               isReadingChapterInfo = 0;
             } else if (isReadingChapterInfo === 3) {
               isReadingChapterInfo = 0;
+            } else if (isReadingChapterInfo === 4) {
+              isReadingChapterInfo = 0;
             } else if (name === 'li') {
               isReadingChapter = false;
-              isReadingChapterPrice = false;
               if (!tempChapter.chapterNumber) tempChapter.chapterNumber = 0;
               if (!isPaidChapter) chapters.push(tempChapter);
               tempChapter = {} as Plugin.ChapterItem;
@@ -373,9 +382,18 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const data = await this.safeFecth(this.site + chapterPath, false);
     const chapterText = data.match(
-      /<div class="epcontent ([\s\S]*?)<\/p><\/div>/g,
+      /<div.*class="epcontent ([\s\S]*?)<div.*class="bottomnav"/g,
     )?.[0];
-
+    if (this.options?.customJs) {
+      try {
+        const $ = load(chapterText || data);
+        // CustomJS HERE
+        return $.html();
+      } catch (error) {
+        console.error('Error executing customJs:', error);
+        throw error;
+      }
+    }
     return chapterText || '';
   }
 
