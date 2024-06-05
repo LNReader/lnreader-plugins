@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.4';
+  version = '0.5.5';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -379,7 +379,7 @@ class NovelUpdates implements Plugin.PluginBase {
           .first()
           .html()!;
         if (!chapterContent) {
-          chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><br>There could be missing content, please check in webview.`;
+          chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><nr>There could be missing content, please check in webview.`;
         }
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
@@ -393,7 +393,12 @@ class NovelUpdates implements Plugin.PluginBase {
         const resultSyringe = await fetchApi(linkSyringe);
         const bodySyringe = await resultSyringe.text();
         const loadedCheerioSyringe = parseHTML(bodySyringe);
-        bloatClasses = ['.wp-block-buttons', '#jp-post-flair', '.wpcnt'];
+        bloatClasses = [
+          '.has-inline-color',
+          '.wp-block-buttons',
+          '.wpcnt',
+          '#jp-post-flair',
+        ];
         bloatClasses.map(tag => loadedCheerioSyringe(tag).remove());
         chapterContent = loadedCheerioSyringe('.entry-content').html()!;
         let titleElementSyringe =
