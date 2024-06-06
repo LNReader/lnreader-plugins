@@ -621,10 +621,8 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Zetro Translation (Outlier)
      */
     if (!isWordPress && !isBlogspot) {
-      console.log('Normal');
       chapterText = await this.getChapterBody(loadedCheerio, domain, url);
     } else if (isBlogspot) {
-      console.log('Blogspot');
       bloatClasses = ['.button-container', '.separator'];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
       chapterTitle =
