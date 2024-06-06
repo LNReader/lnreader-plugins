@@ -1,5 +1,4 @@
 import { fetchFile, fetchApi } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 import qs from 'qs';
@@ -8,8 +7,14 @@ class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
   name = 'Agitoon';
   icon = 'src/kr/agitoon/icon.png';
-  site = 'https://agit655.xyz';
-  version = '2.0.1';
+  site = 'https://agit657.xyz';
+  version = '3.0.0';
+
+  constructor() {
+    fetchApi(this.site).then(res => {
+      if (res.ok) this.site = res.url.replace(/\/$/, '');
+    });
+  }
 
   async popularNovels(
     pageNo: number,
@@ -34,6 +39,11 @@ class Agitoon implements Plugin.PluginBase {
         is_query_first: pageNo == 1,
       }),
     });
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get popular novels: (${res.status}: ${res.statusText}) (try to open in webview)`,
+      );
+    }
     const resJson = (await res.json()) as response;
     const novels: Plugin.NovelItem[] = [];
 
