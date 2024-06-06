@@ -1,5 +1,4 @@
 import { fetchFile, fetchApi } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 import qs from 'qs';
@@ -10,18 +9,18 @@ class Agitoon implements Plugin.PluginBase {
   icon = 'src/kr/agitoon/icon.png';
   site = 'https://agit657.xyz';
   version = '3.0.0';
-  static url: string | undefined;
+
+  constructor() {
+    fetchApi(this.site).then(res => {
+      if (res.ok) this.site = res.url.replace(/\/$/, '');
+    });
+  }
 
   async popularNovels(
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    if (!Agitoon.url) {
-      Agitoon.url =
-        (await fetchApi(this.site).then(res => res.url.replace(/\/$/, ''))) ||
-        this.site;
-    }
-    const res = await fetchApi(Agitoon.url + '/novel/index.update.php', {
+    const res = await fetchApi(this.site + '/novel/index.update.php', {
       headers: {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
@@ -51,7 +50,7 @@ class Agitoon implements Plugin.PluginBase {
     resJson?.list?.forEach(novel =>
       novels.push({
         name: novel.wr_subject,
-        cover: Agitoon.url + novel.np_dir + '/thumbnail/' + novel.np_thumbnail,
+        cover: this.site + novel.np_dir + '/thumbnail/' + novel.np_thumbnail,
         path: novel.wr_id,
       }),
     );
@@ -60,11 +59,6 @@ class Agitoon implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    if (!Agitoon.url) {
-      Agitoon.url =
-        (await fetchApi(this.site).then(res => res.url.replace(/\/$/, ''))) ||
-        this.site;
-    }
     const result = await fetchApi(this.resolveUrl(novelPath, true)).then(res =>
       res.text(),
     );
@@ -73,7 +67,7 @@ class Agitoon implements Plugin.PluginBase {
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h5.pt-2').text(),
-      cover: Agitoon.url + loadedCheerio('div.col-5.pr-0.pl-0 img').attr('src'),
+      cover: this.site + loadedCheerio('div.col-5.pr-0.pl-0 img').attr('src'),
       summary: loadedCheerio('.pt-1.mt-1.pb-1.mb-1').text(),
     };
 
@@ -91,7 +85,7 @@ class Agitoon implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const res = await fetchApi(Agitoon.url + '/novel/list.update.php', {
+    const res = await fetchApi(this.site + '/novel/list.update.php', {
       headers: {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
@@ -119,11 +113,6 @@ class Agitoon implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    if (!Agitoon.url) {
-      Agitoon.url =
-        (await fetchApi(this.site).then(res => res.url.replace(/\/$/, ''))) ||
-        this.site;
-    }
     const result = await fetchApi(this.resolveUrl(chapterPath)).then(res =>
       res.text(),
     );
@@ -140,12 +129,7 @@ class Agitoon implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    if (!Agitoon.url) {
-      Agitoon.url =
-        (await fetchApi(this.site).then(res => res.url.replace(/\/$/, ''))) ||
-        this.site;
-    }
-    const rawResults = await fetchApi(Agitoon.url + '/novel/search.php', {
+    const rawResults = await fetchApi(this.site + '/novel/search.php', {
       headers: {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
@@ -163,7 +147,7 @@ class Agitoon implements Plugin.PluginBase {
       novels.push({
         name: novel.wr_subject,
         cover:
-          Agitoon.url + '/' + novel.np_dir + '/thumbnail/' + novel.np_thumbnail,
+          this.site + '/' + novel.np_dir + '/thumbnail/' + novel.np_thumbnail,
         path: novel.wr_id,
       }),
     );
@@ -172,17 +156,8 @@ class Agitoon implements Plugin.PluginBase {
   }
 
   fetchImage = fetchFile;
-  resolveUrl(path: string, isNovel?: boolean) {
-    if (!Agitoon.url)
-      fetchApi(this.site).then(
-        res => (Agitoon.url = res.url.replace(/\/$/, '')),
-      );
-    return (
-      (Agitoon.url ? Agitoon.url : this.site) +
-      (isNovel ? '/novel/list/' : '/novel/view/') +
-      path
-    );
-  }
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? '/novel/list/' : '/novel/view/') + path;
 }
 
 export default new Agitoon();
