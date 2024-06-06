@@ -180,7 +180,6 @@ class NovelUpdates implements Plugin.PluginBase {
     loadedCheerio: CheerioAPI,
     domain: string[],
     url: string,
-    result: Response,
   ) {
     let bloatClasses = [];
     let chapterTitle = '';
@@ -203,6 +202,23 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterTitle = titleElementAsura.text()!;
         titleElementAsura.remove();
         chapterContent = loadedCheerio('.post-body').html()!;
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
+      case 'fictionread':
+        bloatClasses = ['.content > style'];
+        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        chapterTitle = loadedCheerio('.title-image span').first().text()!;
+        loadedCheerio('.content')
+          .children()
+          .each((idx, ele) => {
+            if (loadedCheerio(ele).attr('id')?.includes('Chaptertitle-info')) {
+              loadedCheerio(ele).remove();
+              return false;
+            }
+          });
+        chapterContent = loadedCheerio('.content').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
@@ -518,12 +534,15 @@ class NovelUpdates implements Plugin.PluginBase {
     /**
      * Detect if the site is a Blogspot site
      */
-    let isBlogspotStr = loadedCheerio(
-      'meta[name="google-adsense-platform-domain"]',
-    ).attr('content');
+    let isBlogspotStr =
+      loadedCheerio('meta[name="google-adsense-platform-domain"]').attr(
+        'content',
+      ) || loadedCheerio('meta[name="generator"]').attr('content');
     let isBlogspot = false;
     if (isBlogspotStr) {
-      isBlogspot = isBlogspotStr.toLowerCase().includes('blogspot');
+      isBlogspot =
+        isBlogspotStr.toLowerCase().includes('blogspot') ||
+        isBlogspotStr.toLowerCase().includes('blogger');
     }
 
     /**
@@ -555,6 +574,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const outliers = [
       'anotivereads',
       'asuratls',
+      'fictionread',
       'helscans',
       'mirilu',
       'novelworldtranslations',
@@ -572,6 +592,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * Blogspot sites:
      * - ¼-Assed
      * - AsuraTls (Outlier)
+     * - FictionRead (Outlier)
      * - Novel World Translations (Outlier)
      * - SacredText TL (Outlier)
      *
@@ -600,13 +621,10 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Zetro Translation (Outlier)
      */
     if (!isWordPress && !isBlogspot) {
-      chapterText = await this.getChapterBody(
-        loadedCheerio,
-        domain,
-        url,
-        result,
-      );
+      console.log('Normal');
+      chapterText = await this.getChapterBody(loadedCheerio, domain, url);
     } else if (isBlogspot) {
+      console.log('Blogspot');
       bloatClasses = ['.button-container', '.separator'];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
       chapterTitle =
