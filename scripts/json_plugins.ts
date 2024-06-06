@@ -87,14 +87,13 @@ json.sort((a, b) => {
 
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
-fetch(`https://img.shields.io/badge/Plugins-${totalPlugins}-blue`)
-  .then(res => res.text())
-  .then(data => {
-    fs.writeFileSync('total.svg', data, { encoding: 'utf-8' });
-  })
-  .catch(error => {
-    fs.writeFileSync('total.svg', '', { encoding: 'utf-8' });
-  });
+const svgContent = fs.readFileSync(path.join(root, 'total.template.svg'), {
+  encoding: 'utf-8',
+});
+fs.writeFileSync(
+  path.join(root, 'total.svg'),
+  svgContent.replace(/--replacement--/g, `Plugins: ${totalPlugins}`),
+);
 
 // check for broken plugins
 for (let language in languages) {
