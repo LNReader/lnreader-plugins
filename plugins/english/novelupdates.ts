@@ -207,7 +207,7 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'fictionread':
-        bloatClasses = ['.content > style'];
+        bloatClasses = ['.content > style', '.meaning', '.word'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterTitle = loadedCheerio('.title-image span').first().text()!;
         loadedCheerio('.content')
