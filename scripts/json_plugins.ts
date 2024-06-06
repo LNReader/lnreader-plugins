@@ -87,14 +87,12 @@ json.sort((a, b) => {
 
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
-fetch(`https://img.shields.io/badge/Plugins-${totalPlugins}-blue`)
-  .then(res => res.text())
-  .then(data => {
-    fs.writeFileSync('total.svg', data, { encoding: 'utf-8' });
-  })
-  .catch(error => {
-    fs.writeFileSync('total.svg', '', { encoding: 'utf-8' });
-  });
+fs.writeFileSync(
+  'total.svg',
+  `
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="80" height="20" role="img" aria-label="Plugins: ${totalPlugins}"><title>Plugins: ${totalPlugins}</title><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="r"><rect width="80" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#r)"><rect width="49" height="20" fill="#555"/><rect x="49" width="31" height="20" fill="#007ec6"/><rect width="80" height="20" fill="url(#s)"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110"><text aria-hidden="true" x="255" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="390">Plugins</text><text x="255" y="140" transform="scale(.1)" fill="#fff" textLength="390">Plugins</text><text aria-hidden="true" x="635" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="210">161</text><text x="635" y="140" transform="scale(.1)" fill="#fff" textLength="210">${totalPlugins}</text></g></svg>
+  `,
+);
 
 // check for broken plugins
 for (let language in languages) {
