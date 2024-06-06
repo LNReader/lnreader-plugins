@@ -87,11 +87,11 @@ json.sort((a, b) => {
 
 fs.writeFileSync(jsonMinPath, JSON.stringify(json));
 fs.writeFileSync(jsonPath, JSON.stringify(json, null, '\t'));
-const svgContent = fs.readFileSync(path.join(root, 'total.template.svg'), {
+const svgContent = fs.readFileSync('total.template.svg', {
   encoding: 'utf-8',
 });
 fs.writeFileSync(
-  path.join(root, 'total.svg'),
+  'total.svg',
   svgContent.replace(/--replacement--/g, `Plugins: ${totalPlugins}`),
 );
 
