@@ -1,5 +1,5 @@
 export const languages = {
-  Arabic: 'العربية',
+  Arabic: '‎العربية',
   Chinese: '中文, 汉语, 漢語',
   English: 'English',
   French: 'Français',
