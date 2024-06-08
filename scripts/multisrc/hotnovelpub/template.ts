@@ -1,4 +1,4 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -162,8 +162,6 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
 
     return novels;
   }
-
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) => this.site + '/' + path;
 }
 

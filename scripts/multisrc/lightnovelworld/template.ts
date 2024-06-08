@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
@@ -26,6 +26,9 @@ class LightNovelWorld implements Plugin.PagePlugin {
   headers = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+  };
+  imageRequestInit?: Plugin.ImageRequestInit | undefined = {
+    headers: this.headers,
   };
   options?: LightNovelWorldOptions;
 
@@ -186,10 +189,6 @@ class LightNovelWorld implements Plugin.PagePlugin {
     });
 
     return novels;
-  }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url, { headers: this.headers });
   }
 
   filters = {

@@ -1,5 +1,5 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -172,6 +172,4 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     return this.parseNovels($);
   }
-
-  fetchImage = fetchFile;
 }
