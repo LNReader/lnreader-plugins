@@ -376,8 +376,10 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'scribblehub':
+        bloatClasses = ['.wi_authornotes'];
+        bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterTitle = loadedCheerio('.chapter-title').first().text()!;
-        chapterContent = loadedCheerio('div.chp_raw').html()!;
+        chapterContent = loadedCheerio('.chp_raw').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
