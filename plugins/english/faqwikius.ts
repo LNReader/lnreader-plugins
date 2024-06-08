@@ -161,8 +161,6 @@ class FaqWikiUs implements Plugin.PluginBase {
 
     return this.parseNovels(loadedCheerio, searchTerm);
   }
-
-  fetchImage = fetchFile;
 }
 
 export default new FaqWikiUs();

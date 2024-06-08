@@ -382,10 +382,6 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     this.searchFunc.setHaystack(novels);
     return this.searchFunc.search(searchTerm);
   }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url, { headers: { referer: this.site } });
-  }
 }
 
 export default new ReLibraryPlugin();

@@ -181,8 +181,6 @@ class XinShu69 implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     class: {
       label: '分类',

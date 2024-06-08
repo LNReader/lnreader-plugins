@@ -170,9 +170,6 @@ class LightNovelVN implements Plugin.PagePlugin {
       }) || [];
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 
 export default new LightNovelVN();

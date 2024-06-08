@@ -134,8 +134,6 @@ class RNRF implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     sort: {
       label: 'Сортировка',

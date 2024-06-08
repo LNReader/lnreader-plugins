@@ -138,7 +138,6 @@ class Bookriver implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + (isNovel ? '/book/' : '/reader/') + path;
 

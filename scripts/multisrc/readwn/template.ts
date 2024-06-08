@@ -1,4 +1,4 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -223,6 +223,4 @@ class ReadwnPlugin implements Plugin.PluginBase {
       .filter(novel => novel.name && novel.path);
     return novels;
   }
-
-  fetchImage = fetchFile;
 }

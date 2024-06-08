@@ -292,8 +292,6 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     categorie_genre: {
       type: FilterTypes.Picker,

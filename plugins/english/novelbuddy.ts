@@ -169,10 +169,6 @@ class NovelBuddy implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
   }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 
 export default new NovelBuddy();

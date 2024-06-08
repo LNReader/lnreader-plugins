@@ -148,8 +148,6 @@ class LibReadPlugin implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     type_genre: {
       type: FilterTypes.Picker,

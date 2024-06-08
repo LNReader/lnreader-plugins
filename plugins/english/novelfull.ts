@@ -135,10 +135,6 @@ class NovelFull implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
-
   filters = {
     sort: {
       value: 'most-popular',

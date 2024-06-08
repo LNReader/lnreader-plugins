@@ -197,8 +197,6 @@ class ficbook implements Plugin.PluginBase {
     return dateString || null;
   };
 
-  fetchImage = fetchFile;
-
   filters = {
     sort: {
       label: 'Сортировка:',

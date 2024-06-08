@@ -113,8 +113,6 @@ class Smakolykytl implements Plugin.PluginBase {
       );
     return novels;
   }
-
-  fetchImage = fetchFile;
 }
 
 export default new Smakolykytl();

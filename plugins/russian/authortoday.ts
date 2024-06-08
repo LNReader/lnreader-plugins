@@ -175,7 +175,6 @@ class AuthorToday implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     isNovel ? this.site + '/work/' + path : this.site + '/reader/' + path;
 

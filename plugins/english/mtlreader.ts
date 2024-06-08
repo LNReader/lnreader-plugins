@@ -103,9 +103,5 @@ class MTLReader implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(seacrhBody);
     return this.parseNovels(loadedCheerio);
   }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 export default new MTLReader();
