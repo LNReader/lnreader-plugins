@@ -165,11 +165,7 @@ class NovelkiPL implements Plugin.PluginBase {
 
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    // if your plugin has images and they won't load
-    // this is the function to fiddle with
-    return fetchFile(url);
-  }
+
   filters = {
     genres: {
       value: '',

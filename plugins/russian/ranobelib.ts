@@ -216,7 +216,6 @@ class RLIB implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) => {
     const ui = this.user?.ui ? 'ui=' + this.user.ui : '';
 

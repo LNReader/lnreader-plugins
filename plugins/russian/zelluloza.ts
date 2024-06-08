@@ -190,7 +190,6 @@ class Zelluloza implements Plugin.PluginBase {
     return null;
   };
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + '/books/' + path;
 

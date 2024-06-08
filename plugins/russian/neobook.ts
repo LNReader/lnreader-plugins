@@ -143,7 +143,6 @@ class Neobook implements Plugin.PluginBase {
     return chapterText;
   }
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + (isNovel ? '/book/' : '/reader/') + path;
 

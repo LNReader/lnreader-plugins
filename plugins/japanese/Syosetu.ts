@@ -217,9 +217,7 @@ class Syosetu implements Plugin.PluginBase {
     // respond with novels!
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
+
   resolveUrl(path: string, isNovel?: boolean | undefined): string {
     return this.novelPrefix + path;
   }

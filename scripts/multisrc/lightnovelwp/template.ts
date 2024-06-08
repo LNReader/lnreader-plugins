@@ -1,6 +1,6 @@
 import { load } from 'cheerio';
 import { Parser } from 'htmlparser2';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
@@ -407,8 +407,6 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     const html = await this.safeFecth(url, true);
     return this.parseNovels(html);
   }
-
-  fetchImage = fetchFile;
 }
 
 function extractChapterNumber(data: string, tempChapter: Plugin.ChapterItem) {

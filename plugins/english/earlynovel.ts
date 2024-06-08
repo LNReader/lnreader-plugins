@@ -139,10 +139,6 @@ class EarlyNovelPlugin implements Plugin.PagePlugin {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
-
   filters = {
     order: {
       value: '/most-popular',

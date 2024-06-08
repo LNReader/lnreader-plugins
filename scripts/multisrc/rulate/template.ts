@@ -1,4 +1,4 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -246,8 +246,6 @@ class RulatePlugin implements Plugin.PluginBase {
     }
     return dateString || null;
   };
-
-  fetchImage = fetchFile;
 }
 
 interface response {

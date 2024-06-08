@@ -170,7 +170,6 @@ class WTRLAB implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
   filters = {
     order: {
       value: 'chapter',

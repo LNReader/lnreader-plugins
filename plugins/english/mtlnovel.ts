@@ -145,11 +145,6 @@ class MTLNovel implements Plugin.PluginBase {
 
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    const headers = new Headers();
-    headers.append('Alt-Used', 'www.mtlnovel.com');
-    return fetchFile(url, { headers });
-  }
 
   filters = {
     order: {

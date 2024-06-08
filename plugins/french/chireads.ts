@@ -250,8 +250,6 @@ class ChireadsPlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     tag: {
       type: FilterTypes.Picker,

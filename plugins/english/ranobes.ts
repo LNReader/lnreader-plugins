@@ -19,49 +19,51 @@ class RanobesPlugin implements Plugin.PagePlugin {
     const novels: Plugin.NovelItem[] = [];
     let tempNovel = {} as Plugin.NovelItem;
     tempNovel.name = '';
-    const baseUrl = this.site
+    const baseUrl = this.site;
     let isParsingNovel = false;
     let isTitleTag = false;
     let isNovelName = false;
     const parser = new Parser({
       onopentag(name, attribs) {
-        if (attribs['class']?.includes('short-cont')){
+        if (attribs['class']?.includes('short-cont')) {
           isParsingNovel = true;
         }
-        if (isParsingNovel){
-          if (name === 'h2' && attribs['class']?.includes('title')){
+        if (isParsingNovel) {
+          if (name === 'h2' && attribs['class']?.includes('title')) {
             isTitleTag = true;
           }
-          if (isTitleTag && name === 'a'){
+          if (isTitleTag && name === 'a') {
             tempNovel.path = attribs['href'].slice(baseUrl.length);
             isNovelName = true;
           }
-          if (name === 'figure'){
-            tempNovel.cover = attribs['style']
-              .replace(/.*url\((.*?)\)./g, '$1');
+          if (name === 'figure') {
+            tempNovel.cover = attribs['style'].replace(
+              /.*url\((.*?)\)./g,
+              '$1',
+            );
           }
-          if (tempNovel.path && tempNovel.cover){
+          if (tempNovel.path && tempNovel.cover) {
             novels.push(tempNovel);
             tempNovel = {} as Plugin.NovelItem;
             tempNovel.name = '';
           }
         }
       },
-      ontext(data){
-        if(isNovelName){
+      ontext(data) {
+        if (isNovelName) {
           tempNovel.name += data;
         }
       },
-      onclosetag(name){
-        if(name === 'h2'){
+      onclosetag(name) {
+        if (name === 'h2') {
           isNovelName = false;
           isTitleTag = false;
         }
-        if(name === 'figure'){
+        if (name === 'figure') {
           isParsingNovel = false;
         }
-      }
-    })
+      },
+    });
     parser.write(html);
     parser.end();
     return novels;
@@ -104,7 +106,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
       summary: '',
       chapters: [],
       totalPages: 1,
-    }
+    };
     let baseUrl = this.site;
     let isCover = false;
     let isAuthor = false;
@@ -113,108 +115,102 @@ class RanobesPlugin implements Plugin.PagePlugin {
     let isStatusText = false;
     let isGenres = false;
     let isGenresText = false;
-    let genreArray: string[] = []
+    let genreArray: string[] = [];
     let novelId = '';
-    const parser = new Parser ({
-      onopentag(name,attribs){
-        if (attribs['class'] === 'poster'){
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        if (attribs['class'] === 'poster') {
           isCover = true;
         }
-        if (isCover && name === 'img'){
+        if (isCover && name === 'img') {
           novel.name = attribs['alt'];
           novel.cover = baseUrl + attribs['src'];
         }
-        if (name === 'div' && attribs['class'] === 'moreless'){
+        if (name === 'div' && attribs['class'] === 'moreless') {
           isSummary = true;
         }
-        if (name === 'li' && attribs['title']?.includes('Original status')){
+        if (name === 'li' && attribs['title']?.includes('Original status')) {
           isStatus = true;
         }
-        if (name === 'input' && attribs['name'] === 'newsid'){
-          novelId = attribs['value']
+        if (name === 'input' && attribs['name'] === 'newsid') {
+          novelId = attribs['value'];
         }
       },
-      onopentagname(name){
-        if (isSummary && name === 'br'){
+      onopentagname(name) {
+        if (isSummary && name === 'br') {
           novel.summary += `/n`;
         }
-        if (isStatus && name === 'a'){
+        if (isStatus && name === 'a') {
           isStatusText = true;
         }
-        if (isGenres && name === 'a'){
+        if (isGenres && name === 'a') {
           isGenresText = true;
         }
       },
-      onattribute(name,value){
-        if (name === 'itemprop' && value === 'creator'){
+      onattribute(name, value) {
+        if (name === 'itemprop' && value === 'creator') {
           isAuthor = true;
         }
-        if (name === 'id' && value === 'mc-fs-genre'){
+        if (name === 'id' && value === 'mc-fs-genre') {
           isGenres = true;
         }
       },
-      ontext(data){
-        if(isAuthor){
+      ontext(data) {
+        if (isAuthor) {
           novel.author = data;
         }
-        if(isSummary){
+        if (isSummary) {
           novel.summary += data;
         }
-        if(isStatusText){
-          novel.status = data === 'Ongoing'
-            ? 'Ongoing'
-            : 'Completed';
+        if (isStatusText) {
+          novel.status = data === 'Ongoing' ? 'Ongoing' : 'Completed';
         }
-        if(isGenresText){
+        if (isGenresText) {
           genreArray.push(data);
         }
       },
-      onclosetag(name){
-        if(name === 'a'){
+      onclosetag(name) {
+        if (name === 'a') {
           isCover = false;
           isAuthor = false;
           isStatusText = false;
           isGenresText = false;
           isStatus = false;
         }
-        if(name === 'div'){
+        if (name === 'div') {
           isSummary = false;
           isGenres = false;
         }
-      }
-    })
+      },
+    });
     parser.write(html);
     parser.end();
     novel.genres = genreArray.join(', ');
 
     const chapterListUrl = this.site + '/chapters/' + novelId + '/';
-    const chaptersHtml = await fetchApi(chapterListUrl).then(r =>
-      r.text(),
-    );
-    let dataJson: { 
-      pages_count: string, 
-      chapters: ChapterEntry[] 
-    } = { pages_count: '', chapters : [] };
+    const chaptersHtml = await fetchApi(chapterListUrl).then(r => r.text());
+    let dataJson: {
+      pages_count: string;
+      chapters: ChapterEntry[];
+    } = { pages_count: '', chapters: [] };
     let isScript = false;
-    const parser2 = new Parser ({
-      ontext(data){
-        if(isScript){
-          if (data.includes('window.__DATA__ =')){
-            dataJson = JSON.parse(
-              data.replace('window.__DATA__ =', '')
-            );
+    const parser2 = new Parser({
+      ontext(data) {
+        if (isScript) {
+          if (data.includes('window.__DATA__ =')) {
+            dataJson = JSON.parse(data.replace('window.__DATA__ =', ''));
           }
         }
       },
-      onclosetag(name){
-        if(name === 'main'){
+      onclosetag(name) {
+        if (name === 'main') {
           isScript = true;
         }
-        if (name === 'script'){
+        if (name === 'script') {
           isScript = false;
         }
       },
-    })
+    });
     parser2.write(chaptersHtml);
     parser2.end();
 
@@ -241,29 +237,27 @@ class RanobesPlugin implements Plugin.PagePlugin {
     const pageUrl = firstUrl + '/page/' + page;
     const pageBody = await fetchApi(pageUrl).then(r => r.text());
     let isScript = false;
-    let dataJson: { 
-      pages_count: string, 
-      chapters: ChapterEntry[] 
-    } = { pages_count: '', chapters : [] };
+    let dataJson: {
+      pages_count: string;
+      chapters: ChapterEntry[];
+    } = { pages_count: '', chapters: [] };
     const parser = new Parser({
-      ontext(data){
-        if(isScript){
-          if (data.includes('window.__DATA__ =')){
-            dataJson = JSON.parse(
-              data.replace('window.__DATA__ =', '')
-            );
+      ontext(data) {
+        if (isScript) {
+          if (data.includes('window.__DATA__ =')) {
+            dataJson = JSON.parse(data.replace('window.__DATA__ =', ''));
           }
         }
       },
-      onclosetag(name){
-        if(name === 'main'){
+      onclosetag(name) {
+        if (name === 'main') {
           isScript = true;
         }
-        if (name === 'script'){
+        if (name === 'script') {
           isScript = false;
         }
-      }
-    })
+      },
+    });
     parser.write(pageBody);
     parser.end();
     const chapters = this.parseChapters(dataJson);
@@ -280,92 +274,92 @@ class RanobesPlugin implements Plugin.PagePlugin {
     let isPtag = false;
     let isStyleText = false;
     const parser = new Parser({
-      onopentag(name,attribs){
-        if (isChapter && name === 'div'){
-          let stylediv = attribs['style']
-          if(stylediv){
-            chapterText += `<div style="${stylediv}">`
+      onopentag(name, attribs) {
+        if (isChapter && name === 'div') {
+          let stylediv = attribs['style'];
+          if (stylediv) {
+            chapterText += `<div style="${stylediv}">`;
             isStyleText = true;
           } else {
-            chapterText += `<div>`
+            chapterText += `<div>`;
           }
         }
-        if (isChapter && name === 'table'){
+        if (isChapter && name === 'table') {
           let w = attribs['width'];
-          if(w) {
+          if (w) {
             chapterText += `<table width="${w}">`;
           } else {
             chapterText += `<table>`;
           }
         }
-        if (isChapter && name === 'tbody'){
+        if (isChapter && name === 'tbody') {
           chapterText += `<tbody>`;
         }
-        if (isChapter && name === 'tr'){
+        if (isChapter && name === 'tr') {
           chapterText += `<tr>`;
         }
-        if (isChapter && name === 'td'){
+        if (isChapter && name === 'td') {
           let w1 = attribs['width'];
-          if(w1) {
+          if (w1) {
             chapterText += `<td width="${w1}">`;
           } else {
             chapterText += `<td>`;
           }
         }
       },
-      onattribute(name, value){
-        if (name === 'id' && value === 'arrticle'){
+      onattribute(name, value) {
+        if (name === 'id' && value === 'arrticle') {
           isChapter = true;
         }
-        if (name === 'class' && value === 'category grey ellipses'){
+        if (name === 'class' && value === 'category grey ellipses') {
           isChapter = false;
           isPtag = false;
         }
       },
-      onopentagname(name){
-        if (isChapter && name === 'p'){
+      onopentagname(name) {
+        if (isChapter && name === 'p') {
           chapterText += '<p>';
           isPtag = true;
-          if(isStyleText){
+          if (isStyleText) {
             isStyleText = false;
           }
         }
-        if (isChapter && name === 'br'){
+        if (isChapter && name === 'br') {
           chapterText += `<br>`;
         }
       },
-      ontext(data){
-        if(isPtag){
+      ontext(data) {
+        if (isPtag) {
           chapterText += data;
         }
-        if(isStyleText){
+        if (isStyleText) {
           chapterText += data;
         }
       },
-      onclosetag(name){
-        if (name === 'p'){
+      onclosetag(name) {
+        if (name === 'p') {
           isPtag = false;
-          chapterText += '</p>'
+          chapterText += '</p>';
         }
-        if (isChapter && name === 'td'){
+        if (isChapter && name === 'td') {
           chapterText += `</td>`;
         }
-        if (isChapter && name === 'tr'){
+        if (isChapter && name === 'tr') {
           chapterText += `</tr>`;
         }
-        if (isChapter && name === 'tbody'){
+        if (isChapter && name === 'tbody') {
           chapterText += `</tbody>`;
         }
-        if (isChapter && name === 'table'){
+        if (isChapter && name === 'table') {
           chapterText += `</table>`;
         }
-        if (isChapter && name === 'div'){
+        if (isChapter && name === 'div') {
           isStyleText = false;
-          chapterText += `</div>`
+          chapterText += `</div>`;
         }
-      }
-    })
-    parser.write(html)
+      },
+    });
+    parser.write(html);
     parser.end();
 
     return chapterText;
@@ -379,11 +373,6 @@ class RanobesPlugin implements Plugin.PagePlugin {
     const body = await fetchApi(link).then(r => r.text());
 
     return this.parseNovels(body);
-  }
-
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
   }
 }
 export default new RanobesPlugin();

@@ -4,6 +4,7 @@ import path from 'path';
 import { PluginList } from '@typings/types';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
+import { fetchFile } from '@libs/fetch';
 const root = path.dirname(require?.main?.filename || '');
 
 export const fetchHeaders: Record<string, string> = {};
@@ -83,8 +84,14 @@ export const parseChapter = async (
   chapterPath: string,
 ) => (await getPlugin(pluginRequirePath))?.parseChapter(chapterPath);
 
-export const fetchImage = async (pluginRequirePath: string, url: string) =>
-  (await getPlugin(pluginRequirePath))?.fetchImage(url);
+export const fetchImage = async (pluginRequirePath: string, url: string) => {
+  const plugin = await getPlugin(pluginRequirePath);
+  return fetchFile(url, {
+    method: plugin?.imageRequestInit?.method,
+    headers: plugin?.imageRequestInit?.headers,
+    body: plugin?.imageRequestInit?.body,
+  });
+};
 
 export const resolveUrl = async (
   pluginRequirePath: string,

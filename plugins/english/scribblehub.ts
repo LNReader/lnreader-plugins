@@ -185,10 +185,6 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
-
   filters = {
     sort: {
       label: 'Sort Results By',

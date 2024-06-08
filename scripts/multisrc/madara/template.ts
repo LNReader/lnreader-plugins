@@ -1,4 +1,4 @@
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
@@ -293,8 +293,6 @@ class MadaraPlugin implements Plugin.PluginBase {
     const loadedCheerio = await this.getCheerio(url, true);
     return this.parseNovels(loadedCheerio);
   }
-
-  fetchImage = fetchFile;
 
   parseData = (date: string) => {
     const dayJSDate = dayjs(); // today

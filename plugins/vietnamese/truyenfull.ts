@@ -142,9 +142,6 @@ class TruyenFull implements Plugin.PagePlugin {
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 
 export default new TruyenFull();

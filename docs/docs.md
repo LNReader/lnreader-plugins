@@ -29,12 +29,12 @@ class ExamplePlugin implements Plugin.PluginBase {}
 | [icon](#pluginbasename)                                        | yes      | Plugin Icon                                           |
 | [site](#pluginbasesite)                                        | yes      | Plugin site link                                      |
 | [version](#pluginbaseversion)                                  | yes      | Plugin version                                        |
+| [imageRequestInit](#pluginbaseimagerequestinit)                | no       | Plugin Image Request Init                             |
 | [filters](#pluginbasefilters)                                  | no       | [Filter definition](#filter-definition-object) object |
 | [popularNovels(page, options)](#pluginbasepopularnovels)       | yes      | Novel list getter                                     |
 | [parseNovelAndChapters(url)](#pluginbaseparsenovelandchapters) | yes      | Novel info and chapter list getter                    |
 | [parseChapter(url)](#pluginbaseparsechapter)                   | yes      | Chapter text getter                                   |
 | [searchNovels(searchTerm, page)](#pluginbasesearchnovels)      | yes      | Novel searching getter                                |
-| [fetchImage(url)](#pluginbasefetchimage)                       | yes      | Customizable function for fetching images             |
 
 #### PluginBase::id
 
@@ -105,6 +105,26 @@ Where
 class ExamplePlugin implements Plugin.PluginBase {
     ...
     version = "1.0.0";
+    ...
+}
+```
+
+#### PluginBase::imageRequestInit
+
+The init for request to obtain images
+
+Used if images failed to load due to site's protection
+
+###### Example
+
+```ts
+class ExamplePlugin implements Plugin.PluginBase {
+    ...
+    imageRequestInit: Plugin.ImageRequestInit = {
+        headers: {
+            Referer: 'https://example.com',
+        },
+    };
     ...
 }
 ```
@@ -307,43 +327,6 @@ class ExamplePlugin implements Plugin.PluginBase {
     ): Promise<Plugin.NovelItem[]> {
         let novels: Plugin.NovelItem[] = [];
         return novels;
-    }
-    ...
-}
-```
-
-#### PluginBase::fetchImage
-
-Function used if images failed to load due to site's protection
-
-```ts
-async fetchImage(url: string): Promise<string | undefined>
-```
-
-See [Fetch functions]() for detailed list of fetch functions provided by us to help with fetching data
-
-###### Parameter
-
-- `url` Image's url to fetch
-
-###### Returns
-
-- `string` base64 representation of the image
-
-or
-
-- `undefined` on error
-
-###### Example
-
-```ts
-class ExamplePlugin implements Plugin.PluginBase {
-    ...
-    async fetchImage(url: string): Promise<string | undefined> {
-        const headers = {
-            Referer: "https://ln.hako.vn",
-        };
-        return await fetchFile(url, { headers: headers });
     }
     ...
 }

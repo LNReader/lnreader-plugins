@@ -174,10 +174,6 @@ class ReadLiteNovel implements Plugin.PluginBase {
     return novels;
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
-
   filters = {
     order: {
       value: 'top-rated',

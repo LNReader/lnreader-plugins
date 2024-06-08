@@ -1,5 +1,4 @@
 import { Parser } from 'htmlparser2';
-import { fetchFile } from '@libs/fetch';
 import { HTMLParser2Util, Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { FilterTypes, Filters } from '@libs/filterInputs';
@@ -395,6 +394,8 @@ class HakoPlugin implements Plugin.PluginBase {
             novel.status = NovelStatus.Unknown;
         }
         novel.genres = novel.genres?.replace(/,*\s*$/, '');
+        novel.name = novel.name.trim();
+        novel.summary = novel.summary?.trim();
         return novel;
       });
   }
@@ -416,12 +417,11 @@ class HakoPlugin implements Plugin.PluginBase {
       this.site + '/tim-kiem?keywords=' + searchTerm + '&page=' + pageNo;
     return this.parseNovels(url);
   }
-  fetchImage(url: string): Promise<string | undefined> {
-    const headers = {
+  imageRequestInit: Plugin.ImageRequestInit = {
+    headers: {
       Referer: 'https://ln.hako.vn',
-    };
-    return fetchFile(url, { headers: headers });
-  }
+    },
+  };
   filters = {
     alphabet: {
       type: FilterTypes.Picker,

@@ -159,9 +159,6 @@ class EpikNovel implements Plugin.PluginBase {
 
     return novels;
   }
-  fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 
 export default new EpikNovel();

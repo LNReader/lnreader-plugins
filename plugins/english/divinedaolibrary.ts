@@ -128,10 +128,6 @@ class DDLPlugin implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio, searchTerm);
   }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
 }
 
 export default new DDLPlugin();
