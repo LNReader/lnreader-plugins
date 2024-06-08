@@ -193,8 +193,6 @@ class Jaomix implements Plugin.PluginBase {
     return dateString || null;
   };
 
-  fetchImage = fetchFile;
-
   filters = {
     sortby: {
       label: 'Сортировка:',

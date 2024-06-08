@@ -128,9 +128,6 @@ class SkyNovels implements Plugin.PluginBase {
 
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 
 export default new SkyNovels();

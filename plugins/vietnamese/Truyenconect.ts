@@ -247,9 +247,7 @@ class TruyenConect implements Plugin.PagePlugin {
 
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
+
   filters = {
     category: {
       label: 'Lọc theo',

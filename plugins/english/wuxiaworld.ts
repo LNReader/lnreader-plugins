@@ -285,10 +285,6 @@ class WuxiaWorld implements Plugin.PluginBase {
     return this.parseNovels(data);
   }
 
-  fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
-
   proto = `
     syntax = "proto3";
     option optimize_for = CODE_SIZE;

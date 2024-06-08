@@ -166,9 +166,6 @@ class LSHNovel implements Plugin.PluginBase {
 
     return novels;
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
 
   filters = {
     order: {

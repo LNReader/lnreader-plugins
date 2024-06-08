@@ -157,10 +157,6 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
-
   filters = {
     category: {
       value: '',

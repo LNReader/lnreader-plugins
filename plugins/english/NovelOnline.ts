@@ -146,10 +146,6 @@ class NovelsOnline implements Plugin.PluginBase {
       .filter(sr => sr !== null);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
-
   filters = {
     sort: {
       value: 'top_rated',

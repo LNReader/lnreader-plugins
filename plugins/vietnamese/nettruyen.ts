@@ -119,8 +119,5 @@ class Nettruyen implements Plugin.PagePlugin {
   ): Promise<Plugin.NovelItem[]> {
     throw new Error('Method not implemented.');
   }
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
 }
 export default new Nettruyen();

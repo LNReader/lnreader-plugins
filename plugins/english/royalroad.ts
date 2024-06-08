@@ -18,37 +18,37 @@ class RoyalRoad implements Plugin.PluginBase {
     let isParsingNovel = false;
     let isNovelName = false;
     const parser = new Parser({
-      onopentag(name, attribs){
-        if (attribs['class']?.includes('fiction-list-item')){
+      onopentag(name, attribs) {
+        if (attribs['class']?.includes('fiction-list-item')) {
           isParsingNovel = true;
         }
-        if (isParsingNovel){
-          if (name === 'a' && attribs['class']?.includes('bold')){
+        if (isParsingNovel) {
+          if (name === 'a' && attribs['class']?.includes('bold')) {
             tempNovel.path = attribs['href'].slice(1);
             isNovelName = true;
           }
-          if (name === 'img'){
+          if (name === 'img') {
             tempNovel.cover = attribs['src'];
           }
-          if (tempNovel.path && tempNovel.name){
+          if (tempNovel.path && tempNovel.name) {
             novels.push(tempNovel);
             tempNovel = {} as Plugin.NovelItem;
             tempNovel.name = '';
           }
         }
       },
-      ontext(data){
-        if(isNovelName){
+      ontext(data) {
+        if (isNovelName) {
           tempNovel.name += data;
         }
       },
-      onclosetag(name){
-        if(name === 'h2'){
+      onclosetag(name) {
+        if (name === 'h2') {
           isNovelName = false;
           isParsingNovel = false;
         }
-      }
-    })
+      },
+    });
     parser.write(html);
     parser.end();
     return novels;
@@ -64,9 +64,9 @@ class RoyalRoad implements Plugin.PluginBase {
     link += `?page=${page}`;
 
     if (filters.genre.value !== '') link += `&genre=${filters.genre.value}`;
-  
+
     const body = await fetchApi(link).then(r => r.text());
-  
+
     return this.parseNovels(body);
   }
 
@@ -78,110 +78,110 @@ class RoyalRoad implements Plugin.PluginBase {
       name: '',
       summary: '',
       chapters: [],
-    }
+    };
     let isNovelName = false;
     let isAuthorName = false;
     let isDescription = false;
     let isH4 = false;
-    let isSpan = 0
+    let isSpan = 0;
     let isTags = false;
     let isGenres = false;
-    let genreArray: string[] = []
+    let genreArray: string[] = [];
     let isFooter = false;
     let isScript = false;
     let chapterJson: ChapterEntry[] = [];
     let volumeJson: VolumeEntry[] = [];
-    const parser = new Parser ({
-      onopentag(name,attribs){
-        if (name === 'img' && attribs['class']?.includes('thumbnail')){
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        if (name === 'img' && attribs['class']?.includes('thumbnail')) {
           novel.cover = attribs['src'];
         }
-        if (name === 'span' && attribs['class']?.includes('label-sm')){
+        if (name === 'span' && attribs['class']?.includes('label-sm')) {
           isSpan++;
         }
-        if (name === 'span' && attribs['class']?.includes('tags')){
+        if (name === 'span' && attribs['class']?.includes('tags')) {
           isTags = true;
         }
       },
-      onopentagname(name){
-        if (name === 'h1'){
+      onopentagname(name) {
+        if (name === 'h1') {
           isNovelName = true;
         }
-        if (isH4 && name === 'a'){
+        if (isH4 && name === 'a') {
           isAuthorName = true;
         }
-        if(isTags && name === 'a'){
+        if (isTags && name === 'a') {
           isGenres = true;
         }
-        if (name === 'label'){
+        if (name === 'label') {
           isDescription = false;
           isTags = false;
         }
-        if (isFooter && name === 'script'){
+        if (isFooter && name === 'script') {
           isScript = true;
         }
       },
-      onattribute(name,value){
-        if (name === 'class' && value === 'description'){
+      onattribute(name, value) {
+        if (name === 'class' && value === 'description') {
           isDescription = true;
         }
-        if (name === 'class' && value === 'page-footer footer'){
+        if (name === 'class' && value === 'page-footer footer') {
           isFooter = true;
         }
       },
-      ontext(data){
-        if (isNovelName){
+      ontext(data) {
+        if (isNovelName) {
           novel.name = data;
         }
-        if (isAuthorName){
+        if (isAuthorName) {
           novel.author = data;
           isAuthorName = false;
         }
-        if (isDescription){
+        if (isDescription) {
           novel.summary += data;
         }
-        if (isSpan === 2){
+        if (isSpan === 2) {
           novel.status = data.trim();
           isSpan++;
         }
-        if (isGenres){
+        if (isGenres) {
           genreArray.push(data);
         }
-        if (isScript){
-          if (data.includes('window.chapters =')){
+        if (isScript) {
+          if (data.includes('window.chapters =')) {
             chapterJson = JSON.parse(
-              data.match(/window.chapters = (.+])(?=;)/)![1]
-            )
+              data.match(/window.chapters = (.+])(?=;)/)![1],
+            );
             volumeJson = JSON.parse(
-              data.match(/window.volumes = (.+])(?=;)/)![1]
-            )
+              data.match(/window.volumes = (.+])(?=;)/)![1],
+            );
           }
         }
       },
-      onclosetag(name){
-        if (name === 'h1'){
+      onclosetag(name) {
+        if (name === 'h1') {
           isNovelName = false;
           isH4 = true;
         }
-        if (name === 'h4'){
+        if (name === 'h4') {
           isH4 = false;
         }
-        if (name === 'a'){
+        if (name === 'a') {
           isGenres = false;
         }
-        if (name === 'script'){
+        if (name === 'script') {
           isScript = false;
         }
-        if (name === 'body'){
+        if (name === 'body') {
           isFooter = false;
         }
-      }
-    })
+      },
+    });
     parser.write(html);
     parser.end();
     novel.summary = novel.summary?.trim();
     novel.genres = genreArray.join(', ');
-    switch(novel.status){
+    switch (novel.status) {
       case 'ONGOING':
         novel.status = NovelStatus.Ongoing;
         break;
@@ -224,106 +224,106 @@ class RoyalRoad implements Plugin.PluginBase {
     let isStyleText = false;
     let styles = '';
     const parser = new Parser({
-      onopentag(name,attribs){
-        if (isChapter && name === 'div'){
-          let stylediv = attribs['style']
-          if(stylediv){
-            chapterText += `<div style="${stylediv}">`
+      onopentag(name, attribs) {
+        if (isChapter && name === 'div') {
+          let stylediv = attribs['style'];
+          if (stylediv) {
+            chapterText += `<div style="${stylediv}">`;
             isStyleText = true;
           } else {
-            chapterText += `<div>`
+            chapterText += `<div>`;
           }
         }
-        if (isChapter && name === 'table'){
+        if (isChapter && name === 'table') {
           let w = attribs['width'];
-          if(w) {
+          if (w) {
             chapterText += `<table width="${w}">`;
           } else {
             chapterText += `<table>`;
           }
         }
-        if (isChapter && name === 'tbody'){
+        if (isChapter && name === 'tbody') {
           chapterText += `<tbody>`;
         }
-        if (isChapter && name === 'tr'){
+        if (isChapter && name === 'tr') {
           chapterText += `<tr>`;
         }
-        if (isChapter && name === 'td'){
+        if (isChapter && name === 'td') {
           let w1 = attribs['width'];
-          if(w1) {
+          if (w1) {
             chapterText += `<td width="${w1}">`;
           } else {
             chapterText += `<td>`;
           }
         }
       },
-      onattribute(name, value){
-        if (name === 'class' && value === 'chapter-inner chapter-content'){
+      onattribute(name, value) {
+        if (name === 'class' && value === 'chapter-inner chapter-content') {
           isChapter = true;
         }
-        if (name === 'class' && value === 'portlet light t-center-3'){
+        if (name === 'class' && value === 'portlet light t-center-3') {
           isChapter = false;
           isPtag = false;
         }
-        if (name === 'class' && value === styles){
+        if (name === 'class' && value === styles) {
           isPtag = false;
         }
       },
-      onopentagname(name){
-        if (isChapter && name === 'p'){
+      onopentagname(name) {
+        if (isChapter && name === 'p') {
           chapterText += '<p>';
           isPtag = true;
-          if(isStyleText){
+          if (isStyleText) {
             isStyleText = false;
           }
         }
-        if (name === 'style'){
+        if (name === 'style') {
           isStyle = true;
         }
-        if (isChapter && name === 'br'){
+        if (isChapter && name === 'br') {
           chapterText += `<br>`;
         }
       },
-      ontext(data){
-        if(isPtag){
+      ontext(data) {
+        if (isPtag) {
           chapterText += data;
         }
-        if(isStyleText){
+        if (isStyleText) {
           chapterText += data;
         }
-        if (isStyle){
-          if (data.includes('display: none;')){
+        if (isStyle) {
+          if (data.includes('display: none;')) {
             styles = data.match(/\.(.*)\{/)![1];
           }
         }
       },
-      onclosetag(name){
-        if (name === 'p'){
+      onclosetag(name) {
+        if (name === 'p') {
           isPtag = false;
-          chapterText += '</p>'
+          chapterText += '</p>';
         }
-        if (name === 'style'){
+        if (name === 'style') {
           isStyle = false;
         }
-        if (isChapter && name === 'td'){
+        if (isChapter && name === 'td') {
           chapterText += `</td>`;
         }
-        if (isChapter && name === 'tr'){
+        if (isChapter && name === 'tr') {
           chapterText += `</tr>`;
         }
-        if (isChapter && name === 'tbody'){
+        if (isChapter && name === 'tbody') {
           chapterText += `</tbody>`;
         }
-        if (isChapter && name === 'table'){
+        if (isChapter && name === 'table') {
           chapterText += `</table>`;
         }
-        if (isChapter && name === 'div'){
+        if (isChapter && name === 'div') {
           isStyleText = false;
-          chapterText += `</div>`
+          chapterText += `</div>`;
         }
-      }
-    })
-    parser.write(html)
+      },
+    });
+    parser.write(html);
     parser.end();
 
     return chapterText;
@@ -337,10 +337,6 @@ class RoyalRoad implements Plugin.PluginBase {
 
     const body = await fetchApi(searchUrl).then(r => r.text());
     return this.parseNovels(body);
-  }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
   }
 
   filters = {

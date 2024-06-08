@@ -195,7 +195,6 @@ class TL implements Plugin.PluginBase {
     return chapterText;
   }
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) => 'https://' + path;
 
   filters = {

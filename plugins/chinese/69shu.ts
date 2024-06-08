@@ -180,8 +180,6 @@ class Shu69 implements Plugin.PluginBase {
     return novels;
   }
 
-  fetchImage = fetchFile;
-
   filters = {
     rank: {
       label: '排行榜',

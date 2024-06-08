@@ -172,13 +172,6 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    const headers = new Headers({
-      'Referer': `${this.site}`,
-    });
-    return await fetchFile(url, { headers });
-  }
-
   filters = {
     genre: {
       type: FilterTypes.CheckboxGroup,

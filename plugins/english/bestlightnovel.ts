@@ -169,10 +169,6 @@ class BLN implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
-  }
-
   filters = {
     status: {
       label: 'Status',

@@ -137,10 +137,6 @@ class PawRead implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url);
-  }
-
   filters = {
     status: {
       value: '',

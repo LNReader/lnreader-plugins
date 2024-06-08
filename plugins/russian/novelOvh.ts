@@ -158,7 +158,6 @@ class novelOvh implements Plugin.PluginBase {
     return html;
   };
 
-  fetchImage = fetchFile;
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + '/novel/' + path;
 
