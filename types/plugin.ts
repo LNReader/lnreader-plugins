@@ -53,6 +53,11 @@ export namespace Plugin {
     requirePath: string;
     icon: string;
   }
+  export interface ImageRequestInit {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: string;
+  }
 
   export interface PluginBase {
     id: string;
@@ -65,6 +70,7 @@ export namespace Plugin {
      */
     icon: string;
     site: string;
+    imageRequestInit?: ImageRequestInit;
     filters?: Filters;
     version: string;
     //flag indicates whether access to LocalStorage, SesesionStorage is required.
@@ -93,7 +99,6 @@ export namespace Plugin {
      *  return await fetchFile(url, { headers: headers });
      * ```
      */
-    fetchImage(url: string): Promise<string | undefined>;
     resolveUrl?(path: string, isNovel?: boolean): string;
   }
 
