@@ -14,6 +14,7 @@ class TemplatePlugin implements Plugin.PluginBase {
   site = 'https://example.com';
   version = '1.0.0';
   filters: Filters | undefined = undefined;
+  imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   async popularNovels(
     pageNo: number,
@@ -79,11 +80,6 @@ class TemplatePlugin implements Plugin.PluginBase {
     // get novels using the search term
 
     return novels;
-  }
-  async fetchImage(url: string): Promise<string | undefined> {
-    // if your plugin has images and they won't load
-    // this is the function to fiddle with
-    return fetchFile(url);
   }
 }
 

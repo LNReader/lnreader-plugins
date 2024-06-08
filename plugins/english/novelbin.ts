@@ -9,6 +9,11 @@ class NovelBin implements Plugin.PluginBase {
   icon = 'src/en/novelbin/icon.png';
   site = 'https://binnovel.com/';
   version = '1.0.1';
+  imageRequestInit?: Plugin.ImageRequestInit | undefined = {
+    headers: {
+      'referrer': this.site,
+    },
+  };
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
@@ -141,14 +146,6 @@ class NovelBin implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
-  }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return fetchFile(url, {
-      headers: {
-        'referrer': this.site,
-      },
-    });
   }
 
   filters = {
