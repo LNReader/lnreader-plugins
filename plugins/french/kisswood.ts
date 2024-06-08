@@ -26,17 +26,67 @@ class KissWoodPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     await Promise.all(
       novels.map(async (novel, index) => {
-        if (listUrlCover[index] !== '') {
-          const $novel = await this.getCheerio(listUrlCover[index]);
-          novel.cover =
-            $novel('div p img').first().attr('src') ||
-            $novel('figure a img').first().attr('src') ||
-            $novel('figure img').first().attr('src') ||
-            defaultCover;
+        const urlCover = listUrlCover[index];
+        if (urlCover) {
+          novel.cover = this.findCoverImage(await this.getCheerio(urlCover));
         }
       }),
     );
     return novels;
+  }
+
+  regexAuthors = [/Auteur :([^\n]*)/, /Auteur\u00A0:([^\n]*)/];
+
+  async getNovelInfo(
+    novel: Plugin.SourceNovel,
+    url: string,
+  ): Promise<Plugin.SourceNovel> {
+    let $ = await this.getCheerio(url);
+
+    const textArray: string[] = $('.entry-content p')
+      .map((_, element) => $(element).text().trim())
+      .get()
+      .join('\n')
+      .split('\n');
+
+    const index = textArray.findIndex(element =>
+      [
+        'Traducteur Anglais- Français',
+        'Titre en français',
+        '———',
+        'Titre :',
+        'Lien vers le premier chapitre',
+        '____________',
+        'Auteur : ',
+      ].some(marker => element.includes(marker)),
+    );
+
+    novel.name = $('header h1').text().trim();
+    novel.summary = (index !== -1 ? textArray.slice(0, index) : textArray)
+      .join('\n')
+      .replace('Synopsis :', '');
+    novel.author = this.extractInfo(textArray.join('\n'), this.regexAuthors);
+    novel.cover = this.findCoverImage($);
+    return novel;
+  }
+
+  findCoverImage($: CheerioAPI): string {
+    return (
+      $('div p img').first().attr('src') ||
+      $('figure a img').first().attr('src') ||
+      $('figure img').first().attr('src') ||
+      defaultCover
+    );
+  }
+
+  extractInfo(text: string, regexes: RegExp[]): string {
+    for (const regex of regexes) {
+      const match = regex.exec(text);
+      if (match !== null) {
+        return match[1].trim();
+      }
+    }
+    return '';
   }
 
   async popularNovels(
@@ -49,20 +99,18 @@ class KissWoodPlugin implements Plugin.PluginBase {
     if (pageNo > 1) return [];
 
     const novels: Plugin.NovelItem[] = [];
-    let novel: Plugin.NovelItem;
-    const url = this.site;
-    const $ = await this.getCheerio(url);
+    const $ = await this.getCheerio(this.site);
     var listUrlCover: string[] = [];
     $('nav div div ul li ul li').each((i, elem) => {
       if ($(elem).text().trim() === 'Sommaire') {
         const novelName = $(elem)
-          .parent()
-          .parent()
-          .find('a')
+          .closest('ul')
+          .siblings('a')
           .first()
           .text()
           .trim();
         const novelUrl = $(elem).find('a').attr('href');
+
         if (novelUrl && novelName) {
           const urlCover = $(elem).parent().find('a').attr('href');
           if (urlCover) {
@@ -71,66 +119,16 @@ class KissWoodPlugin implements Plugin.PluginBase {
             listUrlCover.push('');
           }
 
-          novel = {
+          const novel = {
             name: novelName,
             path: novelUrl.replace(this.site, ''),
+            cover: defaultCover,
           };
           novels.push(novel);
         }
       }
     });
     return await this.getNovelsCovers(novels, listUrlCover);
-  }
-
-  regexAuthors = [/Auteur :([^\n]*)/, /Auteur\u00A0:([^\n]*)/];
-
-  async DonnerNovel(
-    novel: Plugin.SourceNovel,
-    url: string,
-  ): Promise<Plugin.SourceNovel> {
-    let $ = await this.getCheerio(url);
-
-    let textArray: string[] = [];
-    $('.entry-content p').each((index, element) => {
-      const array = $(element).text().trim().split('\n');
-      for (let i = 0; i < array.length; i++) {
-        textArray.push(array[i]);
-      }
-    });
-
-    const index = textArray.findIndex(function (element) {
-      return (
-        element.includes('Traducteur Anglais- Français') ||
-        element.includes('Titre en français') ||
-        element.includes('———') ||
-        element.includes('Titre :') ||
-        element.includes('Lien vers le premier chapitre') ||
-        element.includes('____________') ||
-        element.includes('Auteur : ')
-      );
-    });
-
-    novel.name = $('header h1').text().trim();
-    novel.summary = (index !== -1 ? textArray.slice(0, index) : textArray)
-      .join('\n')
-      .replace('Synopsis :', '');
-    novel.author = this.extractInfo(novel.summary, this.regexAuthors);
-    novel.cover =
-      $('div p img').first().attr('src') ||
-      $('figure a img').first().attr('src') ||
-      $('figure img').first().attr('src') ||
-      defaultCover;
-    return novel;
-  }
-
-  extractInfo(text: string, regexes: RegExp[]): string {
-    for (const regex of regexes) {
-      const match = regex.exec(text);
-      if (match !== null) {
-        return match[1].trim();
-      }
-    }
-    return '';
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -151,18 +149,25 @@ class KissWoodPlugin implements Plugin.PluginBase {
     });
 
     if (novelUrl) {
-      novel = await this.DonnerNovel(novel, novelUrl);
+      novel = await this.getNovelInfo(novel, novelUrl);
     }
+
+    const chapterSelectors = [
+      '.entry-content ul li a',
+      '.entry-content ul li ul li a',
+      '.entry-content p a',
+      '.entry-content li a',
+      '.entry-content blockquote a',
+    ].join(', ');
+
     let chapters: Plugin.ChapterItem[] = [];
-    $(
-      '.entry-content ul li a, .entry-content ul li ul li a , .entry-content p a, .entry-content li a, .entry-content blockquote a',
-    ).each((i, elem) => {
+    $(chapterSelectors).each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).attr('href')?.replace('http://', 'https://');
       if (
         chapterUrl &&
-        chapterUrl.includes(this.site) &&
         chapterName &&
+        chapterUrl.includes(this.site) &&
         // We remove the unnecessary links to Facebook, X, and the homepage from the chapters.
         !chapterUrl.includes('share=facebook') &&
         !chapterUrl.includes('share=x') &&
@@ -184,38 +189,27 @@ class KissWoodPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath);
 
-    let elements: string[] = [];
-
-    $('.entry-content')
+    const elements: string[] = $('.entry-content')
       .contents()
-      .each(function () {
-        elements.push($.html(this));
-      });
+      .map((_, el) => $.html(el))
+      .get();
 
-    const hrIndexes: number[] = [];
-
-    // Parcourir tous les éléments de la liste
-    elements.forEach((elem, index) => {
-      // Vérifier si l'élément contient la balise <hr>
-      if (elem.includes('<hr>')) {
-        // Si oui, ajouter son index au tableau
-        hrIndexes.push(index);
-      }
-    });
+    let hrIndexes: number[] = elements
+      .map((elem, index) => (elem.includes('<hr>') ? index : -1))
+      .filter(index => index !== -1);
 
     if (hrIndexes.length === 0) {
-      hrIndexes.push(0);
-      hrIndexes.push(
-        elements.findIndex(function (element) {
-          return (
+      hrIndexes = [
+        0,
+        elements.findIndex(
+          element =>
             element.includes('https://fr.tipeee.com/kisswood/') ||
             element.includes('>Sommaire</a>') ||
             element.includes('>Chapitre Suivant</a>') ||
             element.includes('———————————————————————————-') ||
-            element.includes('share=facebook')
-          );
-        }),
-      );
+            element.includes('share=facebook'),
+        ),
+      ];
     } else if (hrIndexes.length === 1) {
       hrIndexes.unshift(0);
     } else {
