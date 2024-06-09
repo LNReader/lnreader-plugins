@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.5';
+  version = '0.5.6';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -603,7 +603,8 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Arcane Translations
      * - Blossom Translation
      * - Dumahs Translations
-     * - ElloMTL
+     * - ElloMTl
+     * - Femme Fables
      * - Gem Novels
      * - Genesis Translations (Manually added)
      * - Goblinslate
@@ -683,6 +684,7 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.single_post').html() ||
         loadedCheerio('.post-entry').html() ||
         loadedCheerio('.main-content').html() ||
+        loadedCheerio('.post-content').html() ||
         loadedCheerio('.content').html() ||
         loadedCheerio('.page-body').html() ||
         loadedCheerio('.td-page-content').html() ||
