@@ -10,7 +10,7 @@ class NovhellPlugin implements Plugin.PluginBase {
   name = 'Novhell';
   icon = 'src/fr/novhell/icon.png';
   site = 'https://novhell.org';
-  version = '1.0.0';
+  version = '1.0.1';
   filters: Filters | undefined = undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
@@ -165,10 +165,19 @@ class NovhellPlugin implements Plugin.PluginBase {
     const sections = $('main article div div section');
     if (sections) {
       const numberOfSection = sections.length;
-      const title = sections.eq(numberOfSection - 3);
-      const chapitre = sections.eq(numberOfSection - 2);
-      if (title && chapitre) {
-        return (title.html() || '') + (chapitre.html() || '');
+      let title = sections.eq(numberOfSection - 3);
+      let positionChapter = 2;
+
+      //
+      if (title.find('h4').length === 0) {
+        title = sections.eq(numberOfSection - 4);
+        positionChapter = 3;
+      }
+
+      const chapter = sections.eq(numberOfSection - positionChapter);
+      console.log(title.html());
+      if (title && chapter) {
+        return (title.html() || '') + (chapter.html() || '');
       }
     }
     return '';
