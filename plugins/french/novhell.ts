@@ -168,14 +168,15 @@ class NovhellPlugin implements Plugin.PluginBase {
       let title = sections.eq(numberOfSection - 3);
       let positionChapter = 2;
 
-      //
-      if (title.find('h4').length === 0) {
-        title = sections.eq(numberOfSection - 4);
-        positionChapter = 3;
+      for (let i = 3; i <= 5; i++) {
+        title = sections.eq(numberOfSection - i);
+        if (title.find('h4').length !== 0) {
+          positionChapter = i - 1;
+          break;
+        }
       }
-
       const chapter = sections.eq(numberOfSection - positionChapter);
-      console.log(title.html());
+
       if (title && chapter) {
         return (title.html() || '') + (chapter.html() || '');
       }
