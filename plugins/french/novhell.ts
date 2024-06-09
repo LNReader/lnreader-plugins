@@ -165,7 +165,7 @@ class NovhellPlugin implements Plugin.PluginBase {
     const sections = $('main article div div section');
     if (sections) {
       const numberOfSection = sections.length;
-      let title = sections.eq(numberOfSection - 3);
+      let title;
       let positionChapter = 2;
 
       for (let i = 3; i <= 5; i++) {
