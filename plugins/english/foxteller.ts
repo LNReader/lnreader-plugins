@@ -91,7 +91,7 @@ class Foxteller implements Plugin.PluginBase {
           isParsingChapterList = true;
         } else if (isParsingChapterList && name === 'a') {
           isReadingChapter = true;
-          tempChapter.chapterNumber = chapter.length + 1;
+          tempChapter.chapterNumber = chapters.length + 1;
           tempChapter.path = novelPath + '/' + attribs['href'].split('/')[5];
         } else if (
           isReadingChapter &&
@@ -208,19 +208,19 @@ class Foxteller implements Plugin.PluginBase {
     }).then(res => res.json());
 
     if (typeof aux === 'string') {
-      const base64 = aux.replace(/%(Ra|Rc|Rb|Rd|Rf|Re)&/g, match => {
-        switch (match) {
-          case '%Ra&':
+      const base64 = aux.replace(/%R([a-f])&/g, (match, code) => {
+        switch (code) {
+          case 'a':
             return 'A';
-          case '%Rc&':
+          case 'c':
             return 'B';
-          case '%Rb&':
+          case 'b':
             return 'C';
-          case '%Rd&':
+          case 'd':
             return 'D';
-          case '%Rf&':
+          case 'f':
             return 'E';
-          case '%Re&':
+          case 'e':
             return 'F';
           default:
             return match;
@@ -298,6 +298,7 @@ function decodeBase64(encodedString: string) {
 
     const chr1 = (enc1 << 2) | (enc2 >> 4);
     output += String.fromCharCode(chr1);
+
     if (enc3 !== 64) {
       const chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
       output += String.fromCharCode(chr2);
