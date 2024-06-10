@@ -207,7 +207,7 @@ class Foxteller implements Plugin.PluginBase {
       body: JSON.stringify({ 'x1': novelID, 'x2': chapterID }),
     }).then(res => res.json());
 
-    if (typeof aux === 'string') {
+    if (aux && typeof aux === 'string') {
       const base64 = aux.replace(/%R([a-f])&/g, (match, code) => {
         switch (code) {
           case 'a':
@@ -230,8 +230,7 @@ class Foxteller implements Plugin.PluginBase {
       return decodeURIComponent(escape(decodeBase64(base64)));
     }
 
-    if (!chapterID) throw new Error('Captcha error, please open in webview');
-    return 'Captcha error, please open in webview';
+    throw new Error('This chapter is closed');
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {

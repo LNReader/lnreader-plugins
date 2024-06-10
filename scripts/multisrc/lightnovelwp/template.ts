@@ -78,7 +78,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
     articles.forEach(article => {
       const [, novelUrl, novelName] =
-        article.match(/<a href="(.*?)" title="(.*?)"/) || [];
+        article.match(/<a href="(.*?)".*title="(.*?)"/) || [];
 
       if (novelName && novelUrl) {
         const novelCover =
