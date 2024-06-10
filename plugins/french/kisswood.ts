@@ -246,6 +246,6 @@ class KissWoodPlugin implements Plugin.PluginBase {
 
     return novels;
   }
-
+}
 
 export default new KissWoodPlugin();
