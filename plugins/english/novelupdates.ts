@@ -367,7 +367,10 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterTitle = `Chapter ${chapterID_redox}`;
         const url_redox = `${url.split('chapter')[0]}txt/${chapterID_redox}.txt`;
         const text_redox = await fetchApi(url_redox).then(r => r.text());
-        chapterContent = text_redox.replace(/\n/g, '<br>');
+        chapterContent = text_redox
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+          .replace(/\+\+(.*?)\+\+/g, '<I>$1</I>');
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
