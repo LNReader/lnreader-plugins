@@ -7,8 +7,8 @@ class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
   name = 'Agitoon';
   icon = 'src/kr/agitoon/icon.png';
-  site = 'https://agit657.xyz';
-  version = '3.0.0';
+  site = 'https://agit658.xyz';
+  version = '3.0.1';
 
   constructor() {
     fetchApi(this.site).then(res => {
