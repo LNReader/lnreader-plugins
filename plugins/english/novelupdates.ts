@@ -613,7 +613,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Arcane Translations
      * - Blossom Translation
      * - Dumahs Translations
-     * - ElloMTl
+     * - ElloMTL
      * - Femme Fables
      * - Gem Novels
      * - Genesis Translations (Manually added)
