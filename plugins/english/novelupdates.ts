@@ -1,4 +1,4 @@
-import { CheerioAPI, load as parseHTML } from 'cheerio';
+import { CheerioAPI, load, load as parseHTML } from 'cheerio';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
@@ -362,6 +362,16 @@ class NovelUpdates implements Plugin.PluginBase {
           chapterText = chapterContent;
         }
         break;
+      case 'redoxtranslation':
+        const chapterID_redox = url.split('/').pop();
+        chapterTitle = `Chapter ${chapterID_redox}`;
+        const url_redox = `${url.split('chapter')[0]}txt/${chapterID_redox}.txt`;
+        const text_redox = await fetchApi(url_redox).then(r => r.text());
+        chapterContent = text_redox.replace(/\n/g, '<br>');
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
       case 'sacredtexttranslations':
         bloatClasses = [
           '.entry-content blockquote',
@@ -506,8 +516,8 @@ class NovelUpdates implements Plugin.PluginBase {
 
     const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
-    const url = result.url.toLowerCase();
-    const domain = url.split('/')[2].split('.');
+    const url = result.url;
+    const domain = url.toLowerCase().split('/')[2].split('.');
 
     const loadedCheerio = parseHTML(body);
 
