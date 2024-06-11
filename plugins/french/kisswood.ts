@@ -61,7 +61,6 @@ class KissWoodPlugin implements Plugin.PluginBase {
       ].some(marker => element.includes(marker)),
     );
 
-    novel.name = $('header h1').text().trim();
     novel.summary = (index !== -1 ? textArray.slice(0, index) : textArray)
       .join('\n')
       .replace('Synopsis :', '');
@@ -144,6 +143,7 @@ class KissWoodPlugin implements Plugin.PluginBase {
     $('nav div div ul li ul li').each((i, elem) => {
       if ($(elem).find('a').attr('href') === this.site + novelPath) {
         novelUrl = $(elem).parent().find('a').first().attr('href');
+        novel.name = $(elem).closest('ul').siblings('a').first().text().trim();
         return;
       }
     });
