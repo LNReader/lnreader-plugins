@@ -1,12 +1,12 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.7';
+  version = '0.5.8';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -366,11 +366,31 @@ class NovelUpdates implements Plugin.PluginBase {
         const chapterID_redox = url.split('/').pop();
         chapterTitle = `Chapter ${chapterID_redox}`;
         const url_redox = `${url.split('chapter')[0]}txt/${chapterID_redox}.txt`;
-        const text_redox = await fetchApi(url_redox).then(r => r.text());
-        chapterContent = text_redox
-          .replace(/\n/g, '<br>')
-          .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
-          .replace(/\+\+(.*?)\+\+/g, '<I>$1</I>');
+        chapterContent = await fetchApi(url_redox)
+          .then(r => r.text())
+          .then(text => {
+            // Split text into sentences based on newline characters
+            const sentences_redox = text.split('\n');
+            // Process each sentence individually
+            const formattedSentences_redox = sentences_redox.map(sentence => {
+              // Check if the sentence contains "<hr>"
+              if (sentence.includes('{break}')) {
+                // Create a centered sentence with three stars
+                return '<br> <p>****</p>';
+              } else {
+                // Replace text enclosed within ** with <strong> tags
+                sentence = sentence.replace(
+                  /\*\*(.*?)\*\*/g,
+                  '<strong>$1</strong>',
+                );
+                // Replace text enclosed within ++ with <em> tags
+                sentence = sentence.replace(/\+\+(.*?)\+\+/g, '<em>$1</em>');
+                return sentence;
+              }
+            });
+            // Join the formatted sentences back together with newline characters
+            return formattedSentences_redox.join('<br>');
+          });
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
