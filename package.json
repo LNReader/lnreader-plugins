@@ -38,7 +38,7 @@
         "@types/react-dom": "^18.2.22",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "concurrently": "^8.2.2",
-        "cors-anywhere": "^0.4.4",
+        "http-proxy": "^1.18.1",
         "husky": "^9.0.11",
         "image-size": "^1.1.1",
         "lint-staged": "^15.2.2",
