@@ -47,6 +47,6 @@
         "vite": "^5.2.0"
     },
     "lint-staged": {
-        "**/*.{js,ts}": "prettier --write"
+        "**/*.{js,ts,jsx,tsx}": "prettier --write"
     }
 }
