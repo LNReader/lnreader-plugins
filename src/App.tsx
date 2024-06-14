@@ -7,6 +7,9 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import Appbar from '@components/Appbar';
+import { Provider } from 'react-redux';
+import store from '@redux/store';
+import AppProvider from './provider';
 
 function App() {
   const theme = createTheme({
@@ -21,12 +24,16 @@ function App() {
     },
   });
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Appbar />
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <Provider store={store}>
+      <AppProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Appbar />
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </AppProvider>
+    </Provider>
   );
 }
 

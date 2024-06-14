@@ -10,6 +10,7 @@ export default defineConfig({
       '@libs': path.resolve(__dirname, './src/libs'),
       '@icons': path.resolve(__dirname, './src/icons'),
       '@components': path.resolve(__dirname, './src/components'),
+      '@redux': path.resolve(__dirname, './src/redux'),
       '@plugins': path.resolve(__dirname, './src/plugins'),
       '@typings': path.resolve(__dirname, './src/types'),
       '@scripts': path.resolve(__dirname, './scripts'),
