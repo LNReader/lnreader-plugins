@@ -23,6 +23,11 @@
     "author": "LNReader",
     "license": "MIT",
     "dependencies": {
+        "@emotion/react": "^11.11.4",
+        "@emotion/styled": "^11.11.5",
+        "@fontsource/roboto": "^5.0.13",
+        "@mui/icons-material": "^5.15.20",
+        "@mui/material": "^5.15.20",
         "cheerio": "^1.0.0-rc.12",
         "dayjs": "^1.11.10",
         "htmlparser2": "^9.1.0",

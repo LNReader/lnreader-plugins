@@ -37,6 +37,7 @@
         "paths": {
             "@libs/*": ["./src/libs/*"],
             "@icons/*": ["./src/icons/*"],
+            "@components/*": ["./src/components/*"],
             "@plugins/*": ["./src/plugins/*"],
             "@scripts/*": ["./scripts/*"],
             "@typings/*": ["./src/types/*"]
