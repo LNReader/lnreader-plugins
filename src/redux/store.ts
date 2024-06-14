@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import dialogReducer from './dialogSlice';
-import loadingReducer from './loadingSlice';
+import overlaySlice from './overlaySlice';
 
 const store = configureStore({
   reducer: {
     dialog: dialogReducer,
-    loading: loadingReducer,
+    overlay: overlaySlice,
   },
 });
 

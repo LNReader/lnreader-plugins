@@ -19,17 +19,7 @@ const makeInit = async (init?: FetchInit) => {
     'Accept-Language': '*',
     'Sec-Fetch-Mode': 'cors',
     'Accept-Encoding': 'gzip, deflate',
-    'Cache-Control': 'max-age=0',
   };
-  try {
-    const { getHeaders } = await import('../index.js');
-    defaultHeaders = {
-      ...defaultHeaders,
-      ...getHeaders(),
-    };
-  } catch {
-    // nothing to do
-  }
   if (init?.headers) {
     if (init.headers instanceof Headers) {
       for (const [name, value] of Object.entries(defaultHeaders)) {

@@ -2,7 +2,7 @@ import { load as parseHTML } from 'cheerio';
 import { fetchText, fetchFile } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import { encode } from 'urlencode';
+// import { encode } from 'urlencode';
 import { NovelStatus } from '@libs/novelStatus';
 
 class XinShu69 implements Plugin.PluginBase {
@@ -150,7 +150,7 @@ class XinShu69 implements Plugin.PluginBase {
 
     const searchUrl = `${this.site}/modules/article/search.php`;
     const formData = new FormData();
-    formData.append('searchkey', encode(searchTerm, 'gbk'));
+    // formData.append('searchkey', encode(searchTerm, 'gbk'));
     formData.append('searchtype', 'all');
 
     const body = await fetchText(

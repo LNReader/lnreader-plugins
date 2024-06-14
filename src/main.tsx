@@ -10,6 +10,10 @@ import '@fontsource/roboto/700.css';
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
   let [resource, config] = args;
+  if (resource.toString().includes('localhost')) {
+    const response = await originalFetch(resource, config);
+    return response;
+  }
   const response = await originalFetch('http://localhost:3001/' + resource, {
     ...config,
     credentials: 'include',
