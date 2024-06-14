@@ -6,10 +6,11 @@ import App from './App';
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
   let [resource, config] = args;
-  const response = await originalFetch(
-    'http://localhost:3001/' + resource,
-    config,
-  );
+  const response = await originalFetch('http://localhost:3001/' + resource, {
+    ...config,
+    credentials: 'include',
+    mode: 'cors',
+  });
   return response;
 };
 
