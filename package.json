@@ -1,10 +1,14 @@
 {
     "name": "lnreader-plugins",
-    "version": "2.2.0",
+    "version": "3.0.0",
     "description": "Plugins repo for LNReader",
     "main": "index.js",
+    "type": "module",
     "scripts": {
-        "start": "ts-node ./tswatch.ts",
+        "start": "concurrently \"npm run dev\" \"npm run proxy\"",
+        "dev": "vite",
+        "build": "vite build",
+        "proxy": "node proxy_server.js",
         "test": "exit 0",
         "json": "tsc && node ./.js/scripts/json_plugins.js",
         "generate": "ts-node ./scripts/multisrc/generate.ts",
@@ -22,24 +26,25 @@
         "cheerio": "^1.0.0-rc.12",
         "dayjs": "^1.11.10",
         "htmlparser2": "^9.1.0",
-        "image-size": "^1.1.1",
         "protobufjs": "^7.2.6",
         "qs": "^6.11.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "sanitize-html": "^2.12.1",
-        "terser": "^5.31.1",
         "urlencode": "^2.0.0"
     },
-    "_moduleAliases": {
-        "@libs": "./.js/libs",
-        "@icons": "./.js/icons",
-        "@plugins": "./.js/plugins",
-        "@scripts": "./.js/scripts",
-        "@typings": "./.js/types"
-    },
     "devDependencies": {
+        "@types/react": "^18.2.66",
+        "@types/react-dom": "^18.2.22",
+        "@vitejs/plugin-react-swc": "^3.5.0",
+        "concurrently": "^8.2.2",
+        "cors-anywhere": "^0.4.4",
         "husky": "^9.0.11",
+        "image-size": "^1.1.1",
         "lint-staged": "^15.2.2",
-        "prettier": "3.2.5"
+        "prettier": "3.2.5",
+        "terser": "^5.31.1",
+        "vite": "^5.2.0"
     },
     "lint-staged": {
         "**/*.{js,ts}": "prettier --write"
