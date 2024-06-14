@@ -10,3 +10,4 @@ plugins/*/*\[*\]*.ts
 .js
 .dist
 .DS_Store
+dist
