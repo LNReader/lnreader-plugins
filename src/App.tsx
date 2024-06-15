@@ -16,6 +16,7 @@ import PopularNovels from '@components/accordions/PopularNovels';
 import SearchNovels from '@components/accordions/SearchNovels';
 import ParseNovel from '@components/accordions/ParseNovel';
 import ParseChapter from '@components/accordions/ParseChapter';
+import HeadersSection from '@components/accordions/Headers';
 
 function App() {
   const theme = createTheme({
@@ -41,6 +42,7 @@ function App() {
               width: { sm: 500, md: 1024, lg: '90vw' },
             }}
           >
+            <HeadersSection />
             <PopularNovels />
             <SearchNovels />
             <ParseNovel />
