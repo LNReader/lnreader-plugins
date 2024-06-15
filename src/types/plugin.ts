@@ -49,6 +49,7 @@ export namespace Plugin {
     name: string;
     version: string;
     icon: string;
+    site: string;
   }
   export interface ImageRequestInit {
     method?: string;

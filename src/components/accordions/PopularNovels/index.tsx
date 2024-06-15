@@ -1,5 +1,5 @@
 import { Box, Button, Stack } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
@@ -9,17 +9,29 @@ import usePlugin from '@hooks/usePlugin';
 export default function PopularNovels() {
   const plugin = usePlugin();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
-  const [filters, setFilters] = useState<Filters>();
+  const [filterValues, setFilterValues] = useState<Filters | undefined>();
   const [loading, setLoading] = useState(false);
   const fetchNovels = () => {
     if (plugin) {
       setLoading(true);
       plugin
-        .popularNovels(1, { filters, showLatestNovels: false })
+        .popularNovels(1, { filters: filterValues })
         .then(res => setNovels(res))
         .finally(() => setLoading(false));
     }
   };
+  useEffect(() => {
+    if (plugin?.filters) {
+      let filters = {};
+      for (const fKey in plugin.filters) {
+        filters[fKey] = {
+          type: plugin.filters[fKey].type,
+          value: plugin.filters[fKey].value,
+        };
+      }
+      setFilterValues(filters);
+    }
+  }, [plugin]);
   return (
     <AccordionContainer title="Popular Novels" loading={loading}>
       <Stack direction={'row'} spacing={2}>

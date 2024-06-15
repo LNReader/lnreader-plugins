@@ -13,7 +13,6 @@ import {
   ListItemButton,
   ListItemText,
   TextField,
-  Typography,
 } from '@mui/material';
 import { Search, Translate } from '@mui/icons-material';
 import { searchPlugins } from '@provider/plugins';
@@ -54,6 +53,7 @@ export default function () {
                 name: plugin.name,
                 version: plugin.version,
                 icon: plugin.icon,
+                site: plugin.site,
               }),
             );
             setListVisible(false);
@@ -130,10 +130,14 @@ export default function () {
           </InputAdornment>
           {selectedPlugin ? (
             <Box sx={{ pl: 2, display: 'flex', alignItems: 'center' }}>
-              <Avatar src={resovleIcon(selectedPlugin.icon)} variant="square" />
-              <Typography sx={{ ml: 1 }}>
+              <Avatar
+                sx={{ mr: 1 }}
+                src={resovleIcon(selectedPlugin.icon)}
+                variant="square"
+              />
+              <a href={selectedPlugin.site} target="_blank">
                 {selectedPlugin.name} - v{selectedPlugin.version}
-              </Typography>
+              </a>
             </Box>
           ) : null}
         </Toolbar>
