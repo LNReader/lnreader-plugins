@@ -20,12 +20,11 @@ export default function NovelItemCard({ item }: { item: Plugin.NovelItem }) {
             component="img"
             sx={{ width: 200, height: '100%' }}
             image={item.cover}
-            alt="Live from space album cover"
           />
         </Tooltip>
       </CopiableItem>
       <Box sx={{ display: 'flex', flexDirection: 'column', width: 200 }}>
-        <CardContent>
+        <CardContent sx={{ height: 150 }}>
           <Tooltip title={item.name}>
             <Box>
               <CopiableItem content={item.name}>

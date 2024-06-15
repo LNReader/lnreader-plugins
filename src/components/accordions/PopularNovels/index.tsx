@@ -1,8 +1,8 @@
-import { Box, Button, Stack, TextField } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
-import NovelItemCard from './NovelItemCard';
+import NovelItemCard from '../components/NovelItemCard';
 import { useSelector } from 'react-redux';
 import { AppState } from '@redux/store';
 import { getPlugin } from '@provider/plugins';
