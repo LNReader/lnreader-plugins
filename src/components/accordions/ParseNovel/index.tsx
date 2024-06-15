@@ -9,7 +9,6 @@ import {
 import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
 import usePlugin from '@hooks/usePlugin';
 import SourceNovelCard from './SourceNovelCard';
 import ChapterList from './ChaptertList';
