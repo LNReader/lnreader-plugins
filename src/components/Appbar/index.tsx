@@ -19,6 +19,9 @@ import { Search, Translate } from '@mui/icons-material';
 import { searchPlugins } from '@provider/plugins';
 import { Plugin } from '@typings/plugin';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '@redux/store';
+import { selectPlugin } from '@redux/pluginSlice';
 
 const resovleIcon = (iconPath: string) => {
   return '/icons/' + iconPath;
@@ -28,9 +31,10 @@ export default function () {
   const [searchedPlugins, setSearchPlugins] = useState<Plugin.PluginBase[]>([]);
   const [keyword, setKeyword] = useState('');
   const [listVisible, setListVisible] = useState(false);
-  const [selectedPlugin, setSelectedPlugin] = useState<
-    Plugin.PluginBase | undefined
-  >();
+  const selectedPlugin = useSelector(
+    (state: AppState) => state.plugin.selected,
+  );
+  const dispatch = useDispatch();
   useEffect(() => {
     const plugins = searchPlugins(keyword);
     setSearchPlugins(plugins);
@@ -44,7 +48,14 @@ export default function () {
       <ListItem style={style} key={index} component="div" disablePadding>
         <ListItemButton
           onClick={() => {
-            setSelectedPlugin(plugin);
+            dispatch(
+              selectPlugin({
+                id: plugin.id,
+                name: plugin.name,
+                version: plugin.version,
+                icon: plugin.icon,
+              }),
+            );
           }}
         >
           <ListItemAvatar>
@@ -118,7 +129,9 @@ export default function () {
           {selectedPlugin ? (
             <Box sx={{ pl: 2, display: 'flex', alignItems: 'center' }}>
               <Avatar src={resovleIcon(selectedPlugin.icon)} variant="square" />
-              <Typography sx={{ ml: 1 }}>{selectedPlugin.name}</Typography>
+              <Typography sx={{ ml: 1 }}>
+                {selectedPlugin.name} - v{selectedPlugin.version}
+              </Typography>
             </Box>
           ) : null}
         </Toolbar>

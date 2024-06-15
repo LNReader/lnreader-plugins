@@ -48,9 +48,7 @@ export namespace Plugin {
   export interface PluginItem {
     id: string;
     name: string;
-    lang: (typeof languages)[keyof typeof languages];
     version: string;
-    requirePath: string;
     icon: string;
   }
   export interface ImageRequestInit {
