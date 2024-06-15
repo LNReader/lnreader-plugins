@@ -28,7 +28,7 @@ export default function NovelItemCard({ item }: { item: Plugin.NovelItem }) {
           <Tooltip title={item.name}>
             <Box>
               <CopiableItem content={item.name}>
-                <Button>
+                <Button variant="outlined">
                   <Typography
                     sx={{
                       overflow: 'hidden',

@@ -41,6 +41,7 @@
             "@redux/*": ["./src/redux/*"],
             "@provider/*": ["./src/provider/*"],
             "@plugins/*": ["./src/plugins/*"],
+            "@hooks/*": ["./src/hooks/*"],
             "@scripts/*": ["./scripts/*"],
             "@typings/*": ["./src/types/*"]
         } /* Specify a set of entries that re-map imports to additional lookup locations. */,

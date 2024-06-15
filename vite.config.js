@@ -13,6 +13,7 @@ export default defineConfig({
       '@redux': path.resolve(__dirname, './src/redux'),
       '@provider': path.resolve(__dirname, './src/provider'),
       '@plugins': path.resolve(__dirname, './src/plugins'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
       '@typings': path.resolve(__dirname, './src/types'),
       '@scripts': path.resolve(__dirname, './scripts'),
     },

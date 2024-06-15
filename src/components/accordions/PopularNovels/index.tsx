@@ -1,26 +1,16 @@
 import { Box, Button, Stack } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
-import { useSelector } from 'react-redux';
-import { AppState } from '@redux/store';
-import { getPlugin } from '@provider/plugins';
 import { Filters } from '@libs/filterInputs';
+import usePlugin from '@hooks/usePlugin';
 
 export default function PopularNovels() {
-  const selectedPluginItem = useSelector(
-    (state: AppState) => state.plugin.selected,
-  );
-  const [plugin, setPlugin] = useState<Plugin.PluginBase | undefined>();
+  const plugin = usePlugin();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [filters, setFilters] = useState<Filters>();
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (selectedPluginItem) {
-      setPlugin(getPlugin(selectedPluginItem.id));
-    }
-  }, [selectedPluginItem]);
   const fetchNovels = () => {
     if (plugin) {
       setLoading(true);
