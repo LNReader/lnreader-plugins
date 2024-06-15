@@ -1,10 +1,18 @@
-import { Filters, FilterTypes } from '../../../libs/filterInputs';
+
 import { ScrpitGeneratorFunction } from '../generate';
 import list from './sources.json';
 import defaultSettings from './settings.json';
 import { RulateMetadata } from './template';
 import { readFileSync } from 'fs';
 import path from 'path';
+ 
+enum FilterTypes {
+  TextInput = 'Text',
+  Picker = 'Picker',
+  CheckboxGroup = 'Checkbox',
+  Switch = 'Switch',
+  ExcludableCheckboxGroup = 'XCheckbox',
+}
 
 export const generateAll: ScrpitGeneratorFunction = function (name) {
   return list

@@ -6,6 +6,11 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import 'cheerio';
+import 'htmlparser2';
+import 'dayjs';
+import 'qs';
+import 'protobufjs';
 
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {

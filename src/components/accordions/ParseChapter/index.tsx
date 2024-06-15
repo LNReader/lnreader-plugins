@@ -35,14 +35,16 @@ export default function ParseChapter() {
         </Button>
       </Stack>
       <Box sx={{ height: 10 }} />
-      <Textarea
-        style={{
-          width: '100%',
-        }}
-        maxRows={20}
-        disabled
-        defaultValue={chapterText}
-      />
+      {chapterText ? (
+        <Textarea
+          style={{
+            width: '100%',
+          }}
+          maxRows={20}
+          disabled
+          defaultValue={chapterText}
+        />
+      ) : null}
     </AccordionContainer>
   );
 }

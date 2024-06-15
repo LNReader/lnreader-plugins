@@ -17,9 +17,9 @@ class NovelkiPL implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     //So far is working, If the author of the site changes it, it will have to be changed.
     let link = this.site + '/projekty?filter=t';
-    link += '&genre=' + filters.genres.value;
-    link += '&status=' + filters.status.value;
-    link += '&type=' + filters.type.value;
+    link += '&genre=' + filters?.genres.value;
+    link += '&status=' + filters?.status.value;
+    link += '&type=' + filters?.type.value;
     link += '&page=' + page;
 
     const body = await fetchApi(link).then(res => {

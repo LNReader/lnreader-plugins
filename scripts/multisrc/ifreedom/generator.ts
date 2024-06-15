@@ -1,4 +1,3 @@
-import { Filters } from '../../../libs/filterInputs';
 import { ScrpitGeneratorFunction } from '../generate';
 import list from './sources.json';
 import defaultSettings from './settings.json';

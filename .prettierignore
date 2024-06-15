@@ -1,2 +1,4 @@
 node_modules
 .js
+scripts
+proxy_server.js

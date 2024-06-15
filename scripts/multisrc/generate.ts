@@ -26,10 +26,7 @@ const generate = async (name: string): Promise<boolean> => {
         console.warn(name, ': lang, filename, pluginScript are required!');
         continue;
       }
-      const pluginsDir = path.join(
-        path.dirname(path.dirname(__dirname)),
-        'plugins',
-      );
+      const pluginsDir = './src/plugins';
       const filePath = path.join(
         pluginsDir,
         lang.toLowerCase(),

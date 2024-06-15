@@ -3,7 +3,6 @@ import { fetchApi, fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
-import { NovelItem } from '../../test_web/static/js';
 
 interface SearchedNovel {
   name: string;
@@ -157,7 +156,7 @@ class LightNovelVN implements Plugin.PagePlugin {
       body: formData,
     }).then(r => r.json());
 
-    const novels: NovelItem[] =
+    const novels: Plugin.NovelItem[] =
       result.data?.map(item => {
         return {
           name: item.name,

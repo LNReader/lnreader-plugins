@@ -1,4 +1,4 @@
-import { FilterTypes, Filters } from '../../../libs/filterInputs';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { ScrpitGeneratorFunction } from '../generate';
 import list from './sources.json';
 import { MadaraMetadata } from './template';
