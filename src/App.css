@@ -40,3 +40,7 @@
 .read-the-docs {
   color: #888;
 }
+
+button:focus {
+  outline: none !important;
+}

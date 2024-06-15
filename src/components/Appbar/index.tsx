@@ -56,6 +56,7 @@ export default function () {
                 icon: plugin.icon,
               }),
             );
+            setListVisible(false);
           }}
         >
           <ListItemAvatar>

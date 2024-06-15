@@ -28,7 +28,9 @@ export default function AccordionContainer({
           <LinearProgress />
         </Box>
       ) : null}
-      <AccordionDetails>{children}</AccordionDetails>
+      <AccordionDetails sx={{ alignItems: 'flex-start' }}>
+        {children}
+      </AccordionDetails>
     </Accordion>
   );
 }
