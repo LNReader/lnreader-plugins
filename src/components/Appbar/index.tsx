@@ -109,6 +109,7 @@ export default function () {
                 style={{
                   position: 'absolute',
                   boxShadow: '2px 10px 20px rgba(0, 0, 0, 0.2)',
+                  backgroundColor: 'white',
                 }}
               >
                 {renderPlugin}

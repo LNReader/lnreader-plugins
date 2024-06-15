@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import {
+  Box,
+  Container,
   createTheme,
   CssBaseline,
   StyledEngineProvider,
@@ -10,6 +12,10 @@ import Appbar from '@components/Appbar';
 import { Provider } from 'react-redux';
 import store from '@redux/store';
 import AppProvider from './provider';
+import PopularNovels from '@components/accordions/PopularNovels';
+import SearchNovels from '@components/accordions/SearchNovels';
+import ParseNovel from '@components/accordions/ParseNovel';
+import ParseChapter from '@components/accordions/ParseChapter';
 
 function App() {
   const theme = createTheme({
@@ -25,14 +31,24 @@ function App() {
   });
   return (
     <Provider store={store}>
-      <AppProvider>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Appbar />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </AppProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Appbar />
+          <Container
+            sx={{
+              mt: 6,
+              width: { sm: 500, md: 1024, lg: '90vw' },
+            }}
+          >
+            <PopularNovels />
+            <SearchNovels />
+            <ParseNovel />
+            <ParseChapter />
+          </Container>
+          <AppProvider />
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 }
