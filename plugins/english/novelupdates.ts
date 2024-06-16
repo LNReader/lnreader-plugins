@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.8';
+  version = '0.5.9';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -685,10 +685,12 @@ class NovelUpdates implements Plugin.PluginBase {
         '.pre-bar',
         '.sharedaddy',
         '.sidebar',
+        '.swg-button-v2-light',
         '.wp-block-buttons',
         '.wp-block-image',
         '.wp-dark-mode-switcher',
         '.wp-next-post-navi',
+        '#hpk',
         '#jp-post-flair',
         '#textbox',
       ];
