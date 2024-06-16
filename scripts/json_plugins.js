@@ -18,7 +18,7 @@ const REPO = matched[2];
 const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
 
 const ICON_LINK = `${USER_CONTENT_LINK}/public/icons`;
-const PLUGIN_LINK = `${USER_CONTENT_LINK}/src/.js/plugins`;
+const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/src/plugins`;
 
 const DIST_DIR = '.dist';
 
