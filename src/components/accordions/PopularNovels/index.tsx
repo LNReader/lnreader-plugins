@@ -18,7 +18,7 @@ export default function PopularNovels() {
   const [filterValues, setFilterValues] = useState<Filters | undefined>();
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [maxIndex, setmaxIndex] = useState(0);
+  const [maxIndex, setMaxIndex] = useState(0);
 
   const fetchNovelsByIndex = (index: number) => {
     if (plugin) {
@@ -29,7 +29,7 @@ export default function PopularNovels() {
           if (res.length !== 0) {
             setCurrentIndex(index);
             if (index > maxIndex) {
-              setmaxIndex(index);
+              setMaxIndex(index);
             }
             setNovels(res);
           }
@@ -41,7 +41,7 @@ export default function PopularNovels() {
   useEffect(() => {
     // Reset when changing plugins.
     setCurrentIndex(0);
-    setmaxIndex(0);
+    setMaxIndex(0);
     setNovels([]);
 
     if (plugin?.filters) {
