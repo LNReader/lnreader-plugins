@@ -1,7 +1,7 @@
-const http = require('http');
-const httpProxy = require('http-proxy');
-const url = require('url');
-const fs = require('fs');
+import http from 'http';
+import httpProxy from 'http-proxy';
+import url from 'url';
+import fs from 'fs';
 
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});

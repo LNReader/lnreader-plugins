@@ -15,15 +15,13 @@ export default function HeadersSection() {
   }, [alertVisible]);
 
   useEffect(() => {
-    if (debounceCookies) {
-      setLoading(true);
-      fetch('cookies', {
-        method: 'POST',
-        body: debounceCookies,
-      })
-        .then(() => setAlertVisble(true))
-        .finally(() => setLoading(false));
-    }
+    setLoading(true);
+    fetch('cookies', {
+      method: 'POST',
+      body: debounceCookies,
+    })
+      .then(() => setAlertVisble(true))
+      .finally(() => setLoading(false));
   }, [debounceCookies]);
   return (
     <AccordionContainer title="Headers" loading={loading}>

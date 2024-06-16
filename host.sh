@@ -20,6 +20,7 @@ git reset
 rm -rf .js
 npm run clearMultisrc
 npm run generate
+npx tsc -m node16
 npm run json
 git add -f icons .dist .js/plugins total.svg
 git commit -m "Host plugins"
