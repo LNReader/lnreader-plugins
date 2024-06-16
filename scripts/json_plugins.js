@@ -1,14 +1,10 @@
-require('module-alias/register');
+import path from 'path';
+import fs from 'fs';
+import { exit } from 'process';
+import languages from './languages.js';
+import { execSync } from 'child_process';
+import { minify } from './terser.js';
 
-import * as fs from 'fs';
-import { languages } from '@libs/languages';
-import * as path from 'path';
-import { Plugin } from '@typings/plugin';
-import { minify } from './terser';
-
-const root = path.dirname(__dirname);
-const outRoot = path.join(root, '..');
-const { execSync } = require('child_process');
 const REMOTE = execSync('git remote get-url origin')
   .toString()
   .replace(/[\s\n]/g, '');
@@ -21,48 +17,69 @@ const USERNAME = matched[1];
 const REPO = matched[2];
 const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
 
-const ICON_LINK = `${USER_CONTENT_LINK}/icons`;
-const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/plugins`;
+const ICON_LINK = `${USER_CONTENT_LINK}/public/icons`;
+const PLUGIN_LINK = `${USER_CONTENT_LINK}/src/.js/plugins`;
 
-const json: HostedPluginItem[] = [];
-if (!fs.existsSync(path.join(outRoot, '.dist'))) {
-  fs.mkdirSync(path.join(outRoot, '.dist'));
+const DIST_DIR = '.dist';
+
+const json = [];
+if (!fs.existsSync(DIST_DIR)) {
+  fs.mkdirSync(DIST_DIR);
 }
-const jsonPath = path.join(outRoot, '.dist', 'plugins.json');
-const jsonMinPath = path.join(outRoot, '.dist', 'plugins.min.json');
+const jsonPath = path.join(DIST_DIR, 'plugins.json');
+const jsonMinPath = path.join(DIST_DIR, 'plugins.min.json');
 const pluginSet = new Set();
 let totalPlugins = 0;
 
-interface HostedPluginItem {
-  id: string;
-  name: string;
-  site: string;
-  lang: string;
-  version: string;
-  url: string;
-  iconUrl: string;
-}
+const createRecursiveProxy = () => {
+  const target = {};
+  const handler = {
+    get(target, prop) {
+      if (prop === 'get') {
+        return a => a;
+      }
+      if (!target[prop]) {
+        target[prop] = createRecursiveProxy();
+      }
+      return target[prop];
+    },
+  };
+  return new Proxy(target, handler);
+};
+
+const proxy = createRecursiveProxy();
+
+const _require = () => proxy;
+
+const COMPILED_PLUGIN_DIR = './.js/src/plugins';
 
 for (let language in languages) {
   // language with English name
-  const langPath = path.join(root, 'plugins', language.toLowerCase());
+  const langPath = path.join(COMPILED_PLUGIN_DIR, language.toLowerCase());
   if (!fs.existsSync(langPath)) continue;
   const plugins = fs.readdirSync(langPath);
   plugins.forEach(plugin => {
     if (plugin.startsWith('.')) return;
     minify(path.join(langPath, plugin));
-    const instance: Plugin.PluginBase = require(
-      `../plugins/${language.toLowerCase()}/${plugin.split('.')[0]}`,
-    ).default;
-
+    const rawCode = fs.readFileSync(
+      `${COMPILED_PLUGIN_DIR}/${language.toLowerCase()}/${plugin}`,
+      'utf-8',
+    );
+    const instance = Function(
+      'require',
+      'module',
+      `const exports = module.exports = {}; 
+      ${rawCode}; 
+      return exports.default`,
+    )(_require, {});
     const { id, name, site, version, icon } = instance;
     const normalisedName = name.replace(/\[.*\]/, '');
 
-    const info: HostedPluginItem = {
+    const info = {
       id,
       name: normalisedName,
       site,
-      lang: languages[language as keyof typeof languages],
+      lang: languages[language],
       version,
       url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
       iconUrl: `${ICON_LINK}/${icon || 'siteNotAvailable.png'}`,
@@ -97,7 +114,7 @@ fs.writeFileSync(
 // check for broken plugins
 for (let language in languages) {
   const tsFiles = fs.readdirSync(
-    path.join(root, '..', 'plugins', language.toLocaleLowerCase()),
+    path.join('./src/plugins', language.toLocaleLowerCase()),
   );
   tsFiles
     .filter(f => f.endsWith('.broken.ts'))

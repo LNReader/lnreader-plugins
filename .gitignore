@@ -11,3 +11,4 @@ src/plugins/*/*\[*\]*.ts
 .dist
 .DS_Store
 dist
+total.svg

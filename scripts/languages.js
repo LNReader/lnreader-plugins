@@ -1,4 +1,4 @@
-export const languages = {
+export default {
   Arabic: '‎العربية',
   Chinese: '中文, 汉语, 漢語',
   English: 'English',
@@ -14,4 +14,4 @@ export const languages = {
   Turkish: 'Türkçe',
   Ukrainian: 'Українська',
   Vietnamese: 'Tiếng Việt',
-} as const;
+};

@@ -124,6 +124,5 @@
 
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
     },
-    "include": ["./src/plugins"],
     "exclude": ["./src/plugins/**/*.broken.ts", "./.js/**/*", "scripts", "docs"]
 }

@@ -1,5 +1,4 @@
 import { FilterToValues, Filters } from '@libs/filterInputs';
-import { languages } from '@libs/languages';
 export namespace Plugin {
   export interface ChapterItem {
     name: string;
