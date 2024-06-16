@@ -79,7 +79,7 @@ export default function PopularNovels() {
         >
           {Array.from({ length: maxIndex }, (_, index) => index + 1).map(
             number => (
-              <ToggleButton key={'novel_index_${number}'} value={number}>
+              <ToggleButton key={`novel_page_index_${number}`} value={number}>
                 {number}
               </ToggleButton>
             ),
