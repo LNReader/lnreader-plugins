@@ -1,22 +1,20 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import list from './sources.json';
-import { ReadNovelFullMetadata } from './template';
-import { ScrpitGeneratorFunction } from '../generate';
+import list from './sources.json' with { type: 'json' };
 
-export const generateAll: ScrpitGeneratorFunction = function (name) {
-  return list.map((metadata: ReadNovelFullMetadata) => {
+export const generateAll = function () {
+  return list.map(metadata => {
     console.log(
-      `[${name}] Generating: ${metadata.id}${' '.repeat(20 - metadata.id.length)}`,
+      `[readnovelfull] Generating: ${metadata.id}${' '.repeat(20 - metadata.id.length)}`,
     );
     return generator(metadata);
   });
 };
 
-const generator = function generator(metadata: ReadNovelFullMetadata) {
+const generator = function generator(metadata) {
   const readNovelFullTemplate = readFileSync(
-    path.join(__dirname, 'template.ts'),
+    './scripts/multisrc/readnovelfull/template.ts',
     { encoding: 'utf-8' },
   );
 

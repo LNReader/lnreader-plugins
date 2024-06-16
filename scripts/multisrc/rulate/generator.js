@@ -1,48 +1,44 @@
-
-import { ScrpitGeneratorFunction } from '../generate';
-import list from './sources.json';
-import defaultSettings from './settings.json';
-import { RulateMetadata } from './template';
+import list from './sources.json' with { type: 'json' };
+import defaultSettings from './settings.json' with { type: 'json' };
 import { readFileSync } from 'fs';
-import path from 'path';
- 
-enum FilterTypes {
-  TextInput = 'Text',
-  Picker = 'Picker',
-  CheckboxGroup = 'Checkbox',
-  Switch = 'Switch',
-  ExcludableCheckboxGroup = 'XCheckbox',
-}
 
-export const generateAll: ScrpitGeneratorFunction = function (name) {
+const FilterTypes = {
+  TextInput: 'Text',
+  Picker: 'Picker',
+  CheckboxGroup: 'Checkbox',
+  Switch: 'Switch',
+  ExcludableCheckboxGroup: 'XCheckbox',
+};
+
+export const generateAll = function () {
   return list
-    .map<RulateMetadata>(p => {
+    .map(p => {
       if (p.filters) {
         p.filters.cat.options.unshift(...defaultSettings.filters.cat.options);
       }
       p.filters = Object.assign(defaultSettings.filters, p.filters);
 
       let d = false;
-      const filters: any = {};
+      const filters = {};
       for (const k in p.filters) {
-        const f = p.filters[k as keyof typeof p.filters];
+        const f = p.filters[k];
         if (f) {
           filters[k] = {
             ...f,
-            type: FilterTypes[f.type as keyof typeof FilterTypes],
+            type: FilterTypes[f.type],
           };
         }
       }
       return { ...p, filters: d ? undefined : filters };
     })
-    .map((metadata: RulateMetadata) => {
-      console.log(`[${name}]: Generating`, metadata.id);
+    .map(metadata => {
+      console.log(`[rulate]: Generating`, metadata.id);
       return generator(metadata);
     });
 };
 
-const generator = function generator(metadata: RulateMetadata) {
-  const rulateTemplate = readFileSync(path.join(__dirname, 'template.ts'), {
+const generator = function generator(metadata) {
+  const rulateTemplate = readFileSync('./scripts/multisrc/rulate/template.ts', {
     encoding: 'utf-8',
   });
 

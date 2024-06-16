@@ -1,25 +1,23 @@
 import path from 'path';
 import fs from 'fs';
 
-type GeneratedScript = {
-  lang: string;
-  filename: string;
-  pluginScript: string;
-};
+// type GeneratedScript = {
+//   lang: string;
+//   filename: string;
+//   pluginScript: string;
+// };
 
-export type ScrpitGeneratorFunction = (name: string) => GeneratedScript[];
+// export type ScrpitGeneratorFunction = () => GeneratedScript[];
 
-const isScriptGenerator = (s: unknown): s is ScrpitGeneratorFunction => {
+const isScriptGenerator = s => {
   return !!s && typeof s === 'function';
 };
 
-const generate = async (name: string): Promise<boolean> => {
+const generate = async name => {
   try {
-    const generateAll: ScrpitGeneratorFunction | unknown = require(
-      `./${name}/generator`,
-    ).generateAll;
+    const generateAll = (await import(`./${name}/generator.js`)).generateAll;
     if (!isScriptGenerator(generateAll)) return false;
-    const sources = generateAll(name);
+    const sources = generateAll();
     for (let source of sources) {
       const { lang, filename, pluginScript } = source;
       if (!lang || !filename || !pluginScript) {
@@ -36,17 +34,19 @@ const generate = async (name: string): Promise<boolean> => {
     }
     return true;
   } catch (e) {
-    console.log(`${name} is broken! ${e}`);
+    console.log(`${name} is broken! ${e}\n`);
     return false;
   }
 };
 
+const MULTISRC_DIR = './scripts/multisrc';
+
 const run = async () => {
   const sources = fs
-    .readdirSync(__dirname)
+    .readdirSync(MULTISRC_DIR)
     .filter(
       name =>
-        fs.lstatSync(path.join(__dirname, name)).isDirectory() &&
+        fs.lstatSync(path.join(MULTISRC_DIR, name)).isDirectory() &&
         !name.endsWith('.broken'),
     );
 

@@ -1,26 +1,23 @@
-import { ScrpitGeneratorFunction } from '../generate';
-import { LightNovelWPMetadata } from './template';
-import list from './sources.json';
+import list from './sources.json' with { type: 'json' };
 import { readFileSync } from 'fs';
-import path from 'path';
 
-export const generateAll: ScrpitGeneratorFunction = function (name) {
-  return list.map((source: LightNovelWPMetadata) => {
-    let filters: any = {};
+export const generateAll = function () {
+  return list.map(source => {
+    let filters = {};
     try {
       filters = require(`./filters/${source.id}`);
       source.filters = filters.filters;
     } catch (e) {}
     console.log(
-      `[${name}] Generating: ${source.id}${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
+      `[lightnovelwp] Generating: ${source.id}${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
     );
     return generator(source);
   });
 };
 
-const generator = function generator(source: LightNovelWPMetadata) {
+const generator = function generator(source) {
   const LightNovelWPTemplate = readFileSync(
-    path.join(__dirname, 'template.ts'),
+    './scripts/multisrc/lightnovelwp/template.ts',
     {
       encoding: 'utf-8',
     },

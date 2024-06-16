@@ -1,11 +1,16 @@
-import { FilterTypes, Filters } from '../../../libs/filterInputs';
-import { ScrpitGeneratorFunction } from '../generate';
-import list from './sources.json';
-import { HotNovelPubMetadata } from './template';
+import list from './sources.json' with { type: 'json' };
 import { readFileSync } from 'fs';
 import path from 'path';
 
-const lang: { [key: string]: string } = {
+const FilterTypes = {
+  TextInput: 'Text',
+  Picker: 'Picker',
+  CheckboxGroup: 'Checkbox',
+  Switch: 'Switch',
+  ExcludableCheckboxGroup: 'XCheckbox',
+};
+
+const lang = {
   en: 'english',
   ru: 'russian',
   es: 'spanish',
@@ -13,12 +18,12 @@ const lang: { [key: string]: string } = {
   th: 'turkish',
 };
 
-export const generateAll: ScrpitGeneratorFunction = function (name) {
+export const generateAll = function () {
   return list
-    .map<HotNovelPubMetadata>(p => {
-      const filters: Filters = {};
+    .map(p => {
+      const filters = {};
       for (const k in p.filters) {
-        const f = p.filters[k as keyof typeof p.filters];
+        const f = p.filters[k];
         if (f) {
           filters[k] = {
             ...f,
@@ -28,15 +33,15 @@ export const generateAll: ScrpitGeneratorFunction = function (name) {
       }
       return { ...p, filters };
     })
-    .map((metadata: HotNovelPubMetadata) => {
-      console.log(`[${name}]: Generating`, metadata.id);
+    .map(metadata => {
+      console.log(`[hotnovelpub]: Generating`, metadata.id);
       return generator(metadata);
     });
 };
 
-const generator = function generator(metadata: HotNovelPubMetadata) {
+const generator = function generator(metadata) {
   const HotNovelPubTemplate = readFileSync(
-    path.join(__dirname, 'template.ts'),
+    './scripts/multisrc/hotnovelpub/template.ts',
     {
       encoding: 'utf-8',
     },
