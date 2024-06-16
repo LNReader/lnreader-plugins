@@ -21,7 +21,7 @@ export default function PopularNovels() {
   const [maxIndex, setMaxIndex] = useState(0);
 
   const fetchNovelsByIndex = (index: number) => {
-    if (plugin) {
+    if (plugin && index) {
       setLoading(true);
       plugin
         .popularNovels(index, { filters: filterValues })
