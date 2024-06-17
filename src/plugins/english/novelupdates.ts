@@ -273,21 +273,16 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       case 'isotls': // mii translates
         bloatClasses = [
-          'header.grid',
-          '.chapter-nav',
+          'footer',
+          'header',
+          'nav',
           '.ezoic-ad',
           '.ezoic-adpicker-ad',
           '.ezoic-videopicker-video',
         ];
-        chapterTitle = loadedCheerio('main article header h2').first().text()!;
         bloatClasses.map(tag => loadedCheerio(tag).remove());
+        chapterTitle = loadedCheerio('head title').first().text()!;
         chapterContent = loadedCheerio('main article').html()!;
-        if (!chapterTitle) {
-          chapterTitle = 'nicht gefunden';
-        }
-        if (!chapterContent) {
-          chapterContent = 'nicht gefunden';
-        }
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
