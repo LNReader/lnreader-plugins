@@ -279,8 +279,8 @@ class NovelUpdates implements Plugin.PluginBase {
           '.ezoic-adpicker-ad',
           '.ezoic-videopicker-video',
         ];
+        chapterTitle = loadedCheerio('main article header h2').first().text()!;
         bloatClasses.map(tag => loadedCheerio(tag).remove());
-        chapterTitle = loadedCheerio('head title').first().text()!;
         chapterContent = loadedCheerio('main article').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
