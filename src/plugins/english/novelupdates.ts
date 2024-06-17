@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.9';
+  version = '0.5.10';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -267,6 +267,21 @@ class NovelUpdates implements Plugin.PluginBase {
             '<br><hr><br>TL Notes:<br>' +
             json_inovel.notes.replace(/\n/g, '<br>');
         }
+        if (chapterTitle && chapterContent) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        }
+        break;
+      case 'isotls': // mii translates
+        bloatClasses = [
+          'header.grid',
+          '.chapter-nav',
+          '.ezoic-ad',
+          '.ezoic-adpicker-ad',
+          '.ezoic-videopicker-video',
+        ];
+        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        chapterTitle = loadedCheerio('head title').first().text()!;
+        chapterContent = loadedCheerio('main article').html()!;
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
