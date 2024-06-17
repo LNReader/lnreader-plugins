@@ -186,7 +186,7 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const unwanted = ['blogspot', 'wordpress', 'www'];
+    const unwanted = ['blogspot', 'casper', 'wordpress', 'www'];
     const targetDomain = domain.find(d => !unwanted.includes(d));
 
     switch (targetDomain) {
