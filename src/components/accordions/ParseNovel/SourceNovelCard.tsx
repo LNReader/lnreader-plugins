@@ -102,7 +102,7 @@ export default function SourceNovelCard({
           <Textarea
             sx={{ width: '100%' }}
             maxRows={5}
-            defaultValue={sourceNovel.summary}
+            value={sourceNovel.summary}
             disabled
           />
         </CardContent>

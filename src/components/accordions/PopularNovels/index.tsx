@@ -1,5 +1,11 @@
-import { Box, Button, Stack } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
@@ -11,16 +17,33 @@ export default function PopularNovels() {
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [filterValues, setFilterValues] = useState<Filters | undefined>();
   const [loading, setLoading] = useState(false);
-  const fetchNovels = () => {
-    if (plugin) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [maxIndex, setMaxIndex] = useState(0);
+
+  const fetchNovelsByIndex = (index: number) => {
+    if (plugin && index) {
       setLoading(true);
       plugin
-        .popularNovels(1, { filters: filterValues })
-        .then(res => setNovels(res))
+        .popularNovels(index, { filters: filterValues })
+        .then(res => {
+          if (res.length !== 0) {
+            setCurrentIndex(index);
+            if (index > maxIndex) {
+              setMaxIndex(index);
+            }
+            setNovels(res);
+          }
+        })
         .finally(() => setLoading(false));
     }
   };
+
   useEffect(() => {
+    // Reset when changing plugins.
+    setCurrentIndex(0);
+    setMaxIndex(0);
+    setNovels([]);
+
     if (plugin?.filters) {
       let filters = {};
       for (const fKey in plugin.filters) {
@@ -37,14 +60,31 @@ export default function PopularNovels() {
       <Stack direction={'row'} spacing={2}>
         <Button
           disabled={plugin === undefined}
-          onClick={fetchNovels}
+          onClick={() => fetchNovelsByIndex(1)}
           variant="contained"
         >
           Fetch
         </Button>
-        <Button disabled={plugin === undefined} variant="outlined">
+        <Button
+          disabled={currentIndex === 0}
+          variant="outlined"
+          onClick={() => fetchNovelsByIndex(currentIndex + 1)}
+        >
           Next Page
         </Button>
+        <ToggleButtonGroup
+          value={currentIndex}
+          exclusive
+          onChange={(event, value) => fetchNovelsByIndex(value)}
+        >
+          {Array.from({ length: maxIndex }, (_, index) => index + 1).map(
+            number => (
+              <ToggleButton key={`novel_page_index_${number}`} value={number}>
+                {number}
+              </ToggleButton>
+            ),
+          )}
+        </ToggleButtonGroup>
       </Stack>
       <Box
         sx={{

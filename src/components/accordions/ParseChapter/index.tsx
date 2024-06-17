@@ -42,7 +42,7 @@ export default function ParseChapter() {
           }}
           maxRows={20}
           disabled
-          defaultValue={chapterText}
+          value={chapterText}
         />
       ) : null}
     </AccordionContainer>
