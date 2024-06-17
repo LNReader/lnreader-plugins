@@ -4,6 +4,9 @@ import {
   Stack,
   ToggleButton,
   ToggleButtonGroup,
+  Switch,
+  FormControlLabel,
+  FormGroup,
 } from '@mui/material';
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
@@ -19,12 +22,17 @@ export default function PopularNovels() {
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
+  const [isLatest, setIsLatest] = useState(true);
+  const [labelText, setLabelText] = useState('Latest');
 
   const fetchNovelsByIndex = (index: number) => {
     if (plugin && index) {
       setLoading(true);
       plugin
-        .popularNovels(index, { filters: filterValues })
+        .popularNovels(index, {
+          filters: filterValues,
+          showLatestNovels: isLatest,
+        })
         .then(res => {
           if (res.length !== 0) {
             setCurrentIndex(index);
@@ -37,6 +45,19 @@ export default function PopularNovels() {
         .finally(() => setLoading(false));
     }
   };
+
+  const handleSwitchLatestChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsLatest(event.target.checked);
+  };
+
+  useEffect(() => {
+    if (plugin) {
+      setLabelText(isLatest ? 'Latest' : 'Popular');
+      setCurrentIndex(1);
+      setMaxIndex(1);
+      fetchNovelsByIndex(1);
+    }
+  }, [isLatest]);
 
   useEffect(() => {
     // Reset when changing plugins.
@@ -57,7 +78,19 @@ export default function PopularNovels() {
   }, [plugin]);
   return (
     <AccordionContainer title="Popular Novels" loading={loading}>
-      <Stack direction={'row'} spacing={2}>
+      <Stack direction={'row'} spacing={2} alignItems={'center'}>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isLatest}
+                onChange={handleSwitchLatestChange}
+                color="secondary"
+              />
+            }
+            label={<Box minWidth={70}>{labelText}</Box>}
+          />
+        </FormGroup>
         <Button
           disabled={plugin === undefined}
           onClick={() => fetchNovelsByIndex(1)}
