@@ -282,6 +282,12 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterTitle = loadedCheerio('main article header h2').first().text()!;
         bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterContent = loadedCheerio('main article').html()!;
+        if (!chapterTitle) {
+          chapterTitle = 'nicht gefunden';
+        }
+        if (!chapterContent) {
+          chapterContent = 'nicht gefunden';
+        }
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
