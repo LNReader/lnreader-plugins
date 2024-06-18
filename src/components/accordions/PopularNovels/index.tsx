@@ -23,7 +23,6 @@ export default function PopularNovels() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLatest, setIsLatest] = useState(true);
-  const [labelText, setLabelText] = useState('Latest');
 
   const fetchNovelsByIndex = (index: number) => {
     if (plugin && index) {
@@ -52,7 +51,6 @@ export default function PopularNovels() {
 
   useEffect(() => {
     if (plugin) {
-      setLabelText(isLatest ? 'Latest' : 'Popular');
       setCurrentIndex(1);
       setMaxIndex(1);
       fetchNovelsByIndex(1);
@@ -88,7 +86,7 @@ export default function PopularNovels() {
                 color="secondary"
               />
             }
-            label={<Box minWidth={70}>{labelText}</Box>}
+            label={<Box minWidth={70}>{isLatest ? 'Latest' : 'Popular'}</Box>}
           />
         </FormGroup>
         <Button
