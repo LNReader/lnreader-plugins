@@ -4,7 +4,7 @@ import { defaultCover } from '@libs/defaultCover';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
-import dayjs from 'dayjs';
+//import dayjs from 'dayjs';
 
 class RV implements Plugin.PluginBase {
   id = 'RV';
@@ -85,7 +85,7 @@ class RV implements Plugin.PluginBase {
           chapters.push({
             name: 'Глава ' + chapter.number + ' ' + (chapter.name || ''),
             path: novelPath + '/' + chapter.id,
-            releaseTime: dayjs(chapter.created_at.slice(0, -3)).format('LLL'),
+            //releaseTime: dayjs(chapter.created_at.slice(0, -3)).format('LLL'),
             chapterNumber: chapterIndex + 1,
           });
         }
