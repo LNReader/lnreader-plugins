@@ -62,16 +62,14 @@ class RV implements Plugin.PluginBase {
         .map((index, element) => loadedCheerio(element).text()?.trim())
         .get()
         .join(','),
-      status: loadedCheerio('.status_row > div:nth-child(1) > a:nth-child(2)')
+      status: loadedCheerio('.status_row > div:nth-child(1) > a')
         .text()
         .includes('В работе')
         ? NovelStatus.Ongoing
         : NovelStatus.Completed,
     };
 
-    const bookId = loadedCheerio('div.block_inner > books-chapters-list').attr(
-      ':book-id',
-    );
+    const bookId = loadedCheerio('comments-list').attr('commentable-id');
 
     const chaptersJSON: { data: chapters[] } = await fetchApi(
       this.site + 'api/books/' + bookId + '/chapters/all',
