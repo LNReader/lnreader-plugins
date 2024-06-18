@@ -84,8 +84,8 @@ class RV implements Plugin.PluginBase {
         ) {
           chapters.push({
             name: 'Глава ' + chapter.number + ' ' + (chapter.name || ''),
-            path: novelPath + '/' + chapter.order,
-            releaseTime: dayjs(chapter.created_at).format('LLL'),
+            path: novelPath + '/' + chapter.id,
+            releaseTime: dayjs(chapter.created_at.slice(0, -3)).format('LLL'),
             chapterNumber: chapterIndex + 1,
           });
         }
@@ -102,8 +102,8 @@ class RV implements Plugin.PluginBase {
       res.text(),
     );
     const encrypted = body.match(
-      /<books-chapters-text-component :text='"(.*?)"'/,
-    )?.[1];
+      /<(mobile-books|books)-chapters-text-component.*:text='"(.*?)"'/,
+    )?.[2]
     if (!encrypted) throw new Error('No chapter found');
 
     return unicodeToUtf8(encrypted);
