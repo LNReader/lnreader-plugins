@@ -32,7 +32,7 @@ class RV implements Plugin.PluginBase {
       novels.push({
         name: novel.name,
         cover: novel.images[0] ? this.site + novel.images[0] : defaultCover,
-        path: novel.id.toString(),
+        path: novel.slug,
       }),
     );
 
@@ -69,10 +69,13 @@ class RV implements Plugin.PluginBase {
         : NovelStatus.Completed,
     };
 
+    const bookId = loadedCheerio('div.block_inner > books-chapters-list').attr(
+      ':book-id',
+    );
+
     const chaptersJSON: { data: chapters[] } = await fetchApi(
-      this.site + 'api/books/' + novelPath + '/chapters/all',
+      this.site + 'api/books/' + bookId + '/chapters/all',
     ).then(res => res.json());
-    const chapters: Plugin.ChapterItem[] = [];
 
     if (chaptersJSON.data.length) {
       const chapters: Plugin.ChapterItem[] = [];
@@ -82,7 +85,7 @@ class RV implements Plugin.PluginBase {
           (chapter.is_free || chapter.purchased_by_user)
         ) {
           chapters.push({
-            name: 'Глава ' + chapter.number + ' ' + chapter.name,
+            name: 'Глава ' + chapter.number + ' ' + (chapter.name || ''),
             path: novelPath + '/' + chapter.order,
             releaseTime: dayjs(chapter.created_at).format('LLL'),
             chapterNumber: chapterIndex + 1,
@@ -105,7 +108,7 @@ class RV implements Plugin.PluginBase {
     )?.[1];
     if (!encrypted) throw new Error('No chapter found');
 
-    return decrypt(encrypted);
+    return unicodeToUtf8(encrypted);
   }
 
   filters = {
@@ -174,7 +177,7 @@ interface chapters {
   book_slug: string;
 }
 
-function decrypt(unicode: string) {
+function unicodeToUtf8(unicode: string) {
   return unicode.replace(/\\u([\d\w]{4})/gi, (match, hex) => {
     return String.fromCharCode(parseInt(hex, 16));
   });
