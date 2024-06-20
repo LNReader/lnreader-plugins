@@ -16,7 +16,7 @@
         "host-windows": "powershell ./host.ps1",
         "prettier": "prettier --write \"./**/*.{js,ts}\"",
         "prepare": "husky install",
-        "icons": "npm run clearMultisrc && npm run generate && npm run json && ts-node ./scripts/icon_reloading.ts"
+        "icons": "npm run clearMultisrc && npm run generate && npx tsc -m node16 && npm run json && node ./scripts/icon_reloading.js"
     },
     "author": "LNReader",
     "license": "MIT",
