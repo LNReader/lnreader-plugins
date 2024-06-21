@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.10';
+  version = '0.5.11';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -207,7 +207,12 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'fictionread':
-        bloatClasses = ['.content > style', '.meaning', '.word'];
+        bloatClasses = [
+          '.content > style',
+          '.highlight-ad-container',
+          '.meaning',
+          '.word',
+        ];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
         chapterTitle = loadedCheerio('.title-image span').first().text()!;
         loadedCheerio('.content')
