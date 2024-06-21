@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import sizeOf from 'image-size';
 
-const root = path.join(__dirname, '..');
 const size = 96;
 const minSize = 16;
 
@@ -28,19 +27,19 @@ const skip = new Set([
 ]);
 
 const used = new Set([
-  path.join(root, 'icons', 'coverNotAvailable.webp'),
-  path.join(root, 'icons', 'siteNotAvailable.png'),
+  path.join('public', 'icons', 'coverNotAvailable.webp'),
+  path.join('public', 'icons', 'siteNotAvailable.png'),
 ]);
 
 const notAvailableImage = fs.readFileSync(
-  path.join(root, 'icons', 'siteNotAvailable.png'),
+  path.join('public', 'icons', 'siteNotAvailable.png'),
 );
 
 (async () => {
   console.log('Loading plugins.json ⌛');
-  const plugin_path = path.join(root, '.dist', 'plugins.json');
+  const plugin_path = path.join('.dist', 'plugins.json');
   if (!fs.existsSync(plugin_path)) {
-    console.log('❌', plugin_path, 'not found (run "json_plugins.ts" first)');
+    console.log('❌', plugin_path, 'not found (run "json_plugins.js" first)');
     return;
   }
   const plugins = JSON.parse(fs.readFileSync(plugin_path, 'utf-8'));
@@ -49,7 +48,7 @@ const notAvailableImage = fs.readFileSync(
   let language;
   for (let plugin in plugins) {
     const { id, name, site, iconUrl, lang } = plugins[plugin];
-    const icon = iconUrl && 'icons/' + iconUrl.split('icons/')[1];
+    const icon = iconUrl && 'public/icons/' + iconUrl.split('icons/')[1];
 
     if (language !== lang) {
       language = lang;
@@ -61,7 +60,7 @@ const notAvailableImage = fs.readFileSync(
     }
 
     try {
-      if (icon) used.add(path.join(root, icon));
+      if (icon) used.add(path.join(icon));
       if (!skip.has(id) && icon && site) {
         const image = await fetch(
           `https://www.google.com/s2/favicons?domain=${site}&sz=${size}&type=png`,
@@ -84,7 +83,7 @@ const notAvailableImage = fs.readFileSync(
         const exist = fs.existsSync(icon);
 
         if (!exist) {
-          const dir = icon.match(/^.*[\\\/]/)[0] as string;
+          const dir = icon.match(/^.*[\\\/]/)[0];
           fs.mkdirSync(dir, { recursive: true });
         }
 
@@ -121,7 +120,7 @@ const notAvailableImage = fs.readFileSync(
   }
   console.log('\nDeleting unused icons  ⌛');
 
-  fileList(path.join(root, 'icons')).forEach(path => {
+  fileList(path.join('public', 'icons')).forEach(path => {
     if (!used.has(path)) {
       console.log('🗑️', path);
       fs.rmSync(path, { force: true });
@@ -130,8 +129,8 @@ const notAvailableImage = fs.readFileSync(
   console.log('\nDone ✅');
 })();
 
-function fileList(dir: string): string[] {
-  return fs.readdirSync(dir).reduce((list: string[], file: string) => {
+function fileList(dir) {
+  return fs.readdirSync(dir).reduce((list, file) => {
     const name = path.join(dir, file);
     const isDir = fs.statSync(name).isDirectory();
     return list.concat(isDir ? fileList(name) : [name]);
