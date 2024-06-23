@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.5.11';
+  version = '0.6.0';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -787,7 +787,7 @@ class NovelUpdates implements Plugin.PluginBase {
     );
     searchTerm = longestSearchTerm.replace(/[‘’]/g, "'").replace(/\s+/g, '+');
 
-    const url = this.site + '?s=' + searchTerm + '&post_type=seriesplans';
+    const url = `${this.site}series-finder/?sf=1&sh=${searchTerm}&sort=srank&order=asc&pg=${page}`;
     const result = await fetchApi(url);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
