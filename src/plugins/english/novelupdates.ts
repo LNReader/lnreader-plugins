@@ -2,7 +2,6 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import { URL } from 'url';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
@@ -570,10 +569,13 @@ class NovelUpdates implements Plugin.PluginBase {
     const url = result.url;
     const domain = url.toLowerCase().split('/')[2].split('.');
 
-    const parsedUrl = new URL(url);
+    const parts = url.split('/');
+    const protocol = parts[0].slice(0, -1);
+    const hostname = parts[2];
+
     this.imageRequestInit = {
       headers: {
-        Referer: `${parsedUrl.protocol}//${parsedUrl.hostname}`,
+        Referer: `${protocol}//${hostname}`,
       },
     };
 
