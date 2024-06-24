@@ -10,6 +10,12 @@ class NovelUpdates implements Plugin.PluginBase {
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
+  imageRequestInit: Plugin.ImageRequestInit = {
+    headers: {
+      Referer: `${this.site}`,
+    },
+  };
+
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
@@ -563,6 +569,13 @@ class NovelUpdates implements Plugin.PluginBase {
     const url = result.url;
     const domain = url.toLowerCase().split('/')[2].split('.');
 
+    const parsedUrl = new URL(url);
+    this.imageRequestInit = {
+      headers: {
+        Referer: `${parsedUrl.protocol}//${parsedUrl.hostname}`,
+      },
+    };
+
     const loadedCheerio = parseHTML(body);
 
     /**
@@ -793,12 +806,6 @@ class NovelUpdates implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
   }
-
-  imageRequestInit: Plugin.ImageRequestInit = {
-    headers: {
-      Referer: `${this.site}`,
-    },
-  };
 
   filters = {
     sort: {
