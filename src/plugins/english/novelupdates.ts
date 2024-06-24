@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.6.1';
+  version = '0.6.2';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -793,6 +793,12 @@ class NovelUpdates implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
   }
+
+  imageRequestInit: Plugin.ImageRequestInit = {
+    headers: {
+      Referer: `${this.site}`,
+    },
+  };
 
   filters = {
     sort: {
