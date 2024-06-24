@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.6.0';
+  version = '0.6.1';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -619,7 +619,7 @@ class NovelUpdates implements Plugin.PluginBase {
     /**
      * In case sites are not detected correctly
      */
-    const manualWordPress = ['genesistls'];
+    const manualWordPress = ['genesistls', 'soafp'];
     if (!isWordPress && domain.find(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
@@ -669,7 +669,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Mirilu - Novel Reader Attempts Translating (Outlier)
      * - Neosekai Translations
      * - Shanghai Fantasy
-     * - Soafp
+     * - Soafp (Manually added)
      * - Stabbing with a Syringe (Outlier)
      * - StoneScape
      * - TinyTL (Outlier)
