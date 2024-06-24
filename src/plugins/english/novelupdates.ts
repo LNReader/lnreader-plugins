@@ -2,6 +2,7 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { URL } from 'url';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
