@@ -1,12 +1,12 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import qs from 'qs';
 
-class Neobook implements Plugin.PluginBase {
+class TopLiba implements Plugin.PluginBase {
   id = 'TopLiba';
   name = 'ТопЛиба';
   site = 'https://topliba.com';
@@ -166,4 +166,4 @@ class Neobook implements Plugin.PluginBase {
   } satisfies Filters;
 }
 
-export default new Neobook();
+export default new TopLiba();

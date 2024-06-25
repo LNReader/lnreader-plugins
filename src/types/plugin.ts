@@ -84,18 +84,6 @@ export namespace Plugin {
     parseNovel(novelPath: string): Promise<SourceNovel>;
     parseChapter(chapterPath: string): Promise<string>;
     searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
-    /**
-     *
-     * @param url Image url
-     * @returns {Promise<string|undefined>} Base64 of image
-     * @example
-     * ```ts
-     *  const headers = {
-     *      Referer: "https://ln.hako.vn",
-     *   };
-     *  return await fetchFile(url, { headers: headers });
-     * ```
-     */
     resolveUrl?(path: string, isNovel?: boolean): string;
   }
 

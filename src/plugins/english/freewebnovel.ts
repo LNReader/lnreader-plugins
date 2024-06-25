@@ -1,5 +1,5 @@
 import { Plugin } from '@typings/plugin';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import qs from 'qs';

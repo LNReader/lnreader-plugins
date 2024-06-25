@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
@@ -60,7 +60,7 @@ class TruyenFull implements Plugin.PagePlugin {
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/danh-sach/truyen-hot?page=${pageNo}`;
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
@@ -71,7 +71,7 @@ class TruyenFull implements Plugin.PagePlugin {
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const url = this.site + novelPath;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -119,7 +119,7 @@ class TruyenFull implements Plugin.PagePlugin {
   }
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const url = `${this.site}${novelPath}?page=${page}`;
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const chapters = this.parseChapters(body);
@@ -128,7 +128,7 @@ class TruyenFull implements Plugin.PagePlugin {
     };
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.site + chapterPath);
+    const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -145,7 +145,7 @@ class TruyenFull implements Plugin.PagePlugin {
   ): Promise<Plugin.NovelItem[]> {
     const searchUrl = `${this.site}/tim-kiem?tukhoa=${searchTerm}&page=${pageNo}`;
 
-    const result = await fetch(searchUrl);
+    const result = await fetchApi(searchUrl);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);

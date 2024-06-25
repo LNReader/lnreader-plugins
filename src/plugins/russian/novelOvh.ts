@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
@@ -8,6 +8,7 @@ class novelOvh implements Plugin.PluginBase {
   id = 'novelovh';
   name = 'НовелОВХ';
   site = 'https://novel.ovh';
+  apiSite = 'https://api.novel.ovh/v2/';
   version = '1.0.2';
   icon = 'src/ru/novelovh/icon.png';
 
@@ -89,7 +90,7 @@ class novelOvh implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const book: responseChapter = await fetchApi(
-      'https://api.novel.ovh/v2/chapters/' + chapterPath.split('/')[1],
+      this.apiSite + 'chapters/' + chapterPath.split('/')[1],
     ).then(res => res.json());
 
     const image = Object.fromEntries(
@@ -101,7 +102,7 @@ class novelOvh implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const url = `https://api.novel.ovh/v2/books?type=NOVEL&search=${searchTerm}`;
+    const url = this.apiSite + 'books?type=NOVEL&search=' + searchTerm;
     const books: BooksEntity[] = await fetchApi(url).then(res => res.json());
 
     const novels: Plugin.NovelItem[] = [];

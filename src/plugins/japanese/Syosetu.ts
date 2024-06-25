@@ -1,5 +1,5 @@
 import { load, load as loadCheerio } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { FilterTypes, Filters } from '@libs/filterInputs';
@@ -20,7 +20,7 @@ class Syosetu implements Plugin.PluginBase {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   };
   searchUrl = (pagenum?: number, order?: string) => {
-    return `https://yomou.syosetu.com/search.php?order=${order || 'hyoka'}${
+    return `${this.site}search.php?order=${order || 'hyoka'}${
       pagenum !== undefined
         ? `&p=${pagenum <= 1 || pagenum > 100 ? '1' : pagenum}` // check if pagenum is between 1 and 100
         : '' // if isn't don't set ?p
@@ -72,7 +72,7 @@ class Syosetu implements Plugin.PluginBase {
   }
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     let chapters: Plugin.ChapterItem[] = [];
-    const result = await fetch(this.novelPrefix + novelPath, {
+    const result = await fetchApi(this.novelPrefix + novelPath, {
       headers: this.headers,
     });
     const body = await result.text();
@@ -121,9 +121,12 @@ class Syosetu implements Plugin.PluginBase {
        */
       // get summary for oneshot chapter
 
-      const nameResult = await fetch(this.searchUrl() + `&word=${novel.name}`, {
-        headers: this.headers,
-      });
+      const nameResult = await fetchApi(
+        this.searchUrl() + `&word=${novel.name}`,
+        {
+          headers: this.headers,
+        },
+      );
       const nameBody = await nameResult.text();
       const summaryQuery = loadCheerio(nameBody, {
         decodeEntities: false,
@@ -148,7 +151,7 @@ class Syosetu implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.novelPrefix + chapterPath, {
+    const result = await fetchApi(this.novelPrefix + chapterPath, {
       headers: this.headers,
     });
     const body = await result.text();
@@ -173,7 +176,7 @@ class Syosetu implements Plugin.PluginBase {
     const getNovelsFromPage = async (pagenumber: number) => {
       // load page
       const url = this.searchUrl(pagenumber) + `&word=${searchTerm}`;
-      const result = await fetch(url, { headers: this.headers });
+      const result = await fetchApi(url, { headers: this.headers });
       const body = await result.text();
       // Cheerio it!
       const cheerioQuery = loadCheerio(body, { decodeEntities: false });

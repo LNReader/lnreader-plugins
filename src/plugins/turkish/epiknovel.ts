@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 
@@ -15,7 +15,7 @@ class EpikNovel implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + 'seri-listesi?Sayfa=' + pageNo;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -46,7 +46,7 @@ class EpikNovel implements Plugin.PluginBase {
     const url = this.site + novelPath;
     // console.log(url);
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -113,14 +113,14 @@ class EpikNovel implements Plugin.PluginBase {
 
     // console.log(url);
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
 
     let chapterText = '';
 
-    if (result.url === 'https://www.epiknovel.com/login') {
+    if (result.url === this.site + 'login') {
       chapterText = 'Premium Chapter';
     } else {
       chapterText = loadedCheerio('div#icerik').html() || '';
@@ -134,7 +134,7 @@ class EpikNovel implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'seri-listesi?q=' + searchTerm + '&Sayfa=' + pageNo;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);

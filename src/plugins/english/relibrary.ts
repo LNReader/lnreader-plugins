@@ -1,4 +1,4 @@
-import { fetchFile, fetchText } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio, CheerioAPI } from 'cheerio';
@@ -6,7 +6,6 @@ import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 import { NovelItem } from '../../test_web/static/js';
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
 
 interface FuzzySearchOptions {
   caseSensitive: boolean;
@@ -176,7 +175,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   private async popularNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -201,7 +200,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   private async lastestNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -250,7 +249,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     // synopis:		.entry-content > div.su-box > div.su-box-content
     // chapters:	.entry-content > div.su-accordion <then> li.page_item[]
 
-    const result = await fetch(`${this.site}/${novelPath}`);
+    const result = await fetchApi(`${this.site}/${novelPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -336,7 +335,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     // parse chapter text here
-    const result = await fetch(`${this.site}/${chapterPath}`);
+    const result = await fetchApi(`${this.site}/${chapterPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -364,7 +363,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     if (pageNo !== 1) return [];
 
     let novels: Plugin.NovelItem[] = [];
-    const req = await fetch(`${this.site}/translations/`);
+    const req = await fetchApi(`${this.site}/translations/`);
     const body = await req.text();
 
     const loadedCheerio = loadCheerio(body);

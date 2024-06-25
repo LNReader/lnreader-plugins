@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 
@@ -17,7 +17,7 @@ class Ligera implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -52,7 +52,7 @@ class Ligera implements Plugin.PluginBase {
 
     // console.log(url);
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -120,7 +120,7 @@ class Ligera implements Plugin.PluginBase {
     const url = this.site + chapterPath;
     // console.log(url);
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -140,7 +140,7 @@ class Ligera implements Plugin.PluginBase {
     const url = this.site + '?s=' + searchTerm + '&post_type=wp-manga';
     // console.log(url);
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);

@@ -1,3 +1,4 @@
+import { fetchApi } from '@libs/fetch';
 import { Parser } from 'htmlparser2';
 import { HTMLParser2Util, Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -20,7 +21,7 @@ class HakoPlugin implements Plugin.PluginBase {
   site = 'https://ln.hako.vn';
   version = '1.1.0';
   parseNovels(url: string) {
-    return fetch(url)
+    return fetchApi(url)
       .then(res => res.text())
       .then(html => {
         const novels: Plugin.NovelItem[] = [];
@@ -346,7 +347,7 @@ class HakoPlugin implements Plugin.PluginBase {
         }
       },
     };
-    return fetch(this.site + novelPath)
+    return fetchApi(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
         const parser = new Parser({
@@ -400,7 +401,7 @@ class HakoPlugin implements Plugin.PluginBase {
       });
   }
   parseChapter(chapterPath: string): Promise<string> {
-    return fetch(this.site + chapterPath)
+    return fetchApi(this.site + chapterPath)
       .then(res => res.text())
       .then(
         html =>
@@ -419,7 +420,7 @@ class HakoPlugin implements Plugin.PluginBase {
   }
   imageRequestInit: Plugin.ImageRequestInit = {
     headers: {
-      Referer: 'https://ln.hako.vn',
+      Referer: this.site,
     },
   };
   filters = {

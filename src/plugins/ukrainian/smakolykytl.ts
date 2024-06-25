@@ -1,5 +1,5 @@
 import { Plugin } from '@typings/plugin';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
@@ -7,16 +7,15 @@ class Smakolykytl implements Plugin.PluginBase {
   id = 'smakolykytl';
   name = 'Смаколики';
   site = 'https://smakolykytl.site/';
-  version = '1.0.0';
+  apiSite = 'https://api.smakolykytl.site/api/user';
+  version = '1.0.1';
   icon = 'src/uk/smakolykytl/icon.png';
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const url = showLatestNovels
-      ? 'https://api.smakolykytl.site/api/user/updates'
-      : 'https://api.smakolykytl.site/api/user/projects';
+    const url = showLatestNovels ? apiSite + '/updates' : apiSite + '/projects';
 
     const result = await fetchApi(url);
     const json = (await result.json()) as response;
@@ -35,9 +34,7 @@ class Smakolykytl implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const id = novelPath.split('/').pop();
-    const result = await fetchApi(
-      'https://api.smakolykytl.site/api/user/projects/' + id,
-    );
+    const result = await fetchApi(apiSite + '/projects/' + id);
     const book = (await result.json()) as response;
 
     const novel: Plugin.SourceNovel = {
@@ -60,9 +57,7 @@ class Smakolykytl implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const res = await fetchApi(
-      'https://api.smakolykytl.site/api/user/projects/' + id + '/books',
-    );
+    const res = await fetchApi(apiSite + '/projects/' + id + '/books');
     const data = (await res.json()) as response;
     data?.books?.forEach(volume =>
       volume?.chapters?.forEach(chapter =>
@@ -81,9 +76,7 @@ class Smakolykytl implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const id = chapterPath.split('/').pop();
-    const result = await fetchApi(
-      'https://api.smakolykytl.site/api/user/chapters/' + id,
-    );
+    const result = await fetchApi(apiSite + '/chapters/' + id);
     const json = (await result.json()) as response;
     const chapterRaw: HTML[] = JSON.parse(json?.chapter?.content || '[]');
 
@@ -92,9 +85,7 @@ class Smakolykytl implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(
-      'https://api.smakolykytl.site/api/user/projects',
-    );
+    const result = await fetchApi(apiSite + '/projects');
     const json = (await result.json()) as response;
     const searchTitle = searchTerm.toLowerCase();
     const novels: Plugin.NovelItem[] = [];

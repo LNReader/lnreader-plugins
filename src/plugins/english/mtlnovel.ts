@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
@@ -21,7 +21,9 @@ class MTLNovel implements Plugin.PluginBase {
 
     const headers = new Headers();
     headers.append('Alt-Used', 'www.mtlnovel.com');
-    const body = await fetch(link, { headers }).then(result => result.text());
+    const body = await fetchApi(link, { headers }).then(result =>
+      result.text(),
+    );
 
     const loadedCheerio = parseHTML(body);
 
@@ -50,7 +52,7 @@ class MTLNovel implements Plugin.PluginBase {
     headers.append('Referer', `${this.site}novel-list/`);
     headers.append('Alt-Used', 'www.mtlnovel.com');
 
-    const body = await fetch(this.site + novelPath, {
+    const body = await fetchApi(this.site + novelPath, {
       headers,
     }).then(result => result.text());
 
@@ -70,7 +72,7 @@ class MTLNovel implements Plugin.PluginBase {
     const chapterListUrl = this.site + novelPath + 'chapter-list/';
 
     const getChapters = async () => {
-      const listResult = await fetch(chapterListUrl, { headers });
+      const listResult = await fetchApi(chapterListUrl, { headers });
       const listBody = await listResult.text();
 
       loadedCheerio = parseHTML(listBody);
@@ -101,7 +103,7 @@ class MTLNovel implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const headers = new Headers();
     headers.append('Alt-Used', 'www.mtlnovel.com');
-    const body = await fetch(this.site + chapterPath, { headers }).then(r =>
+    const body = await fetchApi(this.site + chapterPath, { headers }).then(r =>
       r.text(),
     );
 
@@ -119,12 +121,9 @@ class MTLNovel implements Plugin.PluginBase {
     const headers = new Headers();
     headers.append('Alt-Used', 'www.mtlnovel.com');
     const searchUrl =
-      this.site +
-      'wp-admin/admin-ajax.php?action=autosuggest&q=' +
-      searchTerm +
-      '&__amp_source_origin=https%3A%2F%2Fwww.mtlnovel.com';
+      this.site + 'wp-admin/admin-ajax.php?action=autosuggest&q=' + searchTerm;
 
-    const res = await fetch(searchUrl, { headers });
+    const res = await fetchApi(searchUrl, { headers });
     const result = await res.json();
 
     const novels: Plugin.NovelItem[] = [];

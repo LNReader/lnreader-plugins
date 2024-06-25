@@ -1,4 +1,4 @@
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@typings/plugin';
@@ -31,7 +31,7 @@ class Nettruyen implements Plugin.PagePlugin {
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/xem-nhieu/trang-${pageNo}.html`;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     return this.parseNovels(parseHTML(body));
   }
   parseChapters(loadedCheerio: CheerioAPI) {
@@ -52,7 +52,7 @@ class Nettruyen implements Plugin.PagePlugin {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const url = this.site + novelPath;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
@@ -101,7 +101,7 @@ class Nettruyen implements Plugin.PagePlugin {
     const id = novelPath.match(/-(\d+)\//)?.[1];
     if (!id) throw new Error('Cant parse page');
     const url = `${this.site}/ajax.chuong.php?id=${id}&page=${page}&url=${novelPath.replace(/\//g, '')}&loai=truyendich`;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const chapters = this.parseChapters(parseHTML(body));
     return {
       chapters,
@@ -109,7 +109,7 @@ class Nettruyen implements Plugin.PagePlugin {
   }
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + chapterPath;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     return loadedCheerio('#noidungchap').html() || '';
   }

@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile, fetchProto } from '@libs/fetch';
+import { fetchApi, fetchProto } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
@@ -105,6 +105,7 @@ class WuxiaWorld implements Plugin.PluginBase {
   name = 'Wuxia World';
   icon = 'src/en/wuxiaworld/icon.png';
   site = 'https://www.wuxiaworld.com/';
+  apiSite = 'https://api2.wuxiaworld.com/wuxiaworld.api.v2.';
   filters?: Filters | undefined;
   version = '0.5.0';
 
@@ -146,7 +147,7 @@ class WuxiaWorld implements Plugin.PluginBase {
         responseType: 'GetNovelResponse',
         requestData: { slug: novelPath.split('/')[1] },
       },
-      'https://api2.wuxiaworld.com/wuxiaworld.api.v2.Novels/GetNovel',
+      this.apiSite + 'Novels/GetNovel',
       {
         headers: {
           'Content-Type': 'application/grpc-web+proto',
@@ -201,7 +202,7 @@ class WuxiaWorld implements Plugin.PluginBase {
         responseType: 'GetChapterListResponse',
         requestData: { novelId: data.item?.id },
       },
-      'https://api2.wuxiaworld.com/wuxiaworld.api.v2.Chapters/GetChapterList',
+      this.apiSite + 'Chapters/GetChapterList',
       {
         headers: {
           'Content-Type': 'application/grpc-web+proto',
@@ -256,7 +257,7 @@ class WuxiaWorld implements Plugin.PluginBase {
           },
         },
       },
-      'https://api2.wuxiaworld.com/wuxiaworld.api.v2.Chapters/GetChapter',
+      this.apiSite + 'Chapters/GetChapter',
       {
         headers: {
           'Content-Type': 'application/grpc-web+proto',
@@ -275,9 +276,7 @@ class WuxiaWorld implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const searchUrl = 'https://www.wuxiaworld.com/api/novels/search?query=';
-
-    const url = searchUrl + searchTerm;
+    const url = this.site + 'api/novels/search?query=' + searchTerm;
 
     const result = await fetchApi(url);
     const data = await result.json();

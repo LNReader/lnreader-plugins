@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import qs from 'qs';
@@ -115,7 +115,7 @@ class NovelsOnline implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi('https://novelsonline.net/sResults.php', {
+    const result = await fetchApi(this.site + '/sResults.php', {
       headers: {
         Accept: '*/*',
         'Accept-Language': 'pl,en-US;q=0.7,en;q=0.3',

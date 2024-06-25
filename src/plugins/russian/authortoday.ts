@@ -1,7 +1,7 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import { storage } from '@libs/storage';
@@ -12,14 +12,15 @@ class AuthorToday implements Plugin.PluginBase {
   name = 'Автор Тудей';
   icon = 'src/ru/authortoday/icon.png';
   site = 'https://author.today';
-  apiUrl = 'https://api.author.today/v1/';
+  apiSite = 'https://api.author.today/v1/';
+  imageSite = 'https://cm.author.today/content/';
   version = '1.1.0';
 
   async popularNovels(
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.apiUrl + 'catalog/search?page=' + pageNo;
+    let url = this.apiSite + 'catalog/search?page=' + pageNo;
     if (filters?.genre?.value) {
       url += '&genre=' + filters.genre.value;
     }
@@ -48,9 +49,7 @@ class AuthorToday implements Plugin.PluginBase {
     result?.searchResults?.forEach(novel =>
       novels.push({
         name: novel.title,
-        cover: novel.coverUrl
-          ? 'https://cm.author.today/content/' + novel.coverUrl
-          : defaultCover,
+        cover: novel.coverUrl ? imageSite + novel.coverUrl : defaultCover,
         path: novel.id.toString(),
       }),
     );
@@ -61,7 +60,7 @@ class AuthorToday implements Plugin.PluginBase {
   async parseNovel(workID: string): Promise<Plugin.SourceNovel> {
     if (!this.user) this.user = await this.getUser();
     const book: responseBook = await fetchApi(
-      this.apiUrl + 'work/' + workID + '/details',
+      this.apiSite + 'work/' + workID + '/details',
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -93,7 +92,7 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     const chaptersJSON: ChaptersEntity[] = await fetchApi(
-      this.apiUrl + 'work/' + workID + '/content',
+      this.apiSite + 'work/' + workID + '/content',
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -123,7 +122,7 @@ class AuthorToday implements Plugin.PluginBase {
     const [workID, chapterID] = chapterPath.split('/');
     if (!this.user) this.user = await this.getUser();
     const result: encryptedСhapter = await fetchApi(
-      this.apiUrl + `work/${workID}/chapter/${chapterID}/text`,
+      this.apiSite + `work/${workID}/chapter/${chapterID}/text`,
       {
         headers: {
           Authorization: 'Bearer ' + this.user?.token || 'guest',
@@ -183,7 +182,7 @@ class AuthorToday implements Plugin.PluginBase {
     let user = storage.get('user') || { userId: '', token: 'guest' };
     if (user && user.userId && user.token) {
       const currentUser: currentUser = await fetchApi(
-        this.apiUrl + 'account/current-user',
+        this.apiSite + 'account/current-user',
         {
           headers: {
             Authorization: 'Bearer ' + user.token || 'guest',

@@ -1,4 +1,4 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 import qs from 'qs';
@@ -7,8 +7,8 @@ class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
   name = 'Agitoon';
   icon = 'src/kr/agitoon/icon.png';
-  site = 'https://agit659.xyz';
-  version = '3.0.2';
+  site = 'https://agit660.xyz';
+  version = '3.0.3';
 
   async popularNovels(
     pageNo: number,

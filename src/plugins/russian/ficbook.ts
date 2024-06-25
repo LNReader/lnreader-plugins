@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
@@ -10,6 +10,7 @@ class ficbook implements Plugin.PluginBase {
   id = 'ficbook';
   name = 'ficbook';
   site = 'https://ficbook.net';
+  imageSite = 'https://images.ficbook.net/fanfic-covers/';
   version = '1.0.1';
   icon = 'src/ru/ficbook/icon.png';
 
@@ -162,9 +163,7 @@ class ficbook implements Plugin.PluginBase {
     data?.data?.forEach(novel => {
       const name = novel.title.trim();
       const path = '/readfic/' + novel.slug;
-      const cover = novel.cover
-        ? 'https://images.ficbook.net/fanfic-covers/' + novel.cover
-        : defaultCover;
+      const cover = novel.cover ? this.imageSite + novel.cover : defaultCover;
 
       novels.push({ name, cover, path });
     });

@@ -1,4 +1,4 @@
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
@@ -6,6 +6,7 @@ class SkyNovels implements Plugin.PluginBase {
   id = 'skynovels';
   name = 'SkyNovels';
   site = 'https://www.skynovels.net/';
+  apiSite = 'https://api.skynovels.net/api/';
   version = '1.0.0';
   icon = 'src/es/skynovels/icon.png';
 
@@ -13,7 +14,7 @@ class SkyNovels implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    const url = 'https://api.skynovels.net/api/novels?&q';
+    const url = this.apiSite + 'novels?&q';
 
     const result = await fetchApi(url);
     const body = (await result.json()) as response;
@@ -21,24 +22,18 @@ class SkyNovels implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     body.novels?.forEach(res => {
-      const novelName = res.nvl_title;
-      const novelCover =
-        'https://api.skynovels.net/api/get-image/' +
-        res.image +
-        '/novels/false';
+      const name = res.nvl_title;
+      const cover = this.apiSite + 'get-image/' + res.image + '/novels/false';
       const path = 'novelas/' + res.id + '/' + res.nvl_name + '/';
 
-      const novel = { name: novelName, path, cover: novelCover };
-
-      novels.push(novel);
+      novels.push({ name, cover, path });
     });
 
     return novels;
   }
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novelId = novelPath.split('/')[1];
-    const url =
-      'https://api.skynovels.net/api/novel/' + novelId + '/reading?&q';
+    const url = this.apiSite + 'novel/' + novelId + '/reading?&q';
 
     const result = await fetchApi(url);
     const body = (await result.json()) as responseBook;
@@ -50,10 +45,7 @@ class SkyNovels implements Plugin.PluginBase {
       name: item?.nvl_title || 'Untitled',
     };
 
-    novel.cover =
-      'https://api.skynovels.net/api/get-image/' +
-      item?.image +
-      '/novels/false';
+    novel.cover = this.apiSite + 'get-image/' + item?.image + '/novels/false';
 
     let genres: string[] = [];
     item?.genres?.forEach(genre => genres.push(genre.genre_name));
@@ -70,13 +62,11 @@ class SkyNovels implements Plugin.PluginBase {
         const releaseDate = new Date(chapter.createdAt).toDateString();
         const chapterPath = novelPath + chapter.id + '/' + chapter.chp_name;
 
-        const chap = {
+        novelChapters.push({
           name: chapterName,
           releaseTime: releaseDate,
           path: chapterPath,
-        };
-
-        novelChapters.push(chap);
+        });
       });
     });
 
@@ -86,7 +76,7 @@ class SkyNovels implements Plugin.PluginBase {
   }
   async parseChapter(chapterPath: string): Promise<string> {
     let chapterId: string = chapterPath.split('/')[3];
-    const url = `https://api.skynovels.net/api/novel-chapter/${chapterId}`;
+    const url = `${this.apiSite}novel-chapter/${chapterId}`;
 
     const result = await fetchApi(url);
     const body = (await result.json()) as responseChapter;
@@ -97,12 +87,13 @@ class SkyNovels implements Plugin.PluginBase {
 
     return chapterText;
   }
+
   async searchNovels(
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
-    const url = 'https://api.skynovels.net/api/novels?&q';
+    const url = this.apiSite + 'novels?&q';
 
     const result = await fetchApi(url);
     const body = (await result.json()) as response;
@@ -114,16 +105,11 @@ class SkyNovels implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     results?.forEach(res => {
-      const novelName = res.nvl_title;
-      const novelCover =
-        'https://api.skynovels.net/api/get-image/' +
-        res.image +
-        '/novels/false';
+      const name = res.nvl_title;
+      const cover = this.apiSite + 'get-image/' + res.image + '/novels/false';
       const path = 'novelas/' + res.id + '/' + res.nvl_name + '/';
 
-      const novel = { name: novelName, path, cover: novelCover };
-
-      novels.push(novel);
+      novels.push({ name, cover, path });
     });
 
     return novels;

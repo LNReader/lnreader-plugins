@@ -1,5 +1,5 @@
 import { Plugin } from '@typings/plugin';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { load as parseHTML } from 'cheerio';
 
@@ -25,7 +25,7 @@ class WTRLAB implements Plugin.PluginBase {
     link += `&page=${page}`; //TODO Genre & Advance Searching Filter. Ez to implement, too much manual work, too lazy.
 
     if (showLatestNovels) {
-      const response = await fetch('https://wtr-lab.com/api/home/recent', {
+      const response = await fetchApi(this.site + 'api/home/recent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ class WTRLAB implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const response = await fetch(this.site + 'api/search', {
+    const response = await fetchApi(this.site + 'api/search', {
       headers: {
         'Content-Type': 'application/json',
         Referer: this.site + this.sourceLang,

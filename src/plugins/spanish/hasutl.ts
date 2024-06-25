@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 
@@ -16,7 +16,7 @@ class HasulTL implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site + 'light-novels-activas/';
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -46,7 +46,7 @@ class HasulTL implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -89,7 +89,7 @@ class HasulTL implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + chapterPath;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
@@ -104,7 +104,7 @@ class HasulTL implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${searchTerm}&post_type=wp-manga`;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
