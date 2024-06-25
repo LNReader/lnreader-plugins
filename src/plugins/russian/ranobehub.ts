@@ -133,7 +133,7 @@ class RNBH implements Plugin.PluginBase {
       .substring(indexA, indexB)
       .replace(
         /<img data-media-id="(.*?)".*?>/g,
-        `<img src="${this.site}/api/media/$1"/>`,
+        `<img src="${this.site}/api/media/$1">`,
       );
 
     return chapterText;
