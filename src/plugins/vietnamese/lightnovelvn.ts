@@ -75,7 +75,7 @@ class LightNovelVN implements Plugin.PagePlugin {
     const url = this.site + novelPath;
     const body = await fetchApi(url).then(r => r.text());
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
@@ -138,7 +138,7 @@ class LightNovelVN implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('div.chapter-content').html() || '';
+    const chapterText = loadedCheerio('div.chapter-content').html() || '';
 
     return chapterText;
   }
@@ -148,7 +148,7 @@ class LightNovelVN implements Plugin.PagePlugin {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
     const url = `${this.site}/api/book-search`;
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('keyword', searchTerm);
 
     const result: SearchedResult = await fetchApi(url, {

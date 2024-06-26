@@ -11,8 +11,8 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   version = '1.0.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
-    const body = await fetchApi(postUrl + 'browse').then(r => r.text());
+    const novels: Plugin.NovelItem[] = [];
+    const body = await fetchApi(this.site + 'browse').then(r => r.text());
     const loadedCheerio = parseHTML(body);
 
     const postValue = loadedCheerio('div[ax-load][x-data]')
@@ -27,7 +27,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     data.append('post', postValue);
     data.append('action', 'fetch_browse');
 
-    const response: any = await fetchApi(url + 'ajax', {
+    const response: any = await fetchApi(this.site + 'ajax', {
       body: data,
       method: 'POST',
     }).then(res => res.json());
@@ -44,7 +44,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    var site = this.site;
+    const site = this.site;
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: '',
@@ -64,7 +64,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
       novel.cover = defaultCover;
     }
 
-    let genres: string[] = [];
+    const genres: string[] = [];
     loadedCheerio(
       'section[x-data="{ tab: location.hash.substr(1) || \'chapters\' }"].relative > div > div > div.flex.flex-wrap > a',
     ).each(function () {
@@ -77,7 +77,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
       .trim()
       .replace(/(\r\n|\n|\r)/gm, '');
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio(
       'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
@@ -117,7 +117,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     const body = await fetchApi(this.site + 'browse').then(r => r.text());
     const loadedCheerio = parseHTML(body);

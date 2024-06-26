@@ -29,7 +29,7 @@ class Linovelib implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.module-rank-booklist .book-layout').each((i, el) => {
-      let url = loadedCheerio(el).attr('href');
+      const url = loadedCheerio(el).attr('href');
 
       const novelName = loadedCheerio(el).find('.book-title').text();
       const novelCover = loadedCheerio(el)
@@ -55,7 +55,7 @@ class Linovelib implements Plugin.PluginBase {
     const body = await fetchText(url);
     if (body === '') throw Error('无法获取小说内容，请检查网络');
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -83,7 +83,7 @@ class Linovelib implements Plugin.PluginBase {
       .join(',');
 
     // Table of Content is on a different page than the summary page
-    let chapter: Plugin.ChapterItem[] = [];
+    const chapter: Plugin.ChapterItem[] = [];
 
     const idPattern = /\/(\d+)\.html/;
     const novelId = url.match(idPattern)?.[1];
@@ -421,7 +421,7 @@ class Linovelib implements Plugin.PluginBase {
     };
 
     let url = this.site + chapterPath;
-    let baseUrl = url;
+    const baseUrl = url;
     do {
       const page = await loadPage(url);
       hasNextPage = page.pageHasNextPage;
@@ -502,7 +502,7 @@ class Linovelib implements Plugin.PluginBase {
     // await addPage(pageCheerio, redirect);
 
     pageCheerio('.book-ol .book-layout').each((i, el) => {
-      let nUrl = pageCheerio(el).attr('href');
+      const nUrl = pageCheerio(el).attr('href');
 
       const novelName = pageCheerio(el).find('.book-title').text();
       const novelCover = pageCheerio(el)

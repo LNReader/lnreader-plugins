@@ -18,16 +18,16 @@ class ReinoWuxia implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'p/todas-las-novelas.html';
+    const url = this.site + 'p/todas-las-novelas.html';
 
     const result = await fetchApi(url, {
       method: 'GET',
     });
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.post-body.entry-content')
       .find('a')
@@ -40,7 +40,7 @@ class ReinoWuxia implements Plugin.PluginBase {
         novelName = this.getNovelName(novelName);
         const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-        let novelUrl = loadedCheerio(ele).attr('href');
+        const novelUrl = loadedCheerio(ele).attr('href');
 
         if (!novelName || !novelUrl) return;
 
@@ -61,9 +61,9 @@ class ReinoWuxia implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.post-title').text().trim(),
     };
@@ -74,7 +74,7 @@ class ReinoWuxia implements Plugin.PluginBase {
 
     loadedCheerio('div > b').each(function () {
       const detailName = loadedCheerio(this).text();
-      let detail = loadedCheerio(this)[0].nextSibling;
+      const detail = loadedCheerio(this)[0].nextSibling;
 
       if (detailName && detail) {
         const text = loadedCheerio(detail).text();
@@ -92,7 +92,7 @@ class ReinoWuxia implements Plugin.PluginBase {
       }
     });
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('div').each((idx, rootEle) => {
       const detailName = loadedCheerio(rootEle).text();
@@ -150,9 +150,9 @@ class ReinoWuxia implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('.post-body.entry-content').html() || '';
+    const chapterText = loadedCheerio('.post-body.entry-content').html() || '';
 
     return chapterText;
   }
@@ -165,9 +165,9 @@ class ReinoWuxia implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.date-outer').each((idx, ele) => {
       let novelName = loadedCheerio(ele)

@@ -48,7 +48,7 @@ class NovelsOnline implements Plugin.PluginBase {
     const result = await fetchApi(this.site + novelPath).then(res =>
       res.text(),
     );
-    let $ = parseHTML(result);
+    const $ = parseHTML(result);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -58,8 +58,8 @@ class NovelsOnline implements Plugin.PluginBase {
     };
 
     $('.novel-detail-item').each((i, el) => {
-      let detailName = $(el).find('h6').text();
-      let detail = $(el).find('.novel-detail-body');
+      const detailName = $(el).find('h6').text();
+      const detail = $(el).find('.novel-detail-body');
 
       switch (detailName) {
         case 'Description':

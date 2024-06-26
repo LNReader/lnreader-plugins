@@ -119,8 +119,8 @@ class novelOvh implements Plugin.PluginBase {
 
   jsonToHtml = (
     json: ContentEntity[],
-    image: { [key: string]: string },
-    html: string = '',
+    image: Record<string, string>,
+    html = '',
   ) => {
     json.forEach(element => {
       switch (element.type) {

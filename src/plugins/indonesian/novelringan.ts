@@ -80,8 +80,8 @@ class NovelRingan implements Plugin.PluginBase {
       loadedCheerio('img.ts-post-image').attr('data-sxrx');
 
     loadedCheerio('.maininfo li').each(function () {
-      let detailName = loadedCheerio(this).find('b').text().trim();
-      let detail = loadedCheerio(this).find('b').remove().end().text().trim();
+      const detailName = loadedCheerio(this).find('b').text().trim();
+      const detail = loadedCheerio(this).find('b').remove().end().text().trim();
 
       switch (detailName) {
         case 'Status:':

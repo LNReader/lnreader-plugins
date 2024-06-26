@@ -80,7 +80,7 @@ class TruyenConect implements Plugin.PagePlugin {
       if (chapterId) {
         url = url.replace(chapterId + '-', '') + '-' + chapterId;
       }
-      let num = url.match(/chuong-(\d+)/)?.[1];
+      const num = url.match(/chuong-(\d+)/)?.[1];
       chapters.push({
         path: url.replace(this.site, ''),
         name: loadedCheerio(ele).text().trim(),
@@ -122,7 +122,7 @@ class TruyenConect implements Plugin.PagePlugin {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       name: loadedCheerio('.post-title > h1').text().trim(),
@@ -189,7 +189,7 @@ class TruyenConect implements Plugin.PagePlugin {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
     const body = await result.text();
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     const firstChapLink = loadedCheerio('#init-links > a').first().attr('href');
     if (!firstChapLink) throw new Error('Không tìm thấy truyện');
     await this.sleep(1000);
@@ -215,7 +215,7 @@ class TruyenConect implements Plugin.PagePlugin {
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-    let chapterText = loadedCheerio('.reading-content').html() || '';
+    const chapterText = loadedCheerio('.reading-content').html() || '';
 
     return chapterText;
   }

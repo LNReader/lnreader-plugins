@@ -97,7 +97,7 @@ class RNRF implements Plugin.PluginBase {
 
     const jsonRaw = body.match(regex);
     if (jsonRaw instanceof Array && jsonRaw[1]) {
-      let chapter: string =
+      const chapter: string =
         JSON.parse(jsonRaw[1])?.props?.pageProps?.chapter?.content?.text || '';
 
       if (chapter.includes('<img')) {

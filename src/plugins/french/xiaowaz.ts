@@ -35,9 +35,9 @@ class XiaowazPlugin implements Plugin.PluginBase {
   }
 
   async getAllNovels(): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let $ = await this.getCheerio(this.site);
+    const $ = await this.getCheerio(this.site);
 
     const categories: Cheerio<Element>[] = [
       $('li.page_item').find('a:contains("Séries")').parent(),
@@ -99,7 +99,7 @@ class XiaowazPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name = $('.card_title').text().trim();
     novel.cover =
@@ -164,12 +164,12 @@ class XiaowazPlugin implements Plugin.PluginBase {
 
     //Search for chapter links within ul/li tags; otherwise, within p/a tags,
     //but not both at the same time because otherwise, on the TDG page, it redirects to a PDF download link.
-    var pathChapter = $('.entry-content ul li a');
+    let pathChapter = $('.entry-content ul li a');
     if (pathChapter.length === 0) {
       pathChapter = $('.entry-content p a');
     }
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     pathChapter.each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).attr('href');
@@ -272,11 +272,11 @@ class XiaowazPlugin implements Plugin.PluginBase {
     if (pageNo !== 1) return [];
 
     if (!XiaowazPlugin.novels) XiaowazPlugin.novels = await this.getAllNovels();
-    let popularNovels = XiaowazPlugin.novels;
+    const popularNovels = XiaowazPlugin.novels;
 
     // Normalize the text to remove accents and other special characters
     // This ensures that the search term and novel names are compared accurately
-    let novels = popularNovels.filter(novel =>
+    const novels = popularNovels.filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

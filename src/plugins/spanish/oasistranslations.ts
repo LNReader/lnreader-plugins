@@ -13,14 +13,14 @@ class Oasis implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site;
+    const url = this.site;
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.menu-item-1819')
       .find('.sub-menu > li')
@@ -29,7 +29,7 @@ class Oasis implements Plugin.PluginBase {
         if (!novelName.match(/Activas|Finalizadas|Dropeadas/)) {
           const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-          let novelUrl = loadedCheerio(ele).find('a').attr('href');
+          const novelUrl = loadedCheerio(ele).find('a').attr('href');
 
           if (!novelUrl) return;
 
@@ -51,9 +51,9 @@ class Oasis implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.entry-title')
         .text()
@@ -80,13 +80,13 @@ class Oasis implements Plugin.PluginBase {
     // let novelSummary = $(this).next().html();
     novel.summary = '';
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     // if ($(".entry-content").find("li").length) {
     loadedCheerio('.entry-content')
       .find('a')
       .each((idx, ele) => {
-        let chapterUrl = loadedCheerio(ele).attr('href');
+        const chapterUrl = loadedCheerio(ele).attr('href');
 
         if (chapterUrl && chapterUrl.includes(this.site)) {
           const chapterName = loadedCheerio(ele).text();
@@ -112,11 +112,11 @@ class Oasis implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div#jp-post-flair').remove();
 
-    let chapterText = loadedCheerio('.entry-content').html() || '';
+    const chapterText = loadedCheerio('.entry-content').html() || '';
 
     return chapterText;
   }
@@ -126,12 +126,12 @@ class Oasis implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
 
-    let url = this.site;
+    const url = this.site;
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     let novels: Plugin.NovelItem[] = [];
     loadedCheerio('.menu-item-1819')
@@ -141,7 +141,7 @@ class Oasis implements Plugin.PluginBase {
         if (!novelName.match(/Activas|Finalizadas|Dropeadas/)) {
           const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-          let novelUrl = loadedCheerio(ele).find('a').attr('href');
+          const novelUrl = loadedCheerio(ele).find('a').attr('href');
 
           if (!novelUrl) return;
 

@@ -6,7 +6,7 @@ import { NovelStatus } from '@libs/novelStatus';
 import { storage, localStorage } from '@libs/storage';
 import dayjs from 'dayjs';
 
-const statusKey: { [key: number]: string } = {
+const statusKey: Record<number, string> = {
   1: NovelStatus.Ongoing,
   2: NovelStatus.Completed,
   3: NovelStatus.OnHiatus,
@@ -126,7 +126,7 @@ class RLIB implements Plugin.PluginBase {
       novel.genres = genres.join(', ');
     }
 
-    const branch_id: { [key: number]: string } = {};
+    const branch_id: Record<number, string> = {};
     if (data.teams.length) {
       data.teams.forEach(
         ({ name, details }) => (branch_id[details?.branch_id || '0'] = name),
@@ -477,7 +477,7 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
-function jsonToHtml(json: HTML[], html: string = '') {
+function jsonToHtml(json: HTML[], html = '') {
   json.forEach(element => {
     switch (element.type) {
       case 'hardBreak':

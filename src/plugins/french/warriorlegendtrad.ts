@@ -48,7 +48,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
       url = this.site + '/crea';
     }
 
-    let $ = await this.getCheerio(url);
+    const $ = await this.getCheerio(url);
     $('div div div article').each((i, elem) => {
       const novelName = $(elem).find('.entry-wrapper h2').first().text().trim();
       const novelUrl = $(elem).find('.entry-wrapper h2 a').attr('href');
@@ -73,7 +73,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name = $('.site-main article header h1').text().trim();
     novel.cover =
@@ -84,7 +84,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
     novel.summary = this.extractInfo(entryContentText, this.regexSummary);
     novel.status = this.getStatus(entryContentText);
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     $('div div article div')
       .find('h2 a, h3 a')
       .each((i, elem) => {
@@ -150,7 +150,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath);
-    var contenuHtml = '';
+    let contenuHtml = '';
     $('.entry-content')
       .contents()
       .each(function () {
@@ -171,12 +171,12 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

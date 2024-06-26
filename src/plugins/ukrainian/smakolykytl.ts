@@ -15,7 +15,7 @@ class Smakolykytl implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const url = showLatestNovels ? apiSite + '/updates' : apiSite + '/projects';
+    const url = showLatestNovels ? this.apiSite + '/updates' : this.apiSite + '/projects';
 
     const result = await fetchApi(url);
     const json = (await result.json()) as response;
@@ -34,7 +34,7 @@ class Smakolykytl implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const id = novelPath.split('/').pop();
-    const result = await fetchApi(apiSite + '/projects/' + id);
+    const result = await fetchApi(this.apiSite + '/projects/' + id);
     const book = (await result.json()) as response;
 
     const novel: Plugin.SourceNovel = {
@@ -57,7 +57,7 @@ class Smakolykytl implements Plugin.PluginBase {
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    const res = await fetchApi(apiSite + '/projects/' + id + '/books');
+    const res = await fetchApi(this.apiSite + '/projects/' + id + '/books');
     const data = (await res.json()) as response;
     data?.books?.forEach(volume =>
       volume?.chapters?.forEach(chapter =>
@@ -76,7 +76,7 @@ class Smakolykytl implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const id = chapterPath.split('/').pop();
-    const result = await fetchApi(apiSite + '/chapters/' + id);
+    const result = await fetchApi(this.apiSite + '/chapters/' + id);
     const json = (await result.json()) as response;
     const chapterRaw: HTML[] = JSON.parse(json?.chapter?.content || '[]');
 
@@ -85,7 +85,7 @@ class Smakolykytl implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(apiSite + '/projects');
+    const result = await fetchApi(this.apiSite + '/projects');
     const json = (await result.json()) as response;
     const searchTitle = searchTerm.toLowerCase();
     const novels: Plugin.NovelItem[] = [];
@@ -108,7 +108,7 @@ class Smakolykytl implements Plugin.PluginBase {
 
 export default new Smakolykytl();
 
-function jsonToHtml(json: HTML[], html: string = '') {
+function jsonToHtml(json: HTML[], html = '') {
   json.forEach(element => {
     switch (element.type) {
       case 'hardBreak':

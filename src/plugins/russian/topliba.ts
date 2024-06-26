@@ -12,7 +12,7 @@ class TopLiba implements Plugin.PluginBase {
   site = 'https://topliba.com';
   version = '1.0.0';
   icon = 'src/ru/topliba/icon.png';
-  _token: string = ''; //I think it's permanent?
+  _token = ''; //I think it's permanent?
   //PgRebp4cULzQKfJBjsEPeECcDQyrVfP5DvcxIxRo
 
   async fetchNovels(

@@ -66,7 +66,7 @@ class TruyenFull implements Plugin.PagePlugin {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     let lastPage = 1;
     loadedCheerio('ul.pagination.pagination-sm > li > a').each(function () {
       const page = Number(this.attribs['href'].match(/\/trang-(\d+)\//)?.[1]);
@@ -124,7 +124,7 @@ class TruyenFull implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText =
+    const chapterText =
       (loadedCheerio('.chapter-title').html() || '') +
       (loadedCheerio('#chapter-c').html() || '');
 

@@ -129,7 +129,7 @@ class freedlit implements Plugin.PluginBase {
   }
 
   parseDate = (dateString: string | undefined = '') => {
-    const months: { [key: string]: number } = {
+    const months: Record<string, number> = {
       января: 1,
       февраля: 2,
       марта: 3,

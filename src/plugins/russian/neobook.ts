@@ -4,7 +4,7 @@ import { defaultCover } from '@libs/defaultCover';
 import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 
-const statusKey: { [key: string]: string } = {
+const statusKey: Record<string, string> = {
   '0': NovelStatus.Unknown,
   '1': NovelStatus.Ongoing,
   '2': NovelStatus.Completed,

@@ -34,8 +34,8 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url + '/projets/');
+    const url = this.site;
+    const $ = await this.getCheerio(url + '/projets/');
     $('#content .entry-content [href]')
       // We don't collect items for Facebook and Twitter.
       .not('[rel="nofollow noopener noreferrer"]')
@@ -60,14 +60,14 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
     novel.name = $('#content h1.entry-title').text().trim();
     novel.cover =
       $('#content .entry-content p img').first().attr('src') || defaultCover;
     novel.summary = this.getSummary($('#content .entry-content').text());
     novel.author = this.getAuthor($('#content .entry-content').text());
     novel.status = NovelStatus.Ongoing;
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     $('#content .entry-content p a').each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).attr('href');
@@ -88,14 +88,13 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
   }
 
   getSummary(text: string) {
-    let resume: string = '';
-    const regexResume1: RegExp = /Synopsis :([\s\S]*)Traduction anglaise/i;
-    const regexResume2: RegExp = /Synopsis :([\s\S]*)Raw :/i;
-    const regexResume3: RegExp =
-      /Synopsis 1 :([\s\S]*)Synopsis 2 :([\s\S]*)Raw :/i;
-    const regexResume4: RegExp = /Synopsis :([\s\S]*)Prélude/i;
-    const regexResume5: RegExp = /Synospis :([\s\S]*)Original /i;
-    const regexResume6: RegExp = /([\s\S]*)Raw :/i;
+    let resume = '';
+    const regexResume1 = /Synopsis :([\s\S]*)Traduction anglaise/i;
+    const regexResume2 = /Synopsis :([\s\S]*)Raw :/i;
+    const regexResume3 = /Synopsis 1 :([\s\S]*)Synopsis 2 :([\s\S]*)Raw :/i;
+    const regexResume4 = /Synopsis :([\s\S]*)Prélude/i;
+    const regexResume5 = /Synospis :([\s\S]*)Original /i;
+    const regexResume6 = /([\s\S]*)Raw :/i;
 
     const match1: RegExpExecArray | null = regexResume1.exec(text);
     const match2: RegExpExecArray | null = regexResume2.exec(text);
@@ -151,12 +150,12 @@ class HarkenEliwoodPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

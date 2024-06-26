@@ -44,7 +44,7 @@ class DDLPlugin implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let link = this.site + 'novels';
+    const link = this.site + 'novels';
 
     const body = await fetchApi(link).then(res => res.text());
 
@@ -56,7 +56,7 @@ class DDLPlugin implements Plugin.PluginBase {
     const result = await fetchApi(this.site + novelPath);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -120,7 +120,7 @@ class DDLPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'novels';
+    const url = this.site + 'novels';
 
     const result = await fetchApi(url);
     const body = await result.text();

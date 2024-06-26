@@ -84,7 +84,7 @@ class Jaomix implements Plugin.PluginBase {
     };
 
     loadedCheerio('#info-book > p').each(function () {
-      let text = loadedCheerio(this).text().replace(/,/g, '').split(' ');
+      const text = loadedCheerio(this).text().replace(/,/g, '').split(' ');
       if (text[0] === 'Автор:') {
         novel.author = text.splice(1).join(' ');
       } else if (text[0] === 'Жанры:') {
@@ -168,7 +168,7 @@ class Jaomix implements Plugin.PluginBase {
   }
 
   parseDate = (dateString: string | undefined = '') => {
-    const months: { [key: string]: number } = {
+    const months: Record<string, number> = {
       Янв: 1,
       Фев: 2,
       Мар: 3,

@@ -13,14 +13,14 @@ class EpikNovel implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'seri-listesi?Sayfa=' + pageNo;
+    const url = this.site + 'seri-listesi?Sayfa=' + pageNo;
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('div.col-lg-12.col-md-12').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('h3').text();
@@ -49,9 +49,9 @@ class EpikNovel implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1#tables').text().trim(),
     };
@@ -75,7 +75,7 @@ class EpikNovel implements Plugin.PluginBase {
       .replace(/Publisher:|\s/g, '')
       .trim();
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('table').find('tr').first().remove();
 
@@ -116,7 +116,7 @@ class EpikNovel implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     let chapterText = '';
 
@@ -137,9 +137,9 @@ class EpikNovel implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('div.col-lg-12.col-md-12').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('h3').text();

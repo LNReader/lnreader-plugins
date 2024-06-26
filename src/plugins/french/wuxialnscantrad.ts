@@ -34,8 +34,8 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url);
+    const url = this.site;
+    const $ = await this.getCheerio(url);
     $('#menu-item-2210 ul li').each((i, elem) => {
       const novelName = $(elem).first().text().trim();
       const novelUrl = $(elem).find('a').attr('href');
@@ -58,7 +58,7 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name = $('.entry-title').text().trim();
     novel.cover =
@@ -72,8 +72,8 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
     novel.summary = this.getSummary(entryContentText);
     novel.status = this.getStatus(entryContentText);
 
-    var pathChapter = $('.entry-content ul').first().children('li');
-    let chapters: Plugin.ChapterItem[] = [];
+    const pathChapter = $('.entry-content ul').first().children('li');
+    const chapters: Plugin.ChapterItem[] = [];
     pathChapter.each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).find('a').attr('href');
@@ -164,7 +164,7 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath);
 
-    var contenuHtml = '';
+    let contenuHtml = '';
     $('.entry-content')
       .contents()
       .each(function () {
@@ -189,12 +189,12 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

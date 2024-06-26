@@ -52,7 +52,7 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
     const body = await fetchApi(novelUrl).then(result => result.text());
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,

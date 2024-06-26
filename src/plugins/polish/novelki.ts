@@ -100,11 +100,11 @@ class NovelkiPL implements Plugin.PluginBase {
 
     //TODO: Dodać tłumacza danej serii :D
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
-    let chaptersList = loadedCheerio('.chapters > .col-md-3 > div').get();
+    const chaptersList = loadedCheerio('.chapters > .col-md-3 > div').get();
     chaptersList.forEach((e, i) => {
-      let urlChapters = loadedCheerio(e).find('a').attr('href') || '';
+      const urlChapters = loadedCheerio(e).find('a').attr('href') || '';
 
       const chapter: Plugin.ChapterItem = {
         name: loadedCheerio(e).find('a')?.text().trim(),
@@ -125,8 +125,8 @@ class NovelkiPL implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    var pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
-    let codeChapter = pattern.exec(chapterPath) || '';
+    const pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
+    const codeChapter = pattern.exec(chapterPath) || '';
     const body = await fetchApi(
       `${this.site}/api/reader/chapters/${codeChapter[2]}`,
     ).then(res => {
@@ -151,7 +151,7 @@ class NovelkiPL implements Plugin.PluginBase {
     });
     const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = loadedCheerio('#projects > div')
+    const novels: Plugin.NovelItem[] = loadedCheerio('#projects > div')
       .map((index, element) => ({
         name: loadedCheerio(element)
           .find('.card-title')

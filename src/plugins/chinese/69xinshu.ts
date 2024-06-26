@@ -66,7 +66,7 @@ class XinShu69 implements Plugin.PluginBase {
     const body = await fetchText(url, {}, 'gbk');
     if (body === '') throw Error('无法获取小说内容，请检查网络');
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -97,7 +97,7 @@ class XinShu69 implements Plugin.PluginBase {
     }
 
     // Table of Content is on a different page than the summary page
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     const chaptersUrl = loadedCheerio('a.more-btn').attr('href');
     if (chaptersUrl) {
@@ -160,7 +160,7 @@ class XinShu69 implements Plugin.PluginBase {
     );
     if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
 

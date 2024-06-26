@@ -97,7 +97,7 @@ export namespace Plugin {
 
 export namespace HTMLParser2Util {
   interface HandlerBase {
-    onopentag?(name: string, attribs: { [s: string]: string }): void;
+    onopentag?(name: string, attribs: Record<string, string>): void;
     ontext?(data: string): void;
     onclosetag?(name: string, isImplied: boolean): void;
   }

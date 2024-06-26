@@ -74,7 +74,7 @@ class TruyenFull implements Plugin.PagePlugin {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     let lastPage = 1;
     const regex = new RegExp(`${novelPath}\\?page=\\d+`, 'g');
     body.match(regex)?.forEach(v => {
@@ -133,7 +133,7 @@ class TruyenFull implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText =
+    const chapterText =
       (loadedCheerio('.chapter-title').html() || '') +
       (loadedCheerio('#chapter-c').html() || '');
 

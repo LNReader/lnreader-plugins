@@ -1,6 +1,6 @@
 import { parse as parseProto } from 'protobufjs';
 
-type FetchInit = {
+interface FetchInit {
   headers?: Record<string, string | undefined> | Headers;
   method?: string;
   body?: FormData | string;
@@ -10,10 +10,10 @@ type FetchInit = {
     | undefined
     | FormData
     | Headers;
-};
+}
 
 const makeInit = async (init?: FetchInit) => {
-  let defaultHeaders: Record<string, string> = {
+  const defaultHeaders: Record<string, string> = {
     'Connection': 'keep-alive',
     'Accept': '*/*',
     'Accept-Language': '*',

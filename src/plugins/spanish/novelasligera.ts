@@ -15,14 +15,14 @@ class Ligera implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site;
+    const url = this.site;
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.elementor-column').each((idx, ele) => {
       const novelName = loadedCheerio(ele)
@@ -33,7 +33,7 @@ class Ligera implements Plugin.PluginBase {
           .find('a > img')
           .attr('data-lazy-src');
 
-        let novelUrl = loadedCheerio(ele).find('a').attr('href');
+        const novelUrl = loadedCheerio(ele).find('a').attr('href');
         if (!novelUrl) return;
         const novel = {
           name: novelName,
@@ -55,9 +55,9 @@ class Ligera implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1').text(),
     };
@@ -92,7 +92,7 @@ class Ligera implements Plugin.PluginBase {
       '.elementor-text-editor.elementor-clearfix',
     ).text();
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.elementor-accordion-item').remove();
 
@@ -123,14 +123,14 @@ class Ligera implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     loadedCheerio('.osny-nightmode.osny-nightmode--left').remove();
     loadedCheerio('.code-block.code-block-1').remove();
     loadedCheerio('.adsb30').remove();
     loadedCheerio('.saboxplugin-wrap').remove();
     loadedCheerio('.wp-post-navigation').remove();
 
-    let chapterText = loadedCheerio('.entry-content').html() || '';
+    const chapterText = loadedCheerio('.entry-content').html() || '';
     return chapterText;
   }
   async searchNovels(
@@ -143,7 +143,7 @@ class Ligera implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     let novels: Plugin.NovelItem[] = [];
 

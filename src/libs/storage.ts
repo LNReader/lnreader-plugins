@@ -84,9 +84,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
 /**
  * Represents the structure of a storage object with string keys and values.
  */
-interface StorageObject {
-  [key: string]: any;
-}
+type StorageObject = Record<string, any>;
 
 /**
  * Represents a simplified version of the browser's localStorage.

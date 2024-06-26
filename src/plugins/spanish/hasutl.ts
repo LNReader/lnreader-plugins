@@ -14,20 +14,20 @@ class HasulTL implements Plugin.PluginBase {
     pageNo: number,
     options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'light-novels-activas/';
+    const url = this.site + 'light-novels-activas/';
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('div.wp-block-columns').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('.wp-block-button').text();
       const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-      let novelUrl = loadedCheerio(ele)
+      const novelUrl = loadedCheerio(ele)
         .find('.wp-block-button > a')
         .attr('href');
 
@@ -49,18 +49,18 @@ class HasulTL implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.post-header').text(),
     };
     novel.cover = loadedCheerio('.featured-media > img').attr('src');
 
-    let novelSummary = loadedCheerio('.post-content').find('p').html()!;
+    const novelSummary = loadedCheerio('.post-content').find('p').html()!;
     novel.summary = novelSummary;
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.wp-block-media-text__content')
       .find('a')
@@ -69,7 +69,7 @@ class HasulTL implements Plugin.PluginBase {
 
         const releaseDate = null;
 
-        let chapterUrl = loadedCheerio(ele).attr('href');
+        const chapterUrl = loadedCheerio(ele).attr('href');
 
         if (!chapterUrl) return;
 
@@ -92,9 +92,9 @@ class HasulTL implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('.post-content').html() || '';
+    const chapterText = loadedCheerio('.post-content').html() || '';
 
     return chapterText;
   }
@@ -107,9 +107,9 @@ class HasulTL implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.post-container').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('.post-header').text();
@@ -120,7 +120,7 @@ class HasulTL implements Plugin.PluginBase {
       ) {
         const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-        let novelUrl = loadedCheerio(ele).find('a').attr('href');
+        const novelUrl = loadedCheerio(ele).find('a').attr('href');
 
         if (!novelUrl) return;
 

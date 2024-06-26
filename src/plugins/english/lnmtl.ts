@@ -87,7 +87,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     let isStatusKey = false;
     let isList = 0;
     let isGenres = false;
-    let genreArray: string[] = [];
+    const genreArray: string[] = [];
     const parser = new Parser({
       onopentag(name, attribs) {
         if (name === 'img' && attribs['class']?.includes('img-rounded')) {

@@ -14,6 +14,7 @@
         "clearMultisrc": "find . -type f -wholename \"*plugins*\\[*\\]*.[t,j]s\" -delete",
         "host-linux": "chmod +x ./host.sh && ./host.sh",
         "host-windows": "powershell ./host.ps1",
+        "eslint": "npx eslint .",
         "prettier": "prettier --write \"./**/*.{js,ts}\"",
         "prepare": "husky install",
         "icons": "node ./scripts/icon_reloading.js"
@@ -41,19 +42,25 @@
         "urlencode": "^2.0.0"
     },
     "devDependencies": {
+        "@eslint/js": "^9.5.0",
+        "@types/eslint__js": "^8.42.3",
         "@types/qs": "^6.9.15",
         "@types/react": "^18.2.66",
         "@types/react-dom": "^18.2.22",
         "@types/react-window": "^1.8.8",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "concurrently": "^8.2.2",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
         "http-proxy": "^1.18.1",
         "husky": "^9.0.11",
         "image-size": "^1.1.1",
         "lint-staged": "^15.2.2",
-        "prettier": "3.2.5",
+        "prettier": "^3.2.5",
         "terser": "^5.31.1",
         "ts-node": "^10.9.2",
+        "typescript": "^5.5.2",
+        "typescript-eslint": "^7.14.1",
         "vite": "^5.2.0"
     },
     "lint-staged": {

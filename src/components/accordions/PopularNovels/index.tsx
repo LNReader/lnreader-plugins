@@ -64,7 +64,7 @@ export default function PopularNovels() {
     setNovels([]);
 
     if (plugin?.filters) {
-      let filters = {};
+      const filters = {};
       for (const fKey in plugin.filters) {
         filters[fKey] = {
           type: plugin.filters[fKey].type,

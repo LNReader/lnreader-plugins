@@ -71,7 +71,7 @@ class Syosetu implements Plugin.PluginBase {
     return novels;
   }
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     const result = await fetchApi(this.novelPrefix + novelPath, {
       headers: this.headers,
     });
@@ -79,7 +79,7 @@ class Syosetu implements Plugin.PluginBase {
     const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
     // create novel object
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.novel_title').text(),
       author: loadedCheerio('.novel_writername').text().replace('作者：', ''),
@@ -161,7 +161,7 @@ class Syosetu implements Plugin.PluginBase {
       decodeEntities: false,
     });
 
-    let chapterText =
+    const chapterText =
       cheerioQuery('#novel_honbun') // get chapter text
         .html() || '';
     return chapterText;
@@ -181,7 +181,7 @@ class Syosetu implements Plugin.PluginBase {
       // Cheerio it!
       const cheerioQuery = loadCheerio(body, { decodeEntities: false });
 
-      let pageNovels: Plugin.NovelItem[] = [];
+      const pageNovels: Plugin.NovelItem[] = [];
       // find class=searchkekka_box
       cheerioQuery('.searchkekka_box').each((i, e) => {
         // get div with link and name

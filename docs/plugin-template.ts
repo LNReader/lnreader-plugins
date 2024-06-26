@@ -49,7 +49,7 @@ class TemplatePlugin implements Plugin.PluginBase {
     // novel.status = NovelStatus.Completed;
     // novel.summary = '';
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     // TODO: here parse the chapter list
 
@@ -74,7 +74,7 @@ class TemplatePlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     // get novels using the search term
 

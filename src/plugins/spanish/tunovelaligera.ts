@@ -73,7 +73,7 @@ class TuNovelaLigera implements Plugin.PagePlugin {
     const result = await fetchApi(novelUrl);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     let lastPage = 1;
     loadedCheerio('ul.lcp_paginator > li > a').each(function () {
       const page = Number(this.attribs['title']);
@@ -88,7 +88,7 @@ class TuNovelaLigera implements Plugin.PagePlugin {
 
     loadedCheerio('.manga-title-badges').remove();
 
-    let novelCover = loadedCheerio('.summary_image > a > img');
+    const novelCover = loadedCheerio('.summary_image > a > img');
 
     novel.cover =
       novelCover.attr('data-src') ||

@@ -88,7 +88,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}/novels/page/${page}/`;
+    const link = `${this.site}/novels/page/${page}/`;
     const body = await fetchApi(link).then(r => r.text());
 
     return this.parseNovels(body);
@@ -107,7 +107,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
       chapters: [],
       totalPages: 1,
     };
-    let baseUrl = this.site;
+    const baseUrl = this.site;
     let isCover = false;
     let isAuthor = false;
     let isSummary = false;
@@ -115,7 +115,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
     let isStatusText = false;
     let isGenres = false;
     let isGenresText = false;
-    let genreArray: string[] = [];
+    const genreArray: string[] = [];
     let novelId = '';
     const parser = new Parser({
       onopentag(name, attribs) {
@@ -276,7 +276,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
     const parser = new Parser({
       onopentag(name, attribs) {
         if (isChapter && name === 'div') {
-          let stylediv = attribs['style'];
+          const stylediv = attribs['style'];
           if (stylediv) {
             chapterText += `<div style="${stylediv}">`;
             isStyleText = true;
@@ -285,7 +285,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
           }
         }
         if (isChapter && name === 'table') {
-          let w = attribs['width'];
+          const w = attribs['width'];
           if (w) {
             chapterText += `<table width="${w}">`;
           } else {
@@ -299,7 +299,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
           chapterText += `<tr>`;
         }
         if (isChapter && name === 'td') {
-          let w1 = attribs['width'];
+          const w1 = attribs['width'];
           if (w1) {
             chapterText += `<td width="${w1}">`;
           } else {
@@ -369,7 +369,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}/search/${searchTerm}/page/${page}`;
+    const link = `${this.site}/search/${searchTerm}/page/${page}`;
     const body = await fetchApi(link).then(r => r.text());
 
     return this.parseNovels(body);

@@ -41,7 +41,7 @@ class KissWoodPlugin implements Plugin.PluginBase {
     novel: Plugin.SourceNovel,
     url: string,
   ): Promise<Plugin.SourceNovel> {
-    let $ = await this.getCheerio(url);
+    const $ = await this.getCheerio(url);
 
     const textArray: string[] = $('.entry-content p')
       .map((_, element) => $(element).text().trim())
@@ -99,7 +99,7 @@ class KissWoodPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = [];
     const $ = await this.getCheerio(this.site);
-    var listUrlCover: string[] = [];
+    const listUrlCover: string[] = [];
     $('nav div div ul li ul li').each((i, elem) => {
       if ($(elem).text().trim() === 'Sommaire') {
         const novelName = $(elem)
@@ -137,7 +137,7 @@ class KissWoodPlugin implements Plugin.PluginBase {
       status: NovelStatus.Ongoing,
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
     let novelUrl = null;
 
     $('nav div div ul li ul li').each((i, elem) => {
@@ -160,7 +160,7 @@ class KissWoodPlugin implements Plugin.PluginBase {
       '.entry-content blockquote a',
     ].join(', ');
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     $(chapterSelectors).each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).attr('href')?.replace('http://', 'https://');
@@ -224,12 +224,12 @@ class KissWoodPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

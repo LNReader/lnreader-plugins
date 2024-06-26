@@ -73,8 +73,8 @@ class NovelBin implements Plugin.PluginBase {
     };
 
     loadedCheerio('ul.info > li > h3').each(function () {
-      let detailName = loadedCheerio(this).text();
-      let detail = loadedCheerio(this)
+      const detailName = loadedCheerio(this).text();
+      const detail = loadedCheerio(this)
         .siblings()
         .map((i, el) => loadedCheerio(el).text())
         .toArray()

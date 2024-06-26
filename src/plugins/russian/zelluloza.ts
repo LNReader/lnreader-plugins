@@ -358,7 +358,7 @@ class Zelluloza implements Plugin.PluginBase {
   } satisfies Filters;
 }
 
-const alphabet: { [key: string]: string } = {
+const alphabet: Record<string, string> = {
   '~': '0',
   'H': '1',
   '^': '2',

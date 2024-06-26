@@ -1,7 +1,6 @@
 import http from 'http';
 import httpProxy from 'http-proxy';
-import url from 'url';
-import fs from 'fs';
+import { url as URL } from 'url';
 
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});

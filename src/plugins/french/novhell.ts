@@ -33,8 +33,8 @@ class NovhellPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url);
+    const url = this.site;
+    const $ = await this.getCheerio(url);
     $('article div div div figure').each((i, elem) => {
       let novelName = $(elem)
         .find('figcaption span strong')
@@ -65,7 +65,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name =
       $('meta[property="og:title"]')
@@ -114,7 +114,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       .replace('Synopsis', '')
       .replace(':', '')
       .trim();
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     $('main div article div div section div div div div div p a').each(
       (i, elem) => {
@@ -190,12 +190,12 @@ class NovhellPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

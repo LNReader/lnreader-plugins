@@ -35,7 +35,7 @@ class Shu69 implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('div.book-coverlist').each((i, el) => {
-      let url = loadedCheerio(el).find('a.cover').attr('href');
+      const url = loadedCheerio(el).find('a.cover').attr('href');
 
       const novelName = loadedCheerio(el).find('h4.name').text().trim();
       const novelCover = loadedCheerio(el).find('a.cover > img').attr('src');
@@ -59,7 +59,7 @@ class Shu69 implements Plugin.PluginBase {
     const body = await fetchText(url);
     if (body === '') throw Error('无法获取小说内容，请检查网络');
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -84,7 +84,7 @@ class Shu69 implements Plugin.PluginBase {
     novel.genres = '';
 
     // Table of Content is on a different page than the summary page
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     const allUrl = loadedCheerio('dd.all > a').attr('href');
     if (allUrl) {
@@ -156,12 +156,12 @@ class Shu69 implements Plugin.PluginBase {
     });
     if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('div.book-coverlist').each((i, el) => {
-      let url = loadedCheerio(el).find('a.cover').attr('href');
+      const url = loadedCheerio(el).find('a.cover').attr('href');
 
       const novelName = loadedCheerio(el).find('h4.name').text().trim();
       const novelCover = loadedCheerio(el).find('a.cover > img').attr('src');

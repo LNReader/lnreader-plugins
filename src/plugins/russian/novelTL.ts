@@ -5,7 +5,7 @@ import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
-const statusKey: { [key: string]: string } = {
+const statusKey: Record<string, string> = {
   'active': NovelStatus.Ongoing,
   'completed': NovelStatus.Completed,
   'freezed': NovelStatus.OnHiatus,

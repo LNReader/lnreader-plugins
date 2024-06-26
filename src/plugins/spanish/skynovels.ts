@@ -40,21 +40,21 @@ class SkyNovels implements Plugin.PluginBase {
 
     const item = body?.novel?.[0];
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: item?.nvl_title || 'Untitled',
     };
 
     novel.cover = this.apiSite + 'get-image/' + item?.image + '/novels/false';
 
-    let genres: string[] = [];
+    const genres: string[] = [];
     item?.genres?.forEach(genre => genres.push(genre.genre_name));
     novel.genres = genres.join(',');
     novel.author = item?.nvl_writer;
     novel.summary = item?.nvl_content;
     novel.status = item?.nvl_status;
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     item?.volumes?.forEach(volume => {
       volume?.chapters?.forEach(chapter => {
@@ -75,7 +75,7 @@ class SkyNovels implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    let chapterId: string = chapterPath.split('/')[3];
+    const chapterId: string = chapterPath.split('/')[3];
     const url = `${this.apiSite}novel-chapter/${chapterId}`;
 
     const result = await fetchApi(url);
@@ -83,7 +83,7 @@ class SkyNovels implements Plugin.PluginBase {
 
     const item = body?.chapter?.[0];
 
-    let chapterText = item?.chp_content || '404';
+    const chapterText = item?.chp_content || '404';
 
     return chapterText;
   }
@@ -98,7 +98,7 @@ class SkyNovels implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = (await result.json()) as response;
 
-    let results = body?.novels?.filter(novel =>
+    const results = body?.novels?.filter(novel =>
       novel.nvl_title.toLowerCase().includes(searchTerm),
     );
 

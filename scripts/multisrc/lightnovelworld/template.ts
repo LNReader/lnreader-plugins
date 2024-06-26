@@ -148,7 +148,7 @@ class LightNovelWorld implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('#chapter-container').html() || '';
+    const chapterText = loadedCheerio('#chapter-container').html() || '';
 
     return chapterText;
   }
@@ -161,9 +161,9 @@ class LightNovelWorld implements Plugin.PagePlugin {
     const link = `${this.site}search`;
     const response = await fetchApi(link).then(r => r.text());
     const token = parseHTML(response);
-    let verifytoken = token('#novelSearchForm > input').attr('value');
+    const verifytoken = token('#novelSearchForm > input').attr('value');
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('inputContent', searchTerm);
 
     const results = await fetchApi(url, {
@@ -172,7 +172,7 @@ class LightNovelWorld implements Plugin.PagePlugin {
       body: formData,
     }).then(r => r.json());
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     const loadedCheerio = parseHTML(results.resultview);
 
