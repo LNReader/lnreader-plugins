@@ -83,7 +83,7 @@ const notAvailableImage = fs.readFileSync(
         const exist = fs.existsSync(icon);
 
         if (!exist) {
-          const dir = icon.match(/^.*[\\\/]/)[0];
+          const dir = icon.match(/^.*[\\/]/)[0];
           fs.mkdirSync(dir, { recursive: true });
         }
 

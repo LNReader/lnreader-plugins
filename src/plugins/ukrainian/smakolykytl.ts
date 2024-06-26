@@ -15,7 +15,9 @@ class Smakolykytl implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const url = showLatestNovels ? this.apiSite + '/updates' : this.apiSite + '/projects';
+    const url = showLatestNovels
+      ? this.apiSite + '/updates'
+      : this.apiSite + '/projects';
 
     const result = await fetchApi(url);
     const json = (await result.json()) as response;

@@ -80,6 +80,9 @@ class TemplatePlugin implements Plugin.PluginBase {
 
     return novels;
   }
+
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? '/books/' : '/chapter') + path;
 }
 
 export default new TemplatePlugin();

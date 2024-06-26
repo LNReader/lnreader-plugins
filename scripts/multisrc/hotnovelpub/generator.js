@@ -1,6 +1,5 @@
 import list from './sources.json' with { type: 'json' };
 import { readFileSync } from 'fs';
-import path from 'path';
 
 const FilterTypes = {
   TextInput: 'Text',

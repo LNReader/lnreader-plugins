@@ -48,7 +48,7 @@ class Neobook implements Plugin.PluginBase {
     formData.append('filter_timeread', filters?.timeread?.value || '0-999999');
 
     const { bundle_books }: { bundle_books: BundleBooks } = await fetchApi(
-      apiSite,
+      this.apiSite,
       {
         method: 'post',
         body: formData,

@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import path from 'path';
 
 import list from './sources.json' with { type: 'json' };
 

@@ -111,7 +111,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
 
     novel.name =
       (
-        $('div.entry-content > div > strong')[0].nextSibling as Text | null
+        $('div.entry-content > div > strong')[0].nextSibling as string | null
       )?.nodeValue?.trim() || 'Untitled';
 
     novel.cover = $('.su-row > div > div > img').attr('src') || defaultCover;
@@ -189,20 +189,16 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
             const dateHtml =
               cheerio.html()?.substring(cheerio.html()?.indexOf('</a>') || 0) ||
               '';
-            let releaseDate =
+            const releaseDate =
               dateHtml?.substring(
                 dateHtml.indexOf('(') + 1,
                 dateHtml.indexOf(')'),
               ) || undefined;
-            if (releaseDate)
-              try {
-                releaseDate = this.parseDate(releaseDate);
-              } catch (e) {}
             const chapterUrl = cheerio.find('a').attr('href');
             if (chapterUrl) {
               const chapter: Plugin.ChapterItem = {
                 name: newChapterName,
-                releaseTime: releaseDate,
+                releaseTime: this.parseDate(date),
                 path: chapterUrl.replace(site, ''),
                 chapterNumber: chapterIndex,
               };
@@ -232,13 +228,9 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
               });
             if (dates.length == hrefs.length)
               dates.forEach((date, index) => {
-                let releaseDate = date;
-                try {
-                  releaseDate = this.parseDate(date);
-                } catch (e) {}
                 const chapter: Plugin.ChapterItem = {
                   name: newChapterName + ' (' + (index + 1) + ')',
-                  releaseTime: releaseDate,
+                  releaseTime: this.parseDate(date),
                   path: hrefs[index].replace(site, ''),
                   chapterNumber: chapterIndex + (index + 1) / 1000,
                 };

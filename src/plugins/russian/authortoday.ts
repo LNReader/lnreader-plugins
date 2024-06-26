@@ -49,7 +49,7 @@ class AuthorToday implements Plugin.PluginBase {
     result?.searchResults?.forEach(novel =>
       novels.push({
         name: novel.title,
-        cover: novel.coverUrl ? imageSite + novel.coverUrl : defaultCover,
+        cover: novel.coverUrl ? this.imageSite + novel.coverUrl : defaultCover,
         path: novel.id.toString(),
       }),
     );

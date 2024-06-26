@@ -157,13 +157,20 @@ class TruyenConect implements Plugin.PagePlugin {
           novel.artist = loadedCheerio(detail).text().trim();
           break;
         case 'Trạng thái':
-          const status = detail.trim();
-          if (status === 'Full') novel.status = NovelStatus.Completed;
-          else if (status === 'Tạm ngưng') novel.status = NovelStatus.OnHiatus;
-          else if (status === 'Đang tiến hành')
-            novel.status = NovelStatus.Ongoing;
-          else novel.status = NovelStatus.Unknown;
-          break;
+          switch (detail.trim()) {
+            case 'Full':
+              novel.status = NovelStatus.Completed;
+              break;
+            case 'Tạm ngưng':
+              novel.status = NovelStatus.OnHiatus;
+              break;
+            case 'Đang tiến hành':
+              novel.status = NovelStatus.Ongoing;
+              break;
+            default:
+              novel.status = NovelStatus.Unknown;
+              break;
+          }
       }
     });
 

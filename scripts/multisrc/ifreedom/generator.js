@@ -1,7 +1,6 @@
 import list from './sources.json' with { type: 'json' };
 import defaultSettings from './settings.json' with { type: 'json' };
 import { readFileSync } from 'fs';
-import path from 'path';
 
 export const generateAll = function () {
   return list.map(metadata => {

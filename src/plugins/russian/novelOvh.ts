@@ -62,8 +62,10 @@ class novelOvh implements Plugin.PluginBase {
       switch (person.type) {
         case 'AUTHOR':
           novel.author = person.publisher.name;
+          break;
         case 'ARTIST':
           novel.artist = person.publisher.name;
+          break;
       }
     });
 

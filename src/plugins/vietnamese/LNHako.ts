@@ -342,6 +342,7 @@ class HakoPlugin implements Plugin.PluginBase {
             if (this.handlers.GetVolumes?.isDone) {
               this.action = ParseNovelAction.Unknown;
             }
+            break;
           default:
             break;
         }
