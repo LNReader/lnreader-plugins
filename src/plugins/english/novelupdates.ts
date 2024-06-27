@@ -6,15 +6,9 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.6.2';
+  version = '0.6.0';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
-
-  imageRequestInit: Plugin.ImageRequestInit = {
-    headers: {
-      Referer: `${this.site}`,
-    },
-  };
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -568,16 +562,6 @@ class NovelUpdates implements Plugin.PluginBase {
     const body = await result.text();
     const url = result.url;
     const domain = url.toLowerCase().split('/')[2].split('.');
-
-    const parts = url.split('/');
-    const protocol = parts[0].slice(0, -1);
-    const hostname = parts[2];
-
-    this.imageRequestInit = {
-      headers: {
-        Referer: `${protocol}//${hostname}`,
-      },
-    };
 
     const loadedCheerio = parseHTML(body);
 
