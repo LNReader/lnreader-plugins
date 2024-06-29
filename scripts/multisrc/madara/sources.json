@@ -134,12 +134,12 @@
   },
   {
     "id": "riwyat",
-    "sourceSite": "https://riwyat.org/",
+    "sourceSite": "https://riwyatspace.com/",
     "sourceName": "Riwyat",
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 2
+      "versionIncrements": 3
     }
   },
   {
