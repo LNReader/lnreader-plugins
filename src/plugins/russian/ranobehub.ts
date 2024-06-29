@@ -164,8 +164,7 @@ class RNBH implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl = (path: string) =>
-    this.site + '/ranobe/' + path;
+  resolveUrl = (path: string) => this.site + '/ranobe/' + path;
 
   filters = {
     sort: {

@@ -58,9 +58,7 @@ class HakoPlugin implements Plugin.PluginBase {
   }
   popularNovels(
     pageNo: number,
-    {
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = this.site + '/danh-sach';
     if (filters) {

@@ -31,9 +31,7 @@ class NovelBuddy implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}popular?page=${pageNo}`;
 
     const result = await fetchApi(url);

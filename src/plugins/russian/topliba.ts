@@ -2,7 +2,6 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi } from '@libs/fetch';
 import { load as parseHTML } from 'cheerio';
-import qs from 'qs';
 
 class TopLiba implements Plugin.PluginBase {
   id = 'TopLiba';
@@ -21,13 +20,13 @@ class TopLiba implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
     searchTerm?: string,
   ): Promise<Plugin.NovelItem[]> {
-    const data = qs.stringify({
+    const data = new URLSearchParams({
       order_field: showLatestNovels ? 'date' : filters?.sort?.value || 'rating',
       p: page,
       q: searchTerm || undefined,
     });
 
-    const body = await fetchApi(this.site + '/?' + data).then(res =>
+    const body = await fetchApi(this.site + '/?' + data.toString()).then(res =>
       res.text(),
     );
     const novels: Plugin.NovelItem[] = [];
@@ -136,10 +135,10 @@ class TopLiba implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         chapter: chapterID,
         _token: this._token,
-      }),
+      }).toString(),
     }).then(res => res.text());
 
     return chapterText;

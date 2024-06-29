@@ -9,8 +9,7 @@ class HasulTL implements Plugin.PluginBase {
   site = 'https://hasutl.wordpress.com/';
   version = '1.0.0';
 
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'light-novels-activas/';
 
     const result = await fetchApi(url);
@@ -95,9 +94,7 @@ class HasulTL implements Plugin.PluginBase {
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${searchTerm}&post_type=wp-manga`;
 
     const result = await fetchApi(url);

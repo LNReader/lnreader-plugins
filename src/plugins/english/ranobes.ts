@@ -79,9 +79,7 @@ class RanobesPlugin implements Plugin.PagePlugin {
     return chapter.reverse();
   }
 
-  async popularNovels(
-    page: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
     const link = `${this.site}/novels/page/${page}/`;
     const body = await fetchApi(link).then(r => r.text());
 

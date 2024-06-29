@@ -43,8 +43,7 @@ class FaqWikiUs implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then(res => res.text());
     const loadedCheerio = parseHTML(body);
 

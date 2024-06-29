@@ -39,8 +39,7 @@ class DDLPlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const link = this.site + 'novels';
 
     const body = await fetchApi(link).then(res => res.text());
@@ -113,9 +112,7 @@ class DDLPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'novels';
 
     const result = await fetchApi(url);

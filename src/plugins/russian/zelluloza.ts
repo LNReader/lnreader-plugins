@@ -4,7 +4,6 @@ import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
-import qs from 'qs';
 
 class Zelluloza implements Plugin.PluginBase {
   id = 'zelluloza';
@@ -30,12 +29,12 @@ class Zelluloza implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         op: 'morebooks',
         par1: '',
         par2: `125:0:${genres}:0.${sort}.0.0.0.0.0.0.0.0.0.1.s.1..:${pageNo}`,
         par4: '',
-      }),
+      }).toString(),
     }).then(res => res.text());
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
@@ -109,11 +108,11 @@ class Zelluloza implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         op: 'getbook',
         par1: bookID,
         par2: chapterID,
-      }),
+      }).toString(),
     }).then(res => res.text());
 
     const encrypted = body.split('<END>')[0].split('\n');
@@ -152,12 +151,12 @@ class Zelluloza implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         op: 'morebooks',
         par1: searchTerm,
         par2: '206:0:0:0.0.0.0.0.0.0.10.0.0.0.0.0..0..:' + pageNo,
         par4: '',
-      }),
+      }).toString(),
     }).then(res => res.text());
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];

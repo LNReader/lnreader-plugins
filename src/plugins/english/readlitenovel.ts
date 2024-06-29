@@ -152,9 +152,7 @@ class ReadLiteNovel implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url =
       this.site + `/search/autocomplete?dataType=json&query=${searchTerm}`;
     const result = await fetchApi(url);

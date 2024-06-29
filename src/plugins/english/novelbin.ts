@@ -137,9 +137,7 @@ class NovelBin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search/?keyword=${searchTerm}`;
     const body = await fetchApi(url).then(r => r.text());
 

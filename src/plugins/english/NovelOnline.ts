@@ -111,9 +111,7 @@ class NovelsOnline implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const result = await fetchApi(this.site + '/sResults.php', {
       headers: {
         Accept: '*/*',

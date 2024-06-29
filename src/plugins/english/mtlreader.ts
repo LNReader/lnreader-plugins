@@ -31,9 +31,7 @@ class MTLReader implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}novels?page=${pageNo}`;
 
     const body = await fetchApi(url).then(r => r.text());
@@ -89,9 +87,7 @@ class MTLReader implements Plugin.PluginBase {
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then(r => r.text());
     const tokenCheerio = parseHTML(body);
     const token = tokenCheerio('input[name="_token"]').attr('value');

@@ -9,8 +9,7 @@ class SkyNovels implements Plugin.PluginBase {
   version = '1.0.0';
   icon = 'src/es/skynovels/icon.png';
 
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const url = this.apiSite + 'novels?&q';
 
     const result = await fetchApi(url);
@@ -85,9 +84,7 @@ class SkyNovels implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
     const url = this.apiSite + 'novels?&q';
 

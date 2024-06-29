@@ -14,8 +14,7 @@ class ReinoWuxia implements Plugin.PluginBase {
   getNovelName(y: string | undefined) {
     return y?.replace(/-/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase());
   }
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'p/todas-las-novelas.html';
 
     const result = await fetchApi(url, {
@@ -154,9 +153,7 @@ class ReinoWuxia implements Plugin.PluginBase {
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search?q=${searchTerm}`;
 
     const result = await fetchApi(url);

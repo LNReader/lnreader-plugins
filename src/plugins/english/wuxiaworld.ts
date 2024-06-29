@@ -127,8 +127,7 @@ class WuxiaWorld implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const link = `${this.site}api/novels`;
 
     const result = await fetchApi(link);
@@ -270,9 +269,7 @@ class WuxiaWorld implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'api/novels/search?query=' + searchTerm;
 
     const result = await fetchApi(url);

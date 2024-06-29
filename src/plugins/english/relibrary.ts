@@ -221,7 +221,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    {showLatestNovels}: Plugin.PopularNovelsOptions<Filters>,
+    { showLatestNovels }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     // The most-popular page only has a single page, so we return an empty array in case you ask for the impossible
     // the lastest page do have paginated result, so we support that.

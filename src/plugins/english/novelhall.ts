@@ -10,9 +10,7 @@ class NovelHall implements Plugin.PluginBase {
   icon = 'src/en/novelhall/icon.png';
   site = 'https://novelhall.com/';
 
-  async popularNovels(
-    page: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}all2022-${page}.html`;
 
     const body = await fetchApi(url).then(r => r.text());
@@ -91,9 +89,7 @@ class NovelHall implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}index.php?s=so&module=book&keyword=${searchTerm}`;
     const body = await fetchApi(url).then(r => r.text());
     const loadedCheerio = parseHTML(body);

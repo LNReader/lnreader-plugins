@@ -20,9 +20,7 @@ class NovhellPlugin implements Plugin.PluginBase {
     return $;
   }
 
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
     const novels: Plugin.NovelItem[] = [];

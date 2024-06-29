@@ -139,7 +139,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/ban-ts-comment': 'off',
       'no-case-declarations': 'warn',
-      'no-undef': 'error'
+      'no-undef': 'error',
     },
     languageOptions: {
       ecmaVersion: 5,
@@ -156,7 +156,7 @@ export default tseslint.config(
       '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/ban-ts-comment': 'off',
-      'no-undef': 'error'
+      'no-undef': 'error',
     },
     languageOptions: {
       globals: {

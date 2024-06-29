@@ -54,9 +54,7 @@ class TruyenFull implements Plugin.PagePlugin {
     });
     return chapters;
   }
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/danh-sach/truyen-hot?page=${pageNo}`;
     const result = await fetchApi(url);
     const body = await result.text();

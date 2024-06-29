@@ -25,9 +25,7 @@ class Nettruyen implements Plugin.PagePlugin {
     });
     return novels;
   }
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/xem-nhieu/trang-${pageNo}.html`;
     const body = await fetchApi(url).then(r => r.text());
     return this.parseNovels(parseHTML(body));
@@ -69,16 +67,17 @@ class Nettruyen implements Plugin.PagePlugin {
             .text()
             .replace(/Tác giả\s+\n?:/, '');
           break;
-        case 'Trạng thái':{
-                  const text = loadedCheerio(ele).text();
-                  if (text.includes('Đang ra')) {
-                    novel.status = NovelStatus.Ongoing;
-                  } else if (text.includes('Hoàn thành')) {
-                    novel.status = NovelStatus.Completed;
-                  } else {
-                    novel.status = NovelStatus.Unknown;
-                  }
-                  break;}
+        case 'Trạng thái': {
+          const text = loadedCheerio(ele).text();
+          if (text.includes('Đang ra')) {
+            novel.status = NovelStatus.Ongoing;
+          } else if (text.includes('Hoàn thành')) {
+            novel.status = NovelStatus.Completed;
+          } else {
+            novel.status = NovelStatus.Unknown;
+          }
+          break;
+        }
         case 'Thể loại':
           novel.genres = loadedCheerio('a > span')
             .toArray()

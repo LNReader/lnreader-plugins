@@ -25,9 +25,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
     return $;
   }
 
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 2) return [];
 
     const novels: Plugin.NovelItem[] = [];

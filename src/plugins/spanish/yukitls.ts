@@ -135,9 +135,7 @@ class Yuuki implements Plugin.PluginBase {
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
 
     const result = await fetchApi(this.site);

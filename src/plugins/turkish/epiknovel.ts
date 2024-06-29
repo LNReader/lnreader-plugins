@@ -8,9 +8,7 @@ class EpikNovel implements Plugin.PluginBase {
   icon = 'src/tr/epiknovel/icon.png';
   site = 'https://www.epiknovel.com/';
   version = '1.0.0';
-  async popularNovels(
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'seri-listesi?Sayfa=' + pageNo;
 
     const result = await fetchApi(url);

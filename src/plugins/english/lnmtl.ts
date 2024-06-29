@@ -272,9 +272,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     return chapterText.replace(/„/g, '“');
   }
 
-  async searchNovels(
-    searchTerm: string,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const html = await fetchApi(this.site)
       .then(b => b.text())
       .then(r => r.replace(/>\s+</g, '><'));
