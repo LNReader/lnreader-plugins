@@ -153,7 +153,7 @@ class Zelluloza implements Plugin.PluginBase {
       method: 'POST',
       body: new URLSearchParams({
         op: 'morebooks',
-        par1: searchTerm,
+        par1: searchTerm || '',
         par2: '206:0:0:0.0.0.0.0.0.0.10.0.0.0.0.0..0..:' + pageNo,
         par4: '',
       }).toString(),
