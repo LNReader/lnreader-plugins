@@ -274,7 +274,6 @@ class LnMTLPlugin implements Plugin.PagePlugin {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const html = await fetchApi(this.site)
       .then(b => b.text())

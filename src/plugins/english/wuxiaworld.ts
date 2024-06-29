@@ -128,8 +128,6 @@ class WuxiaWorld implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const link = `${this.site}api/novels`;
 
@@ -274,7 +272,6 @@ class WuxiaWorld implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'api/novels/search?query=' + searchTerm;
 

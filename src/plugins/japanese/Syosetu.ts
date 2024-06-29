@@ -1,4 +1,4 @@
-import { load, load as loadCheerio } from 'cheerio';
+import { load as loadCheerio } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
@@ -93,7 +93,7 @@ class Syosetu implements Plugin.PluginBase {
       novel.summary = loadedCheerio('#novel_ex')
         .text()
         .replace(/<\s*br.*?>/g, '\n');
-      cqGetChapters.each(function (i, e) {
+      cqGetChapters.each(() => {
         const chapterA = loadedCheerio(this).find('a');
         const [chapterName, releaseDate, chapterUrl] = [
           // set the variables
@@ -221,7 +221,7 @@ class Syosetu implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl(path: string, isNovel?: boolean | undefined): string {
+  resolveUrl(path: string): string {
     return this.novelPrefix + path;
   }
   filters = {

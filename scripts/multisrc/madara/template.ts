@@ -1,5 +1,5 @@
 import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';

@@ -16,7 +16,7 @@ class ficbook implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    { filters }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site;
 

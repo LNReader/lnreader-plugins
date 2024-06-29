@@ -190,8 +190,7 @@ class Zelluloza implements Plugin.PluginBase {
     return null;
   };
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + '/books/' + path;
+  resolveUrl = (path: string) => this.site + '/books/' + path;
 
   filters = {
     sort: {

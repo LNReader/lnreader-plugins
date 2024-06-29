@@ -592,12 +592,6 @@ interface User {
   id: number;
 }
 
-interface Rating {
-  average: string;
-  votes: number;
-  votesFormated: string;
-}
-
 interface DataClass {
   id: number;
   name: string;
@@ -716,11 +710,4 @@ interface DataChapter {
   name: string;
   branches_count: number;
   branches: Branch[];
-}
-interface BranchesEntity {
-  id: number;
-  branch_id?: number;
-  created_at: string;
-  teams?: BranchTeam[];
-  user: User;
 }

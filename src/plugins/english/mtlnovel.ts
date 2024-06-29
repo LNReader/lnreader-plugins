@@ -116,7 +116,6 @@ class MTLNovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const headers = new Headers();
     headers.append('Alt-Used', 'www.mtlnovel.com');

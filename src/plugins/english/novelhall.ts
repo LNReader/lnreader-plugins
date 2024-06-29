@@ -1,7 +1,6 @@
-import { load, load as parseHTML } from 'cheerio';
+import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 
 class NovelHall implements Plugin.PluginBase {
@@ -9,12 +8,10 @@ class NovelHall implements Plugin.PluginBase {
   name = 'Novel Hall';
   version = '1.0.1';
   icon = 'src/en/novelhall/icon.png';
-  filters?: Filters | undefined; //TODO: Filters Requires hideOnSelect
   site = 'https://novelhall.com/';
 
   async popularNovels(
     page: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}all2022-${page}.html`;
 
@@ -96,7 +93,6 @@ class NovelHall implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}index.php?s=so&module=book&keyword=${searchTerm}`;
     const body = await fetchApi(url).then(r => r.text());

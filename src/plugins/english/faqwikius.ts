@@ -44,8 +44,6 @@ class FaqWikiUs implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    page: number,
-    { showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then(res => res.text());
     const loadedCheerio = parseHTML(body);
@@ -79,7 +77,7 @@ class FaqWikiUs implements Plugin.PluginBase {
 
     const div = loadedCheerio('.book-review-block__meta-item-value');
 
-    div.html(div.html()?.replace(/(?<=>)([^<]+)(?=<br\s*\/?>)/g, '<p>$1</p>')!);
+    div.html(div.html()?.replace(/(?<=>)([^<]+)(?=<br\s*\/?>)/g, '<p>$1</p>'));
 
     loadedCheerio('.book-review-block__meta-item-value strong').each(
       (i, el) => {

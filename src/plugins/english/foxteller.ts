@@ -264,7 +264,7 @@ class Foxteller implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
+  resolveUrl = (path: string) =>
     this.site + '/novel/' + path;
 
   filters = {

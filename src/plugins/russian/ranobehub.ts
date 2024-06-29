@@ -164,7 +164,7 @@ class RNBH implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
+  resolveUrl = (path: string) =>
     this.site + '/ranobe/' + path;
 
   filters = {
@@ -1236,10 +1236,6 @@ interface GenresOrEntity {
   description?: string | null;
 }
 
-interface responseChapters {
-  marked_chapters_ids?: null[] | null;
-  volumes?: VolumesEntity[] | null;
-}
 interface VolumesEntity {
   id: number;
   num: number;

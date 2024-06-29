@@ -12,12 +12,8 @@ class Ligera implements Plugin.PluginBase {
   version = '1.0.0';
 
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
-    const url = this.site;
-
-    const result = await fetchApi(url);
+ ): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -135,7 +131,6 @@ class Ligera implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + '?s=' + searchTerm + '&post_type=wp-manga';
     // console.log(url);

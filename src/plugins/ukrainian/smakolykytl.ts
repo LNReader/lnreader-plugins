@@ -13,13 +13,11 @@ class Smakolykytl implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
+    { showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const url = showLatestNovels
-      ? this.apiSite + '/updates'
-      : this.apiSite + '/projects';
+    const sort = showLatestNovels ? '/updates' : '/projects';
 
-    const result = await fetchApi(url);
+    const result = await fetchApi(this.apiSite + sort);
     const json = (await result.json()) as response;
 
     const novels: Plugin.NovelItem[] = [];

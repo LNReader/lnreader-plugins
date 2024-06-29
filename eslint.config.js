@@ -129,14 +129,15 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   prettierConfig,
   {
-    ignores: ['.js', 'docs'],
+    ignores: ['.js', 'docs', 'proxy_server.js'],
   },
   {
-    files: ['./src/plugins/*/*.ts', './scripts/multisrc/*/*.ts'],
+    files: ['./src/plugins/*/*.ts', './scripts/multisrc/*/template.ts'],
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/ban-ts-comment': 'off',
       'no-case-declarations': 'warn',
       'no-undef': 'error'
     },
@@ -148,12 +149,14 @@ export default tseslint.config(
   },
   {
     files: ['**/*.{ts,tsx,mts,cts,js}'],
-    ignores: ['./src/plugins/*/*.ts', './scripts/multisrc/*/*.ts'],
+    ignores: ['./src/plugins/*/*.ts', './scripts/multisrc/*/template.ts'],
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      'no-undef': 'error'
     },
     languageOptions: {
       globals: {

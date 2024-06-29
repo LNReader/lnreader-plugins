@@ -11,13 +11,8 @@ class Yuuki implements Plugin.PluginBase {
   filters?: Filters | undefined;
   version = '1.0.0';
 
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
-    const url = this.site;
-
-    const result = await fetchApi(url);
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -142,13 +137,10 @@ class Yuuki implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
 
-    const url = this.site;
-
-    const result = await fetchApi(url);
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);

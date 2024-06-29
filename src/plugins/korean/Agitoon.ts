@@ -12,7 +12,7 @@ class Agitoon implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
+    { showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const res = await fetchApi(this.site + '/novel/index.update.php', {
       headers: {

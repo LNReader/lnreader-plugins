@@ -1,5 +1,4 @@
 import { fetchApi } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@typings/plugin';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
@@ -28,7 +27,6 @@ class Nettruyen implements Plugin.PagePlugin {
   }
   async popularNovels(
     pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/xem-nhieu/trang-${pageNo}.html`;
     const body = await fetchApi(url).then(r => r.text());
@@ -71,16 +69,16 @@ class Nettruyen implements Plugin.PagePlugin {
             .text()
             .replace(/Tác giả\s+\n?:/, '');
           break;
-        case 'Trạng thái':
-          const text = loadedCheerio(ele).text();
-          if (text.includes('Đang ra')) {
-            novel.status = NovelStatus.Ongoing;
-          } else if (text.includes('Hoàn thành')) {
-            novel.status = NovelStatus.Completed;
-          } else {
-            novel.status = NovelStatus.Unknown;
-          }
-          break;
+        case 'Trạng thái':{
+                  const text = loadedCheerio(ele).text();
+                  if (text.includes('Đang ra')) {
+                    novel.status = NovelStatus.Ongoing;
+                  } else if (text.includes('Hoàn thành')) {
+                    novel.status = NovelStatus.Completed;
+                  } else {
+                    novel.status = NovelStatus.Unknown;
+                  }
+                  break;}
         case 'Thể loại':
           novel.genres = loadedCheerio('a > span')
             .toArray()
@@ -113,10 +111,7 @@ class Nettruyen implements Plugin.PagePlugin {
     const loadedCheerio = parseHTML(body);
     return loadedCheerio('#noidungchap').html() || '';
   }
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(): Promise<Plugin.NovelItem[]> {
     throw new Error('Method not implemented.');
   }
 }

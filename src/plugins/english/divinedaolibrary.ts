@@ -9,7 +9,6 @@ class DDLPlugin implements Plugin.PluginBase {
   site = 'https://www.divinedaolibrary.com/';
   version = '1.0.1';
   icon = 'src/en/divinedaolibrary/icon.png';
-  filters?: undefined;
 
   parseNovels(loadedCheerio: CheerioAPI, searchTerm?: string) {
     let novels: Plugin.NovelItem[] = [];
@@ -41,8 +40,6 @@ class DDLPlugin implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     const link = this.site + 'novels';
 
@@ -118,7 +115,6 @@ class DDLPlugin implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'novels';
 

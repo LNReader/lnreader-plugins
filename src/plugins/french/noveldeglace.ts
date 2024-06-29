@@ -198,7 +198,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
             if (chapterUrl) {
               const chapter: Plugin.ChapterItem = {
                 name: newChapterName,
-                releaseTime: this.parseDate(date),
+                releaseTime: this.parseDate(releaseDate),
                 path: chapterUrl.replace(site, ''),
                 chapterNumber: chapterIndex,
               };

@@ -1,7 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
@@ -12,7 +11,6 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
   icon = 'src/fr/warriorlegendtrad/icon.png';
   site = 'https://warriorlegendtrad.fr';
   version = '1.0.0';
-  filters: Filters | undefined = undefined;
 
   regexAuthors = [/Auteur\u00A0:([^\n]*)/];
 
@@ -29,10 +27,6 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo > 2) return [];
 
@@ -171,10 +165,7 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    const popularNovels = this.popularNovels(1, {
-      showLatestNovels: true,
-      filters: undefined,
-    });
+    const popularNovels = this.popularNovels(1);
 
     const novels = (await popularNovels).filter(novel =>
       novel.name

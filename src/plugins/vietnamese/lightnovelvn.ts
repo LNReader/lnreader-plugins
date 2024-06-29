@@ -22,7 +22,6 @@ class LightNovelVN implements Plugin.PagePlugin {
   site = 'https://lightnovel.vn';
   async popularNovels(
     pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/truyen-hot-ds?page=${pageNo}`;
     const body = await fetchApi(url).then(r => r.text());

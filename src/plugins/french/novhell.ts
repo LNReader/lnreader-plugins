@@ -1,7 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -11,7 +10,6 @@ class NovhellPlugin implements Plugin.PluginBase {
   icon = 'src/fr/novhell/icon.png';
   site = 'https://novhell.org';
   version = '1.0.1';
-  filters: Filters | undefined = undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url, {
@@ -24,10 +22,6 @@ class NovhellPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
@@ -190,10 +184,7 @@ class NovhellPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    const popularNovels = this.popularNovels(1, {
-      showLatestNovels: true,
-      filters: undefined,
-    });
+    const popularNovels = this.popularNovels(1);
 
     const novels = (await popularNovels).filter(novel =>
       novel.name

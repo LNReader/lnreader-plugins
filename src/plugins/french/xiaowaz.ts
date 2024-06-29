@@ -1,7 +1,6 @@
 import { Cheerio, CheerioAPI, load, Element } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -11,7 +10,6 @@ class XiaowazPlugin implements Plugin.PluginBase {
   icon = 'src/fr/xiaowaz/icon.png';
   site = 'https://xiaowaz.fr';
   version = '1.0.1';
-  filters: Filters | undefined = undefined;
   static novels: Plugin.NovelItem[] | undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
@@ -78,7 +76,7 @@ class XiaowazPlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(pageNo: number, {}: any): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const PAGE_SIZE = 5;
 
     if (!XiaowazPlugin.novels) XiaowazPlugin.novels = await this.getAllNovels();

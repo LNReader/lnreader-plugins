@@ -195,7 +195,7 @@ class TL implements Plugin.PluginBase {
     return chapterText;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) => 'https://' + path;
+  resolveUrl = (path: string) => 'https://' + path;
 
   filters = {
     tags: {

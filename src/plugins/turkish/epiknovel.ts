@@ -1,7 +1,6 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 
 class EpikNovel implements Plugin.PluginBase {
   id = 'epiknovel';
@@ -11,7 +10,6 @@ class EpikNovel implements Plugin.PluginBase {
   version = '1.0.0';
   async popularNovels(
     pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'seri-listesi?Sayfa=' + pageNo;
 

@@ -1,3 +1,5 @@
+/* global Buffer, RequestInit */
+
 import { parse as parseProto } from 'protobufjs';
 
 interface FetchInit {

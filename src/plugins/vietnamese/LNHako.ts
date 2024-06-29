@@ -59,7 +59,6 @@ class HakoPlugin implements Plugin.PluginBase {
   popularNovels(
     pageNo: number,
     {
-      showLatestNovels,
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
@@ -97,7 +96,7 @@ class HakoPlugin implements Plugin.PluginBase {
     const getNameHandler: HTMLParser2Util.Handler = {
       isDone: false,
       isStarted: false,
-      onopentag(name, attribs) {
+      onopentag(name) {
         if (name === 'a') {
           this.isStarted = true;
         }
@@ -105,7 +104,7 @@ class HakoPlugin implements Plugin.PluginBase {
       ontext(data) {
         novel.name += data;
       },
-      onclosetag(name) {
+      onclosetag() {
         if (this.isStarted) {
           this.isDone = true;
         }
@@ -123,7 +122,7 @@ class HakoPlugin implements Plugin.PluginBase {
           novel.summary += data;
         }
       },
-      onclosetag(name) {
+      onclosetag() {
         this.newLine = true;
       },
     };

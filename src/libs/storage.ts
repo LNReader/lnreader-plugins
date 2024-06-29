@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 class Storage {
   private db: Record<string, { created: Date; value: any; expires?: number }>;
 
@@ -54,7 +51,6 @@ class Storage {
   /**
    * Deletes a key from the storage.
    *
-   * @param pluginID - The ID of the plugin.
    * @param key - The key to delete.
    */
   delete(key: string): void {
@@ -64,7 +60,7 @@ class Storage {
   /**
    * Clears all stored items from storage.
    */
-  clearAll(pluginID: string): void {
+  clearAll(): void {
     this.db = {};
   }
 }

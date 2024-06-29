@@ -154,7 +154,6 @@ class ReadLiteNovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url =
       this.site + `/search/autocomplete?dataType=json&query=${searchTerm}`;

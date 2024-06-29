@@ -161,8 +161,7 @@ class novelOvh implements Plugin.PluginBase {
     return html;
   };
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + '/novel/' + path;
+  resolveUrl = (path: string) => this.site + '/novel/' + path;
 
   filters = {
     sort: {

@@ -1,6 +1,5 @@
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
-import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
 class RanobesPlugin implements Plugin.PagePlugin {
@@ -8,7 +7,6 @@ class RanobesPlugin implements Plugin.PagePlugin {
   name = 'Ranobes';
   icon = 'src/en/ranobes/icon.png';
   site = 'https://ranobes.top';
-  filters?: Filters | undefined;
   version = '2.0.0';
 
   async sleep(ms: number) {
@@ -83,10 +81,6 @@ class RanobesPlugin implements Plugin.PagePlugin {
 
   async popularNovels(
     page: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     const link = `${this.site}/novels/page/${page}/`;
     const body = await fetchApi(link).then(r => r.text());

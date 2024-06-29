@@ -129,7 +129,6 @@ class EarlyNovelPlugin implements Plugin.PagePlugin {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search?keyword=${searchTerm}`;
     const result = await fetchApi(url);

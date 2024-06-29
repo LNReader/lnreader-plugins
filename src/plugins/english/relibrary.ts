@@ -1,9 +1,8 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
-import { load as loadCheerio, CheerioAPI } from 'cheerio';
+import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
-import { NovelStatus } from '@libs/novelStatus';
 import { NovelItem } from '../../test_web/static/js';
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 
@@ -166,7 +165,6 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   icon = 'src/en/relibrary/icon.png';
   site = 'https://re-library.com';
   version = '1.0.0';
-  filters: Filters | undefined = undefined;
 
   private searchFunc = new FuzzySearch<Plugin.NovelItem>(item => [item.name], {
     sort: true,
@@ -223,10 +221,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    {showLatestNovels}: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     // The most-popular page only has a single page, so we return an empty array in case you ask for the impossible
     // the lastest page do have paginated result, so we support that.

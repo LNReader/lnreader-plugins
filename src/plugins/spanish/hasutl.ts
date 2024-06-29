@@ -1,7 +1,6 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 
 class HasulTL implements Plugin.PluginBase {
   id = 'HasuTL';
@@ -11,8 +10,6 @@ class HasulTL implements Plugin.PluginBase {
   version = '1.0.0';
 
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'light-novels-activas/';
 
@@ -100,7 +97,6 @@ class HasulTL implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${searchTerm}&post_type=wp-manga`;
 

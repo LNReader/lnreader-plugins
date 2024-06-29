@@ -1,7 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 
 class TruyenFull implements Plugin.PagePlugin {
@@ -47,7 +46,6 @@ class TruyenFull implements Plugin.PagePlugin {
   }
   async popularNovels(
     pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/danh-sach/truyen-hot/trang-${pageNo}/`;
 

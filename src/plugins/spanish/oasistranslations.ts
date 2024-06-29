@@ -10,12 +10,8 @@ class Oasis implements Plugin.PluginBase {
   filters?: Filters | undefined;
   icon = 'src/es/oasistranslations/icon.png';
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    const url = this.site;
-
-    const result = await fetchApi(url);
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -62,7 +58,7 @@ class Oasis implements Plugin.PluginBase {
     };
     novel.cover = loadedCheerio('img[loading="lazy"]').attr('src');
 
-    loadedCheerio('.entry-content > p').each(function (res) {
+    loadedCheerio('.entry-content > p').each(() => {
       if (loadedCheerio(this).text().includes('Autor')) {
         const details = loadedCheerio(this)
           .html()
@@ -82,7 +78,6 @@ class Oasis implements Plugin.PluginBase {
 
     const novelChapters: Plugin.ChapterItem[] = [];
 
-    // if ($(".entry-content").find("li").length) {
     loadedCheerio('.entry-content')
       .find('a')
       .each((idx, ele) => {
@@ -122,13 +117,10 @@ class Oasis implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
 
-    const url = this.site;
-
-    const result = await fetchApi(url);
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);

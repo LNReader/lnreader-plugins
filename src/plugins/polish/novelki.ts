@@ -125,7 +125,7 @@ class NovelkiPL implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    const pattern = /\/projekty\/([^\/]+)\/([^\/]+)/;
+    const pattern = /\/projekty\/([^/]+)\/([^/]+)/;
     const codeChapter = pattern.exec(chapterPath) || '';
     const body = await fetchApi(
       `${this.site}/api/reader/chapters/${codeChapter[2]}`,

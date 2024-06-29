@@ -1,5 +1,4 @@
 import { fetchApi } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
 class SkyNovels implements Plugin.PluginBase {
@@ -11,8 +10,6 @@ class SkyNovels implements Plugin.PluginBase {
   icon = 'src/es/skynovels/icon.png';
 
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.apiSite + 'novels?&q';
 
@@ -90,7 +87,6 @@ class SkyNovels implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
     const url = this.apiSite + 'novels?&q';

@@ -15,8 +15,6 @@ class ReinoWuxia implements Plugin.PluginBase {
     return y?.replace(/-/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase());
   }
   async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = this.site + 'p/todas-las-novelas.html';
 
@@ -158,7 +156,6 @@ class ReinoWuxia implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search?q=${searchTerm}`;
 

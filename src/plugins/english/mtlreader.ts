@@ -1,7 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 
 class MTLReader implements Plugin.PluginBase {
   id = 'mtlreader';
@@ -9,6 +8,7 @@ class MTLReader implements Plugin.PluginBase {
   version = '1.0.0';
   icon = 'src/en/mtlreader/icon.png';
   site = 'https://mtlreader.com/';
+
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
@@ -33,7 +33,6 @@ class MTLReader implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}novels?page=${pageNo}`;
 
@@ -92,7 +91,6 @@ class MTLReader implements Plugin.PluginBase {
   }
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then(r => r.text());
     const tokenCheerio = parseHTML(body);

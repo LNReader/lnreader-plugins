@@ -1,7 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
