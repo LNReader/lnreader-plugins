@@ -3,8 +3,9 @@
 import eslint from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
+import globals from 'globals';
 
-const globals = [
+const globalsHermes = [
   //hermes@0.72
   'AggregateError',
   'Array',
@@ -65,7 +66,6 @@ const globals = [
   'encodeURI',
   'encodeURIComponent',
   'escape',
-  //'eval',
   'gc',
   'globalThis',
   'hasOwnProperty',
@@ -77,7 +77,6 @@ const globals = [
   'parseInt',
   'print',
   'propertyIsEnumerable',
-  //'quit',
   'setImmediate',
   'setTimeout',
   'toLocaleString',
@@ -85,13 +84,44 @@ const globals = [
   'undefined',
   'unescape',
   'valueOf',
-
-  //react-native@0.72
+  //react-native
+  'AbortController',
+  'Blob',
+  'ErrorUtils',
+  'Event',
+  'EventTarget',
+  'File',
+  'FileReader',
   'FormData',
   'Headers',
+  'Intl',
+  'URL',
+  'URLSearchParams',
+  'WebSocket',
+  'XMLHttpRequest',
+  '__DEV__',
+  '__dirname',
+  '__fbBatchedBridgeConfig',
+  'alert',
+  'cancelAnimationFrame',
+  'cancelIdleCallback',
+  'clearImmediate',
+  'clearInterval',
   'console',
+  'document',
+  'exports',
   'fetch',
-].map(i => ({ [i]: 'readonly' }));
+  'global',
+  'module',
+  'navigator',
+  'process',
+  'queueMicrotask',
+  'requestAnimationFrame',
+  'requestIdleCallback',
+  'require',
+  'setInterval',
+  'window',
+].map(key => ({ [key]: 'readonly' }));
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -99,23 +129,37 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   prettierConfig,
   {
-    ignores: ['.js', 'docs', '*.js'],
+    ignores: ['.js', 'docs'],
   },
   {
-    files: ['**/*.{ts,tsx,mts,cts}'],
+    files: ['./src/plugins/*/*.ts', './scripts/multisrc/*/*.ts'],
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
-      'no-undef': 'error',
-      '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      'no-case-declarations': 'warn',
+      'no-undef': 'error'
     },
-  },
-  {
     languageOptions: {
       ecmaVersion: 5,
       sourceType: 'module',
-      globals: Object.assign(...globals),
+      globals: Object.assign(...globalsHermes),
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx,mts,cts,js}'],
+    ignores: ['./src/plugins/*/*.ts', './scripts/multisrc/*/*.ts'],
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-namespace': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
+    languageOptions: {
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
     },
   },
 );

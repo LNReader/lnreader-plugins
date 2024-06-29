@@ -1,6 +1,9 @@
 import list from './sources.json' with { type: 'json' };
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
+const folder = dirname(fileURLToPath(import.meta.url));
 const FilterTypes = {
   TextInput: 'Text',
   Picker: 'Picker',
@@ -39,12 +42,9 @@ export const generateAll = function () {
 };
 
 const generator = function generator(metadata) {
-  const HotNovelPubTemplate = readFileSync(
-    './scripts/multisrc/hotnovelpub/template.ts',
-    {
-      encoding: 'utf-8',
-    },
-  );
+  const HotNovelPubTemplate = readFileSync(join(folder, 'template.ts'), {
+    encoding: 'utf-8',
+  });
 
   const pluginScript = `
     ${HotNovelPubTemplate}

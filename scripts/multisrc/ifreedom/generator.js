@@ -1,6 +1,10 @@
 import list from './sources.json' with { type: 'json' };
 import defaultSettings from './settings.json' with { type: 'json' };
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const folder = dirname(fileURLToPath(import.meta.url));
 
 export const generateAll = function () {
   return list.map(metadata => {
@@ -11,12 +15,9 @@ export const generateAll = function () {
 };
 
 const generator = function generator(metadata) {
-  const IfreedomTemplate = readFileSync(
-    './scripts/multisrc/ifreedom/template.ts',
-    {
-      encoding: 'utf-8',
-    },
-  );
+  const IfreedomTemplate = readFileSync(join(folder, 'template.ts'), {
+    encoding: 'utf-8',
+  });
 
   const pluginScript = `
     ${IfreedomTemplate}

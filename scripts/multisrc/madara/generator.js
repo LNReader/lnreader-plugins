@@ -1,33 +1,39 @@
 import list from './sources.json' with { type: 'json' };
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const folder = dirname(fileURLToPath(import.meta.url));
 
 export const generateAll = function () {
-  return list.map(metadata => {
-    let filters = {};
-    try {
-      filters = require(`./filters/${metadata.id}`);
-      metadata.filters = filters.filters;
-    } catch (e) {}
+  return list.map(source => {
+    const exist = existsSync(join(folder, 'filters', source.id + '.json'));
+    if (exist) {
+      const filters = readFileSync(
+        join(folder, 'filters', source.id + '.json'),
+      );
+      source.filters = JSON.parse(filters);
+    }
     console.log(
-      `[madara] Generating: ${metadata.id}${' '.repeat(20 - metadata.id.length)} ${metadata.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
+      `[madara] Generating: ${source.id}${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
     );
-    return generator(metadata);
+    return generator(source);
   });
 };
 
-const generator = function generator(metadata) {
-  const madaraTemplate = readFileSync('./scripts/multisrc/madara/template.ts', {
+const generator = function generator(source) {
+  const madaraTemplate = readFileSync(join(folder, 'template.ts'), {
     encoding: 'utf-8',
   });
 
   const pluginScript = `
 ${madaraTemplate}
-const plugin = new MadaraPlugin(${JSON.stringify(metadata)});
+const plugin = new MadaraPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();
   return {
-    lang: metadata.options?.lang || 'English',
-    filename: metadata.sourceName,
+    lang: source.options?.lang || 'English',
+    filename: source.sourceName,
     pluginScript,
   };
 };

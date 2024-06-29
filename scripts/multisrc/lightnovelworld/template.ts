@@ -155,7 +155,6 @@ class LightNovelWorld implements Plugin.PagePlugin {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}lnsearchlive`;
     const link = `${this.site}search`;
