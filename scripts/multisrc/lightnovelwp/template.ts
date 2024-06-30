@@ -44,7 +44,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
   getHostname(url: string): string {
     url = url.split('/')[2];
-    let url_parts = url.split('.');
+    const url_parts = url.split('.');
     url_parts.pop(); // remove TLD
     return url_parts.join('.');
   }

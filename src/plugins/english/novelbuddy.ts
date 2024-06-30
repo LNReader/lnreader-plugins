@@ -1,7 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 
 class NovelBuddy implements Plugin.PluginBase {
   id = 'novelbuddy';
@@ -9,7 +8,6 @@ class NovelBuddy implements Plugin.PluginBase {
   site = 'https://novelbuddy.io/';
   version = '1.0.0';
   icon = 'src/en/novelbuddy/icon.png';
-  filters?: undefined; //TODO: Filters, Filters in Filters required
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -33,10 +31,7 @@ class NovelBuddy implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}popular?page=${pageNo}`;
 
     const result = await fetchApi(url);

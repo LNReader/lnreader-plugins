@@ -1,31 +1,33 @@
 import { readFileSync } from 'fs';
-import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const folder = dirname(fileURLToPath(import.meta.url));
 
 import list from './sources.json' with { type: 'json' };
 
 export const generateAll = function () {
-  return list.map(metadata => {
+  return list.map(source => {
     console.log(
-      `[readnovelfull] Generating: ${metadata.id}${' '.repeat(20 - metadata.id.length)}`,
+      `[readnovelfull] Generating: ${source.id}${' '.repeat(20 - source.id.length)}`,
     );
-    return generator(metadata);
+    return generator(source);
   });
 };
 
-const generator = function generator(metadata) {
-  const readNovelFullTemplate = readFileSync(
-    './scripts/multisrc/readnovelfull/template.ts',
-    { encoding: 'utf-8' },
-  );
+const generator = function generator(source) {
+  const readNovelFullTemplate = readFileSync(join(folder, 'template.ts'), {
+    encoding: 'utf-8',
+  });
 
   const pluginScript = `
 ${readNovelFullTemplate}
-const plugin = new ReadNovelFullPlugin(${JSON.stringify(metadata)});
+const plugin = new ReadNovelFullPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();
   return {
-    lang: metadata.options?.lang || 'English',
-    filename: metadata.sourceName,
+    lang: source.options?.lang || 'English',
+    filename: source.sourceName,
     pluginScript,
   };
 };

@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
@@ -173,10 +173,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${searchTerm}&post_type=fictionposts`;
     const result = await fetchApi(url);
     const body = await result.text();

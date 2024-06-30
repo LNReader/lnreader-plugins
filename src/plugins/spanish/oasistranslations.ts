@@ -1,4 +1,4 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
@@ -9,18 +9,13 @@ class Oasis implements Plugin.PluginBase {
   version = '1.0.0';
   filters?: Filters | undefined;
   icon = 'src/es/oasistranslations/icon.png';
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
-    let url = this.site;
-
-    const result = await fetchApi(url);
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.menu-item-1819')
       .find('.sub-menu > li')
@@ -29,7 +24,7 @@ class Oasis implements Plugin.PluginBase {
         if (!novelName.match(/Activas|Finalizadas|Dropeadas/)) {
           const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-          let novelUrl = loadedCheerio(ele).find('a').attr('href');
+          const novelUrl = loadedCheerio(ele).find('a').attr('href');
 
           if (!novelUrl) return;
 
@@ -51,9 +46,9 @@ class Oasis implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.entry-title')
         .text()
@@ -62,7 +57,7 @@ class Oasis implements Plugin.PluginBase {
     };
     novel.cover = loadedCheerio('img[loading="lazy"]').attr('src');
 
-    loadedCheerio('.entry-content > p').each(function (res) {
+    loadedCheerio('.entry-content > p').each(() => {
       if (loadedCheerio(this).text().includes('Autor')) {
         const details = loadedCheerio(this)
           .html()
@@ -80,13 +75,12 @@ class Oasis implements Plugin.PluginBase {
     // let novelSummary = $(this).next().html();
     novel.summary = '';
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
-    // if ($(".entry-content").find("li").length) {
     loadedCheerio('.entry-content')
       .find('a')
       .each((idx, ele) => {
-        let chapterUrl = loadedCheerio(ele).attr('href');
+        const chapterUrl = loadedCheerio(ele).attr('href');
 
         if (chapterUrl && chapterUrl.includes(this.site)) {
           const chapterName = loadedCheerio(ele).text();
@@ -112,26 +106,21 @@ class Oasis implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div#jp-post-flair').remove();
 
-    let chapterText = loadedCheerio('.entry-content').html() || '';
+    const chapterText = loadedCheerio('.entry-content').html() || '';
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
 
-    let url = this.site;
-
-    const result = await fetchApi(url);
+    const result = await fetchApi(this.site);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     let novels: Plugin.NovelItem[] = [];
     loadedCheerio('.menu-item-1819')
@@ -141,7 +130,7 @@ class Oasis implements Plugin.PluginBase {
         if (!novelName.match(/Activas|Finalizadas|Dropeadas/)) {
           const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-          let novelUrl = loadedCheerio(ele).find('a').attr('href');
+          const novelUrl = loadedCheerio(ele).find('a').attr('href');
 
           if (!novelUrl) return;
 

@@ -6,14 +6,13 @@ import NovelItemCard from '../components/NovelItemCard';
 import { useSelector } from 'react-redux';
 import { AppState } from '@redux/store';
 import { getPlugin } from '@provider/plugins';
-import { Filters } from '@libs/filterInputs';
 
 export default function SearchNovels() {
   const selectedPluginItem = useSelector(
     (state: AppState) => state.plugin.selected,
   );
   const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(1);
+  const [page,] = useState(1);
   const [plugin, setPlugin] = useState<Plugin.PluginBase | undefined>();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [loading, setLoading] = useState(false);

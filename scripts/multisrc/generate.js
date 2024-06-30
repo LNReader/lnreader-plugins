@@ -28,7 +28,7 @@ const generate = async name => {
       const filePath = path.join(
         pluginsDir,
         lang.toLowerCase(),
-        filename.replace(/[\s-\.]+/g, '') + `[${name}].ts`,
+        filename.replace(/[\s-.]+/g, '') + `[${name}].ts`,
       );
       fs.writeFileSync(filePath, pluginScript, { encoding: 'utf-8' });
     }

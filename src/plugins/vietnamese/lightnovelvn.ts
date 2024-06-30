@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
@@ -20,12 +20,9 @@ class LightNovelVN implements Plugin.PagePlugin {
   icon = 'src/vi/lightnovelvn/icon.png';
   filters?: Filters | undefined;
   site = 'https://lightnovel.vn';
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/truyen-hot-ds?page=${pageNo}`;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
 
     const loadedCheerio = parseHTML(body);
 
@@ -73,9 +70,9 @@ class LightNovelVN implements Plugin.PagePlugin {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const url = this.site + novelPath;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
@@ -138,7 +135,7 @@ class LightNovelVN implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('div.chapter-content').html() || '';
+    const chapterText = loadedCheerio('div.chapter-content').html() || '';
 
     return chapterText;
   }
@@ -148,7 +145,7 @@ class LightNovelVN implements Plugin.PagePlugin {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
     const url = `${this.site}/api/book-search`;
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('keyword', searchTerm);
 
     const result: SearchedResult = await fetchApi(url, {

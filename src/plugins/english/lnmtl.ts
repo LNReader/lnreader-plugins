@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
@@ -87,7 +87,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     let isStatusKey = false;
     let isList = 0;
     let isGenres = false;
-    let genreArray: string[] = [];
+    const genreArray: string[] = [];
     const parser = new Parser({
       onopentag(name, attribs) {
         if (name === 'img' && attribs['class']?.includes('img-rounded')) {
@@ -272,10 +272,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     return chapterText.replace(/„/g, '“');
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const html = await fetchApi(this.site)
       .then(b => b.text())
       .then(r => r.replace(/>\s+</g, '><'));
@@ -312,7 +309,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     parser.write(html);
     parser.end();
 
-    const search = await fetch(`${this.site}${list}`);
+    const search = await fetchApi(`${this.site}${list}`);
     const data = await search.json();
 
     const nov = data.filter((res: { name: string }) =>

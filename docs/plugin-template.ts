@@ -1,11 +1,10 @@
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
-// import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
+// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 
 class TemplatePlugin implements Plugin.PluginBase {
   id = '';
@@ -42,15 +41,15 @@ class TemplatePlugin implements Plugin.PluginBase {
     // TODO: get here data from the site and
     // un-comment and fill-in the relevant fields
 
-    // novel.name = "";
-    // novel.artist = "";
-    // novel.author = "";
+    // novel.name = '';
+    // novel.artist = '';
+    // novel.author = '';
     novel.cover = defaultCover;
-    // novel.genres = "";
+    // novel.genres = '';
     // novel.status = NovelStatus.Completed;
-    // novel.summary = "";
+    // novel.summary = '';
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     // TODO: here parse the chapter list
 
@@ -75,12 +74,15 @@ class TemplatePlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     // get novels using the search term
 
     return novels;
   }
+
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? '/book/' : '/chapter/') + path;
 }
 
 export default new TemplatePlugin();

@@ -1,5 +1,5 @@
 import { Plugin } from '@typings/plugin';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -43,10 +43,7 @@ class FaqWikiUs implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-    page: number,
-    { showLatestNovels }: Plugin.PopularNovelsOptions,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const body = await fetchApi(this.site).then(res => res.text());
     const loadedCheerio = parseHTML(body);
 
@@ -79,7 +76,7 @@ class FaqWikiUs implements Plugin.PluginBase {
 
     const div = loadedCheerio('.book-review-block__meta-item-value');
 
-    div.html(div.html()?.replace(/(?<=>)([^<]+)(?=<br\s*\/?>)/g, '<p>$1</p>')!);
+    div.html(div.html()?.replace(/(?<=>)([^<]+)(?=<br\s*\/?>)/g, '<p>$1</p>'));
 
     loadedCheerio('.book-review-block__meta-item-value strong').each(
       (i, el) => {

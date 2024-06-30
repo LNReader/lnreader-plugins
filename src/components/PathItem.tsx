@@ -1,4 +1,4 @@
-import { Box, Button, Tooltip, withStyles } from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import CopiableItem from './CopiableItem';

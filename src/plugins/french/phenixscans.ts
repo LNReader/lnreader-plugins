@@ -1,5 +1,5 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
@@ -39,7 +39,7 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
     const order = showLatestNovels ? 'update' : 'popular';
     const url = `${this.site}/manga/?page=${pageNo}${filter}&status=&type=novel&order=${order}`;
 
-    let $ = await this.getCheerio(url);
+    const $ = await this.getCheerio(url);
     $('div div div div a').each((i, elem) => {
       const novelName = $(elem).attr('title')?.trim();
       const novelUrl = $(elem).attr('href');
@@ -63,7 +63,7 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name = $('h1[itemprop=name]').text().replace('– Novel', '').trim();
     novel.cover =
@@ -80,7 +80,7 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
       $('.tsinfo .imptdt:contains(Statut)').text().replace('Statut', '').trim(),
     );
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     $('ul li:has(div.chbox):has(div.eph-num)').each((i, elem) => {
       const chapterName = $(elem).find('a .chapternum').text().trim();
       const chapterUrl = $(elem).find('a').attr('href');
@@ -98,7 +98,7 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
   }
 
   parseDate(date: string): string {
-    const monthMapping: { [key: string]: string } = {
+    const monthMapping: Record<string, string> = {
       janvier: 'January',
       fevrier: 'February',
       mars: 'March',
@@ -149,12 +149,12 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
+    const popularNovels = this.popularNovels(1, {
       showLatestNovels: true,
       filters: undefined,
     });
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

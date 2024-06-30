@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-import { exit } from 'process';
 import languages from './languages.js';
 import { execSync } from 'child_process';
 import { minify } from './terser.js';

@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
@@ -11,6 +11,7 @@ class Bookriver implements Plugin.PluginBase {
   id = 'bookriver';
   name = 'Bookriver';
   site = 'https://bookriver.ru';
+  apiSite = 'https://api.bookriver.ru/api/v1/';
   version = '1.0.1';
   icon = 'src/ru/bookriver/icon.png';
 
@@ -99,7 +100,7 @@ class Bookriver implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const url = 'https://api.bookriver.ru/api/v1/books/chapter/text/';
+    const url = this.apiSite + 'books/chapter/text/';
     const { data }: responseChapter = await fetchApi(
       url + chapterPath.split('/').pop(),
     ).then(res => res.json());
@@ -117,7 +118,8 @@ class Bookriver implements Plugin.PluginBase {
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
     const url =
-      'https://api.bookriver.ru/api/v1/search/autocomplete?keyword=' +
+      this.apiSite +
+      'search/autocomplete?keyword=' +
       searchTerm +
       '&page=' +
       pageNo +

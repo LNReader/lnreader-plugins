@@ -84,18 +84,6 @@ export namespace Plugin {
     parseNovel(novelPath: string): Promise<SourceNovel>;
     parseChapter(chapterPath: string): Promise<string>;
     searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
-    /**
-     *
-     * @param url Image url
-     * @returns {Promise<string|undefined>} Base64 of image
-     * @example
-     * ```ts
-     *  const headers = {
-     *      Referer: "https://ln.hako.vn",
-     *   };
-     *  return await fetchFile(url, { headers: headers });
-     * ```
-     */
     resolveUrl?(path: string, isNovel?: boolean): string;
   }
 
@@ -109,7 +97,7 @@ export namespace Plugin {
 
 export namespace HTMLParser2Util {
   interface HandlerBase {
-    onopentag?(name: string, attribs: { [s: string]: string }): void;
+    onopentag?(name: string, attribs: Record<string, string>): void;
     ontext?(data: string): void;
     onclosetag?(name: string, isImplied: boolean): void;
   }

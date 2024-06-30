@@ -1,6 +1,5 @@
 import PathItem from '@components/PathItem';
 import {
-  Box,
   Paper,
   Table,
   TableBody,
@@ -8,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';

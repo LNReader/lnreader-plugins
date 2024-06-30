@@ -1,6 +1,6 @@
 import { load as parseHTML } from 'cheerio';
 import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
@@ -152,10 +152,7 @@ class ReadLiteNovel implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url =
       this.site + `/search/autocomplete?dataType=json&query=${searchTerm}`;
     const result = await fetchApi(url);

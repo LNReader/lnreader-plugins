@@ -1,7 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
@@ -12,7 +11,6 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
   icon = 'src/fr/wuxialnscantrad/icon.png';
   site = 'https://wuxialnscantrad.wordpress.com';
   version = '1.0.0';
-  filters: Filters | undefined = undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url, {
@@ -23,19 +21,13 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
     return $;
   }
 
-  async popularNovels(
-    pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
     const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url);
+    const url = this.site;
+    const $ = await this.getCheerio(url);
     $('#menu-item-2210 ul li').each((i, elem) => {
       const novelName = $(elem).first().text().trim();
       const novelUrl = $(elem).find('a').attr('href');
@@ -58,7 +50,7 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name = $('.entry-title').text().trim();
     novel.cover =
@@ -72,8 +64,8 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
     novel.summary = this.getSummary(entryContentText);
     novel.status = this.getStatus(entryContentText);
 
-    var pathChapter = $('.entry-content ul').first().children('li');
-    let chapters: Plugin.ChapterItem[] = [];
+    const pathChapter = $('.entry-content ul').first().children('li');
+    const chapters: Plugin.ChapterItem[] = [];
     pathChapter.each((i, elem) => {
       const chapterName = $(elem).text().trim();
       const chapterUrl = $(elem).find('a').attr('href');
@@ -164,7 +156,7 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath);
 
-    var contenuHtml = '';
+    let contenuHtml = '';
     $('.entry-content')
       .contents()
       .each(function () {
@@ -189,12 +181,9 @@ class WuxialnscantradPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
-      showLatestNovels: true,
-      filters: undefined,
-    });
+    const popularNovels = this.popularNovels(1);
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

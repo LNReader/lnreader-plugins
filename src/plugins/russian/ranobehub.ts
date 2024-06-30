@@ -1,10 +1,10 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
-const statusKey: { [key: number]: string } = {
+const statusKey: Record<number, string> = {
   1: NovelStatus.Ongoing,
   2: NovelStatus.Completed,
   3: NovelStatus.OnHiatus,
@@ -133,7 +133,7 @@ class RNBH implements Plugin.PluginBase {
       .substring(indexA, indexB)
       .replace(
         /<img data-media-id="(.*?)".*?>/g,
-        `<img src="${this.site}/api/media/$1"/>`,
+        `<img src="${this.site}/api/media/$1">`,
       );
 
     return chapterText;
@@ -164,8 +164,7 @@ class RNBH implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + '/ranobe/' + path;
+  resolveUrl = (path: string) => this.site + '/ranobe/' + path;
 
   filters = {
     sort: {
@@ -1236,10 +1235,6 @@ interface GenresOrEntity {
   description?: string | null;
 }
 
-interface responseChapters {
-  marked_chapters_ids?: null[] | null;
-  volumes?: VolumesEntity[] | null;
-}
 interface VolumesEntity {
   id: number;
   num: number;

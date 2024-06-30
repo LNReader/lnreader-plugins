@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
@@ -85,7 +85,7 @@ class LightNovelPub implements Plugin.PagePlugin {
     let isSummary = false;
     let isGenres = false;
     let isTags = false;
-    let genreArray: string[] = [];
+    const genreArray: string[] = [];
     let isCover = false;
     const parser = new Parser({
       onopentag(name, attribs) {
@@ -245,7 +245,7 @@ class LightNovelPub implements Plugin.PagePlugin {
     const parser = new Parser({
       onopentag(name, attribs) {
         if (isChapter && name === 'div') {
-          let stylediv = attribs['style'];
+          const stylediv = attribs['style'];
           if (stylediv) {
             chapterText += `<div style="${stylediv}">`;
             isStyleText = true;
@@ -254,7 +254,7 @@ class LightNovelPub implements Plugin.PagePlugin {
           }
         }
         if (isChapter && name === 'table') {
-          let w = attribs['width'];
+          const w = attribs['width'];
           if (w) {
             chapterText += `<table width="${w}">`;
           } else {
@@ -268,7 +268,7 @@ class LightNovelPub implements Plugin.PagePlugin {
           chapterText += `<tr>`;
         }
         if (isChapter && name === 'td') {
-          let w1 = attribs['width'];
+          const w1 = attribs['width'];
           if (w1) {
             chapterText += `<td width="${w1}">`;
           } else {
@@ -334,10 +334,7 @@ class LightNovelPub implements Plugin.PagePlugin {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}lnsearchlive`;
     const link = `${this.site}search`;
     const response = await fetchApi(link).then(r => r.text());

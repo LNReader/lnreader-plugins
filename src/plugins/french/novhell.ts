@@ -1,7 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -11,7 +10,6 @@ class NovhellPlugin implements Plugin.PluginBase {
   icon = 'src/fr/novhell/icon.png';
   site = 'https://novhell.org';
   version = '1.0.1';
-  filters: Filters | undefined = undefined;
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url, {
@@ -22,19 +20,13 @@ class NovhellPlugin implements Plugin.PluginBase {
     return $;
   }
 
-  async popularNovels(
-    pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
     const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
-    let url = this.site;
-    let $ = await this.getCheerio(url);
+    const url = this.site;
+    const $ = await this.getCheerio(url);
     $('article div div div figure').each((i, elem) => {
       let novelName = $(elem)
         .find('figcaption span strong')
@@ -65,7 +57,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       name: 'Sans titre',
     };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name =
       $('meta[property="og:title"]')
@@ -114,7 +106,7 @@ class NovhellPlugin implements Plugin.PluginBase {
       .replace('Synopsis', '')
       .replace(':', '')
       .trim();
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     $('main div article div div section div div div div div p a').each(
       (i, elem) => {
@@ -190,12 +182,9 @@ class NovhellPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
 
-    let popularNovels = this.popularNovels(1, {
-      showLatestNovels: true,
-      filters: undefined,
-    });
+    const popularNovels = this.popularNovels(1);
 
-    let novels = (await popularNovels).filter(novel =>
+    const novels = (await popularNovels).filter(novel =>
       novel.name
         .toLowerCase()
         .normalize('NFD')

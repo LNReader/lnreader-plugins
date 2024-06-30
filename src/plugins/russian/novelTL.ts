@@ -1,11 +1,11 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
-const statusKey: { [key: string]: string } = {
+const statusKey: Record<string, string> = {
   'active': NovelStatus.Ongoing,
   'completed': NovelStatus.Completed,
   'freezed': NovelStatus.OnHiatus,
@@ -195,7 +195,7 @@ class TL implements Plugin.PluginBase {
     return chapterText;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) => 'https://' + path;
+  resolveUrl = (path: string) => 'https://' + path;
 
   filters = {
     tags: {

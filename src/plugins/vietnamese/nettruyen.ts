@@ -1,5 +1,4 @@
-import { fetchFile } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@typings/plugin';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
@@ -26,12 +25,9 @@ class Nettruyen implements Plugin.PagePlugin {
     });
     return novels;
   }
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}/xem-nhieu/trang-${pageNo}.html`;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     return this.parseNovels(parseHTML(body));
   }
   parseChapters(loadedCheerio: CheerioAPI) {
@@ -52,7 +48,7 @@ class Nettruyen implements Plugin.PagePlugin {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const url = this.site + novelPath;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
@@ -71,7 +67,7 @@ class Nettruyen implements Plugin.PagePlugin {
             .text()
             .replace(/Tác giả\s+\n?:/, '');
           break;
-        case 'Trạng thái':
+        case 'Trạng thái': {
           const text = loadedCheerio(ele).text();
           if (text.includes('Đang ra')) {
             novel.status = NovelStatus.Ongoing;
@@ -81,6 +77,7 @@ class Nettruyen implements Plugin.PagePlugin {
             novel.status = NovelStatus.Unknown;
           }
           break;
+        }
         case 'Thể loại':
           novel.genres = loadedCheerio('a > span')
             .toArray()
@@ -101,7 +98,7 @@ class Nettruyen implements Plugin.PagePlugin {
     const id = novelPath.match(/-(\d+)\//)?.[1];
     if (!id) throw new Error('Cant parse page');
     const url = `${this.site}/ajax.chuong.php?id=${id}&page=${page}&url=${novelPath.replace(/\//g, '')}&loai=truyendich`;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const chapters = this.parseChapters(parseHTML(body));
     return {
       chapters,
@@ -109,14 +106,11 @@ class Nettruyen implements Plugin.PagePlugin {
   }
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + chapterPath;
-    const body = await fetch(url).then(r => r.text());
+    const body = await fetchApi(url).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     return loadedCheerio('#noidungchap').html() || '';
   }
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(): Promise<Plugin.NovelItem[]> {
     throw new Error('Method not implemented.');
   }
 }
