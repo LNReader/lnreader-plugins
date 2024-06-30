@@ -224,7 +224,7 @@ class RulatePlugin implements Plugin.PluginBase {
   }
 
   parseDate = (dateString: string | undefined = '') => {
-    const months: { [key: string]: number } = {
+    const months: Record<string, number> = {
       'янв.': 1,
       'февр.': 2,
       'мар.': 3,

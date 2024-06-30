@@ -1,10 +1,10 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 
-const statusKey: { [key: string]: string } = {
+const statusKey: Record<string, string> = {
   '0': NovelStatus.Unknown,
   '1': NovelStatus.Ongoing,
   '2': NovelStatus.Completed,
@@ -16,6 +16,7 @@ class Neobook implements Plugin.PluginBase {
   id = 'neobook';
   name = 'Neobook';
   site = 'https://neobook.org';
+  apiSite = 'https://api.neobook.org/';
   version = '1.0.1';
   icon = 'src/ru/neobook/icon.png';
 
@@ -47,7 +48,7 @@ class Neobook implements Plugin.PluginBase {
     formData.append('filter_timeread', filters?.timeread?.value || '0-999999');
 
     const { bundle_books }: { bundle_books: BundleBooks } = await fetchApi(
-      'https://api.neobook.org/',
+      this.apiSite,
       {
         method: 'post',
         body: formData,

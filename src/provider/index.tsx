@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react';
+import React from 'react';
 import DialogProvider from './DialogProvider';
 import { Backdrop, Box, CircularProgress, Container } from '@mui/material';
 import { useSelector } from 'react-redux';

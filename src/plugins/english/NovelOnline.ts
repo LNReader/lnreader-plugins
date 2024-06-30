@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import qs from 'qs';
@@ -48,7 +48,7 @@ class NovelsOnline implements Plugin.PluginBase {
     const result = await fetchApi(this.site + novelPath).then(res =>
       res.text(),
     );
-    let $ = parseHTML(result);
+    const $ = parseHTML(result);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -58,8 +58,8 @@ class NovelsOnline implements Plugin.PluginBase {
     };
 
     $('.novel-detail-item').each((i, el) => {
-      let detailName = $(el).find('h6').text();
-      let detail = $(el).find('.novel-detail-body');
+      const detailName = $(el).find('h6').text();
+      const detail = $(el).find('.novel-detail-body');
 
       switch (detailName) {
         case 'Description':
@@ -111,11 +111,8 @@ class NovelsOnline implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi('https://novelsonline.net/sResults.php', {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    const result = await fetchApi(this.site + '/sResults.php', {
       headers: {
         Accept: '*/*',
         'Accept-Language': 'pl,en-US;q=0.7,en;q=0.3',

@@ -2,7 +2,6 @@ import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
-import dayjs from 'dayjs';
 
 export interface HotNovelPubMetadata {
   id: string;
@@ -135,10 +134,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
     return chapterText.replace(/\.copy right hot novel pub/g, '');
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const result: responseSearch = await fetchApi(this.apiSite + '/search', {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -162,7 +158,7 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
 
     return novels;
   }
-  resolveUrl = (path: string, isNovel?: boolean) => this.site + '/' + path;
+  resolveUrl = (path: string) => this.site + '/' + path;
 }
 
 interface responseNovels {

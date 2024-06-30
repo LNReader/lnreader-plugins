@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -18,8 +18,7 @@ import { Search, Translate } from '@mui/icons-material';
 import { searchPlugins } from '@provider/plugins';
 import { Plugin } from '@typings/plugin';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@redux/store';
+import { useDispatch } from 'react-redux';
 import { selectPlugin } from '@redux/pluginSlice';
 import usePlugin from '@hooks/usePlugin';
 

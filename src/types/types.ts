@@ -1,5 +1,3 @@
 import { Plugin } from '@typings/plugin';
 
-export type PluginList = {
-  [key: string]: Plugin.PluginItem[];
-};
+export type PluginList = Record<string, Plugin.PluginItem[]>;

@@ -1,12 +1,10 @@
-import { fetchFile, fetchText } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
-import { load as loadCheerio, CheerioAPI } from 'cheerio';
+import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
-import { NovelStatus } from '@libs/novelStatus';
 import { NovelItem } from '../../test_web/static/js';
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
-// import { parseMadaraDate } from "@libs/parseMadaraDate";
 
 interface FuzzySearchOptions {
   caseSensitive: boolean;
@@ -69,8 +67,8 @@ class FuzzySearch<Item> {
     }
     const results: { item: Item; score: number }[] = [];
 
-    for (let item of this.haystack) {
-      for (let value of this.getItems(item)) {
+    for (const item of this.haystack) {
+      for (const value of this.getItems(item)) {
         const score = this.isMatch(value, query);
         if (score !== undefined) {
           results.push({ item, score });
@@ -112,11 +110,11 @@ class FuzzySearch<Item> {
 
   nearestIndexesFor(item: string, query: string): number[] | undefined {
     const letters = query.split('');
-    let indexes: number[][] = [];
+    const indexes: number[][] = [];
 
     const idxFL = this.idxFirstLetter(item, query);
 
-    for (let idx of idxFL) {
+    for (const idx of idxFL) {
       indexes.push([idx]);
       for (let i = 1; i < letters.length; i++) {
         const letter = letters[i];
@@ -139,8 +137,8 @@ class FuzzySearch<Item> {
         return a[0] - b[0];
       }
 
-      let res_a = a[a.length - 1] - a[0];
-      let res_b = b[b.length - 1] - b[0];
+      const res_a = a[a.length - 1] - a[0];
+      const res_b = b[b.length - 1] - b[0];
 
       return res_a - res_b;
     })[0];
@@ -167,21 +165,20 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   icon = 'src/en/relibrary/icon.png';
   site = 'https://re-library.com';
   version = '1.0.0';
-  filters: Filters | undefined = undefined;
 
-  private searchFunc: FuzzySearch<Plugin.NovelItem> = new FuzzySearch(
-    item => [item.name],
-    { sort: true, caseSensitive: false },
-  );
+  private searchFunc = new FuzzySearch<Plugin.NovelItem>(item => [item.name], {
+    sort: true,
+    caseSensitive: false,
+  });
 
   private async popularNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
     loadedCheerio('.entry-content > ol > li').each((_i, el) => {
-      let novel: Partial<NovelItem> = {};
+      const novel: Partial<NovelItem> = {};
       novel.name = loadedCheerio(el).find('h3 > a').text();
       novel.path = loadedCheerio(el)
         .find('table > tbody > tr > td > a')
@@ -201,12 +198,12 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   private async lastestNovelsInner(url: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
     loadedCheerio('article.type-page.page').each((_i, el) => {
-      let novel: Partial<Plugin.NovelItem> = {};
+      const novel: Partial<Plugin.NovelItem> = {};
       novel.name = loadedCheerio(el).find('.entry-title').text();
       novel.path = loadedCheerio(el).find('.entry-title a').attr('href');
       if (novel.path === undefined || novel.name === undefined) return;
@@ -224,10 +221,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { showLatestNovels }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     // The most-popular page only has a single page, so we return an empty array in case you ask for the impossible
     // the lastest page do have paginated result, so we support that.
@@ -241,7 +235,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let novel: Partial<Plugin.SourceNovel> = {
+    const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
     };
     // title:		.entry-content > header.entry-header > .entry-title
@@ -250,7 +244,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     // synopis:		.entry-content > div.su-box > div.su-box-content
     // chapters:	.entry-content > div.su-accordion <then> li.page_item[]
 
-    const result = await fetch(`${this.site}/${novelPath}`);
+    const result = await fetchApi(`${this.site}/${novelPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
@@ -271,7 +265,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
     // Genres in comma separated "list"
     novel.genres = (() => {
-      let genres: string[] = [];
+      const genres: string[] = [];
       loadedCheerio(
         '.entry-content > table > tbody > tr > td > p > span > a',
       ).each((_i, el) => {
@@ -303,7 +297,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       '.entry-content > div.su-box > div.su-box-content',
     ).text();
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     let chapter_idx = 0;
     loadedCheerio('.entry-content > div.su-accordion').each((_i1, el) => {
@@ -336,16 +330,16 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     // parse chapter text here
-    const result = await fetch(`${this.site}/${chapterPath}`);
+    const result = await fetchApi(`${this.site}/${chapterPath}`);
     const body = await result.text();
 
     const loadedCheerio = loadCheerio(body);
-    let text: string[] = [];
+    const text: string[] = [];
     loadedCheerio('.entry-content > p')
       .slice(1)
       .each((_i, el) => {
         loadedCheerio(el).find('span').remove();
-        let t = loadedCheerio(el).html();
+        const t = loadedCheerio(el).html();
         if (t === undefined) return;
         text.push(`<p>${t}</p>`);
       });
@@ -363,14 +357,14 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     // We only want to serve a single "page" since we do the search client side.
     if (pageNo !== 1) return [];
 
-    let novels: Plugin.NovelItem[] = [];
-    const req = await fetch(`${this.site}/translations/`);
+    const novels: Plugin.NovelItem[] = [];
+    const req = await fetchApi(`${this.site}/translations/`);
     const body = await req.text();
 
     const loadedCheerio = loadCheerio(body);
 
     loadedCheerio('.entry-content table a').each((_i, el) => {
-      let e = loadedCheerio(el);
+      const e = loadedCheerio(el);
       if (e && e.attr('href') && e.text()) {
         let path = e.attr('href')!;
         if (path.startsWith(this.site)) {

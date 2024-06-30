@@ -11,36 +11,36 @@ export enum FilterTypes {
   ExcludableCheckboxGroup = 'XCheckbox',
 }
 
-type SwitchFilter = {
+interface SwitchFilter {
   type: FilterTypes.Switch;
   /** Default value */
   value: boolean;
-};
+}
 
-type TextFilter = {
+interface TextFilter {
   type: FilterTypes.TextInput;
   /** Default value */
   value: string;
-};
+}
 
-type CheckboxFilter = {
+interface CheckboxFilter {
   type: FilterTypes.CheckboxGroup;
   options: readonly FilterOption[];
   /** Default value */
   value: string[];
-};
-type PickerFilter = {
+}
+interface PickerFilter {
   type: FilterTypes.Picker;
   options: readonly FilterOption[];
   /** Default value */
   value: string;
-};
+}
 
-type ExcludableCheckboxFilter = {
+interface ExcludableCheckboxFilter {
   type: FilterTypes.ExcludableCheckboxGroup;
   options: readonly FilterOption[];
   value: { include?: string[]; exclude?: string[] };
-};
+}
 
 export type Filters = Record<
   string,

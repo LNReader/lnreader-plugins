@@ -1,3 +1,4 @@
+import { fetchApi } from '@libs/fetch';
 import { Parser } from 'htmlparser2';
 import { HTMLParser2Util, Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -20,7 +21,7 @@ class HakoPlugin implements Plugin.PluginBase {
   site = 'https://ln.hako.vn';
   version = '1.1.0';
   parseNovels(url: string) {
-    return fetch(url)
+    return fetchApi(url)
       .then(res => res.text())
       .then(html => {
         const novels: Plugin.NovelItem[] = [];
@@ -57,10 +58,7 @@ class HakoPlugin implements Plugin.PluginBase {
   }
   popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = this.site + '/danh-sach';
     if (filters) {
@@ -96,7 +94,7 @@ class HakoPlugin implements Plugin.PluginBase {
     const getNameHandler: HTMLParser2Util.Handler = {
       isDone: false,
       isStarted: false,
-      onopentag(name, attribs) {
+      onopentag(name) {
         if (name === 'a') {
           this.isStarted = true;
         }
@@ -104,7 +102,7 @@ class HakoPlugin implements Plugin.PluginBase {
       ontext(data) {
         novel.name += data;
       },
-      onclosetag(name) {
+      onclosetag() {
         if (this.isStarted) {
           this.isDone = true;
         }
@@ -122,7 +120,7 @@ class HakoPlugin implements Plugin.PluginBase {
           novel.summary += data;
         }
       },
-      onclosetag(name) {
+      onclosetag() {
         this.newLine = true;
       },
     };
@@ -341,12 +339,13 @@ class HakoPlugin implements Plugin.PluginBase {
             if (this.handlers.GetVolumes?.isDone) {
               this.action = ParseNovelAction.Unknown;
             }
+            break;
           default:
             break;
         }
       },
     };
-    return fetch(this.site + novelPath)
+    return fetchApi(this.site + novelPath)
       .then(res => res.text())
       .then(html => {
         const parser = new Parser({
@@ -400,7 +399,7 @@ class HakoPlugin implements Plugin.PluginBase {
       });
   }
   parseChapter(chapterPath: string): Promise<string> {
-    return fetch(this.site + chapterPath)
+    return fetchApi(this.site + chapterPath)
       .then(res => res.text())
       .then(
         html =>
@@ -419,7 +418,7 @@ class HakoPlugin implements Plugin.PluginBase {
   }
   imageRequestInit: Plugin.ImageRequestInit = {
     headers: {
-      Referer: 'https://ln.hako.vn',
+      Referer: this.site,
     },
   };
   filters = {

@@ -1,4 +1,4 @@
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
@@ -14,20 +14,17 @@ class ReinoWuxia implements Plugin.PluginBase {
   getNovelName(y: string | undefined) {
     return y?.replace(/-/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase());
   }
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions<Filters>,
-  ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'p/todas-las-novelas.html';
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
+    const url = this.site + 'p/todas-las-novelas.html';
 
     const result = await fetchApi(url, {
       method: 'GET',
     });
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.post-body.entry-content')
       .find('a')
@@ -40,7 +37,7 @@ class ReinoWuxia implements Plugin.PluginBase {
         novelName = this.getNovelName(novelName);
         const novelCover = loadedCheerio(ele).find('img').attr('src');
 
-        let novelUrl = loadedCheerio(ele).attr('href');
+        const novelUrl = loadedCheerio(ele).attr('href');
 
         if (!novelName || !novelUrl) return;
 
@@ -61,9 +58,9 @@ class ReinoWuxia implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.post-title').text().trim(),
     };
@@ -74,7 +71,7 @@ class ReinoWuxia implements Plugin.PluginBase {
 
     loadedCheerio('div > b').each(function () {
       const detailName = loadedCheerio(this).text();
-      let detail = loadedCheerio(this)[0].nextSibling;
+      const detail = loadedCheerio(this)[0].nextSibling;
 
       if (detailName && detail) {
         const text = loadedCheerio(detail).text();
@@ -92,7 +89,7 @@ class ReinoWuxia implements Plugin.PluginBase {
       }
     });
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('div').each((idx, rootEle) => {
       const detailName = loadedCheerio(rootEle).text();
@@ -150,24 +147,21 @@ class ReinoWuxia implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('.post-body.entry-content').html() || '';
+    const chapterText = loadedCheerio('.post-body.entry-content').html() || '';
 
     return chapterText;
   }
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search?q=${searchTerm}`;
 
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.date-outer').each((idx, ele) => {
       let novelName = loadedCheerio(ele)

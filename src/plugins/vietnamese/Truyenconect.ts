@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
@@ -67,7 +67,7 @@ class TruyenConect implements Plugin.PagePlugin {
       link += '?page=' + pageNo;
     }
 
-    const body = await fetch(link).then(r => r.text());
+    const body = await fetchApi(link).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio, selector);
   }
@@ -80,7 +80,7 @@ class TruyenConect implements Plugin.PagePlugin {
       if (chapterId) {
         url = url.replace(chapterId + '-', '') + '-' + chapterId;
       }
-      let num = url.match(/chuong-(\d+)/)?.[1];
+      const num = url.match(/chuong-(\d+)/)?.[1];
       chapters.push({
         path: url.replace(this.site, ''),
         name: loadedCheerio(ele).text().trim(),
@@ -104,7 +104,7 @@ class TruyenConect implements Plugin.PagePlugin {
     const chapterId = firstChapterUrl.match(/-(\d+)$/)?.[1];
     if (!chapterId) throw new Error('Không tìm thấy chương');
     const url = this.site + '/truyen/get-chap-selector?chap=' + chapterId;
-    const data: ChapterSelect = await fetch(url).then(r => r.json());
+    const data: ChapterSelect = await fetchApi(url).then(r => r.json());
     const volumeList: VolumeList = {
       chapters: this.parseChapters(parseHTML(data.chap_selector)),
     };
@@ -119,10 +119,10 @@ class TruyenConect implements Plugin.PagePlugin {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const url = this.site + novelPath;
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       name: loadedCheerio('.post-title > h1').text().trim(),
@@ -157,13 +157,20 @@ class TruyenConect implements Plugin.PagePlugin {
           novel.artist = loadedCheerio(detail).text().trim();
           break;
         case 'Trạng thái':
-          const status = detail.trim();
-          if (status === 'Full') novel.status = NovelStatus.Completed;
-          else if (status === 'Tạm ngưng') novel.status = NovelStatus.OnHiatus;
-          else if (status === 'Đang tiến hành')
-            novel.status = NovelStatus.Ongoing;
-          else novel.status = NovelStatus.Unknown;
-          break;
+          switch (detail.trim()) {
+            case 'Full':
+              novel.status = NovelStatus.Completed;
+              break;
+            case 'Tạm ngưng':
+              novel.status = NovelStatus.OnHiatus;
+              break;
+            case 'Đang tiến hành':
+              novel.status = NovelStatus.Ongoing;
+              break;
+            default:
+              novel.status = NovelStatus.Unknown;
+              break;
+          }
       }
     });
 
@@ -187,9 +194,9 @@ class TruyenConect implements Plugin.PagePlugin {
   }
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const url = this.site + novelPath;
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
     const firstChapLink = loadedCheerio('#init-links > a').first().attr('href');
     if (!firstChapLink) throw new Error('Không tìm thấy truyện');
     await this.sleep(1000);
@@ -202,7 +209,7 @@ class TruyenConect implements Plugin.PagePlugin {
     const query = `dataEpisodes=${volume.value}&datastory=${volume.story}&dataNavigation=${encodeURIComponent(volume.navigation)}`;
     const chaptersUrl = `${this.site}/truyen/getreadingchapAction?${query}`;
     await this.sleep(1000);
-    const res: { err: number; html: string } = await fetch(chaptersUrl).then(
+    const res: { err: number; html: string } = await fetchApi(chaptersUrl).then(
       r => r.json(),
     );
     if (res.err) throw new Error(res.html);
@@ -211,11 +218,11 @@ class TruyenConect implements Plugin.PagePlugin {
     };
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.site + chapterPath);
+    const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
-    let chapterText = loadedCheerio('.reading-content').html() || '';
+    const chapterText = loadedCheerio('.reading-content').html() || '';
 
     return chapterText;
   }
@@ -224,7 +231,7 @@ class TruyenConect implements Plugin.PagePlugin {
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?key=${searchTerm}&page=${pageNo}`;
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);

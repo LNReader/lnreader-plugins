@@ -1,3 +1,4 @@
+/* global Buffer */
 import * as fs from 'fs';
 import * as path from 'path';
 import sizeOf from 'image-size';
@@ -83,7 +84,7 @@ const notAvailableImage = fs.readFileSync(
         const exist = fs.existsSync(icon);
 
         if (!exist) {
-          const dir = icon.match(/^.*[\\\/]/)[0];
+          const dir = path.dirname(icon);
           fs.mkdirSync(dir, { recursive: true });
         }
 

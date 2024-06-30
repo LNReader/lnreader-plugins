@@ -1,7 +1,7 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
-import { fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 
@@ -48,7 +48,7 @@ class BLN implements Plugin.PluginBase {
     link += '&state=' + filters.status.value;
     link += '&page=' + page;
 
-    const result = await fetch(link);
+    const result = await fetchApi(link);
     if (!result.ok) {
       console.error(await result.text());
       // TODO: Cloudflare protection or other error
@@ -61,7 +61,7 @@ class BLN implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetch(this.site + novelPath);
+    const result = await fetchApi(this.site + novelPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -146,7 +146,7 @@ class BLN implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetch(this.site + chapterPath);
+    const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -162,7 +162,7 @@ class BLN implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search_novels/${searchTerm}?page=${page}`;
 
-    const result = await fetch(url);
+    const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);

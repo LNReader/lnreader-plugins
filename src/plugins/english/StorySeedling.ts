@@ -1,5 +1,5 @@
 import { Plugin } from '@typings/plugin';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 
@@ -8,54 +8,49 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   name = 'StorySeedling';
   icon = 'src/en/storyseedling/icon.png';
   site = 'https://storyseedling.com/';
-  version = '1.0.1';
+  version = '1.0.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
-    let url = 'https://storyseedling.com/ajax';
-
-    const postUrl = `https://storyseedling.com/browse/`;
-    const body = await fetchApi(postUrl).then(r => r.text());
-
+    const novels: Plugin.NovelItem[] = [];
+    const body = await fetchApi(this.site + 'browse').then(r => r.text());
     const loadedCheerio = parseHTML(body);
 
-    var postValue = loadedCheerio('div[ax-load][x-data]')
+    const postValue = loadedCheerio('div[ax-load][x-data]')
       .attr('x-data')
       ?.replace("browse('", '')
       .replace("')", '') as string;
 
-    var data = new FormData();
+    const data = new FormData();
     data.append('search', '');
     data.append('orderBy', 'recent');
     data.append('curpage', pageNo.toString());
     data.append('post', postValue);
     data.append('action', 'fetch_browse');
 
-    var response = await (
-      await fetchApi(url, { body: data, method: 'POST' })
-    ).json();
+    const response: any = await fetchApi(this.site + 'ajax', {
+      body: data,
+      method: 'POST',
+    }).then(res => res.json());
 
-    response.data.posts.forEach((element: any) => {
-      const novel = {
+    response.data.posts.forEach((element: any) =>
+      novels.push({
         name: element.title,
         cover: element.thumbnail,
         path: element.permalink.replace(this.site, ''),
-      };
-      novels.push(novel);
-    });
+      }),
+    );
 
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    var site = this.site;
+    const site = this.site;
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: '',
     };
 
     const body = await fetchApi(this.site + novelPath).then(r => r.text());
-
     const loadedCheerio = parseHTML(body);
 
     novel.name = loadedCheerio('h1').text().trim();
@@ -68,7 +63,8 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     if (!novel.cover) {
       novel.cover = defaultCover;
     }
-    let genres: string[] = [];
+
+    const genres: string[] = [];
     loadedCheerio(
       'section[x-data="{ tab: location.hash.substr(1) || \'chapters\' }"].relative > div > div > div.flex.flex-wrap > a',
     ).each(function () {
@@ -81,7 +77,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
       .trim()
       .replace(/(\r\n|\n|\r)/gm, '');
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio(
       'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
@@ -89,20 +85,20 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
       if (loadedCheerio(this).find('> div').length == 2) {
         return;
       }
-      let name = loadedCheerio(this).find('.truncate').text().trim();
-      let url = loadedCheerio(this).attr('href') as string;
-      let releaseTime = loadedCheerio(this)
+      const name = loadedCheerio(this).find('.truncate').text().trim();
+      const url = loadedCheerio(this).attr('href') as string;
+      const releaseTime = loadedCheerio(this)
         .find('div > div > small')
         .text()
         .trim();
-      let chapterNumber = name.split('-')[0].trim().split(' ')[1];
-      const chapter: Plugin.ChapterItem = {
+      const chapterNumber = name.split('-')[0].trim().split(' ')[1];
+
+      chapters.push({
         name: name,
         path: url.replace(site, ''),
-        releaseTime: releaseTime,
+        releaseTime,
         chapterNumber: parseInt(chapterNumber),
-      };
-      chapters.push(chapter);
+      });
     });
     novel.chapters = chapters;
     return novel;
@@ -111,8 +107,8 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     const body = await fetchApi(this.site + chapterPath).then(r => r.text());
 
     const loadedCheerio = parseHTML(body);
-    let t = loadedCheerio('div.justify-center > div.mb-4');
-    let chapterText = t.html() || '';
+    const t = loadedCheerio('div.justify-center > div.mb-4');
+    const chapterText = t.html() || '';
 
     return chapterText;
   }
@@ -121,38 +117,35 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
-    let url = 'https://storyseedling.com/ajax';
+    const novels: Plugin.NovelItem[] = [];
 
-    const postUrl = `https://storyseedling.com/browse/`;
-    const body = await fetchApi(postUrl).then(r => r.text());
-
+    const body = await fetchApi(this.site + 'browse').then(r => r.text());
     const loadedCheerio = parseHTML(body);
 
-    var postValue = loadedCheerio('div[ax-load][x-data]')
+    const postValue = loadedCheerio('div[ax-load][x-data]')
       .attr('x-data')
       ?.replace("browse('", '')
       .replace("')", '') as string;
 
-    var data = new FormData();
+    const data = new FormData();
     data.append('search', searchTerm);
     data.append('orderBy', 'recent');
     data.append('curpage', pageNo.toString());
     data.append('post', postValue);
     data.append('action', 'fetch_browse');
 
-    var response = await (
-      await fetchApi(url, { body: data, method: 'POST' })
-    ).json();
+    const response: any = await fetchApi(this.site + 'ajax', {
+      body: data,
+      method: 'POST',
+    }).then(res => res.json());
 
-    response.data.posts.forEach((element: any) => {
-      const novel = {
+    response.data.posts.forEach((element: any) =>
+      novels.push({
         name: element.title,
         cover: element.thumbnail,
         path: element.permalink.replace(this.site, ''),
-      };
-      novels.push(novel);
-    });
+      }),
+    );
 
     return novels;
   }

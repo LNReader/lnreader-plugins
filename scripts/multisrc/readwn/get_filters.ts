@@ -90,7 +90,7 @@ async function getFilters(name: string, url: string) {
           ?.replace('-0.html', ''),
       }),
     );
-    let nextPage = $('.pagination > li:last-child > a').attr('href');
+    const nextPage = $('.pagination > li:last-child > a').attr('href');
     if (nextPage) {
       const allpage = parseInt(nextPage.replace(/[^0-9]/g, '') || '0', 10);
       for (let pageNo = 0; pageNo < allpage; pageNo++) {

@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
@@ -52,7 +52,7 @@ class ComradeMaoPlugin implements Plugin.PluginBase {
   async parseNovelAndChapters(novelUrl: string): Promise<Plugin.SourceNovel> {
     const body = await fetchApi(novelUrl).then(result => result.text());
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       url: novelUrl,

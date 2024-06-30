@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
@@ -73,8 +73,8 @@ class NovelBin implements Plugin.PluginBase {
     };
 
     loadedCheerio('ul.info > li > h3').each(function () {
-      let detailName = loadedCheerio(this).text();
-      let detail = loadedCheerio(this)
+      const detailName = loadedCheerio(this).text();
+      const detail = loadedCheerio(this)
         .siblings()
         .map((i, el) => loadedCheerio(el).text())
         .toArray()
@@ -137,10 +137,7 @@ class NovelBin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search/?keyword=${searchTerm}`;
     const body = await fetchApi(url).then(r => r.text());
 

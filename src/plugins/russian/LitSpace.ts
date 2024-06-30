@@ -1,7 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { fetchApi } from '@libs/fetch';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
@@ -129,7 +128,7 @@ class freedlit implements Plugin.PluginBase {
   }
 
   parseDate = (dateString: string | undefined = '') => {
-    const months: { [key: string]: number } = {
+    const months: Record<string, number> = {
       января: 1,
       февраля: 2,
       марта: 3,

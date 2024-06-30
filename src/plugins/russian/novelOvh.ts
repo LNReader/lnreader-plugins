@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
@@ -8,6 +8,7 @@ class novelOvh implements Plugin.PluginBase {
   id = 'novelovh';
   name = 'НовелОВХ';
   site = 'https://novel.ovh';
+  apiSite = 'https://api.novel.ovh/v2/';
   version = '1.0.2';
   icon = 'src/ru/novelovh/icon.png';
 
@@ -61,8 +62,10 @@ class novelOvh implements Plugin.PluginBase {
       switch (person.type) {
         case 'AUTHOR':
           novel.author = person.publisher.name;
+          break;
         case 'ARTIST':
           novel.artist = person.publisher.name;
+          break;
       }
     });
 
@@ -89,7 +92,7 @@ class novelOvh implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const book: responseChapter = await fetchApi(
-      'https://api.novel.ovh/v2/chapters/' + chapterPath.split('/')[1],
+      this.apiSite + 'chapters/' + chapterPath.split('/')[1],
     ).then(res => res.json());
 
     const image = Object.fromEntries(
@@ -101,7 +104,7 @@ class novelOvh implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const url = `https://api.novel.ovh/v2/books?type=NOVEL&search=${searchTerm}`;
+    const url = this.apiSite + 'books?type=NOVEL&search=' + searchTerm;
     const books: BooksEntity[] = await fetchApi(url).then(res => res.json());
 
     const novels: Plugin.NovelItem[] = [];
@@ -118,8 +121,8 @@ class novelOvh implements Plugin.PluginBase {
 
   jsonToHtml = (
     json: ContentEntity[],
-    image: { [key: string]: string },
-    html: string = '',
+    image: Record<string, string>,
+    html = '',
   ) => {
     json.forEach(element => {
       switch (element.type) {
@@ -158,8 +161,7 @@ class novelOvh implements Plugin.PluginBase {
     return html;
   };
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + '/novel/' + path;
+  resolveUrl = (path: string) => this.site + '/novel/' + path;
 
   filters = {
     sort: {

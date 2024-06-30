@@ -1,4 +1,3 @@
-import path from 'path';
 import fs from 'fs';
 
 let content = `import { Plugin } from '@typings/plugin';\n`;

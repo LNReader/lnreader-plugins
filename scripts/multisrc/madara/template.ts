@@ -1,5 +1,5 @@
 import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
@@ -82,7 +82,7 @@ class MadaraPlugin implements Plugin.PluginBase {
 
   getHostname(url: string): string {
     url = url.split('/')[2];
-    let url_parts = url.split('.');
+    const url_parts = url.split('.');
     url_parts.pop(); // remove TLD
     return url_parts.join('.');
   }
@@ -203,7 +203,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     });
 
     loadedCheerio('div.summary__content .code-block,script').remove();
-    let summary =
+    const summary =
       loadedCheerio('div.summary__content') ||
       loadedCheerio('#tab-manga-about') ||
       loadedCheerio('.post-content_item h5:contains("Summary")').next();
@@ -250,7 +250,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         releaseDate = dayjs().format('LL');
       }
 
-      let chapterUrl = loadedCheerio(element).find('a').attr('href') || '';
+      const chapterUrl = loadedCheerio(element).find('a').attr('href') || '';
 
       chapters.push({
         name: chapterName,

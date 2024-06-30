@@ -14,7 +14,7 @@ import 'protobufjs';
 
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
-  let [resource, config] = args;
+  const [resource, config] = args;
   if (resource.toString().includes('localhost')) {
     const response = await originalFetch(resource, config);
     return response;

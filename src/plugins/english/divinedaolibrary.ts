@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 
@@ -9,7 +9,6 @@ class DDLPlugin implements Plugin.PluginBase {
   site = 'https://www.divinedaolibrary.com/';
   version = '1.0.1';
   icon = 'src/en/divinedaolibrary/icon.png';
-  filters?: undefined;
 
   parseNovels(loadedCheerio: CheerioAPI, searchTerm?: string) {
     let novels: Plugin.NovelItem[] = [];
@@ -40,11 +39,8 @@ class DDLPlugin implements Plugin.PluginBase {
     return novels;
   }
 
-  async popularNovels(
-    pageNo: number,
-    options: Plugin.PopularNovelsOptions,
-  ): Promise<Plugin.NovelItem[]> {
-    let link = this.site + 'novels';
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
+    const link = this.site + 'novels';
 
     const body = await fetchApi(link).then(res => res.text());
 
@@ -56,7 +52,7 @@ class DDLPlugin implements Plugin.PluginBase {
     const result = await fetchApi(this.site + novelPath);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -116,11 +112,8 @@ class DDLPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'novels';
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    const url = this.site + 'novels';
 
     const result = await fetchApi(url);
     const body = await result.text();

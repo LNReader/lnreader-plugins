@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
@@ -36,7 +36,7 @@ class IndoWebNovel implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    page: number = 1,
+    page = 1,
     { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     /*
@@ -50,7 +50,7 @@ class IndoWebNovel implements Plugin.PluginBase {
     if (filters.genre.value.length)
       link += filters.genre.value.map(i => `&genre[]=${i}`).join('');
     */
-    let link = this.site + `page/${page}/?s`;
+    const link = this.site + `page/${page}/?s`;
     const result = await fetchApi(link);
     const body = await result.text();
 
@@ -114,7 +114,7 @@ class IndoWebNovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    page: number = 1,
+    page = 1,
   ): Promise<Plugin.NovelItem[]> {
     /*
     let link = `${this.site}advanced-search/page/${page}/?title=${searchTerm}&author=&yearx=`;
@@ -123,7 +123,7 @@ class IndoWebNovel implements Plugin.PluginBase {
     link += `&order=${this.filters.sort.value}`;
     link += this.filters.lang.value.map(i => `&country[]=${i}`).join('');
     */
-    let link = this.site + `page/${page}/?s=${searchTerm}`;
+    const link = this.site + `page/${page}/?s=${searchTerm}`;
     const result = await fetchApi(link);
     const body = await result.text();
 

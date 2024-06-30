@@ -1,5 +1,5 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
@@ -38,7 +38,7 @@ class LSHNovel implements Plugin.PluginBase {
 
     loadedCheerio('article.bs').each(function () {
       const novelName = loadedCheerio(this).find('.ntitle').text().trim();
-      let image = loadedCheerio(this).find('img');
+      const image = loadedCheerio(this).find('img');
       const novelCover = image.attr('data-src') || image.attr('src');
 
       const novelUrl = loadedCheerio(this).find('a').attr('href');
@@ -63,7 +63,7 @@ class LSHNovel implements Plugin.PluginBase {
     const result = await fetchApi(url, { headers });
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       url,
@@ -99,7 +99,7 @@ class LSHNovel implements Plugin.PluginBase {
       .end()
       .text();
 
-    let chapter: Plugin.ChapterItem[] = [];
+    const chapter: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.eplister')
       .find('li')
@@ -133,7 +133,7 @@ class LSHNovel implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterText = loadedCheerio('.epcontent').html() || '';
+    const chapterText = loadedCheerio('.epcontent').html() || '';
 
     return chapterText;
   }

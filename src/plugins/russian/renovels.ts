@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
@@ -147,8 +147,7 @@ class ReN implements Plugin.PluginBase {
     return novels;
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) =>
-    this.site + '/novel/' + path;
+  resolveUrl = (path: string) => this.site + '/novel/' + path;
 
   filters = {
     sort: {

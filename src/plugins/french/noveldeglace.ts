@@ -1,5 +1,5 @@
 import { load, CheerioAPI } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { Filters, FilterTypes } from '@libs/filterInputs';
@@ -24,7 +24,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
   }
 
   parseDate(date: string): string {
-    const monthMapping: { [key: string]: string } = {
+    const monthMapping: Record<string, string> = {
       janvier: 'January',
       fevrier: 'February',
       mars: 'March',
@@ -49,7 +49,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     $: CheerioAPI,
     showLatestNovels: boolean | undefined,
   ): Plugin.NovelItem[] {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     $('article').each((i, el) => {
       const cheerio = $(el);
@@ -83,7 +83,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     let url = this.site;
     if (showLatestNovels) url += 'chapitre';
     else {
-      let cat_gen: string = 'all';
+      let cat_gen = 'all';
       if (filters && typeof filters.categorie_genre.value == 'string')
         cat_gen = filters.categorie_genre.value;
       if (
@@ -98,7 +98,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
       else url += 'roman';
     }
     url += '/page/' + pageNo;
-    let $ = await this.getCheerio(url);
+    const $ = await this.getCheerio(url);
     if (!$) return [];
     return this.parseNovels($, showLatestNovels);
   }
@@ -107,16 +107,16 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     const $ = await this.getCheerio(this.site + novelPath);
     if (!$) throw new Error('Failed to load page (open in web view)');
 
-    let novel: Plugin.SourceNovel = { path: novelPath, name: 'Untitled' };
+    const novel: Plugin.SourceNovel = { path: novelPath, name: 'Untitled' };
 
     novel.name =
       (
-        $('div.entry-content > div > strong')[0].nextSibling as Text | null
+        $('div.entry-content > div > strong')[0].nextSibling as string | null
       )?.nodeValue?.trim() || 'Untitled';
 
     novel.cover = $('.su-row > div > div > img').attr('src') || defaultCover;
 
-    let novelInfos = $('div[data-title=Tomes] >').toArray();
+    const novelInfos = $('div[data-title=Tomes] >').toArray();
     novelInfos.pop();
     novelInfos.shift();
     novel.summary =
@@ -149,7 +149,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     if (genres)
       novel.genres = novel.genres ? novel.genres + ',' + genres : genres;
 
-    let status = $("strong:contains('Statut :')").parent().attr('class');
+    const status = $("strong:contains('Statut :')").parent().attr('class');
     switch (status) {
       case 'type etat0':
       case 'type etat1':
@@ -169,13 +169,13 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
         break;
     }
 
-    let novelChapters: Plugin.ChapterItem[] = [];
+    const novelChapters: Plugin.ChapterItem[] = [];
 
     const volumes = $('div[data-title=Tomes] > div').last().contents();
     const hasMultipleVolumes = volumes.length > 1;
 
     let chapterName = '';
-    let site = this.site;
+    const site = this.site;
     volumes.each((volumeIndex: number, el) => {
       if (hasMultipleVolumes) chapterName = 'T.' + (volumeIndex + 1) + ' ';
       $(el)
@@ -189,20 +189,16 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
             const dateHtml =
               cheerio.html()?.substring(cheerio.html()?.indexOf('</a>') || 0) ||
               '';
-            let releaseDate =
+            const releaseDate =
               dateHtml?.substring(
                 dateHtml.indexOf('(') + 1,
                 dateHtml.indexOf(')'),
               ) || undefined;
-            if (releaseDate)
-              try {
-                releaseDate = this.parseDate(releaseDate);
-              } catch (e) {}
             const chapterUrl = cheerio.find('a').attr('href');
             if (chapterUrl) {
               const chapter: Plugin.ChapterItem = {
                 name: newChapterName,
-                releaseTime: releaseDate,
+                releaseTime: this.parseDate(releaseDate),
                 path: chapterUrl.replace(site, ''),
                 chapterNumber: chapterIndex,
               };
@@ -232,13 +228,9 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
               });
             if (dates.length == hrefs.length)
               dates.forEach((date, index) => {
-                let releaseDate = date;
-                try {
-                  releaseDate = this.parseDate(date);
-                } catch (e) {}
                 const chapter: Plugin.ChapterItem = {
                   name: newChapterName + ' (' + (index + 1) + ')',
-                  releaseTime: releaseDate,
+                  releaseTime: this.parseDate(date),
                   path: hrefs[index].replace(site, ''),
                   chapterNumber: chapterIndex + (index + 1) / 1000,
                 };
@@ -258,7 +250,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     if (!$) throw new Error('Failed to load page (open in web view)');
 
     $('.mistape_caption').remove();
-    let chapterText =
+    const chapterText =
       $('.chapter-content').html() || $('.entry-content').html() || '';
     return chapterText;
   }
@@ -268,7 +260,7 @@ class NovelDeGlacePlugin implements Plugin.PluginBase {
     num: number,
   ): Promise<Plugin.NovelItem[]> {
     if (num !== 1) return []; // only 1 page of results
-    let url = this.site + 'roman';
+    const url = this.site + 'roman';
     const $ = await this.getCheerio(url);
     if (!$) throw new Error('Failed to load page (open in web view)');
 

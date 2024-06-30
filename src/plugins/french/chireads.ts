@@ -1,5 +1,5 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
@@ -27,7 +27,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site;
-    let tag: string = 'all';
+    let tag = 'all';
     if (showLatestNovels) url += '/category/translatedtales/page/' + pageNo;
     else {
       if (
@@ -41,7 +41,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
     }
     let $ = await this.getCheerio(url);
 
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
     let novel: Plugin.NovelItem;
 
     if (showLatestNovels || tag !== 'all') {
@@ -133,7 +133,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novel: Plugin.SourceNovel = { path: novelPath, name: 'Sans titre' };
 
-    let $ = await this.getCheerio(this.site + novelPath);
+    const $ = await this.getCheerio(this.site + novelPath);
 
     novel.name =
       $('.inform-product-txt').first().text().trim() ||
@@ -146,7 +146,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
       $('.inform-inform-txt').text().trim() ||
       $('.inform-intr-txt').text().trim();
 
-    let infos =
+    const infos =
       $('div.inform-product-txt > div.inform-intr-col').text().trim() ||
       $('div.inform-inform-data > h6').text().trim();
     if (infos.includes('Auteur : '))
@@ -178,7 +178,7 @@ class ChireadsPlugin implements Plugin.PluginBase {
         break;
     }
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
 
     let chapterList = $('.chapitre-table a');
     if (!chapterList.length) {
