@@ -15,16 +15,15 @@ import 'protobufjs';
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
   const [resource, config] = args;
-  if (resource.toString().includes('localhost')) {
-    const response = await originalFetch(resource, config);
-    return response;
-  }
-  const response = await originalFetch('http://localhost:3001/' + resource, {
+  const _res = await originalFetch('http://localhost:3001/' + resource, {
     ...config,
     credentials: 'include',
     mode: 'cors',
   });
-  return response;
+  Object.defineProperty(_res, 'url', {
+    value: _res.url.includes('localhost') ? resource.toString() : _res.url,
+  });
+  return _res;
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
