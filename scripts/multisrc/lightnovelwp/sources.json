@@ -14,7 +14,7 @@
     "sourceName": "Kol Novel",
     "options": {
       "lang": "Arabic",
-      "versionIncrements": 2
+      "versionIncrements": 2,
       "reverseChapters": true,
       "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());"
     }
