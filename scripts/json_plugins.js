@@ -82,6 +82,7 @@ for (let language in languages) {
       version,
       url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
       iconUrl: `${ICON_LINK}/${icon || 'siteNotAvailable.png'}`,
+      down: plugin.endsWith('.down.js'),
     };
 
     if (pluginSet.has(id)) {
