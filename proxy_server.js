@@ -25,8 +25,6 @@ const proxyRequest = (req, res) => {
 };
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
-  var requestState = req.corsAnywhereRequestState;
-
   var statusCode = proxyRes.statusCode;
   if (
     statusCode === 301 ||
@@ -38,8 +36,6 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     req.method = 'GET';
     req.headers['content-length'] = '0';
     delete req.headers['content-type'];
-    requestState.location = parsedLocation;
-
     // Remove all listeners (=reset events to initial state)
     req.removeAllListeners();
 
@@ -54,8 +50,6 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     proxyRequest(req, res);
     return false;
   }
-  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
   for (const _header in proxyRes.headers) {
     res.setHeader(_header, proxyRes.headers[_header]);
   }
@@ -78,8 +72,6 @@ const cookiesHandler = (req, res) => {
   });
   req.on('end', () => {
     temp_cookies = cookies;
-    res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-    res.setHeader('Access-Control-Allow-Credentials', true);
     res.end();
   });
 };
@@ -87,6 +79,22 @@ const cookiesHandler = (req, res) => {
 http
   .createServer(function (req, res) {
     const path = req.url.replace(/^\//, '');
+    res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    if (req.headers['access-control-request-method']) {
+      res.setHeader(
+        'access-control-allow-methods',
+        req.headers['access-control-request-method'],
+      );
+      delete req.headers['access-control-request-method'];
+    }
+    if (req.headers['access-control-request-headers']) {
+      res.setHeader(
+        'access-control-allow-headers',
+        req.headers['access-control-request-headers'],
+      );
+      delete req.headers['access-control-request-headers'];
+    }
     if (path === 'cookies') {
       cookiesHandler(req, res);
     } else {
@@ -106,7 +114,11 @@ http
       req.headers.host = _url.host;
       req.url = _url.toString();
       res.statusCode = 200;
-      proxyRequest(req, res);
+      if (req.method === 'OPTIONS') {
+        res.end();
+      } else {
+        proxyRequest(req, res);
+      }
     }
   })
   .listen(3001);
