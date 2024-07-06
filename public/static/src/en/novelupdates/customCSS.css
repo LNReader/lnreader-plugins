@@ -12,7 +12,7 @@
     border: solid #e0cc00;
     box-shadow: 0 0 10px 1px #e0cc00;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
 }
 .game-prompt-gold-info-title {
@@ -36,7 +36,7 @@
     border: solid #00219b;
     box-shadow: 0 0 10px 1px #00219b;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
 }
 .game-prompt-info-title {
@@ -59,7 +59,7 @@
     border: solid #00219b;
     box-shadow: 0 0 10px 1px #00219b;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
 }
 .game-prompt-info-small-content {
@@ -75,7 +75,7 @@
     border: solid #c2c2c2;
     box-shadow: 0 0 10px 1px #737373;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
 }
 .game-prompt-silver-info-content {
@@ -92,7 +92,7 @@
     border: solid #750b00e3;
     box-shadow: 0 0 20px 3px #750b0070;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
 }
 .game-prompt-warning-title {
@@ -142,8 +142,8 @@
     background: linear-gradient(180deg,rgb(var(--colors-novel-system-box-bg-1)) 35%,rgb(var(--colors-novel-system-box-bg-2)) 214%);
     border: 1px solid rgb(var(--colors-novel-system-box-border));
     color: #fffffd;
-    font-family: Rajdhani,serif;
-    font-weight: 500;
+    /*font-family: Rajdhani,serif;*/
+    /*font-weight: 500;*/
     margin: 0 auto;
     padding: 1rem;
     text-shadow: 1px 1px 2px rgb(var(--colors-novel-system-box-shadow)),0 0 1em rgb(var(--colors-novel-system-box-shadow)),0 0 .2em rgb(var(--colors-novel-system-box-shadow));
@@ -164,7 +164,7 @@
     margin: 15px auto;
     box-shadow: 0 0 10px 1px #5e636e;
     border-radius: 5px;
-    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Oswald', sans-serif;*/
     background-color: #000000;
     padding: 10px 30px 10px 30px;
 }
@@ -172,8 +172,8 @@
     background: linear-gradient(33deg, #334455 0%, #223344 100%);
     border: 1px solid #aabbcc;
     color: #fffffd;
-    font-family: Rajdhani,serif;
-    font-weight: 500;
+    /*font-family: Rajdhani,serif;*/
+    /*font-weight: 500;*/
     margin: 0 auto;
     padding: 1rem;
     width: fit-content;
