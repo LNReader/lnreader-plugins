@@ -60,12 +60,14 @@ export namespace Plugin {
     id: string;
     name: string;
     /**
-     * Relative path without icon. E.g:
+     * Relative path without static. E.g:
      * ```js
      * "src/vi/hakolightnovel/icon.png"
      * ```
      */
     icon: string;
+    customJS?: string;
+    customCSS?: string;
     site: string;
     imageRequestInit?: ImageRequestInit;
     filters?: Filters;

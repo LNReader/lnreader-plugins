@@ -23,7 +23,7 @@ import { selectPlugin } from '@redux/pluginSlice';
 import usePlugin from '@hooks/usePlugin';
 
 const resovleIcon = (iconPath: string) => {
-  return '/icons/' + iconPath;
+  return '/static/' + iconPath;
 };
 
 export default function () {

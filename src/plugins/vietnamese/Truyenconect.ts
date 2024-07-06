@@ -24,6 +24,7 @@ class TruyenConect implements Plugin.PagePlugin {
   id = 'truyenconect';
   name = 'Truyen Conect';
   icon = 'src/vi/truyenconect/icon.png';
+  customJS = 'src/vi/truyenconect/test.js';
   site = 'https://truyenconect.com';
   version = '1.0.0';
   async sleep(ms: number) {
@@ -56,7 +57,7 @@ class TruyenConect implements Plugin.PagePlugin {
     if (showLatestNovels) {
       selector =
         '.c-page__content .page-content-listing.item-big_thumbnail .item-thumb.c-image-hover';
-    } else if (filters.category.value) {
+    } else if (filters?.category.value) {
       link += '/' + filters.category.value;
       selector =
         'table.manga-shortcodes.manga-chapters-listing td[width="10%"]';

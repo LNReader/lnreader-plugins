@@ -16,7 +16,7 @@ const USERNAME = matched[1];
 const REPO = matched[2];
 const USER_CONTENT_LINK = `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
 
-const ICON_LINK = `${USER_CONTENT_LINK}/public/icons`;
+const STATIC_LINK = `${USER_CONTENT_LINK}/public/static`;
 const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/src/plugins`;
 
 const DIST_DIR = '.dist';
@@ -71,7 +71,7 @@ for (let language in languages) {
       ${rawCode}; 
       return exports.default`,
     )(_require, {});
-    const { id, name, site, version, icon } = instance;
+    const { id, name, site, version, icon, customJS, customCSS } = instance;
     const normalisedName = name.replace(/\[.*\]/, '');
 
     const info = {
@@ -81,7 +81,9 @@ for (let language in languages) {
       lang: languages[language],
       version,
       url: `${PLUGIN_LINK}/${language.toLowerCase()}/${plugin}`,
-      iconUrl: `${ICON_LINK}/${icon || 'siteNotAvailable.png'}`,
+      iconUrl: `${STATIC_LINK}/${icon || 'siteNotAvailable.png'}`,
+      customJS: customJS ? `${STATIC_LINK}/${customJS}` : undefined,
+      customCSS: customCSS ? `${STATIC_LINK}/${customCSS}` : undefined,
     };
 
     if (pluginSet.has(id)) {
