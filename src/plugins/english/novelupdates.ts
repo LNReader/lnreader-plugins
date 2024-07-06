@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.6.0';
+  version = '0.6.1';
   icon = 'src/en/novelupdates/icon.png';
   site = 'https://www.novelupdates.com/';
 
@@ -294,9 +294,16 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'ko-fi':
-        chapterText = loadedCheerio('script:contains("shadowDom.innerHTML")')
+        const matchResult = loadedCheerio(
+          'script:contains("shadowDom.innerHTML")',
+        )
           .html()
-          ?.match(/shadowDom\.innerHTML \+= '(<div.*?)';/)![1];
+          ?.match(/shadowDom\.innerHTML \+= '(<div.*?)';/);
+        if (matchResult && matchResult[1]) {
+          chapterText = matchResult[1];
+        } else {
+          chapterText = '';
+        }
         break;
       case 'mirilu':
         bloatClasses = ['#jp-post-flair'];
@@ -383,6 +390,11 @@ class NovelUpdates implements Plugin.PluginBase {
         } else if (chapterContent) {
           chapterText = chapterContent;
         }
+        break;
+      case 'readingpia':
+        bloatClasses = ['.ezoic-ad', '.ezoic-adpicker-ad', '.ez-video-wrap'];
+        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        chapterText = loadedCheerio('.chapter-body').html()!;
         break;
       case 'redoxtranslation':
         const chapterID_redox = url.split('/').pop();
