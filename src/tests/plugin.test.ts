@@ -3,7 +3,7 @@
 import { getPlugin, searchPlugins } from '@provider/plugins';
 import { Plugin } from '@typings/plugin';
 
-const plugins = searchPlugins('ranobehu');
+const plugins = searchPlugins('');
 plugins.forEach(({ name, id }) => {
   const t1 = `Test: ${name} (${id})`;
   let chapterPath: string | undefined;
