@@ -66,6 +66,7 @@ export default function PopularNovels() {
     if (plugin?.filters) {
       const filters = {};
       for (const fKey in plugin.filters) {
+        //@ts-expect-error
         filters[fKey] = {
           type: plugin.filters[fKey].type,
           value: plugin.filters[fKey].value,
