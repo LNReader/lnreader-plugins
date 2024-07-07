@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import { CheerioAPI, load as parseHTML } from 'cheerio';
+import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
@@ -17,6 +17,7 @@ class Genesis implements Plugin.PluginBase {
   };
 
   parseNovels(json: any[]) {
+    console.log('parse novels:', json);
     const novels: Plugin.NovelItem[] = json.map((entry: any) => {
       return {
         name: entry.novel_title,
@@ -35,6 +36,7 @@ class Genesis implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    console.log('popular novels:', 'searching');
     let link = `https://genesistudio.com/api/search?`;
     if (showLatestNovels) {
       link += 'sort=Recent';
@@ -51,6 +53,7 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    console.log('parse novel:', novelPath);
     const body = await fetchApi(this.site + novelPath).then(r => r.text());
 
     let loadedCheerio = parseHTML(body);
@@ -63,6 +66,8 @@ class Genesis implements Plugin.PluginBase {
       author: loadedCheerio('button div p.text-xs.text-center').first().text(),
       chapters: [],
     };
+
+    console.log('novel:', novel);
 
     novel.genres = loadedCheerio('div.hidden div')
       .children('a')
@@ -87,6 +92,7 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    console.log('search novel:', searchTerm);
     const url = `${this.site}/api/search?serialization=All&sort=Popular&title=${searchTerm}`;
     const json = await fetchApi(url).then(r => r.json());
 
