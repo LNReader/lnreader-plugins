@@ -17,11 +17,14 @@ class Genesis implements Plugin.PluginBase {
   };
 
   parseNovels(json: any[]) {
-    const novels: Plugin.NovelItem[] = json.map((entry: any) => {
+    const novels: Plugin.NovelItem[] = json.map((novel: any) => {
+      const assets = 'https://edit.genesistudio.com/assets/';
+      const format = '?format=auto&quality=70&width=400&height=600';
+
       return {
-        name: entry.novel_title,
-        path: `/novels/${entry.abbreviation}`,
-        cover: `https://edit.genesistudio.com/assets/${entry.cover}?format=auto&quality=70&width=400&height=600`,
+        name: novel.novel_title,
+        path: `/novels/${novel.abbreviation}`,
+        cover: `${assets}${novel.cover}${format}`,
       };
     });
 
