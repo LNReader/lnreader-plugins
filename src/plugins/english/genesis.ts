@@ -55,17 +55,18 @@ class Genesis implements Plugin.PluginBase {
     const json = await fetchApi(url).then(r => r.json());
 
     const nodes = json.nodes;
-
     const data = nodes
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
-
     const novelData = data[data[0].novel];
+
+    const assets = 'https://edit.genesistudio.com/assets/';
+    const format = '?format=auto&quality=70&width=400&height=600';
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: data[novelData.novel_title],
-      cover: `https://edit.genesistudio.com/assets/${data[novelData.cover]}?format=auto&quality=70&width=400&height=600`,
+      cover: `${assets}${data[novelData.cover]}${format}`,
       summary: data[novelData.synopsis],
       genres: data[novelData.genres]
         .map((index: number) => data[index])
