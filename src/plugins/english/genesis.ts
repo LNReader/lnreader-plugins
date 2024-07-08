@@ -17,7 +17,6 @@ class Genesis implements Plugin.PluginBase {
   };
 
   parseNovels(json: any[]) {
-    console.log('parse novels:', json);
     const novels: Plugin.NovelItem[] = json.map((entry: any) => {
       return {
         name: entry.novel_title,
@@ -36,7 +35,6 @@ class Genesis implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    console.log('popular novels:', 'searching');
     let link = `https://genesistudio.com/api/search?`;
     if (showLatestNovels) {
       link += 'sort=Recent';
@@ -53,29 +51,29 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    console.log('parse novel:', novelPath);
-    const body = await fetchApi(this.site + novelPath).then(r => r.text());
+    const url = `${this.site}${novelPath}/__data.json?x-sveltekit-invalidated=001`;
+    const json = await fetchApi(url).then(r => r.json());
 
-    let loadedCheerio = parseHTML(body);
+    const nodes = json.nodes;
+
+    const data = nodes
+      .filter((node: { type: string }) => node.type === 'data')
+      .map((node: { data: any }) => node.data)[0];
+
+    const novelData = data[data[0].novel];
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('div.border img').first().attr('alt') || 'Untitled',
-      cover: loadedCheerio('div.border img').first().attr('src'),
-      summary: loadedCheerio('p.text-muted-foreground.text-sm').text().trim(),
-      author: loadedCheerio('button div p.text-xs.text-center').first().text(),
+      name: data[novelData.novel_title],
+      cover: `https://edit.genesistudio.com/assets/${data[novelData.cover]}?format=auto&quality=70&width=400&height=600`,
+      summary: data[novelData.synopsis],
+      genres: data[novelData.genres]
+        .map((index: number) => data[index])
+        .join(','),
+      author: data[novelData.author],
+      status: data[novelData.serialization],
       chapters: [],
     };
-
-    console.log('novel:', novel);
-
-    novel.genres = loadedCheerio('div.hidden div')
-      .children('a')
-      .map((i, el) => loadedCheerio(el).text())
-      .toArray()
-      .join(',');
-
-    // to-do: add chapter list
 
     return novel;
   }
@@ -92,7 +90,6 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    console.log('search novel:', searchTerm);
     const url = `${this.site}/api/search?serialization=All&sort=Popular&title=${searchTerm}`;
     const json = await fetchApi(url).then(r => r.json());
 
