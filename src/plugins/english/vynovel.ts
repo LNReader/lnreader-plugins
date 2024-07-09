@@ -128,28 +128,32 @@ class VyNovel implements Plugin.PluginBase {
       const [value, type] = date.split(' ');
       if (!value || !type) return null;
 
-      switch (type) {
+      switch (type.toLowerCase()) {
         case 'minutes': {
           const minutes = parseInt(value, 10);
-          date = new Date(Date.now() - minutes * 60 * 1000);
+          date = Date.now() - minutes * 60 * 1000;
           break;
         }
         case 'hour':
         case 'hours': {
           const hours = parseInt(value, 10);
-          date = new Date(Date.now() - hours * 60 * 60 * 1000);
+          date = Date.now() - hours * 60 * 60 * 1000;
           break;
         }
         case 'day':
         case 'days': {
           const days = parseInt(value, 10);
-          date = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+          date = Date.now() - days * 24 * 60 * 60 * 1000;
           break;
         }
         default:
           console.log(date);
           date = undefined;
       }
+    } else {
+      const [month, day, year] = date.split(' ');
+      if (!month || !day || !year) return null;
+      date = year + '-' + month + '-' + day;
     }
     return dayjs(date).format('LLL');
   };
