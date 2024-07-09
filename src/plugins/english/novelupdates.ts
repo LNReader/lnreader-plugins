@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.0';
+  version = '0.7.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -45,11 +45,11 @@ class NovelUpdates implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}`;
     if (
-      filters.language.value.length ||
-      filters.novelType.value.length ||
-      filters.genres.value.include?.length ||
-      filters.genres.value.exclude?.length ||
-      filters.storyStatus.value !== ''
+      filters?.language.value.length ||
+      filters?.novelType.value.length ||
+      filters?.genres.value.include?.length ||
+      filters?.genres.value.exclude?.length ||
+      filters?.storyStatus.value !== ''
     ) {
       link += 'series-finder/?sf=1';
     } else if (showLatestNovels) {
@@ -58,30 +58,30 @@ class NovelUpdates implements Plugin.PluginBase {
       link += 'series-ranking/?rank=week';
     }
 
-    if (filters.language.value.length)
+    if (filters?.language.value.length)
       link += '&org=' + filters.language.value.join(',');
 
-    if (filters.novelType.value.length)
+    if (filters?.novelType.value.length)
       link += '&nt=' + filters.novelType.value.join(',');
 
-    if (filters.genres.value.include?.length)
+    if (filters?.genres.value.include?.length)
       link += '&gi=' + filters.genres.value.include.join(',');
 
-    if (filters.genres.value.exclude?.length)
+    if (filters?.genres.value.exclude?.length)
       link += '&ge=' + filters.genres.value.exclude.join(',');
 
     if (
-      filters.genres.value.include?.length ||
-      filters.genres.value.exclude?.length
+      filters?.genres.value.include?.length ||
+      filters?.genres.value.exclude?.length
     )
       link += '&mgi=' + filters.genre_operator.value;
 
-    if (filters.storyStatus.value.length)
+    if (filters?.storyStatus.value.length)
       link += '&ss=' + filters.storyStatus.value;
 
-    link += '&sort=' + filters.sort.value;
+    link += '&sort=' + filters?.sort.value;
 
-    link += '&order=' + filters.order.value;
+    link += '&order=' + filters?.order.value;
 
     link += '&pg=' + page;
 
@@ -229,6 +229,16 @@ class NovelUpdates implements Plugin.PluginBase {
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
+        break;
+      case 'genesistudio':
+        const url_genesis = `${url}/__data.json?x-sveltekit-invalidated=001`;
+        const json_genesis = await fetchApi(url_genesis).then(r => r.json());
+
+        const nodes_genesis = json_genesis.nodes;
+        const data_genesis = nodes_genesis
+          .filter((node: { type: string }) => node.type === 'data')
+          .map((node: { data: any }) => node.data)[0];
+        chapterText = data_genesis[data_genesis[0].content];
         break;
       case 'helscans':
         chapterTitle = loadedCheerio('.entry-title-main').first().text()!;
