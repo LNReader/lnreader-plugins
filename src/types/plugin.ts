@@ -24,7 +24,7 @@ export namespace Plugin {
     cover?: string;
   }
   export interface SourceNovel extends NovelItem {
-    /** Comma separated genre list */
+    /** Comma separated genre list -> "action,fantasy,romance" */
     genres?: string;
     summary?: string;
     author?: string;

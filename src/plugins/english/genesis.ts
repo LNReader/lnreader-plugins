@@ -16,11 +16,10 @@ class Genesis implements Plugin.PluginBase {
     },
   };
 
-  parseNovels(json: any[]) {
+  async parseNovels(json: any[]): Promise<Plugin.NovelItem[]> {
+    const assets = 'https://edit.genesistudio.com/assets/';
+    const format = '?format=auto&quality=70&width=400&height=600';
     const novels: Plugin.NovelItem[] = json.map((novel: any) => {
-      const assets = 'https://edit.genesistudio.com/assets/';
-      const format = '?format=auto&quality=70&width=400&height=600';
-
       return {
         name: novel.novel_title,
         path: `/novels/${novel.abbreviation}`,
@@ -71,13 +70,44 @@ class Genesis implements Plugin.PluginBase {
       name: data[novelData.novel_title],
       cover: `${assets}${data[novelData.cover]}${format}`,
       summary: data[novelData.synopsis],
-      genres: data[novelData.genres]
-        .map((index: number) => data[index])
-        .join(','),
       author: data[novelData.author],
       status: data[novelData.serialization],
-      chapters: [],
     };
+
+    novel.genres = data[novelData.genres]
+      .map((index: number) => data[index])
+      .join(',');
+
+    const chapterData = data[data[0].chapters];
+    const freeChapterData = chapterData.free;
+    const premiumChapterData = chapterData.premium;
+
+    const freeChapters: Plugin.ChapterItem[] = data[freeChapterData]
+      .map((index: number) => data[index])
+      .map((chapter: any) => {
+        return {
+          name: data[chapter.chapter_title],
+          path: `/viewer/${data[chapter.id]}`,
+          releaseTime: data[chapter.date_created],
+          chapterNumber: data[chapter.chapter_number],
+          page: '1',
+        };
+      })
+      .reverse();
+
+    const premiumChapters: Plugin.ChapterItem[] = data[premiumChapterData]
+      .map((index: number) => data[index])
+      .map((chapter: any) => {
+        return {
+          name: `${data[chapter.chapter_title]} 🔒`,
+          path: `/viewer/${data[chapter.id]}`,
+          releaseTime: data[chapter.date_created],
+          chapterNumber: data[chapter.chapter_number],
+          page: '2',
+        };
+      });
+
+    novel.chapters = [...freeChapters, ...premiumChapters];
 
     return novel;
   }
