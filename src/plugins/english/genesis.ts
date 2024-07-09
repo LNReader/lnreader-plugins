@@ -97,14 +97,15 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(r => r.text());
+    const url = `${this.site}${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
+    const json = await fetchApi(url).then(r => r.json());
 
-    const loadedCheerio = parseHTML(body);
+    const nodes = json.nodes;
+    const data = nodes
+      .filter((node: { type: string }) => node.type === 'data')
+      .map((node: { data: any }) => node.data)[0];
 
-    loadedCheerio('#chr-content > div,h6,p[style="display: none;"]').remove();
-    const chapterText = loadedCheerio('#chr-content').html() || '';
-
-    return chapterText;
+    return data[data[0].content];
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
