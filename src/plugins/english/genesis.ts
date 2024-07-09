@@ -19,15 +19,14 @@ class Genesis implements Plugin.PluginBase {
   async parseNovels(json: any[]): Promise<Plugin.NovelItem[]> {
     const assets = 'https://edit.genesistudio.com/assets/';
     const format = '?format=auto&quality=70&width=400&height=600';
-    const novels: Plugin.NovelItem[] = json.map((novel: any) => {
+
+    return json.map((novel: any) => {
       return {
         name: novel.novel_title,
         path: `/novels/${novel.abbreviation}`,
         cover: `${assets}${novel.cover}${format}`,
       };
     });
-
-    return novels;
   }
 
   async popularNovels(
@@ -80,9 +79,9 @@ class Genesis implements Plugin.PluginBase {
 
     const chapterData = data[data[0].chapters];
     const freeChapterData = chapterData.free;
-    const premiumChapterData = chapterData.premium;
+    // const premiumChapterData = chapterData.premium;
 
-    const freeChapters: Plugin.ChapterItem[] = data[freeChapterData]
+    novel.chapters = data[freeChapterData]
       .map((index: number) => data[index])
       .map((chapter: any) => {
         return {
@@ -90,24 +89,9 @@ class Genesis implements Plugin.PluginBase {
           path: `/viewer/${data[chapter.id]}`,
           releaseTime: data[chapter.date_created],
           chapterNumber: data[chapter.chapter_number],
-          page: '1',
         };
       })
       .reverse();
-
-    const premiumChapters: Plugin.ChapterItem[] = data[premiumChapterData]
-      .map((index: number) => data[index])
-      .map((chapter: any) => {
-        return {
-          name: `${data[chapter.chapter_title]} 🔒`,
-          path: `/viewer/${data[chapter.id]}`,
-          releaseTime: data[chapter.date_created],
-          chapterNumber: data[chapter.chapter_number],
-          page: '2',
-        };
-      });
-
-    novel.chapters = [...freeChapters, ...premiumChapters];
 
     return novel;
   }
@@ -155,7 +139,6 @@ class Genesis implements Plugin.PluginBase {
       label: 'Genres',
       value: [],
       options: [
-        { label: 'None', value: '' },
         { label: 'Action', value: 'genres=Action' },
         { label: 'Comedy', value: 'genres=Comedy' },
         { label: 'Drama', value: 'genres=Drama' },
