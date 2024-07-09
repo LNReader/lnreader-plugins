@@ -85,7 +85,7 @@ class Genesis implements Plugin.PluginBase {
       .map((index: number) => data[index])
       .map((chapter: any) => {
         return {
-          name: data[chapter.chapter_title],
+          name: `Chapter ${data[chapter.chapter_number]}: ${data[chapter.chapter_title]}`,
           path: `/viewer/${data[chapter.id]}`,
           releaseTime: data[chapter.date_created],
           chapterNumber: data[chapter.chapter_number],
