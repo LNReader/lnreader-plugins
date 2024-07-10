@@ -115,7 +115,12 @@ class NovelFire implements Plugin.PluginBase {
         .toArray()
         .join(','),
       summary:
-        loadedCheerio('.summary .content .txt').text() || 'No Summary Found',
+        loadedCheerio('.summary .content .txt')
+          .html()!
+          .replace(/<\/p>/g, '\n\n')
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<[^>]+>/g, '')
+          .trim() || 'No Summary Found',
       author:
         loadedCheerio('.author .property-item > span').text() ||
         'No Author Found',
