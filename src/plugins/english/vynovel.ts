@@ -150,12 +150,9 @@ class VyNovel implements Plugin.PluginBase {
           console.log(date);
           date = undefined;
       }
-    } else {
-      const [month, day, year] = date.split(' ');
-      if (!month || !day || !year) return null;
-      date = year + '-' + month + '-' + day;
+      return dayjs(date).format('LLL');
     }
-    return dayjs(date).format('LLL');
+    return date;
   };
 
   resolveUrl = (path: string, isNovel?: boolean) =>
