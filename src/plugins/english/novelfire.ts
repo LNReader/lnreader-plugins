@@ -11,35 +11,6 @@ class NovelFire implements Plugin.PluginBase {
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
-  async parseNovels(url: string): Promise<Plugin.NovelItem[]> {
-    const result = await fetchApi(url);
-    const body = await result.text();
-    let loadedCheerio = parseHTML(body);
-
-    return loadedCheerio('.novel-item')
-      .map((index, ele) => {
-        const novelName =
-          loadedCheerio(ele).find('.novel-title > a').attr('title') ||
-          'No Title Found';
-        const novelCover = loadedCheerio(ele)
-          .find('.novel-cover > img')
-          .attr('data-src');
-        const novelPath = loadedCheerio(ele)
-          .find('.novel-title > a')
-          .attr('href');
-
-        if (!novelPath) return null;
-
-        return {
-          name: novelName,
-          cover: novelCover,
-          path: novelPath.replace(this.site, ''),
-        };
-      })
-      .get()
-      .filter(novel => novel !== null);
-  }
-
   async popularNovels(
     pageNo: number,
     {
@@ -68,7 +39,33 @@ class NovelFire implements Plugin.PluginBase {
     } else {
       url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=all-time-rank&page=${pageNo}`;
     }
-    return this.parseNovels(url);
+
+    const result = await fetchApi(url);
+    const body = await result.text();
+    const loadedCheerio = parseHTML(body);
+
+    return loadedCheerio('.novel-item')
+      .map((index, ele) => {
+        const novelName =
+          loadedCheerio(ele).find('.novel-title > a').attr('title') ||
+          'No Title Found';
+        const novelCover = loadedCheerio(ele)
+          .find('.novel-cover > img')
+          .attr('data-src');
+        const novelPath = loadedCheerio(ele)
+          .find('.novel-title > a')
+          .attr('href');
+
+        if (!novelPath) return null;
+
+        return {
+          name: novelName,
+          cover: novelCover,
+          path: novelPath.replace(this.site, ''),
+        };
+      })
+      .get()
+      .filter(novel => novel !== null);
   }
 
   async parsePage(
@@ -149,19 +146,31 @@ class NovelFire implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    /**
-     * Split searchTerm by specific special characters and find the longest split
-     */
-    const splits = searchTerm.split('*');
-    const longestSearchTerm = splits.reduce(
-      (a, b) => (a.length > b.length ? a : b),
-      '',
-    );
-    searchTerm = longestSearchTerm.replace(/[‘’]/g, "'").replace(/\s+/g, '+');
+    const url = `${this.site}search?keyword=${searchTerm}&page=${page}`;
+    const result = await fetchApi(url);
+    const body = await result.text();
 
-    const url = `${this.site}series-finder/?sf=1&sh=${searchTerm}&sort=srank&order=asc&pg=${page}`;
+    const loadedCheerio = parseHTML(body);
 
-    return this.parseNovels(url);
+    return loadedCheerio('.novel-list.chapters .novel-item')
+      .map((index, ele) => {
+        const novelName =
+          loadedCheerio(ele).find('a').attr('title') || 'No Title Found';
+        const novelCover = loadedCheerio(ele)
+          .find('.novel-cover > img')
+          .attr('src');
+        const novelPath = loadedCheerio(ele).find('a').attr('href');
+
+        if (!novelPath) return null;
+
+        return {
+          name: novelName,
+          cover: novelCover,
+          path: novelPath.replace(this.site, ''),
+        };
+      })
+      .get()
+      .filter(novel => novel !== null);
   }
 
   filters = {
