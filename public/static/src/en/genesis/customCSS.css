@@ -24,8 +24,8 @@
     justify-content:center!important;
     margin-left:auto;
     margin-right:auto;
-    width:100%;
-    height:100%
+    /** width:100%;
+    height:100% **/
 }
 .ta-between {
     align-items:center!important
