@@ -28,7 +28,7 @@ class NovelFire implements Plugin.PluginBase {
       }
       params.append('ctgcon', filters.genre_operator.value);
       for (const genre of filters.genres.value) {
-        params.append('categories', genre);
+        params.append('categories[]', genre);
       }
       params.append('totalchapter', filters.chapters.value);
       params.append('ratcon', filters.rating_operator.value);
