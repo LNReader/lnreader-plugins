@@ -144,7 +144,16 @@ class NovelFire implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    return '';
+    const url = this.site + chapterPath;
+    const result = await fetchApi(url);
+    const body = await result.text();
+
+    const loadedCheerio = parseHTML(body);
+
+    const bloatClasses = ['.box-notification'];
+    bloatClasses.map(tag => loadedCheerio(tag).remove());
+
+    return loadedCheerio('#content').html()!;
   }
 
   async searchNovels(
