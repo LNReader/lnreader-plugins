@@ -23,9 +23,7 @@
     align-items:center!important;
     justify-content:center!important;
     margin-left:auto;
-    margin-right:auto;
-    /** width:100%;
-    height:100% **/
+    margin-right:auto
 }
 .ta-between {
     align-items:center!important
@@ -51,7 +49,6 @@
     border-radius:5px;
     background-color:#000;
     padding:20px;
-    line-height:2;
     font-size:25px;
     color:#fff;
     font-family: Oswald Variable, serif
@@ -114,7 +111,6 @@
     box-shadow:0 0 20px 3px #750b0070;
     border-radius:5px;
     background-color:#000;
-    line-height:2;
     font-size:25px;
     color:#fff;
     font-family: Oswald Variable, serif
@@ -178,7 +174,6 @@
     box-shadow:0 0 10px 1px #e0cc00;
     border-radius:5px;
     background-color:#000;
-    line-height:2;
     font-size:25px;
     color:#fff;
     font-family: Oswald Variable, serif;
@@ -263,7 +258,6 @@
     box-shadow:0 0 10px 1px #737373;
     border-radius:5px;
     background-color:#000;
-    line-height:2;
     font-size:25px;
     color:#fff;
     font-family: Oswald Variable, serif;
