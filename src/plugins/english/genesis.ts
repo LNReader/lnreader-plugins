@@ -8,6 +8,7 @@ class Genesis implements Plugin.PluginBase {
   id = 'genesistudio';
   name = 'Genesis';
   icon = 'src/en/genesis/icon.png';
+  customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
   version = '1.0.0';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
@@ -30,12 +31,14 @@ class Genesis implements Plugin.PluginBase {
   }
 
   async popularNovels(
-    page: number,
+    pageNo: number,
     {
       showLatestNovels,
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    if (pageNo !== 1) return [];
+
     let link = `https://genesistudio.com/api/search?`;
     if (showLatestNovels) {
       link += 'sort=Recent';
@@ -108,7 +111,12 @@ class Genesis implements Plugin.PluginBase {
     return data[data[0].content];
   }
 
-  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+  async searchNovels(
+    searchTerm: string,
+    pageNo: number,
+  ): Promise<Plugin.NovelItem[]> {
+    if (pageNo !== 1) return [];
+
     const url = `${this.site}/api/search?serialization=All&sort=Popular&title=${searchTerm}`;
     const json = await fetchApi(url).then(r => r.json());
 
