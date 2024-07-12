@@ -68,45 +68,59 @@ class NovelFire implements Plugin.PluginBase {
       .filter(novel => novel !== null);
   }
 
-  async parsePage(
+  async parseChapters(
     novelPath: string,
-    pageNo: number,
-  ): Promise<Plugin.SourcePage> {
-    const url = `${this.site}${novelPath}/chapters?page=${pageNo}`;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    pages: number,
+  ): Promise<Plugin.ChapterItem[]> {
+    const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
+    const allChapters: Plugin.ChapterItem[] = [];
 
-    const loadedCheerio = parseHTML(body);
+    // Function to parse a single page
+    const parsePage = async (page: number) => {
+      const url = `${this.site}${novelPath}/chapters?page=${page}`;
+      const result = await fetchApi(url);
+      const body = await result.text();
 
-    const chapters = loadedCheerio('.chapter-list li')
-      .map((index, ele) => {
-        const chapterName =
-          loadedCheerio(ele).find('a').attr('title') || 'No Title Found';
-        const chapterPath = loadedCheerio(ele).find('a').attr('href');
+      const loadedCheerio = parseHTML(body);
 
-        if (!chapterPath) return null;
+      const chapters = loadedCheerio('.chapter-list li')
+        .map((index, ele) => {
+          const chapterName =
+            loadedCheerio(ele).find('a').attr('title') || 'No Title Found';
+          const chapterPath = loadedCheerio(ele).find('a').attr('href');
 
-        return {
-          name: chapterName,
-          path: chapterPath.replace(this.site, ''),
-        };
-      })
-      .get()
-      .filter(chapter => chapter !== null);
+          if (!chapterPath) return null;
 
-    return chapters.length === 0 ? { chapters: [] } : { chapters };
+          return {
+            name: chapterName,
+            path: chapterPath.replace(this.site, ''),
+          };
+        })
+        .get()
+        .filter(chapter => chapter !== null) as Plugin.ChapterItem[];
+
+      return chapters;
+    };
+
+    // Parse all pages in parallel
+    const chaptersArray = await Promise.all(pagesArray.map(parsePage));
+
+    // Merge all chapters into a single array
+    for (const chapters of chaptersArray) {
+      allChapters.push(...chapters);
+    }
+
+    return allChapters.length === 0 ? [] : allChapters;
   }
 
-  async parseNovel(
-    novelPath: string,
-  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
 
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.novel-title').text() || 'No Title Found',
       cover: loadedCheerio('.cover > img').attr('data-src'),
@@ -128,17 +142,14 @@ class NovelFire implements Plugin.PluginBase {
         loadedCheerio('.header-stats .ongoing').text() ||
         loadedCheerio('.header-stats .completed').text() ||
         'No Status Found',
-      totalPages: 1,
     };
 
     const totalChapters = loadedCheerio('.header-stats .icon-book-open')
       .parent()
       .text()
       .trim();
-    novel.totalPages = Math.ceil(parseInt(totalChapters) / 100);
-
-    const firstPage = await this.parsePage(novelPath, 1);
-    novel.chapters = firstPage.chapters;
+    const pages = Math.ceil(parseInt(totalChapters) / 100);
+    novel.chapters = await this.parseChapters(novelPath, pages);
 
     return novel;
   }
