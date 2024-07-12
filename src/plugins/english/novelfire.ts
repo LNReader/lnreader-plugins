@@ -161,8 +161,20 @@ class NovelFire implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    const bloatClasses = ['.box-notification'];
-    bloatClasses.map(tag => loadedCheerio(tag).remove());
+    const bloatElements = [
+      '.box-ads',
+      '.box-notification',
+      /^nf/, // Regular expression to match tags starting with 'nf'
+    ];
+    bloatElements.map(tag => {
+      if (tag instanceof RegExp) {
+        loadedCheerio('*')
+          .filter((_, el) => tag.test(loadedCheerio(el).prop('tagName')!))
+          .remove();
+      } else {
+        loadedCheerio(tag).remove();
+      }
+    });
 
     return loadedCheerio('#content').html()!;
   }
