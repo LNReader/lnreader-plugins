@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
@@ -169,7 +169,9 @@ class NovelFire implements Plugin.PluginBase {
     bloatElements.map(tag => {
       if (tag instanceof RegExp) {
         loadedCheerio('*')
-          .filter((_, el) => tag.test(loadedCheerio(el).prop('tagName')!))
+          .filter((_, el) =>
+            tag.test(loadedCheerio(el).prop('tagName')!.toLowerCase()),
+          )
           .remove();
       } else {
         loadedCheerio(tag).remove();
