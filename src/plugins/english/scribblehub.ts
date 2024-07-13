@@ -43,7 +43,6 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     if (showLatestNovels) {
       url += `latest-series/?pg=${page}`;
     } else if (filters) {
-      url += 'series-finder/?sf=1&';
       const params = new URLSearchParams();
       if (filters.genres.value.include?.length) {
         params.append('gi', filters.genres.value.include.join(','));
@@ -73,6 +72,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       params.append('sort', filters.sort.value);
       params.append('order', filters.order.value);
       params.append('pg', page.toString());
+      url += `series-finder/?sf=1&${params.toString()}`;
     } else {
       url += `series-finder/?sf=1&sort=ratings&order=desc&pg=${page}`;
     }
@@ -190,7 +190,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       value: 'ratings',
       options: [
         { label: 'Chapters', value: 'chapters' },
-        { label: 'Chapters per week', value: 'frequency' },
+        { label: 'Chapters per Week', value: 'frequency' },
         { label: 'Date Added', value: 'dateadded' },
         { label: 'Favorites', value: 'favorites' },
         { label: 'Last Updated', value: 'lastchdate' },
@@ -205,7 +205,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     order: {
-      label: 'Order by',
+      label: 'Order By',
       value: 'desc',
       options: [
         { label: 'Descending', value: 'desc' },
@@ -214,8 +214,8 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     storyStatus: {
-      label: 'Story Status (Translation)',
-      value: '',
+      label: 'Story Status',
+      value: 'all',
       options: [
         { label: 'All', value: 'all' },
         { label: 'Completed', value: 'completed' },
