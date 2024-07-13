@@ -10,6 +10,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
   icon = 'src/en/scribblehub/icon.png';
   site = 'https://www.scribblehub.com/';
   version = '1.0.1';
+
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
