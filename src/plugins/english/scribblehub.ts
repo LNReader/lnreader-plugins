@@ -74,6 +74,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
 
     link += '&sort=' + filters.sort.value;
     link += '&order=' + filters.order.value;
+    link += '&pg=' + page;
 
     const body = await fetchApi(link).then(result => result.text());
 
@@ -222,6 +223,15 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       ],
       type: FilterTypes.Picker,
     },
+    genre_operator: {
+      value: 'and',
+      label: 'Genres (And/Or)',
+      options: [
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
+      ],
+      type: FilterTypes.Picker,
+    },
     genres: {
       label: 'Genres',
       value: {
@@ -263,12 +273,12 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
     },
-    genre_operator: {
+    content_warning_operator: {
       value: 'and',
-      label: 'Genre And/Or',
+      label: 'Mature Content (And/Or)',
       options: [
-        { label: 'OR', value: 'or' },
-        { label: 'AND', value: 'and' },
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
       ],
       type: FilterTypes.Picker,
     },
@@ -284,15 +294,6 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
         { label: 'Strong Language', value: '49' },
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
-    },
-    content_warning_operator: {
-      value: 'and',
-      label: 'Mature Content And/Or',
-      options: [
-        { label: 'OR', value: 'or' },
-        { label: 'AND', value: 'and' },
-      ],
-      type: FilterTypes.Picker,
     },
   } satisfies Filters;
 }
