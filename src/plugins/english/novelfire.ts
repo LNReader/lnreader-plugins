@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.2';
+  version = '1.0.1';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
