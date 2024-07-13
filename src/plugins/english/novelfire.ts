@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
@@ -35,7 +35,8 @@ class NovelFire implements Plugin.PluginBase {
       params.append('rating', filters.rating.value);
       params.append('status', filters.status.value);
       params.append('sort', filters.sort.value);
-      url += `?${params.toString()}&page=${pageNo}`;
+      params.append('page', pageNo.toString());
+      url += `?${params.toString()}`;
     } else {
       url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=all-time-rank&page=${pageNo}`;
     }
@@ -347,12 +348,12 @@ class NovelFire implements Plugin.PluginBase {
       value: '0',
       options: [
         { label: 'All', value: '0' },
-        { label: '<50', value: '1%2C49' },
-        { label: '50-100', value: '50%2C100' },
-        { label: '100-200', value: '100%2C200' },
-        { label: '200-500', value: '200%2C500' },
-        { label: '500-1000', value: '500%2C1000' },
-        { label: '>1000', value: '1001%2C1000000' },
+        { label: '<50', value: '1,49' },
+        { label: '50-100', value: '50,100' },
+        { label: '100-200', value: '100,200' },
+        { label: '200-500', value: '200,500' },
+        { label: '500-1000', value: '500,1000' },
+        { label: '>1000', value: '1001,1000000' },
       ],
       type: FilterTypes.Picker,
     },
