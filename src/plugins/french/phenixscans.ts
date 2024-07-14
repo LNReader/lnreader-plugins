@@ -11,7 +11,7 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
   name = 'PhenixScans';
   icon = 'src/fr/phenixscans/icon.png';
   site = 'https://phenixscans.fr';
-  version = '1.0.0';
+  version = '1.0.1';
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url);
@@ -98,25 +98,26 @@ class PhenixScansTradPlugin implements Plugin.PluginBase {
   }
 
   parseDate(date: string): string {
-    const monthMapping: Record<string, string> = {
-      janvier: 'January',
-      fevrier: 'February',
-      mars: 'March',
-      avril: 'April',
-      mai: 'May',
-      juin: 'June',
-      juillet: 'July',
-      aout: 'August',
-      septembre: 'September',
-      octobre: 'October',
-      novembre: 'November',
-      decembre: 'December',
+    const monthMapping: Record<string, number> = {
+      janvier: 1,
+      fevrier: 2,
+      mars: 3,
+      avril: 4,
+      mai: 5,
+      juin: 6,
+      juillet: 7,
+      aout: 8,
+      septembre: 9,
+      octobre: 10,
+      novembre: 11,
+      decembre: 12,
     };
-    const [month, day, year] = date.split(' ');
+
+    const [day, month, year] = date.split(' ');
     return dayjs(
       `${day} ${monthMapping[month.normalize('NFD').replace(/[\u0300-\u036f]/g, '')]} ${year}`,
       'D MMMM YYYY',
-    ).format('YYYY-MM-DD');
+    ).format('DD MMMM YYYY');
   }
 
   getStatus(status: string) {
