@@ -1,4 +1,4 @@
-name: Host Plugins
+name: Publish Plugins
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  host:
+  Publish:
     if: github.repository == 'LNReader/lnreader-plugins'
     runs-on: ubuntu-latest
     steps:
@@ -15,11 +15,11 @@ jobs:
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
       - uses: actions/setup-node@v3
         with:
-          node-version: "18"
-      - name: Install dependencies
+          node-version: '18'
+      - name: Install Dependencies
         run: npm install
 
-      - name: Host plugins
+      - name: Publish Plugins
         run: |
           git config user.name "github-actions[bot]"
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com

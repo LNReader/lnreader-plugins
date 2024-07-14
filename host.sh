@@ -23,7 +23,7 @@ npm run generate
 npx tsc -m node16
 npm run json
 git add -f public/static .dist .js/src/plugins total.svg
-git commit -m "Host plugins"
+git commit -m "chore: Publish Plugins"
 git push -f origin $dist
 
 git checkout -f $current
