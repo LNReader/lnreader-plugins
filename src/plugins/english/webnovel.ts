@@ -60,6 +60,7 @@ class Webnovel implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    // todo: filters don't work
     let url = this.site + '/stories/';
     if (showLatestNovels) {
       url += `novel?orderBy=5&pageIndex=${pageNo}`;
@@ -156,6 +157,7 @@ class Webnovel implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
+    // todo: parse chapter
     const url = this.site + chapterPath;
     const result = await fetchApi(url);
     const body = await result.text();
@@ -231,7 +233,7 @@ class Webnovel implements Plugin.PluginBase {
     },
     genres_male: {
       label: 'Male Genres',
-      value: '',
+      value: '1',
       options: [
         { label: 'All', value: '1' },
         { label: 'Action', value: 'novel-action-male' },
@@ -251,7 +253,7 @@ class Webnovel implements Plugin.PluginBase {
     },
     genres_female: {
       label: 'Female Genres',
-      value: '',
+      value: '2',
       options: [
         { label: 'All', value: '2' },
         { label: 'Fantasy', value: 'novel-fantasy-female' },
