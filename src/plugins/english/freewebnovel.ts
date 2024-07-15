@@ -8,7 +8,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/en/freewebnovel/icon.png';
 
   async getCheerio(url: string): Promise<CheerioAPI> {
@@ -24,7 +24,7 @@ class FreeWebNovel implements Plugin.PluginBase {
     return loadedCheerio('.li-row')
       .map((index, element) => ({
         name: loadedCheerio(element).find('.tit').text() || '',
-        cover: loadedCheerio(element).find('img').attr('src'),
+        cover: this.site + loadedCheerio(element).find('img').attr('src'),
         path: loadedCheerio(element).find('h3 > a').attr('href') || '',
       }))
       .get()
@@ -61,7 +61,7 @@ class FreeWebNovel implements Plugin.PluginBase {
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.tit').text(),
-      cover: loadedCheerio('.pic > img').attr('src'),
+      cover: this.site + loadedCheerio('.pic > img').attr('src'),
       summary: loadedCheerio('.inner').text().trim(),
     };
 

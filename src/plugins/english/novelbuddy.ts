@@ -6,7 +6,7 @@ class NovelBuddy implements Plugin.PluginBase {
   id = 'novelbuddy';
   name = 'NovelBuddy.io';
   site = 'https://novelbuddy.io/';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/novelbuddy/icon.png';
 
   parseNovels(loadedCheerio: CheerioAPI) {
@@ -111,10 +111,13 @@ class NovelBuddy implements Plugin.PluginBase {
           'oct',
           'nov',
           'dec',
-        ].join('|');
-        const rx = new RegExp(`(${months}) (\\d{1,2}), (\\d{4})`, 'i').exec(
-          releaseDate,
-        );
+        ];
+        const monthsJoined = months.join('|');
+
+        const rx = new RegExp(
+          `(${monthsJoined}) (\\d{1,2}), (\\d{4})`,
+          'i',
+        ).exec(releaseDate);
         if (!rx) return;
         const year = +rx[3];
         const month = months.indexOf(rx[1].toLowerCase());

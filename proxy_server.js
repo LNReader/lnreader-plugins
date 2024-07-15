@@ -55,6 +55,8 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
   }
   delete proxyRes.headers['set-cookie'];
   delete proxyRes.headers['set-cookie2'];
+  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
+  res.setHeader('Access-Control-Allow-Credentials', true);
   proxyRes.on('data', function (chunk) {
     res.write(chunk);
   });
@@ -67,6 +69,8 @@ var temp_cookies = null;
 
 const cookiesHandler = (req, res) => {
   let cookies = '';
+  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
+  res.setHeader('Access-Control-Allow-Credentials', true);
   req.on('readable', () => {
     cookies += req.read();
   });
@@ -79,8 +83,6 @@ const cookiesHandler = (req, res) => {
 http
   .createServer(function (req, res) {
     const path = req.url.replace(/^\//, '');
-    res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-    res.setHeader('Access-Control-Allow-Credentials', true);
     if (req.headers['access-control-request-method']) {
       res.setHeader(
         'access-control-allow-methods',

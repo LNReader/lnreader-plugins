@@ -6,10 +6,11 @@ import dayjs from 'dayjs';
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
   id = 'scribblehub';
-  name = 'ScribbleHub';
+  name = 'Scribble Hub';
   icon = 'src/en/scribblehub/icon.png';
   site = 'https://www.scribblehub.com/';
-  version = '1.0.0';
+  version = '1.0.1';
+
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
@@ -39,43 +40,45 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}`;
-    if (showLatestNovels) link += 'latest-series/';
-    // if (filters.genres.value.include?.length ||
-    // filters.genres.value.exclude?.length)
-    else link += 'series-finder/?sf=1';
-    // else
-    // link += "series-ranking/";
-    // TODO, series-ranking filters when hideOnSelect come out
+    let url = `${this.site}`;
+    if (showLatestNovels) {
+      url += `latest-series/?pg=${page}`;
+    } else if (filters) {
+      const params = new URLSearchParams();
+      if (filters.genres.value.include?.length) {
+        params.append('gi', filters.genres.value.include.join(','));
+      }
+      if (
+        filters.genres.value.include?.length ||
+        filters.genres.value.exclude?.length
+      ) {
+        params.append('mgi', filters.genre_operator.value);
+      }
+      if (filters.genres.value.exclude?.length) {
+        params.append('ge', filters.genres.value.exclude.join(','));
+      }
+      if (filters.content_warning.value.include?.length) {
+        params.append('cti', filters.content_warning.value.include.join(','));
+      }
+      if (
+        filters.content_warning.value.include?.length ||
+        filters.content_warning.value.exclude?.length
+      ) {
+        params.append('mct', filters.content_warning_operator.value);
+      }
+      if (filters.content_warning.value.exclude?.length) {
+        params.append('cte', filters.content_warning.value.exclude.join(','));
+      }
+      params.append('cp', filters.storyStatus.value);
+      params.append('sort', filters.sort.value);
+      params.append('order', filters.order.value);
+      params.append('pg', page.toString());
+      url += `series-finder/?sf=1&${params.toString()}`;
+    } else {
+      url += `series-finder/?sf=1&sort=ratings&order=desc&pg=${page}`;
+    }
 
-    if (filters.genres.value.include?.length)
-      link += '&gi=' + filters.genres.value.include.join(',');
-
-    if (filters.genres.value.exclude?.length)
-      link += '&ge=' + filters.genres.value.exclude.join(',');
-
-    if (
-      filters.genres.value.include?.length ||
-      filters.genres.value.exclude?.length
-    )
-      link += '&mgi=' + filters.genre_operator.value;
-
-    if (filters.content_warning.value.include?.length)
-      link += '&cti=' + filters.content_warning.value.include.join(',');
-
-    if (filters.content_warning.value.exclude?.length)
-      link += '&cte=' + filters.content_warning.value.exclude.join(',');
-
-    if (
-      filters.content_warning.value.include?.length ||
-      filters.content_warning.value.exclude?.length
-    )
-      link += '&mct' + filters.content_warning_operator.value;
-
-    link += '&sort=' + filters.sort.value;
-    link += '&order=' + filters.order.value;
-
-    const body = await fetchApi(link).then(result => result.text());
+    const body = await fetchApi(url).then(result => result.text());
 
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
@@ -188,7 +191,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       value: 'ratings',
       options: [
         { label: 'Chapters', value: 'chapters' },
-        { label: 'Chapters per week', value: 'frequency' },
+        { label: 'Chapters per Week', value: 'frequency' },
         { label: 'Date Added', value: 'dateadded' },
         { label: 'Favorites', value: 'favorites' },
         { label: 'Last Updated', value: 'lastchdate' },
@@ -203,7 +206,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     order: {
-      label: 'Order by',
+      label: 'Order By',
       value: 'desc',
       options: [
         { label: 'Descending', value: 'desc' },
@@ -212,13 +215,22 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     storyStatus: {
-      label: 'Story Status (Translation)',
-      value: '',
+      label: 'Story Status',
+      value: 'all',
       options: [
         { label: 'All', value: 'all' },
         { label: 'Completed', value: 'completed' },
         { label: 'Ongoing', value: 'ongoing' },
         { label: 'Hiatus', value: 'hiatus' },
+      ],
+      type: FilterTypes.Picker,
+    },
+    genre_operator: {
+      value: 'and',
+      label: 'Genres (And/Or)',
+      options: [
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
       ],
       type: FilterTypes.Picker,
     },
@@ -263,12 +275,12 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
     },
-    genre_operator: {
+    content_warning_operator: {
       value: 'and',
-      label: 'Genre And/Or',
+      label: 'Mature Content (And/Or)',
       options: [
-        { label: 'OR', value: 'or' },
-        { label: 'AND', value: 'and' },
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
       ],
       type: FilterTypes.Picker,
     },
@@ -284,15 +296,6 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
         { label: 'Strong Language', value: '49' },
       ],
       type: FilterTypes.ExcludableCheckboxGroup,
-    },
-    content_warning_operator: {
-      value: 'and',
-      label: 'Mature Content And/Or',
-      options: [
-        { label: 'OR', value: 'or' },
-        { label: 'AND', value: 'and' },
-      ],
-      type: FilterTypes.Picker,
     },
   } satisfies Filters;
 }

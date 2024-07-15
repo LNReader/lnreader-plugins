@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Pagination,
-  Stack,
-  TextField,
-} from '@mui/material';
+import { Box, Button, Pagination, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';

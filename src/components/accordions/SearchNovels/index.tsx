@@ -12,7 +12,7 @@ export default function SearchNovels() {
     (state: AppState) => state.plugin.selected,
   );
   const [searchTerm, setSearchTerm] = useState('');
-  const [page,] = useState(1);
+  const [page] = useState(1);
   const [plugin, setPlugin] = useState<Plugin.PluginBase | undefined>();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [loading, setLoading] = useState(false);
