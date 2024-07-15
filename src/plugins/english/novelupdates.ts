@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.1';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -159,10 +159,11 @@ class NovelUpdates implements Plugin.PluginBase {
       chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
       const chapterUrl =
         'https:' + loadedCheerio(el).find('a').first().next().attr('href');
+      const chapterId = chapterUrl.split('/').filter(Boolean).pop();
 
       chapter.push({
         name: chapterName,
-        path: chapterUrl.replace(this.site, ''),
+        path: `${chapterUrl.replace(this.site, '')},${chapterId},${novelId}`,
       });
     });
 
@@ -582,6 +583,13 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
+    const novelId = chapterPath.split(',')[2];
+    const chapterId = chapterPath.split(',')[1];
+    chapterPath = chapterPath.split(',')[0];
+
+    await fetchApi(
+      `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
+    );
     const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
     const url = result.url;
