@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import { load as parseHTML } from 'cheerio';
+import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
@@ -16,14 +16,38 @@ class Webnovel implements Plugin.PluginBase {
     },
   };
 
-  async parseNovels(json: any[]): Promise<Plugin.NovelItem[]> {
-    return json.map((novel: any) => {
-      return {
-        name: novel.novel_title,
-        path: `/novels/${novel.abbreviation}`,
-        cover: novel.cover,
-      };
-    });
+  async parseNovels(
+    loadedCheerio: CheerioAPI,
+    category_bool: boolean,
+    search_bool: boolean,
+  ): Promise<Plugin.NovelItem[]> {
+    const category = '.j_category_wrapper';
+    const search = '.j_list_container';
+    const selector = category_bool
+      ? category
+      : search_bool
+        ? search
+        : `${category}, ${search}`;
+
+    return loadedCheerio(`${selector} li`)
+      .map((index, ele) => {
+        const novelName =
+          loadedCheerio(ele).find('.g_thumb').attr('title') || 'No Title Found';
+        const novelCover = loadedCheerio(ele)
+          .find('.g_thumb > img')
+          .attr('src');
+        const novelPath = loadedCheerio(ele).find('.g_thumb').attr('href');
+
+        if (!novelPath) return null;
+
+        return {
+          name: novelName,
+          cover: novelCover,
+          path: novelPath,
+        };
+      })
+      .get()
+      .filter(novel => novel !== null);
   }
 
   async popularNovels(
@@ -199,33 +223,17 @@ class Webnovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    page: number,
+    pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}search?keyword=${searchTerm}&page=${page}`;
+    searchTerm = searchTerm.replace(/\s+/g, '+');
+
+    const url = `${this.site}/search?keywords=${searchTerm}&pageIndex=${pageNo}`;
     const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
 
-    return loadedCheerio('.novel-list.chapters .novel-item')
-      .map((index, ele) => {
-        const novelName =
-          loadedCheerio(ele).find('a').attr('title') || 'No Title Found';
-        const novelCover = loadedCheerio(ele)
-          .find('.novel-cover > img')
-          .attr('src');
-        const novelPath = loadedCheerio(ele).find('a').attr('href');
-
-        if (!novelPath) return null;
-
-        return {
-          name: novelName,
-          cover: novelCover,
-          path: novelPath.replace(this.site, ''),
-        };
-      })
-      .get()
-      .filter(novel => novel !== null);
+    return this.parseNovels(loadedCheerio, false, true);
   }
 
   filters = {
