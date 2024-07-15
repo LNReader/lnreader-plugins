@@ -587,9 +587,6 @@ class NovelUpdates implements Plugin.PluginBase {
     const chapterId = chapterPath.split(',')[1];
     chapterPath = chapterPath.split(',')[0];
 
-    await fetchApi(
-      `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
-    );
     const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
     const url = result.url;
@@ -801,6 +798,10 @@ class NovelUpdates implements Plugin.PluginBase {
         `href="${this.getLocation(result.url)}/`,
       );
     }
+
+    await fetchApi(
+      `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
+    );
 
     return chapterText;
   }
