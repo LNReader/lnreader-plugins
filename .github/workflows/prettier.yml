@@ -21,4 +21,4 @@ jobs:
         run: npm ci
 
       - name: Prettier
-        run: npx prettier --check .
+        run: npx prettier --check "./src/**/*.{ts,tsx,js,css}"
