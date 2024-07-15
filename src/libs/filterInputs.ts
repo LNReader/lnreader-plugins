@@ -1,7 +1,6 @@
 export interface FilterOption {
   readonly label: string;
   readonly value: string;
-  readonly subFilters?: Filters;
 }
 
 export enum FilterTypes {
