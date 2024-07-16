@@ -132,7 +132,7 @@ class Webnovel implements Plugin.PluginBase {
       loadedCheerio(ele_v)
         .find('li')
         .each((index_c, ele_c) => {
-          const chapterName =
+          let chapterName =
             `${volumeName}: ` +
             (loadedCheerio(ele_c).find('a').attr('title')?.trim() ||
               'No Title Found');
@@ -140,7 +140,9 @@ class Webnovel implements Plugin.PluginBase {
 
           if (chapterPath) {
             chapters.push({
-              name: chapterName,
+              name: loadedCheerio(ele_c).find('svg').length
+                ? `${chapterName} 🔒`
+                : chapterName,
               path: chapterPath,
             });
           }
