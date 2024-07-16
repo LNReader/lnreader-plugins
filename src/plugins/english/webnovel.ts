@@ -170,6 +170,9 @@ class Webnovel implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
+    const bloatElements = ['.cha-info'];
+    bloatElements.map(tag => loadedCheerio(tag).remove());
+
     return loadedCheerio('.chapter_content').html()!;
   }
 
