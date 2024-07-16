@@ -126,7 +126,8 @@ class Webnovel implements Plugin.PluginBase {
         .each((index_c, ele_c) => {
           const chapterName =
             `${volumeName}: ` +
-            (loadedCheerio(ele_c).find('a').attr('title') || 'No Title Found');
+            (loadedCheerio(ele_c).find('a').attr('title')?.trim() ||
+              'No Title Found');
           const chapterPath = loadedCheerio(ele_c).find('a').attr('href');
 
           if (chapterPath) {
