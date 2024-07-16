@@ -10,6 +10,10 @@ class Webnovel implements Plugin.PluginBase {
   version = '1.0.0';
   icon = 'src/en/webnovel/icon.png';
   site = 'https://www.webnovel.com';
+  headers = {
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  };
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
@@ -98,7 +102,9 @@ class Webnovel implements Plugin.PluginBase {
       url += `novel?orderBy=1&pageIndex=${pageNo}`;
     }
 
-    const result = await fetchApi(url);
+    const result = await fetchApi(url, {
+      headers: this.headers,
+    });
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
@@ -107,7 +113,9 @@ class Webnovel implements Plugin.PluginBase {
 
   async parseChapters(novelPath: string): Promise<Plugin.ChapterItem[]> {
     const url = this.site + novelPath + '/catalog';
-    const result = await fetchApi(url);
+    const result = await fetchApi(url, {
+      headers: this.headers,
+    });
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -144,7 +152,9 @@ class Webnovel implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
-    const result = await fetchApi(url);
+    const result = await fetchApi(url, {
+      headers: this.headers,
+    });
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -166,7 +176,9 @@ class Webnovel implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + chapterPath;
-    const result = await fetchApi(url);
+    const result = await fetchApi(url, {
+      headers: this.headers,
+    });
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -195,7 +207,9 @@ class Webnovel implements Plugin.PluginBase {
     searchTerm = searchTerm.replace(/\s+/g, '+');
 
     const url = `${this.site}/search?keywords=${searchTerm}&pageIndex=${pageNo}`;
-    const result = await fetchApi(url);
+    const result = await fetchApi(url, {
+      headers: this.headers,
+    });
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
