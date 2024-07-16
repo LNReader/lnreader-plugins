@@ -171,10 +171,12 @@ class Webnovel implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    const bloatElements = ['.cha-info'];
+    const bloatElements = ['.cha-info', '.para-comment'];
     bloatElements.map(tag => loadedCheerio(tag).remove());
 
-    const chapterTitle = loadedCheerio('.chapter_content .cha-tit').text();
+    const chapterTitle = loadedCheerio('.chapter_content .cha-tit')
+      .text()
+      .trim();
     const chapterContent = loadedCheerio(
       '.chapter_content .cha-content .cha-words',
     ).html()!;
