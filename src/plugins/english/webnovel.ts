@@ -60,38 +60,39 @@ class Webnovel implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    // todo: filters don't work
     let url = this.site + '/stories/';
+    const params = new URLSearchParams();
+
     if (showLatestNovels) {
       url += `novel?orderBy=5&pageIndex=${pageNo}`;
     } else if (filters) {
-      const params = new URLSearchParams();
       if (filters.genres_gender.value === '1') {
-        if (filters.genres_male.value === '1') {
+        if (filters.genres_male.value !== '1') {
+          url += filters.genres_male.value;
+        } else {
           url += 'novel';
           params.append('gender', '1');
         }
-        if (filters.genres_male.value !== '1') {
-          url += filters.genres_male.value;
-        }
       } else if (filters.genres_gender.value === '2') {
-        if (filters.genres_female.value === '2') {
+        if (filters.genres_female.value !== '2') {
+          url += filters.genres_female.value;
+        } else {
           url += 'novel';
           params.append('gender', '2');
         }
-        if (filters.genres_female.value !== '2') {
-          url += filters.genres_female.value;
-        }
       }
+
       if (filters.type.value !== '3') {
         params.append('sourceType', filters.type.value);
-      } else if (filters.type.value === '3') {
+      } else {
         params.append('translateMode', '3');
         params.append('sourceType', '1');
       }
+
       params.append('bookStatus', filters.status.value);
       params.append('orderBy', filters.sort.value);
       params.append('pageIndex', pageNo.toString());
+
       url += '?' + params.toString();
     } else {
       url += `novel?orderBy=1&pageIndex=${pageNo}`;
@@ -114,11 +115,17 @@ class Webnovel implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.volume-item').each((index_v, ele_v) => {
+      let originalVolumeName = loadedCheerio(ele_v).first().text().trim();
+      let volumeNameMatch = originalVolumeName.match(/Volume\s(\d+)/);
+      let volumeName = volumeNameMatch
+        ? `Volume ${volumeNameMatch[1]}`
+        : 'Unknown Volume';
+
       loadedCheerio(ele_v)
         .find('li')
         .each((index_c, ele_c) => {
           const chapterName =
-            `Volume ${index_v}: ` +
+            `${volumeName}: ` +
             (loadedCheerio(ele_c).find('a').attr('title') || 'No Title Found');
           const chapterPath = loadedCheerio(ele_c).find('a').attr('href');
 
@@ -157,31 +164,13 @@ class Webnovel implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    // todo: parse chapter
     const url = this.site + chapterPath;
     const result = await fetchApi(url);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
 
-    const bloatElements = [
-      '.box-ads',
-      '.box-notification',
-      /^nf/, // Regular expression to match tags starting with 'nf'
-    ];
-    bloatElements.map(tag => {
-      if (tag instanceof RegExp) {
-        loadedCheerio('*')
-          .filter((_, el) =>
-            tag.test(loadedCheerio(el).prop('tagName')!.toLowerCase()),
-          )
-          .remove();
-      } else {
-        loadedCheerio(tag).remove();
-      }
-    });
-
-    return loadedCheerio('#content').html()!;
+    return loadedCheerio('.chapter_content').html()!;
   }
 
   async searchNovels(
