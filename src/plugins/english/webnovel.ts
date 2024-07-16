@@ -167,8 +167,12 @@ class Webnovel implements Plugin.PluginBase {
       cover: 'https:' + loadedCheerio('.g_thumb > img').attr('src'),
       genres: loadedCheerio('.det-hd-detail > .det-hd-tag').attr('title') || '',
       summary:
-        loadedCheerio('.j_synopsis > p').text().replace('br', '\n') ||
-        'No Summary Found',
+        loadedCheerio('.j_synopsis > p')
+          .find('br')
+          .replaceWith('\n')
+          .end()
+          .text()
+          .trim() || 'No Summary Found',
       author:
         loadedCheerio('.det-info .c_s')
           .filter((i_, ele) => {
