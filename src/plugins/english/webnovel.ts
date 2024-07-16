@@ -173,8 +173,10 @@ class Webnovel implements Plugin.PluginBase {
     const bloatElements = ['.cha-info'];
     bloatElements.map(tag => loadedCheerio(tag).remove());
 
-    const chapterTitle = loadedCheerio('.cha-tit').text();
-    const chapterContent = loadedCheerio('.cha-content').html()!;
+    const chapterTitle = loadedCheerio('.chapter_content .cha-tit').text();
+    const chapterContent = loadedCheerio(
+      '.chapter_content .cha-content .cha-words',
+    ).html()!;
     let chapterText = '';
     if (chapterTitle && chapterContent) {
       chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
