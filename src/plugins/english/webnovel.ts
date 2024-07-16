@@ -173,7 +173,14 @@ class Webnovel implements Plugin.PluginBase {
     const bloatElements = ['.cha-info'];
     bloatElements.map(tag => loadedCheerio(tag).remove());
 
-    return loadedCheerio('.chapter_content').html()!;
+    const chapterTitle = loadedCheerio('.cha-tit').text();
+    const chapterContent = loadedCheerio('.cha-content').html()!;
+    let chapterText = '';
+    if (chapterTitle && chapterContent) {
+      chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+    }
+
+    return chapterText;
   }
 
   async searchNovels(
