@@ -37,7 +37,7 @@ class Webnovel implements Plugin.PluginBase {
         : '';
 
     return loadedCheerio(`${selector} li`)
-      .map((index, ele) => {
+      .map((i_, ele) => {
         const novelName =
           loadedCheerio(ele).find('.g_thumb').attr('title') || 'No Title Found';
         const novelCover = loadedCheerio(ele)
@@ -122,7 +122,7 @@ class Webnovel implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio('.volume-item').each((index_v, ele_v) => {
+    loadedCheerio('.volume-item').each((i_v_, ele_v) => {
       let originalVolumeName = loadedCheerio(ele_v).first().text().trim();
       let volumeNameMatch = originalVolumeName.match(/Volume\s(\d+)/);
       let volumeName = volumeNameMatch
@@ -131,7 +131,7 @@ class Webnovel implements Plugin.PluginBase {
 
       loadedCheerio(ele_v)
         .find('li')
-        .each((index_c, ele_c) => {
+        .each((i_c_, ele_c) => {
           const chapterName =
             `${volumeName}: ` +
             (loadedCheerio(ele_c).find('a').attr('title')?.trim() ||
@@ -168,8 +168,21 @@ class Webnovel implements Plugin.PluginBase {
       genres: loadedCheerio('.det-hd-detail > .det-hd-tag').attr('title') || '',
       summary: loadedCheerio('.j_synopsis > p').text() || 'No Summary Found',
       author:
-        loadedCheerio('.det-info .c_primary').attr('title') ||
-        'No Author Found',
+        loadedCheerio('.det-info .c_s')
+          .filter((i_, ele) => {
+            return loadedCheerio(ele).text().trim() === 'Author:';
+          })
+          .next()
+          .text()
+          .trim() || 'No Author Found',
+      status:
+        loadedCheerio('.det-hd-detail svg')
+          .filter((i_, ele) => {
+            return loadedCheerio(ele).attr('title') === 'Status';
+          })
+          .next()
+          .text()
+          .trim() || 'Unknown Status',
       chapters: await this.parseChapters(novelPath),
     };
 
