@@ -865,25 +865,25 @@ class TL implements Plugin.PluginBase {
 
 export default new TL();
 
-interface response {
+type response = {
   data: Data;
-}
+};
 
-interface Data {
+type Data = {
   projects?: Projects;
   project?: Project;
   chapter?: DataChapter;
-}
+};
 
-interface DataChapter {
+type DataChapter = {
   text: Text;
-}
+};
 
-interface Text {
+type Text = {
   text: string;
-}
+};
 
-interface Project {
+type Project = {
   title: string;
   translationStatus: string;
   fullUrl: string;
@@ -893,58 +893,58 @@ interface Project {
   tags: Genre[];
   annotation: Text;
   subprojects: Subprojects;
-}
+};
 
-interface Cover {
+type Cover = {
   url: string;
-}
+};
 
-interface Genre {
+type Genre = {
   nameRu: string;
   nameEng: string;
-}
+};
 
-interface Person {
+type Person = {
   role: string;
   name: Name;
-}
+};
 
-interface Name {
+type Name = {
   firstName: string;
   lastName: string;
-}
+};
 
-interface Subprojects {
+type Subprojects = {
   content: SubprojectsContent[];
-}
+};
 
-interface SubprojectsContent {
+type SubprojectsContent = {
   title: null | string;
   volumes: Volumes;
-}
+};
 
-interface Volumes {
+type Volumes = {
   content: VolumesContent[];
-}
+};
 
-interface VolumesContent {
+type VolumesContent = {
   shortName: null | string;
   chapters: ChapterElement[];
-}
+};
 
-interface ChapterElement {
+type ChapterElement = {
   title: null | string;
   publishDate: Date;
   fullUrl: string;
   published: boolean;
-}
+};
 
-interface Projects {
+type Projects = {
   content: ProjectsContent[];
-}
+};
 
-interface ProjectsContent {
+type ProjectsContent = {
   title: string;
   fullUrl: string;
   covers: Cover[];
-}
+};

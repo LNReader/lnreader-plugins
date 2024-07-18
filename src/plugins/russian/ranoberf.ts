@@ -151,7 +151,7 @@ class RNRF implements Plugin.PluginBase {
 
 export default new RNRF();
 
-interface response {
+type response = {
   props: Props;
   page: string;
   query: Query;
@@ -160,25 +160,25 @@ interface response {
   gssp: boolean;
   appGip: boolean;
   dynamicIds?: string[];
-}
+};
 
-interface Props {
+type Props = {
   pageProps: PageProps;
   isMobile: boolean;
   theme: string;
   __N_SSP: boolean;
-}
+};
 
-interface PageProps {
+type PageProps = {
   initialReduxState: InitialReduxState;
   book?: PagePropsBook;
   totalData?: TotalData;
   layoutViewCookies?: string;
   displayBanner?: boolean;
   chapter?: PagePropsChapter;
-}
+};
 
-interface PagePropsBook {
+type PagePropsBook = {
   id: number;
   countryId: number;
   creatorId: number;
@@ -223,9 +223,9 @@ interface PagePropsBook {
   verticalImage: Image;
   horizontalImage: Image;
   squareImage: Image;
-}
+};
 
-interface ChapterElement {
+type ChapterElement = {
   id: number;
   bookId: number;
   title: string;
@@ -241,35 +241,35 @@ interface ChapterElement {
   price: number;
   views: number;
   isUserPaid?: boolean;
-}
+};
 
-interface Country {
+type Country = {
   id: number;
   title: string;
   code: string;
-}
+};
 
-interface Genre {
+type Genre = {
   id: number;
   title: string;
   slug: string;
-}
+};
 
-interface Image {
+type Image = {
   id: number;
   alt: string;
   path: string;
   name: string;
   url: string;
-}
+};
 
-interface Timer {
+type Timer = {
   value: null;
   for: null;
   message: string;
-}
+};
 
-interface PagePropsChapter {
+type PagePropsChapter = {
   id: number;
   bookId: number;
   editorId: null;
@@ -297,94 +297,94 @@ interface PagePropsChapter {
   nextChapter: null;
   previousChapter: PreviousChapter;
   corrections: null;
-}
+};
 
-interface ChapterBook {
+type ChapterBook = {
   id: number;
   title: string;
   titleEn: string;
   url: string;
-}
+};
 
-interface Content {
+type Content = {
   id: number;
   text: string;
   symbolsCount: number;
-}
+};
 
-interface PreviousChapter {
+type PreviousChapter = {
   id: number;
   title: string;
   views: number;
   publishedAt: Date;
   url: string;
   numberChapter: string;
-}
+};
 
-interface InitialReduxState {
+type InitialReduxState = {
   data?: Data;
   auth: Auth;
   banners?: Banners;
   corrections?: Corrections;
   readerSettings?: ReaderSettings;
-}
+};
 
-interface Auth {
+type Auth = {
   isAuth: boolean;
   user: null;
-}
+};
 
-interface Banners {
+type Banners = {
   displaySale: boolean;
-}
+};
 
-interface Corrections {
+type Corrections = {
   items: null;
   data: null;
-}
+};
 
-interface Data {
+type Data = {
   bookPage: BookPage | null;
   chapterPage: ChapterPage | null;
-}
+};
 
-interface BookPage {
+type BookPage = {
   bookId: number;
   bookmark: null;
-}
+};
 
-interface ChapterPage {
+type ChapterPage = {
   chapterId: number;
   bookId: number;
   bookmark: null;
-}
+};
 
-interface ReaderSettings {
+type ReaderSettings = {
   fontSize: number;
   lineHeight: number;
   textIndent: number;
   sidebarHide: number;
   textAlign: string;
-}
+};
 
-interface TotalData {
+type TotalData = {
   items: Item[];
   _links: Links;
   pagesData: PagesData;
-}
+};
 
-interface Links {
+type Links = {
   self: First;
   first: First;
   last: First;
   next: First;
-}
+};
 
-interface First {
+type First = {
   href: string;
-}
+};
 
-interface Item {
+type Item = {
   id: number;
   title: string;
   description: string;
@@ -398,16 +398,16 @@ interface Item {
   verticalImage: Image;
   horizontalImage: Image;
   squareImage: Image;
-}
+};
 
-interface PagesData {
+type PagesData = {
   totalCount: number;
   pageCount: number;
   currentPage: number;
   perPage: number;
-}
+};
 
-interface Query {
+type Query = {
   book?: string;
   chapter?: string;
-}
+};

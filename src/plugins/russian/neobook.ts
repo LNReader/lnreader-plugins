@@ -213,13 +213,13 @@ class Neobook implements Plugin.PluginBase {
 
 export default new Neobook();
 
-interface BundleBooks {
+type BundleBooks = {
   categories: any[];
   topSection: any[];
   feed: Novels[];
-}
+};
 
-interface BottomSection {
+type BottomSection = {
   id: string;
   boost: string;
   preferenceid: string;
@@ -230,9 +230,9 @@ interface BottomSection {
   more: string;
   part: string;
   items: Novels[];
-}
+};
 
-interface Novels {
+type Novels = {
   status?: string;
   error?: string;
   login?: Login;
@@ -290,9 +290,9 @@ interface Novels {
   carouselItems?: Novels[];
   book?: Novels;
   activeChapterIndex?: number;
-}
+};
 
-interface Attachment {
+type Attachment = {
   has: string;
   id: string;
   typeid: string;
@@ -304,16 +304,16 @@ interface Attachment {
   video: string;
   origin: string;
   ext: string;
-}
+};
 
-interface Image {
+type Image = {
   s: string;
   m: string;
   l: string;
   has?: string;
-}
+};
 
-interface Chapter {
+type Chapter = {
   id: string;
   token: string;
   status: string;
@@ -324,9 +324,9 @@ interface Chapter {
   access: string;
   loaded: string;
   data?: Data;
-}
+};
 
-interface Data {
+type Data = {
   available: string;
   access: string;
   id: string;
@@ -339,27 +339,27 @@ interface Data {
   datePublish: string;
   attachment: Attachment;
   lastComments: any[];
-}
+};
 
-interface NovelsCounters {
+type NovelsCounters = {
   impressions: Bookmarks;
   views: Bookmarks;
   likes: Bookmarks;
   comments: Bookmarks;
   bookmarks: Bookmarks;
-}
+};
 
-interface Bookmarks {
+type Bookmarks = {
   value: string;
   formatted: string;
-}
+};
 
-interface Feed {
+type Feed = {
   name: string;
   canRemoved: string;
-}
+};
 
-interface Login {
+type Login = {
   uid: string;
   utoken: string;
   has: string;
@@ -376,14 +376,14 @@ interface Login {
   deposit: any[];
   affiliate: any[];
   preferences: any[];
-}
+};
 
-interface LoginCounters {
+type LoginCounters = {
   notifications: string;
   messages: string;
-}
+};
 
-interface LoginUser {
+type LoginUser = {
   id: string;
   username: string;
   firstname: string;
@@ -392,39 +392,39 @@ interface LoginUser {
   status: string;
   balance: Balance;
   connectedService: string;
-}
+};
 
-interface Balance {
+type Balance = {
   neo: Price;
-}
+};
 
-interface Price {
+type Price = {
   has: string;
   value: string;
   currency: Currency;
   formatted: string;
   deadline: string;
-}
+};
 
 type Currency = 'NEO';
 
-interface Rating {
+type Rating = {
   value: string;
   count: string;
   my: string;
-}
+};
 
-interface ReadProgress {
+type ReadProgress = {
   chapter: string;
   progress: string;
-}
+};
 
-interface ReadTime {
+type ReadTime = {
   hours: string;
   minutes: string;
-}
+};
 
-interface NovelsUser {
+type NovelsUser = {
   available: string;
   boosted: string;
   id: string;
@@ -452,4 +452,4 @@ interface NovelsUser {
   isSubscription: string;
   isBlock: string;
   gr: string;
-}
+};

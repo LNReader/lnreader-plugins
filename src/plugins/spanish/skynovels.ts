@@ -111,10 +111,10 @@ class SkyNovels implements Plugin.PluginBase {
 
 export default new SkyNovels();
 
-interface response {
+type response = {
   novels?: NovelsEntity[] | null;
-}
-interface NovelsEntity {
+};
+type NovelsEntity = {
   id: number;
   nvl_author?: number | null;
   nvl_content: string;
@@ -135,16 +135,16 @@ interface NovelsEntity {
   nvl_rating?: number | null;
   nvl_ratings_count: number;
   genres?: GenresEntity[] | null;
-}
-interface GenresEntity {
+};
+type GenresEntity = {
   id: number;
   genre_name: string;
-}
+};
 
-interface responseBook {
+type responseBook = {
   novel?: NovelEntity[] | null;
-}
-interface NovelEntity {
+};
+type NovelEntity = {
   id: number;
   nvl_author: number;
   nvl_content: string;
@@ -168,29 +168,29 @@ interface NovelEntity {
   novel_ratings?: NovelRatingsEntity[] | null;
   collaborators?: CollaboratorsEntity[] | null;
   genres?: GenresEntity[] | null;
-}
-interface BookmarksEntity {
+};
+type BookmarksEntity = {
   id: number;
   user_id: number;
   chp_id: number;
   chp_name: string;
-}
-interface VolumesEntity {
+};
+type VolumesEntity = {
   vlm_title: string;
   id: number;
   nvl_id: number;
   user_id?: number | null;
   chapters?: ChaptersEntity[] | null;
-}
-interface ChaptersEntity {
+};
+type ChaptersEntity = {
   id: number;
   chp_index_title: string;
   chp_name: string;
   chp_number: number;
   chp_status: string;
   createdAt: string;
-}
-interface NovelRatingsEntity {
+};
+type NovelRatingsEntity = {
   user_id: number;
   rate_value: number;
   rate_comment: string;
@@ -201,21 +201,21 @@ interface NovelRatingsEntity {
   user_login: string;
   image?: string | null;
   likes?: (LikesEntity | null)[] | null;
-}
-interface LikesEntity {
+};
+type LikesEntity = {
   id: number;
   user_id: number;
   user_login: string;
-}
-interface CollaboratorsEntity {
+};
+type CollaboratorsEntity = {
   user_id: number;
   user_login: string;
-}
+};
 
-interface responseChapter {
+type responseChapter = {
   chapter?: ChapterEntity[] | null;
-}
-interface ChapterEntity {
+};
+type ChapterEntity = {
   id: number;
   chp_author: number;
   chp_translator?: null;
@@ -237,9 +237,9 @@ interface ChapterEntity {
   comments?: null[] | null;
   reactions?: null[] | null;
   total_reactions?: TotalReactionsEntity[] | null;
-}
-interface TotalReactionsEntity {
+};
+type TotalReactionsEntity = {
   reaction_id: number;
   reaction_name: string;
   reaction_count: number;
-}
+};

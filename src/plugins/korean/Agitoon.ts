@@ -155,12 +155,12 @@ class Agitoon implements Plugin.PluginBase {
 
 export default new Agitoon();
 
-interface response {
+type response = {
   list_limit: number;
   list?: ListEntity[] | null;
   list_count: number;
-}
-interface ListEntity {
+};
+type ListEntity = {
   wr_id: string;
   wr_subject: string;
   np_dir: string;
@@ -174,13 +174,13 @@ interface ListEntity {
   np_country: string;
   np_age: string;
   is_scrap: number;
-}
+};
 
-interface responseBook {
+type responseBook = {
   list?: ListEntity2[] | null;
   download_time: string;
-}
-interface ListEntity2 {
+};
+type ListEntity2 = {
   wr_id: string;
   wr_subject: string;
   wr_datetime: string;
@@ -188,4 +188,4 @@ interface ListEntity2 {
   novel_c_style1: string;
   novel_c_str1: string;
   data_novel_c_view: string;
-}
+};

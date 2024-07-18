@@ -1,6 +1,6 @@
 import { FilterToValues, Filters } from '@libs/filterInputs';
 export namespace Plugin {
-  export interface ChapterItem {
+  export type ChapterItem = {
     name: string;
     path: string;
     /**
@@ -17,13 +17,13 @@ export namespace Plugin {
      * For novel without pages only
      */
     page?: string;
-  }
-  export interface NovelItem {
+  };
+  export type NovelItem = {
     name: string;
     path: string;
     cover?: string;
-  }
-  export interface SourceNovel extends NovelItem {
+  };
+  export type SourceNovel = {
     /** Comma separated genre list -> "action,fantasy,romance" */
     genres?: string;
     summary?: string;
@@ -31,32 +31,32 @@ export namespace Plugin {
     artist?: string;
     status?: string;
     chapters?: ChapterItem[];
-  }
+  } & NovelItem;
 
-  export interface SourcePage {
+  export type SourcePage = {
     chapters: ChapterItem[];
-  }
+  };
 
-  export interface PopularNovelsOptions<
+  export type PopularNovelsOptions<
     Q extends Filters | undefined = Filters | undefined,
-  > {
+  > = {
     showLatestNovels?: boolean;
     filters: Q extends undefined ? undefined : FilterToValues<Q>;
-  }
-  export interface PluginItem {
+  };
+  export type PluginItem = {
     id: string;
     name: string;
     version: string;
     icon: string;
     site: string;
-  }
-  export interface ImageRequestInit {
+  };
+  export type ImageRequestInit = {
     method?: string;
     headers?: Record<string, string>;
     body?: string;
-  }
+  };
 
-  export interface PluginBase {
+  export type PluginBase = {
     id: string;
     name: string;
     /**
@@ -87,32 +87,31 @@ export namespace Plugin {
     parseChapter(chapterPath: string): Promise<string>;
     searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
     resolveUrl?(path: string, isNovel?: boolean): string;
-  }
+  };
 
-  export interface PagePlugin extends PluginBase {
+  export type PagePlugin = {
     parseNovel(
       novelPath: string,
     ): Promise<SourceNovel & { totalPages: number }>;
     parsePage(novelPath: string, page: string): Promise<SourcePage>;
-  }
+  } & PluginBase;
 }
 
 export namespace HTMLParser2Util {
-  interface HandlerBase {
+  type HandlerBase = {
     onopentag?(name: string, attribs: Record<string, string>): void;
     ontext?(data: string): void;
     onclosetag?(name: string, isImplied: boolean): void;
-  }
+  };
 
-  export interface Handler extends HandlerBase {
+  export type Handler = {
     isStarted?: boolean;
     isDone?: boolean;
-  }
+  } & HandlerBase;
 
   // route htmlparser2 event to handlers
-  export interface HandlerRouter<ActionType extends string>
-    extends HandlerBase {
+  export type HandlerRouter<ActionType extends string> = {
     handlers: Record<ActionType, Handler | undefined>;
     action: ActionType;
-  }
+  } & HandlerBase;
 }

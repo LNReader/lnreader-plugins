@@ -384,18 +384,18 @@ class RoyalRoad implements Plugin.PluginBase {
 
 export default new RoyalRoad();
 
-interface ChapterEntry {
+type ChapterEntry = {
   id: number;
   volumeId: number;
   title: string;
   date: string;
   order: number;
   url: string;
-}
+};
 
-interface VolumeEntry {
+type VolumeEntry = {
   id: number;
   title: string;
   cover: string;
   order: number;
-}
+};

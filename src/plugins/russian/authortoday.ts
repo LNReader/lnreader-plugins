@@ -377,14 +377,14 @@ function decrypt(
   return text;
 }
 
-interface authorization {
+type authorization = {
   userId: number;
   token: string;
   issued: string;
   expires: string;
-}
+};
 
-interface currentUser {
+type currentUser = {
   id: number;
   userName: string;
   fio: string;
@@ -400,9 +400,9 @@ interface currentUser {
   emailConfirmed: boolean;
   isDeleted: boolean;
   isDisabled: boolean;
-}
+};
 
-interface response {
+type response = {
   searchResults?: SearchResultsEntity[] | null;
   realTotalCount: number;
   code?: string;
@@ -411,8 +411,8 @@ interface response {
   format: Format;
   duration: Duration;
   isWorkMarkEnabled: boolean;
-}
-interface SearchResultsEntity {
+};
+type SearchResultsEntity = {
   id: number;
   title: string;
   annotation: string;
@@ -455,20 +455,20 @@ interface SearchResultsEntity {
   isLiked: boolean;
   isWorkMarkEnabled: boolean;
   workInLibraryState: string;
-}
-interface Format {
+};
+type Format = {
   enumValue: string;
   value: string;
   title: string;
   mobileTitle: string;
-}
-interface Duration {
+};
+type Duration = {
   value: string;
   title: string;
   mobileTitle: string;
-}
+};
 
-interface responseBook {
+type responseBook = {
   message?: string;
   chapters?: ChaptersEntity[] | null;
   allowDownloads: boolean;
@@ -552,8 +552,8 @@ interface responseBook {
   purchaseTime?: null;
   likeTime?: null;
   markTime?: null;
-}
-interface ChaptersEntity {
+};
+type ChaptersEntity = {
   id: number;
   workId: number;
   title: string;
@@ -563,16 +563,16 @@ interface ChaptersEntity {
   lastModificationTime: string;
   textLength: number;
   isAvailable: boolean;
-}
+};
 
-interface GalleryImagesEntity {
+type GalleryImagesEntity = {
   id: string;
   caption?: null;
   url: string;
   height: number;
   width: number;
-}
-interface RecommendationsEntity {
+};
+type RecommendationsEntity = {
   title: string;
   coverUrl: string;
   authorId: number;
@@ -599,9 +599,9 @@ interface RecommendationsEntity {
   removalReason?: null;
   removalReasonComment?: null;
   id: number;
-}
+};
 
-interface encryptedСhapter {
+type encryptedСhapter = {
   id: number;
   title: string;
   isDraft: boolean;
@@ -611,4 +611,4 @@ interface encryptedСhapter {
   key: string;
   code?: string;
   message?: string;
-}
+};

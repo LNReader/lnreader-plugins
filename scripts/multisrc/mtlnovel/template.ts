@@ -5,17 +5,17 @@ import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 import { Filters } from '@libs/filterInputs';
 
-interface MTLNovelOptions {
+type MTLNovelOptions = {
   lang?: string;
-}
+};
 
-export interface MTLNovelMetadata {
+export type MTLNovelMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: MTLNovelOptions;
   filters?: any;
-}
+};
 
 class MTLNovelPlugin implements Plugin.PluginBase {
   id: string;
@@ -173,11 +173,11 @@ class MTLNovelPlugin implements Plugin.PluginBase {
     const result = await res.json();
 
     const novels: Plugin.NovelItem[] = [];
-    interface SearchEntry {
+    type SearchEntry = {
       title: string;
       thumbnail: string;
       permalink: string;
-    }
+    };
     result.items[0].results.map((item: SearchEntry) => {
       const novelName = item.title.replace(/<\/?strong>/g, '');
       const novelCover = item.thumbnail;
