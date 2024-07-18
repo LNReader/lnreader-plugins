@@ -41,7 +41,7 @@ export namespace Plugin {
     Q extends Filters | undefined = Filters | undefined,
   > {
     showLatestNovels?: boolean;
-    filters?: Q extends undefined ? undefined : FilterToValues<Q>;
+    filters: Q extends undefined ? undefined : FilterToValues<Q>;
   }
   export interface PluginItem {
     id: string;

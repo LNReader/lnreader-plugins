@@ -144,7 +144,7 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 5,
       sourceType: 'module',
-      globals: Object.assign(...globalsHermes),
+      globals: Object.assign({}, ...globalsHermes),
     },
   },
   {

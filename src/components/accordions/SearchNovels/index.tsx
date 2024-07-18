@@ -1,26 +1,17 @@
 import { Box, Button, Stack, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
-import { useSelector } from 'react-redux';
-import { AppState } from '@redux/store';
-import { getPlugin } from '@provider/plugins';
+import { useAppStore } from '@store';
 
 export default function SearchNovels() {
-  const selectedPluginItem = useSelector(
-    (state: AppState) => state.plugin.selected,
-  );
+  const plugin = useAppStore(state => state.plugin);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [page] = useState(1);
-  const [plugin, setPlugin] = useState<Plugin.PluginBase | undefined>();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (selectedPluginItem) {
-      setPlugin(getPlugin(selectedPluginItem.id));
-    }
-  }, [selectedPluginItem]);
   const fetchNovels = () => {
     if (plugin) {
       setLoading(true);
