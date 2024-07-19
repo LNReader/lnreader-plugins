@@ -92,9 +92,9 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const url = this.site + novelPath;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    let url = this.site + novelPath;
+    let result = await fetchApi(url);
+    let body = await result.text();
 
     let loadedCheerio = parseHTML(body);
 
@@ -103,6 +103,12 @@ class NovelUpdates implements Plugin.PluginBase {
     const updatedPath = shortlink
       ? shortlink.replace(this.site, '')
       : novelPath;
+
+    url = this.site + updatedPath;
+    result = await fetchApi(url);
+    body = await result.text();
+
+    loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: updatedPath,
