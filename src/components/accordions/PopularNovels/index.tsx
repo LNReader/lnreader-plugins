@@ -7,122 +7,27 @@ import {
   Switch,
   FormControlLabel,
   FormGroup,
-  Dialog,
-  FormControl,
-  Grid,
 } from '@mui/material';
-import React, { useEffect, useState, ChangeEvent, ReactNode } from 'react';
+import React, { useEffect, useState, ChangeEvent, useRef } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
-import {
-  Filters,
-  FilterToValues,
-  FilterTypes,
-  AnyFilterValue,
-} from '@libs/filterInputs';
+import { Filters, FilterToValues } from '@libs/filterInputs';
 import { useAppStore } from '@store';
 import './index.css';
-import { PickerFilter } from '../components/filters/PickerFilter';
-import { SwitchFilter } from '../components/filters/SwitchFilter';
-
-const renderFilters = (
-  filters: Filters | undefined,
-  values: FilterToValues<Filters | undefined> | undefined,
-  set: (key: string, v: AnyFilterValue) => void,
-): React.ReactNode => {
-  const isValueCorrectType = <T extends AnyFilterValue>(
-    o: AnyFilterValue,
-    f: T,
-  ): o is T => {
-    const checkIfIsCorrectObjectType = (o: AnyFilterValue, f: T): o is T => {
-      const areArrays = Array.isArray(o) && Array.isArray(f);
-      const areObjects = typeof o === 'object' && typeof f === 'object';
-      return areArrays || areObjects;
-    };
-    return typeof o === typeof f || checkIfIsCorrectObjectType(o, f);
-  };
-
-  if (!filters || !values) return false;
-  return (
-    <>
-      <b>Filters:</b>
-      {Object.entries(filters).map(([key, filter]) => {
-        if (!(key in values)) {
-          console.error(`No filter value for ${key} in filter values!`);
-          return null;
-        }
-        switch (filter.type) {
-          case FilterTypes.Picker: {
-            // Check if filterValues have correct type
-            // this needs to be inside of every case in this switch to get correct value type
-            const value = values[key].value; // here value has every possible value type
-            // We could just do `as typeof filter.value` but just to be sure I made a typeguard
-            if (!isValueCorrectType<typeof filter.value>(value, filter.value)) {
-              console.error(
-                `FilterValue for filter [${key}] has a wrong type!`,
-              );
-              return null;
-            }
-            // value; // here value has only Picker's value
-            return (
-              <PickerFilter
-                key={`picker_filter_${key}`}
-                filter={{ key, filter }}
-                value={value}
-                set={newValue => set(key, newValue)}
-              />
-            );
-          }
-          case FilterTypes.Switch: {
-            // Check if filterValues have correct type
-            // this needs to be inside of every case in this switch to get correct value type
-            const value = values[key].value; // here value has every possible value type
-            // We could just do `as typeof filter.value` but just to be sure I made a typeguard
-            if (!isValueCorrectType<typeof filter.value>(value, filter.value)) {
-              console.error(
-                `FilterValue for filter [${key}] has a wrong type!`,
-              );
-              return null;
-            }
-            // value; // here value has only Picker's value
-            return (
-              <SwitchFilter
-                filter={{ key, filter }}
-                key={`switch_filter_${key}`}
-                value={value}
-                set={newValue => set(key, newValue)}
-              />
-            );
-          }
-          default:
-            return (
-              <FormControl
-                key={key}
-                variant="standard"
-                sx={{ m: 1, minWidth: 120 }}
-              >
-                <b>{filter.type} filters not yet implemented!</b>
-              </FormControl>
-            );
-        }
-      })}
-    </>
-  );
-};
+import { DialogRef, FiltersDialog } from '../components/filters/FiltersDialog';
 
 export default function PopularNovels() {
   const plugin = useAppStore(state => state.plugin);
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [filterValues, setFilterValues] = useState<
-    FilterToValues<Filters | undefined> | undefined
+    FilterToValues<Filters> | undefined
   >();
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLatest, setIsLatest] = useState(true);
-  const [filterDialogOpen, setFilterDialog] = useState(false);
-  const [filterElements, setFilterElements] = useState<ReactNode>(false);
+  const dialogRef = useRef<DialogRef>(null);
 
   const fetchNovelsByIndex = async (index: number) => {
     if (plugin && index) {
@@ -141,19 +46,6 @@ export default function PopularNovels() {
       setLoading(false);
     }
   };
-
-  const setFilterWithKey = (key: string, newValue: AnyFilterValue) =>
-    setFilterValues(fValues =>
-      !fValues
-        ? fValues
-        : {
-            ...fValues,
-            [key]: {
-              ...fValues[key],
-              value: newValue,
-            },
-          },
-    );
 
   const handleSwitchLatestChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIsLatest(event.target.checked);
@@ -183,18 +75,8 @@ export default function PopularNovels() {
         };
       }
       setFilterValues(filters);
-      // initial set of elements to avoid errors when changing plugins
-      setFilterElements(
-        renderFilters(plugin?.filters, filters, setFilterWithKey),
-      );
     }
   }, [plugin]);
-
-  useEffect(() => {
-    setFilterElements(
-      renderFilters(plugin?.filters, filterValues, setFilterWithKey),
-    );
-  }, [filterValues]);
 
   return (
     <AccordionContainer title="Popular Novels" loading={loading}>
@@ -225,28 +107,21 @@ export default function PopularNovels() {
         >
           Next Page
         </Button>
-        <Button disabled={!plugin} onClick={() => setFilterDialog(true)}>
+        <Button
+          disabled={!plugin || isLatest || !plugin.filters}
+          onClick={() => {
+            dialogRef.current?.show();
+          }}
+        >
           Filters
         </Button>
-        <Dialog open={filterDialogOpen} onClose={() => setFilterDialog(false)}>
-          <div id="filtersContent">
-            {filterElements}
-            <Grid gridAutoFlow={'column'}>
-              <Button
-                style={{ color: '#00aa  00ff' }}
-                onClick={() => fetchNovelsByIndex(1)}
-              >
-                Refetch
-              </Button>
-              <Button
-                style={{ color: 'red' }}
-                onClick={() => setFilterDialog(false)}
-              >
-                Close
-              </Button>
-            </Grid>
-          </div>
-        </Dialog>
+        <FiltersDialog
+          ref={dialogRef}
+          values={filterValues}
+          filters={plugin?.filters}
+          setValues={setFilterValues}
+          refetch={() => fetchNovelsByIndex(1)}
+        />
         <ToggleButtonGroup
           value={currentIndex}
           exclusive

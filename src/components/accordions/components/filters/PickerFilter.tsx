@@ -13,26 +13,34 @@ export const PickerFilter = ({
   value: ValueOfFilter<FilterType>;
   set: (v: ValueOfFilter<FilterType>) => void;
 }) => {
+  const label = filter.label.replace(/s+/gi, '-');
   return (
-    <FormControl key={key} variant="standard" sx={{ m: 1, minWidth: 120 }}>
-      <InputLabel
-        id={`filter_label_${filter.label.replace(/\s+/gi, '-')}_${key}`}
-      >
+    <FormControl
+      key={key}
+      variant="filled"
+      fullWidth
+      margin="dense"
+      style={{ alignSelf: 'center' }}
+    >
+      <InputLabel id={`picker_filter_label_${label}_${key}`}>
         {filter.label}
       </InputLabel>
       <Select
-        labelId={`filter_label_${filter.label.replace(/\s+/gi, '-')}_${key}`}
-        id={`picker_filter_${filter.label.replace(/\s+/gi, '-')}_${key}`}
+        size="medium"
+        labelId={`picker_filter_label_${label}_${key}`}
+        id={`picker_filter_${label}_${key}`}
         value={value || key}
         onChange={({ target: { value: newValue } }) => {
           if (newValue === key) newValue = '';
           set(newValue);
         }}
+        MenuProps={{ slotProps: { paper: { sx: { maxHeight: 36 * 4 } } } }}
         label={filter.label}
       >
         {filter.options.map(option => {
           return (
             <MenuItem
+              style={{ minHeight: 36 }}
               key={`${key}_${option.value}`}
               value={
                 /** Because Mui treats empty string as `empty value`
