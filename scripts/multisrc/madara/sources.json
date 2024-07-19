@@ -229,14 +229,6 @@
     }
   },
   {
-    "id": "e-novel",
-    "sourceSite": "https://e-novel.online/",
-    "sourceName": "E-Novel",
-    "options": {
-      "lang": "Portuguese"
-    }
-  },
-  {
     "id": "panchotranslations",
     "sourceSite": "https://panchotranslations.com/",
     "sourceName": "Pancho Translations",
