@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.1';
+  version = '0.9.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -98,8 +98,14 @@ class NovelUpdates implements Plugin.PluginBase {
 
     let loadedCheerio = parseHTML(body);
 
+    // Extract shortlink and update path if available
+    const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
+    const updatedPath = shortlink
+      ? shortlink.replace(this.site, '')
+      : novelPath;
+
     const novel: Plugin.SourceNovel = {
-      path: novelPath,
+      path: updatedPath,
       name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
       cover: loadedCheerio('.wpb_wrapper img').attr('src'),
       chapters: [],
@@ -158,14 +164,17 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
       const chapterUrl =
-        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
-      const chapterId = chapterUrl.split('/').filter(Boolean).pop();
+        'https:' +
+        loadedCheerio(el)
+          .find('a')
+          .first()
+          .next()
+          .attr('href')
+          ?.replace(this.site, '');
 
       chapter.push({
         name: chapterName,
-        path: chapterUrl.replace(this.site, ''),
-        sourceNovelId: novelId,
-        sourceChapterId: chapterId,
+        path: chapterUrl,
       });
     });
 
@@ -585,10 +594,6 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const novelId = chapterPath.split(',')[2];
-    const chapterId = chapterPath.split(',')[1];
-    chapterPath = chapterPath.split(',')[0];
-
     const result = await fetchApi(this.site + chapterPath);
     const body = await result.text();
     const url = result.url;
@@ -801,11 +806,27 @@ class NovelUpdates implements Plugin.PluginBase {
       );
     }
 
-    await fetchApi(
-      `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
-    );
-
     return chapterText;
+  }
+
+  async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
+    // Extract the novelId from the novelPath
+    const novelIdMatch = novelPath.match(/\?p=(\d+)/);
+    const novelId = novelIdMatch ? novelIdMatch[1] : null;
+
+    // Extract the chapterId from the chapterPath
+    const chapterIdMatch = chapterPath.match(/\/(\d+)\//);
+    const chapterId = chapterIdMatch ? chapterIdMatch[1] : null;
+
+    if (novelId && chapterId) {
+      await fetchApi(
+        `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
+      );
+    } else {
+      throw new Error(
+        `Invalid novelPath (${novelPath}) or chapterPath (${chapterPath}).`,
+      );
+    }
   }
 
   async searchNovels(

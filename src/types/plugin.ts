@@ -17,8 +17,6 @@ export namespace Plugin {
      * For novel without pages only
      */
     page?: string;
-    sourceNovelId?: string;
-    sourceChapterId?: string;
   }
   export interface NovelItem {
     name: string;
@@ -87,6 +85,7 @@ export namespace Plugin {
      */
     parseNovel(novelPath: string): Promise<SourceNovel>;
     parseChapter(chapterPath: string): Promise<string>;
+    trackProgress?(novelPath: string, chapterPath: string): Promise<void>;
     searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
     resolveUrl?(path: string, isNovel?: boolean): string;
   }
