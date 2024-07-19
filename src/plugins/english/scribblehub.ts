@@ -9,7 +9,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
   name = 'Scribble Hub';
   icon = 'src/en/scribblehub/icon.png';
   site = 'https://www.scribblehub.com/';
-  version = '1.0.1';
+  version = '1.1.0';
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -174,6 +174,34 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio('div.chp_raw').html() || '';
     return chapterText;
+  }
+
+  async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
+    // Extract the novelId from the novelPath
+    const novelIdMatch = novelPath?.match(/\?p=(\d+)/);
+    const novelId = novelIdMatch ? novelIdMatch[1] : null;
+
+    // Extract the chapterId from the chapterPath
+    const chapterIdMatch = chapterPath.match(/\/(\d+)\//);
+    const chapterId = chapterIdMatch ? chapterIdMatch[1] : null;
+
+    const link = `${this.site}wp-admin/admin-ajax.php`;
+
+    if (novelId && chapterId) {
+      const formData = new FormData();
+      formData.append('action', 'wi_addchangerl');
+      formData.append('strCID', chapterId);
+      formData.append('strSID', novelId);
+
+      await fetchApi(link, {
+        method: 'POST',
+        body: formData,
+      });
+    } else {
+      throw new Error(
+        `Invalid novelPath (${novelPath}) or chapterPath (${chapterPath}).`,
+      );
+    }
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
