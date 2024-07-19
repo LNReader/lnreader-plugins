@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.0';
+  version = '0.8.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -163,7 +163,9 @@ class NovelUpdates implements Plugin.PluginBase {
 
       chapter.push({
         name: chapterName,
-        path: `${chapterUrl.replace(this.site, '')},${chapterId},${novelId}`,
+        path: chapterUrl.replace(this.site, ''),
+        sourceNovelId: novelId,
+        sourceChapterId: chapterId,
       });
     });
 

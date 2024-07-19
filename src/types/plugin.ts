@@ -17,6 +17,8 @@ export namespace Plugin {
      * For novel without pages only
      */
     page?: string;
+    sourceNovelId?: string;
+    sourceChapterId?: string;
   }
   export interface NovelItem {
     name: string;
