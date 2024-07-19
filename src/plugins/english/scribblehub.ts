@@ -178,11 +178,11 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
 
   async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
     // Extract the novelId from the novelPath
-    const novelIdMatch = novelPath?.match(/\?p=(\d+)/);
+    const novelIdMatch = novelPath.match(/series\/(\d+)\//);
     const novelId = novelIdMatch ? novelIdMatch[1] : null;
 
     // Extract the chapterId from the chapterPath
-    const chapterIdMatch = chapterPath.match(/\/(\d+)\//);
+    const chapterIdMatch = chapterPath.match(/chapter\/(\d+)\//);
     const chapterId = chapterIdMatch ? chapterIdMatch[1] : null;
 
     const link = `${this.site}wp-admin/admin-ajax.php`;
