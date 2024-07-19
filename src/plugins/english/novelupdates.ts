@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.0';
+  version = '0.9.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -85,16 +85,18 @@ class NovelUpdates implements Plugin.PluginBase {
 
     link += '&pg=' + page;
 
-    const body = await fetchApi(link).then(result => result.text());
+    const result = await fetchApi(link);
+    const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
+
     return this.parseNovels(loadedCheerio);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let url = this.site + novelPath;
-    let result = await fetchApi(url);
-    let body = await result.text();
+    const url = this.site + novelPath;
+    const result = await fetchApi(url);
+    const body = await result.text();
 
     let loadedCheerio = parseHTML(body);
 
@@ -104,15 +106,9 @@ class NovelUpdates implements Plugin.PluginBase {
       ? shortlink.replace(this.site, '')
       : novelPath;
 
-    url = this.site + updatedPath;
-    result = await fetchApi(url);
-    body = await result.text();
-
-    loadedCheerio = parseHTML(body);
-
     const novel: Plugin.SourceNovel = {
-      path: updatedPath,
-      name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
+      path: novelPath,
+      name: loadedCheerio('.seriestitlenu').text() + updatedPath || 'Untitled',
       cover: loadedCheerio('.wpb_wrapper img').attr('src'),
       chapters: [],
     };
