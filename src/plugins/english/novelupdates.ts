@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.0';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -160,17 +160,11 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
       const chapterUrl =
-        'https:' +
-        loadedCheerio(el)
-          .find('a')
-          .first()
-          .next()
-          .attr('href')
-          ?.replace(this.site, '');
+        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
 
       chapter.push({
         name: chapterName,
-        path: chapterUrl,
+        path: chapterUrl.replace(this.site, ''),
       });
     });
 
