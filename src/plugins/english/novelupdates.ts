@@ -100,14 +100,8 @@ class NovelUpdates implements Plugin.PluginBase {
 
     let loadedCheerio = parseHTML(body);
 
-    // Extract shortlink and update path if available
-    const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
-    const updatedPath = shortlink
-      ? shortlink.replace(this.site, '')
-      : novelPath;
-
     const novel: Plugin.SourceNovel = {
-      path: updatedPath,
+      path: novelPath,
       name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
       cover: loadedCheerio('.wpb_wrapper img').attr('src'),
       chapters: [],
@@ -812,8 +806,18 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
+    const url = this.site + novelPath;
+    const result = await fetchApi(url);
+    const body = await result.text();
+
+    let loadedCheerio = parseHTML(body);
+
+    // Extract shortlink and update path if available
+    const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
+    const updatedNovelPath = shortlink?.replace(this.site, '');
+
     // Extract the novelId from the novelPath
-    const novelIdMatch = novelPath.match(/\?p=(\d+)/);
+    const novelIdMatch = updatedNovelPath?.match(/\?p=(\d+)/);
     const novelId = novelIdMatch ? novelIdMatch[1] : null;
 
     // Extract the chapterId from the chapterPath
