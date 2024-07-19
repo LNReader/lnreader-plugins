@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.1';
+  version = '0.9.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -107,8 +107,8 @@ class NovelUpdates implements Plugin.PluginBase {
       : novelPath;
 
     const novel: Plugin.SourceNovel = {
-      path: novelPath,
-      name: loadedCheerio('.seriestitlenu').text() + updatedPath || 'Untitled',
+      path: updatedPath,
+      name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
       cover: loadedCheerio('.wpb_wrapper img').attr('src'),
       chapters: [],
     };
