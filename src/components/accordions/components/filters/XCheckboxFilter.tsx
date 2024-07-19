@@ -1,7 +1,9 @@
 import React from 'react';
 import { Filter, FilterTypes, ValueOfFilter } from '@libs/filterInputs';
 import { FormControl, FormControlLabel, FormLabel, Grid } from '@mui/material';
-import { TripleCheckbox, TripleCheckboxState } from './TripleCheckbox';
+import { useAppStore } from '@store';
+import { TriStateCheckbox, TriStateCheckboxState } from './TriStateCheckbox';
+import { TriStateSwitch } from './TriStateSwitch';
 
 type FilterType = FilterTypes.ExcludableCheckboxGroup;
 
@@ -14,13 +16,15 @@ export const XCheckboxFilter = ({
   value: ValueOfFilter<FilterType>;
   set: (v: typeof value) => void;
 }) => {
-  const getCheckboxState = (v: string): TripleCheckboxState => {
+  const useSwitches = useAppStore(state => state.useSwitches);
+
+  const getCheckboxState = (v: string): TriStateCheckboxState => {
     if (value.include?.includes(v)) return 'checked';
     if (value.exclude?.includes(v)) return 'unchecked';
     return 'neutral';
   };
 
-  const handleChange = (key: string, v: TripleCheckboxState) => {
+  const handleChange = (key: string, v: TriStateCheckboxState) => {
     console.log(`setting ${key} to`, v);
     if (v === 'unchecked')
       return set({
@@ -45,7 +49,6 @@ export const XCheckboxFilter = ({
   return (
     <FormControl key={key} variant="outlined">
       <FormLabel>{filter.label}</FormLabel>
-
       <Grid container columns={{ xs: 3 }}>
         {filter.options.map(option => {
           return (
@@ -58,12 +61,20 @@ export const XCheckboxFilter = ({
             >
               <FormControl>
                 <FormControlLabel
+                  labelPlacement={useSwitches ? 'top' : 'end'}
                   style={{ userSelect: 'none' }}
                   control={
-                    <TripleCheckbox
-                      value={getCheckboxState(option.value)}
-                      onChange={c => handleChange(option.value, c)}
-                    />
+                    useSwitches ? (
+                      <TriStateSwitch
+                        value={getCheckboxState(option.value)}
+                        onChange={c => handleChange(option.value, c)}
+                      />
+                    ) : (
+                      <TriStateCheckbox
+                        value={getCheckboxState(option.value)}
+                        onChange={c => handleChange(option.value, c)}
+                      />
+                    )
                   }
                   label={option.label}
                 />

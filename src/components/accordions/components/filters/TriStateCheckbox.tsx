@@ -1,11 +1,11 @@
 import { styled } from '@mui/system';
 import React, { useRef, useState } from 'react';
 
-class TripleCheckboxClasses {
-  root = 'TripleCheckboxRoot';
-  base = 'TripleCheckboxBase';
-  input = 'TripleCheckboxInput';
-  svg = 'TripleCheckboxSVG';
+class TriStateCheckboxClasses {
+  root = 'TriStateCheckboxRoot';
+  base = 'TriStateCheckboxBase';
+  input = 'TriStateCheckboxInput';
+  svg = 'TriStateCheckboxSVG';
   checked: string;
   unchecked: string;
   neutral: string;
@@ -21,22 +21,9 @@ class TripleCheckboxClasses {
   }
 }
 
-const classes = new TripleCheckboxClasses();
+const classes = new TriStateCheckboxClasses();
 
-//   '&::before': {
-//     backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-//       theme.palette.getContrastText(theme.palette.primary.main),
-//     )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
-//     right: 12,
-//   },
-//   '&::after': {
-//     backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-//       theme.palette.getContrastText(theme.palette.primary.main),
-//     )}" d="M19,13H5V11H19V13Z" /></svg>')`,
-//     left: 12,
-//   },
-
-const TripleCheckboxRoot = styled(`span`, {
+const TriStateCheckboxRoot = styled(`span`, {
   name: classes.root,
   slot: 'root',
 })(({ theme }) => ({
@@ -61,7 +48,7 @@ const TripleCheckboxRoot = styled(`span`, {
   padding: '9px',
 }));
 
-const TripleCheckboxInput = styled(`input`, {
+const TriStateCheckboxInput = styled(`input`, {
   name: classes.input,
   slot: 'input',
 })(() => ({
@@ -77,7 +64,7 @@ const TripleCheckboxInput = styled(`input`, {
   zIndex: 1,
 }));
 
-const TripleCheckboxSVG = styled(`svg`, { name: classes.svg, slot: 'image' })(
+const TriStateCheckboxSVG = styled(`svg`, { name: classes.svg, slot: 'image' })(
   () => ({
     userSelect: 'none',
     width: '1em',
@@ -104,17 +91,17 @@ const uncheckedPath = (
   ></path>
 );
 
-export type TripleCheckboxState = 'checked' | 'unchecked' | 'neutral';
+export type TriStateCheckboxState = 'checked' | 'unchecked' | 'neutral';
 
-export const TripleCheckbox = function ({
+export const TriStateCheckbox = function ({
   value,
   onChange,
 }: {
-  value?: TripleCheckboxState;
-  onChange?: (newValue: TripleCheckboxState) => void;
+  value?: TriStateCheckboxState;
+  onChange?: (newValue: TriStateCheckboxState) => void;
 }) {
-  const [state, sSt] = useState<TripleCheckboxState>(value ?? 'neutral');
-  const setState = (v: TripleCheckboxState) => {
+  const [state, sSt] = useState<TriStateCheckboxState>(value ?? 'neutral');
+  const setState = (v: TriStateCheckboxState) => {
     onChange?.(v);
     sSt(value ?? v);
   };
@@ -124,7 +111,7 @@ export const TripleCheckbox = function ({
 
   return (
     <>
-      <TripleCheckboxRoot
+      <TriStateCheckboxRoot
         className={classes[curVal]}
         data-state={curVal}
         ref={root}
@@ -139,15 +126,15 @@ export const TripleCheckbox = function ({
           }
         }}
       >
-        <TripleCheckboxInput />
-        <TripleCheckboxSVG>
+        <TriStateCheckboxInput />
+        <TriStateCheckboxSVG>
           {curVal === 'checked'
             ? checkmarkPath
             : curVal === 'unchecked'
               ? uncheckedPath
               : emptyPath}
-        </TripleCheckboxSVG>
-      </TripleCheckboxRoot>
+        </TriStateCheckboxSVG>
+      </TriStateCheckboxRoot>
     </>
   );
 };

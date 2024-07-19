@@ -1,12 +1,12 @@
 import { styled } from '@mui/system';
 import React, { useRef, useState } from 'react';
 
-class TripleSwitchClasses {
-  root = 'TripleSwitchRoot';
-  base = 'TripleSwitchBase';
-  track = 'TripleSwitchTrack';
-  thumb = 'TripleSwitchThumb';
-  input = 'TripleSwitchInput';
+class TriStateSwitchClasses {
+  root = 'TriStateSwitchRoot';
+  base = 'TriStateSwitchBase';
+  track = 'TriStateSwitchTrack';
+  thumb = 'TriStateSwitchThumb';
+  input = 'TriStateSwitchInput';
   checked: string;
   unchecked: string;
   neutral: string;
@@ -24,9 +24,9 @@ class TripleSwitchClasses {
   }
 }
 
-const classes = new TripleSwitchClasses();
+const classes = new TriStateSwitchClasses();
 
-const TripleSwitchRoot = styled(`span`, {
+const TriStateSwitchRoot = styled(`span`, {
   name: classes.root,
   slot: 'root',
 })(() => ({
@@ -42,32 +42,12 @@ const TripleSwitchRoot = styled(`span`, {
   padding: '8px',
 }));
 
-const TripleSwitchTrack = styled(`span`, {
+const TriStateSwitchTrack = styled(`span`, {
   name: classes.track,
   slot: 'track',
-})(({ theme }) => ({
+})(() => ({
   // Android12 visuals:
   borderRadius: 22 / 2,
-  '&::before, &::after': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    width: 16,
-    height: 16,
-    transform: 'translateY(-50%)',
-  },
-  '&::before': {
-    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-      theme.palette.getContrastText(theme.palette.primary.main),
-    )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
-    right: 12,
-  },
-  '&::after': {
-    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-      theme.palette.getContrastText(theme.palette.primary.main),
-    )}" d="M19,13H5V11H19V13Z" /></svg>')`,
-    left: 12,
-  },
   // base Track
   width: '100%',
   height: '100%',
@@ -79,7 +59,7 @@ const TripleSwitchTrack = styled(`span`, {
   opacity: 0.38,
 }));
 
-const TripleSwitchBase = styled(`span`, {
+const TriStateSwitchBase = styled(`span`, {
   name: classes.base,
   slot: 'base',
 })(({ theme }) => ({
@@ -125,7 +105,7 @@ const TripleSwitchBase = styled(`span`, {
     'left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;',
 }));
 
-const TripleSwitchInput = styled(`input`, {
+const TriStateSwitchInput = styled(`input`, {
   name: classes.input,
   slot: 'input',
 })(() => ({
@@ -141,7 +121,7 @@ const TripleSwitchInput = styled(`input`, {
   zIndex: 1,
 }));
 
-const TripleSwitchThumb = styled(`span`, {
+const TriStateSwitchThumb = styled(`span`, {
   name: classes.thumb,
   slot: 'thumb',
 })(() => ({
@@ -152,17 +132,17 @@ const TripleSwitchThumb = styled(`span`, {
   backgroundColor: 'currentColor',
   borderRadius: '50%',
 }));
-type TripleSwitchState = 'checked' | 'unchecked' | 'neutral';
+type TriStateSwitchState = 'checked' | 'unchecked' | 'neutral';
 
-export const TripleSwitch = function ({
+export const TriStateSwitch = function ({
   value,
   onChange,
 }: {
-  value?: TripleSwitchState;
-  onChange?: (newValue: TripleSwitchState) => void;
+  value?: TriStateSwitchState;
+  onChange?: (newValue: TriStateSwitchState) => void;
 }) {
-  const [state, sSt] = useState<TripleSwitchState>(value ?? 'neutral');
-  const setState = (v: TripleSwitchState) => {
+  const [state, sSt] = useState<TriStateSwitchState>(value ?? 'neutral');
+  const setState = (v: TriStateSwitchState) => {
     onChange?.(v);
     sSt(value ?? v);
   };
@@ -170,7 +150,7 @@ export const TripleSwitch = function ({
   const root = useRef<HTMLSpanElement>(null);
   return (
     <>
-      <TripleSwitchRoot
+      <TriStateSwitchRoot
         data-state={state}
         ref={root}
         onClick={e => {
@@ -200,12 +180,12 @@ export const TripleSwitch = function ({
           }
         }}
       >
-        <TripleSwitchBase className={classes[value ?? state]}>
-          <TripleSwitchInput />
-          <TripleSwitchThumb />
-        </TripleSwitchBase>
-        <TripleSwitchTrack />
-      </TripleSwitchRoot>
+        <TriStateSwitchBase className={classes[value ?? state]}>
+          <TriStateSwitchInput />
+          <TriStateSwitchThumb />
+        </TriStateSwitchBase>
+        <TriStateSwitchTrack />
+      </TriStateSwitchRoot>
     </>
   );
 };
