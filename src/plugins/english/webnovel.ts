@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
