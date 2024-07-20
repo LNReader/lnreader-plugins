@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
@@ -7,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.1';
+  version = '0.8.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -188,7 +187,7 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const unwanted = ['blogspot', 'casper', 'wordpress', 'www'];
+    const unwanted = ['app', 'blogspot', 'casper', 'wordpress', 'www'];
     const targetDomain = domain.find(d => !unwanted.includes(d));
 
     switch (targetDomain) {
@@ -555,6 +554,11 @@ class NovelUpdates implements Plugin.PluginBase {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
         break;
+      case 'yoru':
+        const chapterIdYoru = url.split('/').pop();
+        const linkYoru = `https://pxp-main-531j.onrender.com/api/v1/book_chapters/${chapterIdYoru}/content`;
+        const jsonYoru = await fetchApi(linkYoru).then(r => r.json());
+        chapterText = await fetchApi(jsonYoru).then(r => r.text());
       case 'zetrotranslation':
         bloatClasses = ['hr', 'p:contains("\u00a0")'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
