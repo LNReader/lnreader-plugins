@@ -52,40 +52,40 @@ class NovelUpdates implements Plugin.PluginBase {
       filters?.storyStatus.value !== ''
     ) {
       link += 'series-finder/?sf=1';
+
+      if (filters?.language.value.length)
+        link += '&org=' + filters.language.value.join(',');
+
+      if (filters?.novelType.value.length)
+        link += '&nt=' + filters.novelType.value.join(',');
+
+      if (filters?.genres.value.include?.length)
+        link += '&gi=' + filters.genres.value.include.join(',');
+
+      if (filters?.genres.value.exclude?.length)
+        link += '&ge=' + filters.genres.value.exclude.join(',');
+
+      if (
+        filters?.genres.value.include?.length ||
+        filters?.genres.value.exclude?.length
+      )
+        link += '&mgi=' + filters.genre_operator.value;
+
+      if (filters?.reading_lists.value.length)
+        link += '&hd=' + filters?.reading_lists.value.join(',');
+      link += '&mRLi=' + filters?.reading_list_operator.value;
+
+      if (filters?.storyStatus.value.length)
+        link += '&ss=' + filters.storyStatus.value;
+
+      link += '&sort=' + filters?.sort.value;
+
+      link += '&order=' + filters?.order.value;
     } else if (showLatestNovels) {
       link += 'latest-series/?st=1';
     } else {
       link += 'series-ranking/?rank=week';
     }
-
-    if (filters?.language.value.length)
-      link += '&org=' + filters.language.value.join(',');
-
-    if (filters?.novelType.value.length)
-      link += '&nt=' + filters.novelType.value.join(',');
-
-    if (filters?.genres.value.include?.length)
-      link += '&gi=' + filters.genres.value.include.join(',');
-
-    if (filters?.genres.value.exclude?.length)
-      link += '&ge=' + filters.genres.value.exclude.join(',');
-
-    if (
-      filters?.genres.value.include?.length ||
-      filters?.genres.value.exclude?.length
-    )
-      link += '&mgi=' + filters.genre_operator.value;
-
-    if (filters?.reading_lists.value.length)
-      link += '&hd=' + filters?.reading_lists.value.join(',');
-    link += '&mRLi=' + filters?.reading_list_operator.value;
-
-    if (filters?.storyStatus.value.length)
-      link += '&ss=' + filters.storyStatus.value;
-
-    link += '&sort=' + filters?.sort.value;
-
-    link += '&order=' + filters?.order.value;
 
     link += '&pg=' + page;
 
