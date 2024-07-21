@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.2';
+  version = '0.7.3';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -48,6 +48,7 @@ class NovelUpdates implements Plugin.PluginBase {
       filters?.novelType.value.length ||
       filters?.genres.value.include?.length ||
       filters?.genres.value.exclude?.length ||
+      filters?.reading_lists.value !== '' ||
       filters?.storyStatus.value !== ''
     ) {
       link += 'series-finder/?sf=1';
@@ -68,6 +69,11 @@ class NovelUpdates implements Plugin.PluginBase {
 
     if (filters?.genres.value.exclude?.length)
       link += '&ge=' + filters.genres.value.exclude.join(',');
+
+    if (filters?.reading_lists.value !== '') {
+      link += '&hd=' + filters?.reading_lists.value;
+      link += '&mRLi=' + filters?.reading_list_operator.value;
+    }
 
     if (
       filters?.genres.value.include?.length ||
@@ -890,6 +896,15 @@ class NovelUpdates implements Plugin.PluginBase {
       ],
       type: FilterTypes.CheckboxGroup,
     },
+    genre_operator: {
+      label: 'Genre (And/Or)',
+      value: 'and',
+      options: [
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
+      ],
+      type: FilterTypes.Picker,
+    },
     genres: {
       label: 'Genres',
       type: FilterTypes.ExcludableCheckboxGroup,
@@ -935,12 +950,21 @@ class NovelUpdates implements Plugin.PluginBase {
         { label: 'Yuri', value: '922' },
       ],
     },
-    genre_operator: {
-      label: 'Genre (AND/OR)',
-      value: 'and',
+    reading_list_operator: {
+      label: 'Reading List (Include/Exclude)',
+      value: 'include',
       options: [
-        { label: 'AND', value: 'and' },
-        { label: 'OR', value: 'or' },
+        { label: 'Include', value: 'include' },
+        { label: 'Exclude', value: 'exclude' },
+      ],
+      type: FilterTypes.Picker,
+    },
+    reading_lists: {
+      label: 'Reading Lists',
+      value: '',
+      options: [
+        { label: 'No', value: '' },
+        { label: 'All Reading Lists', value: '-1' },
       ],
       type: FilterTypes.Picker,
     },
