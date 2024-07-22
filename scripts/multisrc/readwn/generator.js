@@ -12,7 +12,7 @@ export const generateAll = function () {
       const filters = readFileSync(
         join(folder, 'filters', source.id + '.json'),
       );
-      source.filters = JSON.parse(filters);
+      source.filters = JSON.parse(filters).filters;
     }
     console.log(
       `[readwn] Generating: ${source.id}${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
