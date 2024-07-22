@@ -247,10 +247,11 @@
   },
   {
     "id": "asuralightnovel",
-    "sourceSite": "https://asuralightnovel.com/",
-    "sourceName": "Asura Light Novel",
+    "sourceSite": "https://srankmanga.com/",
+    "sourceName": "Srank Manga",
     "options": {
-      "useNewChapterEndpoint": true
+        "useNewChapterEndpoint": true,
+        "versionIncrements": 1
     }
   },
   {
