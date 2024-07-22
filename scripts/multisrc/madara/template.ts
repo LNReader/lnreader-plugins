@@ -39,7 +39,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/madara/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.0.${2 + versionIncrements}`;
+    this.version = `1.0.${3 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
