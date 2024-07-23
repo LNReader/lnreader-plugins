@@ -97,7 +97,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       loadedCheerio(selectEl).find('option').each((i, el) => {
         const chapterName = loadedCheerio(el).text().trim();
         const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
-        const chapterUrl = `${novelUrl}/chapter/${chapterUrlCode}`
+        const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`
         // const chapterReleaseTime = loadedCheerio(el).find('span.datetime').text().trim();
         // const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
 
