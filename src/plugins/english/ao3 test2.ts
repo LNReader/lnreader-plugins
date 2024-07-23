@@ -5,9 +5,9 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 
 class ArchiveOfOurOwn implements Plugin.PluginBase {
-  id = 'archiveofourowntest4';
-  name = 'ArchiveOfOurOwntest4';
-  version = '1.1.5';
+  id = 'archiveofourown';
+  name = 'Archive Of Our Own';
+  version = '1.0.5';
   icon = 'src/en/ao3/icon.png';
   site = 'https://archiveofourown.org/';
 
@@ -70,10 +70,10 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
   async parseNovel(novelUrl: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(new URL(novelUrl, this.site).toString());
     const body = await result.text();
-    const chapterURL = await fetchApi(new URL(`${novelUrl}/navigate`, this.site).toString());
-    const chapterlist = await chapterURL.text();
+    // const chapterURL = await fetchApi(new URL(`${novelUrl}/navigate`, this.site).toString());
+    // const chapterlist = await chapterURL.text();
     const loadedCheerio = parseHTML(body);
-    const loadedChapterList = parseHTML(chapterlist)
+    // const loadedChapterList = parseHTML(chapterlist)
 
     const novel: Plugin.SourceNovel = {
       path: novelUrl,
@@ -93,17 +93,18 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       .join(',');
 
     const chapterItems: Plugin.ChapterItem[] = [];
-    loadedChapterList('li.index').each((i, el) => {
-      const chapterName = loadedChapterList(el).find('a').text().trim();
-      const chapterUrl = loadedChapterList(el).find('a').attr('href')?.trim();
-      const chapterReleaseTime = loadedChapterList(el).find('span.datetime').text().trim();
-      const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
+    loadedCheerio('#chapter_index').each((i, el) => {
+      const chapterName = loadedCheerio(el).find('select option').text().trim();
+      const chapterUrlCode = loadedCheerio(el).find('select option').attr('value')?.trim();
+      const chapterUrl = `${novelUrl}${chapterUrlCode}`
+      // const chapterReleaseTime = loadedCheerio(el).find('span.datetime').text().trim();
+      // const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
 
       if (chapterUrl) {
         chapterItems.push({ 
           name: chapterName, 
           path: new URL(chapterUrl, this.site).toString(),
-          releaseTime: formattedReleaseTime
+          // releaseTime: formattedReleaseTime
         });      }
     });
 
