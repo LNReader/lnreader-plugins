@@ -93,21 +93,22 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       .join(',');
 
     const chapterItems: Plugin.ChapterItem[] = [];
-    loadedCheerio('#chapter_index').each((i, el) => {
-      const chapterName = loadedCheerio(el).find('option').text().trim();
-      const chapterUrlCode = loadedCheerio(el).find('option').attr('value')?.trim();
-      const chapterUrl = `${novelUrl}/${chapterUrlCode}`
-      // const chapterReleaseTime = loadedCheerio(el).find('span.datetime').text().trim();
-      // const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
+    loadedCheerio('#chapter_index select').each((i, selectEl) => {
+      loadedCheerio(selectEl).find('option').each((i, el) => {
+        const chapterName = loadedCheerio(el).text().trim();
+        const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
+        const chapterUrl = `${novelUrl}/${chapterUrlCode}`
+        // const chapterReleaseTime = loadedCheerio(el).find('span.datetime').text().trim();
+        // const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
 
-      if (chapterUrl) {
-        chapterItems.push({ 
-          name: chapterName, 
-          path: new URL(chapterUrl, this.site).toString(),
-          // releaseTime: formattedReleaseTime
-        });      }
+        if (chapterUrl) {
+          chapterItems.push({ 
+            name: chapterName, 
+            path: new URL(chapterUrl, this.site).toString(),
+            // releaseTime: formattedReleaseTime
+          });      }
+      });
     });
-
     novel.chapters = chapterItems;
 
     return novel;
