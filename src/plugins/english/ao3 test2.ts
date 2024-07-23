@@ -94,9 +94,9 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
     const chapterItems: Plugin.ChapterItem[] = [];
     loadedCheerio('#chapter_index').each((i, el) => {
-      const chapterName = loadedCheerio(el).find('select option').text().trim();
-      const chapterUrlCode = loadedCheerio(el).find('select option').attr('value')?.trim();
-      const chapterUrl = `${novelUrl}${chapterUrlCode}`
+      const chapterName = loadedCheerio(el).find('option').text().trim();
+      const chapterUrlCode = loadedCheerio(el).find('option').attr('value')?.trim();
+      const chapterUrl = `${novelUrl}/${chapterUrlCode}`
       // const chapterReleaseTime = loadedCheerio(el).find('span.datetime').text().trim();
       // const formattedReleaseTime = chapterReleaseTime.replace(/[()]/g, '');
 
