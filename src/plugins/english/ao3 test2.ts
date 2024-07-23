@@ -8,7 +8,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
   id = 'archiveofourowntest4';
   name = 'ArchiveOfOurOwntest4';
   version = '1.1.5';
-  icon = 'src/en/archiveofourown/icon.png';
+  icon = 'src/en/ao3/icon.png';
   site = 'https://archiveofourown.org/';
 
   parseNovels(loadedCheerio: CheerioAPI): Plugin.NovelItem[] {
@@ -38,8 +38,6 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
     // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
-
-    if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
     if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
     if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
     if (filters.categories.value.length > 0) {
