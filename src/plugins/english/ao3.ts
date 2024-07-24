@@ -51,7 +51,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
   // Apply additional filters
   if (filters) {
-    if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
+    // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
     if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
     if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
     if (filters.categories.value.length > 0) {
