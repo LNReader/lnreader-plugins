@@ -15,8 +15,8 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('li.work').each((idx, ele) => {
-      const novelName = loadedCheerio(ele).find('h4.heading > a').text().trim();
-      const novelUrl = loadedCheerio(ele).find('h4.heading > a').attr('href')?.trim();
+      const novelName = loadedCheerio(ele).find('h4.heading > a').first().text().trim();
+      const novelUrl = loadedCheerio(ele).find('h4.heading > a').first().attr('href')?.trim();
 
       if (!novelUrl) return;
 
@@ -82,16 +82,37 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       summary: loadedCheerio('blockquote.userstuff').text().trim(),
       status: loadedCheerio('dt.status').text().includes('Updated')
       ? 'Ongoing'
-      : 'Completed', // AO3 doesn't provide a clear status indicator
+      : 'Completed', 
       chapters: [],
     };
 
-    // novel.author = loadedCheerio('a[rel="author"]').text().trim();
     novel.author = loadedCheerio('a[rel="author"]').map((i, el) => loadedCheerio(el).text().trim()).get().join(', ');
     novel.genres = Array.from(loadedCheerio('dd.freeform.tags li a.tag'))
       .map(el => loadedCheerio(el).text().trim())
       .join(',');
-
+    const summary = loadedCheerio('blockquote.userstuff').text().trim();
+    const fandom = Array.from(loadedCheerio('dd.fandom.tags li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const rating = Array.from(loadedCheerio('dd.rating.tags li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const warning = Array.from(loadedCheerio('dd.warning.tags li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const series = Array.from(loadedCheerio('dd.series li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const relation = Array.from(loadedCheerio('dd.relationship.tags li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const character = Array.from(loadedCheerio('dd.character.tags li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    const stats = Array.from(loadedCheerio('dd.stats li a.tag'))
+    .map(el => loadedCheerio(el).text().trim())
+    .join(',');
+    novel.summary = `${fandom}\n${rating}\n${summary}\n${warning}\n${series}\n${relation}\n${character}\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
     loadedCheerio('#chapter_index select').each((i, selectEl) => {
       loadedCheerio(selectEl).find('option').each((i, el) => {
@@ -120,8 +141,17 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    const chapterText = loadedCheerio('div#chapters > div').html() || '';
+    loadedCheerio('h3.title a').each((i, el) => {
+      const element = loadedCheerio(el);
+      element.removeAttr('href');
+      const parent = element.parent();
+      parent.html(`${element.text()}<br>${parent.contents().eq(1).text().trim()}`);
+    });
 
+    loadedCheerio('h3.landmark.heading#work').remove();
+  
+    const chapterText = loadedCheerio('div#chapters > div').html() || '';
+    
     return chapterText;
   }
 
