@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.6';
+  version = '0.7.7';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -552,18 +552,23 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'wetriedtls':
-        const script_wetried = loadedCheerio(
-          'script:contains("u003c/p\\u003e")',
-        )
-          .html()!
-          .trim();
-        const start_wetried =
-          script_wetried.indexOf('.push(') + '.push('.length;
-        const end_wetried = script_wetried.lastIndexOf(')');
-        chapterText = JSON.parse(
-          script_wetried.slice(start_wetried, end_wetried),
-        )[1];
+        loadedCheerio('script').each((_, ele) => {
+          const scriptContent_wetried = loadedCheerio(ele).html()!.trim();
+          if (scriptContent_wetried.includes('</p>')) {
+            const start_wetried =
+              scriptContent_wetried.indexOf('.push(') + '.push('.length;
+            const end_wetried = scriptContent_wetried.lastIndexOf(')');
+            const jsonString = scriptContent_wetried.slice(
+              start_wetried,
+              end_wetried,
+            );
+            const jsonData = JSON.parse(jsonString);
+            chapterText = jsonData[1];
+            return false;
+          }
+        });
         break;
+
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
