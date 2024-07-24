@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.2';
+  version = '0.7.3';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -550,6 +550,17 @@ class NovelUpdates implements Plugin.PluginBase {
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
+        break;
+      case 'wetriedtls':
+        const script_wetried = loadedCheerio('script:contains("p dir=")')
+          .html()!
+          .trim();
+        const start_wetried =
+          script_wetried.indexOf('.push(') + '.push('.length;
+        const end_wetried = script_wetried.lastIndexOf(')');
+        chapterText = JSON.parse(
+          script_wetried.slice(start_wetried, end_wetried),
+        )[1];
         break;
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
