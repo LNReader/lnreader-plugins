@@ -40,7 +40,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (showLatestNovels) {
-      let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+      `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
     } else if (filters) {
       let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
       // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
