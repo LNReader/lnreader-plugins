@@ -553,17 +553,15 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       case 'wetriedtls':
         const scriptContent_wetried =
-          loadedCheerio('script:contains("p dir=")').html()! ||
-          loadedCheerio('script:contains("u003c")').html()!;
-        const start_wetried =
-          scriptContent_wetried.indexOf('.push(') + '.push('.length;
-        const end_wetried = scriptContent_wetried.lastIndexOf(')');
-        const jsonString_wetried = scriptContent_wetried.slice(
-          start_wetried,
-          end_wetried,
-        );
-        const jsonData_wetried = JSON.parse(jsonString_wetried);
-        chapterText = jsonData_wetried[1];
+          loadedCheerio('script:contains("p dir=")').html() ||
+          loadedCheerio('script:contains("u003c")').html();
+        if (scriptContent_wetried) {
+          const jsonString_wetried = scriptContent_wetried.slice(
+            scriptContent_wetried.indexOf('.push(') + '.push('.length,
+            scriptContent_wetried.lastIndexOf(')'),
+          );
+          chapterText = JSON.parse(jsonString_wetried)[1];
+        }
         break;
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
