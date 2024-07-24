@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.11';
+  version = '0.7.12';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -553,10 +553,10 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       case 'wetriedtls':
         const scriptContent_wetried =
-          loadedCheerio('script:contains("p dir=")').html()! ||
+          loadedCheerio('script:contains("p dir=")').html() ||
           loadedCheerio(
             'script:contains(`class=\\"text-muted-foreground underline underline-offset-[3px] hover:text-foreground transition-colors cursor-pointer\\"`)',
-          ).html()!;
+          ).html();
         if (scriptContent_wetried) {
           const start_wetried =
             scriptContent_wetried.indexOf('.push(') + '.push('.length;
