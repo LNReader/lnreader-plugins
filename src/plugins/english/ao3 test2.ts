@@ -140,14 +140,21 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio('h3.title a').each((i, el) => {
-      const element = loadedCheerio(el);
-      element.removeAttr('href');
-      const parent = element.parent();
-      const nextSiblingText = parent.contents().eq(1).text().trim();
-      parent.html(`${element.text()}<br>${nextSiblingText}`);
+    // loadedCheerio('h3.title a').each((i, el) => {
+    //   const element = loadedCheerio(el);
+    //   element.removeAttr('href');
+    //   const parent = element.parent();
+    //   const nextSiblingText = parent.contents().eq(1).text().trim();
+    //   parent.html(`${element.text()}<br>${nextSiblingText}`);
+    // });
+    loadedCheerio('h3.title').each((i, el) => {
+      const $h3 = loadedCheerio(el);
+      const $a = $h3.find('a');
+      $a.removeAttr('href');
+      const aText = $a.text().trim();
+      const nextSiblingText = $h3.contents().filter((_, node) => node.nodeType === 3).text().trim();
+      $h3.html(`${aText}<br>${nextSiblingText}`);
     });
-
     loadedCheerio('h3.landmark.heading#work').remove();
   
     const chapterText = loadedCheerio('div#chapters > div').html() || '';
