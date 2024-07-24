@@ -39,34 +39,69 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       filters, 
     }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link =''
-    if (showLatestNovels) {
-      link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
-    } else if (filters) {
-      link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
-      // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
-      if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
-      if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
-      if (filters.categories.value.length > 0) {
-        filters.categories.value.forEach((category: string) => {
-          link += `&work_search%5Bcategory_ids%5D%5B%5D=${category}`;
-        });
-      }
-      if (filters.warningsFilter.value.length > 0) {
-        filters.warningsFilter.value.forEach((warning: string) => {
-          link += `&work_search%5Barchive_warning_ids%5D%5B%5D=${warning}`;
-        });
-      }
-      if (filters.singlechap.value !== '') link += `&work_search%5Bsingle_chapter%5D=${filters.singlechap.value}`;
-      if (filters.author.value !== '') link += `&work_search%5Bcreators%5D=${filters.author.value}`;
-      if (filters.dateFilter.value !== '' && filters.dateIncrements.value !== '') {
-        link += `&work_search%5Brevised_at%5D=${filters.dateFilter.value}+${filters.dateIncrements.value}`;
-      }
-      if (filters.words.value !== '') link += `&work_search%5Bword_count%5D=${filters.words.value}`;
-      if (filters.hits.value !== '') link += `&work_search%5Bhits%5D=${filters.hits.value}`;
-      if (filters.bookmarks.value !== '') link += `&work_search%5Bbookmarks_count%5D=${filters.bookmarks.value}`;
-      if (filters.comments.value !== '') link += `&work_search%5Bcomments_count%5D=${filters.comments.value}`;
-      if (filters.kudos.value !== '') link += `&work_search%5Bkudos_count%5D=${filters.kudos.value}`;
+     // Base URL and common parameters
+  let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en`;
+  
+  // Apply sorting based on showLatestNovels
+  if (showLatestNovels) {
+    link += `&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+  } else if (filters) {
+    link += `&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+  }
+
+  // Apply additional filters
+  if (filters) {
+    if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
+    if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
+    if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
+    if (filters.categories.value.length > 0) {
+      filters.categories.value.forEach((category: string) => {
+        link += `&work_search%5Bcategory_ids%5D%5B%5D=${category}`;
+      });
+    }
+    if (filters.warningsFilter.value.length > 0) {
+      filters.warningsFilter.value.forEach((warning: string) => {
+        link += `&work_search%5Barchive_warning_ids%5D%5B%5D=${warning}`;
+      });
+    }
+    if (filters.singlechap.value !== '') link += `&work_search%5Bsingle_chapter%5D=${filters.singlechap.value}`;
+    if (filters.author.value !== '') link += `&work_search%5Bcreators%5D=${filters.author.value}`;
+    if (filters.dateFilter.value !== '' && filters.dateIncrements.value !== '') {
+      link += `&work_search%5Brevised_at%5D=${filters.dateFilter.value}+${filters.dateIncrements.value}`;
+    }
+    if (filters.words.value !== '') link += `&work_search%5Bword_count%5D=${filters.words.value}`;
+    if (filters.hits.value !== '') link += `&work_search%5Bhits%5D=${filters.hits.value}`;
+    if (filters.bookmarks.value !== '') link += `&work_search%5Bbookmarks_count%5D=${filters.bookmarks.value}`;
+    if (filters.comments.value !== '') link += `&work_search%5Bcomments_count%5D=${filters.comments.value}`;
+    if (filters.kudos.value !== '') link += `&work_search%5Bkudos_count%5D=${filters.kudos.value}`;
+    // let link =''
+    // if (showLatestNovels) {
+    //   link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+    // } else if (filters) {
+    //   link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+    //   // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
+    //   if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
+    //   if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
+    //   if (filters.categories.value.length > 0) {
+    //     filters.categories.value.forEach((category: string) => {
+    //       link += `&work_search%5Bcategory_ids%5D%5B%5D=${category}`;
+    //     });
+    //   }
+    //   if (filters.warningsFilter.value.length > 0) {
+    //     filters.warningsFilter.value.forEach((warning: string) => {
+    //       link += `&work_search%5Barchive_warning_ids%5D%5B%5D=${warning}`;
+    //     });
+    //   }
+    //   if (filters.singlechap.value !== '') link += `&work_search%5Bsingle_chapter%5D=${filters.singlechap.value}`;
+    //   if (filters.author.value !== '') link += `&work_search%5Bcreators%5D=${filters.author.value}`;
+    //   if (filters.dateFilter.value !== '' && filters.dateIncrements.value !== '') {
+    //     link += `&work_search%5Brevised_at%5D=${filters.dateFilter.value}+${filters.dateIncrements.value}`;
+    //   }
+    //   if (filters.words.value !== '') link += `&work_search%5Bword_count%5D=${filters.words.value}`;
+    //   if (filters.hits.value !== '') link += `&work_search%5Bhits%5D=${filters.hits.value}`;
+    //   if (filters.bookmarks.value !== '') link += `&work_search%5Bbookmarks_count%5D=${filters.bookmarks.value}`;
+    //   if (filters.comments.value !== '') link += `&work_search%5Bcomments_count%5D=${filters.comments.value}`;
+    //   if (filters.kudos.value !== '') link += `&work_search%5Bkudos_count%5D=${filters.kudos.value}`;
     }
 
     const body = await fetchApi(link).then(r => r.text());
