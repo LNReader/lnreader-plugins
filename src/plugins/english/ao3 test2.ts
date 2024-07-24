@@ -39,10 +39,11 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       filters, 
     }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
+    let link =''
     if (showLatestNovels) {
-      `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+      link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
     } else if (filters) {
-      let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+      link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
       // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
       if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
       if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
