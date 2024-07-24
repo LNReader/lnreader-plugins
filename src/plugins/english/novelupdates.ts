@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.13';
+  version = '0.7.14';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -553,21 +553,17 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       case 'wetriedtls':
         const scriptContent_wetried =
-          loadedCheerio('script:contains("p dir=")').html() ||
-          loadedCheerio('script:contains("u003c")').html();
-        if (scriptContent_wetried) {
-          const start_wetried =
-            scriptContent_wetried.indexOf('.push(') + '.push('.length;
-          const end_wetried = scriptContent_wetried.lastIndexOf(')');
-          const jsonString = scriptContent_wetried.slice(
-            start_wetried,
-            end_wetried,
-          );
-          const jsonData = JSON.parse(jsonString);
-          chapterText = jsonData[1];
-        } else {
-          throw new Error(`Couldn't parse chapter content.`);
-        }
+          loadedCheerio('script:contains("p dir=")').html()! ||
+          loadedCheerio('script:contains("u003c")').html()!;
+        const start_wetried =
+          scriptContent_wetried.indexOf('.push(') + '.push('.length;
+        const end_wetried = scriptContent_wetried.lastIndexOf(')');
+        const jsonString_wetried = scriptContent_wetried.slice(
+          start_wetried,
+          end_wetried,
+        );
+        const jsonData_wetried = JSON.parse(jsonString_wetried);
+        chapterText = jsonData_wetried[1];
         break;
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
