@@ -79,7 +79,6 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       path: novelUrl,
       name: loadedCheerio('h2.title').text().trim() || 'Untitled',
       cover: defaultCover, // No cover image available
-      summary: loadedCheerio('blockquote.userstuff').text().trim(),
       status: loadedCheerio('dt.status').text().includes('Updated')
       ? 'Ongoing'
       : 'Completed', 
