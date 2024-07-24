@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.8';
+  version = '0.7.9';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -554,7 +554,7 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'wetriedtls':
         const scriptContent_wetried =
           loadedCheerio('script:contains("p dir=")').html()!.trim() ||
-          loadedCheerio('script:contains("u003c/p\u003e")').html()!.trim();
+          loadedCheerio('script:contains("u003c/p")').html()!.trim();
         if (scriptContent_wetried) {
           const start_wetried =
             scriptContent_wetried.indexOf('.push(') + '.push('.length;
