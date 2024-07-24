@@ -111,7 +111,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const stats = Array.from(loadedCheerio('dd.stats li a.tag'))
     .map(el => loadedCheerio(el).text().trim())
     .join(',');
-    novel.summary = `${fandom}\n${rating}\n${summary}\n${warning}\n${series}\n${relation}\n${character}\n${stats}`;
+    novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nSummary:\n${novel.summary}\n\nWarning:\n${warning}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
     loadedCheerio('#chapter_index select').each((i, selectEl) => {
       loadedCheerio(selectEl).find('option').each((i, el) => {
