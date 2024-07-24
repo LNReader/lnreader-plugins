@@ -36,7 +36,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     page: number,
     { 
       showLatestNovels,
-      filters 
+      filters, 
     }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (showLatestNovels) {
