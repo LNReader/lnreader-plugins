@@ -15,15 +15,23 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('li.work').each((idx, ele) => {
-      const novelName = loadedCheerio(ele).find('h4.heading > a').first().text().trim();
-      const novelUrl = loadedCheerio(ele).find('h4.heading > a').first().attr('href')?.trim();
+      const novelName = loadedCheerio(ele)
+        .find('h4.heading > a')
+        .first()
+        .text()
+        .trim();
+      const novelUrl = loadedCheerio(ele)
+        .find('h4.heading > a')
+        .first()
+        .attr('href')
+        ?.trim();
 
       if (!novelUrl) return;
 
       const novel = {
         name: novelName,
         cover: defaultCover, // No cover image
-        path: (novelUrl).slice(1),
+        path: novelUrl.slice(1),
       };
 
       novels.push(novel);
@@ -34,46 +42,55 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { 
-      showLatestNovels,
-      filters, 
-    }: Plugin.PopularNovelsOptions<Filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-     // Base URL and common parameters
-  let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en`;
-  
-  // Apply sorting based on showLatestNovels
-  if (showLatestNovels) {
-    link += `&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
-  } else if (filters) {
-    link += `&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
-  }
+    // Base URL and common parameters
+    let link = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en`;
 
-  // Apply additional filters
-  if (filters) {
-    // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
-    if (filters.completion.value !== '') link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
-    if (filters.crossover.value !== '') link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
-    if (filters.categories.value.length > 0) {
-      filters.categories.value.forEach((category: string) => {
-        link += `&work_search%5Bcategory_ids%5D%5B%5D=${category}`;
-      });
+    // Apply sorting based on showLatestNovels
+    if (showLatestNovels) {
+      link += `&work_search%5Bsort_column%5D=revised_at&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
+    } else if (filters) {
+      link += `&work_search%5Bsort_column%5D=${filters.sort.value}&work_search%5Bsort_direction%5D=${filters.sortdir.value}`;
     }
-    if (filters.warningsFilter.value.length > 0) {
-      filters.warningsFilter.value.forEach((warning: string) => {
-        link += `&work_search%5Barchive_warning_ids%5D%5B%5D=${warning}`;
-      });
-    }
-    if (filters.singlechap.value !== '') link += `&work_search%5Bsingle_chapter%5D=${filters.singlechap.value}`;
-    if (filters.author.value !== '') link += `&work_search%5Bcreators%5D=${filters.author.value}`;
-    if (filters.dateFilter.value !== '' && filters.dateIncrements.value !== '') {
-      link += `&work_search%5Brevised_at%5D=${filters.dateFilter.value}+${filters.dateIncrements.value}`;
-    }
-    if (filters.words.value !== '') link += `&work_search%5Bword_count%5D=${filters.words.value}`;
-    if (filters.hits.value !== '') link += `&work_search%5Bhits%5D=${filters.hits.value}`;
-    if (filters.bookmarks.value !== '') link += `&work_search%5Bbookmarks_count%5D=${filters.bookmarks.value}`;
-    if (filters.comments.value !== '') link += `&work_search%5Bcomments_count%5D=${filters.comments.value}`;
-    if (filters.kudos.value !== '') link += `&work_search%5Bkudos_count%5D=${filters.kudos.value}`;
+
+    // Apply additional filters
+    if (filters) {
+      // if (filters.genre.value !== '') link += `&work_search%5Bfandom_names%5D=${filters.genre.value}`;
+      if (filters.completion.value !== '')
+        link += `&work_search%5Bcomplete%5D=${filters.completion.value}`;
+      if (filters.crossover.value !== '')
+        link += `&work_search%5Bcrossover%5D=${filters.crossover.value}`;
+      if (filters.categories.value.length > 0) {
+        filters.categories.value.forEach((category: string) => {
+          link += `&work_search%5Bcategory_ids%5D%5B%5D=${category}`;
+        });
+      }
+      if (filters.warningsFilter.value.length > 0) {
+        filters.warningsFilter.value.forEach((warning: string) => {
+          link += `&work_search%5Barchive_warning_ids%5D%5B%5D=${warning}`;
+        });
+      }
+      if (filters.singlechap.value !== '')
+        link += `&work_search%5Bsingle_chapter%5D=${filters.singlechap.value}`;
+      if (filters.author.value !== '')
+        link += `&work_search%5Bcreators%5D=${filters.author.value}`;
+      if (
+        filters.dateFilter.value !== '' &&
+        filters.dateIncrements.value !== ''
+      ) {
+        link += `&work_search%5Brevised_at%5D=${filters.dateFilter.value}+${filters.dateIncrements.value}`;
+      }
+      if (filters.words.value !== '')
+        link += `&work_search%5Bword_count%5D=${filters.words.value}`;
+      if (filters.hits.value !== '')
+        link += `&work_search%5Bhits%5D=${filters.hits.value}`;
+      if (filters.bookmarks.value !== '')
+        link += `&work_search%5Bbookmarks_count%5D=${filters.bookmarks.value}`;
+      if (filters.comments.value !== '')
+        link += `&work_search%5Bcomments_count%5D=${filters.comments.value}`;
+      if (filters.kudos.value !== '')
+        link += `&work_search%5Bkudos_count%5D=${filters.kudos.value}`;
     }
 
     const body = await fetchApi(link).then(r => r.text());
@@ -91,51 +108,57 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       name: loadedCheerio('h2.title').text().trim() || 'Untitled',
       cover: defaultCover, // No cover image available
       status: loadedCheerio('dt.status').text().includes('Updated')
-      ? 'Ongoing'
-      : 'Completed', 
+        ? 'Ongoing'
+        : 'Completed',
       chapters: [],
     };
 
-    novel.author = loadedCheerio('a[rel="author"]').map((i, el) => loadedCheerio(el).text().trim()).get().join(', ');
+    novel.author = loadedCheerio('a[rel="author"]')
+      .map((i, el) => loadedCheerio(el).text().trim())
+      .get()
+      .join(', ');
     novel.genres = Array.from(loadedCheerio('dd.freeform.tags li a.tag'))
       .map(el => loadedCheerio(el).text().trim())
       .join(',');
     const summary = loadedCheerio('blockquote.userstuff').text().trim();
     const fandom = Array.from(loadedCheerio('dd.fandom.tags li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const rating = Array.from(loadedCheerio('dd.rating.tags li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const warning = Array.from(loadedCheerio('dd.warning.tags li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const series = Array.from(loadedCheerio('dd.series li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const relation = Array.from(loadedCheerio('dd.relationship.tags li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const character = Array.from(loadedCheerio('dd.character.tags li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     const stats = Array.from(loadedCheerio('dd.stats li a.tag'))
-    .map(el => loadedCheerio(el).text().trim())
-    .join(',');
+      .map(el => loadedCheerio(el).text().trim())
+      .join(',');
     novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nWarning:\n${warning}\n\nSummary:\n${summary}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
     loadedCheerio('#chapter_index select').each((i, selectEl) => {
-      loadedCheerio(selectEl).find('option').each((i, el) => {
-        const chapterName = loadedCheerio(el).text().trim();
-        const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
-        const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`
+      loadedCheerio(selectEl)
+        .find('option')
+        .each((i, el) => {
+          const chapterName = loadedCheerio(el).text().trim();
+          const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
+          const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
 
-        if (chapterUrl) {
-          chapterItems.push({ 
-            name: chapterName, 
-            path: new URL(chapterUrl, this.site).toString(),
-          });      }
-      });
+          if (chapterUrl) {
+            chapterItems.push({
+              name: chapterName,
+              path: new URL(chapterUrl, this.site).toString(),
+            });
+          }
+        });
     });
     novel.chapters = chapterItems;
 
@@ -153,19 +176,23 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       const $a = $h3.find('a');
       $a.removeAttr('href');
       const aText = $a.text().trim();
-      const nextSiblingText = $h3.contents().filter((_, node) => node.nodeType === 3).text().trim();
+      const nextSiblingText = $h3
+        .contents()
+        .filter((_, node) => node.nodeType === 3)
+        .text()
+        .trim();
       $h3.html(`${aText}<br>${nextSiblingText}`);
     });
     loadedCheerio('h3.landmark.heading#work').remove();
-  
+
     const chapterText = loadedCheerio('div#chapters > div').html() || '';
-    
+
     return chapterText;
   }
 
   async searchNovels(
     searchTerm: string,
-    page: number
+    page: number,
   ): Promise<Plugin.NovelItem[]> {
     const searchUrl = `${this.site}works/search?page=${page}&work_search%5Blanguage_id%5D=en&work_search%5Bquery%5D=${searchTerm}`;
 
@@ -295,7 +322,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
         { label: 'മലയാളം', value: 'ml' },
         { label: 'Malti', value: 'mt' },
         { label: 'ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ', value: 'mnc' },
-        { label: 'Mando\'a', value: 'qmd' },
+        { label: "Mando'a", value: 'qmd' },
         { label: 'मराठी', value: 'mr' },
         { label: 'Mikisúkî', value: 'mik' },
         { label: 'ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ᠌ | Монгол Кирилл үсэг', value: 'mon' },
@@ -381,7 +408,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     },
     categories: {
       value: [],
-      label:'Categories',
+      label: 'Categories',
       options: [
         { label: 'F/F', value: '116' },
         { label: 'F/M', value: '22' },
@@ -408,9 +435,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     singlechap: {
       value: '',
       label: 'Single Chapter',
-      options: [
-        { label: 'Days', value: '1' },
-      ],
+      options: [{ label: 'Days', value: '1' }],
       type: FilterTypes.Picker,
     },
     author: {
@@ -436,7 +461,8 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     },
     words: {
       value: '',
-      label: 'Word Count, exact number eg. 40 or  less than eg. <40 or greater than eg. >40 or range eg. 10-100',
+      label:
+        'Word Count, exact number eg. 40 or  less than eg. <40 or greater than eg. >40 or range eg. 10-100',
       type: FilterTypes.TextInput,
     },
     hits: {
@@ -458,7 +484,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       value: '',
       label: 'Kudos',
       type: FilterTypes.TextInput,
-    },   
+    },
   } satisfies Filters;
 }
 
