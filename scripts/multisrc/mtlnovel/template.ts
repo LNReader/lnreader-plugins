@@ -33,7 +33,7 @@ class MTLNovelPlugin implements Plugin.PluginBase {
     this.icon = 'multisrc/mtlnovel/mtlnovel/icon.png';
     this.site = metadata.sourceSite;
     this.mainUrl = 'https://www.mtlnovel.com/';
-    this.version = '1.1.0';
+    this.version = '1.1.1';
     this.options = metadata.options ?? ({} as MTLNovelOptions);
     this.filters = metadata.filters satisfies Filters;
   }
