@@ -565,6 +565,18 @@ class NovelUpdates implements Plugin.PluginBase {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
         break;
+      case 'wetriedtls':
+        const scriptContent_wetried =
+          loadedCheerio('script:contains("p dir=")').html() ||
+          loadedCheerio('script:contains("u003c")').html();
+        if (scriptContent_wetried) {
+          const jsonString_wetried = scriptContent_wetried.slice(
+            scriptContent_wetried.indexOf('.push(') + '.push('.length,
+            scriptContent_wetried.lastIndexOf(')'),
+          );
+          chapterText = JSON.parse(jsonString_wetried)[1];
+        }
+        break;
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
