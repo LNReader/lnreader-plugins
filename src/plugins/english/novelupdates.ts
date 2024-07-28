@@ -48,39 +48,51 @@ class NovelUpdates implements Plugin.PluginBase {
       filters?.novelType.value.length ||
       filters?.genres.value.include?.length ||
       filters?.genres.value.exclude?.length ||
+      filters?.reading_lists.value.length ||
       filters?.storyStatus.value !== ''
     ) {
       link += 'series-finder/?sf=1';
+
+      if (filters?.language.value.length) {
+        link += '&org=' + filters.language.value.join(',');
+      }
+
+      if (filters?.novelType.value.length) {
+        link += '&nt=' + filters.novelType.value.join(',');
+      }
+
+      if (filters?.genres.value.include?.length) {
+        link += '&gi=' + filters.genres.value.include.join(',');
+      }
+
+      if (filters?.genres.value.exclude?.length) {
+        link += '&ge=' + filters.genres.value.exclude.join(',');
+      }
+
+      if (
+        filters?.genres.value.include?.length ||
+        filters?.genres.value.exclude?.length
+      ) {
+        link += '&mgi=' + filters.genre_operator.value;
+      }
+
+      if (filters?.reading_lists.value.length) {
+        link += '&hd=' + filters?.reading_lists.value.join(',');
+        link += '&mRLi=' + filters?.reading_list_operator.value;
+      }
+
+      if (filters?.storyStatus.value.length) {
+        link += '&ss=' + filters.storyStatus.value;
+      }
+
+      link += '&sort=' + filters?.sort.value;
+
+      link += '&order=' + filters?.order.value;
     } else if (showLatestNovels) {
       link += 'latest-series/?st=1';
     } else {
       link += 'series-ranking/?rank=week';
     }
-
-    if (filters?.language.value.length)
-      link += '&org=' + filters.language.value.join(',');
-
-    if (filters?.novelType.value.length)
-      link += '&nt=' + filters.novelType.value.join(',');
-
-    if (filters?.genres.value.include?.length)
-      link += '&gi=' + filters.genres.value.include.join(',');
-
-    if (filters?.genres.value.exclude?.length)
-      link += '&ge=' + filters.genres.value.exclude.join(',');
-
-    if (
-      filters?.genres.value.include?.length ||
-      filters?.genres.value.exclude?.length
-    )
-      link += '&mgi=' + filters.genre_operator.value;
-
-    if (filters?.storyStatus.value.length)
-      link += '&ss=' + filters.storyStatus.value;
-
-    link += '&sort=' + filters?.sort.value;
-
-    link += '&order=' + filters?.order.value;
 
     link += '&pg=' + page;
 
@@ -553,6 +565,18 @@ class NovelUpdates implements Plugin.PluginBase {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
         break;
+      case 'wetriedtls':
+        const scriptContent_wetried =
+          loadedCheerio('script:contains("p dir=")').html() ||
+          loadedCheerio('script:contains("u003c")').html();
+        if (scriptContent_wetried) {
+          const jsonString_wetried = scriptContent_wetried.slice(
+            scriptContent_wetried.indexOf('.push(') + '.push('.length,
+            scriptContent_wetried.lastIndexOf(')'),
+          );
+          chapterText = JSON.parse(jsonString_wetried)[1];
+        }
+        break;
       case 'wuxiaworld':
         bloatClasses = ['.MuiLink-root'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
@@ -567,6 +591,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const link_yoru = `https://pxp-main-531j.onrender.com/api/v1/book_chapters/${chapterId_yoru}/content`;
         const json_yoru = await fetchApi(link_yoru).then(r => r.json());
         chapterText = await fetchApi(json_yoru).then(r => r.text());
+        break;
       case 'zetrotranslation':
         bloatClasses = ['hr', 'p:contains("\u00a0")'];
         bloatClasses.map(tag => loadedCheerio(tag).remove());
@@ -856,7 +881,9 @@ class NovelUpdates implements Plugin.PluginBase {
     const url = `${this.site}series-finder/?sf=1&sh=${searchTerm}&sort=srank&order=asc&pg=${page}`;
     const result = await fetchApi(url);
     const body = await result.text();
+
     const loadedCheerio = parseHTML(body);
+
     return this.parseNovels(loadedCheerio);
   }
 
@@ -922,6 +949,15 @@ class NovelUpdates implements Plugin.PluginBase {
       ],
       type: FilterTypes.CheckboxGroup,
     },
+    genre_operator: {
+      label: 'Genre (And/Or)',
+      value: 'and',
+      options: [
+        { label: 'And', value: 'and' },
+        { label: 'Or', value: 'or' },
+      ],
+      type: FilterTypes.Picker,
+    },
     genres: {
       label: 'Genres',
       type: FilterTypes.ExcludableCheckboxGroup,
@@ -967,14 +1003,20 @@ class NovelUpdates implements Plugin.PluginBase {
         { label: 'Yuri', value: '922' },
       ],
     },
-    genre_operator: {
-      label: 'Genre (AND/OR)',
-      value: 'and',
+    reading_list_operator: {
+      label: 'Reading List (Include/Exclude)',
+      value: 'include',
       options: [
-        { label: 'AND', value: 'and' },
-        { label: 'OR', value: 'or' },
+        { label: 'Include', value: 'include' },
+        { label: 'Exclude', value: 'exclude' },
       ],
       type: FilterTypes.Picker,
+    },
+    reading_lists: {
+      label: 'Reading Lists',
+      value: [],
+      options: [{ label: 'All Reading Lists', value: '-1' }],
+      type: FilterTypes.CheckboxGroup,
     },
   } satisfies Filters;
 }
