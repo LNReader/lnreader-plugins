@@ -144,15 +144,17 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       .join(',');
     novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nWarning:\n${warning}\n\nSummary:\n${summary}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
-      loadedCheerio('#chapters h3.title').each((i, titleEl) => {
-        const fullTitleText = loadedCheerio(titleEl).text().trim();
-        const chapterNameMatch = fullTitleText.match(/: "(.*)"\s*\[(.*)\]/);
-        const chapterName = chapterNameMatch ? `"${chapterNameMatch[1]}" [${chapterNameMatch[2]}]` : '';
-        const chapterUrlRaw = loadedCheerio(titleEl).find('a').attr('href')?.trim();
-        const chapterUrlCode = chapterUrlRaw?.match(/\/chapters\/(\d+)/)?.[1];
-        const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
-    
-        if (chapterUrl) {
+    loadedCheerio('.work.navigation.actions li a').each((i, el) => {
+      const href = loadedCheerio(el).attr('href');
+      if (href && href.includes('/downloads/')) {
+        const chapterUrlCodeMatch = href.match(/updated_at=(\d+)/);
+        const chapterUrlCode = chapterUrlCodeMatch ? chapterUrlCodeMatch[1] : null;
+        const chapterName = loadedCheerio('h2.title.heading').text().trim();
+        
+        // Construct chapter URL in the same format
+        const chapterUrl = chapterUrlCode ? `${novelUrl}/chapters/${chapterUrlCode}` : null;
+  
+        if (chapterName && chapterUrl) {
           chapterItems.push({
             name: chapterName,
             path: new URL(chapterUrl, this.site).toString(),
