@@ -144,8 +144,12 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       .join(',');
     novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nWarning:\n${warning}\n\nSummary:\n${summary}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
-    const releaseTimeText = loadedCheerio('.wrapper dd.published').text().trim();
-    const releaseTime = releaseTimeText ? new Date(releaseTimeText).toISOString() : '';
+    const releaseTimeText = loadedCheerio('.wrapper dd.published')
+      .text()
+      .trim();
+    const releaseTime = releaseTimeText
+      ? new Date(releaseTimeText).toISOString()
+      : '';
     if (loadedCheerio('#chapter_index select').length > 0) {
       loadedCheerio('#chapter_index select').each((i, selectEl) => {
         loadedCheerio(selectEl)
@@ -154,7 +158,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
             const chapterName = loadedCheerio(el).text().trim();
             const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
             const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
-    
+
             if (chapterUrl) {
               chapterItems.push({
                 name: chapterName,
@@ -163,53 +167,64 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
             }
           });
       });
-    } 
+    }
     if (chapterItems.length === 0) {
       loadedCheerio('#chapters h3.title').each((i, titleEl) => {
         const fullTitleText = loadedCheerio(titleEl).text().trim();
         const chapterNameMatch = fullTitleText.match(/:\s*(.*)$/);
         let chapterName = chapterNameMatch ? chapterNameMatch[1].trim() : '';
-        const chapterUrlRaw = loadedCheerio(titleEl).find('a').attr('href')?.trim();
+        const chapterUrlRaw = loadedCheerio(titleEl)
+          .find('a')
+          .attr('href')
+          ?.trim();
         const chapterUrlCode = chapterUrlRaw?.match(/\/chapters\/(\d+)/)?.[1];
         const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
-        
+
         if (chapterUrl) {
           if (chapterName === '') {
-            const novelTitle = loadedCheerio('.work .title.heading').text().trim();
+            const novelTitle = loadedCheerio('.work .title.heading')
+              .text()
+              .trim();
             chapterName = novelTitle;
           }
           chapterItems.push({
             name: chapterName,
             path: new URL(chapterUrl, this.site).toString(),
-            releaseTime: releaseTime
+            releaseTime: releaseTime,
           });
         }
       });
-    if (chapterItems.length === 0) {
-      loadedCheerio('.work.navigation.actions li a').each((i, el) => {
-        const href = loadedCheerio(el).attr('href');
-        if (href && href.includes('/downloads/')) {
-          const chapterUrlCodeMatch = href.match(/updated_at=(\d+)/);
-          const chapterUrlCode = chapterUrlCodeMatch ? chapterUrlCodeMatch[1] : null;
-          let chapterName = loadedCheerio('h2.title.heading').text().trim();
-  
-          const chapterUrl = chapterUrlCode ? `${novelUrl}/chapters/${chapterUrlCode}` : null;
-    
-          if (chapterName && chapterUrl) {
-            if (chapterName === '') {
-              const novelTitle = loadedCheerio('.work .title.heading').text().trim();
-              chapterName = novelTitle;
+      if (chapterItems.length === 0) {
+        loadedCheerio('.work.navigation.actions li a').each((i, el) => {
+          const href = loadedCheerio(el).attr('href');
+          if (href && href.includes('/downloads/')) {
+            const chapterUrlCodeMatch = href.match(/updated_at=(\d+)/);
+            const chapterUrlCode = chapterUrlCodeMatch
+              ? chapterUrlCodeMatch[1]
+              : null;
+            let chapterName = loadedCheerio('h2.title.heading').text().trim();
+
+            const chapterUrl = chapterUrlCode
+              ? `${novelUrl}/chapters/${chapterUrlCode}`
+              : null;
+
+            if (chapterName && chapterUrl) {
+              if (chapterName === '') {
+                const novelTitle = loadedCheerio('.work .title.heading')
+                  .text()
+                  .trim();
+                chapterName = novelTitle;
+              }
+              chapterItems.push({
+                name: chapterName,
+                path: new URL(chapterUrl, this.site).toString(),
+                releaseTime: releaseTime,
+              });
             }
-            chapterItems.push({
-              name: chapterName,
-              path: new URL(chapterUrl, this.site).toString(),
-              releaseTime: releaseTime
-            });
           }
-        }
-      });
+        });
+      }
     }
-  }
     novel.chapters = chapterItems;
 
     return novel;
