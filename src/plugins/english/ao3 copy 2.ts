@@ -144,6 +144,8 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       .join(',');
     novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nWarning:\n${warning}\n\nSummary:\n${summary}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
+    const releaseTimeText = loadedCheerio('.work .published').text().trim();
+    const releaseTime = releaseTimeText ? new Date(releaseTimeText).toISOString() : '';
       loadedCheerio('#chapters h3.title').each((i, titleEl) => {
         const fullTitleText = loadedCheerio(titleEl).text().trim();
         const chapterNameMatch = fullTitleText.match(/:\s*(.*)$/);
@@ -156,6 +158,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
           chapterItems.push({
             name: chapterName,
             path: new URL(chapterUrl, this.site).toString(),
+            releaseTime: releaseTime
           });
         }
       });
