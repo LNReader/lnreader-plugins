@@ -150,12 +150,12 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     novel.summary = `Fandom:\n${fandom}\n\nRating:\n${rating}\n\nWarning:\n${warning}\n\nSummary:\n${summary}\n\nSeries:\n${series}\n\nRelationships:\n${relation}\n\nCharacters:\n${character}\n\nStats:\n${stats}`;
     const chapterItems: Plugin.ChapterItem[] = [];
 // Assuming `loadedCheerio` is a cheerio instance loaded with the HTML content
-if (loadedCheerio('ol.chapter').length > 0) {
-  loadedCheerio('ol.chapter').each((i, selectEl) => {
-    loadedCheerio(selectEl)
+if (loadeddate('ol.chapter').length > 0) {
+  loadeddate('ol.chapter').each((i, selectEl) => {
+    loadeddate(selectEl)
       .find('li')
       .each((i, el) => {
-        const chapterEl = loadedCheerio(el);
+        const chapterEl = loadeddate(el);
         const chapterLink = chapterEl.find('a');
         let chapterName = chapterLink.text().trim();
         const chapterUrlCode = chapterLink.attr('href')?.split('/').pop(); // Extracts the last part of the URL
