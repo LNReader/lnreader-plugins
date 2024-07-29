@@ -147,7 +147,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       loadedCheerio('#chapters h3.title').each((i, titleEl) => {
         const fullTitleText = loadedCheerio(titleEl).text().trim();
         const chapterNameMatch = fullTitleText.match(/:\s*(.*)$/);
-        const chapterName = chapterNameMatch ? `"${chapterNameMatch[1]}" [${chapterNameMatch[2]}]` : '';
+        const chapterName = chapterNameMatch ? chapterNameMatch[1].trim() : '';
         const chapterUrlRaw = loadedCheerio(titleEl).find('a').attr('href')?.trim();
         const chapterUrlCode = chapterUrlRaw?.match(/\/chapters\/(\d+)/)?.[1];
         const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
