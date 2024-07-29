@@ -159,7 +159,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
           chapterItems.push({
             name: chapterName,
             path: new URL(chapterUrl, this.site).toString(),
-            releaseTime: releaseTime
+            releaseTime: releaseTimeText
           });
         }
     });
