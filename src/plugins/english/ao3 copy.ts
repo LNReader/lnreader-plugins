@@ -151,11 +151,15 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
       if (href && href.includes('/downloads/')) {
         const chapterUrlCodeMatch = href.match(/updated_at=(\d+)/);
         const chapterUrlCode = chapterUrlCodeMatch ? chapterUrlCodeMatch[1] : null;
-        const chapterName = loadedCheerio('h2.title.heading').text().trim();
+        let chapterName = loadedCheerio('h2.title.heading').text().trim();
 
         const chapterUrl = chapterUrlCode ? `${novelUrl}/chapters/${chapterUrlCode}` : null;
   
         if (chapterName && chapterUrl) {
+          if (chapterName === '') {
+            const novelTitle = loadedCheerio('.work .title.heading').text().trim();
+            chapterName = novelTitle;
+          }
           chapterItems.push({
             name: chapterName,
             path: new URL(chapterUrl, this.site).toString(),
