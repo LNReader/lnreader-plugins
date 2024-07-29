@@ -162,7 +162,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
           });
       });
     } else {
-      loadedCheerio('div#chapters h3.title').each((i, titleEl) => {
+      loadedCheerio('#chapters h3.title').each((i, titleEl) => {
         const fullTitleText = loadedCheerio(titleEl).text().trim();
         const chapterNameMatch = fullTitleText.match(/: "(.*)"\s*\[(.*)\]/);
         const chapterName = chapterNameMatch ? `"${chapterNameMatch[1]}" [${chapterNameMatch[2]}]` : '';
