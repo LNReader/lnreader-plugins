@@ -131,7 +131,7 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       ontext(data) {
         if (isNovelName) {
-          novel.name = data;
+          novel.name = novel.name + data;
         }
         if (isAuthorName) {
           novel.author = data;
