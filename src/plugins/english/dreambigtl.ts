@@ -18,21 +18,14 @@ class DreamBigTL implements Plugin.PluginBase {
 
     try {
       const url = `${this.site}p/disclaimer.html`;
-      console.log('Fetching URL:', url);
 
       await delay(2000);
       const response = await fetchApi(url);
       const body = await response.text();
-      console.log('Response body length:', body.length);
-
       const loadedCheerio = parseHTML(body);
       const novels: Plugin.NovelItem[] = [];
       const categories = ['New Novels', 'Ongoing Novels', 'Completed Novels'];
 
-      console.log(
-        'Menu items found:',
-        loadedCheerio('#webify-pro-main-nav-menu > li').length,
-      );
 
       loadedCheerio('#webify-pro-main-nav-menu > li.has-sub').each(
         (_, categoryElem) => {
@@ -41,18 +34,13 @@ class DreamBigTL implements Plugin.PluginBase {
             .first()
             .text()
             .trim();
-          console.log('Checking category:', categoryName);
 
           if (categories.includes(categoryName)) {
-            console.log('Found matching category:', categoryName);
             const subMenu =
               loadedCheerio(categoryElem).find('ul.sub-menu.m-sub');
-            console.log('Submenu items found:', subMenu.find('li').length);
-
             subMenu.find('li > a').each((_, novelElem) => {
               const novelName = loadedCheerio(novelElem).text().trim();
               const novelUrl = loadedCheerio(novelElem).attr('href');
-              console.log('Novel found:', novelName, novelUrl);
 
               if (novelUrl) {
                 novels.push({
@@ -66,11 +54,9 @@ class DreamBigTL implements Plugin.PluginBase {
         },
       );
 
-      console.log('Total novels found:', novels.length);
       novels.forEach(novel => console.log('Novel:', novel.name, novel.path));
 
       if (novels.length === 0) {
-        console.warn('No novels found, trying to parse everything...');
 
         // Fallback: try to parse everything...
         loadedCheerio('a').each((_, elem) => {
@@ -85,7 +71,6 @@ class DreamBigTL implements Plugin.PluginBase {
           }
         });
 
-        console.log('Fallback total novels found:', novels.length);
       }
 
       if (showLatestNovels) {
@@ -94,7 +79,6 @@ class DreamBigTL implements Plugin.PluginBase {
 
       return novels;
     } catch (error) {
-      console.error('Error fetching popular novels:', error);
       throw new Error('Unable to fetch novels from any available URL');
     }
   }
@@ -124,7 +108,6 @@ class DreamBigTL implements Plugin.PluginBase {
 
       return novel;
     } catch (error) {
-      console.error('Error parsing novel:', error);
       throw error;
     }
   }
@@ -171,13 +154,9 @@ class DreamBigTL implements Plugin.PluginBase {
         });
       }
 
-      if (chapters.length === 0) {
-        console.warn('No chapters found');
-      }
 
       return chapters.reverse();
     } catch (error) {
-      console.error('Error parsing chapters:', error);
       throw error;
     }
   }
@@ -187,7 +166,6 @@ class DreamBigTL implements Plugin.PluginBase {
     try {
       return await fetchFile(coverUrl);
     } catch (error) {
-      console.error('Error fetching novel cover:', error);
       return '';
     }
   }
@@ -208,12 +186,10 @@ class DreamBigTL implements Plugin.PluginBase {
       const chapterContent = loadedCheerio('.post-body').html() || '';
 
       if (!chapterContent) {
-        console.warn('No chapter content found');
       }
 
       return `<h1>${chapterTitle}</h1>${chapterContent}`;
     } catch (error) {
-      console.error('Error parsing chapter:', error);
       throw error;
     }
   }
@@ -249,13 +225,8 @@ class DreamBigTL implements Plugin.PluginBase {
         }
       });
 
-      if (novels.length === 0) {
-        console.warn('No search results found');
-      }
-
       return novels;
     } catch (error) {
-      console.error('Error searching novels:', error);
       throw error;
     }
   }
