@@ -350,6 +350,7 @@
     "sourceName": "Galaxy Translations",
     "options": {
       "useNewChapterEndpoint": true,
+      "versionIncrements": 1,
       "lang": "English"
     }
   },
