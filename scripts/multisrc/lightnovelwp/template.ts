@@ -73,6 +73,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   }
 
   parseNovels(html: string): Plugin.NovelItem[] {
+    html = load(html).html(); // fix "'" beeing replaced by "&#8217;" (html entities)
     const novels: Plugin.NovelItem[] = [];
 
     const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
@@ -82,7 +83,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
       if (novelName && novelUrl) {
         const novelCover =
-          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/>/) || [];
+          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/?>/) || [];
 
         novels.push({
           name: novelName,
