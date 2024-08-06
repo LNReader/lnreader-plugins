@@ -1,5 +1,5 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 
 class DreamBigTL implements Plugin.PluginBase {
@@ -13,135 +13,98 @@ class DreamBigTL implements Plugin.PluginBase {
     pageNo: number,
     { showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    const delay = (ms: number) =>
-      new Promise(resolve => setTimeout(resolve, ms));
+    const url = `${this.site}p/disclaimer.html`;
 
-    try {
-      const url = `${this.site}p/disclaimer.html`;
+    const response = await fetchApi(url);
+    const body = await response.text();
+    const loadedCheerio = parseHTML(body);
+    const novels: Plugin.NovelItem[] = [];
+    const categories = ['New Novels', 'Ongoing Novels', 'Completed Novels'];
 
-      await delay(2000);
-      const response = await fetchApi(url);
-      const body = await response.text();
-      const loadedCheerio = parseHTML(body);
-      const novels: Plugin.NovelItem[] = [];
-      const categories = ['New Novels', 'Ongoing Novels', 'Completed Novels'];
+    loadedCheerio('#webify-pro-main-nav-menu > li.has-sub').each(
+      (_, categoryElem) => {
+        const categoryName = loadedCheerio(categoryElem)
+          .children('a')
+          .first()
+          .text()
+          .trim();
 
+        if (categories.includes(categoryName)) {
+          const subMenu = loadedCheerio(categoryElem).find('ul.sub-menu.m-sub');
+          subMenu.find('li > a').each((_, novelElem) => {
+            const novelName = loadedCheerio(novelElem).text().trim();
+            const novelUrl = loadedCheerio(novelElem).attr('href');
 
-      loadedCheerio('#webify-pro-main-nav-menu > li.has-sub').each(
-        (_, categoryElem) => {
-          const categoryName = loadedCheerio(categoryElem)
-            .children('a')
-            .first()
-            .text()
-            .trim();
+            if (novelUrl) {
+              novels.push({
+                name: novelName,
+                path: novelUrl.replace(this.site, ''),
+                cover: '',
+              });
+            }
+          });
+        }
+      },
+    );
 
-          if (categories.includes(categoryName)) {
-            const subMenu =
-              loadedCheerio(categoryElem).find('ul.sub-menu.m-sub');
-            subMenu.find('li > a').each((_, novelElem) => {
-              const novelName = loadedCheerio(novelElem).text().trim();
-              const novelUrl = loadedCheerio(novelElem).attr('href');
+    novels.forEach(novel => console.log('Novel:', novel.name, novel.path));
 
-              if (novelUrl) {
-                novels.push({
-                  name: novelName,
-                  path: novelUrl.replace(this.site, ''),
-                  cover: '',
-                });
-              }
-            });
-          }
-        },
-      );
-
-      novels.forEach(novel => console.log('Novel:', novel.name, novel.path));
-
-      if (novels.length === 0) {
-
-        // Fallback: try to parse everything...
-        loadedCheerio('a').each((_, elem) => {
-          const href = loadedCheerio(elem).attr('href');
-          if (href && href.includes('/p/') && !href.includes('disclaimer')) {
-            const novelName = loadedCheerio(elem).text().trim();
-            novels.push({
-              name: novelName,
-              path: href.replace(this.site, ''),
-              cover: '',
-            });
-          }
-        });
-
-      }
-
-      if (showLatestNovels) {
-        novels.sort((a, b) => b.path.localeCompare(a.path));
-      }
-
-      return novels;
-    } catch (error) {
-      throw new Error('Unable to fetch novels from any available URL');
+    if (novels.length === 0) {
+      // Fallback: try to parse everything...
+      loadedCheerio('a').each((_, elem) => {
+        const href = loadedCheerio(elem).attr('href');
+        if (href && href.includes('/p/') && !href.includes('disclaimer')) {
+          const novelName = loadedCheerio(elem).text().trim();
+          novels.push({
+            name: novelName,
+            path: href.replace(this.site, ''),
+            cover: '',
+          });
+        }
+      });
     }
+
+    if (showLatestNovels) {
+      novels.sort((a, b) => b.path.localeCompare(a.path));
+    }
+
+    return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
-    try {
-      const result = await fetchApi(url);
-      const body = await result.text();
-      const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(url);
+    const body = await result.text();
+    const loadedCheerio = parseHTML(body);
 
-      const novel: Plugin.SourceNovel = {
-        path: novelPath,
-        name: loadedCheerio('h1.entry-title').text().trim(),
-        cover: await this.getNovelCover(
-          loadedCheerio('.post-body img').first().attr('src') || '',
-        ),
-        summary: loadedCheerio('.post-body p').first().text().trim(),
-        author:
-          loadedCheerio('.post-body')
-            .text()
-            .match(/Author:\s*(.+)/i)?.[1]
-            ?.trim() || 'Unknown',
-        status: this.getNovelStatus(novelPath),
-        chapters: await this.parseChapters(loadedCheerio),
-      };
+    const novel: Plugin.SourceNovel = {
+      path: novelPath,
+      name: loadedCheerio('h1.entry-title').text().trim(),
+      cover: loadedCheerio('.post-body img').first().attr('src') || '',
+      summary: loadedCheerio('.post-body p').first().text().trim(),
+      author:
+        loadedCheerio('.post-body')
+          .text()
+          .match(/Author:\s*(.+)/i)?.[1]
+          ?.trim() || 'Unknown',
+      status: this.getNovelStatus(novelPath),
+      chapters: await this.parseChapters(loadedCheerio),
+    };
 
-      return novel;
-    } catch (error) {
-      throw error;
-    }
+    return novel;
   }
+
   async parseChapters(
     loadedCheerio: CheerioAPI,
   ): Promise<Plugin.ChapterItem[]> {
     const chapters: Plugin.ChapterItem[] = [];
-    try {
-      // Parse "Free Tier" chapters
-      loadedCheerio('.chapter-panel').each((_, panel) => {
-        const panelTitle = loadedCheerio(panel).find('summary').text().trim();
-        if (panelTitle === 'Free Tier') {
-          loadedCheerio(panel)
-            .find('ul li a')
-            .each((_, chapterEle) => {
-              const chapterName = loadedCheerio(chapterEle).text().trim();
-              const chapterUrl = loadedCheerio(chapterEle).attr('href');
-              if (chapterUrl) {
-                chapters.push({
-                  name: chapterName,
-                  path: chapterUrl.replace(this.site, ''),
-                });
-              }
-            });
-        }
-      });
-
-      // Parse "List of Chapters"
-      if (chapters.length === 0) {
-        loadedCheerio(
-          'h2:contains("List of Chapters"), span:contains("List of Chapters")',
-        ).each((_, header) => {
-          const chapterList = loadedCheerio(header).next('ul');
-          chapterList.find('li a').each((_, chapterEle) => {
+    // Parse "Free Tier" chapters
+    loadedCheerio('.chapter-panel').each((_, panel) => {
+      const panelTitle = loadedCheerio(panel).find('summary').text().trim();
+      if (panelTitle === 'Free Tier') {
+        loadedCheerio(panel)
+          .find('ul li a')
+          .each((_, chapterEle) => {
             const chapterName = loadedCheerio(chapterEle).text().trim();
             const chapterUrl = loadedCheerio(chapterEle).attr('href');
             if (chapterUrl) {
@@ -151,23 +114,29 @@ class DreamBigTL implements Plugin.PluginBase {
               });
             }
           });
-        });
       }
+    });
 
-
-      return chapters.reverse();
-    } catch (error) {
-      throw error;
+    // Parse "List of Chapters"
+    if (chapters.length === 0) {
+      loadedCheerio(
+        'h2:contains("List of Chapters"), span:contains("List of Chapters")',
+      ).each((_, header) => {
+        const chapterList = loadedCheerio(header).next('ul');
+        chapterList.find('li a').each((_, chapterEle) => {
+          const chapterName = loadedCheerio(chapterEle).text().trim();
+          const chapterUrl = loadedCheerio(chapterEle).attr('href');
+          if (chapterUrl) {
+            chapters.push({
+              name: chapterName,
+              path: chapterUrl.replace(this.site, ''),
+            });
+          }
+        });
+      });
     }
-  }
 
-  async getNovelCover(coverUrl: string): Promise<string> {
-    if (!coverUrl) return '';
-    try {
-      return await fetchFile(coverUrl);
-    } catch (error) {
-      return '';
-    }
+    return chapters.reverse();
   }
 
   getNovelStatus(novelPath: string): string {
@@ -177,58 +146,42 @@ class DreamBigTL implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const url = this.site + chapterPath;
-    try {
-      const result = await fetchApi(url);
-      const body = await result.text();
-      const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(url);
+    const body = await result.text();
+    const loadedCheerio = parseHTML(body);
 
-      const chapterTitle = loadedCheerio('h1.entry-title').text().trim();
-      const chapterContent = loadedCheerio('.post-body').html() || '';
+    const chapterTitle = loadedCheerio('h1.entry-title').text().trim();
+    const chapterContent = loadedCheerio('.post-body').html() || '';
 
-      if (!chapterContent) {
-      }
-
-      return `<h1>${chapterTitle}</h1>${chapterContent}`;
-    } catch (error) {
-      throw error;
-    }
+    return `<h1>${chapterTitle}</h1>${chapterContent}`;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}search?q=${encodeURIComponent(searchTerm)}`;
-    try {
-      const result = await fetchApi(url);
-      const body = await result.text();
-      const loadedCheerio = parseHTML(body);
+    const result = await fetchApi(url);
+    const body = await result.text();
+    const loadedCheerio = parseHTML(body);
 
-      const novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
-      loadedCheerio(
-        '.blog-posts.index-post-wrap .blog-post.hentry.index-post',
-      ).each((_, ele) => {
-        const novelName = loadedCheerio(ele)
-          .find('.entry-title a')
-          .text()
-          .trim();
-        const novelUrl = loadedCheerio(ele).find('.entry-title a').attr('href');
-        const novelCover =
-          loadedCheerio(ele).find('.entry-image').attr('data-image') || '';
-        // const novelCategory = loadedCheerio(ele).find('.entry-category').text().trim();
+    loadedCheerio(
+      '.blog-posts.index-post-wrap .blog-post.hentry.index-post',
+    ).each((_, ele) => {
+      const novelName = loadedCheerio(ele).find('.entry-title a').text().trim();
+      const novelUrl = loadedCheerio(ele).find('.entry-title a').attr('href');
+      const novelCover =
+        loadedCheerio(ele).find('.entry-image').attr('data-image') || '';
 
-        if (novelUrl) {
-          novels.push({
-            name: novelName,
-            path: novelUrl.replace(this.site, ''),
-            cover: novelCover,
-            // category: novelCategory,
-          });
-        }
-      });
+      if (novelUrl) {
+        novels.push({
+          name: novelName,
+          path: novelUrl.replace(this.site, ''),
+          cover: novelCover,
+        });
+      }
+    });
 
-      return novels;
-    } catch (error) {
-      throw error;
-    }
+    return novels;
   }
 }
 
