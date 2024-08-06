@@ -162,7 +162,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
             if (chapterUrl) {
               chapterItems.push({
                 name: chapterName,
-                path: new URL(chapterUrl, this.site).toString(),
+                path: chapterUrl,
               });
             }
           });
@@ -189,7 +189,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
           }
           chapterItems.push({
             name: chapterName,
-            path: new URL(chapterUrl, this.site).toString(),
+            path: chapterUrl,
             releaseTime: releaseTime,
           });
         }
@@ -204,11 +204,9 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
               : null;
             let chapterName = loadedCheerio('h2.title.heading').text().trim();
 
-            const chapterUrl = chapterUrlCode
-              ? `${novelUrl}/chapters/${chapterUrlCode}`
-              : null;
+            const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
 
-            if (chapterName && chapterUrl) {
+            if (chapterUrl) {
               if (chapterName === '') {
                 const novelTitle = loadedCheerio('.work .title.heading')
                   .text()
@@ -217,7 +215,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
               }
               chapterItems.push({
                 name: chapterName,
-                path: new URL(chapterUrl, this.site).toString(),
+                path: chapterUrl,
                 releaseTime: releaseTime,
               });
             }
