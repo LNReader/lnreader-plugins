@@ -150,6 +150,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const releaseTime = releaseTimeText
       ? new Date(releaseTimeText).toISOString()
       : '';
+    const parseChapters = () => {
     if (loadedCheerio('#chapter_index select').length > 0) {
       loadedCheerio('#chapter_index select').each((i, selectEl) => {
         loadedCheerio(selectEl)
@@ -223,6 +224,15 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
         });
       }
     }
+  }
+  let attempts = 3;
+  while (chapterItems.length === 0 && attempts > 0) {
+    parseChapters();
+    if (chapterItems.length === 0) {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+    }
+    attempts--;
+  }
     novel.chapters = chapterItems;
 
     return novel;
