@@ -49,7 +49,7 @@ type ExcludableCheckboxFilter = {
   value: {
     /** Checkboxes marked as included */
     include?: string[];
-    /** Checkboxes marked as included */
+    /** Checkboxes marked as excluded */
     exclude?: string[];
   };
 };
@@ -59,22 +59,21 @@ type ExcludableCheckboxFilter = {
  */
 export type Filters = Record<string, Filter<FilterTypes>>;
 
+/** Mapping of each FilterType to a Filter */
+type FilterFromType = {
+  [FilterTypes.CheckboxGroup]: CheckboxFilter;
+  [FilterTypes.ExcludableCheckboxGroup]: ExcludableCheckboxFilter;
+  [FilterTypes.Picker]: PickerFilter;
+  [FilterTypes.Switch]: SwitchFilter;
+  [FilterTypes.TextInput]: TextFilter;
+};
+
 /**
  * Get type of a single filter type from the {@link FilterType}
  */
 export type Filter<Type extends FilterTypes> = {
   label: string;
-} & (Type extends FilterTypes.CheckboxGroup
-  ? CheckboxFilter
-  : Type extends FilterTypes.Picker
-    ? PickerFilter
-    : Type extends FilterTypes.Switch
-      ? SwitchFilter
-      : Type extends FilterTypes.TextInput
-        ? TextFilter
-        : Type extends FilterTypes.ExcludableCheckboxGroup
-          ? ExcludableCheckboxFilter
-          : never);
+} & FilterFromType[Type];
 
 /**
  * Strip {@link FilterObject} object from 'label' and 'options' to get key - filter_value pairs

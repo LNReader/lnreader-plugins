@@ -3,7 +3,7 @@ import { StoreCreator } from '.';
 import { getPlugin } from '@provider/plugins';
 
 export type PluginStore = {
-  selectedPlugin?: Plugin.PluginItem;
+  pluginItem?: Plugin.PluginItem;
   plugin?: Plugin.PluginBase;
   selectPlugin(plugin: Plugin.PluginItem): void;
 };
@@ -17,11 +17,11 @@ export const PluginStore: StoreCreator<PluginStore> = set => ({
   // selectedPlugin: undefined,
 
   // those are actions
-  selectPlugin(plugin) {
+  selectPlugin(pluginItem) {
     set(state => ({
       ...state,
-      selectedPlugin: plugin,
-      plugin: getPlugin(plugin.id),
+      pluginItem,
+      plugin: getPlugin(pluginItem.id),
     }));
   },
 });

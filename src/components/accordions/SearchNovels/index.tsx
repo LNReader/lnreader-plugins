@@ -1,5 +1,5 @@
 import { Box, Button, Stack, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
@@ -12,17 +12,25 @@ export default function SearchNovels() {
   const [page] = useState(1);
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const [fetchError, setFetchError] = useState('');
+
   const fetchNovels = () => {
     if (plugin) {
       setLoading(true);
       plugin
         .searchNovels(searchTerm, page)
         .then(res => setNovels(res))
-        .finally(() => setLoading(false));
+        .finally(() => setLoading(false))
+        .catch(e => {
+          setFetchError(e.message);
+        });
     }
   };
+
   return (
     <AccordionContainer title="Search Novels" loading={loading}>
+      {fetchError && <span style={{ color: 'red' }}>{fetchError}</span>}
       <Stack direction={'row'} spacing={2}>
         <TextField
           value={searchTerm}
