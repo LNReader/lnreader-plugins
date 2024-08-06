@@ -4,6 +4,7 @@ import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { Cheerio } from 'node_modules/cheerio/lib';
+import { Parser } from 'htmlparser2';
 
 class RewayatClub implements Plugin.PluginBase {
   id = 'rewayatclub';
@@ -19,7 +20,15 @@ class RewayatClub implements Plugin.PluginBase {
       novelUrl:string,
       novelCover:string
     }
-    console.log(loadedCheerio)
+    const json = loadedCheerio('script:contains("__NUXT__")').text();
+    const regex = /chapters:\[\{[\s\S]*?\}\]/;
+    const jsonmatch = json?.match(regex);
+    const jsonOnly = jsonmatch ? jsonmatch[1].replace(/(\w+):/g, '"$1":').replace(/:\s*([^",}\s]+)/g, ': "$1"'): defaultCover;
+    const parsedObject = JSON.parse(jsonOnly) as novels;
+    const novelName : string = parsedObject.arabic
+    const novelUrl : string = parsedObject.novelUrl
+    const novelCover : string = parsedObject.novelName
+    console.log(loadedCheerio);
     loadedCheerio('.row--dense').each((idx, ele) => {
         loadedCheerio(ele).find('.v-sheet--outlined').each((idx, ele) => {
             const novelName = loadedCheerio(ele)
@@ -129,7 +138,59 @@ class RewayatClub implements Plugin.PluginBase {
       }
     });
     novel.chapters = chapterItems;
+    const chapterListUrl = `https://rewayat.club/novel/reborn-in-naruto-as-madara-grandson?page=1`;
+    const chaptersHtml = await fetchApi(chapterListUrl).then(r => r.text());
   
+    let dataJson: {
+      pages_count: string;
+      chapters:[];
+    } = { pages_count: '', chapters: [] };
+  
+    let isScript = false;
+    const parser = new Parser({
+      ontext(data) {
+        if (isScript) {
+          if (data.includes('window.__NUXT__=')) {
+            const jsonData = data.replace('window.__NUXT__=', '');
+            try {
+              const cleanedJsonData = JSON.parse(jsonData.replace(/\\u002F/g, '/'));
+              dataJson.pages_count = cleanedJsonData.fetch[0].pagination.count.toString();
+              dataJson.chapters = cleanedJsonData.fetch[0].chapters.map((chapter: any) => ({
+                number: chapter.number,
+                title: chapter.title,
+                date: chapter.date,
+                link: `/chapters/${chapter.number}`
+              }));
+            } catch (error) {
+              console.error('Error parsing JSON:', error);
+            }
+          }
+        }
+      },
+      onclosetag(name) {
+        if (name === 'main') {
+          isScript = true;
+        }
+        if (name === 'script') {
+          isScript = false;
+        }
+      }
+    });
+    parser.write(chaptersHtml);
+    parser.end();
+  
+    novel.totalPages = Number(dataJson.pages_count);
+    novel.chapters = dataJson.chapters;
+  
+    const latestChapter = dataJson.chapters[0];
+    novel.latestChapter = latestChapter
+      ? {
+          path: latestChapter.link.replace(this.site, ''),
+          name: latestChapter.title,
+          releaseTime: new Date(latestChapter.date).toISOString()
+        }
+      : undefined;
+
     return novel;
   }
   async parseChapter(chapterUrl: string): Promise<string> {

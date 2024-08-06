@@ -162,7 +162,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
             if (chapterUrl) {
               chapterItems.push({
                 name: chapterName,
-                path: new URL(chapterUrl, this.site).toString(),
+                path: chapterUrl,
               });
             }
           });
@@ -189,7 +189,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
           }
           chapterItems.push({
             name: chapterName,
-            path: new URL(chapterUrl, this.site).toString(),
+            path: chapterUrl,
             releaseTime: releaseTime,
           });
         }
@@ -217,7 +217,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
               }
               chapterItems.push({
                 name: chapterName,
-                path: new URL(chapterUrl, this.site).toString(),
+                path: chapterUrl,
                 releaseTime: releaseTime,
               });
             }
