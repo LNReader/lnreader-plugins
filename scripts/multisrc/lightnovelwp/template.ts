@@ -37,7 +37,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${2 + versionIncrements}`;
+    this.version = `1.1.${3 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
@@ -177,7 +177,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           isReadingStatus = true;
         }
         // chapters
-        else if (attribs['class'] === 'eplister eplisterfull') {
+        else if (attribs['class'] && attribs['class'].includes('eplister')) {
           isParsingChapterList = true;
         } else if (isParsingChapterList && name === 'li') {
           isReadingChapter = true;
