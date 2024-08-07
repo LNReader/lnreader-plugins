@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.4';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -850,6 +850,36 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     return chapterText;
+  }
+
+  async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
+    const url = this.site + novelPath;
+    const result = await fetchApi(url);
+    const body = await result.text();
+
+    let loadedCheerio = parseHTML(body);
+
+    // Extract shortlink and update path if available
+    const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
+    const updatedNovelPath = shortlink?.replace(this.site, '');
+
+    // Extract the novelId from the novelPath
+    const novelIdMatch = updatedNovelPath?.match(/\?p=(\d+)/);
+    const novelId = novelIdMatch ? novelIdMatch[1] : null;
+
+    // Extract the chapterId from the chapterPath
+    const chapterIdMatch = chapterPath.match(/\/(\d+)\//);
+    const chapterId = chapterIdMatch ? chapterIdMatch[1] : null;
+
+    if (novelId && chapterId) {
+      await fetchApi(
+        `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
+      );
+    } else {
+      throw new Error(
+        `Invalid novelPath (${novelPath}) or chapterPath (${chapterPath}).`,
+      );
+    }
   }
 
   async searchNovels(
