@@ -8,7 +8,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com';
-  version = '1.0.3';
+  version = '1.0.2';
   icon = 'src/en/freewebnovel/icon.png';
 
   async getCheerio(url: string): Promise<CheerioAPI> {
