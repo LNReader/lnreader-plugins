@@ -6,21 +6,21 @@ import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 import { Filters } from '@libs/filterInputs';
 
-interface LightNovelWPOptions {
+type LightNovelWPOptions = {
   reverseChapters?: boolean;
   lang?: string;
   versionIncrements?: number;
   seriesPath?: string;
   customJs?: string;
-}
+};
 
-export interface LightNovelWPMetadata {
+export type LightNovelWPMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: LightNovelWPOptions;
   filters?: any;
-}
+};
 
 class LightNovelWPPlugin implements Plugin.PluginBase {
   id: string;

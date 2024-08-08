@@ -125,7 +125,7 @@ class RV implements Plugin.PluginBase {
 
 export default new RV();
 
-interface book {
+type book = {
   id: number;
   name: string;
   original_name: string;
@@ -151,9 +151,9 @@ interface book {
   updated_at: string;
   slug: string;
   chapters_count: number;
-}
+};
 
-interface chapters {
+type chapters = {
   id: number;
   name: string;
   number: string;
@@ -173,7 +173,7 @@ interface chapters {
   is_new: boolean;
   purchased_by_user: boolean;
   book_slug: string;
-}
+};
 
 function unicodeToUtf8(unicode: string) {
   return unicode.replace(/\\u([\d\w]{4})/gi, (match, hex) =>

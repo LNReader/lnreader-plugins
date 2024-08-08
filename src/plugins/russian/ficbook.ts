@@ -2650,11 +2650,11 @@ class ficbook implements Plugin.PluginBase {
 
 export default new ficbook();
 
-interface Data {
+type Data = {
   data?: DataEntity[] | null;
   more: boolean;
-}
-interface DataEntity {
+};
+type DataEntity = {
   id: string;
   slug: string;
   author_id: number;
@@ -2673,4 +2673,4 @@ interface DataEntity {
   readedDate?: string | null;
   reward_cnt: number;
   cover?: string | null;
-}
+};

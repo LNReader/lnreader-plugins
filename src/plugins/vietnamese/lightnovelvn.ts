@@ -4,14 +4,14 @@ import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 
-interface SearchedNovel {
+type SearchedNovel = {
   name: string;
   slug: string;
   coverUrl: string;
-}
-interface SearchedResult {
+};
+type SearchedResult = {
   data?: SearchedNovel[];
-}
+};
 
 class LightNovelVN implements Plugin.PagePlugin {
   id = 'lightnovel.vn';

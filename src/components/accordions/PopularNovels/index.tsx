@@ -8,40 +8,42 @@ import {
   FormControlLabel,
   FormGroup,
 } from '@mui/material';
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState, ChangeEvent, useRef } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
-import { Filters } from '@libs/filterInputs';
-import usePlugin from '@hooks/usePlugin';
+import { Filters, FilterToValues } from '@libs/filterInputs';
+import { useAppStore } from '@store';
+import './index.css';
+import { DialogRef, FiltersDialog } from '../components/filters/FiltersDialog';
 
 export default function PopularNovels() {
-  const plugin = usePlugin();
+  const plugin = useAppStore(state => state.plugin);
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
-  const [filterValues, setFilterValues] = useState<Filters | undefined>();
+  const [filterValues, setFilterValues] = useState<
+    FilterToValues<Filters> | undefined
+  >();
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLatest, setIsLatest] = useState(true);
+  const dialogRef = useRef<DialogRef>(null);
 
-  const fetchNovelsByIndex = (index: number) => {
+  const fetchNovelsByIndex = async (index: number) => {
     if (plugin && index) {
       setLoading(true);
-      plugin
-        .popularNovels(index, {
-          filters: filterValues,
-          showLatestNovels: isLatest,
-        })
-        .then(res => {
-          if (res.length !== 0) {
-            setCurrentIndex(index);
-            if (index > maxIndex) {
-              setMaxIndex(index);
-            }
-            setNovels(res);
-          }
-        })
-        .finally(() => setLoading(false));
+      const novels = await plugin.popularNovels(index, {
+        filters: filterValues || {},
+        showLatestNovels: isLatest,
+      });
+      if (novels.length !== 0) {
+        setCurrentIndex(index);
+        if (index > maxIndex) {
+          setMaxIndex(index);
+        }
+        setNovels(novels);
+      }
+      setLoading(false);
     }
   };
 
@@ -59,14 +61,15 @@ export default function PopularNovels() {
 
   useEffect(() => {
     // Reset when changing plugins.
+    // TODO: Fix crashing on plugin change!
     setCurrentIndex(0);
     setMaxIndex(0);
     setNovels([]);
 
     if (plugin?.filters) {
-      const filters = {};
+      const filters: FilterToValues<typeof plugin.filters> = {};
       for (const fKey in plugin.filters) {
-        filters[fKey] = {
+        filters[fKey as keyof typeof filters] = {
           type: plugin.filters[fKey].type,
           value: plugin.filters[fKey].value,
         };
@@ -74,6 +77,7 @@ export default function PopularNovels() {
       setFilterValues(filters);
     }
   }, [plugin]);
+
   return (
     <AccordionContainer title="Popular Novels" loading={loading}>
       <Stack direction={'row'} spacing={2} alignItems={'center'}>
@@ -103,10 +107,25 @@ export default function PopularNovels() {
         >
           Next Page
         </Button>
+        <Button
+          disabled={!plugin || isLatest || !plugin.filters}
+          onClick={() => {
+            dialogRef.current?.show();
+          }}
+        >
+          Filters
+        </Button>
+        <FiltersDialog
+          ref={dialogRef}
+          values={filterValues}
+          filters={plugin?.filters}
+          setValues={setFilterValues}
+          refetch={() => fetchNovelsByIndex(1)}
+        />
         <ToggleButtonGroup
           value={currentIndex}
           exclusive
-          onChange={(event, value) => fetchNovelsByIndex(value)}
+          onChange={(_event, value) => fetchNovelsByIndex(value)}
         >
           {Array.from({ length: maxIndex }, (_, index) => index + 1).map(
             number => (

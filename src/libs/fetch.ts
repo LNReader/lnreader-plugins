@@ -2,7 +2,7 @@
 
 import { parse as parseProto } from 'protobufjs';
 
-interface FetchInit {
+type FetchInit = {
   headers?: Record<string, string | undefined> | Headers;
   method?: string;
   body?: FormData | string;
@@ -12,7 +12,7 @@ interface FetchInit {
     | undefined
     | FormData
     | Headers;
-}
+};
 
 const makeInit = async (init?: FetchInit) => {
   const defaultHeaders: Record<string, string> = {
@@ -100,13 +100,13 @@ export const fetchText = async function (
   }
 };
 
-interface ProtoRequestInit {
+type ProtoRequestInit = {
   // merged .proto file
   proto: string;
   requestType: string;
   requestData?: any;
   responseType: string;
-}
+};
 
 const BYTE_MARK = BigInt((1 << 8) - 1);
 

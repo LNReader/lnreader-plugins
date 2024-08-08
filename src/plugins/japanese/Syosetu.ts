@@ -3,7 +3,6 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { FilterTypes, Filters } from '@libs/filterInputs';
-import { NovelItem } from '../../test_web/static/js';
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -52,13 +51,13 @@ class Syosetu implements Plugin.PluginBase {
       if (parseInt(loadedCheerio('.is-current').html() || '1') !== pagenumber)
         return [];
 
-      const novels: NovelItem[] = [];
+      const novels: Plugin.NovelItem[] = [];
       loadedCheerio('.c-card').each((_, e) => {
         const anchor = loadedCheerio(e).find('.p-ranklist-item__title a');
         const url = anchor.attr('href');
         if (!url) return;
         const name = anchor.text();
-        const novel: NovelItem = {
+        const novel: Plugin.NovelItem = {
           path: url.replace(this.novelPrefix, ''),
           name,
           cover: defaultCover,
@@ -93,12 +92,12 @@ class Syosetu implements Plugin.PluginBase {
       novel.summary = loadedCheerio('#novel_ex')
         .text()
         .replace(/<\s*br.*?>/g, '\n');
-      cqGetChapters.each(() => {
-        const chapterA = loadedCheerio(this).find('a');
+      cqGetChapters.each((_, e) => {
+        const chapterA = loadedCheerio(e).find('a');
         const [chapterName, releaseDate, chapterUrl] = [
           // set the variables
           chapterA.text(),
-          loadedCheerio(this)
+          loadedCheerio(e)
             .find('dt') // get title
             .text() // get text
             .replace(/（.）/g, '') // remove "(edited)" mark

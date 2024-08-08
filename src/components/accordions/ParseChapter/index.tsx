@@ -1,10 +1,10 @@
 import { Box, Button, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
-import usePlugin from '@hooks/usePlugin';
 import Textarea from '@components/Textarea';
+import { useAppStore } from '@store';
 export default function ParseChapter() {
-  const plugin = usePlugin();
+  const plugin = useAppStore(state => state.plugin);
   const [loading, setLoading] = useState(false);
   const [chapterPath, setchapterPath] = useState('');
   const [chapterText, setChapterText] = useState('');

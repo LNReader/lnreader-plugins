@@ -4,21 +4,21 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 
-interface VolumeData {
+type VolumeData = {
   story: string;
   navigation: string;
   value: string;
-}
+};
 
-interface ChapterSelect {
+type ChapterSelect = {
   chap_selector: string;
   eps_selector: boolean | string;
-}
+};
 
-interface VolumeList {
+type VolumeList = {
   chapters: Plugin.ChapterItem[];
   volumes?: VolumeData[];
-}
+};
 
 class TruyenConect implements Plugin.PagePlugin {
   id = 'truyenconect';

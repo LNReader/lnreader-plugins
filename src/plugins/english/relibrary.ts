@@ -6,10 +6,10 @@ import { defaultCover } from '@libs/defaultCover';
 import { NovelItem } from '../../test_web/static/js';
 // import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 
-interface FuzzySearchOptions {
+type FuzzySearchOptions = {
   caseSensitive: boolean;
   sort: boolean;
-}
+};
 
 // Shamelessly stolen from 'https://raw.githubusercontent.com/wouterrutgers/fuzzy-search/master/src/FuzzySearch.mjs'
 // I did modify the code a fair bit, but the algorithm is still the same under the hood.

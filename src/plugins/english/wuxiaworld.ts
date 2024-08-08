@@ -4,35 +4,35 @@ import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 
-interface StringValue {
+type StringValue = {
   value: string;
-}
+};
 
-interface BoolValue {
+type BoolValue = {
   value: boolean;
-}
+};
 
-interface DecimalValue {
+type DecimalValue = {
   units: bigint;
   nanos: number;
-}
+};
 
-interface Timestamp {
+type Timestamp = {
   seconds: number;
   nanos: number;
-}
+};
 
-interface NovelEntry {
+type NovelEntry = {
   name: string;
   coverUrl: string;
   slug: string;
-}
+};
 
-interface RelatedChapterUserInfo {
+type RelatedChapterUserInfo = {
   isChapterUnlocked?: BoolValue;
-}
+};
 
-interface ChapterItem {
+type ChapterItem = {
   entityId: number;
   name: string;
   slug: string;
@@ -41,19 +41,19 @@ interface ChapterItem {
   relatedUserInfo?: RelatedChapterUserInfo;
   offset: number;
   publishedAt?: Timestamp;
-}
+};
 
-interface GetChapterResponse {
+type GetChapterResponse = {
   item?: ChapterItem;
-}
+};
 
-interface ChapterGroupCounts {
+type ChapterGroupCounts = {
   total: number;
   advance: number;
   normal: number;
-}
+};
 
-interface ChapterGroupItem {
+type ChapterGroupItem = {
   id: number;
   title: string;
   order: number;
@@ -61,11 +61,11 @@ interface ChapterGroupItem {
   toChapterNumber?: DecimalValue;
   chapterList: ChapterItem[];
   counts?: ChapterGroupCounts;
-}
+};
 
-interface GetChapterListResponse {
+type GetChapterListResponse = {
   items: ChapterGroupItem[];
-}
+};
 
 enum NovelItem_Status {
   Finished = 0,
@@ -74,14 +74,14 @@ enum NovelItem_Status {
   All = -1,
 }
 
-interface NovelKarmaInfo {
+type NovelKarmaInfo = {
   isActive: boolean;
   isFree: boolean;
   maxFreeChapter?: DecimalValue;
   canUnlockWithVip: boolean;
-}
+};
 
-interface NovelItem {
+type NovelItem = {
   id: number;
   name: string;
   slug: string;
@@ -94,11 +94,11 @@ interface NovelItem {
   authorName?: StringValue;
   karmaInfo?: NovelKarmaInfo;
   genres: string[];
-}
+};
 
-interface GetNovelResponse {
+type GetNovelResponse = {
   item?: NovelItem;
-}
+};
 
 class WuxiaWorld implements Plugin.PluginBase {
   id = 'wuxiaworld';

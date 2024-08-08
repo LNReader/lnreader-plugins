@@ -6,17 +6,17 @@ import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 import qs from 'qs';
 
-interface ReadwnOptions {
+type ReadwnOptions = {
   versionIncrements?: number;
-}
+};
 
-export interface ReadwnMetadata {
+export type ReadwnMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   filters?: any;
   options?: ReadwnOptions;
-}
+};
 
 class ReadwnPlugin implements Plugin.PluginBase {
   id: string;

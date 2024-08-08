@@ -1,3 +1,4 @@
-import { Plugin } from '@typings/plugin';
+import { Plugin } from '../types/plugin';
 
-export default [] as Plugin.PluginBase[];
+declare const PLUGINS: Plugin.PluginItem[];
+export default PLUGINS;

@@ -9,20 +9,20 @@ import dayjs from 'dayjs';
 const includesAny = (str: string, keywords: string[]) =>
   new RegExp(keywords.join('|')).test(str);
 
-interface MadaraOptions {
+type MadaraOptions = {
   useNewChapterEndpoint?: boolean;
   lang?: string;
   orderBy?: string;
   versionIncrements?: number;
-}
+};
 
-export interface MadaraMetadata {
+export type MadaraMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: MadaraOptions;
   filters?: any;
-}
+};
 
 class MadaraPlugin implements Plugin.PluginBase {
   id: string;

@@ -2,12 +2,12 @@ import { Box, Button, Pagination, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
-import usePlugin from '@hooks/usePlugin';
 import SourceNovelCard from './SourceNovelCard';
 import ChapterList from './ChaptertList';
+import { useAppStore } from '@store';
 
 export default function ParseNovel() {
-  const plugin = usePlugin();
+  const plugin = useAppStore(state => state.plugin);
   const [sourceNovel, setSouceNovel] = useState<
     Plugin.SourceNovel | undefined
   >();

@@ -39,11 +39,13 @@
     "react-virtuoso": "^4.7.11",
     "react-window": "^1.8.10",
     "sanitize-html": "^2.12.1",
-    "urlencode": "^2.0.0"
+    "urlencode": "^2.0.0",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",
     "@types/eslint__js": "^8.42.3",
+    "@types/eslint-config-prettier": "^6.11.3",
     "@types/qs": "^6.9.15",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

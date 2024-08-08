@@ -55,16 +55,16 @@ async function getFilters(sources: HotNovelPubMetadata) {
   return filters;
 }
 
-interface response {
+type response = {
   status: number;
   message: string;
   data?: DataEntity[];
-}
-interface DataEntity {
+};
+type DataEntity = {
   id: number;
   name: string;
   slug: string;
-}
+};
 
 async function start() {
   const result = [];

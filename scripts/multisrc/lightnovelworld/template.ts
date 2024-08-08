@@ -4,18 +4,18 @@ import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
 
-interface LightNovelWorldOptions {
+type LightNovelWorldOptions = {
   lang?: string;
   versionIncrements?: number;
-}
+};
 
-export interface LightNovelWorldMetadata {
+export type LightNovelWorldMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: LightNovelWorldOptions;
   filters?: any;
-}
+};
 
 class LightNovelWorld implements Plugin.PagePlugin {
   id: string;
