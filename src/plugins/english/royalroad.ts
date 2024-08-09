@@ -234,7 +234,7 @@ class RoyalRoad implements Plugin.PluginBase {
     const html = await result.text();
 
     const extractContent = (regex: RegExp, defaultValue: string) =>
-      html.match(regex)?.[1] || defaultValue;
+      html.match(regex)?.[1] + '<hr>' || defaultValue;
 
     const authorNoteTop = extractContent(
       /(<div class="portlet solid author-note-portlet"[^]+)<div class="margin-bottom-20/,
@@ -249,7 +249,7 @@ class RoyalRoad implements Plugin.PluginBase {
       '<br>',
     );
 
-    const chapterText = `${authorNoteTop}<hr>${innerText}<hr>${authorNoteBot}`;
+    const chapterText = authorNoteTop + innerText + authorNoteBot.slice(0, -4);
     return chapterText;
   }
 
