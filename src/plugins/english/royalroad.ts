@@ -232,24 +232,21 @@ class RoyalRoad implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
-
-    const extractContent = (regex: RegExp, defaultValue: string) =>
-      html.match(regex)?.[1] + '<hr>' || defaultValue;
-
-    const authorNoteTop = extractContent(
+    const parts: string[] = [];
+    const regexPatterns: RegExp[] = [
       /(<div class="portlet solid author-note-portlet"[^]+)<div class="margin-bottom-20/,
-      '<br>',
-    );
-    const innerText = extractContent(
       /(<div class="chapter-inner chapter-content"[^]+)<div class="portlet light t-center-3/,
-      'Chapter Text is Unavailable, Report on Github/Discord',
-    );
-    const authorNoteBot = extractContent(
-      /(<div id="Chapter_Bottom_Desktop"[^]+)<a id="donate"/,
-      '<br>',
-    );
+      /(<\/div>\s+<div class="portlet solid author-note-portlet"[^]+)<div class="row margin-bottom-10/,
+    ];
 
-    const chapterText = authorNoteTop + innerText + authorNoteBot.slice(0, -4);
+    const extractContent = (patterns: RegExp[]) => {
+      patterns.forEach(regex => {
+        const match = html.match(regex)?.[1];
+        if (match) parts.push(match);
+      });
+    };
+    extractContent(regexPatterns);
+    const chapterText = parts.join('<hr>');
     return chapterText;
   }
 
