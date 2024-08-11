@@ -100,11 +100,11 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
 
   async parseNovel(novelUrl: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(new URL(novelUrl, this.site).toString());
-    const urlchapter = novelUrl+'/navigate'
+    const urlchapter = novelUrl + '/navigate';
     const chapters = await fetchApi(new URL(urlchapter, this.site).toString());
     const body = await result.text();
-    const chapterlisttext = await chapters.text()
-    const chapterlistload = parseHTML(chapterlisttext)
+    const chapterlisttext = await chapters.text();
+    const chapterlistload = parseHTML(chapterlisttext);
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
@@ -150,16 +150,22 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const chapterItems: Plugin.ChapterItem[] = [];
     const longReleaseDate: string[] = [];
     let match: RegExpExecArray | null;
-    chapterlistload('ol.index').each((i,ele)=>{
-      chapterlistload(ele).find('li').each((i,el)=>{
-        const chapterNameMatch = chapterlistload(el).find('a').text().trim();
-        const releaseTimeText = chapterlistload(el).find('span.datetime').text().replace(/\(([^)]+)\)/g, '$1').trim();
-        const releaseTime = releaseTimeText
-        ? new Date(releaseTimeText).toISOString()
-        : '';
-        longReleaseDate.push(releaseTime);
-      })
-    })
+    chapterlistload('ol.index').each((i, ele) => {
+      chapterlistload(ele)
+        .find('li')
+        .each((i, el) => {
+          const chapterNameMatch = chapterlistload(el).find('a').text().trim();
+          const releaseTimeText = chapterlistload(el)
+            .find('span.datetime')
+            .text()
+            .replace(/\(([^)]+)\)/g, '$1')
+            .trim();
+          const releaseTime = releaseTimeText
+            ? new Date(releaseTimeText).toISOString()
+            : '';
+          longReleaseDate.push(releaseTime);
+        });
+    });
     const releaseTimeText = loadedCheerio('.wrapper dd.published')
       .text()
       .trim();
@@ -176,12 +182,12 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
             const chapterUrlCode = loadedCheerio(el).attr('value')?.trim();
             const chapterUrl = `${novelUrl}/chapters/${chapterUrlCode}`;
             const releaseDate: string = longReleaseDate[dateCounter];
-            dateCounter ++
+            dateCounter++;
             if (chapterUrl) {
               chapterItems.push({
                 name: chapterName,
                 path: chapterUrl,
-                releaseTime:releaseDate,
+                releaseTime: releaseDate,
               });
             }
           });
