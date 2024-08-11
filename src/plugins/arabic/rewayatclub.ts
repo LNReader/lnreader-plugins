@@ -13,7 +13,6 @@ class RewayatClub implements Plugin.PagePlugin {
 
   parseNovels(loadedCheerio: CheerioAPI): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
-    console.log(loadedCheerio);
     loadedCheerio('.row--dense').each((idx, ele) => {
       loadedCheerio(ele)
         .find('.v-sheet--outlined')
@@ -61,15 +60,11 @@ class RewayatClub implements Plugin.PagePlugin {
               )
               .replace(/-/g, ' ')
               .toLowerCase();
-            console.log(`Image URLs: ${imageUrlShortLower}`);
             if (imageUrlShortLower.includes(novelUrlMatch)) {
               novelCover = `https://api.rewayat.club/${imageUrlShort}`;
               break;
             }
           }
-          console.log(`Novel URL: ${novelUrlMatch}`);
-          console.log(`Image URLs: ${imageUrls}`);
-          console.log(`Novel Cover: ${novelCover}`);
           if (!novelUrl) return;
 
           const novel = {
