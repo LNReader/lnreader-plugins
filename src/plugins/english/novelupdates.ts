@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.1';
+  version = '0.8.2';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -126,30 +126,32 @@ class NovelUpdates implements Plugin.PluginBase {
         'ss': 'SS',
       };
 
-      return loadedCheerio('#myTable tbody')
-        .map((_, el) => {
-          let chapterName =
-            loadedCheerio(el).find('a').attr('title') || 'No Title Found';
-          for (const name in nameReplacements) {
-            chapterName = chapterName.replace(name, nameReplacements[name]);
-          }
-          chapterName = chapterName
-            .replace(/\b\w/g, l => l.toUpperCase())
-            .trim();
-          const chapterPath =
-            'https:' + loadedCheerio(el).find('a').attr('href');
-          const chapterDate = loadedCheerio(el).find('td').first().text();
+      const chapters: Plugin.ChapterItem[] = [];
 
-          if (!chapterPath) return null;
+      loadedCheerio('#myTable tbody tr').each((_, el) => {
+        let chapterName =
+          loadedCheerio(el).find('a').attr('title') || 'No Title Found';
 
-          return {
+        for (const [key, value] of Object.entries(nameReplacements)) {
+          const regex = new RegExp(`\\b${key}\\b`, 'gi');
+          chapterName = chapterName.replace(regex, value);
+        }
+
+        chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
+
+        const chapterPath = loadedCheerio(el).find('a').attr('href');
+        const chapterDate = loadedCheerio(el).find('td').first().text();
+
+        if (chapterPath) {
+          chapters.push({
             name: chapterName,
             path: chapterPath.replace(this.site, ''),
             releaseTime: chapterDate,
-          };
-        })
-        .get()
-        .filter(chapter => chapter !== null) as Plugin.ChapterItem[];
+          });
+        }
+      });
+
+      return chapters;
     };
 
     // Parse all pages in parallel
