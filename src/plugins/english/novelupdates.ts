@@ -14,12 +14,10 @@ class NovelUpdates implements Plugin.PluginBase {
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div.search_main_box_nu').each((idx, ele) => {
-      const novelCover = loadedCheerio(ele).find('img').attr('src');
-      const novelName = loadedCheerio(ele).find('.search_title > a').text();
-      const novelUrl = loadedCheerio(ele)
-        .find('.search_title > a')
-        .attr('href');
+    loadedCheerio('div.search_main_box_nu').each((_, el) => {
+      const novelCover = loadedCheerio(el).find('img').attr('src');
+      const novelName = loadedCheerio(el).find('.search_title > a').text();
+      const novelUrl = loadedCheerio(el).find('.search_title > a').attr('href');
 
       if (!novelUrl) return;
 
