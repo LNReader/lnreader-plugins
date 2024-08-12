@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.4';
+  version = '0.8.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -129,9 +129,8 @@ class NovelUpdates implements Plugin.PluginBase {
       loadedCheerio('#myTable tbody tr').each((_, el) => {
         let chapterName =
           loadedCheerio(el).find('a').last().attr('title') || 'No Title Found';
-        for (const [key, value] of Object.entries(nameReplacements)) {
-          const regex = new RegExp(`\\b${key}\\b`, 'gi');
-          chapterName = chapterName.replace(regex, value);
+        for (const name in nameReplacements) {
+          chapterName = chapterName.replace(name, nameReplacements[name]);
         }
         chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
         const chapterPath =
