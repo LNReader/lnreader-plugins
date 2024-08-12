@@ -11,72 +11,15 @@ class RewayatClub implements Plugin.PagePlugin {
   icon = 'src/ar/rewayatclub/icon.png';
   site = 'https://rewayat.club/';
 
-  parseNovels(loadedCheerio: CheerioAPI): Plugin.NovelItem[] {
+  parseNovels(data: NovelData): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('.row--dense').each((idx, ele) => {
-      loadedCheerio(ele)
-        .find('.v-sheet--outlined')
-        .each((idx, ele) => {
-          const novelName = loadedCheerio(ele)
-            .find('.v-list-item__title')
-            .text()
-            .trim();
-          const novelUrl =
-            loadedCheerio(ele)
-              .find('a')
-              .attr('href')
-              ?.trim()
-              .replace(/^\/*/, '') || '';
-          const novelUrlMatch = novelUrl
-            .replace(/\d+$|-/g, ' ')
-            .replace(
-              /%20|%21|%22|%23|%24|%25|%26|%27|%28|%29|%2A|%2B|%2C|%2D|%2E|%3A|%3B|%3C|%3D|%3E|%3F|%40|%5B|%5C|%5D|%5E|%5F|%60|%7B|%7C|%7D|%7E|[._~:?#[\]@!$&'()*+,;=]+/g,
-              '',
-            )
-            .toLowerCase();
-          const imageRaw = loadedCheerio(
-            'body script:contains("__NUXT__")',
-          ).text();
-          const imageUrlRegex = /poster_url:"\\u002F([^"]+)"/g;
-          const imageUrls: string[] = [];
-          let match: RegExpExecArray | null;
-
-          while ((match = imageUrlRegex.exec(imageRaw)) !== null) {
-            imageUrls.push(
-              match[1]
-                .replace(/\\u002F/g, '/')
-                .replace(/%20/g, ' ')
-                .replace(/^\/*/, ''),
-            );
-          }
-
-          let novelCover = defaultCover;
-
-          for (const imageUrlShort of imageUrls) {
-            const imageUrlShortLower = imageUrlShort
-              .replace(
-                /%20|%21|%22|%23|%24|%25|%26|%27|%28|%29|%2A|%2B|%2C|%2D|%2E|%3A|%3B|%3C|%3D|%3E|%3F|%40|%5B|%5C|%5D|%5E|%5F|%60|%7B|%7C|%7D|%7E|[._~:?#[\]@!$&'()*+,;=]+/g,
-                '',
-              )
-              .replace(/-/g, ' ')
-              .toLowerCase();
-            if (imageUrlShortLower.includes(novelUrlMatch)) {
-              novelCover = `https://api.rewayat.club/${imageUrlShort}`;
-              break;
-            }
-          }
-          if (!novelUrl) return;
-
-          const novel = {
-            name: novelName,
-            cover: novelCover,
-            path: novelUrl,
-          };
-
-          novels.push(novel);
-        });
+    data.results.map((item: NovelEntry) => {
+      novels.push({
+        name: item.arabic,
+        path: `novel/${item.slug}`,
+        cover: `https://api.rewayat.club/${item.poster_url.slice(1)}`,
+      });
     });
-
     return novels;
   }
 
@@ -84,7 +27,7 @@ class RewayatClub implements Plugin.PagePlugin {
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}library`;
+    let link = `https://api.rewayat.club/api/novels/`;
 
     if (filters) {
       if (filters.categories.value !== '') {
@@ -100,9 +43,9 @@ class RewayatClub implements Plugin.PagePlugin {
       }
     }
     link += `&page=${page}`;
-    const body = await fetchApi(link).then(r => r.text());
+    const body = await fetchApi(link).then(r => r.json());
     const loadedCheerio = parseHTML(body);
-    return this.parseNovels(loadedCheerio);
+    return this.parseNovels(body);
   }
 
   async parseNovel(
@@ -111,7 +54,6 @@ class RewayatClub implements Plugin.PagePlugin {
     const result = await fetchApi(new URL(novelUrl, this.site).toString());
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
-
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelUrl,
       name: loadedCheerio('h1.primary--text span').text().trim() || 'Untitled',
@@ -161,67 +103,23 @@ class RewayatClub implements Plugin.PagePlugin {
 
     return novel;
   }
-  parseChapters(data: { chapters: ChapterEntry[] }) {
+  parseChapters(data: ChapterData, novelPath: string) {
     const chapter: Plugin.ChapterItem[] = [];
-    data.chapters.map((item: ChapterEntry) => {
+    data.results.map((item: ChapterEntry) => {
       chapter.push({
-        name: item.chapterName,
-        releaseTime: new Date(item.releaseTime).toISOString(),
-        path: item.chapterUrl,
-        chapterNumber: item.chapterNumber,
+        name: item.title,
+        releaseTime: new Date(item.date).toISOString(),
+        path: `${novelPath}/${item.number}`,
+        chapterNumber: item.number,
       });
     });
-    return chapter.reverse();
+    return chapter;
   }
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const pagePath = novelPath;
-    const firstUrl = this.site + pagePath;
-    const pageUrl = firstUrl + '?page=' + page;
-    const body = await fetchApi(pageUrl).then(r => r.text());
-    const loadedCheerio = parseHTML(body);
-    let dataJson: {
-      pages_count: string;
-      chapters: ChapterEntry[];
-    } = { pages_count: '', chapters: [] };
-    const chaptersinfo: {
-      chapterName: string;
-      chapterUrl: string;
-      releaseTime: string;
-      chapterNumber: number;
-    }[] = [];
-    loadedCheerio('div[role="list"] a').each((i, el) => {
-      const chapterName = loadedCheerio(el)
-        .find('div.v-list-item__title')
-        .text()
-        .trim();
-      const chapterUrl = loadedCheerio(el)
-        .attr('href')
-        ?.trim()
-        .replace(/^\/*/, '');
-      const releaseTime = loadedCheerio(el)
-        .find('div.v-list-item__subtitle span')
-        .first()
-        .text()
-        .trim()
-        .replace(/\//g, '-');
-      const chapternumber = loadedCheerio(el)
-        .find('div.v-avatar--tile span.v-chip__content span')
-        .text();
-      const chapterNumber = parseInt(chapternumber, 10);
-      chaptersinfo.push({
-        chapterName: chapterName,
-        chapterUrl: chapterUrl || '',
-        releaseTime: releaseTime || '',
-        chapterNumber: chapterNumber || '',
-      });
-    });
-    const pagecount = loadedCheerio(
-      '.v-select__selections div.v-select__selection--comma',
-    ).text();
-    dataJson.pages_count = pagecount;
-
-    dataJson.chapters = chaptersinfo;
-    const chapters = this.parseChapters(dataJson);
+    const pagePath = novelPath.slice(6);
+    const pageUrl = `https://api.rewayat.club/api/chapters/${pagePath}/?ordering=number&page=${page}`;
+    const dataJson = await fetchApi(pageUrl).then(r => r.json());
+    const chapters = this.parseChapters(dataJson, novelPath);
     return {
       chapters,
     };
@@ -251,12 +149,12 @@ class RewayatClub implements Plugin.PagePlugin {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const searchUrl = `${this.site}library?type=0&ordering=-num_chapters&page=${page}&search=${searchTerm}`;
+    const searchUrl = `https://api.rewayat.club/api/novels/?type=0&ordering=-num_chapters&page=${page}&search=${searchTerm}`;
 
-    const result = await fetchApi(searchUrl);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
-    return this.parseNovels(loadedCheerio);
+    const result = await fetchApi(searchUrl).then(r => r.json());
+    // const body = await result.text();
+    // const loadedCheerio = parseHTML(body);
+    return this.parseNovels(result);
   }
 
   filters = {
@@ -308,9 +206,45 @@ class RewayatClub implements Plugin.PagePlugin {
 
 export default new RewayatClub();
 
+interface NovelEntry {
+  arabic: string;
+  english: string;
+  about: string;
+  poster_url: string;
+  slug: string;
+  original: boolean;
+  complete: boolean;
+  num_chapters: number;
+  genre: {
+    id: number;
+    arabic: string;
+    english: string;
+  };
+}
+interface NovelData {
+  count: number;
+  next: string;
+  previous: string;
+  results: NovelEntry[];
+}
 interface ChapterEntry {
-  chapterName: string;
-  chapterUrl: string;
-  releaseTime: string;
-  chapterNumber: number;
+  number: number;
+  title: string;
+  date: string;
+  uploader: {
+    username: string;
+    id: number;
+  };
+  hitcounts: {
+    hits: number;
+    id: number;
+  };
+  read: any[];
+}
+
+interface ChapterData {
+  count: number;
+  next: string;
+  previous: string;
+  results: ChapterEntry[];
 }
