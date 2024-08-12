@@ -126,7 +126,7 @@ class NovelUpdates implements Plugin.PluginBase {
         'ss': 'SS',
       };
 
-      return loadedCheerio('#myTable tbody tr')
+      return loadedCheerio('#myTable tbody')
         .map((_, el) => {
           let chapterName =
             loadedCheerio(el).find('a').attr('title') || 'No Title Found';
