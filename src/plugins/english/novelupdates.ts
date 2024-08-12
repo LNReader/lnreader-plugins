@@ -146,7 +146,7 @@ class NovelUpdates implements Plugin.PluginBase {
         }
       });
 
-      return chapters.reverse();
+      return chapters;
     };
 
     // Parse all pages in parallel
@@ -157,7 +157,7 @@ class NovelUpdates implements Plugin.PluginBase {
       allChapters.push(...chapters);
     }
 
-    return allChapters.length === 0 ? [] : allChapters;
+    return allChapters.length === 0 ? [] : allChapters.reverse();
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
