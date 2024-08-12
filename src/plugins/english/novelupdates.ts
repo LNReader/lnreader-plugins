@@ -146,7 +146,7 @@ class NovelUpdates implements Plugin.PluginBase {
         }
       });
 
-      return chapters;
+      return chapters.reverse();
     };
 
     // Parse all pages in parallel
