@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.4';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -104,6 +104,65 @@ class NovelUpdates implements Plugin.PluginBase {
     return this.parseNovels(loadedCheerio);
   }
 
+  async parseChapters(
+    novelPath: string,
+    pages: number,
+  ): Promise<Plugin.ChapterItem[]> {
+    const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
+    const allChapters: Plugin.ChapterItem[] = [];
+
+    // Function to parse a single page
+    const parsePage = async (page: number) => {
+      const url = `${this.site}${novelPath}?pg=${page}`;
+      const result = await fetchApi(url);
+      const body = await result.text();
+
+      const loadedCheerio = parseHTML(body);
+
+      const nameReplacements: Record<string, string> = {
+        'v': 'volume ',
+        'c': ' chapter ',
+        'part': 'part ',
+        'ss': 'SS',
+      };
+
+      return loadedCheerio('#myTable tbody tr')
+        .map((_, el) => {
+          let chapterName =
+            loadedCheerio(el).find('a').attr('title') || 'No Title Found';
+          for (const name in nameReplacements) {
+            chapterName = chapterName.replace(name, nameReplacements[name]);
+          }
+          chapterName = chapterName
+            .replace(/\b\w/g, l => l.toUpperCase())
+            .trim();
+          const chapterPath =
+            'https:' + loadedCheerio(el).find('a').attr('href');
+          const chapterDate = loadedCheerio(el).find('td').first().text();
+
+          if (!chapterPath) return null;
+
+          return {
+            name: chapterName,
+            path: chapterPath.replace(this.site, ''),
+            releaseTime: chapterDate,
+          };
+        })
+        .get()
+        .filter(chapter => chapter !== null) as Plugin.ChapterItem[];
+    };
+
+    // Parse all pages in parallel
+    const chaptersArray = await Promise.all(pagesArray.map(parsePage));
+
+    // Merge all chapters into a single array
+    for (const chapters of chaptersArray) {
+      allChapters.push(...chapters);
+    }
+
+    return allChapters.length === 0 ? [] : allChapters;
+  }
+
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
@@ -114,18 +173,18 @@ class NovelUpdates implements Plugin.PluginBase {
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
-      cover: loadedCheerio('.wpb_wrapper img').attr('src'),
+      cover: loadedCheerio('.wpb_wrapper img').attr('src') || '',
       chapters: [],
     };
 
     novel.author = loadedCheerio('#authtag')
-      .map((i, el) => loadedCheerio(el).text().trim())
+      .map((_, el) => loadedCheerio(el).text().trim())
       .toArray()
       .join(', ');
 
     novel.genres = loadedCheerio('#seriesgenre')
       .children('a')
-      .map((i, el) => loadedCheerio(el).text())
+      .map((_, el) => loadedCheerio(el).text())
       .toArray()
       .join(',');
 
@@ -139,47 +198,13 @@ class NovelUpdates implements Plugin.PluginBase {
 
     novel.summary = summary + `\n\nType: ${type}`;
 
-    const chapter: Plugin.ChapterItem[] = [];
+    const bloatElements = ['.previous_page', '.next_page'];
+    bloatElements.forEach(tag => loadedCheerio(tag).remove());
 
-    const novelId = loadedCheerio('input#mypostid').attr('value')!;
+    const pages =
+      parseInt(loadedCheerio('.digg_pagination').children().last().text()) || 1;
 
-    const formData = new FormData();
-    formData.append('action', 'nd_getchapters');
-    formData.append('mygrr', '0');
-    formData.append('mypostid', novelId);
-
-    const link = `${this.site}wp-admin/admin-ajax.php`;
-
-    const text = await fetchApi(link, {
-      method: 'POST',
-      body: formData,
-    }).then(data => data.text());
-
-    loadedCheerio = parseHTML(text);
-
-    const nameReplacements: Record<string, string> = {
-      'v': 'volume ',
-      'c': ' chapter ',
-      'part': 'part ',
-      'ss': 'SS',
-    };
-
-    loadedCheerio('li.sp_li_chp').each((i, el) => {
-      let chapterName = loadedCheerio(el).text();
-      for (const name in nameReplacements) {
-        chapterName = chapterName.replace(name, nameReplacements[name]);
-      }
-      chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
-      const chapterUrl =
-        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
-
-      chapter.push({
-        name: chapterName,
-        path: chapterUrl.replace(this.site, ''),
-      });
-    });
-
-    novel.chapters = chapter.reverse();
+    novel.chapters = await this.parseChapters(novelPath, pages);
 
     return novel;
   }
@@ -196,7 +221,7 @@ class NovelUpdates implements Plugin.PluginBase {
     domain: string[],
     url: string,
   ) {
-    let bloatClasses = [];
+    let bloatElements = [];
     let chapterTitle = '';
     let chapterContent = '';
     let chapterText = '';
@@ -221,13 +246,13 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'fictionread':
-        bloatClasses = [
+        bloatElements = [
           '.content > style',
           '.highlight-ad-container',
           '.meaning',
           '.word',
         ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('.title-image span').first().text() ||
           'Title not found';
@@ -319,7 +344,7 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'isotls': // mii translates
-        bloatClasses = [
+        bloatElements = [
           'footer',
           'header',
           'nav',
@@ -327,7 +352,7 @@ class NovelUpdates implements Plugin.PluginBase {
           '.ezoic-adpicker-ad',
           '.ezoic-videopicker-video',
         ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('head title').first().text() || 'Title not found';
         chapterContent =
@@ -347,8 +372,8 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'mirilu':
-        bloatClasses = ['#jp-post-flair'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['#jp-post-flair'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         const titleElement_mirilu = loadedCheerio(
           '.entry-content p strong',
         ).first();
@@ -359,8 +384,8 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'novelplex':
-        bloatClasses = ['.passingthrough_adreminder'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['.passingthrough_adreminder'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('.halChap--jud').first().text() || 'Title not found';
         chapterContent =
@@ -368,8 +393,8 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'novelworldtranslations':
-        bloatClasses = ['.separator img'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['.separator img'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         loadedCheerio('.entry-content a')
           .filter((_, el) => {
             return (
@@ -412,12 +437,12 @@ class NovelUpdates implements Plugin.PluginBase {
           return loadedCheerio(this).css('display') === 'block';
         });
         const loadedCheerioSnow = parseHTML(displayedDiv_snow.html()!);
-        bloatClasses = [
+        bloatElements = [
           '.responsivevoice-button',
           '.zoomdesc-cont p img',
           '.zoomdesc-cont p noscript',
         ];
-        bloatClasses.map(tag => loadedCheerioSnow(tag).remove());
+        bloatElements.map(tag => loadedCheerioSnow(tag).remove());
         chapterContent =
           loadedCheerioSnow('.zoomdesc-cont').html() || 'Content not found';
         const titleElement_snow = loadedCheerioSnow('.scroller h2').first();
@@ -434,8 +459,8 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'readingpia':
-        bloatClasses = ['.ezoic-ad', '.ezoic-adpicker-ad', '.ez-video-wrap'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['.ezoic-ad', '.ezoic-adpicker-ad', '.ez-video-wrap'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterText = loadedCheerio('.chapter-body').html() || 'Text not found';
         break;
       case 'redoxtranslation':
@@ -470,12 +495,12 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'sacredtexttranslations':
-        bloatClasses = [
+        bloatElements = [
           '.entry-content blockquote',
           '.entry-content div',
           '.reaction-buttons',
         ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('.entry-title').first().text() || 'Title not found';
         chapterContent =
@@ -483,8 +508,8 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'scribblehub':
-        bloatClasses = ['.wi_authornotes'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['.wi_authornotes'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('.chapter-title').first().text() || 'Title not found';
         chapterContent =
@@ -520,13 +545,13 @@ class NovelUpdates implements Plugin.PluginBase {
           const body_syringe = await result_syringe.text();
           loadedCheerio = parseHTML(body_syringe);
         }
-        bloatClasses = [
+        bloatElements = [
           '.has-inline-color',
           '.wp-block-buttons',
           '.wpcnt',
           '#jp-post-flair',
         ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterContent =
           loadedCheerio('.entry-content').html() || 'Content not found';
         const titleElement_syringe = loadedCheerio('.entry-content h3').first();
@@ -541,14 +566,14 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'tinytranslation':
-        bloatClasses = [
+        bloatElements = [
           '.content noscript',
           '.google_translate_element',
           '.navigate',
           '.post-views',
           'br',
         ];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('.title-content').first().text() || 'Title not found';
         loadedCheerio('.title-content').first().remove();
@@ -590,8 +615,8 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       case 'wuxiaworld':
-        bloatClasses = ['.MuiLink-root'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['.MuiLink-root'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterTitle =
           loadedCheerio('h4 span').first().text() || 'Title not found';
         chapterContent =
@@ -605,8 +630,8 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = await fetchApi(json_yoru).then(r => r.text());
         break;
       case 'zetrotranslation':
-        bloatClasses = ['hr', 'p:contains("\u00a0")'];
-        bloatClasses.map(tag => loadedCheerio(tag).remove());
+        bloatElements = ['hr', 'p:contains("\u00a0")'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterContent =
           loadedCheerio('.text-left').html() || 'Content not found';
         const titleElement_zetro = loadedCheerio('.text-left h2').first();
@@ -627,7 +652,7 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    let bloatClasses = [];
+    let bloatElements = [];
     let chapterTitle = '';
     let chapterContent = '';
     let chapterText = '';
@@ -755,8 +780,8 @@ class NovelUpdates implements Plugin.PluginBase {
     if (!isWordPress && !isBlogspot) {
       chapterText = await this.getChapterBody(loadedCheerio, domain, url);
     } else if (isBlogspot) {
-      bloatClasses = ['.button-container', '.separator'];
-      bloatClasses.map(tag => loadedCheerio(tag).remove());
+      bloatElements = ['.button-container', '.separator'];
+      bloatElements.forEach(tag => loadedCheerio(tag).remove());
       chapterTitle =
         loadedCheerio('.entry-title').first().text() ||
         loadedCheerio('.post-title').first().text() ||
@@ -769,7 +794,7 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       }
     } else if (isWordPress) {
-      bloatClasses = [
+      bloatElements = [
         '.ad',
         '.author-avatar',
         '.chapter-warning',
@@ -792,7 +817,7 @@ class NovelUpdates implements Plugin.PluginBase {
         '#jp-post-flair',
         '#textbox',
       ];
-      bloatClasses.map(tag => loadedCheerio(tag).remove());
+      bloatElements.forEach(tag => loadedCheerio(tag).remove());
       chapterTitle =
         loadedCheerio('.entry-title').first().text() ||
         loadedCheerio('.entry-title-main').first().text() ||
