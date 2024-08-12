@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.2';
+  version = '0.8.3';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -204,7 +204,7 @@ class NovelUpdates implements Plugin.PluginBase {
     bloatElements.forEach(tag => loadedCheerio(tag).remove());
 
     const pages =
-      parseInt(loadedCheerio('.digg_pagination').children().last().text()) || 1;
+      parseInt(loadedCheerio('.digg_pagination a').last().text()) || 1;
 
     novel.chapters = await this.parseChapters(novelPath, pages);
 
