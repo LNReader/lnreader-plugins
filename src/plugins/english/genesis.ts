@@ -101,7 +101,9 @@ class Genesis implements Plugin.PluginBase {
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
 
-    return data[data[0].content] + data[data[0].footnotes] ?? ''
+    return (
+      data[data[0].content] + data[data[0].footnotes] ?? ""
+    );
   }
 
   async searchNovels(
