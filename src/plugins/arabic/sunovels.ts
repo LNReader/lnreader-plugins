@@ -17,15 +17,9 @@ class RewayatClub implements Plugin.PagePlugin {
       loadedCheerio(ele)
         .find('a')
         .each((idx, ele) => {
-          const novelName = loadedCheerio(ele)
-            .find('h4')
-            .text()
-            .trim();
+          const novelName = loadedCheerio(ele).find('h4').text().trim();
           const novelUrl =
-            loadedCheerio(ele)
-              .attr('href')
-              ?.trim()
-              .replace(/^\/*/, '') || '';
+            loadedCheerio(ele).attr('href')?.trim().replace(/^\/*/, '') || '';
           const imageUrl = loadedCheerio(ele).find('img').attr('src');
           const novelCover = this.site + imageUrl?.replace(/^\/*/, '') || '';
 
@@ -52,7 +46,11 @@ class RewayatClub implements Plugin.PagePlugin {
       if (filters.status.value !== '') {
         link += `status=${filters.status.value}`;
       }
-      if (Array.isArray(filters.categories.value) && filters.categories.value.length > 0 && !filters.categories.value.includes('all')) {
+      if (
+        Array.isArray(filters.categories.value) &&
+        filters.categories.value.length > 0 &&
+        !filters.categories.value.includes('all')
+      ) {
         filters.categories.value.forEach((genre: string) => {
           link += `&category=${genre}`;
         });
@@ -75,7 +73,9 @@ class RewayatClub implements Plugin.PagePlugin {
       path: novelUrl,
       name: loadedCheerio('div.main-head h3').text().trim() || 'Untitled',
       author: loadedCheerio('.novel-author').text().trim(),
-      summary: loadedCheerio('section.info-section div.description p').text().trim(),
+      summary: loadedCheerio('section.info-section div.description p')
+        .text()
+        .trim(),
       totalPages: 1,
       chapters: [],
     };
@@ -84,17 +84,13 @@ class RewayatClub implements Plugin.PagePlugin {
       .map(el => loadedCheerio(el).text().trim())
       .join(',');
     const statusGenre = Array.from(
-      loadedCheerio('div.header-stats span')
-      .eq(3)
-      .find('strong'),
+      loadedCheerio('div.header-stats span').eq(3).find('strong'),
     )
       .map(el => loadedCheerio(el).text().trim())
       .filter(text => statusWords.has(text));
     novel.genres = `${statusGenre},${mainGenres}`;
     const statusText = Array.from(
-      loadedCheerio('div.header-stats span')
-      .eq(3)
-      .find('strong')
+      loadedCheerio('div.header-stats span').eq(3).find('strong'),
     )
       .map(el => loadedCheerio(el).text().trim())
       .filter(text => statusWords.has(text))
@@ -105,8 +101,9 @@ class RewayatClub implements Plugin.PagePlugin {
         'مكتمل': 'Completed',
         'مستمر': 'Ongoing',
       }[statusText] || 'Unknown';
-    const imageUrl = loadedCheerio('div.img-container figure.cover img')
-      .attr('src');
+    const imageUrl = loadedCheerio('div.img-container figure.cover img').attr(
+      'src',
+    );
     const imageUrlFull = this.site + imageUrl?.replace(/^\/*/, '') || '';
     novel.cover = imageUrlFull;
     const chapterNumberStr = loadedCheerio('div.header-stats span')
@@ -133,7 +130,7 @@ class RewayatClub implements Plugin.PagePlugin {
   }
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const numPage = parseInt(page, 10);
-    const pageCorrected = numPage - 1
+    const pageCorrected = numPage - 1;
     const pagePath = novelPath;
     const firstUrl = this.site + pagePath;
     const pageUrl = firstUrl + '?activeTab=chapters&page=' + pageCorrected;
@@ -150,8 +147,7 @@ class RewayatClub implements Plugin.PagePlugin {
       chapterNumber: string | number;
     }[] = [];
     loadedCheerio('ul.chaptersList a').each((i, el) => {
-      const chapterName: string = loadedCheerio(el)
-        .attr('title') ?? '';
+      const chapterName: string = loadedCheerio(el).attr('title') ?? '';
       const chapterUrl = loadedCheerio(el)
         .attr('href')
         ?.trim()
@@ -173,9 +169,7 @@ class RewayatClub implements Plugin.PagePlugin {
         chapterNumber: chapterNumber || '',
       });
     });
-    const pagecount = loadedCheerio(
-      'ul.pagination a.active',
-    ).text();
+    const pagecount = loadedCheerio('ul.pagination a.active').text();
     dataJson.pages_count = pagecount;
 
     dataJson.chapters = chaptersinfo;
@@ -295,5 +289,5 @@ interface ChapterEntry {
   chapterName: string;
   chapterUrl: string;
   releaseTime: string;
-  chapterNumber: number;
+  chapterNumber: string | number;
 }
