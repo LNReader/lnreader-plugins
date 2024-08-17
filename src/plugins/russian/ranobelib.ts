@@ -18,7 +18,7 @@ class RLIB implements Plugin.PluginBase {
   name = 'RanobeLib';
   site = 'https://ranobelib.me';
   apiSite = 'https://api.lib.social/api/manga/';
-  version = '2.0.1';
+  version = '2.0.2';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
 
@@ -189,7 +189,7 @@ class RLIB implements Plugin.PluginBase {
       ).then(res => res.json());
       chapterText =
         result?.data?.content?.type == 'doc'
-          ? jsonToHtml(result.data.content.content)
+          ? jsonToHtml(result.data.content.content, result.data.attachments)
           : result?.data?.content;
     }
 
@@ -477,7 +477,7 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
-function jsonToHtml(json: HTML[], html = '') {
+function jsonToHtml(json: HTML[], images, html = '') {
   json.forEach(element => {
     switch (element.type) {
       case 'hardBreak':
@@ -487,7 +487,16 @@ function jsonToHtml(json: HTML[], html = '') {
         html += '<hr>';
         break;
       case 'image':
-        if (element.attrs) {
+        if (element.attrs?.images?.length) {
+          element.attrs.images.forEach(({ image }) => {
+            const file = images.find(
+              file => file.name == image || file.id == image,
+            );
+            if (file) {
+              html += `<img src='${file.url}'>`;
+            }
+          });
+        } else if (element.attrs) {
           const attrs = Object.entries(element.attrs)
             .filter(attr => attr?.[1])
             .map(attr => `${attr[0]}="${attr[1]}"`);
@@ -497,13 +506,13 @@ function jsonToHtml(json: HTML[], html = '') {
       case 'paragraph':
         html +=
           '<p>' +
-          (element.content ? jsonToHtml(element.content) : '<br>') +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
           '</p>';
         break;
       case 'heading':
         html +=
           '<h2>' +
-          (element.content ? jsonToHtml(element.content) : '<br>') +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
           '</h2>';
         break;
       case 'text':
@@ -649,7 +658,7 @@ interface Subscription {
 }
 
 interface Attachment {
-  id: null;
+  id?: string;
   filename: string;
   name: string;
   extension: string;
