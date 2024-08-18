@@ -53,9 +53,6 @@ class RewayatClub implements Plugin.PagePlugin {
     let link = `${this.site}library?`;
 
     if (filters) {
-      if (filters.status.value !== '') {
-        link += `status=${filters.status.value}`;
-      }
       if (
         Array.isArray(filters.categories.value) &&
         filters.categories.value.length > 0 &&
@@ -64,6 +61,9 @@ class RewayatClub implements Plugin.PagePlugin {
         filters.categories.value.forEach((genre: string) => {
           link += `&category=${genre}`;
         });
+      }
+      if (filters.status.value !== '') {
+        link += `status=${filters.status.value}`;
       }
     }
     link += `&page=${page}`;
@@ -233,31 +233,31 @@ class RewayatClub implements Plugin.PagePlugin {
         { label: 'أصلية', value: 'أصلية' }, // Original
         { label: 'أكشن', value: 'أكشن' }, // Action
         { label: 'إثارة', value: 'إثارة' }, // Thriller
-        { label: 'إنتقال الى عالم أخر', value: 'إنتقال الى عالم أخر' }, // Isekai
+        { label: 'إنتقال الى عالم أخر', value: 'إنتقال+الى+عالم+أخر' }, // Isekai
         { label: 'إيتشي', value: 'إيتشي' }, // Ecchi
-        { label: 'الخيال العلمي', value: 'الخيال العلمي' }, // Science Fiction
+        { label: 'الخيال العلمي', value: 'الخيال+العلمي' }, // Science Fiction
         { label: 'بوليسي', value: 'بوليسي' }, // Detective
         { label: 'تاريخي', value: 'تاريخي' }, // Historical
-        { label: 'تقمص شخصيات', value: 'تقمص شخصيات' }, // Roleplaying
+        { label: 'تقمص شخصيات', value: 'تقمص+شخصيات' }, // Roleplaying
         { label: 'جريمة', value: 'جريمة' }, // Crime
         { label: 'جوسى', value: 'جوسى' }, // Josei
         { label: 'حريم', value: 'حريم' }, // Harem
-        { label: 'حياة مدرسية', value: 'حياة مدرسية' }, // School Life
-        { label: 'خارقة للطبيعة', value: 'خارقة للطبيعة' }, // Supernatural
+        { label: 'حياة مدرسية', value: 'حياة+مدرسية' }, // School Life
+        { label: 'خارقة للطبيعة', value: 'خارقة+للطبيعة' }, // Supernatural
         { label: 'خيالي', value: 'خيالي' }, // Fantasy
         { label: 'دراما', value: 'دراما' }, // Drama
         { label: 'رعب', value: 'رعب' }, // Horror
         { label: 'رومانسي', value: 'رومانسي' }, // Romance
         { label: 'سحر', value: 'سحر' }, // Magic
         { label: 'سينن', value: 'سينن' }, // Seinen
-        { label: 'شريحة من الحياة', value: 'شريحة من الحياة' }, // Slice of Life
+        { label: 'شريحة من الحياة', value: 'شريحة+من+الحياة' }, // Slice of Life
         { label: 'شونين', value: 'شونين' }, // Shounen
         { label: 'غموض', value: 'غموض' }, // Mystery
-        { label: 'فنون القتال', value: 'فنون القتال' }, // Martial Arts
-        { label: 'قوى خارقة', value: 'قوى خارقة' }, // Super Powers
+        { label: 'فنون القتال', value: 'فنون+القتال' }, // Martial Arts
+        { label: 'قوى خارقة', value: 'قوى+خارقة' }, // Super Powers
         { label: 'كوميدى', value: 'كوميدى' }, // Comedy
         { label: 'مأساوي', value: 'مأساوي' }, // Tragedy
-        { label: 'ما بعد الكارثة', value: 'ما بعد الكارثة' }, // Post-Apocalypse
+        { label: 'ما بعد الكارثة', value: 'ما+بعد+الكارثة' }, // Post-Apocalypse
         { label: 'مغامرة', value: 'مغامرة' }, // Adventure
         { label: 'ميكا', value: 'ميكا' }, // Mecha
         { label: 'ناضج', value: 'ناضج' }, // Mature
@@ -267,12 +267,12 @@ class RewayatClub implements Plugin.PagePlugin {
         { label: 'ابراج', value: 'ابراج' }, // Astrology
         { label: 'الالهة', value: 'الالهة' }, // Deities
         { label: 'شياطين', value: 'شياطين' }, // Demons
-        { label: 'السفر عبر الزمن', value: 'السفر عبر الزمن' }, // Time Travel
-        { label: 'رواية صينية', value: 'رواية صينية' }, // Chinese Novel
-        { label: 'رواية ويب', value: 'رواية ويب' }, // Web Novel
-        { label: 'لايت نوفل', value: 'لايت نوفل' }, // Light Novel
+        { label: 'السفر عبر الزمن', value: 'السفر+عبر+الزمن' }, // Time Travel
+        { label: 'رواية صينية', value: 'رواية+صينية' }, // Chinese Novel
+        { label: 'رواية ويب', value: 'رواية+ويب' }, // Web Novel
+        { label: 'لايت نوفل', value: 'لايت+نوفل' }, // Light Novel
         { label: 'كوري', value: 'كوري' }, // Korean
-        { label: '+18', value: '+18' }, // +18
+        { label: '+18', value: '%2B18' }, // +18
         { label: 'إيسكاي', value: 'إيسكاي' }, // Isekai
         { label: 'ياباني', value: 'ياباني' }, // Japanese
         { label: 'مؤلفة', value: 'مؤلفة' }, // Authored
