@@ -13,6 +13,18 @@ class RewayatClub implements Plugin.PagePlugin {
 
   parseNovels(loadedCheerio: CheerioAPI): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
+    const imageUrlList: string[] = [];
+    loadedCheerio('script').each((idx, ele) => { 
+      const regax = /\/uploads\/[^\s"]+/g;
+      const scriptText = loadedCheerio(ele).text();
+      const imageUrlMatched = scriptText.match(regax);
+      if (imageUrlMatched) {
+        imageUrlList.push(...imageUrlMatched);
+      }
+      const imageUrl = loadedCheerio(ele).find('img').attr('src');
+      const novelCover = this.site + imageUrl?.replace(/^\/*/, '') || '';
+      })
+    let counter: number = 0;
     loadedCheerio('.list-item').each((idx, ele) => {
       loadedCheerio(ele)
         .find('a')
@@ -20,15 +32,13 @@ class RewayatClub implements Plugin.PagePlugin {
           const novelName = loadedCheerio(ele).find('h4').text().trim();
           const novelUrl =
             loadedCheerio(ele).attr('href')?.trim().replace(/^\/*/, '') || '';
-          const imageUrl = loadedCheerio(ele).find('img').attr('src');
-          const novelCover = this.site + imageUrl?.replace(/^\/*/, '') || '';
-
+          const novelCover: string = this.site + imageUrlList[counter].slice(1)
           const novel = {
             name: novelName,
             cover: novelCover || defaultCover,
             path: novelUrl,
           };
-
+          counter ++;
           novels.push(novel);
         });
     });
