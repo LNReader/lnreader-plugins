@@ -59,11 +59,11 @@ class RewayatClub implements Plugin.PagePlugin {
         !filters.categories.value.includes('all')
       ) {
         filters.categories.value.forEach((genre: string) => {
-          link += `&category=${genre}`;
+          link += `category=${genre}`;
         });
       }
       if (filters.status.value !== '') {
-        link += `status=${filters.status.value}`;
+        link += `&status=${filters.status.value}`;
       }
     }
     link += `&page=${page}`;
