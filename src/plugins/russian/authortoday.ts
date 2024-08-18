@@ -135,15 +135,6 @@ class AuthorToday implements Plugin.PluginBase {
     }
 
     const chapterText = decrypt(result.text, result.key, this.user?.userId);
-    if (chapterText.includes('<img')) {
-      return chapterText.replace(/src="(.*?)"/g, (match, url) => {
-        if (!url.startsWith('http')) {
-          return `src="${this.site}${url}"`;
-        }
-        return `src="${url}"`;
-      });
-    }
-
     return chapterText;
   }
 

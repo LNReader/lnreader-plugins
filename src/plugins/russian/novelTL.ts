@@ -178,20 +178,6 @@ class TL implements Plugin.PluginBase {
     }).then(res => res.json());
 
     const chapterText = data.chapter?.text?.text || '';
-    if (chapterText.includes('<img')) {
-      return chapterText.replace(
-        /src="(.*?)"|href="(.*?)"/g,
-        (match: string, src: string, href: string) => {
-          if (src && !src.startsWith('http')) {
-            return `src="${this.site + src}"`;
-          } else if (href && !href.startsWith('http')) {
-            return `href="${this.site + href}"`;
-          }
-          return match;
-        },
-      );
-    }
-
     return chapterText;
   }
 

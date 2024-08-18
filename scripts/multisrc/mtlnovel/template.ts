@@ -22,6 +22,7 @@ class MTLNovelPlugin implements Plugin.PluginBase {
   name: string;
   icon: string;
   site: string;
+  mainUrl: string;
   version: string;
   options?: MTLNovelOptions;
   filters?: Filters;
@@ -31,7 +32,8 @@ class MTLNovelPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = 'multisrc/mtlnovel/mtlnovel/icon.png';
     this.site = metadata.sourceSite;
-    this.version = '1.1.0';
+    this.mainUrl = 'https://www.mtlnovel.com/';
+    this.version = '1.1.1';
     this.options = metadata.options ?? ({} as MTLNovelOptions);
     this.filters = metadata.filters satisfies Filters;
   }
@@ -77,9 +79,8 @@ class MTLNovelPlugin implements Plugin.PluginBase {
       if (
         !novelCover ||
         novelCover == 'https://www.mtlnovel.net/no-image.jpg.webp'
-      ) {
+      )
         novelCover = defaultCover;
-      }
       const novelUrl = loadedCheerio(el).find('a.list-title').attr('href');
 
       if (!novelUrl) return;
@@ -87,7 +88,7 @@ class MTLNovelPlugin implements Plugin.PluginBase {
       const novel = {
         name: novelName,
         cover: novelCover,
-        path: novelUrl.replace(this.site, ''),
+        path: novelUrl.replace(this.mainUrl, '').replace(this.site, ''),
       };
 
       novels.push(novel);
@@ -108,14 +109,37 @@ class MTLNovelPlugin implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('h1.entry-title').text() || 'Untitled',
-      cover: loadedCheerio('.nov-head > amp-img').attr('src'),
+      name: loadedCheerio('h1.entry-title').text().trim() || 'Untitled',
+      cover: loadedCheerio('.nov-head > amp-img').attr('src') || defaultCover,
       summary: loadedCheerio('div.desc > h2').next().text().trim(),
-      author: loadedCheerio('#author').text(),
-      status: loadedCheerio('#status').text(),
-      genres: loadedCheerio('#genre').text().replace(/\s+/g, ''),
       chapters: [],
     };
+
+    loadedCheerio('.info tr').each((i, el) => {
+      const infoName = loadedCheerio(el).find('td').eq(0).text().trim();
+      const infoValue = loadedCheerio(el).find('td').eq(2).text().trim();
+      switch (infoName) {
+        case 'Genre':
+        case 'Tags':
+        case 'Mots Clés':
+        case 'Género':
+        case 'Label':
+          if (novel.genres) novel.genres += ', ' + infoValue;
+          else novel.genres = infoValue;
+          break;
+        case 'Author':
+        case 'Auteur':
+        case 'Autor(a)':
+          novel.author = infoValue;
+          break;
+        case 'Status':
+        case 'Statut':
+        case 'Estado':
+          if (infoValue == 'Hiatus') novel.status = NovelStatus.OnHiatus;
+          else novel.status = infoValue;
+          break;
+      }
+    });
 
     const chapterListUrl = this.site + novelPath + 'chapter-list/';
 
@@ -136,7 +160,7 @@ class MTLNovelPlugin implements Plugin.PluginBase {
           const chapterUrl = loadedCheerio(el).attr('href');
           if (!chapterUrl) return;
           chapter.push({
-            path: chapterUrl.replace(this.site, ''),
+            path: chapterUrl.replace(this.mainUrl, '').replace(this.site, ''),
             name: chapterName,
             releaseTime: releaseDate,
           });
@@ -181,7 +205,9 @@ class MTLNovelPlugin implements Plugin.PluginBase {
     result.items[0].results.map((item: SearchEntry) => {
       const novelName = item.title.replace(/<\/?strong>/g, '');
       const novelCover = item.thumbnail;
-      const novelUrl = item.permalink.replace(this.site, '');
+      const novelUrl = item.permalink
+        .replace(this.mainUrl, '')
+        .replace(this.site, '');
 
       const novel = { name: novelName, cover: novelCover, path: novelUrl };
 
