@@ -4,7 +4,7 @@ import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 
-class RewayatClub implements Plugin.PagePlugin {
+class Sunovels implements Plugin.PagePlugin {
   id = 'sunovels';
   name = 'Sunovels';
   version = '1.0.0';
