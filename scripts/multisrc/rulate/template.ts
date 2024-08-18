@@ -192,13 +192,6 @@ class RulatePlugin implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio('.content-text img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const src = loadedCheerio(element).attr('src');
-        loadedCheerio(element).attr('src', this.site + src);
-      }
-    });
-
     const chapterText = loadedCheerio('.content-text').html();
     return chapterText || '';
   }

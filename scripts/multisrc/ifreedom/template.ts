@@ -152,8 +152,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
           .pop();
 
         if (bestlink) {
-          if (bestlink.startsWith('http')) return `src="${bestlink}"`;
-          return `src="${this.site}${bestlink}"`;
+          return `src="${bestlink}"`;
         }
         return match;
       });
