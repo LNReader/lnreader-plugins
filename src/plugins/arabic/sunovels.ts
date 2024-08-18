@@ -296,7 +296,7 @@ class Sunovels implements Plugin.PagePlugin {
   } satisfies Filters;
 }
 
-export default new RewayatClub();
+export default new Sunovels();
 
 interface ChapterEntry {
   chapterName: string;
