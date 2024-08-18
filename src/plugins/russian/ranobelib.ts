@@ -657,7 +657,7 @@ type Subscription = {
   relation: null;
 };
 
-interface Attachment {
+type Attachment = {
   id?: string;
   filename: string;
   name: string;
