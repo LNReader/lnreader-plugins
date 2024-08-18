@@ -1147,7 +1147,7 @@ class RNBH implements Plugin.PluginBase {
 
 export default new RNBH();
 
-interface responseNovels {
+type responseNovels = {
   id: number;
   names: Names;
   rating: number;
@@ -1158,27 +1158,27 @@ interface responseNovels {
   status: string;
   user?: User;
   counts: Counts;
-}
-interface Names {
+};
+type Names = {
   eng?: string;
   rus?: string;
   original: string;
-}
-interface Poster {
+};
+type Poster = {
   medium: string;
   small: string;
   color: string;
-}
-interface User {
+};
+type User = {
   status?: null;
   liked: boolean;
-}
-interface Counts {
+};
+type Counts = {
   volumes: string;
   chapters: string;
-}
+};
 
-interface responseNovel {
+type responseNovel = {
   id: number;
   names: Names;
   rating: number;
@@ -1195,55 +1195,53 @@ interface responseNovel {
   start_reading_url: string;
   html: string;
   tags: Tags;
-}
-interface Posters {
+};
+type Posters = {
   big: string;
   medium: string;
   small: string;
   tiny: string;
   color: string;
-}
-interface AuthorsEntity {
+};
+type AuthorsEntity = {
   name_eng: string;
   pivot: Pivot;
-}
-interface Pivot {
+};
+type Pivot = {
   ranobe_id: number;
   author_id?: number;
   translator_id?: number;
-}
-interface TranslatorsEntity {
+};
+type TranslatorsEntity = {
   name: string;
   pivot: Pivot;
-}
-interface Status {
+};
+type Status = {
   id: number;
   title: string;
-}
-interface Tags {
+  name: string;
+};
+type Tags = {
   events?: GenresOrEntity[] | null;
   genres?: GenresOrEntity[] | null;
-}
-interface GenresOrEntity {
+};
+type GenresOrEntity = {
   id: number;
   names: Names;
   url: string;
   title: string;
   description?: string | null;
-}
+};
 
-interface VolumesEntity {
+type VolumesEntity = {
   id: number;
   num: number;
   name: string;
   status: Status;
   chapters?: ChaptersEntity[] | null;
-}
-interface Status {
-  id: number;
-  name: string;
-}
-interface ChaptersEntity {
+};
+
+type ChaptersEntity = {
   id: number;
   name: string;
   num: number;
@@ -1252,18 +1250,18 @@ interface ChaptersEntity {
   has_images: boolean;
   changed_at: string;
   comments_count: string;
-}
+};
 
-interface responseSearch {
+type responseSearch = {
   meta: Meta;
   collections?: DataEntity[] | null;
   data?: DataEntity[] | null;
-}
-interface Meta {
+};
+type Meta = {
   key: string;
   title: string;
-}
-interface DataEntity {
+};
+type DataEntity = {
   id: number;
   names?: Names | null;
   description?: string | null;
@@ -1275,10 +1273,10 @@ interface DataEntity {
   roles?: null[] | null;
   avatar?: Avatar | null;
   has_plus?: boolean | null;
-}
-interface Avatar {
+};
+type Avatar = {
   big: string;
   color: string;
   thumb: string;
   is_default: boolean;
-}
+};

@@ -8,8 +8,6 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import Appbar from '@components/Appbar';
-import { Provider } from 'react-redux';
-import store from '@redux/store';
 import AppProvider from './provider';
 import PopularNovels from '@components/accordions/PopularNovels';
 import SearchNovels from '@components/accordions/SearchNovels';
@@ -30,27 +28,25 @@ function App() {
     },
   });
   return (
-    <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Appbar />
-          <Container
-            sx={{
-              mt: 6,
-              width: { sm: 500, md: 1024, lg: '90vw' },
-            }}
-          >
-            <HeadersSection />
-            <PopularNovels />
-            <SearchNovels />
-            <ParseNovel />
-            <ParseChapter />
-          </Container>
-          <AppProvider />
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Appbar />
+        <Container
+          sx={{
+            mt: 6,
+            width: { sm: 500, md: 1024, lg: '90vw' },
+          }}
+        >
+          <HeadersSection />
+          <PopularNovels />
+          <SearchNovels />
+          <ParseNovel />
+          <ParseChapter />
+        </Container>
+        <AppProvider />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 
