@@ -21,8 +21,6 @@ class RewayatClub implements Plugin.PagePlugin {
       if (imageUrlMatched) {
         imageUrlList.push(...imageUrlMatched);
       }
-      const imageUrl = loadedCheerio(ele).find('img').attr('src');
-      const novelCover = this.site + imageUrl?.replace(/^\/*/, '') || '';
     });
     let counter: number = 0;
     loadedCheerio('.list-item').each((idx, ele) => {
@@ -120,7 +118,7 @@ class RewayatClub implements Plugin.PagePlugin {
     const imageUrl = loadedCheerio('div.img-container figure.cover img').attr(
       'src',
     );
-    const imageUrlFull = this.site + imageUrl?.replace(/^\/*/, '') || '';
+    const imageUrlFull = this.site + imageUrl?.slice(1);
     novel.cover = imageUrlFull;
     const chapterNumberStr = loadedCheerio('div.header-stats span')
       .first()
