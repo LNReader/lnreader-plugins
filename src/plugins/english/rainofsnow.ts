@@ -90,10 +90,10 @@ class Rainofsnow implements Plugin.PagePlugin {
 
     loadedCheerio('#chapter')
       .find('li')
-      .each(function () {
-        const name = loadedCheerio(this).find('.chapter').first().text().trim();
-        const releaseTime = loadedCheerio(this).find('small').text();
-        const path = loadedCheerio(this).find('a').attr('href');
+      .each((i, el) => {
+        const name = loadedCheerio(el).find('.chapter').first().text().trim();
+        const releaseTime = loadedCheerio(el).find('small').text();
+        const path = loadedCheerio(el).find('a').attr('href').slice(this.site.length);
 
         // the link looks like this:
         // https://rainofsnow.com/chapters/missing-fiance-ch1/?novelid=61402
