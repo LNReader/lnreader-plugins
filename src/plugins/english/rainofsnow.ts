@@ -6,7 +6,7 @@ import { NovelStatus } from '@libs/novelStatus';
 
 const baseUrl = 'https://rainofsnow.com/';
 
-class Rainofsnow implements Plugin.PluginBase {
+class Rainofsnow implements Plugin.PagePlugin {
   id = 'rainofsnow';
   name = 'Rainofsnow';
   icon = 'src/en/rainofsnow/icon.png';
