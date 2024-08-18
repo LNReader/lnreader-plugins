@@ -56,6 +56,7 @@ class RewayatClub implements Plugin.PagePlugin {
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
+    const pageCorrected = page - 1;
     let link = `${this.site}library?`;
 
     if (filters) {
@@ -71,7 +72,7 @@ class RewayatClub implements Plugin.PagePlugin {
         link += `&status=${filters.status.value}`;
       }
     }
-    link += `&page=${page}`;
+    link += `&page=${pageCorrected}`;
     const body = await fetchApi(link).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
