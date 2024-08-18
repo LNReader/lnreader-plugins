@@ -55,8 +55,7 @@ class RewayatClub implements Plugin.PagePlugin {
     if (filters) {
       if (
         Array.isArray(filters.categories.value) &&
-        filters.categories.value.length > 0 &&
-        !filters.categories.value.includes('all')
+        filters.categories.value.length > 0
       ) {
         filters.categories.value.forEach((genre: string) => {
           link += `category=${genre}`;
@@ -226,7 +225,6 @@ class RewayatClub implements Plugin.PagePlugin {
       value: [],
       label: 'التصنيفات',
       options: [
-        { label: 'all', value: 'all' },
         { label: 'Wuxia', value: 'Wuxia' },
         { label: 'Xianxia', value: 'Xianxia' },
         { label: 'XUANHUAN', value: 'XUANHUAN' },
