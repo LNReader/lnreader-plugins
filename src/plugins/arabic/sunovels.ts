@@ -32,10 +32,16 @@ class RewayatClub implements Plugin.PagePlugin {
           const novelName = loadedCheerio(ele).find('h4').text().trim();
           const novelUrl =
             loadedCheerio(ele).attr('href')?.trim().replace(/^\/*/, '') || '';
-          const novelCover: string = this.site + imageUrlList[counter].slice(1);
+          let novelCover = defaultCover;
+          if (imageUrlList.length > 0) {
+            novelCover = this.site + imageUrlList[counter].slice(1);
+          } else {
+            const imageUrl = loadedCheerio(ele).find('img').attr('src');
+            novelCover = this.site + imageUrl?.slice(1);
+          }
           const novel = {
             name: novelName,
-            cover: novelCover || defaultCover,
+            cover: novelCover,
             path: novelUrl,
           };
           counter++;
