@@ -5,12 +5,12 @@ import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
-export interface IfreedomMetadata {
+export type IfreedomMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   filters?: Filters;
-}
+};
 
 class IfreedomPlugin implements Plugin.PluginBase {
   id: string;
@@ -152,8 +152,7 @@ class IfreedomPlugin implements Plugin.PluginBase {
           .pop();
 
         if (bestlink) {
-          if (bestlink.startsWith('http')) return `src="${bestlink}"`;
-          return `src="${this.site}${bestlink}"`;
+          return `src="${bestlink}"`;
         }
         return match;
       });

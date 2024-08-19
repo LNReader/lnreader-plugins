@@ -140,7 +140,7 @@ class LSHNovel implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo?: number | undefined,
+    //pageNo?: number | undefined,
   ): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${searchTerm}`;
     const headers = new Headers();

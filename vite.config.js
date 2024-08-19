@@ -19,6 +19,7 @@ export default defineConfig({
       '@hooks': path.resolve(dirname, './src/hooks'),
       '@typings': path.resolve(dirname, './src/types'),
       '@scripts': path.resolve(dirname, './scripts'),
+      '@store': path.resolve(dirname, './src/store'),
     },
   },
   server: {

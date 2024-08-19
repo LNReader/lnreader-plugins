@@ -369,9 +369,9 @@ class RanobesPlugin implements Plugin.PagePlugin {
 }
 export default new RanobesPlugin();
 
-interface ChapterEntry {
+type ChapterEntry = {
   id: number;
   title: string;
   date: string;
   link: string;
-}
+};

@@ -205,22 +205,22 @@ class WTRLAB implements Plugin.PluginBase {
   } satisfies Filters;
 }
 
-interface NovelJson {
+type NovelJson = {
   props: Props;
   page: string;
-}
+};
 
-interface Props {
+type Props = {
   pageProps: PageProps;
   __N_SSP: boolean;
-}
+};
 
-interface PageProps {
+type PageProps = {
   serie: Serie;
   server_time: Date;
-}
+};
 
-interface Serie {
+type Serie = {
   serie_data: SerieData;
   chapters: Chapter[];
   recommendation: SerieData[];
@@ -231,9 +231,9 @@ interface Serie {
   data: Data;
   is_default: boolean;
   raw_type: string;
-}
+};
 
-interface Chapter {
+type Chapter = {
   serie_id: number;
   id: number;
   order: number;
@@ -242,16 +242,16 @@ interface Chapter {
   name: string;
   created_at: string;
   updated_at: string;
-}
-interface ChapterData {
+};
+type ChapterData = {
   data: ChapterContent;
-}
-interface ChapterContent {
+};
+type ChapterContent = {
   title: string;
   body: string;
-}
+};
 
-interface SerieData {
+type SerieData = {
   serie_id?: number;
   recommendation_id?: number;
   score?: string;
@@ -273,26 +273,26 @@ interface SerieData {
   from: null;
   raw_id: number;
   genres?: number[];
-}
+};
 
-interface Data {
+type Data = {
   title: string;
   author: string;
   description: string;
   image: string;
-}
+};
 
-interface JsonNovel {
+type JsonNovel = {
   success: boolean;
   data: Datum[];
-}
-interface Datum {
+};
+type Datum = {
   serie: Serie;
   chapters: Chapter[];
   updated_at: Date;
   raw_id: number;
   slug: string;
   data: Data;
-}
+};
 
 export default new WTRLAB();

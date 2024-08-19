@@ -13,3 +13,4 @@ src/plugins/*/*\[*\]*.ts
 dist
 total.svg
 src/plugins/index.ts
+.history
