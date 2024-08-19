@@ -4,8 +4,6 @@ import { Filters } from '@libs/filterInputs';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { NovelStatus } from '@libs/novelStatus';
 
-const baseUrl = 'https://rainofsnow.com/';
-
 class Rainofsnow implements Plugin.PagePlugin {
   id = 'rainofsnow';
   name = 'Rainofsnow';
@@ -21,17 +19,15 @@ class Rainofsnow implements Plugin.PagePlugin {
     loadedCheerio('.minbox').each((index, element) => {
       const name = loadedCheerio(element).find('h3').text();
       const cover = loadedCheerio(element).find('img').attr('data-src');
-      const xpath = loadedCheerio(element)
+      const path = loadedCheerio(element)
         .find('h3 > a')
         .attr('href')
         ?.replace(this.site, '')
         .replace(/\/+$/, '');
 
-      if (!xpath) {
+      if (!path) {
         return;
       }
-
-      const path = xpath;
 
       novels.push({ name, cover, path });
     });
@@ -59,10 +55,13 @@ class Rainofsnow implements Plugin.PagePlugin {
     return this.parseNovels(loadedCheerio);
   }
 
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novel: Plugin.SourceNovel = {
+  async parseNovel(
+    novelPath: string,
+  ): Promise<Plugin.SourceNovel & { totalPages: number }> {
+    const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
       name: '',
+      totalPages: 0,
     };
 
     const body = await fetchApi(this.site + novelPath).then(res => res.text());
@@ -84,75 +83,59 @@ class Rainofsnow implements Plugin.PagePlugin {
       'body > div.queen > div > div > div.row > div.col-md-12.col-lg-7 > div > div.backcolor1 > ul > li:nth-child(2) > small',
     ).text();
 
-    novel.status = status ? NovelStatus.Completed : NovelStatus.Ongoing;
+    let x = 1;
+    loadedCheerio('.page-numbers')
+      .find('li')
+      .each(function (i, el) {
+        const num = loadedCheerio(el).find('a').text().trim().match(/(\d+)/);
 
-    const novelChapters: Plugin.ChapterItem[] = [];
+        let n = Number(num?.[1] || '0');
+        if (n > x) {
+          x = n;
+        }
+      });
+
+    novel.totalPages = x;
+
+    novel.status = status ? NovelStatus.Completed : NovelStatus.Ongoing;
+    novel.chapters = this.parseChapters(loadedCheerio);
+    return novel;
+  }
+
+  // parse paged chapters
+  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+    const url = this.site + novelPath + '/page/' + page + '/#chapter';
+    const body = await fetchApi(url).then(res => res.text());
+    const loadedCheerio = parseHTML(body);
+    const chapters = this.parseChapters(loadedCheerio);
+    return { chapters };
+  }
+
+  // helper to parse a novel
+  parseChapters(loadedCheerio: CheerioAPI) {
+    const chapter: Plugin.ChapterItem[] = [];
 
     loadedCheerio('#chapter')
       .find('li')
       .each((i, el) => {
         const name = loadedCheerio(el).find('.chapter').first().text().trim();
         const releaseTime = loadedCheerio(el).find('small').text();
-        const path = loadedCheerio(el).find('a').attr('href').slice(this.site.length);
-
-        // the link looks like this:
-        // https://rainofsnow.com/chapters/missing-fiance-ch1/?novelid=61402
-        //
-        // ok sooo wtf. npm says I cant have the full link here, so i slice it off with
-        // ?.slice(novelPath.length);
-        // and get 'chapters/missing-fiance-ch1/?novelid=61402'
-        // which testing this with 'Parse Chapter' crashes the proxy with 'Invalid URL'
-        // but if I use the full link, it works perfectly fine... but then the test site complains that it needs to be relative -_-
+        const path = loadedCheerio(el)
+          .find('a')
+          .attr('href')
+          ?.slice(this.site.length);
 
         if (path && name) {
-          novelChapters.push({ name, path, releaseTime });
+          chapter.push({ name, path, releaseTime });
         }
       });
 
-    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-    let page = 1;
-
-    let nextPageExists = loadedCheerio('.next.page-numbers').length;
-
-    while (nextPageExists) {
-      const chaptersUrl = `${novelPath}page/${++page}/#chapter`;
-
-      const chaptersRequest = await fetch(chaptersUrl);
-      const chaptersHtml = await chaptersRequest.text();
-
-      let newCheerio = parseHTML(chaptersHtml);
-
-      nextPageExists = newCheerio('.next.page-numbers').length;
-
-      newCheerio('#chapter')
-        .find('li')
-        .each(function () {
-          const name = loadedCheerio(this)
-            .find('.chapter')
-            .first()
-            .text()
-            .trim();
-          const releaseTime = newCheerio(this).find('small').text();
-          const path = newCheerio(this).find('a').attr('href');
-          // ?.slice(novelPath.length);
-
-          if (path && name) {
-            novelChapters.push({ name, releaseTime, path });
-          }
-        });
-
-      delay(1000);
-    }
-
-    novel.chapters = novelChapters;
-
-    return novel;
+    return chapter;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
     // parse chapter text here
-    const result = await fetch(chapterPath);
+    const result = await fetch(this.site + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
@@ -169,9 +152,13 @@ class Rainofsnow implements Plugin.PagePlugin {
   ): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
     // get novels using the search term
+    // no page number, infinite scroll
 
     const newSearch = searchTerm.replace(/\s+/g, '+');
-    let url = baseUrl + '?s=' + newSearch;
+    let url = this.site + '?s=' + newSearch;
+
+    console.log('SERCH URL: ', url);
+
     const result = await fetch(url);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
@@ -192,13 +179,8 @@ class Rainofsnow implements Plugin.PagePlugin {
       novels.push({ name, cover, path });
     });
 
-    // return this.parseNovels(loadedCheerio, searchTerm);
     return novels;
   }
-
-  // wtf does this do?
-  // resolveUrl = (path: string, isNovel?: boolean) =>
-  //   this.site + (isNovel ? '/book/' : '/chapter/') + path;
 }
 
 export default new Rainofsnow();
