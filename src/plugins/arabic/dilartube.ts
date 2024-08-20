@@ -38,22 +38,22 @@ class Sunovels implements Plugin.PagePlugin {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     const pageCorrected = page - 1;
-    let link = `${this.site}library?`;
+    let link = `${this.site}mangas`;
 
-    if (filters) {
-      if (
-        Array.isArray(filters.categories.value) &&
-        filters.categories.value.length > 0
-      ) {
-        filters.categories.value.forEach((genre: string) => {
-          link += `&category=${genre}`;
-        });
-      }
-      if (filters.status.value !== '') {
-        link += `&status=${filters.status.value}`;
-      }
-    }
-    link += `&page=${pageCorrected}`;
+    // if (filters) {
+    //   if (
+    //     Array.isArray(filters.categories.value) &&
+    //     filters.categories.value.length > 0
+    //   ) {
+    //     filters.categories.value.forEach((genre: string) => {
+    //       link += `&category=${genre}`;
+    //     });
+    //   }
+    //   if (filters.status.value !== '') {
+    //     link += `&status=${filters.status.value}`;
+    //   }
+    // }
+    // link += `&page=${pageCorrected}`;
     const body = await fetchApi(link).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
