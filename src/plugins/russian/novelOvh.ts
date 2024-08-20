@@ -183,7 +183,7 @@ class novelOvh implements Plugin.PluginBase {
 
 export default new novelOvh();
 
-interface BooksEntity {
+type BooksEntity = {
   id: string;
   slug: string;
   type: string;
@@ -211,18 +211,18 @@ interface BooksEntity {
   chaptersCount: number;
   createdAt: string;
   updatedAt: string;
-}
-interface Name {
+};
+type Name = {
   ru: string;
   original: string;
   en: string;
-}
-interface AltNamesEntity {
+};
+type AltNamesEntity = {
   language: string;
   name: string;
-}
+};
 
-interface responseNovel {
+type responseNovel = {
   book: Book;
   branches: BranchesEntity[];
   chapters: ChaptersEntity[];
@@ -233,8 +233,8 @@ interface responseNovel {
   promotionVideos?: null[] | null;
   folderItems?: null[] | null;
   contentNotices?: null[] | null;
-}
-interface Book {
+};
+type Book = {
   id: string;
   slug: string;
   type: string;
@@ -273,17 +273,17 @@ interface Book {
   createdAt: string;
   updatedAt: string;
   rating?: null;
-}
-interface LabelsEntity {
+};
+type LabelsEntity = {
   id: string;
   slug: string;
   name: string;
-}
-interface RelationsEntity {
+};
+type RelationsEntity = {
   type: string;
   publisher: Publisher;
-}
-interface Publisher {
+};
+type Publisher = {
   id: string;
   kind: string;
   slug: string;
@@ -298,8 +298,8 @@ interface Publisher {
   tonAddress?: null;
   createdAt: string;
   updatedAt: string;
-}
-interface BranchesEntity {
+};
+type BranchesEntity = {
   id: string;
   licensed: boolean;
   editorsChoice: boolean;
@@ -309,8 +309,8 @@ interface BranchesEntity {
   publishers?: PublishersEntity[] | null;
   subscription?: null;
   bookmark?: null;
-}
-interface PublishersEntity {
+};
+type PublishersEntity = {
   id: string;
   kind: string;
   slug: string;
@@ -324,8 +324,8 @@ interface PublishersEntity {
   tonAddress?: null;
   createdAt: string;
   updatedAt: string;
-}
-interface ChaptersEntity {
+};
+type ChaptersEntity = {
   id: string;
   name?: string | null;
   title?: string | null;
@@ -341,8 +341,8 @@ interface ChaptersEntity {
   createdAt: string;
   expiredAt: string;
   updatedAt: string;
-}
-interface RelatedEntityOrBook {
+};
+type RelatedEntityOrBook = {
   id: string;
   type: string;
   slug: string;
@@ -361,23 +361,23 @@ interface RelatedEntityOrBook {
   averageRating: number;
   createdAt: string;
   updatedAt: string;
-}
-interface AssociatedEntity {
+};
+type AssociatedEntity = {
   id: string;
   kind: string;
   createdAt: string;
   updatedAt: string;
   book: RelatedEntityOrBook;
-}
-interface CoversEntity {
+};
+type CoversEntity = {
   id: string;
   volume: number;
   image: string;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-interface responseChapter {
+type responseChapter = {
   id: string;
   name?: string;
   title: string;
@@ -397,22 +397,22 @@ interface responseChapter {
   createdAt: string;
   expiredAt: string;
   updatedAt: string;
-}
-interface Content {
+};
+type Content = {
   type: string;
   content?: ContentEntity[] | null;
-}
-interface ContentEntity {
+};
+type ContentEntity = {
   text?: string | null;
   type: string;
   attrs?: Attrs | null;
   content?: Content[] | null;
-}
-interface Attrs {
+};
+type Attrs = {
   textAlign?: string;
   pages?: [string];
-}
-interface PagesEntity {
+};
+type PagesEntity = {
   id: string;
   image: string;
   index: number;
@@ -420,4 +420,4 @@ interface PagesEntity {
   height: number;
   width: number;
   createdAt: string;
-}
+};

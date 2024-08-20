@@ -18,42 +18,29 @@ import { Search, Translate } from '@mui/icons-material';
 import { searchPlugins } from '@provider/plugins';
 import { Plugin } from '@typings/plugin';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { useDispatch } from 'react-redux';
-import { selectPlugin } from '@redux/pluginSlice';
-import usePlugin from '@hooks/usePlugin';
+import { useAppStore } from '@store';
 
 const resovleIcon = (iconPath: string) => {
   return '/static/' + iconPath;
 };
 
-export default function () {
-  const [searchedPlugins, setSearchPlugins] = useState<Plugin.PluginBase[]>([]);
-  const [keyword, setKeyword] = useState('');
-  const [listVisible, setListVisible] = useState(false);
-  const plugin = usePlugin();
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const plugins = searchPlugins(keyword);
-    setSearchPlugins(plugins);
-  }, [keyword]);
-
-  function renderPlugin(props: ListChildComponentProps<Plugin.PluginBase[]>) {
+function renderPlugin(setListVisible: (v: boolean) => void) {
+  return function (props: ListChildComponentProps<Plugin.PluginBase[]>) {
     const { index, style, data } = props;
     const plugin = data[index];
+    const selectPlugin = useAppStore(state => state.selectPlugin);
 
     return (
       <ListItem style={style} key={index} component="div" disablePadding>
         <ListItemButton
           onClick={() => {
-            dispatch(
-              selectPlugin({
-                id: plugin.id,
-                name: plugin.name,
-                version: plugin.version,
-                icon: plugin.icon,
-                site: plugin.site,
-              }),
-            );
+            selectPlugin({
+              id: plugin.id,
+              name: plugin.name,
+              version: plugin.version,
+              icon: plugin.icon,
+              site: plugin.site,
+            });
             setListVisible(false);
           }}
         >
@@ -64,7 +51,20 @@ export default function () {
         </ListItemButton>
       </ListItem>
     );
-  }
+  };
+}
+
+export default function Appbar() {
+  const [searchedPlugins, setSearchPlugins] = useState<Plugin.PluginBase[]>([]);
+  const [keyword, setKeyword] = useState('');
+  const [listVisible, setListVisible] = useState(false);
+
+  const plugin = useAppStore(state => state.plugin);
+
+  useEffect(() => {
+    const plugins = searchPlugins(keyword);
+    setSearchPlugins(plugins);
+  }, [keyword]);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -111,7 +111,7 @@ export default function () {
                   backgroundColor: 'white',
                 }}
               >
-                {renderPlugin}
+                {renderPlugin(setListVisible)}
               </FixedSizeList>
             ) : null}
           </FormControl>

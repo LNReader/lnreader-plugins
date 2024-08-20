@@ -3,35 +3,34 @@ import React, { useEffect, useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
 import { Plugin } from '@typings/plugin';
 import NovelItemCard from '../components/NovelItemCard';
-import { useSelector } from 'react-redux';
-import { AppState } from '@redux/store';
-import { getPlugin } from '@provider/plugins';
+import { useAppStore } from '@store';
 
 export default function SearchNovels() {
-  const selectedPluginItem = useSelector(
-    (state: AppState) => state.plugin.selected,
-  );
+  const plugin = useAppStore(state => state.plugin);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [page] = useState(1);
-  const [plugin, setPlugin] = useState<Plugin.PluginBase | undefined>();
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (selectedPluginItem) {
-      setPlugin(getPlugin(selectedPluginItem.id));
-    }
-  }, [selectedPluginItem]);
+
+  const [fetchError, setFetchError] = useState('');
+
   const fetchNovels = () => {
     if (plugin) {
       setLoading(true);
       plugin
         .searchNovels(searchTerm, page)
         .then(res => setNovels(res))
-        .finally(() => setLoading(false));
+        .finally(() => setLoading(false))
+        .catch(e => {
+          setFetchError(e.message);
+        });
     }
   };
+
   return (
     <AccordionContainer title="Search Novels" loading={loading}>
+      {fetchError && <span style={{ color: 'red' }}>{fetchError}</span>}
       <Stack direction={'row'} spacing={2}>
         <TextField
           value={searchTerm}

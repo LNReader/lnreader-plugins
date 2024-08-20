@@ -226,7 +226,7 @@ class Bookriver implements Plugin.PluginBase {
 }
 export default new Bookriver();
 
-interface response {
+type response = {
   props: {
     pageProps: {
       state: {
@@ -241,9 +241,9 @@ interface response {
       };
     };
   };
-}
+};
 
-interface BooksEntity {
+type BooksEntity = {
   name: string;
   coverImages: { url: string }[];
   slug: string;
@@ -256,17 +256,17 @@ interface BooksEntity {
     chapters: Chapter[];
   };
   statusComplete: string;
-}
+};
 
-interface Chapter {
+type Chapter = {
   name: string;
   available: boolean;
   firstPublishedAt?: Date | null;
   createdAt?: Date | null;
   chapterId: number | string;
-}
+};
 
-interface responseChapter {
+type responseChapter = {
   data: {
     id: number;
     bookId: number;
@@ -288,12 +288,12 @@ interface responseChapter {
     };
     publicationScheduledFor?: null;
   };
-}
+};
 
-interface responseSearch {
+type responseSearch = {
   data: Data;
   total: number;
-}
-interface Data {
+};
+type Data = {
   books?: BooksEntity[] | null;
-}
+};

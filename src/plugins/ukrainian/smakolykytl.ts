@@ -142,55 +142,55 @@ function jsonToHtml(json: HTML[], html = '') {
   return html;
 }
 
-interface response {
+type response = {
   projects?: TopLevelProject[];
   updates?: Update[];
   project?: TopLevelProject;
   books?: BookElement[];
   chapter?: TopLevelChapter;
-}
+};
 
-interface BookElement {
+type BookElement = {
   id: number;
   rank: number;
   title: string;
   chapters: PurpleChapter[];
-}
+};
 
-interface PurpleChapter {
+type PurpleChapter = {
   id: number;
   title: string;
   rank: string;
   modifiedAt: Date;
-}
+};
 
-interface TopLevelChapter {
+type TopLevelChapter = {
   id: number;
   title: string;
   rank: string;
   content: string;
   modifiedAt: Date;
   book: ChapterBook;
-}
+};
 
-interface ChapterBook {
+type ChapterBook = {
   id: number;
   rank: number;
   title: string;
   chapters: FluffyChapter[];
   project: BookProject;
-}
+};
 
-interface FluffyChapter {
+type FluffyChapter = {
   id: number;
   rank: string;
-}
+};
 
-interface BookProject {
+type BookProject = {
   id: number;
-}
+};
 
-interface TopLevelProject {
+type TopLevelProject = {
   id: number;
   title: string;
   description: string;
@@ -205,37 +205,37 @@ interface TopLevelProject {
   image: Image;
   tags?: Genre[];
   genres?: Genre[];
-}
+};
 
-interface Genre {
+type Genre = {
   id: number;
   title: string;
-}
+};
 
-interface Image {
+type Image = {
   id: number;
   url: string;
   name: string;
-}
+};
 
-interface Update {
+type Update = {
   id: number;
   title: string;
   author: string;
   translator: string;
   modifiedAt: Date;
   image: Image;
-}
+};
 
-interface HTML {
+type HTML = {
   type: string;
   content?: HTML[];
   attrs?: Attrs;
   text?: string;
-}
+};
 
-interface Attrs {
+type Attrs = {
   src: string;
   alt: string | null;
   title: string | null;
-}
+};

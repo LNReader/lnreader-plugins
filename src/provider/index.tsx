@@ -1,11 +1,10 @@
 import React from 'react';
 import DialogProvider from './DialogProvider';
 import { Backdrop, Box, CircularProgress, Container } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { AppState } from '@redux/store';
+import { useAppStore } from '@store';
 
 export default function AppProvider() {
-  const loading = useSelector((state: AppState) => state.overlay.loading);
+  const loading = useAppStore(state => state.loading);
   return (
     <Container sx={{ position: 'absolute' }}>
       <Backdrop
