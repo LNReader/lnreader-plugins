@@ -114,8 +114,8 @@ class FreeWebNovel implements Plugin.PluginBase {
     if (loadedCheerio('style').text().includes('p:nth-last-child(1)'))
       loadedCheerio('div.txt').find('p:last-child').remove();
 
-    const chapterText = loadedCheerio('div.txt').html() || '';
-    return chapterText
+    const chapterText = loadedCheerio("div.txt").html() || "";
+return chapterText
   .replace(
     /(?:(?<=<p>\s*)(?:This (?:chapter is updated by|content is taken from)|Follow current novels on) )?[ƒfF][Rrɾг][Eēeё][Eēёe][Wwω][Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵv][Eёeē][Llℓɭ]\.\s?[Cƈcç][O૦σøoѳ][M๓ɱm]\.?/g,
     '',
