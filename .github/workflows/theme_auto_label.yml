@@ -21,12 +21,6 @@ jobs:
           echo "URL=$URL" >> $GITHUB_OUTPUT
           echo "Using URL: \`$URL\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Get User Agent
-        id: get_user_agent
-        run: |
-          CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
-          echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
-
       - name: Get Base URL
         id: get_base_url
         env:
@@ -36,63 +30,13 @@ jobs:
           echo "BASE_URL=$BASE_URL" >> $GITHUB_OUTPUT
           echo "Using Base URL: \`$BASE_URL\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Check if URL is Valid
-        id: url_check
-        env:
-          BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
-          USER_AGENT: ${{ steps.get_user_agent.outputs.USER_AGENT }}
-          GH_TOKEN: ${{ github.token }}
-          OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
+      - name: Get User Agent
+        id: get_user_agent
         run: |
-          check_url() {
-            local protocol=$1
-            local url="${protocol}://${BASE_URL}"
-            if ! curl --output /dev/null --silent --head --fail "$url" -H "User-Agent: $USER_AGENT"; then
-              echo "❌ Error: Request Failed ($(curl --output /dev/null --silent --head --fail "$url" -H "User-Agent: $USER_AGENT" -w "%{http_code}"))" >> $GITHUB_STEP_SUMMARY
-              echo "URL is invalid or Cloudflare issue or site is down" >> $GITHUB_STEP_SUMMARY
-              curl -v "$url" -H "User-Agent: $USER_AGENT" > curl_output_${protocol}.txt 2>&1
-              curl "$url" -H "User-Agent: $USER_AGENT" > curl_output_${protocol}.html
-              return 1
-            fi
-            return 0
-          }
-          
-          if [[ -z "$BASE_URL" ]]; then
-            echo "url_valid=false" >> $GITHUB_OUTPUT
-            echo "❌ Error: URL Not Found" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-          if check_url "https" && check_url "http"; then
-            echo "url_valid=false" >> $GITHUB_OUTPUT
-            curl -v "$URL" -H "User-Agent: $USER_AGENT" > curl_output.txt 2>&1
-            curl "$URL" -H "User-Agent: $USER_AGENT" > curl_output.html
-            gh issue comment $ISSUE_NUMBER -b '
-            > [!WARNING]  
-            > **Unable to Check for Themes**
-            > This issue may be due to Cloudflare protection on the website, an invalid URL, or the website being down.
-            
-            *This message is for development purposes and can be ignored otherwise. [View GitHub Action](https://github.com/${{ env.OWNER }}/${{ env.REPO_NAME }}/actions/runs/${{ github.run_id }})*
-            ' -R $REPO
-            exit 1
-          fi
-          echo "url_valid=true" >> $GITHUB_OUTPUT
-      
-      - name: Upload curl output
-        if: failure()
-        env:
-          BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: curl-output-${{ env.BASE_URL }}
-          path: |
-            ./curl_output_http.txt
-            ./curl_output_https.txt
-            ./curl_output_http.html
-            ./curl_output_https.html
+          CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
+          echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
 
       - name: Check Madara theme
-        if: steps.url_check.outputs.url_valid == 'true'
         id: check_madara
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -109,7 +53,6 @@ jobs:
           fi
 
       - name: Check Lighnovelwp theme
-        if: steps.url_check.outputs.url_valid == 'true'
         id: check_lighnovelwp
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -126,7 +69,6 @@ jobs:
           fi
 
       - name: Check if the site has multiple themes
-        if: steps.url_check.outputs.url_valid == 'true'
         id: check_multiple_themes
         env:
           MADARA: ${{ steps.check_madara.outputs.madara }}
@@ -144,6 +86,7 @@ jobs:
         env:
           MADARA: ${{ steps.check_madara.outputs.madara }}
           LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [[ "$MADARA" == "true" ]]; then
             gh issue edit $ISSUE_NUMBER --add-label "Theme: Madara" -R $REPO
