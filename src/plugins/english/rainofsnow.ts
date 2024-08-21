@@ -1,6 +1,6 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -9,12 +9,10 @@ class Rainofsnow implements Plugin.PagePlugin {
   name = 'Rainofsnow';
   icon = 'src/en/rainofsnow/icon.png';
   site = 'https://rainofsnow.com/';
-  version = '1.0.0';
-  filters: Filters | undefined = undefined;
-  imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
+  version = '1.1.0';
 
-  parseNovels(loadedCheerio: CheerioAPI, searchTerm?: string) {
-    let novels: Plugin.NovelItem[] = [];
+  parseNovels(loadedCheerio: CheerioAPI) {
+    const novels: Plugin.NovelItem[] = [];
 
     loadedCheerio('.minbox').each((index, element) => {
       const name = loadedCheerio(element).find('h3').text();
@@ -31,24 +29,14 @@ class Rainofsnow implements Plugin.PagePlugin {
 
       novels.push({ name, cover, path });
     });
-
-    if (searchTerm) {
-      novels = novels.filter(novel =>
-        novel.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
-
     return novels;
   }
 
   async popularNovels(
     pageNo: number,
-    {
-      showLatestNovels,
-      filters,
-    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+    { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + 'novels/page/' + pageNo;
+    const url = this.site + 'novels/page/' + pageNo + filters.genre.value;
     const body = await fetchApi(url).then(res => res.text());
     const loadedCheerio = parseHTML(body);
 
@@ -61,44 +49,38 @@ class Rainofsnow implements Plugin.PagePlugin {
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
       name: '',
+      chapters: [],
       totalPages: 0,
     };
 
     const body = await fetchApi(this.site + novelPath).then(res => res.text());
     const loadedCheerio = parseHTML(body);
 
-    novel.name = loadedCheerio('div.text > h2').text().trim();
+    novel.name = loadedCheerio('.text h2').text().trim();
 
-    novel.cover = loadedCheerio('.imagboca1 > img').attr('data-src');
+    novel.cover = loadedCheerio('.imagboca1 img').attr('data-src');
 
     novel.summary = loadedCheerio('#synop').text().trim();
 
-    novel.genres = loadedCheerio(
-      'body > div.queen > div > div > div.row > div.col-md-12.col-lg-7 > div > div.backcolor1 > ul > li:nth-child(5) > small',
-    )
+    novel.genres = loadedCheerio('span:contains("Genre(s)")')
+      .next()
       .text()
       .trim();
 
-    novel.author = loadedCheerio(
-      'body > div.queen > div > div > div.row > div.col-md-12.col-lg-7 > div > div.backcolor1 > ul > li:nth-child(2) > small',
-    ).text();
+    novel.author = loadedCheerio('span:contains("Author")').next().text();
 
     let x = 1;
-    loadedCheerio('.page-numbers')
-      .find('li')
-      .each(function (i, el) {
-        const num = loadedCheerio(el).find('a').text().trim().match(/(\d+)/);
-
-        let n = Number(num?.[1] || '0');
-        if (n > x) {
-          x = n;
-        }
-      });
+    loadedCheerio('.page-numbers li').each(function (i, el) {
+      const num = loadedCheerio(el).find('a').text().trim().match(/(\d+)/);
+      const n = Number(num?.[1] || '0');
+      if (n > x) {
+        x = n;
+      }
+    });
 
     novel.totalPages = x;
 
-    novel.status = status ? NovelStatus.Completed : NovelStatus.Ongoing;
-    novel.chapters = this.parseChapters(loadedCheerio);
+    novel.status = NovelStatus.Unknown;
     return novel;
   }
 
@@ -115,20 +97,20 @@ class Rainofsnow implements Plugin.PagePlugin {
   parseChapters(loadedCheerio: CheerioAPI) {
     const chapter: Plugin.ChapterItem[] = [];
 
-    loadedCheerio('#chapter')
-      .find('li')
-      .each((i, el) => {
-        const name = loadedCheerio(el).find('.chapter').first().text().trim();
-        const releaseTime = loadedCheerio(el).find('small').text();
-        const path = loadedCheerio(el)
-          .find('a')
-          .attr('href')
-          ?.slice(this.site.length);
+    loadedCheerio('#chapter .march1 li').each((i, el) => {
+      const name = loadedCheerio(el).find('.chapter').first().text().trim();
+      const releaseTime = new Date(
+        loadedCheerio(el).find('small').text().trim(),
+      ).toISOString();
+      const path = loadedCheerio(el)
+        .find('a')
+        .attr('href')
+        ?.slice(this.site.length);
 
-        if (path && name) {
-          chapter.push({ name, path, releaseTime });
-        }
-      });
+      if (path && name) {
+        chapter.push({ name, path, releaseTime });
+      }
+    });
 
     return chapter;
   }
@@ -140,47 +122,53 @@ class Rainofsnow implements Plugin.PagePlugin {
 
     const loadedCheerio = parseHTML(body);
 
-    let chapterName = loadedCheerio('.content > h2').text();
-    let chapterText = loadedCheerio('.content').html();
+    const chapterName = loadedCheerio('.content > h2').text();
+    const chapterText = loadedCheerio('.content').html();
     if (!chapterText) return '';
     return chapterName + '\n' + chapterText;
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
-    const novels: Plugin.NovelItem[] = [];
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     // get novels using the search term
     // no page number, infinite scroll
 
     const newSearch = searchTerm.replace(/\s+/g, '+');
-    let url = this.site + '?s=' + newSearch;
-
-    console.log('SERCH URL: ', url);
+    const url = this.site + '?s=' + newSearch;
 
     const result = await fetch(url);
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
-
-    loadedCheerio('.minbox').each((index, element) => {
-      const name = loadedCheerio(element).find('h3').text();
-      const cover = loadedCheerio(element).find('img').attr('data-src');
-      const path = loadedCheerio(element)
-        .find('h3 > a')
-        .attr('href')
-        ?.slice(this.site.length)
-        .replace(/\/+$/, '');
-
-      if (!path) {
-        return;
-      }
-
-      novels.push({ name, cover, path });
-    });
-
-    return novels;
+    return this.parseNovels(loadedCheerio);
   }
+
+  filters = {
+    genre: {
+      value: '',
+      label: 'Filter By',
+      options: [
+        { label: 'All', value: '' },
+        { label: 'Action', value: '?n_orderby=16' },
+        { label: 'Adventure', value: '?n_orderby=11' },
+        { label: 'Angst', value: '?n_orderby=776' },
+        { label: 'Chinese', value: '?n_orderby=342' },
+        { label: 'Comedy', value: '?n_orderby=13' },
+        { label: 'Drama', value: '?n_orderby=3' },
+        { label: 'Fantasy', value: '?n_orderby=7' },
+        { label: 'Japanese', value: '?n_orderby=343' },
+        { label: 'Korean', value: '?n_orderby=341' },
+        { label: 'Mature', value: '?n_orderby=778' },
+        { label: 'Mystery', value: '?n_orderby=12' },
+        { label: 'Original Novel', value: '?n_orderby=339' },
+        { label: 'Psychological', value: '?n_orderby=769' },
+        { label: 'Romance', value: '?n_orderby=5' },
+        { label: 'Sci-fi', value: '?n_orderby=14' },
+        { label: 'Slice of Life', value: '?n_orderby=779' },
+        { label: 'Supernatural', value: '?n_orderby=780' },
+        { label: 'Tragedy', value: '?n_orderby=777' },
+      ],
+      type: FilterTypes.Picker,
+    },
+  } satisfies Filters;
 }
 
 export default new Rainofsnow();
