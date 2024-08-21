@@ -91,6 +91,7 @@ class FaqWikiUs implements Plugin.PluginBase {
       const multiWordGenres = [
         //add more when found
         'Slice of Life',
+        'School Life',
       ];
       multiWordGenres.forEach(genre => {
         genreText = genreText.replace(
