@@ -68,10 +68,9 @@ class FaqWikiUs implements Plugin.PluginBase {
       .replace('Novel – All Chapters', '')
       .trim();
 
-    novel.cover = loadedCheerio('.wp-block-image')
-      .find('img')
-      .attr('src')
-      ?.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
+    const img = loadedCheerio('.wp-block-image img');
+    const cover = img.attr('data-ezsrc') || img.attr('src');
+    novel.cover = cover?.replace(/\?ezimgfmt=.*$/, ''); // Regular expression magic!
 
     const status = loadedCheerio(
       "#lcp_instance_0 +:icontains('complete')",
