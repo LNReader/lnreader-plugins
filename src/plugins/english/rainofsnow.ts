@@ -103,7 +103,7 @@ class Rainofsnow implements Plugin.PagePlugin {
         ?.slice(this.site.length);
       if (!path) return;
       const name = loadedCheerio(el).find('.chapter').first().text().trim();
-      const date = loadedCheerio(el).find('small').text().trim();
+      const date = loadedCheerio(el).find('small').text().trim().toLowerCase();
       const months = [
         'jan',
         'feb',
@@ -118,9 +118,9 @@ class Rainofsnow implements Plugin.PagePlugin {
         'nov',
         'dec',
       ];
-      const regex = /(\w+)\s(\d{1,2}),\s(\d{4})/;
+      const regex = /([a-z]+)\s(\d{1,2}),\s(\d{4})/;
       const [, monthName, day, year] = regex.exec(date) || [];
-      const month = months.indexOf(monthName.toLowerCase().slice(0, 3));
+      const month = months.indexOf(monthName.slice(0, 3));
       const releaseTime =
         monthName && month !== -1
           ? new Date(+year, month, +day).toISOString()
