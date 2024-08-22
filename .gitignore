@@ -14,3 +14,4 @@ dist
 total.svg
 src/plugins/index.ts
 .history
+.tool-versions

@@ -7,8 +7,8 @@ class NovelBin implements Plugin.PluginBase {
   id = 'novelbin';
   name = 'Novel Bin';
   icon = 'src/en/novelbin/icon.png';
-  site = 'https://binnovel.com/';
-  version = '1.0.1';
+  site = 'https://lightnovel.novelupdates.net/';
+  version = '1.0.2';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
@@ -19,13 +19,18 @@ class NovelBin implements Plugin.PluginBase {
 
     loadedCheerio('.col-novel-main .list-novel .row').each((i, el) => {
       const novelName = loadedCheerio(el).find('h3.novel-title > a').text();
-      const novelCover = loadedCheerio(el)
-        .find('img.cover')
-        .attr('data-src')
-        ?.replace('_200_89', '');
-      const novelUrl = loadedCheerio(el)
-        .find('h3.novel-title > a')
-        .attr('href');
+      const novelCover =
+        loadedCheerio(el)
+          .find('img.cover')
+          .attr('data-src')
+          ?.replace('_200_89', '') ??
+        loadedCheerio(el).find('img.cover').attr('src')?.replace('_200_89', '');
+      const novelUrl =
+        'book/' +
+        loadedCheerio(el)
+          .find('h3.novel-title > a')
+          .attr('href')
+          ?.replace(/.*\//, '');
 
       if (!novelUrl) return;
 
@@ -130,10 +135,14 @@ class NovelBin implements Plugin.PluginBase {
     const body = await fetchApi(this.site + chapterPath).then(r => r.text());
 
     const loadedCheerio = parseHTML(body);
+    const regex = new RegExp(/original11Content\.replace\((.*?)\);/, '');
+    const replace = body.match(regex)?.[1].split(', ')?.[0];
 
     loadedCheerio('#chr-content > div,h6,p[style="display: none;"]').remove();
-    const chapterText = loadedCheerio('#chr-content').html() || '';
-
+    let chapterText = loadedCheerio('#chr-content').html() || '';
+    if (chapterText && replace) {
+      chapterText.replaceAll(replace, '');
+    }
     return chapterText;
   }
 
