@@ -141,7 +141,7 @@ class NovelBin implements Plugin.PluginBase {
     loadedCheerio('#chr-content > div,h6,p[style="display: none;"]').remove();
     let chapterText = loadedCheerio('#chr-content').html() || '';
     if (chapterText && replace) {
-      chapterText.replaceAll(replace, '');
+      chapterText.replace(new RegExp(replace, 'g'), '');
     }
     return chapterText;
   }
