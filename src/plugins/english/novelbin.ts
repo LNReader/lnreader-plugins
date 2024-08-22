@@ -8,7 +8,7 @@ class NovelBin implements Plugin.PluginBase {
   name = 'Novel Bin';
   icon = 'src/en/novelbin/icon.png';
   site = 'https://lightnovel.novelupdates.net/';
-  version = '1.0.2';
+  version = '1.0.3';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
