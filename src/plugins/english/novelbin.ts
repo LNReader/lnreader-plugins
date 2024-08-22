@@ -135,13 +135,14 @@ class NovelBin implements Plugin.PluginBase {
     const body = await fetchApi(this.site + chapterPath).then(r => r.text());
 
     const loadedCheerio = parseHTML(body);
-    const regex = new RegExp(/original11Content\.replace\((.*?)\);/, '');
-    const replace = body.match(regex)?.[1].split(', ')?.[0];
+    const regex = new RegExp(/original11Content\.replace\("(.*?)\);/, '');
+    const replace = body.match(regex)?.[1].split('", ')?.[0];
 
     loadedCheerio('#chr-content > div,h6,p[style="display: none;"]').remove();
+
     let chapterText = loadedCheerio('#chr-content').html() || '';
     if (chapterText && replace) {
-      chapterText.replace(new RegExp(replace, 'g'), '');
+      chapterText = chapterText.split(replace).join('');
     }
     return chapterText;
   }
