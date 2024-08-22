@@ -113,7 +113,7 @@ class FreeWebNovel implements Plugin.PluginBase {
     // remove freewebnovel signature
     if (loadedCheerio('style').text().includes('p:nth-last-child(1)'))
       loadedCheerio('div.txt').find('p:last-child').remove();
-    
+
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText
       .replace(
