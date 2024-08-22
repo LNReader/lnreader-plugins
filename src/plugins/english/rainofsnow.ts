@@ -118,7 +118,7 @@ class Rainofsnow implements Plugin.PagePlugin {
         'nov',
         'dec',
       ];
-      const regex = /(\S+) (..?), (.+)/;
+      const regex = /([a-z]+) (..?), (.+)/;
       const [, monthName, day, year] = regex.exec(date) || [];
       const month = months.indexOf(monthName.slice(0, 3));
       const releaseTime =
