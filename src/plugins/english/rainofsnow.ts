@@ -49,7 +49,6 @@ class Rainofsnow implements Plugin.PagePlugin {
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
       name: '',
-      chapters: [],
       totalPages: 0,
     };
 
@@ -70,7 +69,7 @@ class Rainofsnow implements Plugin.PagePlugin {
     novel.author = loadedCheerio('span:contains("Author")').next().text();
 
     let x = 1;
-    loadedCheerio('.page-numbers li').each(function (i, el) {
+    loadedCheerio('.page-numbers li').each((i, el) => {
       const num = loadedCheerio(el).find('a').text().trim().match(/(\d+)/);
       const n = Number(num?.[1] || '0');
       if (n > x) {
@@ -79,7 +78,7 @@ class Rainofsnow implements Plugin.PagePlugin {
     });
 
     novel.totalPages = x;
-
+    novel.chapters = this.parseChapters(loadedCheerio);
     novel.status = NovelStatus.Unknown;
     return novel;
   }
