@@ -32,7 +32,7 @@ class FaqWikiUs implements Plugin.PluginBase {
         .attr('href')
         ?.replace('tp:', 'tps:')
         ?.replace(this.site, '')
-        ?.slice(0, -1);
+        ?.replace(/\/+$/, '');
       if (!path) return;
 
       novels.push({ name, cover, path });
@@ -125,7 +125,7 @@ class FaqWikiUs implements Plugin.PluginBase {
       const path = loadedCheerio(element)
         .attr('href')
         ?.replace(this.site, '')
-        ?.slice(0, -1);
+        ?.replace(/\/+$/, '');
       const chapterNumber = chapterIndex + 1;
       if (!path) return;
       chapters.push({
