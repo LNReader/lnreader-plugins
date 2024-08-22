@@ -31,7 +31,7 @@ class FaqWikiUs implements Plugin.PluginBase {
         .find('a')
         .attr('href')
         ?.replace('tp:', 'tps:')
-        ?.slice(this.site.length)
+        ?.replace(this.site, '')
         ?.slice(0, -1);
       if (!path) return;
 
@@ -124,7 +124,7 @@ class FaqWikiUs implements Plugin.PluginBase {
         .trim();
       const path = loadedCheerio(element)
         .attr('href')
-        ?.slice(this.site.length)
+        ?.replace(this.site, '')
         ?.slice(0, -1);
       const chapterNumber = chapterIndex + 1;
       if (!path) return;
