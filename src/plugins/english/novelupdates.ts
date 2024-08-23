@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.1';
+  version = '0.8.2';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -164,7 +164,7 @@ class NovelUpdates implements Plugin.PluginBase {
     };
 
     const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
-    const batchSize = 20;
+    const batchSize = 10;
 
     // Parse all pages in batches
     await parsePagesInBatches(pagesArray, batchSize);
