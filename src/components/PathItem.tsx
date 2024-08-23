@@ -3,10 +3,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import CopiableItem from './CopiableItem';
 
-interface Validation {
+type Validation = {
   type?: 'error' | 'warning';
   message?: string;
-}
+};
 
 const validatePath = (path: string): Validation => {
   if (path.includes('http'))

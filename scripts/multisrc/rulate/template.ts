@@ -5,12 +5,12 @@ import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
-export interface RulateMetadata {
+export type RulateMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   filters?: Filters;
-}
+};
 
 class RulatePlugin implements Plugin.PluginBase {
   id: string;
@@ -192,13 +192,6 @@ class RulatePlugin implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
-    loadedCheerio('.content-text img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const src = loadedCheerio(element).attr('src');
-        loadedCheerio(element).attr('src', this.site + src);
-      }
-    });
-
     const chapterText = loadedCheerio('.content-text').html();
     return chapterText || '';
   }
@@ -248,10 +241,10 @@ class RulatePlugin implements Plugin.PluginBase {
   };
 }
 
-interface response {
+type response = {
   id: number;
   title_one: string;
   title_two: string;
   url: string;
   img: string;
-}
+};
