@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.0';
+  version = '0.8.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -106,7 +106,6 @@ class NovelUpdates implements Plugin.PluginBase {
     novelPath: string,
     pages: number,
   ): Promise<Plugin.ChapterItem[]> {
-    const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
     const allChapters: Plugin.ChapterItem[] = [];
 
     // Function to parse a single page
@@ -149,13 +148,26 @@ class NovelUpdates implements Plugin.PluginBase {
       return chapters;
     };
 
-    // Parse all pages in parallel
-    const chaptersArray = await Promise.all(pagesArray.map(parsePage));
+    // Function to parse pages in batches
+    const parsePagesInBatches = async (
+      pagesArray: number[],
+      batchSize: number,
+    ) => {
+      for (let i = 0; i < pagesArray.length; i += batchSize) {
+        const batch = pagesArray.slice(i, i + batchSize);
+        const chaptersArray = await Promise.all(batch.map(parsePage));
 
-    // Merge all chapters into a single array
-    for (const chapters of chaptersArray) {
-      allChapters.push(...chapters);
-    }
+        for (const chapters of chaptersArray) {
+          allChapters.push(...chapters);
+        }
+      }
+    };
+
+    const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
+    const batchSize = 20;
+
+    // Parse all pages in batches
+    await parsePagesInBatches(pagesArray, batchSize);
 
     return allChapters.length === 0 ? [] : allChapters.reverse();
   }
