@@ -26,6 +26,7 @@ const proxyRequest = (req, res) => {
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
   var statusCode = proxyRes.statusCode;
+  // Redirect
   if (
     statusCode === 301 ||
     statusCode === 302 ||
@@ -82,7 +83,7 @@ const cookiesHandler = (req, res) => {
 
 http
   .createServer(function (req, res) {
-    const path = req.url.replace(/^\//, '');
+    const path = req.url.charAt(0) === '/' ? req.url.slice(1) : req.url;
     if (req.headers['access-control-request-method']) {
       res.setHeader(
         'access-control-allow-methods',
