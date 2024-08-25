@@ -1,5 +1,7 @@
 import { FilterToValues, Filters } from '@libs/filterInputs';
+import { util } from 'protobufjs';
 export namespace Plugin {
+  import float = util.float;
   export type ChapterItem = {
     name: string;
     path: string;
@@ -30,6 +32,7 @@ export namespace Plugin {
     author?: string;
     artist?: string;
     status?: string;
+    rating?: number;
     chapters?: ChapterItem[];
   } & NovelItem;
 
