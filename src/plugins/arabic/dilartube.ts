@@ -132,7 +132,7 @@ class Sunovels implements Plugin.PluginBase {
       '3': 'Completed',
     }[statusId] || 'Unknown';
     novel.status = statusText
-    chapters.map((item: ChapterRelease) => {
+    chapterData.map((item: ChapterRelease) => {
       chapters.push({
         name: item.title,
         releaseTime: new Date(item.created_at).toISOString(),
