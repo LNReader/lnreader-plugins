@@ -734,6 +734,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - FictionRead (Outlier)
      * - Novel World Translations (Outlier)
      * - SacredText TL (Outlier)
+     * - Toasteful
      *
      * WordPress sites:
      * - Anomlaously Creative (Outlier)
@@ -763,13 +764,19 @@ class NovelUpdates implements Plugin.PluginBase {
     if (!isWordPress && !isBlogspot) {
       chapterText = await this.getChapterBody(loadedCheerio, domain, url);
     } else if (isBlogspot) {
-      bloatClasses = ['.button-container', '.separator'];
+      bloatClasses = [
+        '.button-container',
+        '.ChapterNav',
+        '.ch-bottom',
+        '.separator',
+      ];
       bloatClasses.map(tag => loadedCheerio(tag).remove());
       chapterTitle =
         loadedCheerio('.entry-title').first().text() ||
         loadedCheerio('.post-title').first().text() ||
         'Title not found';
       chapterContent =
+        loadedCheerio('.content-post').html() ||
         loadedCheerio('.entry-content').html() ||
         loadedCheerio('.post-body').html() ||
         'Content not found';
