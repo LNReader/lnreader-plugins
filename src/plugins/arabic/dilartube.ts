@@ -90,7 +90,7 @@ class dilartube implements Plugin.PluginBase {
     //     link += `&status=${filters.status.value}`;
     //   }
     // }
-    // link += `&page=${pageCorrected}`;
+    link += `?page=${page}`;
     // const body = await fetchApi(link).then(r => r.text());
     const response = await fetchApi(link).then(r => r.json());
     console.log(response)
