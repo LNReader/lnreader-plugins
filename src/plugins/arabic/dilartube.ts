@@ -44,7 +44,7 @@ function decrypt(responseData: string): string {
   return aesDecrypt(enc[0], secretKey, enc[2]);
 }
 
-class Sunovels implements Plugin.PluginBase {
+class dilartube implements Plugin.PluginBase {
   id = 'dilartube';
   name = 'dilar tube';
   version = '1.0.0';
@@ -53,17 +53,19 @@ class Sunovels implements Plugin.PluginBase {
 
   parseNovels(data: ApiResponse): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
+    const seenTitles = new Set<string>();
     data.releases
-    .filter((release) => release.manga.is_novel)  // Filter for novels only
+    .filter((release) => release.manga.is_novel)
     .map((release) => {
       const manga = release.manga;
-
+      if (!seenTitles.has(manga.title)) {
+        seenTitles.add(manga.title);
       novels.push({
-        name: manga.title,  // Extract the novel's title
-        path: `api/mangas/${manga.id}`,  // Construct the path, using id or slug if available
-        cover: `uploads/manga/cover/3543/${manga.cover}`,  // Construct the full cover URL
+        name: manga.title,  
+        path: `mangas/${manga.id}`,  
+        cover: `${this.site}uploads/manga/cover/${manga.id}/${manga.cover}`,  
       });
-    });
+    }});
     return novels;
   }
 
@@ -73,7 +75,7 @@ class Sunovels implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}releases`;
     if (showLatestNovels){
-      link = `${this.site}releases`;
+      link = `${this.site}/api/releases`;
     }
     // if (filters) {
     //   if (
@@ -97,25 +99,24 @@ class Sunovels implements Plugin.PluginBase {
 
   async parseNovel(novelUrl: string): Promise<Plugin.SourceNovel> {
     const chapterItems: Plugin.ChapterItem[] = [];
-    let fullUrl = this.site + novelUrl;
-    let chapterUrl = this.site + novelUrl + '/releases'
+    let fullUrl = this.site + 'api/' + novelUrl;
+    let chapterUrl = this.site + 'api/' + novelUrl + '/releases'
     const manga = await fetchApi(fullUrl).then(r => r.json());
     const chapters = await fetchApi(chapterUrl).then(r => r.json());
     const mangaData = manga.mangaData;
     const chapterData = chapters.releases
   
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Plugin.SourceNovel = {
       path: novelUrl,
       name: mangaData.arabic_title || 'Untitled',
       author: (mangaData.authors.length > 0 ? mangaData.authors[0].name : '') || 'Unknown',
       summary: mangaData.summary || '',
       cover: `${this.site}uploads/manga/cover/${mangaData.id}/${mangaData.cover}`,
-      totalPages: 1,
       chapters: [],
     };
   
     // Status and genres
-    const translationStatusId:string = mangaData.status.toString();
+    const translationStatusId:string = mangaData.translation_status;
     const translationText = {
       '1': 'مستمره',
       '0': 'منتهية',
@@ -126,103 +127,28 @@ class Sunovels implements Plugin.PluginBase {
     const mainGenres = mangaData.categories.map(category => category.name).join(',');
     novel.genres = `${translationText},${mainGenres}`;
     
-    const statusId:string = mangaData.status.toString();
+    const statusId:string = mangaData.story_status;
     const statusText = {
       '2': 'Ongoing',
       '3': 'Completed',
     }[statusId] || 'Unknown';
     novel.status = statusText
     chapterData.map((item: ChapterRelease) => {
-      chapters.push({
+      chapterItems.push({
         name: item.title,
         releaseTime: new Date(item.created_at).toISOString(),
         path: `${novelUrl}/${mangaData.title.replace(' ','-')}/${item.chapter}`,
         chapterNumber: item.chapter,
       });
     });
-    novel.chapters = chapterItems;
+    novel.chapters = chapterItems.reverse();
     return novel;
-  }
-  parseChapters(data: { chapters: ChapterEntry[] }) {
-    const chapter: Plugin.ChapterItem[] = [];
-    data.chapters.map((item: ChapterEntry) => {
-      chapter.push({
-        name: item.chapterName,
-        releaseTime: new Date(item.releaseTime).toISOString(),
-        path: item.chapterUrl,
-        chapterNumber: item.chapterNumber,
-      });
-    });
-    return chapter;
-  }
-  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const numPage = parseInt(page, 10);
-    const pageCorrected = numPage - 1;
-    const pagePath = novelPath;
-    const firstUrl = this.site + pagePath;
-    const pageUrl = firstUrl + '?activeTab=chapters&page=' + pageCorrected;
-    const body = await fetchApi(pageUrl).then(r => r.text());
-    const loadedCheerio = parseHTML(body);
-    let dataJson: {
-      pages_count: string;
-      chapters: ChapterEntry[];
-    } = { pages_count: '', chapters: [] };
-    const chaptersinfo: {
-      chapterName: string;
-      chapterUrl: string;
-      releaseTime: string;
-      chapterNumber: string | number;
-    }[] = [];
-    loadedCheerio('ul.chaptersList a').each((i, el) => {
-      const chapterName: string = loadedCheerio(el).attr('title') ?? '';
-      const chapterUrl = loadedCheerio(el)
-        .attr('href')
-        ?.trim()
-        .replace(/^\/*/, '');
-      const dateAttr = loadedCheerio(el)
-        .find('time.chapter-update')
-        .attr('datetime');
-      const date = new Date(dateAttr);
-      const releaseTime = date.toISOString();
-      const chapternumber = loadedCheerio(el)
-        .find('strong.chapter-title')
-        .text()
-        .replace(/[^\d٠-٩]/g, '');
-      const chapterNumber = parseInt(chapternumber, 10);
-      chaptersinfo.push({
-        chapterName: chapterName,
-        chapterUrl: chapterUrl || '',
-        releaseTime: releaseTime || '',
-        chapterNumber: chapterNumber || '',
-      });
-    });
-    const pagecount = loadedCheerio('ul.pagination a.active').text();
-    dataJson.pages_count = pagecount;
-
-    dataJson.chapters = chaptersinfo;
-    const chapters = this.parseChapters(dataJson);
-    return {
-      chapters,
-    };
   }
   async parseChapter(chapterUrl: string): Promise<string> {
     const result = await fetchApi(new URL(chapterUrl, this.site).toString());
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
-    let chapterText = '';
-    loadedCheerio('div.chapter-content').each((idx, ele) => {
-      loadedCheerio(ele)
-        .find('p')
-        .not('.d-none')
-        .each((idx, textEle) => {
-          chapterText +=
-            loadedCheerio(textEle)
-              .map((_, pEle) => loadedCheerio(pEle).text().trim())
-              .get()
-              .join(' ') + ' ';
-        });
-    });
-    chapterText = chapterText.trim();
+    const chapterText = loadedCheerio('div.reader-content').text().trim();
     return chapterText;
   }
 
@@ -237,9 +163,9 @@ class Sunovels implements Plugin.PluginBase {
       headers: {
         'Content-Type': 'application/json',
       },
-      'Sec-Fetch-Mode': 'no-cors',
+      mode: 'cors',
       body: JSON.stringify({
-        title: `"${searchTerm}"`,
+        title: {searchTerm},
         manga_types: {
           include: ["1", "2", "3", "4", "5", "6", "7", "8"],
           exclude: [],
@@ -274,8 +200,8 @@ class Sunovels implements Plugin.PluginBase {
     const body = await result.json();
     const decryptedData = decrypt(body.data);
     const jsonData = JSON.parse(decryptedData);
-    const loadedCheerio = parseHTML(jsonData);
-    return this.parseNovels(loadedCheerio);
+
+    return this.parseNovels(jsonData);
   }
 
   filters = {
@@ -283,53 +209,6 @@ class Sunovels implements Plugin.PluginBase {
       value: [],
       label: 'التصنيفات',
       options: [
-        { label: 'Wuxia', value: 'Wuxia' },
-        { label: 'Xianxia', value: 'Xianxia' },
-        { label: 'XUANHUAN', value: 'XUANHUAN' },
-        { label: 'أصلية', value: 'أصلية' }, // Original
-        { label: 'أكشن', value: 'أكشن' }, // Action
-        { label: 'إثارة', value: 'إثارة' }, // Thriller
-        { label: 'إنتقال الى عالم أخر', value: 'إنتقال+الى+عالم+أخر' }, // Isekai
-        { label: 'إيتشي', value: 'إيتشي' }, // Ecchi
-        { label: 'الخيال العلمي', value: 'الخيال+العلمي' }, // Science Fiction
-        { label: 'بوليسي', value: 'بوليسي' }, // Detective
-        { label: 'تاريخي', value: 'تاريخي' }, // Historical
-        { label: 'تقمص شخصيات', value: 'تقمص+شخصيات' }, // Roleplaying
-        { label: 'جريمة', value: 'جريمة' }, // Crime
-        { label: 'جوسى', value: 'جوسى' }, // Josei
-        { label: 'حريم', value: 'حريم' }, // Harem
-        { label: 'حياة مدرسية', value: 'حياة+مدرسية' }, // School Life
-        { label: 'خارقة للطبيعة', value: 'خارقة+للطبيعة' }, // Supernatural
-        { label: 'خيالي', value: 'خيالي' }, // Fantasy
-        { label: 'دراما', value: 'دراما' }, // Drama
-        { label: 'رعب', value: 'رعب' }, // Horror
-        { label: 'رومانسي', value: 'رومانسي' }, // Romance
-        { label: 'سحر', value: 'سحر' }, // Magic
-        { label: 'سينن', value: 'سينن' }, // Seinen
-        { label: 'شريحة من الحياة', value: 'شريحة+من+الحياة' }, // Slice of Life
-        { label: 'شونين', value: 'شونين' }, // Shounen
-        { label: 'غموض', value: 'غموض' }, // Mystery
-        { label: 'فنون القتال', value: 'فنون+القتال' }, // Martial Arts
-        { label: 'قوى خارقة', value: 'قوى+خارقة' }, // Super Powers
-        { label: 'كوميدى', value: 'كوميدى' }, // Comedy
-        { label: 'مأساوي', value: 'مأساوي' }, // Tragedy
-        { label: 'ما بعد الكارثة', value: 'ما+بعد+الكارثة' }, // Post-Apocalypse
-        { label: 'مغامرة', value: 'مغامرة' }, // Adventure
-        { label: 'ميكا', value: 'ميكا' }, // Mecha
-        { label: 'ناضج', value: 'ناضج' }, // Mature
-        { label: 'نفسي', value: 'نفسي' }, // Psychological
-        { label: 'فانتازيا', value: 'فانتازيا' }, // Fantasy
-        { label: 'رياضة', value: 'رياضة' }, // Sports
-        { label: 'ابراج', value: 'ابراج' }, // Astrology
-        { label: 'الالهة', value: 'الالهة' }, // Deities
-        { label: 'شياطين', value: 'شياطين' }, // Demons
-        { label: 'السفر عبر الزمن', value: 'السفر+عبر+الزمن' }, // Time Travel
-        { label: 'رواية صينية', value: 'رواية+صينية' }, // Chinese Novel
-        { label: 'رواية ويب', value: 'رواية+ويب' }, // Web Novel
-        { label: 'لايت نوفل', value: 'لايت+نوفل' }, // Light Novel
-        { label: 'كوري', value: 'كوري' }, // Korean
-        { label: '+18', value: '%2B18' }, // +18
-        { label: 'إيسكاي', value: 'إيسكاي' }, // Isekai
         { label: 'ياباني', value: 'ياباني' }, // Japanese
         { label: 'مؤلفة', value: 'مؤلفة' }, // Authored
       ],
@@ -349,41 +228,8 @@ class Sunovels implements Plugin.PluginBase {
   } satisfies Filters;
 }
 
-export default new Sunovels();
+export default new dilartube();
 
-interface ChapterEntry {
-  chapterName: string;
-  chapterUrl: string;
-  releaseTime: string;
-  chapterNumber: string | number;
-}
-interface Uploader {
-  id: number;
-  nick: string;
-  rev_links: any[];
-  admob_rewarded_tag_ios: string | null;
-  admob_rewarded_tag_android: string | null;
-}
-
-interface Team {
-  id: number;
-  name: string;
-  rating: number;
-  settings: Record<string, unknown>;
-  paypal: string | null;
-}
-
-interface CoverBlurhash {
-  hash: string;
-  width: number;
-  height: number;
-}
-
-interface BannerBlurhash {
-  hash: string;
-  width: number;
-  height: number;
-}
 
 interface Category {
   id: number;
@@ -409,9 +255,7 @@ interface Manga {
   cover: string;
   cover_pos: number;
   rectangle_cover_pos: number;
-  cover_blurhash: CoverBlurhash;
   banner: string;
-  banner_blurhash: BannerBlurhash;
   manga_type_id: number;
   reading_direction: string;
   story_status: number;
@@ -459,9 +303,7 @@ interface Release {
   team_rating: string;
   team_settings: string;
   team_paypal: string | null;
-  uploader: Uploader;
   has_rev_link: boolean;
-  teams: Team[];
   manga: Manga;
 }
 
@@ -595,9 +437,7 @@ type ChapterRelease = {
   title: string;
   team_id: number;
   team_name: string;
-  uploader: Uploader;
   has_rev_link: boolean;
-  teams: Team[];
 };
 
 type ChapterResponse = {
