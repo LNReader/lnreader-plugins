@@ -206,26 +206,43 @@ class dilartube implements Plugin.PluginBase {
   }
 
   filters = {
-    categories: {
-      value: [],
-      label: 'التصنيفات',
-      options: [
-        { label: 'ياباني', value: 'ياباني' }, // Japanese
-        { label: 'مؤلفة', value: 'مؤلفة' }, // Authored
-      ],
-      type: FilterTypes.CheckboxGroup,
-    },
-    status: {
-      value: '',
-      label: 'الحالة',
-      options: [
-        { label: 'جميع الروايات', value: '' },
-        { label: 'مكتمل', value: 'Completed' },
-        { label: 'جديد', value: 'New' },
-        { label: 'مستمر', value: 'Ongoing' },
-      ],
-      type: FilterTypes.Picker,
-    },
+    types: {
+    value: [],
+    label: 'الأنواع',
+    options: [
+      { label: 'يابانية', value: '1' }, // Japanese
+      { label: 'كورية', value: '2' }, // Korean
+      { label: 'صينية', value: '3' }, // Chinese
+      { label: 'عربية', value: '4' }, // Arabic
+      { label: 'كوميك', value: '5' }, // Comic
+      { label: 'هواة', value: '6' }, // Amateur
+      { label: 'إندونيسية', value: '7' }, // Indonesian
+      { label: 'روسية', value: '8' }, // Russian
+    ],
+    type: FilterTypes.CheckboxGroup,
+  },
+
+  status: {
+    value: '',
+    label: 'الحالة',
+    options: [
+      { label: 'مستمرة', value: '2' }, // Ongoing
+      { label: 'منتهية', value: '3' }, // Completed
+    ],
+    type: FilterTypes.CheckboxGroup,
+  },
+  
+  translation: {
+    value: [],
+    label: 'الترجمة',
+    options: [
+      { label: 'منتهية', value: '0' }, // Completed
+      { label: 'مستمرة', value: '1' }, // Ongoing
+      { label: 'متوقفة', value: '2' }, // Paused
+      { label: 'غير مترجمة', value: '3' }, // Not Translated
+    ],
+    type: FilterTypes.CheckboxGroup,
+  },
   } satisfies Filters;
 }
 
