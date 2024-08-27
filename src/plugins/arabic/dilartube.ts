@@ -162,6 +162,7 @@ class dilartube implements Plugin.PluginBase {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Referer: `${this.site}/`
       },
       mode: 'cors',
       body: JSON.stringify({
