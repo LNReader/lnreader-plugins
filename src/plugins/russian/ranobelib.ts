@@ -526,82 +526,82 @@ function jsonToHtml(json: HTML[], images, html = '') {
   return html;
 }
 
-interface HTML {
+type HTML = {
   type: string;
   content?: HTML[];
   attrs?: Attrs;
   text?: string;
-}
+};
 
-interface Attrs {
+type Attrs = {
   src: string;
   alt: string | null;
   title: string | null;
-}
+};
 
-interface authorization {
+type authorization = {
   token: Token;
   auth: Auth;
   timestamp: number;
-}
-interface Token {
+};
+type Token = {
   token_type: string;
   expires_in: number;
   access_token: string;
   refresh_token: string;
   timestamp: number;
-}
-interface Auth {
+};
+type Auth = {
   id: number;
   username: string;
   avatar: Cover;
   last_online_at: string;
   metadata: Metadata;
-}
-interface Metadata {
+};
+type Metadata = {
   auth_domains: string;
-}
+};
 
-interface TopLevel {
+type TopLevel = {
   data: DataClass | DataClass[];
   links?: Links;
   meta?: Meta;
-}
+};
 
-interface AgeRestriction {
+type AgeRestriction = {
   id: number;
   label: string;
-}
+};
 
-interface Branch {
+type Branch = {
   id: number;
   branch_id: null;
   created_at: string;
   teams: BranchTeam[];
   user: User;
-}
+};
 
-interface BranchTeam {
+type BranchTeam = {
   id: number;
   slug: string;
   slug_url: string;
   model: string;
   name: string;
   cover: Cover;
-}
+};
 
-interface Cover {
+type Cover = {
   filename: null | string;
   thumbnail: string;
   default: string;
-}
+};
 
-interface User {
+type User = {
   username: string;
   id: number;
-}
+};
 
-interface DataClass {
+type DataClass = {
   id: number;
   name: string;
   rus_name?: string;
@@ -633,9 +633,9 @@ interface DataClass {
   likes_count?: number;
   content?: any;
   attachments?: Attachment[];
-}
+};
 
-interface Artist {
+type Artist = {
   id: number;
   slug: string;
   slug_url: string;
@@ -648,16 +648,16 @@ interface Artist {
   confirmed: null;
   user_id: number;
   titles_count_details: null;
-}
+};
 
-interface Subscription {
+type Subscription = {
   is_subscribed: boolean;
   source_type: string;
   source_id: number;
   relation: null;
-}
+};
 
-interface Attachment {
+type Attachment = {
   id?: string;
   filename: string;
   name: string;
@@ -665,14 +665,14 @@ interface Attachment {
   url: string;
   width: number;
   height: number;
-}
+};
 
-interface Genre {
+type Genre = {
   id: number;
   name: string;
-}
+};
 
-interface DataTeam {
+type DataTeam = {
   id: number;
   slug: string;
   slug_url: string;
@@ -682,22 +682,22 @@ interface DataTeam {
   details?: Details;
   vk?: string;
   discord?: null;
-}
+};
 
-interface Details {
+type Details = {
   branch_id: null;
   is_active: boolean;
   subscriptions_count: null;
-}
+};
 
-interface Links {
+type Links = {
   first: string;
   last: null;
   prev: null;
   next: string;
-}
+};
 
-interface Meta {
+type Meta = {
   current_page?: number;
   from?: number;
   path?: string;
@@ -707,9 +707,9 @@ interface Meta {
   has_next_page?: boolean;
   seed?: string;
   country?: string;
-}
+};
 
-interface DataChapter {
+type DataChapter = {
   id: number;
   index: number;
   item_number: number;
@@ -719,4 +719,4 @@ interface DataChapter {
   name: string;
   branches_count: number;
   branches: Branch[];
-}
+};

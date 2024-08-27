@@ -946,7 +946,7 @@ class ReN implements Plugin.PluginBase {
 
 export default new ReN();
 
-interface responseNovels {
+type responseNovels = {
   id: number;
   secondary_name: string;
   main_name: string;
@@ -969,15 +969,15 @@ interface responseNovels {
   categories?: ItemEntity[] | null;
   rus_name?: string;
   en_name?: string;
-}
+};
 
-interface Img {
+type Img = {
   high?: string;
   mid?: string;
   low: string;
-}
+};
 
-interface responseNovel {
+type responseNovel = {
   id: number;
   img: Img;
   secondary_name: string;
@@ -1010,42 +1010,42 @@ interface responseNovel {
   uploaded: number;
   can_post_comments: boolean;
   adaptation: Adaptation | null;
-}
+};
 
-interface Adaptation {
+type Adaptation = {
   main_name: string;
   secondary_name: string;
   dir: string;
   img: string;
-}
+};
 
-interface ItemEntity {
+type ItemEntity = {
   id: number;
   name: string;
-}
-interface PublishersEntity {
+};
+type PublishersEntity = {
   id: number;
   name: string;
   img: string;
   dir: string;
   tagline: string;
   type: string;
-}
-interface BranchesEntity {
+};
+type BranchesEntity = {
   id: number;
   img: string;
   publishers?: PublishersEntity[] | null;
   subscribed: boolean;
   total_votes: number;
   count_chapters: number;
-}
-interface FirstChapter {
+};
+type FirstChapter = {
   id: number;
   tome: number;
   chapter: string;
-}
+};
 
-interface responseСhapters {
+type responseСhapters = {
   id: number;
   rated?: null;
   viewed?: null;
@@ -1060,9 +1060,9 @@ interface responseСhapters {
   pub_date?: null;
   upload_date: string;
   is_paid: boolean;
-}
+};
 
-interface responseСhapter {
+type responseСhapter = {
   id: number;
   chapter: string;
   name: string;
@@ -1078,4 +1078,4 @@ interface responseСhapter {
   index: number;
   publishers?: PublishersEntity[] | null;
   tome: number;
-}
+};
