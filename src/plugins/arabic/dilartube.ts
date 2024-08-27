@@ -166,7 +166,7 @@ class dilartube implements Plugin.PluginBase {
       },
       mode: 'cors',
       body: JSON.stringify({
-        title: {searchTerm},
+        title: searchTerm,
         manga_types: {
           include: ["1", "2", "3", "4", "5", "6", "7", "8"],
           exclude: [],
