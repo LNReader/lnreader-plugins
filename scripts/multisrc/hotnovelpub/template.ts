@@ -3,17 +3,17 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
-export interface HotNovelPubMetadata {
+export type HotNovelPubMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   filters?: Filters;
   options?: HotNovelPubOptions;
-}
+};
 
-interface HotNovelPubOptions {
+type HotNovelPubOptions = {
   lang?: string;
-}
+};
 
 class HotNovelPubPlugin implements Plugin.PluginBase {
   id: string;
@@ -161,16 +161,16 @@ class HotNovelPubPlugin implements Plugin.PluginBase {
   resolveUrl = (path: string) => this.site + '/' + path;
 }
 
-interface responseNovels {
+type responseNovels = {
   status: number;
   message: string;
   data: Data;
-}
-interface Data {
+};
+type Data = {
   category?: Category;
   books: Books;
-}
-interface Category {
+};
+type Category = {
   id: number;
   name: string;
   description: string;
@@ -178,13 +178,13 @@ interface Category {
   createdAt: string;
   updatedAt: string;
   countryId: number;
-}
-interface Books {
+};
+type Books = {
   total: number;
   pages_count: number;
   data?: DataEntity[];
-}
-interface DataEntity {
+};
+type DataEntity = {
   id: number;
   name: string;
   view: number;
@@ -193,24 +193,24 @@ interface DataEntity {
   slug: string;
   categories?: CategoriesEntity[] | null;
   source?: null;
-}
-interface CategoriesEntity {
+};
+type CategoriesEntity = {
   id: number;
   name: string;
   slug?: string;
-}
+};
 
-interface responseNovel {
+type responseNovel = {
   status: number;
   message: string;
   data: Data1;
-}
-interface Data1 {
+};
+type Data1 = {
   book: Book1;
   tags: Tags;
   chapters?: ChaptersEntity[];
-}
-interface Book1 {
+};
+type Book1 = {
   id: number;
   name: string;
   description: string;
@@ -229,47 +229,47 @@ interface Book1 {
   source?: null;
   idSource?: null;
   prize?: null;
-}
-interface Authorize {
+};
+type Authorize = {
   id: number;
   name: string;
   description: string;
   avatar: string;
   slug: string;
-}
-interface Tags {
+};
+type Tags = {
   tags_name?: string[] | null;
   tags?: CategoriesEntity[] | null;
-}
-interface ChaptersEntity {
+};
+type ChaptersEntity = {
   id: number;
   title: string;
   slug: string;
   index: number;
-}
+};
 
-interface ChapterType {
+type ChapterType = {
   type: string;
   data?: string[];
-}
+};
 
-interface responseSearch {
+type responseSearch = {
   status: number;
   message: string;
   data: Data2;
-}
-interface Data2 {
+};
+type Data2 = {
   books?: BooksEntity[] | null;
   authorizes?: AuthorizesEntityOrCategoriesEntity[] | null;
   categories?: AuthorizesEntityOrCategoriesEntity[] | null;
-}
-interface BooksEntity {
+};
+type BooksEntity = {
   id: number;
   name: string;
   slug: string;
-}
-interface AuthorizesEntityOrCategoriesEntity {
+};
+type AuthorizesEntityOrCategoriesEntity = {
   id: number;
   name: string;
   slug: string;
-}
+};

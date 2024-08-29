@@ -6,21 +6,21 @@ import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 import { Filters } from '@libs/filterInputs';
 
-interface LightNovelWPOptions {
+type LightNovelWPOptions = {
   reverseChapters?: boolean;
   lang?: string;
   versionIncrements?: number;
   seriesPath?: string;
   customJs?: string;
-}
+};
 
-export interface LightNovelWPMetadata {
+export type LightNovelWPMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: LightNovelWPOptions;
   filters?: any;
-}
+};
 
 class LightNovelWPPlugin implements Plugin.PluginBase {
   id: string;
@@ -37,7 +37,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${2 + versionIncrements}`;
+    this.version = `1.1.${4 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
@@ -73,6 +73,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   }
 
   parseNovels(html: string): Plugin.NovelItem[] {
+    html = load(html).html(); // fix "'" beeing replaced by "&#8217;" (html entities)
     const novels: Plugin.NovelItem[] = [];
 
     const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
@@ -82,7 +83,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
       if (novelName && novelUrl) {
         const novelCover =
-          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/>/) || [];
+          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/?>/) || [];
 
         novels.push({
           name: novelName,
@@ -177,12 +178,12 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           isReadingStatus = true;
         }
         // chapters
-        else if (attribs['class'] === 'eplister eplisterfull') {
+        else if (attribs['class'] && attribs['class'].includes('eplister')) {
           isParsingChapterList = true;
         } else if (isParsingChapterList && name === 'li') {
           isReadingChapter = true;
         } else if (isReadingChapter) {
-          if (name === 'a') {
+          if (name === 'a' && tempChapter.path === undefined) {
             tempChapter.path = attribs['href'].replace(baseURL, '').trim();
           } else if (attribs['class'] === 'epl-num') {
             isReadingChapterInfo = 1;

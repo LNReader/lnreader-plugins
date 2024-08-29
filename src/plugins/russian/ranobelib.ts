@@ -18,7 +18,7 @@ class RLIB implements Plugin.PluginBase {
   name = 'RanobeLib';
   site = 'https://ranobelib.me';
   apiSite = 'https://api.lib.social/api/manga/';
-  version = '2.0.1';
+  version = '2.0.2';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
 
@@ -189,7 +189,7 @@ class RLIB implements Plugin.PluginBase {
       ).then(res => res.json());
       chapterText =
         result?.data?.content?.type == 'doc'
-          ? jsonToHtml(result.data.content.content)
+          ? jsonToHtml(result.data.content.content, result.data.attachments)
           : result?.data?.content;
     }
 
@@ -477,7 +477,7 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
-function jsonToHtml(json: HTML[], html = '') {
+function jsonToHtml(json: HTML[], images, html = '') {
   json.forEach(element => {
     switch (element.type) {
       case 'hardBreak':
@@ -487,7 +487,16 @@ function jsonToHtml(json: HTML[], html = '') {
         html += '<hr>';
         break;
       case 'image':
-        if (element.attrs) {
+        if (element.attrs?.images?.length) {
+          element.attrs.images.forEach(({ image }) => {
+            const file = images.find(
+              file => file.name == image || file.id == image,
+            );
+            if (file) {
+              html += `<img src='${file.url}'>`;
+            }
+          });
+        } else if (element.attrs) {
           const attrs = Object.entries(element.attrs)
             .filter(attr => attr?.[1])
             .map(attr => `${attr[0]}="${attr[1]}"`);
@@ -497,13 +506,13 @@ function jsonToHtml(json: HTML[], html = '') {
       case 'paragraph':
         html +=
           '<p>' +
-          (element.content ? jsonToHtml(element.content) : '<br>') +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
           '</p>';
         break;
       case 'heading':
         html +=
           '<h2>' +
-          (element.content ? jsonToHtml(element.content) : '<br>') +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
           '</h2>';
         break;
       case 'text':
@@ -517,82 +526,82 @@ function jsonToHtml(json: HTML[], html = '') {
   return html;
 }
 
-interface HTML {
+type HTML = {
   type: string;
   content?: HTML[];
   attrs?: Attrs;
   text?: string;
-}
+};
 
-interface Attrs {
+type Attrs = {
   src: string;
   alt: string | null;
   title: string | null;
-}
+};
 
-interface authorization {
+type authorization = {
   token: Token;
   auth: Auth;
   timestamp: number;
-}
-interface Token {
+};
+type Token = {
   token_type: string;
   expires_in: number;
   access_token: string;
   refresh_token: string;
   timestamp: number;
-}
-interface Auth {
+};
+type Auth = {
   id: number;
   username: string;
   avatar: Cover;
   last_online_at: string;
   metadata: Metadata;
-}
-interface Metadata {
+};
+type Metadata = {
   auth_domains: string;
-}
+};
 
-interface TopLevel {
+type TopLevel = {
   data: DataClass | DataClass[];
   links?: Links;
   meta?: Meta;
-}
+};
 
-interface AgeRestriction {
+type AgeRestriction = {
   id: number;
   label: string;
-}
+};
 
-interface Branch {
+type Branch = {
   id: number;
   branch_id: null;
   created_at: string;
   teams: BranchTeam[];
   user: User;
-}
+};
 
-interface BranchTeam {
+type BranchTeam = {
   id: number;
   slug: string;
   slug_url: string;
   model: string;
   name: string;
   cover: Cover;
-}
+};
 
-interface Cover {
+type Cover = {
   filename: null | string;
   thumbnail: string;
   default: string;
-}
+};
 
-interface User {
+type User = {
   username: string;
   id: number;
-}
+};
 
-interface DataClass {
+type DataClass = {
   id: number;
   name: string;
   rus_name?: string;
@@ -624,9 +633,9 @@ interface DataClass {
   likes_count?: number;
   content?: any;
   attachments?: Attachment[];
-}
+};
 
-interface Artist {
+type Artist = {
   id: number;
   slug: string;
   slug_url: string;
@@ -639,31 +648,31 @@ interface Artist {
   confirmed: null;
   user_id: number;
   titles_count_details: null;
-}
+};
 
-interface Subscription {
+type Subscription = {
   is_subscribed: boolean;
   source_type: string;
   source_id: number;
   relation: null;
-}
+};
 
-interface Attachment {
-  id: null;
+type Attachment = {
+  id?: string;
   filename: string;
   name: string;
   extension: string;
   url: string;
   width: number;
   height: number;
-}
+};
 
-interface Genre {
+type Genre = {
   id: number;
   name: string;
-}
+};
 
-interface DataTeam {
+type DataTeam = {
   id: number;
   slug: string;
   slug_url: string;
@@ -673,22 +682,22 @@ interface DataTeam {
   details?: Details;
   vk?: string;
   discord?: null;
-}
+};
 
-interface Details {
+type Details = {
   branch_id: null;
   is_active: boolean;
   subscriptions_count: null;
-}
+};
 
-interface Links {
+type Links = {
   first: string;
   last: null;
   prev: null;
   next: string;
-}
+};
 
-interface Meta {
+type Meta = {
   current_page?: number;
   from?: number;
   path?: string;
@@ -698,9 +707,9 @@ interface Meta {
   has_next_page?: boolean;
   seed?: string;
   country?: string;
-}
+};
 
-interface DataChapter {
+type DataChapter = {
   id: number;
   index: number;
   item_number: number;
@@ -710,4 +719,4 @@ interface DataChapter {
   name: string;
   branches_count: number;
   branches: Branch[];
-}
+};

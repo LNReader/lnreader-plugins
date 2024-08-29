@@ -367,14 +367,14 @@ class LnMTLPlugin implements Plugin.PagePlugin {
 
 export default new LnMTLPlugin();
 
-interface ChapterEntry {
+type ChapterEntry = {
   number: number;
   title: string;
   slug: string;
   created_at: string;
-}
+};
 
-interface VolumeEntry {
+type VolumeEntry = {
   id: string;
   title: string;
-}
+};

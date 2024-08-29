@@ -3,18 +3,18 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
-interface ReadNovelFullOptions {
+type ReadNovelFullOptions = {
   lang?: string;
   versionIncrements?: number;
-}
+};
 
-export interface ReadNovelFullMetadata {
+export type ReadNovelFullMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   options?: ReadNovelFullOptions;
   filters?: any;
-}
+};
 
 class ReadNovelFullPlugin implements Plugin.PluginBase {
   id: string;
@@ -159,7 +159,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
 
-    return $('#chr-content').text();
+    return $('#chr-content').html();
   }
 
   async searchNovels(
