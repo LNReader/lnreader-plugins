@@ -28,8 +28,10 @@ class RewayatClub implements Plugin.PagePlugin {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = `https://api.rewayat.club/api/novels/`;
-
-    if (filters) {
+if (showLatestNovels) {
+      link = `${this.site}api/chapters/weekly/list/?page=${page}`;
+    }
+    else if (filters) {
       if (filters.categories.value !== '') {
         link += `?type=${filters.categories.value}`;
       }
@@ -41,10 +43,9 @@ class RewayatClub implements Plugin.PagePlugin {
           link += `&genre=${genre}`;
         });
       }
+      link+= `&page=${page}`;
     }
-    link += `&page=${page}`;
     const body = await fetchApi(link).then(r => r.json());
-    const loadedCheerio = parseHTML(body);
     return this.parseNovels(body);
   }
 
