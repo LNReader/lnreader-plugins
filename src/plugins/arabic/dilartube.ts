@@ -4,85 +4,47 @@ import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 
-import crypto from 'crypto';
-
-// Decrypt function
-function decrypt(responseData: string): string {
-  const enc = responseData.split('|');
-
-  // Helper function to compute SHA-256 hash
-  const sha256 = (input: string): string => {
-      return crypto.createHash('sha256').update(input, 'utf8').digest('hex');
-  };
-
-  // Convert hex string to byte array
-  const hexStringToByteArray = (hexString: string): Uint8Array => {
-      const length = hexString.length;
-      const byteArray = new Uint8Array(length / 2);
-      for (let i = 0; i < length; i += 2) {
-          byteArray[i / 2] = parseInt(hexString.substr(i, 2), 16);
-      }
-      return byteArray;
-  };
-
-  // AES decryption
-  const aesDecrypt = (encryptedText: string, secretKey: Uint8Array, ivString: string): string => {
-      const decipher = crypto.createDecipheriv(
-          'aes-256-cbc',
-          secretKey,
-          Buffer.from(ivString, 'base64')
-      );
-      let decrypted = decipher.update(encryptedText, 'base64', 'utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
-  };
-
-  // Generate the secret key
-  const secretKey = hexStringToByteArray(sha256(enc[3]));
-
-  // Decrypt the message
-  return aesDecrypt(enc[0], secretKey, enc[2]);
-}
 
 class dilartube implements Plugin.PluginBase {
   id = 'dilartube';
   name = 'dilar tube';
   version = '1.0.0';
-  icon = 'src/ar/sunovels/icon.png';
+  icon = 'src/ar/dilartube/icon.png';
   site = 'https://dilar.tube/';
 
   parseNovels(data: ApiResponse): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
     const seenTitles = new Set<string>();
-    if (data.releases && data.releases.length > 0) {
-    data.releases
-    .filter((release) => release.manga.is_novel)
-    .map((release) => {
-      const manga = release.manga;
-      if (!seenTitles.has(manga.title)) {
-        seenTitles.add(manga.title);
-      novels.push({
-        name: manga.title,  
-        path: `mangas/${manga.id}`,  
-        cover: `${this.site}uploads/manga/cover/${manga.id}/${manga.cover}`,  
-      });
-    }});
-  } else if (data.data && data.data.length > 0) {
-    data.data
-    .filter((data) => data.data.is_novel)
-    .map((data) => {
-      const manga = data.data;
-      if (!seenTitles.has(data.title)) {
-        seenTitles.add(manga.title);
-            novels.push({
-              name: data.title,
-              path: `mangas/${data.id}`,
-              cover: `${this.site}uploads/manga/cover/${data.id}/${data.cover}`,
-            });
+  if (data.data && data.data.length > 0) {
+  data.data
+      .filter((dataItem) => dataItem.is_novel)
+      .forEach((dataItem) => {
+          const manga = dataItem;
+          if (!seenTitles.has(dataItem.title)) {
+              seenTitles.add(manga.title);
+              novels.push({
+                  name: dataItem.title || 'novel',
+                  path: `mangas/${manga.id}`,
+                  cover: manga.cover ? `${this.site}uploads/manga/cover/${manga.id}/${manga.cover}` : defaultCover,
+              });
           }
-        });
-    };
-  
+      });
+}
+if (data.releases && data.releases.length > 0) {
+  data.releases
+      .filter((release) => release.manga.is_novel)
+      .forEach((release) => {
+          const manga = release.manga;
+          if (!seenTitles.has(manga.title)) {
+              seenTitles.add(manga.title);
+              novels.push({
+                  name: manga.title || 'novel',
+                  path: `mangas/${manga.id}`,
+                  cover: manga.cover ? `${this.site}uploads/manga/cover/${manga.id}/${manga.cover}` : defaultCover,
+              });
+          }
+      });
+}
     return novels;
   }
 
@@ -110,7 +72,6 @@ class dilartube implements Plugin.PluginBase {
     // link += `?page=${page}`;
     // const body = await fetchApi(link).then(r => r.text());
     const response = await fetchApi(link).then(r => r.json());
-    console.log(response)
     return this.parseNovels(response);
   }
 
@@ -131,8 +92,6 @@ class dilartube implements Plugin.PluginBase {
       cover: `${this.site}uploads/manga/cover/${mangaData.id}/${mangaData.cover}`,
       chapters: [],
     };
-  
-    // Status and genres
     const translationStatusId:string = mangaData.translation_status;
     const translationText = {
       '1': 'مستمره',
@@ -141,7 +100,7 @@ class dilartube implements Plugin.PluginBase {
       '3': 'غير مترجمه',
     }[translationStatusId] || 'غير معروف';
     const statusWords = new Set(['مكتمل', 'جديد', 'مستمر']);
-    const mainGenres = mangaData.categories.map(category => category.name).join(',');
+    const mainGenres = mangaData.categories.map((category: { name: any; }) => category.name).join(',');
     novel.genres = `${translationText},${mainGenres}`;
     
     const statusId:string = mangaData.story_status;
@@ -165,7 +124,11 @@ class dilartube implements Plugin.PluginBase {
     const result = await fetchApi(new URL(chapterUrl, this.site).toString());
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
-    const chapterText = loadedCheerio('div.reader-content').text().trim();
+
+    const jsonData = loadedCheerio('script.js-react-on-rails-component').html();
+    const parsedData = JSON.parse(jsonData as string);
+
+    const chapterText = parsedData.readerDataAction.readerData.release.content;
     return chapterText;
   }
 
@@ -181,9 +144,7 @@ class dilartube implements Plugin.PluginBase {
         body: formData,
     }).then(r => r.json());
     const data: ApiResponse = response[0]
-    const filterdMangaData = data
-    console.log(filterdMangaData)
-    return this.parseNovels(filterdMangaData);
+    return this.parseNovels(data);
   }
 
   // filters = {
@@ -281,7 +242,6 @@ interface Manga {
   categories: Category[];
   type: Type;
 }
-
 interface Release {
   id: number;
   manga_id: number;
@@ -305,36 +265,16 @@ interface Release {
   has_rev_link: boolean;
   manga: Manga;
 }
-
 interface ApiResponse {
   releases: Release[];
-  data: searchData[];
+  data: searchManga[];
 }
-
-type MangaLibrary = {
-  reading: number;
-  completed: number;
-  on_hold: number;
-  dropped: number;
-  planning: number;
-  plan_to_read: number;
-  favorite: number;
-  suggestion: number;
-};
-
 type MangaCategory = {
   id: number;
   name: string;
   icon: string | null;
   manga_id: number;
 };
-
-type MangaBlurhash = {
-  hash: string;
-  width: number;
-  height: number;
-};
-
 type AuthorArtist = {
   id: number;
   name: string;
@@ -359,9 +299,7 @@ type MangaData = {
   cover: string;
   cover_pos: number;
   rectangle_cover_pos: number;
-  cover_blurhash: MangaBlurhash;
   banner: string;
-  banner_blurhash: MangaBlurhash;
   manga_type_id: number;
   reading_direction: string;
   story_status: number;
@@ -414,7 +352,6 @@ type MangaData = {
 };
 
 type MangaResponse = {
-  mangaLibrary: MangaLibrary;
   membersMentioning: any[];
   memberRates: any | null;
   mangaLogs: Record<string, any>;
@@ -438,10 +375,6 @@ type ChapterRelease = {
   team_id: number;
   team_name: string;
   has_rev_link: boolean;
-};
-
-type ChapterResponse = {
-  releases: ChapterRelease[];
 };
 interface searchManga {
   filter: any;
@@ -481,10 +414,5 @@ interface searchManga {
   categories: Category[];
   type: Type;
 }
-interface searchData {
-  filter: any;
-  class: string;
-  type_label: string;
-  data: searchManga[];
-}
-// type ResponseArray = searchData[];
+
+
