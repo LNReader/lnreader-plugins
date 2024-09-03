@@ -55,7 +55,7 @@ class dilartube implements Plugin.PluginBase {
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}releases`;
+    let link = `${this.site}api/releases?page=${page}`;
     if (showLatestNovels) {
       link = `${this.site}api/releases?page=${page}`;
     }
