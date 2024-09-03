@@ -54,6 +54,7 @@ class dilartube implements Plugin.PluginBase {
   parseNovels(data: ApiResponse): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
     const seenTitles = new Set<string>();
+    if (data.releases && data.releases.length > 0) {
     data.releases
     .filter((release) => release.manga.is_novel)
     .map((release) => {
@@ -66,6 +67,22 @@ class dilartube implements Plugin.PluginBase {
         cover: `${this.site}uploads/manga/cover/${manga.id}/${manga.cover}`,  
       });
     }});
+  } else if (data.data && data.data.length > 0) {
+    data.data
+    .filter((data) => data.data.is_novel)
+    .map((data) => {
+      const manga = data.data;
+      if (!seenTitles.has(data.title)) {
+        seenTitles.add(manga.title);
+            novels.push({
+              name: data.title,
+              path: `mangas/${data.id}`,
+              cover: `${this.site}uploads/manga/cover/${data.id}/${data.cover}`,
+            });
+          }
+        });
+    };
+  
     return novels;
   }
 
@@ -75,7 +92,7 @@ class dilartube implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}releases`;
     if (showLatestNovels){
-      link = `${this.site}/api/releases`;
+      link = `${this.site}api/releases?page=${page}`;
     }
     // if (filters) {
     //   if (
@@ -90,7 +107,7 @@ class dilartube implements Plugin.PluginBase {
     //     link += `&status=${filters.status.value}`;
     //   }
     // }
-    link += `?page=${page}`;
+    // link += `?page=${page}`;
     // const body = await fetchApi(link).then(r => r.text());
     const response = await fetchApi(link).then(r => r.json());
     console.log(response)
@@ -156,94 +173,58 @@ class dilartube implements Plugin.PluginBase {
     searchTerm: string,
     page: number
   ): Promise<Plugin.NovelItem[]> {
-    const searchUrl = `${this.site}api/mangas/search`;
-  
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Referer: `${this.site}/`
-      },
-      mode: 'cors',
-      body: JSON.stringify({
-        title: searchTerm,
-        manga_types: {
-          include: ["1", "2", "3", "4", "5", "6", "7", "8"],
-          exclude: [],
-        },
-        oneshot: false,
-        novel: false,
-        story_status: {
-          include: [],
-          exclude: [],
-        },
-        translation_status: {
-          include: [],
-          exclude: ["3"],
-        },
-        categories: {
-          include: [null],
-          exclude: [],
-        },
-        chapters: {
-          min: "",
-          max: "",
-        },
-        dates: {
-          start: null,
-          end: null,
-        },
-        page: page,
-      }),
-    };
-    
-    const result = await fetchApi(searchUrl, options).then(response => response.json());
-    const body = await result.json();
-    const decryptedData = decrypt(body.data);
-    const jsonData = JSON.parse(decryptedData);
-
-    return this.parseNovels(jsonData);
+    const formData = new FormData();
+    formData.append('query', searchTerm);
+    formData.append('includes', '["Manga","Team","Member"]');
+    const response= await fetchApi('https://dilar.tube/api/quick_search', {
+        method: 'POST',
+        body: formData,
+    }).then(r => r.json());
+    const data: ApiResponse = response[0]
+    const filterdMangaData = data
+    console.log(filterdMangaData)
+    return this.parseNovels(filterdMangaData);
   }
 
-  filters = {
-    types: {
-    value: [],
-    label: 'الأنواع',
-    options: [
-      { label: 'يابانية', value: '1' }, // Japanese
-      { label: 'كورية', value: '2' }, // Korean
-      { label: 'صينية', value: '3' }, // Chinese
-      { label: 'عربية', value: '4' }, // Arabic
-      { label: 'كوميك', value: '5' }, // Comic
-      { label: 'هواة', value: '6' }, // Amateur
-      { label: 'إندونيسية', value: '7' }, // Indonesian
-      { label: 'روسية', value: '8' }, // Russian
-    ],
-    type: FilterTypes.CheckboxGroup,
-  },
+  // filters = {
+  //   types: {
+  //   value: [],
+  //   label: 'الأنواع',
+  //   options: [
+  //     { label: 'يابانية', value: '1' }, // Japanese
+  //     { label: 'كورية', value: '2' }, // Korean
+  //     { label: 'صينية', value: '3' }, // Chinese
+  //     { label: 'عربية', value: '4' }, // Arabic
+  //     { label: 'كوميك', value: '5' }, // Comic
+  //     { label: 'هواة', value: '6' }, // Amateur
+  //     { label: 'إندونيسية', value: '7' }, // Indonesian
+  //     { label: 'روسية', value: '8' }, // Russian
+  //   ],
+  //   type: FilterTypes.CheckboxGroup,
+  // },
 
-  status: {
-    value: '',
-    label: 'الحالة',
-    options: [
-      { label: 'مستمرة', value: '2' }, // Ongoing
-      { label: 'منتهية', value: '3' }, // Completed
-    ],
-    type: FilterTypes.CheckboxGroup,
-  },
+  // status: {
+  //   value: '',
+  //   label: 'الحالة',
+  //   options: [
+  //     { label: 'مستمرة', value: '2' }, // Ongoing
+  //     { label: 'منتهية', value: '3' }, // Completed
+  //   ],
+  //   type: FilterTypes.CheckboxGroup,
+  // },
   
-  translation: {
-    value: [],
-    label: 'الترجمة',
-    options: [
-      { label: 'منتهية', value: '0' }, // Completed
-      { label: 'مستمرة', value: '1' }, // Ongoing
-      { label: 'متوقفة', value: '2' }, // Paused
-      { label: 'غير مترجمة', value: '3' }, // Not Translated
-    ],
-    type: FilterTypes.CheckboxGroup,
-  },
-  } satisfies Filters;
+  // translation: {
+  //   value: [],
+  //   label: 'الترجمة',
+  //   options: [
+  //     { label: 'منتهية', value: '0' }, // Completed
+  //     { label: 'مستمرة', value: '1' }, // Ongoing
+  //     { label: 'متوقفة', value: '2' }, // Paused
+  //     { label: 'غير مترجمة', value: '3' }, // Not Translated
+  //   ],
+  //   type: FilterTypes.CheckboxGroup,
+  // },
+  // } satisfies Filters;
 }
 
 export default new dilartube();
@@ -327,6 +308,7 @@ interface Release {
 
 interface ApiResponse {
   releases: Release[];
+  data: searchData[];
 }
 
 type MangaLibrary = {
@@ -461,3 +443,48 @@ type ChapterRelease = {
 type ChapterResponse = {
   releases: ChapterRelease[];
 };
+interface searchManga {
+  filter: any;
+  id: number;
+  title: string;
+  summary: string;
+  is_novel: boolean;
+  is_oneshot: boolean;
+  genre_id: number;
+  cover: string;
+  cover_pos: number;
+  rectangle_cover_pos: number;
+  banner: string;
+  manga_type_id: number;
+  reading_direction: string;
+  story_status: number;
+  translation_status: number;
+  vols: number;
+  chaps: number;
+  reviewed: boolean;
+  banned: boolean;
+  rating: string;
+  rates_count: number;
+  commentable: boolean;
+  show_comments: boolean;
+  deleted_at: string | null;
+  delete_reason: string;
+  time_stamp: number;
+  latest_chapterization_id: number;
+  uniq_visitors_count: number;
+  publisher_id: number | null;
+  publisher_name: string | null;
+  discord_url: string | null;
+  mobile_exclusive: boolean;
+  authors: any[];
+  artists: any[];
+  categories: Category[];
+  type: Type;
+}
+interface searchData {
+  filter: any;
+  class: string;
+  type_label: string;
+  data: searchManga[];
+}
+// type ResponseArray = searchData[];
