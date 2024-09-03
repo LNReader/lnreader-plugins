@@ -16,8 +16,16 @@ class RewayatClub implements Plugin.PagePlugin {
     data.results.map((item: NovelEntry) => {
       novels.push({
         name: item.arabic || item.novel?.arabic || 'novel',
-        path: item.slug ? `novel/${item.slug}` : item.novel ? `novel/${item.novel.slug}` : 'novel',
-        cover: item.poster_url ? `https://api.rewayat.club/${item.poster_url.slice(1)}` : item.novel ? `https://api.rewayat.club/${item.novel.poster_url.slice(1)}` : defaultCover,
+        path: item.slug
+          ? `novel/${item.slug}`
+          : item.novel
+            ? `novel/${item.novel.slug}`
+            : 'novel',
+        cover: item.poster_url
+          ? `https://api.rewayat.club/${item.poster_url.slice(1)}`
+          : item.novel
+            ? `https://api.rewayat.club/${item.novel.poster_url.slice(1)}`
+            : defaultCover,
       });
     });
     return novels;
@@ -27,19 +35,17 @@ class RewayatClub implements Plugin.PagePlugin {
     page: number,
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
-    
     let link = `https://api.rewayat.club/api/novels/`;
     let body: NovelData = {
       count: 0,
       next: '',
       previous: '',
-      results: []
+      results: [],
     };
-if (showLatestNovels) {
+    if (showLatestNovels) {
       link = `${this.site}api/chapters/weekly/list/?page=${page}`;
       body = await fetchApi(link).then(r => r.json());
-    }
-    else if (filters) {
+    } else if (filters) {
       if (filters.categories.value !== '') {
         link += `?type=${filters.categories.value}`;
       }
@@ -51,7 +57,7 @@ if (showLatestNovels) {
           link += `&genre=${genre}`;
         });
       }
-      link+= `&page=${page}`;
+      link += `&page=${page}`;
       body = await fetchApi(link).then(r => r.json());
     }
     return this.parseNovels(body);
@@ -134,9 +140,12 @@ if (showLatestNovels) {
     };
   }
   async parseChapter(chapterUrl: string): Promise<string> {
-    let link = this.site + 'api/chapters/' + chapterUrl.slice(6)
+    let link = this.site + 'api/chapters/' + chapterUrl.slice(6);
     const result = await fetchApi(link).then(r => r.json());
-    let chapterText = result.content.flat().join('').replace(/<p>\n|\n<p>\n/g, '');
+    let chapterText = result.content
+      .flat()
+      .join('')
+      .replace(/<p>\n|\n<p>\n/g, '');
     chapterText = chapterText.trim();
     return chapterText;
   }
@@ -215,14 +224,14 @@ interface NovelEntry {
     english: string;
   };
   novel?: {
-                arabic: string,
-                english:string,
-                slug: string,
-                poster: string,
-                id:number,
-                poster_url: string,
-                original: boolean
-            }
+    arabic: string;
+    english: string;
+    slug: string;
+    poster: string;
+    id: number;
+    poster_url: string;
+    original: boolean;
+  };
 }
 interface NovelData {
   count?: number;
