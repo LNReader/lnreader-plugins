@@ -380,9 +380,10 @@ class NovelUpdates implements Plugin.PluginBase {
           });
         chapterTitle =
           loadedCheerio('.entry-title').first().text() || 'Title not found';
-        chapterContent =
-          loadedCheerio('.entry-content').html() ||
-          'Content not found'.replace(/&nbsp;/g, '').replace(/\n/g, '<br>');
+        chapterContent = loadedCheerio('.entry-content')
+          .html()!
+          .replace(/&nbsp;/g, '')
+          .replace(/\n/g, '<br>');
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'raeitranslations':
@@ -494,9 +495,9 @@ class NovelUpdates implements Plugin.PluginBase {
           throw new Error('Age verification required, please open in webview.');
         }
         chapterTitle = `${loadedCheerio('.pl-4 h1').first().text() || 'Title not found'} | ${loadedCheerio('.pl-4 div').first().text() || 'Title not found'}`;
-        chapterContent =
-          loadedCheerio('#startContainer + * > *').first().html() ||
-          'Content not found';
+        chapterContent = loadedCheerio('#startContainer + * > *')
+          .first()
+          .html()!;
         if (!chapterContent) {
           chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><br>There could be missing content, please check in webview.`;
         }
@@ -753,8 +754,7 @@ class NovelUpdates implements Plugin.PluginBase {
       chapterContent =
         loadedCheerio('.content-post').html() ||
         loadedCheerio('.entry-content').html() ||
-        loadedCheerio('.post-body').html() ||
-        'Content not found';
+        loadedCheerio('.post-body').html()!;
       if (chapterTitle && chapterContent) {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       }
@@ -813,8 +813,7 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.page-body').html() ||
         loadedCheerio('.td-page-content').html() ||
         loadedCheerio('#content').html() ||
-        loadedCheerio('article.post').html() ||
-        'Content not found';
+        loadedCheerio('article.post').html()!;
       if (chapterTitle && chapterContent) {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       }
