@@ -12,6 +12,9 @@
 }
 .litrpg-frame {
     --litrpg-polygon: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+    border: solid #00219b;
+    box-shadow: 0 0 10px 1px #00219b;
+    border-radius: 5px;
     background-color: #000000;
     clip-path: var(--litrpg-polygon);
 }
