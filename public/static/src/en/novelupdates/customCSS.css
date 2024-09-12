@@ -23,6 +23,9 @@
     margin: 0 .875rem;
     overflow: auto;
 }
+.litrpg-body ul {
+    text-align: left;
+}
 
 /**
  * Novel Updates -> FictionRead
