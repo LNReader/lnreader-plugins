@@ -204,7 +204,7 @@ class Webnovel implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     const bloatElements = ['.para-comment'];
-    bloatElements.map(tag => loadedCheerio(tag).remove());
+    bloatElements.forEach(tag => loadedCheerio(tag).remove());
 
     return (
       loadedCheerio('.cha-tit').html()! + loadedCheerio('.cha-words').html()!
