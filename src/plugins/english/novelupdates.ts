@@ -690,7 +690,7 @@ class NovelUpdates implements Plugin.PluginBase {
       loadedCheerio('footer').text(),
     ];
 
-    const wordpressKeywords = ['wordpress', 'Site Kit by Google'];
+    const wordpressKeywords = ['wordpress', 'site kit by google'];
     let isWordPress =
       wordpressSources.some(
         source =>
