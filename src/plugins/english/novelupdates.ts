@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.9';
+  version = '0.7.8';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -687,28 +687,24 @@ class NovelUpdates implements Plugin.PluginBase {
     const wordpressSources = [
       loadedCheerio('#dcl_comments-js-extra').html(),
       loadedCheerio('meta[name="generator"]').attr('content'),
-      loadedCheerio('.powered-by').text(),
-      ...loadedCheerio('script[src]')
-        .map((_, el) => loadedCheerio(el).html())
-        .get(),
-      ...loadedCheerio('footer')
-        .map((_, el) => loadedCheerio(el).text())
-        .get(),
+      loadedCheerio('footer').text(),
     ];
 
     const wordpressKeywords = ['wordpress', 'Site Kit by Google'];
-    let isWordPress = wordpressSources.some(
-      source =>
-        source &&
-        wordpressKeywords.some(keyword =>
-          source.toLowerCase().includes(keyword),
-        ),
-    );
+    let isWordPress =
+      wordpressSources.some(
+        source =>
+          source &&
+          wordpressKeywords.some(keyword =>
+            source.toLowerCase().includes(keyword),
+          ),
+      ) ||
+      loadedCheerio('.powered-by').text().toLowerCase().includes('wordpress');
 
     /**
      * In case sites are not detected correctly
      */
-    const manualWordPress = ['genesistls', 'soafp'];
+    const manualWordPress = ['soafp', 'etherreads'];
     if (!isWordPress && domain.find(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
