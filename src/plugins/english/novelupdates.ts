@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.8';
+  version = '0.7.9';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -687,9 +687,13 @@ class NovelUpdates implements Plugin.PluginBase {
     const wordpressSources = [
       loadedCheerio('#dcl_comments-js-extra').html(),
       loadedCheerio('meta[name="generator"]').attr('content'),
-      loadedCheerio('script[src]').html(),
       loadedCheerio('.powered-by').text(),
-      loadedCheerio('footer').text(),
+      ...loadedCheerio('script[src]')
+        .map((_, el) => loadedCheerio(el).html())
+        .get(),
+      ...loadedCheerio('footer')
+        .map((_, el) => loadedCheerio(el).text())
+        .get(),
     ];
 
     const wordpressKeywords = ['wordpress', 'Site Kit by Google'];
