@@ -91,16 +91,6 @@
     }
   },
   {
-    "id": "genesistls",
-    "sourceSite": "https://genesistls.com/",
-    "sourceName": "GenesisTls (Deprecated)",
-    "options": {
-      "lang": "English",
-      "reverseChapters": false,
-      "customJs": "$('.genesistls-watermark').remove();$('.epcontent p').each((i, el) => { if ($(el).html() === '&nbsp;') $(el).remove(); });"
-    }
-  },
-  {
     "id": "pandamtl",
     "sourceSite": "https://pandamtl.com/",
     "sourceName": "Panda Machine Translations",
