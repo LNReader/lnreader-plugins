@@ -119,11 +119,10 @@ class NovelFull implements Plugin.PluginBase {
     loadedCheerio('#chapter-content div.ads').remove();
     const chapterText = loadedCheerio('#chapter-content').html() || '';
 
-    return chapterText
-      .replace(
-        /If you find any errors \(Ads popup, ads redirect, broken links, non-standard content, etc\.\.\), Please let us know \S* report chapter \S* so we can fix it as soon as possible\./,
-        '',
-      );
+    return chapterText.replace(
+      /If you find any errors \(Ads popup, ads redirect, broken links, non-standard content, etc\.\.\), Please let us know \S* report chapter \S* so we can fix it as soon as possible\./,
+      '',
+    );
   }
 
   async searchNovels(
