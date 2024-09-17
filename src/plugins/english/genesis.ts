@@ -1,7 +1,16 @@
-/* eslint-disable no-case-declarations */
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+
+/**
+ * Example for novel API:
+ * https://genesistudio.com/novels/dlh/__data.json?x-sveltekit-invalidated=001
+ * -> to view novel remove '__data.json?x-sveltekit-invalidated=001'
+ *
+ * Example for chapter API:
+ * https://genesistudio.com/viewer/2443/__data.json?x-sveltekit-invalidated=001
+ * -> to view chapter remove '__data.json?x-sveltekit-invalidated=001'
+ */
 
 class Genesis implements Plugin.PluginBase {
   id = 'genesistudio';
@@ -9,7 +18,7 @@ class Genesis implements Plugin.PluginBase {
   icon = 'src/en/genesis/icon.png';
   customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
-  version = '1.0.2';
+  version = '1.0.3';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
@@ -75,8 +84,10 @@ class Genesis implements Plugin.PluginBase {
     novel.status = data[novelData.release_days] ? 'Ongoing' : 'Completed';
 
     const chapterData = data[data[0].chapters];
-    const freeChapterData = chapterData.free;
-    // const premiumChapterData = chapterData.premium;
+    const freeChapterData = chapterData.free_chapters;
+
+    /** Premium chapters not yet implemented */
+    // const premiumChapterData = chapterData.premium_chapters;
 
     novel.chapters = data[freeChapterData]
       .map((index: number) => data[index])
@@ -101,7 +112,11 @@ class Genesis implements Plugin.PluginBase {
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
 
-    return data[data[0].content] + data[data[0].footnotes] ?? '';
+    /** May change in the future */
+    const content = data[19];
+    const footnotes = data[data[0].footnotes];
+
+    return content + footnotes ?? '';
   }
 
   async searchNovels(
