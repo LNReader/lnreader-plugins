@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.7';
+  version = '0.7.8';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -665,36 +665,45 @@ class NovelUpdates implements Plugin.PluginBase {
     /**
      * Detect if the site is a Blogspot site
      */
-    const isBlogspotStr =
+    const blogspotSources = [
       loadedCheerio('meta[name="google-adsense-platform-domain"]').attr(
         'content',
-      ) || loadedCheerio('meta[name="generator"]').attr('content');
-    let isBlogspot = false;
-    if (isBlogspotStr) {
-      isBlogspot =
-        isBlogspotStr.toLowerCase().includes('blogspot') ||
-        isBlogspotStr.toLowerCase().includes('blogger');
-    }
+      ),
+      loadedCheerio('meta[name="generator"]').attr('content'),
+    ];
+
+    const blogspotKeywords = ['blogspot', 'blogger'];
+    let isBlogspot = blogspotSources.some(
+      source =>
+        source &&
+        blogspotKeywords.some(keyword =>
+          source.toLowerCase().includes(keyword),
+        ),
+    );
 
     /**
      * Detect if the site is a WordPress site
      */
-    const isWordPressStr =
-      loadedCheerio('#dcl_comments-js-extra').html() ||
-      loadedCheerio('meta[name="generator"]').attr('content') ||
-      loadedCheerio('footer').text()!;
-    let isWordPress = false;
-    if (isWordPressStr) {
-      isWordPress =
-        isWordPressStr.toLowerCase().includes('wordpress') ||
-        isWordPressStr.includes('Site Kit by Google') ||
-        loadedCheerio('.powered-by').text().toLowerCase().includes('wordpress');
-    }
+    const wordpressSources = [
+      loadedCheerio('#dcl_comments-js-extra').html(),
+      loadedCheerio('meta[name="generator"]').attr('content'),
+      loadedCheerio('.powered-by').text(),
+      loadedCheerio('footer').text(),
+    ];
+
+    const wordpressKeywords = ['wordpress', 'site kit by google'];
+    let isWordPress = wordpressSources.some(
+      source =>
+        source &&
+        wordpressKeywords.some(keyword =>
+          source.toLowerCase().includes(keyword),
+        ),
+    );
 
     /**
      * In case sites are not detected correctly
      */
-    const manualWordPress = ['genesistls', 'soafp'];
+    const manualWordPress = ['etherreads', 'soafp'];
     if (!isWordPress && domain.find(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
@@ -810,8 +819,12 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.title_story').first().text() ||
         loadedCheerio('.active').first().text() ||
         loadedCheerio('head title').first().text() ||
+        loadedCheerio('h1.leading-none ~ h2').first().text() ||
         'Title not found';
-      const chapterSubtitle = loadedCheerio('.cat-series').first().text() || '';
+      const chapterSubtitle =
+        loadedCheerio('.cat-series').first().text() ||
+        loadedCheerio('h1.leading-none ~ span').first().text() ||
+        '';
       if (chapterSubtitle) {
         chapterTitle = chapterSubtitle;
       }
@@ -829,6 +842,7 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.content').html() ||
         loadedCheerio('.page-body').html() ||
         loadedCheerio('.td-page-content').html() ||
+        loadedCheerio('.reader-content').html() ||
         loadedCheerio('#content').html() ||
         loadedCheerio('article.post').html()!;
       if (chapterTitle && chapterContent) {
