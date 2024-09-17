@@ -6,7 +6,7 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 class NovelFull implements Plugin.PluginBase {
   id = 'novelfull';
   name = 'NovelFull';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/novelfull/icon.png';
   site = 'https://novelfull.com/';
 
