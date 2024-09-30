@@ -117,12 +117,12 @@ class FreeWebNovel implements Plugin.PluginBase {
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText
       .replace(
-        /(?:(?<=<p>\s*)(?:This (?:chapter is updated by|content is taken from)|Follow current novels on) )?[ƒfF][Rrɾг][Eēeё][Eēёe][Wwω][Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵv][Eёeē][Llℓɭ]\.\s?[Cƈcç][O૦σøoѳ][M๓ɱm]\.?/g,
-        '',
+        /<p>\s*(?:(?:This (?:chapter is updated by|content is taken from)|Follow current novels on) )?(?:[ƒfF][Rrɾг][Eēeё][Eēёe][Wwω][Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵv][Eёeē][LlℓɭI\|]\.\s?[Cƈcç][O૦σøoѳ][M๓ɱm]|ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ)\.?/g,
+        '<p>',
       )
       .replace(
-        /(?<=<p>\s*)Visit for the best novel reading experience\.?/g,
-        '',
+        /<p>\s*Visit for the best novel reading experience\.?/g,
+        '<p>',
       );
   }
 
