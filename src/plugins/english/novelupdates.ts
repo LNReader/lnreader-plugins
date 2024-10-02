@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.3';
+  version = '0.8.4';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -188,12 +188,13 @@ class NovelUpdates implements Plugin.PluginBase {
 
     loadedCheerio('#myTable tbody tr').each((index, element) => {
       const chapterTitle = loadedCheerio(element)
-        .find('td')
+        .find('td a')
         .first()
+        .next()
         .text()
         .trim();
       const chapterLink =
-        'https:' + loadedCheerio(element).find('td a').attr('href');
+        'https:' + loadedCheerio(element).find('td a').next().attr('href');
 
       chapters.push({
         name: chapterTitle,
