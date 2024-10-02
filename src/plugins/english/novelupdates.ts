@@ -188,13 +188,15 @@ class NovelUpdates implements Plugin.PluginBase {
 
     loadedCheerio('#myTable tbody tr').each((index, element) => {
       const chapterTitle = loadedCheerio(element)
-        .find('td a')
+        .find('td')
         .first()
         .next()
+        .find('a')
         .text()
         .trim();
       const chapterLink =
-        'https:' + loadedCheerio(element).find('td a').next().attr('href');
+        'https:' +
+        loadedCheerio(element).find('td').next().find('a').attr('href');
 
       chapters.push({
         name: chapterTitle,
