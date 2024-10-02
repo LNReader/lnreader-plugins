@@ -82,8 +82,8 @@ class Genesis implements Plugin.PluginBase {
             .map((genreId: number) => data[genreId])
             .join(', ');
           novel.status = value.release_days ? 'Ongoing' : 'Completed';
-        } else if ('chapters' in value) {
-          const chaptersFunction = data[value.chapters];
+        } else if ('chapters_list' in value) {
+          const chaptersFunction = data[value.chapters_list];
           const chapterMatches = chaptersFunction.match(
             /'id':((?!_)\w+),'chapter_title':(?:'([^'\\]*(?:\\.[^'\\]*)*)'|(\w+\([^\)]+\))),'chapter_number':(\w+),'required_tier':(\w+),'date_created':([^,]*),/g,
           );
