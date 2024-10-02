@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.6';
+  version = '0.8.7';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -191,12 +191,12 @@ class NovelUpdates implements Plugin.PluginBase {
       .last()
       .prev()
       .text();
-    let maxPage = 0;
+    let maxPage = 1;
     if (maxPageString.length > 0) {
       maxPage = parseInt(maxPageString);
     }
 
-    for (let curPage = maxPage; curPage >= 0; curPage--) {
+    for (let curPage = 1; curPage <= maxPage; curPage++) {
       const url = this.site + novelPath + '?pg=' + curPage;
       const result = await fetchApi(url);
       const body = await result.text();
