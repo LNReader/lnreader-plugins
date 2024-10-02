@@ -184,6 +184,60 @@ class NovelUpdates implements Plugin.PluginBase {
     return novel;
   }
 
+  async getBody(novelPath: string) {
+    const url = this.site + novelPath;
+    const result = await fetchApi(url);
+    const body = await result.text();
+
+    let loadedCheerio = parseHTML(body);
+
+    const novel: Plugin.SourceNovel = {
+      path: novelPath,
+      name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
+      cover: loadedCheerio('.wpb_wrapper img').attr('src'),
+      chapters: [],
+    };
+
+    novel.author = loadedCheerio('#authtag')
+      .map((i, el) => loadedCheerio(el).text().trim())
+      .toArray()
+      .join(', ');
+
+    novel.genres = loadedCheerio('#seriesgenre')
+      .children('a')
+      .map((i, el) => loadedCheerio(el).text())
+      .toArray()
+      .join(',');
+
+    novel.status = loadedCheerio('#editstatus').text().includes('Ongoing')
+      ? 'Ongoing'
+      : 'Completed';
+
+    const type = loadedCheerio('#showtype').text().trim();
+
+    const summary = loadedCheerio('#editdescription').text().trim();
+
+    novel.summary = summary + `\n\nType: ${type}`;
+
+    const chapter: Plugin.ChapterItem[] = [];
+
+    const novelId = loadedCheerio('input#mypostid').attr('value')!;
+
+    const formData = new FormData();
+    formData.append('action', 'nd_getchapters');
+    formData.append('mygrr', '0');
+    formData.append('mypostid', novelId);
+
+    const link = `${this.site}wp-admin/admin-ajax.php`;
+
+    const text = await fetchApi(link, {
+      method: 'POST',
+      body: formData,
+    }).then(data => data.text());
+
+    return text;
+  }
+
   getLocation(href: string) {
     const match = href.match(
       /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
