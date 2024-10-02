@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.5';
+  version = '0.8.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -186,61 +186,58 @@ class NovelUpdates implements Plugin.PluginBase {
       'ss': 'SS',
     };
 
-    loadedCheerio('#myTable tbody tr').each((index, element) => {
-      const chapterTitle = loadedCheerio(element)
-        .find('td')
-        .first()
-        .next()
-        .next()
-        .find('a')
-        .text()
-        .trim();
-      const chapterLink =
-        'https:' +
-        loadedCheerio(element)
+    let maxPageString = loadedCheerio('.digg_pagination')
+      .find('a')
+      .last()
+      .prev()
+      .text();
+    let maxPage = 0;
+    if (maxPageString.length > 0) {
+      maxPage = parseInt(maxPageString);
+    }
+
+    for (let curPage = maxPage; curPage >= 0; curPage--) {
+      const url = this.site + novelPath + '?pg=' + curPage;
+      const result = await fetchApi(url);
+      const body = await result.text();
+
+      let loadedCheerio = parseHTML(body);
+
+      loadedCheerio('#myTable tbody tr').each((index, element) => {
+        let chapterTitle = loadedCheerio(element)
           .find('td')
           .first()
           .next()
           .next()
           .find('a')
-          .attr('href');
+          .text()
+          .trim();
 
-      chapters.push({
-        name: chapterTitle,
-        path: chapterLink?.replace(this.site, ''),
+        for (const name in nameReplacements) {
+          chapterTitle = chapterTitle.replace(name, nameReplacements[name]);
+        }
+        chapterTitle = chapterTitle
+          .replace(/\b\w/g, l => l.toUpperCase())
+          .trim();
+
+        const chapterLink =
+          'https:' +
+          loadedCheerio(element)
+            .find('td')
+            .first()
+            .next()
+            .next()
+            .find('a')
+            .attr('href');
+
+        chapters.push({
+          name: chapterTitle,
+          path: chapterLink?.replace(this.site, ''),
+        });
       });
-    });
+    }
 
     novel.chapters = chapters.reverse();
-
-    // Log the extracted chapters
-    console.log(chapters);
-
-    // loadedCheerio('#myTable.tbody')
-    //   .find('tr')
-    //   .each((i, el) => {
-    //     let chapterName = loadedCheerio(el).find('td').first().next().text();
-    //     for (const name in nameReplacements) {
-    //       chapterName = chapterName.replace(name, nameReplacements[name]);
-    //     }
-    //     chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
-    //     const chapterUrl =
-    //       'https:' +
-    //       loadedCheerio(el)
-    //         .find('td')
-    //         .first()
-    //         .next()
-    //         .find('a')
-    //         .first()
-    //         .attr('href');
-
-    //     chapter.push({
-    //       name: chapterName,
-    //       path: chapterUrl.replace(this.site, ''),
-    //     });
-    //   });
-
-    // novel.chapters = chapter.reverse();
 
     return novel;
   }
