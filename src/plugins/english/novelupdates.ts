@@ -196,7 +196,7 @@ class NovelUpdates implements Plugin.PluginBase {
         .trim();
       const chapterLink =
         'https:' +
-        loadedCheerio(element).find('td').next().find('a').attr('href');
+        loadedCheerio(element).find('td').first().next().find('a').attr('href');
 
       chapters.push({
         name: chapterTitle,
