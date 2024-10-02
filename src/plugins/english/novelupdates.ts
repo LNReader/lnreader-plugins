@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.8.4';
+  version = '0.8.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -191,12 +191,19 @@ class NovelUpdates implements Plugin.PluginBase {
         .find('td')
         .first()
         .next()
+        .next()
         .find('a')
         .text()
         .trim();
       const chapterLink =
         'https:' +
-        loadedCheerio(element).find('td').first().next().find('a').attr('href');
+        loadedCheerio(element)
+          .find('td')
+          .first()
+          .next()
+          .next()
+          .find('a')
+          .attr('href');
 
       chapters.push({
         name: chapterTitle,
