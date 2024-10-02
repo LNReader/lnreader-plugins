@@ -141,44 +141,6 @@ class NovelUpdates implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    // const novelId = loadedCheerio('input#mypostid').attr('value')!;
-
-    // const formData = new FormData();
-    // formData.append('action', 'nd_getchapters');
-    // formData.append('mygrr', '0');
-    // formData.append('mypostid', novelId);
-
-    // const link = `${this.site}wp-admin/admin-ajax.php`;
-
-    // const text = await fetchApi(link, {
-    //   method: 'POST',
-    //   body: formData,
-    // }).then(data => data.text());
-
-    // loadedCheerio = parseHTML(text);
-
-    // const nameReplacements: Record<string, string> = {
-    //   'v': 'volume ',
-    //   'c': ' chapter ',
-    //   'part': 'part ',
-    //   'ss': 'SS',
-    // };
-
-    // loadedCheerio('li.sp_li_chp').each((i, el) => {
-    //   let chapterName = loadedCheerio(el).text();
-    //   for (const name in nameReplacements) {
-    //     chapterName = chapterName.replace(name, nameReplacements[name]);
-    //   }
-    //   chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
-    //   const chapterUrl =
-    //     'https:' + loadedCheerio(el).find('a').first().next().attr('href');
-
-    //   chapter.push({
-    //     name: chapterName,
-    //     path: chapterUrl.replace(this.site, ''),
-    //   });
-    // });
-
     const nameReplacements: Record<string, string> = {
       'v': 'volume ',
       'c': ' chapter ',
