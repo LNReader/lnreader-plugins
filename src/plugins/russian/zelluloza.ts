@@ -9,7 +9,7 @@ class Zelluloza implements Plugin.PluginBase {
   id = 'zelluloza';
   name = 'Целлюлоза';
   site = 'https://zelluloza.ru';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/ru/zelluloza/icon.png';
 
   async popularNovels(
@@ -385,54 +385,7 @@ function decrypt(encrypt: string) {
     hexArray.push(alphabet[firstChar] + alphabet[secondChar]);
   }
 
-  return '<p>' + hexToUtf8(hexArray) + '</p>';
-}
-
-function hexToUtf8(hexArray: string[]) {
-  let index = 0;
-  let result = '';
-
-  while (index < hexArray.length) {
-    const currentHex = parseInt(hexArray[index], 16) & 0xff;
-
-    if (currentHex < 128) {
-      if (currentHex < 16) {
-        switch (currentHex) {
-          case 9:
-            result += ' ';
-            break;
-          case 13:
-            result += '\r';
-            break;
-          case 10:
-            result += '\n';
-            break;
-        }
-      } else {
-        result += String.fromCharCode(currentHex);
-      }
-      index++;
-    } else if (currentHex > 191 && currentHex < 224) {
-      if (index + 1 < hexArray.length) {
-        const nextHex = parseInt(hexArray[index + 1], 16) & 0xff;
-        result += String.fromCharCode(
-          ((currentHex & 31) << 6) | (nextHex & 63),
-        );
-      }
-      index += 2;
-    } else {
-      if (index + 2 < hexArray.length) {
-        const nextHex = parseInt(hexArray[index + 1], 16) & 0xff;
-        const thirdHex = parseInt(hexArray[index + 2], 16) & 0xff;
-        result += String.fromCharCode(
-          ((currentHex & 15) << 12) | ((nextHex & 63) << 6) | (thirdHex & 63),
-        );
-      }
-      index += 3;
-    }
-  }
-
-  return result;
+  return '<p>' + decodeURIComponent('%' + hexArray.join('%')) + '</p>';
 }
 
 export default new Zelluloza();
