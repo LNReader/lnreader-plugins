@@ -9,6 +9,7 @@ const minSize = 16;
 const skip = new Set([
   //custom icons
   'FWK.US',
+  'RNRF',
   'ReN',
   'daonovel',
   'dragontea',

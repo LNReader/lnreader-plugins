@@ -8,7 +8,7 @@ import { NovelStatus } from '@libs/novelStatus';
 class NovelMania implements Plugin.PluginBase {
   id = 'novelmania.com.br';
   name = 'Novel Mania';
-  icon = 'src/pt-br/novelmania.png';
+  icon = 'src/pt-br/novelmania/icon.png';
   site = 'https://novelmania.com.br';
   version = '1.0.0';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
