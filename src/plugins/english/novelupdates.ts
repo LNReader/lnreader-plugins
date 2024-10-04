@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.9';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -139,23 +139,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
     novel.summary = summary + `\n\nType: ${type}`;
 
-    const chapter: Plugin.ChapterItem[] = [];
-
-    const novelId = loadedCheerio('input#mypostid').attr('value')!;
-
-    const formData = new FormData();
-    formData.append('action', 'nd_getchapters');
-    formData.append('mygrr', '0');
-    formData.append('mypostid', novelId);
-
-    const link = `${this.site}wp-admin/admin-ajax.php`;
-
-    const text = await fetchApi(link, {
-      method: 'POST',
-      body: formData,
-    }).then(data => data.text());
-
-    loadedCheerio = parseHTML(text);
+    const chapters: Plugin.ChapterItem[] = [];
 
     const nameReplacements: Record<string, string> = {
       'v': 'volume ',
@@ -164,22 +148,58 @@ class NovelUpdates implements Plugin.PluginBase {
       'ss': 'SS',
     };
 
-    loadedCheerio('li.sp_li_chp').each((i, el) => {
-      let chapterName = loadedCheerio(el).text();
-      for (const name in nameReplacements) {
-        chapterName = chapterName.replace(name, nameReplacements[name]);
-      }
-      chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
-      const chapterUrl =
-        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
+    let maxPageString = loadedCheerio('.digg_pagination')
+      .find('a')
+      .last()
+      .prev()
+      .text();
+    let maxPage = 1;
+    if (maxPageString.length > 0) {
+      maxPage = parseInt(maxPageString);
+    }
 
-      chapter.push({
-        name: chapterName,
-        path: chapterUrl.replace(this.site, ''),
+    for (let curPage = 1; curPage <= maxPage; curPage++) {
+      const url = this.site + novelPath + '?pg=' + curPage;
+      const result = await fetchApi(url);
+      const body = await result.text();
+
+      let loadedCheerio = parseHTML(body);
+
+      loadedCheerio('#myTable tbody tr').each((index, element) => {
+        let chapterTitle = loadedCheerio(element)
+          .find('td')
+          .first()
+          .next()
+          .next()
+          .find('a')
+          .text()
+          .trim();
+
+        for (const name in nameReplacements) {
+          chapterTitle = chapterTitle.replace(name, nameReplacements[name]);
+        }
+        chapterTitle = chapterTitle
+          .replace(/\b\w/g, l => l.toUpperCase())
+          .trim();
+
+        const chapterLink =
+          'https:' +
+          loadedCheerio(element)
+            .find('td')
+            .first()
+            .next()
+            .next()
+            .find('a')
+            .attr('href');
+
+        chapters.push({
+          name: chapterTitle,
+          path: chapterLink?.replace(this.site, ''),
+        });
       });
-    });
+    }
 
-    novel.chapters = chapter.reverse();
+    novel.chapters = chapters.reverse();
 
     return novel;
   }
