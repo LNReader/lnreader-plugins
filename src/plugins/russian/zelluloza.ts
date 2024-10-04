@@ -19,27 +19,17 @@ class Zelluloza implements Plugin.PluginBase {
       showLatestNovels,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    const sort = showLatestNovels ? '0.0' : filters?.sort?.value || '6.0';
-    const genres = filters?.genres?.value || '';
+    const sort = showLatestNovels ? '0' : filters?.sort?.value || '3';
 
-    const body = await fetchApi(this.site + '/ajaxcall/', {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Referer: this.site + '/top/freebooks/',
-        Origin: this.site,
-      },
-      method: 'POST',
-      body: new URLSearchParams({
-        op: 'morebooks',
-        par1: '',
-        par2: `125:0:${genres}:0.${sort}.0.0.0.0.0.0.0.0.0.1.s.1..:${pageNo}`,
-        par4: '',
-      }).toString(),
-    }).then(res => res.text());
+    const path = filters?.genres?.value
+      ? `/search/genres/${filters.genres.value}/?page=${pageNo}`
+      : `/top/freebooks/?sort_order=${sort}&page=${pageNo}`;
+
+    const body = await fetchApi(this.site + path).then(res => res.text());
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div[style="display: flex;"]').each((index, element) => {
+    loadedCheerio('section[class="book-card-item"]').each((index, element) => {
       novels.push({
         name: loadedCheerio(element).find('span[itemprop="name"]').text() || '',
         cover:
@@ -194,13 +184,13 @@ class Zelluloza implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Сортировка',
-      value: '6.0',
+      value: '3',
       options: [
-        { label: 'Топ-недели', value: '6.0' },
-        { label: 'Бестселеры', value: '5.0' },
-        { label: 'Популярные у читателей', value: '2.0' },
-        { label: 'Книжные новинки', value: '0.0' },
-        { label: 'Законченные книги', value: '0.1' },
+        { label: 'По рейтингу', value: '3' },
+        { label: 'По изменению', value: '0' },
+        { label: 'По длительности чтения', value: '1' },
+        { label: 'По количеству читателей', value: '2' },
+        { label: 'По популярности', value: '4' },
       ],
       type: FilterTypes.Picker,
     },
