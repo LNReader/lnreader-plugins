@@ -7,9 +7,9 @@ import { defaultCover } from '@libs/defaultCover';
 class dilartube implements Plugin.PluginBase {
   id = 'dilartube';
   name = 'dilar tube';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ar/dilartube/icon.png';
-  site = 'https://dilar.tube/';
+  site = 'https://golden.rest/';
 
   parseNovels(data: ApiResponse): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
