@@ -83,40 +83,203 @@ class Genesis implements Plugin.PluginBase {
             .join(', ');
           novel.status = value.release_days ? 'Ongoing' : 'Completed';
         } else if ('chapters_list' in value) {
-          const chaptersFunction = data[value.chapters_list];
-          const chapterMatches = chaptersFunction.match(
-            /'id':((?!_)\w+),'chapter_title':(?:'([^'\\]*(?:\\.[^'\\]*)*)'|(\w+\([^\)]+\))),'chapter_number':(\w+),'required_tier':(\w+),'date_created':([^,]*),/g,
+          const chapterArrays = Object.values(
+            this.decodeData(data[value.chapters_list]),
           );
 
-          if (chapterMatches) {
-            novel.chapters = chapterMatches
-              .map((match: string) => {
-                const [, id, title, , number, requiredTier, dateCreated] =
-                  match.match(
-                    /'id':(\w+),'chapter_title':(?:'([^'\\]*(?:\\.[^'\\]*)*)'|(\w+\([^\)]+\))),'chapter_number':(\w+),'required_tier':(\w+),'date_created':([^,]*),/,
-                  )!;
+          novel.chapters = chapterArrays.flatMap((chapterArrays: any) => {
+            return chapterArrays
+              .map((chapter: any) => {
+                console.log(chapter);
+                if (
+                  chapter.id != null &&
+                  chapter.chapter_title != null &&
+                  chapter.chapter_number != null &&
+                  chapter.required_tier != null &&
+                  chapter.date_created != null
+                ) {
+                  const id = chapter.id;
+                  const title = chapter.chapter_title || 'Unknown Title';
+                  const number = parseInt(chapter.chapter_number, 10) || 0;
+                  const requiredTier = parseInt(chapter.required_tier, 10) || 0;
+                  const dateCreated = chapter.date_created || '';
 
-                if (parseInt(requiredTier, 16) === 0) {
-                  return {
-                    name: `Chapter ${parseInt(number, 16)}: ${title || 'Unknown Title'}`,
-                    path: `/viewer/${parseInt(id, 16)}`,
-                    releaseTime: dateCreated.replace(/^'|'$/g, ''),
-                    chapterNumber: parseInt(number, 16),
-                  };
+                  // Chapters with a 'requiredTier' of 0 are processed
+                  if (requiredTier === 0) {
+                    return {
+                      name: `Chapter ${number}: ${title}`,
+                      path: `/viewer/${id}`,
+                      releaseTime: dateCreated,
+                      chapterNumber: number,
+                    };
+                  }
                 }
                 return null;
               })
               .filter(
-                (
-                  chapter: Plugin.ChapterItem | null,
-                ): chapter is Plugin.ChapterItem => chapter !== null,
+                (chapter: any): chapter is Plugin.ChapterItem =>
+                  chapter !== null,
               );
-          }
+          });
         }
       }
     }
 
     return novel;
+  }
+
+  decodeData(code: any) {
+    let offset = this.getOffsetIndex(code);
+    let params = this.getDecodeParams(code);
+    let constant = this.getConstant(code);
+    let data = this.getStringsArrayRaw(code);
+
+    let getDataAt = (x: number) => data[x - offset];
+
+    //reshuffle data array
+    while (true) {
+      try {
+        let some_number = this.applyDecodeParams(params, getDataAt);
+        if (some_number === constant) break;
+        else data.push(data.shift());
+      } catch (err) {
+        data.push(data.shift());
+      }
+    }
+
+    return this.getChapterData(code, getDataAt);
+  }
+
+  getOffsetIndex(code: string) {
+    // @ts-ignore
+    let string = /{(\w+)=\1-0x(?<offset>[0-9a-f]+);/.exec(code).groups.offset;
+    return parseInt(string, 16);
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  getStringsArrayRaw(code: string) {
+    // @ts-ignore
+    let json = /function \w+\(\){var \w+=(?<array>\['.+']);/.exec(code).groups
+      .array;
+
+    //replace string single quotes with double quotes and add escaped chars
+    json = json.replace(/'(.+?)'([,\]])/g, (match, p1, p2) => {
+      return `"${p1.replace(/\\x([0-9a-z]{2})/g, (match: any, p1: string) => {
+        //hexadecimal unicode escape chars
+        return String.fromCharCode(parseInt(p1, 16));
+      })}"${p2}`;
+    });
+
+    return JSON.parse(json);
+  }
+
+  /**
+   * @returns {{offset: number, divider: number, negated: boolean}[][]}
+   */
+  getDecodeParams(code: string) {
+    // @ts-ignore
+    let jsDecodeInt = /while\(!!\[]\){try{var \w+=(?<code>.+?);/.exec(code)
+      .groups.code;
+    let decodeSections = jsDecodeInt.split('+');
+    let params = [];
+    for (let section of decodeSections) {
+      params.push(this.decodeParamSection(section));
+    }
+    return params;
+  }
+
+  /**
+   * @param {string} section
+   * @returns {{offset: number, divider: number, negated: boolean}[]}
+   */
+  decodeParamSection(section: string) {
+    let sections = section.split('*');
+    let params = [];
+    for (let section of sections) {
+      // @ts-ignore
+      let offsetStr = /parseInt\(\w+\(0x(?<offset>[0-9a-f]+)\)\)/.exec(section)
+        .groups.offset;
+      let offset = parseInt(offsetStr, 16);
+      // @ts-ignore
+      let dividerStr = /\/0x(?<divider>[0-9a-f]+)/.exec(section).groups.divider;
+      let divider = parseInt(dividerStr, 16);
+      let negated = section.includes('-');
+      params.push({ offset, divider, negated });
+    }
+    return params;
+  }
+
+  getConstant(code: string) {
+    // @ts-ignore
+    let constantStr = /}}}\(\w+,0x(?<constant>[0-9a-f]+)\),/.exec(code).groups
+      .constant;
+    return parseInt(constantStr, 16);
+  }
+
+  getChapterData(
+    code: string,
+    getDataAt: { (x: number): any; (arg0: number): any },
+  ) {
+    // @ts-ignore
+    let chapterDataStr =
+      /\),\(function\(\){var \w+=\w+;return(?<data>{.+?});/.exec(code).groups
+        .data;
+
+    //replace hex with decimal
+    chapterDataStr = chapterDataStr.replace(/:0x([0-9a-f]+)/g, (match, p1) => {
+      let hex = parseInt(p1, 16);
+      return `: ${hex}`;
+    });
+
+    //replace ![] with false and !![] with true
+    chapterDataStr = chapterDataStr
+      .replace(/:!!\[]/g, ':true')
+      .replace(/:!\[]/g, ':false');
+
+    //replace string single quotes with double quotes and add escaped chars
+    chapterDataStr = chapterDataStr.replace(
+      /'(.+?)'([,\]}:])/g,
+      (match, p1, p2) => {
+        return `"${p1.replace(/\\x([0-9a-z]{2})/g, (match: any, p1: string) => {
+          //hexadecimal unicode escape chars
+          return String.fromCharCode(parseInt(p1, 16));
+        })}"${p2}`;
+      },
+    );
+
+    //parse the data getting methods
+    // @ts-ignore
+    chapterDataStr = chapterDataStr.replace(
+      /:\w+\(0x(?<offset>[0-9a-f]+)\)/g,
+      (match, p1) => {
+        let offset = parseInt(p1, 16);
+        return `:${JSON.stringify(getDataAt(offset))}`;
+      },
+    );
+
+    return JSON.parse(chapterDataStr);
+  }
+
+  /**
+   * @param {{offset: number, divider: number, negated: boolean}[][]} params
+   * @param {function(number): string} getDataAt
+   */
+  applyDecodeParams(
+    params: { offset: number; divider: number; negated: boolean }[][],
+    getDataAt: { (x: number): any; (arg0: any): string },
+  ) {
+    let res = 0;
+    for (let paramAdd of params) {
+      let resInner = 1;
+      for (let paramMul of paramAdd) {
+        resInner *= parseInt(getDataAt(paramMul.offset)) / paramMul.divider;
+        if (paramMul.negated) resInner *= -1;
+      }
+      res += resInner;
+    }
+    return res;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
