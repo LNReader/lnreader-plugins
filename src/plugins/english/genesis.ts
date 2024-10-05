@@ -222,8 +222,8 @@ class Genesis implements Plugin.PluginBase {
     code: string,
     getDataAt: { (x: number): any; (arg0: number): any },
   ) {
-    // @ts-ignore
     let chapterDataStr =
+      // @ts-ignore
       /\),\(function\(\){var \w+=\w+;return(?<data>{.+?});/.exec(code).groups
         .data;
 
@@ -250,8 +250,8 @@ class Genesis implements Plugin.PluginBase {
     );
 
     //parse the data getting methods
-    // @ts-ignore
     chapterDataStr = chapterDataStr.replace(
+      // @ts-ignore
       /:\w+\(0x(?<offset>[0-9a-f]+)\)/g,
       (match, p1) => {
         let offset = parseInt(p1, 16);
