@@ -18,7 +18,7 @@ class Genesis implements Plugin.PluginBase {
   icon = 'src/en/genesis/icon.png';
   customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
-  version = '1.0.4';
+  version = '1.0.5';
 
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
@@ -126,7 +126,7 @@ class Genesis implements Plugin.PluginBase {
     const data = nodes
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
-    const content = data[19];
+    const content = data[data[0].gs];
     const footnotes = data[data[0].footnotes];
     return content + (footnotes ?? '');
   }
