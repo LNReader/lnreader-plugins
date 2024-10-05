@@ -289,7 +289,7 @@ class Genesis implements Plugin.PluginBase {
     const data = nodes
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
-    const content = data[data[0].gs];
+    const content = data[data[0].gs] ?? data[19];
     const footnotes = data[data[0].footnotes];
     return content + (footnotes ?? '');
   }
