@@ -18,7 +18,7 @@ class Genesis implements Plugin.PluginBase {
   icon = 'src/en/genesis/icon.png';
   customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
-  version = '1.0.5';
+  version = '1.0.6';
 
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
@@ -54,12 +54,15 @@ class Genesis implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = `${this.site}${novelPath}/__data.json?x-sveltekit-invalidated=001`;
+
+    // Fetch the novel's data in JSON format
     const json = await fetchApi(url).then(r => r.json());
     const nodes = json.nodes;
-    const data = nodes
-      .filter((node: { type: string }) => node.type === 'data')
-      .map((node: { data: any }) => node.data)[0];
 
+    // Extract the main novel data from the nodes
+    const data = this.extractNovelData(nodes);
+
+    // Initialize the novel object with default values
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: '',
@@ -70,76 +73,114 @@ class Genesis implements Plugin.PluginBase {
       chapters: [],
     };
 
-    for (const key in data) {
-      const value = data[key];
-      if (typeof value === 'object' && value !== null) {
-        if ('novel_title' in value) {
-          novel.name = data[value.novel_title];
-          novel.cover = data[value.cover];
-          novel.summary = data[value.synopsis];
-          novel.author = data[value.author];
-          novel.genres = (data[value.genres] as number[])
-            .map((genreId: number) => data[genreId])
-            .join(', ');
-          novel.status = value.release_days ? 'Ongoing' : 'Completed';
-        } else if ('chapters_list' in value) {
-          const chapterArrays = Object.values(
-            this.decodeData(data[value.chapters_list]),
-          );
+    // Parse and assign novel metadata (title, cover, summary, author, etc.)
+    this.populateNovelMetadata(novel, data);
 
-          novel.chapters = chapterArrays.flatMap((chapterArrays: any) => {
-            return chapterArrays
-              .map((chapter: any) => {
-                console.log(chapter);
-                if (
-                  chapter.id != null &&
-                  chapter.chapter_title != null &&
-                  chapter.chapter_number != null &&
-                  chapter.required_tier != null &&
-                  chapter.date_created != null
-                ) {
-                  const id = chapter.id;
-                  const title = chapter.chapter_title || 'Unknown Title';
-                  const number = parseInt(chapter.chapter_number, 10) || 0;
-                  const requiredTier = parseInt(chapter.required_tier, 10) || 0;
-                  const dateCreated = chapter.date_created || '';
-
-                  // Chapters with a 'requiredTier' of 0 are processed
-                  if (requiredTier === 0) {
-                    return {
-                      name: `Chapter ${number}: ${title}`,
-                      path: `/viewer/${id}`,
-                      releaseTime: dateCreated,
-                      chapterNumber: number,
-                    };
-                  }
-                }
-                return null;
-              })
-              .filter(
-                (chapter: any): chapter is Plugin.ChapterItem =>
-                  chapter !== null,
-              );
-          });
-        }
-      }
-    }
+    // Parse the chapters if available and assign them to the novel object
+    novel.chapters = this.extractChapters(data);
 
     return novel;
   }
 
-  decodeData(code: any) {
-    let offset = this.getOffsetIndex(code);
-    let params = this.getDecodeParams(code);
-    let constant = this.getConstant(code);
-    let data = this.getStringsArrayRaw(code);
+  // Helper function to extract novel data from nodes
+  extractNovelData(nodes: any[]): any {
+    return nodes
+      .filter((node: { type: string }) => node.type === 'data')
+      .map((node: { data: any }) => node.data)[0];
+  }
 
-    let getDataAt = (x: number) => data[x - offset];
+  // Helper function to populate novel metadata
+  populateNovelMetadata(novel: Plugin.SourceNovel, data: any): void {
+    for (const key in data) {
+      const value = data[key];
+
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        'novel_title' in value
+      ) {
+        novel.name = data[value.novel_title] || 'Unknown Title';
+        novel.cover = data[value.cover] || '';
+        novel.summary = data[value.synopsis] || '';
+        novel.author = data[value.author] || 'Unknown Author';
+        novel.genres =
+          (data[value.genres] as number[])
+            .map((genreId: number) => data[genreId])
+            .join(', ') || 'Unknown Genre';
+        novel.status = value.release_days ? 'Ongoing' : 'Completed';
+        break; // Break the loop once metadata is found
+      }
+    }
+  }
+
+  // Helper function to extract and format chapters
+  extractChapters(data: any): Plugin.ChapterItem[] {
+    for (const key in data) {
+      const value = data[key];
+
+      if (typeof value === 'object' && value !== null && 'clist' in value) {
+        const chapterData = this.decodeData(data[value.clist]);
+
+        // Object.values will give us an array of arrays (any[][])
+        const chapterArrays: any[][] = Object.values(chapterData);
+
+        // Flatten and format the chapters
+        return chapterArrays.flatMap((chapters: any[]) => {
+          return chapters
+            .map((chapter: any) => this.formatChapter(chapter))
+            .filter(
+              (chapter): chapter is Plugin.ChapterItem => chapter !== null,
+            );
+        });
+      }
+    }
+
+    return [];
+  }
+
+  // Helper function to format an individual chapter
+  formatChapter(chapter: any): Plugin.ChapterItem | null {
+    const { id, chapter_title, chapter_number, required_tier, date_created } =
+      chapter;
+
+    // Ensure required fields are present and valid
+    if (
+      id &&
+      chapter_title &&
+      chapter_number &&
+      required_tier !== null &&
+      date_created
+    ) {
+      const number = parseInt(chapter_number, 10) || 0;
+      const requiredTier = parseInt(required_tier, 10) || 0;
+
+      // Only process chapters with a 'requiredTier' of 0
+      if (requiredTier === 0) {
+        return {
+          name: `Chapter ${number}: ${chapter_title}`,
+          path: `/viewer/${id}`,
+          releaseTime: date_created,
+          chapterNumber: number,
+        };
+      }
+    }
+
+    return null;
+  }
+
+  decodeData(code: any) {
+    const offset = this.getOffsetIndex(code);
+    const params = this.getDecodeParams(code);
+    const constant = this.getConstant(code);
+    const data = this.getStringsArrayRaw(code);
+
+    const getDataAt = (x: number) => data[x - offset];
 
     //reshuffle data array
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        let some_number = this.applyDecodeParams(params, getDataAt);
+        const some_number = this.applyDecodeParams(params, getDataAt);
         if (some_number === constant) break;
         else data.push(data.shift());
       } catch (err) {
@@ -152,7 +193,7 @@ class Genesis implements Plugin.PluginBase {
 
   getOffsetIndex(code: string) {
     // @ts-ignore
-    let string = /{(\w+)=\1-0x(?<offset>[0-9a-f]+);/.exec(code).groups.offset;
+    const string = /{(\w+)=\1-0x(?<offset>[0-9a-f]+);/.exec(code).groups.offset;
     return parseInt(string, 16);
   }
 
@@ -180,11 +221,11 @@ class Genesis implements Plugin.PluginBase {
    */
   getDecodeParams(code: string) {
     // @ts-ignore
-    let jsDecodeInt = /while\(!!\[]\){try{var \w+=(?<code>.+?);/.exec(code)
+    const jsDecodeInt = /while\(!!\[]\){try{var \w+=(?<code>.+?);/.exec(code)
       .groups.code;
-    let decodeSections = jsDecodeInt.split('+');
-    let params = [];
-    for (let section of decodeSections) {
+    const decodeSections = jsDecodeInt.split('+');
+    const params = [];
+    for (const section of decodeSections) {
       params.push(this.decodeParamSection(section));
     }
     return params;
@@ -195,17 +236,19 @@ class Genesis implements Plugin.PluginBase {
    * @returns {{offset: number, divider: number, negated: boolean}[]}
    */
   decodeParamSection(section: string) {
-    let sections = section.split('*');
-    let params = [];
-    for (let section of sections) {
+    const sections = section.split('*');
+    const params = [];
+    for (const section of sections) {
       // @ts-ignore
-      let offsetStr = /parseInt\(\w+\(0x(?<offset>[0-9a-f]+)\)\)/.exec(section)
-        .groups.offset;
-      let offset = parseInt(offsetStr, 16);
+      const offsetStr = /parseInt\(\w+\(0x(?<offset>[0-9a-f]+)\)\)/.exec(
+        section,
+      ).groups.offset;
+      const offset = parseInt(offsetStr, 16);
       // @ts-ignore
-      let dividerStr = /\/0x(?<divider>[0-9a-f]+)/.exec(section).groups.divider;
-      let divider = parseInt(dividerStr, 16);
-      let negated = section.includes('-');
+      const dividerStr = /\/0x(?<divider>[0-9a-f]+)/.exec(section).groups
+        .divider;
+      const divider = parseInt(dividerStr, 16);
+      const negated = section.includes('-');
       params.push({ offset, divider, negated });
     }
     return params;
@@ -213,7 +256,7 @@ class Genesis implements Plugin.PluginBase {
 
   getConstant(code: string) {
     // @ts-ignore
-    let constantStr = /}}}\(\w+,0x(?<constant>[0-9a-f]+)\),/.exec(code).groups
+    const constantStr = /}}}\(\w+,0x(?<constant>[0-9a-f]+)\),/.exec(code).groups
       .constant;
     return parseInt(constantStr, 16);
   }
@@ -229,7 +272,7 @@ class Genesis implements Plugin.PluginBase {
 
     //replace hex with decimal
     chapterDataStr = chapterDataStr.replace(/:0x([0-9a-f]+)/g, (match, p1) => {
-      let hex = parseInt(p1, 16);
+      const hex = parseInt(p1, 16);
       return `: ${hex}`;
     });
 
@@ -254,7 +297,7 @@ class Genesis implements Plugin.PluginBase {
       // @ts-ignore
       /:\w+\(0x(?<offset>[0-9a-f]+)\)/g,
       (match, p1) => {
-        let offset = parseInt(p1, 16);
+        const offset = parseInt(p1, 16);
         return `:${JSON.stringify(getDataAt(offset))}`;
       },
     );
@@ -271,9 +314,9 @@ class Genesis implements Plugin.PluginBase {
     getDataAt: { (x: number): any; (arg0: any): string },
   ) {
     let res = 0;
-    for (let paramAdd of params) {
+    for (const paramAdd of params) {
       let resInner = 1;
-      for (let paramMul of paramAdd) {
+      for (const paramMul of paramAdd) {
         resInner *= parseInt(getDataAt(paramMul.offset)) / paramMul.divider;
         if (paramMul.negated) resInner *= -1;
       }
