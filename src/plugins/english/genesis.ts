@@ -118,8 +118,10 @@ class Genesis implements Plugin.PluginBase {
     for (const key in data) {
       const value = data[key];
 
-      if (typeof value === 'object' && value !== null && 'clist' in value) {
-        const chapterData = this.decodeData(data[value.clist]);
+      // Change string here if the chapters are stored under a different key
+      const chapterKey = 'chapters';
+      if (typeof value === 'object' && value !== null && chapterKey in value) {
+        const chapterData = this.decodeData(data[value[chapterKey]]);
 
         // Object.values will give us an array of arrays (any[][])
         const chapterArrays: any[][] = Object.values(chapterData);
