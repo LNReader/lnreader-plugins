@@ -17,6 +17,16 @@ const disAllowedHeaders = [
 
 const proxyRequest = (req, res) => {
   const _url = new URL(req.url);
+  console.log(
+    `----------------
+Making proxy request - at ${new Date().toLocaleTimeString()}
+url: ${_url.href}
+headers: 
+${Object.entries(req.headers)
+  .map(([name, value]) => '\t' + name + ': ' + value)
+  .join('\n')}
+----------------`,
+  );
   proxy.web(req, res, {
     target: _url.origin,
     selfHandleResponse: true,
