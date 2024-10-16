@@ -4,7 +4,7 @@ import httpProxy from 'http-proxy';
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});
 
-const disAllowedHeaders = [
+const disAllowedRequestHeaders = [
   'sec-ch-ua',
   'sec-ch-ua-mobile',
   'sec-ch-ua-platform',
@@ -15,8 +15,20 @@ const disAllowedHeaders = [
   'pragma',
 ];
 
+const disAllowResponseHeaders = ['link', 'set-cookie', 'set-cookie2'];
+
 const proxyRequest = (req, res) => {
   const _url = new URL(req.url);
+  console.log('\x1b[36m', '----------------');
+  console.log(
+    `Making proxy request - at ${new Date().toLocaleTimeString()}
+url: ${_url.href}
+headers:`,
+  );
+  Object.entries(req.headers).forEach(([name, value]) => {
+    console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
+  });
+  console.log('\x1b[36m', '----------------');
   proxy.web(req, res, {
     target: _url.origin,
     selfHandleResponse: true,
@@ -52,10 +64,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     return false;
   }
   for (const _header in proxyRes.headers) {
-    res.setHeader(_header, proxyRes.headers[_header]);
+    if (!disAllowResponseHeaders.includes(_header)) {
+      res.setHeader(_header, proxyRes.headers[_header]);
+    }
   }
-  delete proxyRes.headers['set-cookie'];
-  delete proxyRes.headers['set-cookie2'];
+  for (const _header in disAllowedRequestHeaders) {
+    delete proxyRes.headers[_header];
+  }
   res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
   res.setHeader('Access-Control-Allow-Credentials', true);
   proxyRes.on('data', function (chunk) {
@@ -101,26 +116,35 @@ http
     if (path === 'cookies') {
       cookiesHandler(req, res);
     } else {
-      const _url = new URL(path);
-      for (const _header of disAllowedHeaders) {
-        delete req.headers[_header];
-      }
-      for (const _header in req.headers) {
-        if (req.headers[_header]?.includes('localhost')) {
-          delete req.headers[_header];
+      try {
+        const _url = new URL(path);
+        for (const _header in req.headers) {
+          if (
+            req.headers[_header]?.includes('localhost') ||
+            disAllowedRequestHeaders.includes(_header)
+          ) {
+            delete req.headers[_header];
+          }
         }
-      }
-      req.headers['sec-fetch-mode'] = 'cors';
-      if (temp_cookies) {
-        req.headers['cookie'] = temp_cookies;
-      }
-      req.headers.host = _url.host;
-      req.url = _url.toString();
-      res.statusCode = 200;
-      if (req.method === 'OPTIONS') {
-        res.end();
-      } else {
-        proxyRequest(req, res);
+        req.headers['sec-fetch-mode'] = 'cors';
+        if (temp_cookies) {
+          req.headers['cookie'] = temp_cookies;
+        }
+        req.headers.host = _url.host;
+        req.url = _url.toString();
+        res.statusCode = 200;
+        if (req.method === 'OPTIONS') {
+          res.end();
+        } else {
+          proxyRequest(req, res);
+        }
+      } catch (err) {
+        console.log('\x1b[31m', '----------ERRROR----------');
+        console.error(err);
+        console.log('\x1b[31m', '----------ERRROR----------');
+        if (!res.closed) {
+          res.end();
+        }
       }
     }
   })
