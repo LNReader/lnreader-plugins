@@ -17,16 +17,16 @@ const disAllowedHeaders = [
 
 const proxyRequest = (req, res) => {
   const _url = new URL(req.url);
+  console.log('\x1b[36m', '----------------');
   console.log(
-    `----------------
-Making proxy request - at ${new Date().toLocaleTimeString()}
+    `Making proxy request - at ${new Date().toLocaleTimeString()}
 url: ${_url.href}
-headers: 
-${Object.entries(req.headers)
-  .map(([name, value]) => '\t' + name + ': ' + value)
-  .join('\n')}
-----------------`,
+headers:`,
   );
+  Object.entries(req.headers).forEach(([name, value]) => {
+    console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
+  });
+  console.log('\x1b[36m', '----------------');
   proxy.web(req, res, {
     target: _url.origin,
     selfHandleResponse: true,
@@ -111,26 +111,35 @@ http
     if (path === 'cookies') {
       cookiesHandler(req, res);
     } else {
-      const _url = new URL(path);
-      for (const _header of disAllowedHeaders) {
-        delete req.headers[_header];
-      }
-      for (const _header in req.headers) {
-        if (req.headers[_header]?.includes('localhost')) {
+      try {
+        const _url = new URL(path);
+        for (const _header of disAllowedHeaders) {
           delete req.headers[_header];
         }
-      }
-      req.headers['sec-fetch-mode'] = 'cors';
-      if (temp_cookies) {
-        req.headers['cookie'] = temp_cookies;
-      }
-      req.headers.host = _url.host;
-      req.url = _url.toString();
-      res.statusCode = 200;
-      if (req.method === 'OPTIONS') {
-        res.end();
-      } else {
-        proxyRequest(req, res);
+        for (const _header in req.headers) {
+          if (req.headers[_header]?.includes('localhost')) {
+            delete req.headers[_header];
+          }
+        }
+        req.headers['sec-fetch-mode'] = 'cors';
+        if (temp_cookies) {
+          req.headers['cookie'] = temp_cookies;
+        }
+        req.headers.host = _url.host;
+        req.url = _url.toString();
+        res.statusCode = 200;
+        if (req.method === 'OPTIONS') {
+          res.end();
+        } else {
+          proxyRequest(req, res);
+        }
+      } catch (err) {
+        console.log('\x1b[31m', '----------ERRROR----------');
+        console.error(err);
+        console.log('\x1b[31m', '----------ERRROR----------');
+        if (!res.closed) {
+          res.end();
+        }
       }
     }
   })
