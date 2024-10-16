@@ -4,7 +4,7 @@ import httpProxy from 'http-proxy';
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});
 
-const disAllowedHeaders = [
+const disAllowedRequestHeaders = [
   'sec-ch-ua',
   'sec-ch-ua-mobile',
   'sec-ch-ua-platform',
@@ -14,6 +14,8 @@ const disAllowedHeaders = [
   'sec-fetch-dest',
   'pragma',
 ];
+
+const disAllowResponseHeaders = ['link', 'set-cookie', 'set-cookie2'];
 
 const proxyRequest = (req, res) => {
   const _url = new URL(req.url);
@@ -62,10 +64,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     return false;
   }
   for (const _header in proxyRes.headers) {
-    res.setHeader(_header, proxyRes.headers[_header]);
+    if (!disAllowResponseHeaders.includes(_header)) {
+      res.setHeader(_header, proxyRes.headers[_header]);
+    }
   }
-  delete proxyRes.headers['set-cookie'];
-  delete proxyRes.headers['set-cookie2'];
+  for (const _header in disAllowedRequestHeaders) {
+    delete proxyRes.headers[_header];
+  }
   res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
   res.setHeader('Access-Control-Allow-Credentials', true);
   proxyRes.on('data', function (chunk) {
@@ -113,11 +118,11 @@ http
     } else {
       try {
         const _url = new URL(path);
-        for (const _header of disAllowedHeaders) {
-          delete req.headers[_header];
-        }
         for (const _header in req.headers) {
-          if (req.headers[_header]?.includes('localhost')) {
+          if (
+            req.headers[_header]?.includes('localhost') ||
+            disAllowedRequestHeaders.includes(_header)
+          ) {
             delete req.headers[_header];
           }
         }
