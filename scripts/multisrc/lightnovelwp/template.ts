@@ -8,6 +8,8 @@ import { Filters } from '@libs/filterInputs';
 
 type LightNovelWPOptions = {
   reverseChapters?: boolean;
+  down?: boolean;
+  downSince?: string;
   lang?: string;
   versionIncrements?: number;
   seriesPath?: string;
