@@ -168,7 +168,7 @@ class MadaraPlugin implements Plugin.PluginBase {
       path: novelPath,
       name:
         loadedCheerio('.post-title h1').text().trim() ||
-        loadedCheerio('#manga-title h1').text(),
+        loadedCheerio('#manga-title h1').text().trim(),
     };
 
     novel.cover =

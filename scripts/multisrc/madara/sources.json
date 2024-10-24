@@ -377,6 +377,7 @@
     "sourceSite": "https://citrusaurora.com/",
     "sourceName": "Citrus Aurora",
     "options": {
+      "versionIncrements": 1,
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
