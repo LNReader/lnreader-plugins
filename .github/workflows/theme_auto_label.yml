@@ -1,0 +1,97 @@
+name: Auto Theme Labeler
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  auto-label:
+    if: contains(github.event.issue.labels.*.name, 'Source Request')
+    runs-on: ubuntu-latest
+    env:
+      REPO: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Get Source Request URL
+        id: get_url
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          URL=$(echo "$ISSUE_BODY" | sed -n '/### Source link/,+2p' | sed '1,2d' | tr -d '[:space:]')
+          echo "URL=$URL" >> $GITHUB_OUTPUT
+          echo "Using URL: \`$URL\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Get Base URL
+        id: get_base_url
+        env:
+          URL: ${{ steps.get_url.outputs.URL }}
+        run: |
+          BASE_URL=$(echo "$URL" | sed 's/https\?:\/\///' | cut -d'/' -f1)
+          echo "BASE_URL=$BASE_URL" >> $GITHUB_OUTPUT
+          echo "Using Base URL: \`$BASE_URL\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Get User Agent
+        id: get_user_agent
+        run: |
+          CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
+          echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
+
+      - name: Check Madara theme
+        id: check_madara
+        env:
+          BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
+          USER_AGENT: ${{ steps.get_user_agent.outputs.USER_AGENT }}
+        run: |
+          if curl --location --output /dev/null --silent --head --fail "https://$BASE_URL/wp-content/themes/madara/style.css" -H "User-Agent: $USER_AGENT"; then
+            echo "madara=true" >> $GITHUB_OUTPUT
+            echo "✅ Madara Theme Detected" >> $GITHUB_STEP_SUMMARY
+          elif curl --location --output /dev/null --silent --head --fail "http://$BASE_URL/wp-content/themes/madara/style.css" -H "User-Agent: $USER_AGENT"; then
+            echo "madara=true" >> $GITHUB_OUTPUT
+            echo "✅ Madara Theme Detected" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "madara=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Lighnovelwp theme
+        id: check_lighnovelwp
+        env:
+          BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
+          USER_AGENT: ${{ steps.get_user_agent.outputs.USER_AGENT }}
+        run: |
+          if curl --location --output /dev/null --silent --head --fail "https://$BASE_URL/wp-content/themes/lightnovel/style.css" -H "User-Agent: $USER_AGENT"; then
+            echo "lighnovelwp=true" >> $GITHUB_OUTPUT
+            echo "✅ Lighnovelwp Theme Detected" >> $GITHUB_STEP_SUMMARY
+          elif curl --location --output /dev/null --silent --head --fail "http://$BASE_URL/wp-content/themes/lightnovel/style.css" -H "User-Agent: $USER_AGENT"; then
+            echo "lighnovelwp=true" >> $GITHUB_OUTPUT
+            echo "✅ Lighnovelwp Theme Detected" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "lighnovelwp=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if the site has multiple themes
+        id: check_multiple_themes
+        env:
+          MADARA: ${{ steps.check_madara.outputs.madara }}
+          LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}
+        run: |
+          if [[ "$MADARA" == "true" && "$LIGHNOVELWP" == "true" ]]; then
+            echo "multiple_themes=true" >> $GITHUB_OUTPUT
+            echo "❌ Error: Multiple Themes Detected on Site" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "multiple_themes=false" >> $GITHUB_OUTPUT
+
+      - name: Add Label
+        if: steps.check_multiple_themes.outputs.multiple_themes == 'false'
+        env:
+          MADARA: ${{ steps.check_madara.outputs.madara }}
+          LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$MADARA" == "true" ]]; then
+            gh issue edit $ISSUE_NUMBER --add-label "Theme: Madara" -R $REPO
+          elif [[ "$LIGHNOVELWP" == "true" ]]; then
+            gh issue edit $ISSUE_NUMBER --add-label "Theme: Lighnovelwp" -R $REPO
+          else
+            echo "No Theme Detected" >> $GITHUB_STEP_SUMMARY
+          fi

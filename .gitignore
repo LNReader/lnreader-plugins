@@ -1,0 +1,16 @@
+node_modules
+.vscode
+.env
+config.json
+
+# generated multisrc .ts files
+src/plugins/*/*\[*\]*.ts
+
+# ignore dist stuffs
+.js
+.dist
+.DS_Store
+dist
+total.svg
+src/plugins/index.ts
+.history

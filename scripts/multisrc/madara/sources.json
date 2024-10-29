@@ -1,0 +1,439 @@
+[
+  {
+    "id": "boxnovel",
+    "sourceSite": "https://boxnovel.com/",
+    "sourceName": "BoxNovel",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "novelTL",
+    "sourceSite": "https://noveltranslate.com/",
+    "sourceName": "NovelTranslate",
+    "options": {}
+  },
+  {
+    "id": "lunarletters",
+    "sourceSite": "https://lunarletters.com/",
+    "sourceName": "LunarLetters",
+    "options": {
+      "versionIncrements": 1,
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "sleeptTLS",
+    "sourceSite": "https://sleepytranslations.com/",
+    "sourceName": "SleepyTranslations",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "1stkissnovel",
+    "sourceSite": "https://1stkissnovel.org/",
+    "sourceName": "FirstKissNovel",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "daonovel",
+    "sourceSite": "https://daonovel.co/",
+    "sourceName": "DaoNovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "mostnovel",
+    "sourceSite": "https://mostnovel.com/",
+    "sourceName": "MostNovel",
+    "options": {}
+  },
+  {
+    "id": "novelmultiverse",
+    "sourceSite": "https://www.novelmultiverse.com/",
+    "sourceName": "NovelMultiverse"
+  },
+  {
+    "id": "lnheaven",
+    "sourceSite": "https://lightnovelheaven.com/",
+    "sourceName": "LightNovelHeaven",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "arnovel",
+    "sourceSite": "https://ar-novel.com/",
+    "sourceName": "ArNovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic",
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "meionovel",
+    "sourceSite": "https://meionovel.id/",
+    "sourceName": "MeioNovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Indonesian"
+    }
+  },
+  {
+    "id": "webnovelover",
+    "sourceSite": "https://www.webnovelover.com/",
+    "sourceName": "WebNovelLover"
+  },
+  {
+    "id": "wbnovel",
+    "sourceSite": "https://wbnovel.com/",
+    "sourceName": "WBNovel",
+    "options": {
+      "lang": "Indonesian"
+    }
+  },
+  {
+    "id": "wuxiaworld.site",
+    "sourceSite": "https://wuxiaworld.site/",
+    "sourceName": "WuxiaWorld.Site",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "mysticalmerries",
+    "sourceSite": "https://mysticalmerries.com/",
+    "sourceName": "MysticalSeries",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "morenovel",
+    "sourceSite": "https://risenovel.com/",
+    "sourceName": "Risenovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 1,
+      "lang": "Indonesian"
+    }
+  },
+  {
+    "id": "hizomanga",
+    "sourceSite": "https://hizomanga.net/",
+    "sourceName": "HizoManga",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic",
+      "versionIncrements": 2
+    }
+  },
+  {
+    "id": "riwyat",
+    "sourceSite": "https://cenele.com/",
+    "sourceName": "Riwyat",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic",
+      "versionIncrements": 4
+    }
+  },
+  {
+    "id": "novel4up",
+    "sourceSite": "https://novel4up.com/",
+    "sourceName": "Novel4Up",
+    "options": {
+      "lang": "Arabic"
+    }
+  },
+  {
+    "id": "turkcelightnovels",
+    "sourceSite": "https://turkcelightnovels.com/",
+    "sourceName": "TurkceLightNovels",
+    "options": {
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "sonicmtl",
+    "sourceSite": "https://www.sonicmtl.com/",
+    "sourceName": "SonicMTL",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "guavaread",
+    "sourceSite": "https://guavaread.com/",
+    "sourceName": "Guavaread",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "neosekaiTLS",
+    "sourceSite": "https://www.neosekaitranslations.com/",
+    "sourceName": "NeoSekai Translations"
+  },
+  {
+    "id": "mtl-novel",
+    "sourceSite": "https://mtl-novel.com/",
+    "sourceName": "MTL-Novel",
+    "options": {
+      "useNewChapterEndpoint": false,
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "zetroTL",
+    "sourceSite": "https://zetrotranslation.com/",
+    "sourceName": "Zetro Translation",
+    "options": {}
+  },
+  {
+    "id": "webnoveloku",
+    "sourceSite": "https://www.webnoveloku.com/",
+    "sourceName": "WebNovelOku",
+    "options": {
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "LightNovelUpdates",
+    "sourceSite": "https://www.lightnovelupdates.com/",
+    "sourceName": "Light Novel Updates"
+  },
+  {
+    "id": "foxaholic",
+    "sourceSite": "https://www.foxaholic.com/",
+    "sourceName": "Foxaholic"
+  },
+  {
+    "id": "nitromanga",
+    "sourceSite": "https://nitromanga.com/",
+    "sourceName": "Nitro Manga",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "kiniga",
+    "sourceSite": "https://kiniga.com/",
+    "sourceName": "Kiniga",
+    "options": {
+      "lang": "Portuguese"
+    }
+  },
+  {
+    "id": "panchotranslations",
+    "sourceSite": "https://panchotranslations.com/",
+    "sourceName": "Pancho Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "salmonlatte",
+    "sourceSite": "https://salmonlatte.com/",
+    "sourceName": "Salmon Latte",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "asuralightnovel",
+    "sourceSite": "https://srankmanga.com/",
+    "sourceName": "Srank Manga",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "novel-lucky",
+    "sourceSite": "https://novel-lucky.com/",
+    "sourceName": "Novel Lucky",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Thai"
+    }
+  },
+  {
+    "id": "fanstranslations",
+    "sourceSite": "https://fanstranslations.com/",
+    "sourceName": "Fans Translations",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "worldnovel",
+    "sourceSite": "https://world-novel.fr/",
+    "sourceName": "WorldNovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "French"
+    }
+  },
+  {
+    "id": "hiraethtranslation",
+    "sourceSite": "https://hiraethtranslation.com/",
+    "sourceName": "Hiraeth Translation",
+    "options": {
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "novelpdf",
+    "sourceSite": "https://novelpdf.xyz/",
+    "sourceName": "Novel PDF",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Thai"
+    }
+  },
+  {
+    "id": "azora",
+    "sourceSite": "https://azorago.com/",
+    "sourceName": "Azora",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic"
+    }
+  },
+  {
+    "id": "translatinotaku",
+    "sourceSite": "https://translatinotaku.net/",
+    "sourceName": "TranslatinOtaku",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "dragontea",
+    "sourceSite": "https://dragontea.ink/",
+    "sourceName": "Dragon Tea",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English",
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "novelbookid",
+    "sourceSite": "https://www.novelbook.id/",
+    "sourceName": "NovelBookID",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Indonesian"
+    }
+  },
+  {
+    "id": "meownovel",
+    "sourceSite": "https://meownovel.com/",
+    "sourceName": "Meownovel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "galaxytranslations",
+    "sourceSite": "https://darkstartranslations.com/",
+    "sourceName": "Galaxy Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 3,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "olaoe",
+    "sourceSite": "https://olaoe.cyou/",
+    "sourceName": "Olaoe.cyou",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Arabic"
+    }
+  },
+  {
+    "id": "wordexcerpt",
+    "sourceSite": "https://wordexcerpt.com/",
+    "sourceName": "WordExcerpt",
+    "options": {
+      "lang": "English"
+    }
+  },
+  {
+    "id": "citrusaurora",
+    "sourceSite": "https://citrusaurora.com/",
+    "sourceName": "Citrus Aurora",
+    "options": {
+      "versionIncrements": 1,
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "duskblossoms",
+    "sourceSite": "https://duskblossoms.com/",
+    "sourceName": "Dusk Blossoms",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "fenrir",
+    "sourceSite": "https://fenrirtranslations.com/",
+    "sourceName": "Fenrir Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "bellereservoir",
+    "sourceSite": "https://bellereservoir.com/",
+    "sourceName": "Belle Reservoir",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "traducciones",
+    "sourceSite": "https://traduccionesamistosas.eyudud.net/",
+    "sourceName": "Traducciones Amistosas",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "coralboutique",
+    "sourceSite": "https://coralboutique.xyz/",
+    "sourceName": "Coral Boutique",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "pasteltales",
+    "sourceSite": "https://pasteltales.com/",
+    "sourceName": "Pastel Tales",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "mtlnovel",
+    "sourceSite": "https://www.mtlnovels.com/",
+    "sourceName": "MTL Novel",
+    "options": {
+      "lang": "English"
+    }
+  },
+  {
+    "id": "mtlnovel-fr",
+    "sourceSite": "https://fr.mtlnovels.com/",
+    "sourceName": "MTL Novel (FR)",
+    "options": {
+      "lang": "French"
+    }
+  },
+  {
+    "id": "mtlnovel-es",
+    "sourceSite": "https://es.mtlnovels.com/",
+    "sourceName": "MTL Novel (ES)",
+    "options": {
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "mtlnovel-id",
+    "sourceSite": "https://id.mtlnovels.com/",
+    "sourceName": "MTL Novel (ID)",
+    "options": {
+      "lang": "Indonesian"
+    }
+  },
+  {
+    "id": "mtlnovel-pt",
+    "sourceSite": "https://pt.mtlnovels.com/",
+    "sourceName": "MTL Novel (PT)",
+    "options": {
+      "lang": "Portuguese"
+    }
+  },
+  {
+    "id": "mtlnovel-ru",
+    "sourceSite": "https://ru.mtlnovels.com/",
+    "sourceName": "MTL Novel (RU)",
+    "options": {
+      "lang": "Russian"
+    }
+  }
+]
