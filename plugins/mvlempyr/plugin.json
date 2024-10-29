@@ -1,3 +1,48 @@
+{
+  "name": "MyDramaNovel",
+  "url": "https://mydramanovel.com/",
+  "version": "1.0.0",
+  "language": "en",
+  "supportsSearch": true,
+  "endpoints": {
+    "search": "/api/search",
+    "bookDetails": "/api/book/{id}"
+  },
+  "headers": {
+    "User-Agent": "LNReader"
+  }
+}
+
+{
+  "name": "WuxiaBox",
+  "url": "https://www.wuxiabox.com/",
+  "version": "1.0.0",
+  "language": "en",
+  "supportsSearch": true,
+  "endpoints": {
+    "search": "/api/search",
+    "bookDetails": "/api/book/{id}"
+  },
+  "headers": {
+    "User-Agent": "LNReader"
+  }
+}
+
+{
+  "name": "Wuxia.Click",
+  "url": "https://wuxia.click/",
+  "version": "1.0.0",
+  "language": "en",
+  "supportsSearch": true,
+  "endpoints": {
+    "search": "/api/search",
+    "bookDetails": "/api/book/{id}"
+  },
+  "headers": {
+    "User-Agent": "LNReader"
+  }
+}
+
 // This is a plugin for MVLEMPYR
 {
   "name": "MVLEMPYR",
