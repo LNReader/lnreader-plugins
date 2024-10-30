@@ -7,21 +7,19 @@ on:
 
 jobs:
   Publish:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+          token: ${{ secrets.Nou }}
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
       - name: Install Dependencies
         run: npm install
-
       - name: Publish Plugins
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           npm run host-linux
         shell: bash
