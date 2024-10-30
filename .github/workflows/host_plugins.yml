@@ -25,6 +25,8 @@ jobs:
         run: npm install
 
       - name: Publish Plugins
+        env:
+          GITHUB_TOKEN: ${{ secrets.Nou }}
         run: |
           git config user.name "Woundez"
           git config user.email "790nouradel@gmail.com"
