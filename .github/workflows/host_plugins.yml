@@ -14,9 +14,6 @@ jobs:
         with:
           token: ${{ secrets.Nou }}
 
-      - name: Set up repository URL with authentication
-        run: git remote set-url origin https://Woundez:${{ secrets.Nou }}@github.com/Woundez/lnreader-plugins.git
-
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -31,5 +28,6 @@ jobs:
         run: |
           git config user.name "Woundez"
           git config user.email "790nouradel@gmail.com"
+          git remote set-url origin https://Woundez:${{ secrets.Nou }}@github.com/Woundez/lnreader-plugins.git
           npm run host-linux
         shell: bash
