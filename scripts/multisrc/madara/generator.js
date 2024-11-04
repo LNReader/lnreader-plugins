@@ -33,7 +33,7 @@ export default plugin;
     `.trim();
   return {
     lang: source.options?.lang || 'English',
-    filename: source.sourceName,
+    filename: source.sourceName.replace(/[^\w]/g, ''),
     pluginScript,
   };
 };
