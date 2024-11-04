@@ -435,5 +435,50 @@
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
+  },
+  {
+    "id": "azraznovel",
+    "sourceSite": "https://araznovel.com/",
+    "sourceName": "Araz Novel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "noveloku",
+    "sourceSite": "https://noveloku.com.tr/",
+    "sourceName": "Novel oku",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "nabiscans",
+    "sourceSite": "https://nabiscans.com/",
+    "sourceName": "NABİ SCANS",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "ekitaplar",
+    "sourceSite": "https://e-kitaplar.com/",
+    "sourceName": "E-KİTAPLAR",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "novelokutr",
+    "sourceSite": "https://novelokutr.net/",
+    "sourceName": "Novelokutr",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
   }
 ]
