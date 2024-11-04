@@ -3,6 +3,7 @@ import httpProxy from 'http-proxy';
 
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});
+const temp_cookie_fix = false; //NOTE: this may break other things, but better than nothing
 
 const disAllowedRequestHeaders = [
   'sec-ch-ua',
@@ -29,11 +30,35 @@ headers:`,
     console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
   });
   console.log('\x1b[36m', '----------------');
-  proxy.web(req, res, {
-    target: _url.origin,
-    selfHandleResponse: true,
-    followRedirects: true,
-  });
+  if (temp_cookie_fix) {
+    fetch(_url.href, {
+      'headers': {
+        'cookie': temp_cookies,
+        'origin': req.headers.origin2,
+        'user-agent': req.headers['user-agent'],
+      },
+    })
+      .then(res2 => res2.text())
+      .then(res2 => {
+        res.writeHead(200, {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        });
+        res.write(res2);
+        res.end();
+      })
+      .catch(err => {
+        console.error(err);
+        res.statusCode = 500;
+        res.end();
+      });
+  } else {
+    proxy.web(req, res, {
+      target: _url.origin,
+      selfHandleResponse: true,
+      followRedirects: true,
+    });
+  }
 };
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
@@ -87,8 +112,8 @@ const cookiesHandler = (req, res) => {
   let cookies = '';
   res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
   res.setHeader('Access-Control-Allow-Credentials', true);
-  req.on('readable', () => {
-    cookies += req.read();
+  req.on('data', chunk => {
+    cookies += chunk;
   });
   req.on('end', () => {
     temp_cookies = cookies;
@@ -134,6 +159,10 @@ http
         req.url = _url.toString();
         res.statusCode = 200;
         if (req.method === 'OPTIONS') {
+          res.writeHead(200, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+          });
           res.end();
         } else {
           proxyRequest(req, res);
