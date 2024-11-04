@@ -2,7 +2,6 @@ import { load as parseHTML } from 'cheerio';
 import { fetchText } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-// import { encode } from 'urlencode';
 import { NovelStatus } from '@libs/novelStatus';
 
 class XinShu69 implements Plugin.PluginBase {

@@ -20,11 +20,11 @@ class TopLiba implements Plugin.PluginBase {
     searchTerm?: string,
   ): Promise<Plugin.NovelItem[]> {
     const data = new URLSearchParams({
-      q: searchTerm,
       order_field: showLatestNovels ? 'date' : filters?.sort?.value || 'rating',
       p: page,
     });
 
+    if (searchTerm) data.append('q', searchTerm);
     const body = await fetchApi(this.site + '/?' + data.toString()).then(res =>
       res.text(),
     );
