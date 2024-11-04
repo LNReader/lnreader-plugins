@@ -480,5 +480,14 @@
       "useNewChapterEndpoint": true,
       "lang": "Turkish"
     }
+  },
+  {
+    "id": "wooksteahouse",
+    "sourceSite": "https://wooksteahouse.com/",
+    "sourceName": "Wook's Teahouse",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
   }
 ]
