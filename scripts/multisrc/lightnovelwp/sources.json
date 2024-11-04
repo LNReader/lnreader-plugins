@@ -226,5 +226,15 @@
       "seriesPath": "/seri/",
       "lang": "Turkish"
     }
+  },
+  {
+    "id": "kodekslibrary",
+    "sourceSite": "https://www.kodekslibrary.com/",
+    "sourceName": "Kodeks Library",
+    "options": {
+      "reverseChapters": true,
+      "seriesPath": "series",
+      "lang": "Turkish"
+    }
   }
 ]
