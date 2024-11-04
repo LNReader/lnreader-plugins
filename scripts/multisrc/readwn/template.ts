@@ -4,7 +4,6 @@ import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
-import qs from 'qs';
 
 type ReadwnOptions = {
   versionIncrements?: number;
@@ -204,12 +203,12 @@ class ReadwnPlugin implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         show: 'title',
         tempid: 1,
         tbname: 'news',
         keyboard: searchTerm,
-      }),
+      }).toString(),
     }).then(res => res.text());
     const loadedCheerio = parseHTML(result);
 

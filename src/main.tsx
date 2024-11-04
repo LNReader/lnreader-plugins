@@ -9,8 +9,11 @@ import '@fontsource/roboto/700.css';
 import 'cheerio';
 import 'htmlparser2';
 import 'dayjs';
-import 'qs';
 import 'protobufjs';
+import { URL, URLSearchParams } from 'whatwg-url-without-unicode';
+
+window.URL = URL;
+window.URLSearchParams = URLSearchParams;
 
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
