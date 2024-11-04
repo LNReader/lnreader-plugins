@@ -47,8 +47,14 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     let pageQuery = '';
-    if (pageNo > 1)
-      pageQuery += this._pageCache.get('popularnovels-' + pageNo) || '';
+    if (pageNo > 1) {
+      const query = this._pageCache.get('popularnovels-' + pageNo);
+      if (query) {
+        pageQuery += query;
+      } else {
+        return [];
+      }
+    }
 
     return await this.parseNovelListPage(
       `${this.site}novels${pageQuery}`,
