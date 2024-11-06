@@ -9,7 +9,6 @@ import '@fontsource/roboto/700.css';
 import 'cheerio';
 import 'htmlparser2';
 import 'dayjs';
-import 'qs';
 import 'protobufjs';
 
 const { fetch: originalFetch } = window;

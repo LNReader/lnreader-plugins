@@ -1,7 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { fetchApi } from '@libs/fetch';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import qs from 'qs';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class FreeWebNovel implements Plugin.PluginBase {
@@ -134,7 +133,7 @@ class FreeWebNovel implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({ searchkey: searchTerm }),
+      body: new URLSearchParams({ searchkey: searchTerm }).toString(),
     });
     if (!r.ok)
       throw new Error(
