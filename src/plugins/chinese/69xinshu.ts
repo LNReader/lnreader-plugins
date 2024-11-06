@@ -9,8 +9,8 @@ class XinShu69 implements Plugin.PluginBase {
   id = '69xinshu';
   name = '69书吧';
   icon = 'src/cn/69xinshu/icon.png';
-  site = 'https://www.69shu.pro';
-  version = '0.1.1';
+  site = 'https://69shu.biz';
+  version = '0.1.2';
 
   async popularNovels(
     pageNo: number,
@@ -32,20 +32,14 @@ class XinShu69 implements Plugin.PluginBase {
 
     const novelsList =
       pageNo === 1
-        ? loadedCheerio('div.newbox > ul > li')
+        ? loadedCheerio('.newlistbox > ul > li')
         : loadedCheerio('li');
-    novelsList.each((i, e) => {
-      const novelUrl = loadedCheerio(e)
-        .find('li > div > h3 > a:nth-child(2)')
-        .attr('href');
 
+    novelsList.each((i, e) => {
+      const novelUrl = loadedCheerio(e).find('div > h3 > a').attr('href');
       if (novelUrl) {
-        const novelName = loadedCheerio(e)
-          .find('li > div > h3 > a:nth-child(2)')
-          .text();
-        const novelCover = loadedCheerio(e)
-          .find('li > a > img')
-          .attr('data-src');
+        const novelName = loadedCheerio(e).find('div > h3 > a').text();
+        const novelCover = loadedCheerio(e).find('a > img').attr('data-src');
 
         const novel = {
           name: novelName,
@@ -159,12 +153,11 @@ class XinShu69 implements Plugin.PluginBase {
       'gbk',
     );
     if (body === '') throw Error('无法获取搜索结果，请检查网络');
-
     const loadedCheerio = parseHTML(body);
 
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div.newbox > ul > li').each((i, e) => {
+    loadedCheerio('.newbox > ul > li').each((i, e) => {
       const novelUrl = loadedCheerio(e).find('a').attr('href')!;
       const novelName = loadedCheerio(e).find('div.newnav > h3').text();
       const novelCover = loadedCheerio(e).find('img').attr('data-src');

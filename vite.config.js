@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,7 +8,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react({ devTarget: 'es5' })],
+  plugins: [nodePolyfills(), react({ devTarget: 'es5' })],
   resolve: {
     alias: {
       '@libs': path.resolve(dirname, './src/libs'),
