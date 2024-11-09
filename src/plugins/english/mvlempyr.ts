@@ -53,7 +53,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     const novelInfosStart = body.split('<div class="novelcolumn">');
     novelInfosStart.shift(); //remove first element that doesent have a novel
 
-    let ret = [];
+    const ret = [];
     for (const novelInfo of novelInfosStart) {
       const realNovelInfo =
         novelInfo.split('READ</a></div></div></div>')[0] +
