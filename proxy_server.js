@@ -1,9 +1,11 @@
 import http from 'http';
 import httpProxy from 'http-proxy';
+import { exec } from 'child_process';
 
 const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});
 const temp_cookie_fix = false; //NOTE: this may break other things, but better than nothing
+const curl_insteadof_fetch = false; //NOTE: this may break other things, but better than nothing
 
 const disAllowedRequestHeaders = [
   'sec-ch-ua',
@@ -30,7 +32,36 @@ headers:`,
     console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
   });
   console.log('\x1b[36m', '----------------');
-  if (temp_cookie_fix) {
+  if (curl_insteadof_fetch) {
+    //i mean if it works it works i guess, better than nothing
+    let curl = `curl '${_url.href}' -H 'User-Agent: ${req.headers['user-agent']}'`;
+    if (temp_cookies) curl += ` -H 'Cookie: ${temp_cookies}'`;
+    if (req.headers.origin2) curl += ` -H 'Origin: ${req.headers.origin2}'`;
+
+    console.log('Running curl command:', curl);
+
+    exec(
+      curl,
+      {
+        shell: 'C:\\Program Files\\git\\usr\\bin\\bash.exe',
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+        }
+        res.writeHead(200, {
+          'Access-Control-Allow-Origin': CLIENT_HOST,
+          'Access-Control-Allow-Credentials': true,
+        });
+        res.write(stdout);
+        res.end();
+      },
+    );
+  } else if (temp_cookie_fix) {
     fetch(_url.href, {
       'headers': {
         'cookie': temp_cookies,
@@ -41,7 +72,7 @@ headers:`,
       .then(res2 => res2.text())
       .then(res2 => {
         res.writeHead(200, {
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': CLIENT_HOST,
           'Access-Control-Allow-Credentials': true,
         });
         res.write(res2);
@@ -160,7 +191,7 @@ http
         res.statusCode = 200;
         if (req.method === 'OPTIONS') {
           res.writeHead(200, {
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': CLIENT_HOST,
             'Access-Control-Allow-Credentials': true,
           });
           res.end();
