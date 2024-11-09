@@ -45,33 +45,46 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     }
 
     return loadedCheerio('.novelcolumn')
-      .map((i, el) => {
-        const el$ = parseHTML(el);
-
-        return {
-          name: el$('h2[fs-cmsfilter-field="name"]').text(),
-          path: el$('a').attr('href')!.replace(/^\//, ''),
-          cover: el$('img').attr('src'),
-          avgReview: parseFloat(
-            el$('.ratingwrapper > div[fs-cmssort-field="avgr"]').text(),
-          ),
-          reviewCount: parseFloat(
-            el$('.ratingwrapper > div[fs-cmssort-field="reviews"]').text(),
-          ),
-          chapterCount: parseFloat(
-            el$('div[fs-cmssort-field="chapter"].chapter-count').text(),
-          ),
-          updated: new Date(
-            el$('div[fs-cmssort-field="update"]').text(),
-          ).getTime(),
-          created: new Date(
-            el$('div[fs-cmssort-field="crdate"]').text(),
-          ).getTime(),
-          genres: el$('div[fs-cmsnest-collection="genre"]').text().split(', '),
-          tags: el$('div[fs-cmsnest-collection="tags"]').text().split(', '),
-        };
-      })
+      .map((i, el) => this.parseNovelHtml(parseHTML(el)))
       .toArray();
+  }
+
+  parseNovelsFast(body: string) {
+    const novelInfosStart = body.split('<div class="novelcolumn">');
+    novelInfosStart.shift(); //remove first element that doesent have a novel
+
+    let ret = [];
+    for (const novelInfo of novelInfosStart) {
+      const realNovelInfo =
+        novelInfo.split('READ</a></div></div></div>')[0] +
+        'READ</a></div></div></div>';
+
+      const cheerio = parseHTML(realNovelInfo);
+      ret.push(this.parseNovelHtml(cheerio));
+    }
+
+    return ret;
+  }
+
+  parseNovelHtml(el: CheerioAPI) {
+    return {
+      name: el('h2[fs-cmsfilter-field="name"]').text(),
+      path: el('a').attr('href')!.replace(/^\//, ''),
+      cover: el('img').attr('src'),
+      avgReview: parseFloat(
+        el('.ratingwrapper > div[fs-cmssort-field="avgr"]').text(),
+      ),
+      reviewCount: parseFloat(
+        el('.ratingwrapper > div[fs-cmssort-field="reviews"]').text(),
+      ),
+      chapterCount: parseFloat(
+        el('div[fs-cmssort-field="chapter"].chapter-count').text(),
+      ),
+      updated: new Date(el('div[fs-cmssort-field="update"]').text()).getTime(),
+      created: new Date(el('div[fs-cmssort-field="crdate"]').text()).getTime(),
+      genres: el('div[fs-cmsnest-collection="genre"]').text().split(', '),
+      tags: el('div[fs-cmsnest-collection="tags"]').text().split(', '),
+    };
   }
 
   async popularNovels(
@@ -128,6 +141,9 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       },
     });
     const body = await result.text();
+    if (!nextPageConsumer) {
+      return this.parseNovelsFast(body);
+    }
 
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio, nextPageConsumer);
