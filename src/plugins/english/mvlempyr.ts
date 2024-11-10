@@ -14,7 +14,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     'origin': 'https://www.mvlempyr.com/',
   };
 
-  _chapSite = 'https://chp.mvlempyr.com/';
+  _chapSite = 'https://chp.mvlempyr.net/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
   _allNovelsPromise: Promise<(Plugin.NovelItem & ExtraNovelData)[]> | undefined;
 
@@ -216,7 +216,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + chapterPath);
+    const result = await fetchApi(this._chapSite + chapterPath);
     const body = await result.text();
 
     const loadedCheerio = parseHTML(body);
