@@ -39,27 +39,36 @@ headers:`,
 
     console.log('Running curl command:', curl);
 
-    exec(
-      curl,
-      {
-        shell: 'C:\\Program Files\\git\\usr\\bin\\bash.exe',
-      },
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
+    const isWindows = process.platform === 'win32';
+    const options = isWindows
+      ? {
+          shell:
+            process.env.BASH_LOCATION ||
+            'C:\\Program Files\\git\\usr\\bin\\bash.exe',
         }
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-        }
-        res.writeHead(200, {
+      : {};
+
+    exec(curl, options, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        res.writeHead(500, {
           'Access-Control-Allow-Origin': CLIENT_HOST,
           'Access-Control-Allow-Credentials': true,
         });
-        res.write(stdout);
+        res.write(`exec error: ${error}`);
         res.end();
-      },
-    );
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+      }
+      res.writeHead(200, {
+        'Access-Control-Allow-Origin': CLIENT_HOST,
+        'Access-Control-Allow-Credentials': true,
+      });
+      res.write(stdout);
+      res.end();
+    });
   } else if (request_mode === 'cookie') {
     fetch(_url.href, {
       'headers': {

@@ -94,12 +94,12 @@ export default function HeadersSection() {
         Fetch Mode:
         <Select
           variant="outlined"
-          label="Fetch Mode"
+          label="Fetcher"
           value={fetchMode}
           onChange={e => setFetchMode(e.target.value)}
         >
           <MenuItem value="proxy">Proxy</MenuItem>
-          <MenuItem value="cookie">Cookie</MenuItem>
+          <MenuItem value="cookie">Node fetch</MenuItem>
           <MenuItem value="curl">Curl</MenuItem>
         </Select>
       </div>
