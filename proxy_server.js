@@ -44,7 +44,7 @@ headers:`,
       ? {
           shell:
             process.env.BASH_LOCATION ||
-            'C:\\Program Files\\git\\usr\\bin\\bash.exe',
+            process.env.ProgramFiles + '\\git\\usr\\bin\\bash.exe',
         }
       : {};
 
