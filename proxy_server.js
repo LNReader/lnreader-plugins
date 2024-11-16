@@ -173,7 +173,6 @@ http
         req.headers['access-control-request-method'],
       );
       delete req.headers['access-control-request-method'];
-    } else {
     }
     if (req.headers['access-control-request-headers']) {
       res.setHeader(
