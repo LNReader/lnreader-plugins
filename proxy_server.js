@@ -5,7 +5,8 @@ import { exec } from 'child_process';
 const proxy = httpProxy.createProxyServer({});
 const ServerSettings = {
   CLIENT_HOST: 'http://localhost:3000',
-  request_mode: 'proxy',
+  fetchMode: 'proxy',
+  cookies: null,
   disAllowedRequestHeaders: [
     'sec-ch-ua',
     'sec-ch-ua-mobile',
@@ -17,7 +18,6 @@ const ServerSettings = {
     'pragma',
   ],
   disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
-  temp_cookies: null,
 };
 
 const proxyRequest = (req, res) => {
@@ -32,11 +32,11 @@ headers:`,
     console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
   });
   console.log('\x1b[36m', '----------------');
-  if (ServerSettings.request_mode === 'curl') {
+  if (ServerSettings.fetchMode === 'curl') {
     //i mean if it works it works i guess, better than nothing
     let curl = `curl '${_url.href}' -H 'User-Agent: ${req.headers['user-agent']}'`;
-    if (ServerSettings.temp_cookies)
-      curl += ` -H 'Cookie: ${ServerSettings.temp_cookies}'`;
+    if (ServerSettings.cookies)
+      curl += ` -H 'Cookie: ${ServerSettings.cookies}'`;
     if (req.headers.origin2) curl += ` -H 'Origin: ${req.headers.origin2}'`;
 
     console.log('Running curl command:', curl);
@@ -65,10 +65,10 @@ headers:`,
       res.write(stdout);
       res.end();
     });
-  } else if (ServerSettings.request_mode === 'node-fetch') {
+  } else if (ServerSettings.fetchMode === 'node-fetch') {
     fetch(_url.href, {
       'headers': {
-        'cookie': ServerSettings.temp_cookies,
+        'cookie': ServerSettings.cookies,
         'origin': req.headers.origin2,
         'user-agent': req.headers['user-agent'],
       },
@@ -84,7 +84,7 @@ headers:`,
         res.statusCode = 500;
         res.end();
       });
-  } else if (ServerSettings.request_mode === 'proxy') {
+  } else if (ServerSettings.fetchMode === 'proxy') {
     proxy.web(req, res, {
       target: _url.origin,
       selfHandleResponse: true,
@@ -136,25 +136,25 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
   });
 });
 
-const cookiesHandler = (req, res) => {
-  let cookies = '';
+const settingsHandler = (req, res) => {
+  let str = '';
   req.on('data', chunk => {
-    cookies += chunk;
+    str += chunk;
   });
   req.on('end', () => {
-    ServerSettings.temp_cookies = cookies;
-    res.end();
-  });
-};
-
-const fetchModeHandler = (req, res) => {
-  let fetchMode = '';
-  req.on('data', chunk => {
-    fetchMode += chunk;
-  });
-  req.on('end', () => {
-    ServerSettings.request_mode = fetchMode;
-    res.end();
+    try {
+      const settings = JSON.parse(str);
+      for (let setting in settings) {
+        ServerSettings[setting] = settings[setting];
+      }
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(ServerSettings));
+    } catch {
+      res.statusCode = 400;
+    } finally {
+      res.end();
+    }
   });
 };
 
@@ -167,6 +167,7 @@ http
         req.headers['access-control-request-method'],
       );
       delete req.headers['access-control-request-method'];
+    } else {
     }
     if (req.headers['access-control-request-headers']) {
       res.setHeader(
@@ -177,10 +178,10 @@ http
     }
     res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
     res.setHeader('Access-Control-Allow-Credentials', true);
-    if (path === 'cookies') {
-      cookiesHandler(req, res);
-    } else if (path === 'fetchMode') {
-      fetchModeHandler(req, res);
+    if (req.method === 'OPTIONS') {
+      res.end();
+    } else if (path === 'settings') {
+      settingsHandler(req, res);
     } else {
       try {
         const _url = new URL(path);
@@ -193,17 +194,13 @@ http
           }
         }
         req.headers['sec-fetch-mode'] = 'cors';
-        if (ServerSettings.temp_cookies) {
-          req.headers['cookie'] = ServerSettings.temp_cookies;
+        if (ServerSettings.cookies) {
+          req.headers['cookie'] = ServerSettings.cookies;
         }
         req.headers.host = _url.host;
         req.url = _url.toString();
         res.statusCode = 200;
-        if (req.method === 'OPTIONS') {
-          res.end();
-        } else {
-          proxyRequest(req, res);
-        }
+        proxyRequest(req, res);
       } catch (err) {
         console.log('\x1b[31m', '----------ERRROR----------');
         console.error(err);

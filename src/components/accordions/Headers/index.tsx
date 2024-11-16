@@ -15,36 +15,29 @@ export default function HeadersSection() {
   const [cookies, setCookies] = useState('');
   const debounceCookies = useDebounce(cookies, 500);
   const [fetchMode, setFetchMode] = useState('proxy');
-  const [alertVisible, setAlertVisble] = useState('');
+  const [alertVisible, setAlertVisble] = useState(false);
   useEffect(() => {
     if (alertVisible) {
-      const id = setTimeout(() => setAlertVisble(''), 1000);
+      const id = setTimeout(() => setAlertVisble(false), 1000);
       return () => clearTimeout(id);
     }
   }, [alertVisible]);
 
   useEffect(() => {
     setLoading(true);
-    fetch('cookies', {
+    fetch('settings', {
       method: 'POST',
-      body: debounceCookies,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cookies: debounceCookies, fetchMode: fetchMode }),
     })
-      .then(() => setAlertVisble('Cookies updated'))
+      .then(() => setAlertVisble(true))
       .finally(() => setLoading(false));
-  }, [debounceCookies]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch('fetchMode', {
-      method: 'POST',
-      body: fetchMode,
-    })
-      .then(() => setAlertVisble('Fetch mode updated'))
-      .finally(() => setLoading(false));
-  }, [fetchMode]);
+  }, [debounceCookies, fetchMode]);
 
   return (
-    <AccordionContainer title="Headers" loading={loading}>
+    <AccordionContainer title="Settings" loading={loading}>
       {alertVisible ? (
         <Alert
           sx={{
@@ -54,7 +47,7 @@ export default function HeadersSection() {
             right: 0,
           }}
         >
-          {alertVisible}
+          Settings updated
         </Alert>
       ) : null}
       <TextField
