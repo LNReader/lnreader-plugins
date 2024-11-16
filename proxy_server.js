@@ -53,10 +53,7 @@ headers:`,
     exec(curl, options, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
-        res.writeHead(500, {
-          'Access-Control-Allow-Origin': ServerSettings.CLIENT_HOST,
-          'Access-Control-Allow-Credentials': true,
-        });
+        res.statusCode = 500;
         res.write(`exec error: ${error}`);
         res.end();
         return;
@@ -64,10 +61,7 @@ headers:`,
       if (stderr) {
         console.error(`stderr: ${stderr}`);
       }
-      res.writeHead(200, {
-        'Access-Control-Allow-Origin': ServerSettings.CLIENT_HOST,
-        'Access-Control-Allow-Credentials': true,
-      });
+      res.statusCode = 200;
       res.write(stdout);
       res.end();
     });
@@ -81,10 +75,7 @@ headers:`,
     })
       .then(res2 => res2.text())
       .then(res2 => {
-        res.writeHead(200, {
-          'Access-Control-Allow-Origin': ServerSettings.CLIENT_HOST,
-          'Access-Control-Allow-Credentials': true,
-        });
+        res.statusCode = 200;
         res.write(res2);
         res.end();
       })
@@ -137,8 +128,6 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
   for (const _header in ServerSettings.disAllowedRequestHeaders) {
     delete proxyRes.headers[_header];
   }
-  res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
   proxyRes.on('data', function (chunk) {
     res.write(chunk);
   });
@@ -149,8 +138,6 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
 
 const cookiesHandler = (req, res) => {
   let cookies = '';
-  res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
   req.on('data', chunk => {
     cookies += chunk;
   });
@@ -162,8 +149,6 @@ const cookiesHandler = (req, res) => {
 
 const fetchModeHandler = (req, res) => {
   let fetchMode = '';
-  res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
   req.on('data', chunk => {
     fetchMode += chunk;
   });
@@ -190,6 +175,8 @@ http
       );
       delete req.headers['access-control-request-headers'];
     }
+    res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
+    res.setHeader('Access-Control-Allow-Credentials', true);
     if (path === 'cookies') {
       cookiesHandler(req, res);
     } else if (path === 'fetchMode') {
@@ -213,10 +200,6 @@ http
         req.url = _url.toString();
         res.statusCode = 200;
         if (req.method === 'OPTIONS') {
-          res.writeHead(200, {
-            'Access-Control-Allow-Origin': ServerSettings.CLIENT_HOST,
-            'Access-Control-Allow-Credentials': true,
-          });
           res.end();
         } else {
           proxyRequest(req, res);
