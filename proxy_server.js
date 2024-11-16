@@ -69,7 +69,7 @@ headers:`,
       res.write(stdout);
       res.end();
     });
-  } else if (request_mode === 'cookie') {
+  } else if (request_mode === 'node-fetch') {
     fetch(_url.href, {
       'headers': {
         'cookie': temp_cookies,

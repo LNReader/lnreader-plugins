@@ -15,11 +15,11 @@ export default function HeadersSection() {
   const [cookies, setCookies] = useState('');
   const debounceCookies = useDebounce(cookies, 500);
   const [fetchMode, setFetchMode] = useState('proxy');
-  const debounceFetchMode = useDebounce(fetchMode, 500);
-  const [alertVisible, setAlertVisble] = useState(false);
+  const [alertVisible, setAlertVisble] = useState('');
   useEffect(() => {
     if (alertVisible) {
-      setTimeout(() => setAlertVisble(false), 1000);
+      const id = setTimeout(() => setAlertVisble(''), 1000);
+      return () => clearTimeout(id);
     }
   }, [alertVisible]);
 
@@ -29,7 +29,7 @@ export default function HeadersSection() {
       method: 'POST',
       body: debounceCookies,
     })
-      .then(() => setAlertVisble(true))
+      .then(() => setAlertVisble('Cookies updated'))
       .finally(() => setLoading(false));
   }, [debounceCookies]);
 
@@ -37,11 +37,11 @@ export default function HeadersSection() {
     setLoading(true);
     fetch('fetchMode', {
       method: 'POST',
-      body: debounceFetchMode,
+      body: fetchMode,
     })
-      .then(() => setAlertVisble(true))
+      .then(() => setAlertVisble('Fetch mode updated'))
       .finally(() => setLoading(false));
-  }, [debounceFetchMode]);
+  }, [fetchMode]);
 
   return (
     <AccordionContainer title="Headers" loading={loading}>
@@ -54,7 +54,7 @@ export default function HeadersSection() {
             right: 0,
           }}
         >
-          Cookies updated
+          {alertVisible}
         </Alert>
       ) : null}
       <TextField
@@ -99,7 +99,7 @@ export default function HeadersSection() {
           onChange={e => setFetchMode(e.target.value)}
         >
           <MenuItem value="proxy">Proxy</MenuItem>
-          <MenuItem value="cookie">Node fetch</MenuItem>
+          <MenuItem value="node-fetch">Node fetch</MenuItem>
           <MenuItem value="curl">Curl</MenuItem>
         </Select>
       </div>

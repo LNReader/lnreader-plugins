@@ -10,10 +10,6 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   site = 'https://www.mvlempyr.com/';
   version = '1.0.1';
 
-  headers = {
-    'origin': 'https://www.mvlempyr.com/',
-  };
-
   _chapSite = 'https://chp.mvlempyr.net/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
   _allNovelsPromise: Promise<(Plugin.NovelItem & ExtraNovelData)[]> | undefined;
