@@ -184,6 +184,7 @@ http
     res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
     res.setHeader('Access-Control-Allow-Credentials', true);
     if (req.method === 'OPTIONS') {
+      res.statusCode = 200;
       res.end();
     } else if (path === 'settings') {
       settingsHandler(req, res);
