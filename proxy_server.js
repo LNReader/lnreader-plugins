@@ -2,22 +2,24 @@ import http from 'http';
 import httpProxy from 'http-proxy';
 import { exec } from 'child_process';
 
-const CLIENT_HOST = 'http://localhost:3000';
 const proxy = httpProxy.createProxyServer({});
-let request_mode = 'proxy';
-
-const disAllowedRequestHeaders = [
-  'sec-ch-ua',
-  'sec-ch-ua-mobile',
-  'sec-ch-ua-platform',
-  'sec-fetch-site',
-  'origin',
-  'sec-fetch-site',
-  'sec-fetch-dest',
-  'pragma',
-];
-
-const disAllowResponseHeaders = ['link', 'set-cookie', 'set-cookie2'];
+const ServerSettings = {
+  CLIENT_HOST: 'http://localhost:3000',
+  fetchMode: 'proxy',
+  cookies: null,
+  disAllowedRequestHeaders: [
+    'sec-ch-ua',
+    'sec-ch-ua-mobile',
+    'sec-ch-ua-platform',
+    'sec-fetch-site',
+    'origin',
+    'sec-fetch-site',
+    'sec-fetch-dest',
+    'pragma',
+  ],
+  disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
+  useUserAgent: true,
+};
 
 const proxyRequest = (req, res) => {
   const _url = new URL(req.url);
@@ -31,10 +33,14 @@ headers:`,
     console.log('\t', '\x1b[32m', name + ':', '\x1b[37m', value);
   });
   console.log('\x1b[36m', '----------------');
-  if (request_mode === 'curl') {
+  if (ServerSettings.fetchMode === 'curl') {
     //i mean if it works it works i guess, better than nothing
-    let curl = `curl '${_url.href}' -H 'User-Agent: ${req.headers['user-agent']}'`;
-    if (temp_cookies) curl += ` -H 'Cookie: ${temp_cookies}'`;
+    let curl = `curl '${_url.href}'`;
+    if (ServerSettings.useUserAgent) {
+      curl += ` -H 'User-Agent: ${req.headers['user-agent']}'`;
+    }
+    if (ServerSettings.cookies)
+      curl += ` -H 'Cookie: ${ServerSettings.cookies}'`;
     if (req.headers.origin2) curl += ` -H 'Origin: ${req.headers.origin2}'`;
 
     console.log('Running curl command:', curl);
@@ -51,10 +57,7 @@ headers:`,
     exec(curl, options, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
-        res.writeHead(500, {
-          'Access-Control-Allow-Origin': CLIENT_HOST,
-          'Access-Control-Allow-Credentials': true,
-        });
+        res.statusCode = 500;
         res.write(`exec error: ${error}`);
         res.end();
         return;
@@ -62,27 +65,23 @@ headers:`,
       if (stderr) {
         console.error(`stderr: ${stderr}`);
       }
-      res.writeHead(200, {
-        'Access-Control-Allow-Origin': CLIENT_HOST,
-        'Access-Control-Allow-Credentials': true,
-      });
+      res.statusCode = 200;
       res.write(stdout);
       res.end();
     });
-  } else if (request_mode === 'node-fetch') {
+  } else if (ServerSettings.fetchMode === 'node-fetch') {
     fetch(_url.href, {
       'headers': {
-        'cookie': temp_cookies,
+        'cookie': ServerSettings.cookies,
         'origin': req.headers.origin2,
-        'user-agent': req.headers['user-agent'],
+        'user-agent': ServerSettings.useUserAgent
+          ? req.headers['user-agent']
+          : undefined,
       },
     })
       .then(res2 => res2.text())
       .then(res2 => {
-        res.writeHead(200, {
-          'Access-Control-Allow-Origin': CLIENT_HOST,
-          'Access-Control-Allow-Credentials': true,
-        });
+        res.statusCode = 200;
         res.write(res2);
         res.end();
       })
@@ -91,7 +90,7 @@ headers:`,
         res.statusCode = 500;
         res.end();
       });
-  } else if (request_mode === 'proxy') {
+  } else if (ServerSettings.fetchMode === 'proxy') {
     proxy.web(req, res, {
       target: _url.origin,
       selfHandleResponse: true,
@@ -128,15 +127,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     return false;
   }
   for (const _header in proxyRes.headers) {
-    if (!disAllowResponseHeaders.includes(_header)) {
+    if (!ServerSettings.disAllowResponseHeaders.includes(_header)) {
       res.setHeader(_header, proxyRes.headers[_header]);
     }
   }
-  for (const _header in disAllowedRequestHeaders) {
+  for (const _header in ServerSettings.disAllowedRequestHeaders) {
     delete proxyRes.headers[_header];
   }
-  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
   proxyRes.on('data', function (chunk) {
     res.write(chunk);
   });
@@ -145,31 +142,25 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
   });
 });
 
-var temp_cookies = null;
-
-const cookiesHandler = (req, res) => {
-  let cookies = '';
-  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
+const settingsHandler = (req, res) => {
+  let str = '';
   req.on('data', chunk => {
-    cookies += chunk;
+    str += chunk;
   });
   req.on('end', () => {
-    temp_cookies = cookies;
-    res.end();
-  });
-};
-
-const fetchModeHandler = (req, res) => {
-  let fetchMode = '';
-  res.setHeader('Access-Control-Allow-Origin', CLIENT_HOST);
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  req.on('data', chunk => {
-    fetchMode += chunk;
-  });
-  req.on('end', () => {
-    request_mode = fetchMode;
-    res.end();
+    try {
+      const settings = JSON.parse(str);
+      for (let setting in settings) {
+        ServerSettings[setting] = settings[setting];
+      }
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(ServerSettings));
+    } catch {
+      res.statusCode = 400;
+    } finally {
+      res.end();
+    }
   });
 };
 
@@ -190,37 +181,35 @@ http
       );
       delete req.headers['access-control-request-headers'];
     }
-    if (path === 'cookies') {
-      cookiesHandler(req, res);
-    } else if (path === 'fetchMode') {
-      fetchModeHandler(req, res);
+    res.setHeader('Access-Control-Allow-Origin', ServerSettings.CLIENT_HOST);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 200;
+      res.end();
+    } else if (path === 'settings') {
+      settingsHandler(req, res);
     } else {
       try {
         const _url = new URL(path);
         for (const _header in req.headers) {
           if (
             req.headers[_header]?.includes('localhost') ||
-            disAllowedRequestHeaders.includes(_header)
+            ServerSettings.disAllowedRequestHeaders.includes(_header)
           ) {
             delete req.headers[_header];
           }
         }
         req.headers['sec-fetch-mode'] = 'cors';
-        if (temp_cookies) {
-          req.headers['cookie'] = temp_cookies;
+        if (ServerSettings.cookies) {
+          req.headers['cookie'] = ServerSettings.cookies;
+        }
+        if (!ServerSettings.useUserAgent) {
+          delete req.headers['user-agent'];
         }
         req.headers.host = _url.host;
         req.url = _url.toString();
         res.statusCode = 200;
-        if (req.method === 'OPTIONS') {
-          res.writeHead(200, {
-            'Access-Control-Allow-Origin': CLIENT_HOST,
-            'Access-Control-Allow-Credentials': true,
-          });
-          res.end();
-        } else {
-          proxyRequest(req, res);
-        }
+        proxyRequest(req, res);
       } catch (err) {
         console.log('\x1b[31m', '----------ERRROR----------');
         console.error(err);

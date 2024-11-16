@@ -8,6 +8,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
 import useDebounce from '@hooks/useDebounce';
 
 export default function HeadersSection() {
@@ -15,36 +16,34 @@ export default function HeadersSection() {
   const [cookies, setCookies] = useState('');
   const debounceCookies = useDebounce(cookies, 500);
   const [fetchMode, setFetchMode] = useState('proxy');
-  const [alertVisible, setAlertVisble] = useState('');
+  const [alertVisible, setAlertVisble] = useState(false);
+  const [useUserAgent, setUseUserAgent] = useState(true);
   useEffect(() => {
     if (alertVisible) {
-      const id = setTimeout(() => setAlertVisble(''), 1000);
+      const id = setTimeout(() => setAlertVisble(false), 1000);
       return () => clearTimeout(id);
     }
   }, [alertVisible]);
 
   useEffect(() => {
     setLoading(true);
-    fetch('cookies', {
+    fetch('settings', {
       method: 'POST',
-      body: debounceCookies,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cookies: debounceCookies,
+        fetchMode: fetchMode,
+        useUserAgent,
+      }),
     })
-      .then(() => setAlertVisble('Cookies updated'))
+      .then(() => setAlertVisble(true))
       .finally(() => setLoading(false));
-  }, [debounceCookies]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch('fetchMode', {
-      method: 'POST',
-      body: fetchMode,
-    })
-      .then(() => setAlertVisble('Fetch mode updated'))
-      .finally(() => setLoading(false));
-  }, [fetchMode]);
+  }, [debounceCookies, fetchMode, useUserAgent]);
 
   return (
-    <AccordionContainer title="Headers" loading={loading}>
+    <AccordionContainer title="Settings" loading={loading}>
       {alertVisible ? (
         <Alert
           sx={{
@@ -54,20 +53,27 @@ export default function HeadersSection() {
             right: 0,
           }}
         >
-          {alertVisible}
+          Settings updated
         </Alert>
       ) : null}
-      <TextField
-        size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">Headers</InputAdornment>
-          ),
-        }}
-        disabled
-        value={navigator.userAgent}
-        sx={{ width: '100%' }}
-      />
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
+          size="small"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">User Agent</InputAdornment>
+            ),
+          }}
+          disabled
+          value={navigator.userAgent}
+          sx={{ width: '100%' }}
+        />
+        <Checkbox
+          size="large"
+          checked={useUserAgent}
+          onChange={e => setUseUserAgent(e.target.checked)}
+        />
+      </Box>
       <Box sx={{ height: 10 }} />
       <TextField
         size="small"
