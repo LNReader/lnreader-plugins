@@ -18,6 +18,7 @@ const ServerSettings = {
     'pragma',
   ],
   disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
+  useUserAgent: true,
 };
 
 const proxyRequest = (req, res) => {
@@ -34,7 +35,10 @@ headers:`,
   console.log('\x1b[36m', '----------------');
   if (ServerSettings.fetchMode === 'curl') {
     //i mean if it works it works i guess, better than nothing
-    let curl = `curl '${_url.href}' -H 'User-Agent: ${req.headers['user-agent']}'`;
+    let curl = `curl '${_url.href}'`;
+    if (ServerSettings.useUserAgent) {
+      curl += ` -H 'User-Agent: ${req.headers['user-agent']}'`;
+    }
     if (ServerSettings.cookies)
       curl += ` -H 'Cookie: ${ServerSettings.cookies}'`;
     if (req.headers.origin2) curl += ` -H 'Origin: ${req.headers.origin2}'`;
@@ -70,7 +74,9 @@ headers:`,
       'headers': {
         'cookie': ServerSettings.cookies,
         'origin': req.headers.origin2,
-        'user-agent': req.headers['user-agent'],
+        'user-agent': ServerSettings.useUserAgent
+          ? req.headers['user-agent']
+          : undefined,
       },
     })
       .then(res2 => res2.text())
@@ -196,6 +202,9 @@ http
         req.headers['sec-fetch-mode'] = 'cors';
         if (ServerSettings.cookies) {
           req.headers['cookie'] = ServerSettings.cookies;
+        }
+        if (!ServerSettings.useUserAgent) {
+          delete req.headers['user-agent'];
         }
         req.headers.host = _url.host;
         req.url = _url.toString();
