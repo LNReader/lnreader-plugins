@@ -2,13 +2,14 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Parser } from 'htmlparser2';
 
 class MVLEMPYRPlugin implements Plugin.PluginBase {
   id = 'mvlempyr.com';
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.1';
+  version = '1.0.2';
 
   _chapSite = 'https://chp.mvlempyr.net/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
@@ -47,7 +48,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
 
   parseNovelsFast(body: string) {
     const novelInfosStart = body.split('<div class="novelcolumn">');
-    novelInfosStart.shift(); //remove first element that doesent have a novel
+    novelInfosStart.shift(); //remove first element that doesn't have a novel
 
     const ret = [];
     for (const novelInfo of novelInfosStart) {
@@ -59,6 +60,128 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       ret.push(this.parseNovelHtml(cheerio));
     }
 
+    return ret;
+  }
+
+  /**
+   * Equivalent to parseNovelsFast except uses htmlparser2 instead of cheerio for even more fast-fast
+   */
+  parseNovelsFastNew(body: string) {
+    const novelInfosStart = body.split('<div class="novelcolumn">');
+    novelInfosStart.shift(); //remove first element that doesn't have a novel
+
+    const ret = [];
+    for (const novelInfo of novelInfosStart) {
+      const realNovelInfo =
+        novelInfo.split('READ</a></div></div></div>')[0] +
+        'READ</a></div></div></div>';
+
+      ret.push(this.parseNovelHtmlNew(realNovelInfo));
+    }
+
+    return ret;
+  }
+
+  parseNovelHtmlNew(el: string): Plugin.NovelItem & ExtraNovelData {
+    const ret = {
+      name: '',
+      path: '',
+      cover: '',
+      avgReview: '',
+      reviewCount: '',
+      chapterCount: '',
+      updated: '',
+      created: '',
+      genres: '',
+      tags: '',
+    };
+    let inTag = '';
+    let depth = 0;
+    let depthRatingWrapper = 0;
+    const parser = new Parser({
+      onopentag(
+        name: string,
+        attribs: Record<string, string>,
+        isImplied: boolean,
+      ) {
+        if (depthRatingWrapper) depthRatingWrapper++;
+        if (inTag) {
+          depth++;
+          return;
+        }
+
+        if (attribs['class']?.includes?.('ratingwrapper'))
+          depthRatingWrapper = 1;
+
+        if (name === 'h2' && attribs['fs-cmsfilter-field'] === 'name')
+          inTag = 'name';
+        if (name === 'a' && !ret.path)
+          ret.path = attribs['href'].replace(/^\//, '');
+        if (name === 'img' && !ret.cover) ret.cover = attribs['src'];
+        if (
+          name === 'div' &&
+          attribs['fs-cmssort-field'] === 'avgr' &&
+          depthRatingWrapper
+        )
+          inTag = 'avgReview';
+        if (
+          name === 'div' &&
+          attribs['fs-cmssort-field'] === 'reviews' &&
+          depthRatingWrapper
+        )
+          inTag = 'reviewCount';
+        if (
+          name === 'div' &&
+          attribs['fs-cmssort-field'] === 'chapter' &&
+          attribs['class']?.includes?.('chapter-count')
+        )
+          inTag = 'chapterCount';
+        if (name === 'div' && attribs['fs-cmssort-field'] === 'update')
+          inTag = 'updated';
+        if (name === 'div' && attribs['fs-cmssort-field'] === 'crdate')
+          inTag = 'created';
+        if (name === 'div' && attribs['fs-cmsnest-collection'] === 'genre')
+          inTag = 'genres';
+        if (name === 'div' && attribs['fs-cmsnest-collection'] === 'tags')
+          inTag = 'tags';
+
+        if (inTag) {
+          depth++;
+        }
+      },
+      ontext(data: string) {
+        if (!inTag) return;
+
+        // @ts-ignore
+        ret[inTag] = (ret[inTag] || '') + data;
+      },
+      onclosetag(name: string, isImplied: boolean) {
+        if (depthRatingWrapper) depthRatingWrapper--;
+        if (!inTag) return;
+        depth--;
+        if (!depth) inTag = '';
+      },
+    });
+
+    parser.write(el);
+    parser.end();
+
+    // @ts-ignore
+    ret.avgReview = parseFloat(ret.avgReview);
+    // @ts-ignore
+    ret.reviewCount = parseFloat(ret.reviewCount);
+    // @ts-ignore
+    ret.chapterCount = parseFloat(ret.chapterCount);
+    // @ts-ignore
+    ret.updated = new Date(ret.updated).getTime();
+    // @ts-ignore
+    ret.created = new Date(ret.created).getTime();
+    // @ts-ignore
+    ret.genres = ret.genres.split(', ');
+    // @ts-ignore
+    ret.tags = ret.tags.split(', ');
+
+    // @ts-ignore
     return ret;
   }
 
@@ -138,7 +261,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     });
     const body = await result.text();
     if (!nextPageConsumer) {
-      return this.parseNovelsFast(body);
+      return this.parseNovelsFastNew(body);
     }
 
     const loadedCheerio = parseHTML(body);
