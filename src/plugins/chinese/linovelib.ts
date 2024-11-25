@@ -364,12 +364,10 @@ class Linovelib implements Plugin.PluginBase {
     };
     const addPage = async (pageCheerio: CheerioAPI) => {
       const formatPage = async () => {
-        // Remove JS
-        pageCheerio('#acontent .adsbygoogle').remove();
-        pageCheerio('#acontent script').remove();
-        // Remove the notice of website
-        pageCheerio('center').remove();
-        pageCheerio('br').remove();
+        // Remove JS and notice of the website
+        pageCheerio(
+          '#acontent .adsbygoogle, #acontent script, center',
+        ).remove();
 
         // Load lazyloaded images
         pageCheerio('#acontent img.imagecontent').each((i, el) => {
