@@ -370,8 +370,11 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       return this._allNovels;
     }
     this._allNovelsPromise = this.loadAll();
-    this._allNovels = await this._allNovelsPromise;
-    this._allNovelsPromise = undefined;
+    try {
+      this._allNovels = await this._allNovelsPromise;
+    } finally {
+      this._allNovelsPromise = undefined;
+    }
     return this._allNovels;
   }
 
