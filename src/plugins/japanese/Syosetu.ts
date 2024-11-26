@@ -77,7 +77,7 @@ class Syosetu implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
-    // create novel object
+    // Create novel object with basic metadata
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.novel_title').text(),
@@ -85,67 +85,28 @@ class Syosetu implements Plugin.PluginBase {
       cover: defaultCover,
     };
 
-    // Get all the chapters
-    const cqGetChapters = loadedCheerio('.novel_sublist2');
-    if (cqGetChapters.length !== 0) {
-      // has more than 1 chapter
-      novel.summary = loadedCheerio('#novel_ex')
-        .text()
-        .replace(/<\s*br.*?>/g, '\n');
-      cqGetChapters.each((_, e) => {
-        const chapterA = loadedCheerio(e).find('a');
-        const [chapterName, releaseDate, chapterUrl] = [
-          // set the variables
-          chapterA.text(),
-          loadedCheerio(e)
-            .find('dt') // get title
-            .text() // get text
-            .replace(/（.）/g, '') // remove "(edited)" mark
-            .trim(), // trim spaces
-          chapterA.attr('href'),
-        ];
-        if (chapterUrl) {
-          chapters.push({
-            name: chapterName,
-            releaseTime: releaseDate,
-            path: chapterUrl,
-          });
-        }
-      });
-    } else {
-      /**
-       * Because there are oneshots on the site, they have to be treated with special care
-       * that's what pisses me off in Shosetsu app. They have this extension,
-       * but every oneshot is set as "there are no chapters" and all contents are thrown into the description!!
-       */
-      // get summary for oneshot chapter
+    // Get summary if available
+    novel.summary = loadedCheerio('#novel_ex').text().trim();
 
-      const nameResult = await fetchApi(
-        this.searchUrl() + `&word=${novel.name}`,
-        {
-          headers: this.headers,
-        },
-      );
-      const nameBody = await nameResult.text();
-      const summaryQuery = loadCheerio(nameBody, {
-        decodeEntities: false,
-      });
-      const foundText = summaryQuery('.searchkekka_box')
-        .first()
-        .find('.ex')
+    // Parse chapters using the correct selectors
+    loadedCheerio('.p-eplist__sublist').each((_, element) => {
+      const chapterLink = loadedCheerio(element).find('a');
+      const chapterUrl = chapterLink.attr('href');
+      const chapterName = chapterLink.text().trim();
+      const releaseDate = loadedCheerio(element)
+        .find('.p-eplist__update')
         .text()
-        .replace(/\s{2,}/g, '\n');
-      novel.summary = foundText;
+        .trim();
 
-      // add single chapter
-      chapters.push({
-        name: 'Oneshot',
-        releaseTime: loadedCheerio('head')
-          .find("meta[name='WWWC']")
-          .attr('content'), // get date from metadata
-        path: novelPath, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot,
-      });
-    }
+      if (chapterUrl) {
+        chapters.push({
+          name: chapterName,
+          releaseTime: releaseDate,
+          path: chapterUrl.replace(this.novelPrefix, ''),
+        });
+      }
+    });
+
     novel.chapters = chapters;
     return novel;
   }
@@ -155,15 +116,20 @@ class Syosetu implements Plugin.PluginBase {
     });
     const body = await result.text();
 
-    // create cheerioQuery
     const cheerioQuery = loadCheerio(body, {
       decodeEntities: false,
     });
 
-    const chapterText =
-      cheerioQuery('#novel_honbun') // get chapter text
-        .html() || '';
-    return chapterText;
+    // Get the novel text content and process it
+    const chapterContent = cheerioQuery('.p-novel__body .js-novel-text')
+      .find('p')
+      .map((_, element) => {
+        return cheerioQuery(element).text();
+      })
+      .get()
+      .join('\n');
+
+    return chapterContent || '';
   }
   async searchNovels(
     searchTerm: string,
