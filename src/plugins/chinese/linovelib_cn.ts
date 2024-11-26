@@ -4,9 +4,9 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
-class Linovelib implements Plugin.PluginBase {
-  id = 'linovelib';
-  name = 'Linovelib';
+class Linovelib_cn implements Plugin.PluginBase {
+  id = 'linovelib-cn';
+  name = 'Linovelib-cn';
   icon = 'src/cn/linovelib/icon.png';
   site = 'https://www.bilinovel.com';
   version = '1.1.3';
@@ -545,4 +545,4 @@ class Linovelib implements Plugin.PluginBase {
   } satisfies Filters;
 }
 
-export default new Linovelib();
+export default new Linovelib_cn();
