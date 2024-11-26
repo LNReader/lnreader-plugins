@@ -1,16 +1,35 @@
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
+import { NovelStatus } from '@libs/novelStatus';
 
-class RanobesPlugin implements Plugin.PagePlugin {
-  id = 'ranobes';
-  name = 'Ranobes';
-  icon = 'src/en/ranobes/icon.png';
-  site = 'https://ranobes.top';
-  version = '2.0.0';
+type RanobesOptions = {
+  lang?: string;
+  path: string;
+};
 
-  async sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+export type RanobesMetadata = {
+  id: string;
+  sourceSite: string;
+  sourceName: string;
+  options?: RanobesOptions;
+};
+
+class RanobesPlugin implements Plugin.PluginBase {
+  id: string;
+  name: string;
+  icon: string;
+  site: string;
+  version: string;
+  options: RanobesOptions;
+
+  constructor(metadata: RanobesMetadata) {
+    this.id = metadata.id;
+    this.name = metadata.sourceName;
+    this.icon = 'multisrc/ranobes/ranobes/icon.png';
+    this.site = metadata.sourceSite;
+    this.version = '2.0.1';
+    this.options = metadata.options as RanobesOptions;
   }
 
   parseNovels(html: string) {
@@ -79,18 +98,71 @@ class RanobesPlugin implements Plugin.PagePlugin {
     return chapter.reverse();
   }
 
-  async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
-    const link = `${this.site}/novels/page/${page}/`;
-    const body = await fetchApi(link).then(r => r.text());
+  parseDate = (date: string) => {
+    const now = new Date();
+    if (!date) return now.toISOString();
+    if (this.id === 'ranobes-ru') {
+      if (date.includes(' в ')) return date.replace(' в ', ' г., ');
 
+      const [when, time] = date.split(', ');
+      if (!time) return now.toISOString();
+      const [h, m] = time.split(':');
+
+      switch (when) {
+        case 'Сегодня':
+          now.setHours(parseInt(h, 10));
+          now.setMinutes(parseInt(m, 10));
+          break;
+        case 'Вчера':
+          now.setDate(now.getDate() - 1);
+          now.setHours(parseInt(h, 10));
+          now.setMinutes(parseInt(m, 10));
+          break;
+        default:
+          return now.toISOString();
+      }
+    } else {
+      const [num, xz, ago] = date.split(' ');
+      if (ago !== 'ago') return now.toISOString();
+
+      switch (xz) {
+        case 'minutes':
+          now.setMinutes(parseInt(num, 10));
+          break;
+        case 'hour':
+        case 'hours':
+          now.setHours(parseInt(num, 10));
+          break;
+        case 'day':
+        case 'days':
+          now.setDate(now.getDate() - parseInt(num, 10));
+          break;
+        case 'month':
+        case 'months':
+          now.setMonth(now.getMonth() - parseInt(num, 10));
+          break;
+        case 'year':
+        case 'years':
+          now.setFullYear(now.getFullYear() - parseInt(num, 10));
+          break;
+        default:
+          return now.toISOString();
+      }
+    }
+    return now.toISOString();
+  };
+
+  async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
+    const link = `${this.site}/${this.options.path}/page/${page}/`;
+    const body = await fetchApi(link).then(r => r.text());
     return this.parseNovels(body);
   }
 
   async parseNovel(
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
-    const url = this.site + novelPath;
-    const result = await fetchApi(url);
+    const baseUrl = this.site;
+    const result = await fetchApi(baseUrl + novelPath);
     const html = await result.text();
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
@@ -99,7 +171,6 @@ class RanobesPlugin implements Plugin.PagePlugin {
       chapters: [],
       totalPages: 1,
     };
-    const baseUrl = this.site;
     let isCover = false;
     let isAuthor = false;
     let isSummary = false;
@@ -107,8 +178,15 @@ class RanobesPlugin implements Plugin.PagePlugin {
     let isStatusText = false;
     let isGenres = false;
     let isGenresText = false;
+    let isMaxChapters = false;
+    let isChapter = false;
+    let isChapterTitle = false;
+    let isChapterDate = false;
     const genreArray: string[] = [];
-    let novelId = '';
+    const chapters: Plugin.ChapterItem[] = [];
+    let tempchapter: Plugin.ChapterItem = {};
+    let maxChapters = 0;
+    const fixDate = this.parseDate;
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class'] === 'poster') {
@@ -118,19 +196,49 @@ class RanobesPlugin implements Plugin.PagePlugin {
           novel.name = attribs['alt'];
           novel.cover = baseUrl + attribs['src'];
         }
-        if (name === 'div' && attribs['class'] === 'moreless') {
+        if (
+          (name === 'div' &&
+            attribs['class'] === 'moreless cont-text showcont-h') ||
+          (attribs['class'] === 'cont-text showcont-h' &&
+            attribs['itemprop'] === 'description')
+        ) {
           isSummary = true;
         }
-        if (name === 'li' && attribs['title']?.includes('Original status')) {
+        if (
+          name === 'li' &&
+          attribs['title'] &&
+          (attribs['title'].includes('Original status') ||
+            attribs['title'].includes('Статус оригинала'))
+        ) {
           isStatus = true;
         }
-        if (name === 'input' && attribs['name'] === 'newsid') {
-          novelId = attribs['value'];
+        if (name === 'a' && attribs['rel'] === 'chapter') {
+          isChapter = true;
+          tempchapter.path = attribs['href'].replace(baseUrl, '');
+        }
+        if (
+          isChapter &&
+          name === 'span' &&
+          attribs['class'] === 'title ellipses'
+        ) {
+          isChapterTitle = true;
+        }
+        if (isChapter && name === 'span' && attribs['class'] === 'grey') {
+          isChapterDate = true;
+        }
+        if (
+          name === 'li' &&
+          (attribs['title'] ==
+            'Glossary + illustrations + division of chapters, etc.' ||
+            attribs['title'] ===
+              'Глоссарий + иллюстраций + разделение глав и т.д.')
+        ) {
+          isMaxChapters = true;
         }
       },
       onopentagname(name) {
         if (isSummary && name === 'br') {
-          novel.summary += `/n`;
+          novel.summary += '\n';
         }
         if (isStatus && name === 'a') {
           isStatusText = true;
@@ -152,13 +260,26 @@ class RanobesPlugin implements Plugin.PagePlugin {
           novel.author = data;
         }
         if (isSummary) {
-          novel.summary += data;
+          novel.summary += data.trim();
         }
         if (isStatusText) {
-          novel.status = data === 'Ongoing' ? 'Ongoing' : 'Completed';
+          novel.status =
+            data === 'Ongoing' || data == 'В процессе'
+              ? NovelStatus.Ongoing
+              : NovelStatus.Completed;
         }
         if (isGenresText) {
           genreArray.push(data);
+        }
+        if (isMaxChapters) {
+          const isNumber = data.replace(/\D/g, '');
+          if (isNumber) {
+            maxChapters = parseInt(isNumber, 10);
+          }
+        }
+        if (isChapter) {
+          if (isChapterTitle) tempchapter.name = data.trim();
+          if (isChapterDate) tempchapter.releaseTime = fixDate(data.trim());
         }
       },
       onclosetag(name) {
@@ -173,68 +294,79 @@ class RanobesPlugin implements Plugin.PagePlugin {
           isSummary = false;
           isGenres = false;
         }
+        if (name === 'li') {
+          isMaxChapters = false;
+        }
+        if (name === 'a') {
+          isChapter = false;
+          if (tempchapter.name) {
+            chapters.push({ ...tempchapter, page: '1' });
+            tempchapter = {};
+          }
+        }
+        if (name === 'span') {
+          if (isChapterTitle) isChapterTitle = false;
+          if (isChapterDate) isChapterDate = false;
+        }
       },
     });
     parser.write(html);
     parser.end();
     novel.genres = genreArray.join(', ');
+    novel.totalPages = Math.ceil((maxChapters || 1) / 25);
+    novel.chapters = chapters;
 
-    const chapterListUrl = this.site + '/chapters/' + novelId + '/';
-    const chaptersHtml = await fetchApi(chapterListUrl).then(r => r.text());
-    let dataJson: {
-      pages_count: string;
-      chapters: ChapterEntry[];
-    } = { pages_count: '', chapters: [] };
-    let isScript = false;
-    const parser2 = new Parser({
-      ontext(data) {
-        if (isScript) {
-          if (data.includes('window.__DATA__ =')) {
-            dataJson = JSON.parse(data.replace('window.__DATA__ =', ''));
-          }
-        }
-      },
-      onclosetag(name) {
-        if (name === 'main') {
-          isScript = true;
-        }
-        if (name === 'script') {
-          isScript = false;
-        }
-      },
-    });
-    parser2.write(chaptersHtml);
-    parser2.end();
+    if (novel.chapters[0].path) {
+      novel.latestChapter = novel.chapters[0];
+    }
 
-    novel.totalPages = Number(dataJson.pages_count);
-    novel.chapters = this.parseChapters(dataJson);
-
-    const latestChapterUrl = dataJson.chapters[0].link;
-    const latestChapterName = dataJson.chapters[0].title;
-    const latestChapterDate = dataJson.chapters[0].date;
-
-    novel.latestChapter = latestChapterUrl
-      ? {
-          path: latestChapterUrl.replace(this.site, ''),
-          name: latestChapterName,
-          releaseTime: new Date(latestChapterDate).toISOString(),
-        }
-      : undefined;
     return novel;
   }
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const pagePath = novelPath.split('-')[0];
-    const firstUrl = this.site + '/chapters' + pagePath.replace('novels/', '');
-    const pageUrl = firstUrl + '/page/' + page;
-    const pageBody = await fetchApi(pageUrl).then(r => r.text());
+    const pagePath =
+      this.id == 'ranobes'
+        ? novelPath.split('-')[0]
+        : '/' + novelPath.split('-').slice(1).join('-').split('.')[0];
+    const firstUrl =
+      this.site + '/chapters' + pagePath.replace(this.options.path + '/', '');
+    const pageBody = await fetchApi(firstUrl + '/page/' + page).then(r =>
+      r.text(),
+    );
+
+    const baseUrl = this.site;
     let isScript = false;
+    let isChapter = false;
+    let isChapterInfo = false;
+    let isChapterDate = false;
+
+    let chapters: Plugin.ChapterItem[] = [];
+    let tempchapter: Plugin.ChapterItem = {};
+    const fixDate = this.parseDate;
+
     let dataJson: {
       pages_count: string;
       chapters: ChapterEntry[];
     } = { pages_count: '', chapters: [] };
+
     const parser = new Parser({
+      onopentag(name, attribs) {
+        if (name === 'div' && attribs['class'] === 'cat_block cat_line') {
+          isChapter = true;
+        }
+        if (isChapter && name === 'a' && attribs['title'] && attribs['href']) {
+          tempchapter.name = attribs['title'];
+          tempchapter.path = attribs['href'].replace(baseUrl, '');
+        }
+        if (name === 'span' && attribs['class'] === 'grey small') {
+          isChapterInfo = true;
+        }
+        if (name === 'small' && isChapterInfo) {
+          isChapterDate = true;
+        }
+      },
       ontext(data) {
+        if (isChapterDate) tempchapter.releaseTime = fixDate(data.trim());
         if (isScript) {
           if (data.includes('window.__DATA__ =')) {
             dataJson = JSON.parse(data.replace('window.__DATA__ =', ''));
@@ -242,6 +374,19 @@ class RanobesPlugin implements Plugin.PagePlugin {
         }
       },
       onclosetag(name) {
+        if (name === 'a' && tempchapter.name) {
+          chapters.push(tempchapter);
+          tempchapter = {};
+        }
+        if (name === 'div') {
+          isChapter = false;
+        }
+        if (name === 'span') {
+          isChapterInfo = false;
+        }
+        if (name === 'small') {
+          isChapterDate = false;
+        }
         if (name === 'main') {
           isScript = true;
         }
@@ -252,7 +397,11 @@ class RanobesPlugin implements Plugin.PagePlugin {
     });
     parser.write(pageBody);
     parser.end();
-    const chapters = this.parseChapters(dataJson);
+
+    if (dataJson.chapters?.length) {
+      chapters = this.parseChapters(dataJson);
+    }
+
     return {
       chapters,
     };
@@ -261,99 +410,11 @@ class RanobesPlugin implements Plugin.PagePlugin {
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
-    let chapterText = '';
-    let isChapter = false;
-    let isPtag = false;
-    let isStyleText = false;
-    const parser = new Parser({
-      onopentag(name, attribs) {
-        if (isChapter && name === 'div') {
-          const stylediv = attribs['style'];
-          if (stylediv) {
-            chapterText += `<div style="${stylediv}">`;
-            isStyleText = true;
-          } else {
-            chapterText += `<div>`;
-          }
-        }
-        if (isChapter && name === 'table') {
-          const w = attribs['width'];
-          if (w) {
-            chapterText += `<table width="${w}">`;
-          } else {
-            chapterText += `<table>`;
-          }
-        }
-        if (isChapter && name === 'tbody') {
-          chapterText += `<tbody>`;
-        }
-        if (isChapter && name === 'tr') {
-          chapterText += `<tr>`;
-        }
-        if (isChapter && name === 'td') {
-          const w1 = attribs['width'];
-          if (w1) {
-            chapterText += `<td width="${w1}">`;
-          } else {
-            chapterText += `<td>`;
-          }
-        }
-      },
-      onattribute(name, value) {
-        if (name === 'id' && value === 'arrticle') {
-          isChapter = true;
-        }
-        if (name === 'class' && value === 'category grey ellipses') {
-          isChapter = false;
-          isPtag = false;
-        }
-      },
-      onopentagname(name) {
-        if (isChapter && name === 'p') {
-          chapterText += '<p>';
-          isPtag = true;
-          if (isStyleText) {
-            isStyleText = false;
-          }
-        }
-        if (isChapter && name === 'br') {
-          chapterText += `<br>`;
-        }
-      },
-      ontext(data) {
-        if (isPtag) {
-          chapterText += data;
-        }
-        if (isStyleText) {
-          chapterText += data;
-        }
-      },
-      onclosetag(name) {
-        if (name === 'p') {
-          isPtag = false;
-          chapterText += '</p>';
-        }
-        if (isChapter && name === 'td') {
-          chapterText += `</td>`;
-        }
-        if (isChapter && name === 'tr') {
-          chapterText += `</tr>`;
-        }
-        if (isChapter && name === 'tbody') {
-          chapterText += `</tbody>`;
-        }
-        if (isChapter && name === 'table') {
-          chapterText += `</table>`;
-        }
-        if (isChapter && name === 'div') {
-          isStyleText = false;
-          chapterText += `</div>`;
-        }
-      },
-    });
-    parser.write(html);
-    parser.end();
 
+    const indexA = html.indexOf('<div class="text" id="arrticle">');
+    const indexB = html.indexOf('<div class="category grey ellipses">', indexA);
+
+    const chapterText = html.substring(indexA, indexB);
     return chapterText;
   }
 
@@ -361,13 +422,28 @@ class RanobesPlugin implements Plugin.PagePlugin {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const link = `${this.site}/search/${searchTerm}/page/${page}`;
-    const body = await fetchApi(link).then(r => r.text());
-
-    return this.parseNovels(body);
+    let html;
+    if (this.id === 'ranobes-ru') {
+      html = await fetchApi(this.site + '/index.php?do=search', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Referer: this.site + '/',
+        },
+        method: 'POST',
+        body: new URLSearchParams({
+          do: 'search',
+          subaction: 'search',
+          search_start: page.toString(),
+          story: searchTerm,
+        }).toString(),
+      }).then(res => res.text());
+    } else {
+      const link = `${this.site}/search/${searchTerm}/page/${page}`;
+      html = await fetchApi(link).then(r => r.text());
+    }
+    return this.parseNovels(html);
   }
 }
-export default new RanobesPlugin();
 
 type ChapterEntry = {
   id: number;
