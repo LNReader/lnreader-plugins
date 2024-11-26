@@ -5,8 +5,8 @@ import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
 class Linovelib_tw implements Plugin.PluginBase {
-  id = 'linovelib-tw';
-  name = 'Linovelib-tw';
+  id = 'linovelib_tw';
+  name = 'Linovelib(繁體)';
   icon = 'src/cn/linovelib/icon.png';
   site = 'https://tw.linovelib.com/';
   version = '1.0.0';
