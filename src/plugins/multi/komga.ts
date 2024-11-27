@@ -8,7 +8,7 @@ import { storage } from '@libs/storage';
 class KomgaPlugin implements Plugin.PluginBase {
   id = 'komga';
   name = 'Komga';
-  icon = '';
+  icon = 'src/multi/komga/icon.png';
   version = '1.0.0';
 
   site = storage.get('url');
