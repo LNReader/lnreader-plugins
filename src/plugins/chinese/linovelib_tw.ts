@@ -4,12 +4,12 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
-class Linovelib implements Plugin.PluginBase {
-  id = 'linovelib';
-  name = 'Linovelib';
+class Linovelib_tw implements Plugin.PluginBase {
+  id = 'linovelib_tw';
+  name = 'Linovelib(繁體)';
   icon = 'src/cn/linovelib/icon.png';
-  site = 'https://www.bilinovel.com';
-  version = '1.1.3';
+  site = 'https://tw.linovelib.com/';
+  version = '1.0.0';
 
   async popularNovels(
     pageNo: number,
@@ -22,7 +22,7 @@ class Linovelib implements Plugin.PluginBase {
     const url = `${this.site}/top/${rank}/${pageNo}.html`;
 
     const body = await fetchText(url);
-    if (body === '') throw Error('无法获取小说列表，请检查网络');
+    if (body === '') throw Error('無法獲取小説列表, 請檢查網絡');
 
     const loadedCheerio = parseHTML(body);
 
@@ -53,7 +53,7 @@ class Linovelib implements Plugin.PluginBase {
     const url = this.site + novelPath;
 
     const body = await fetchText(url);
-    if (body === '') throw Error('无法获取小说内容，请检查网络');
+    if (body === '') throw Error('無法獲取小説信息, 請檢查網絡');
 
     const loadedCheerio = parseHTML(body);
 
@@ -72,7 +72,7 @@ class Linovelib implements Plugin.PluginBase {
     novel.author = loadedCheerio('#bookDetailWrapper .book-rand-a a').text();
 
     const meta = loadedCheerio('#bookDetailWrapper .book-meta').text();
-    novel.status = meta.includes('完结')
+    novel.status = meta.includes('完結')
       ? NovelStatus.Completed
       : NovelStatus.Ongoing;
 
@@ -365,12 +365,10 @@ class Linovelib implements Plugin.PluginBase {
     const addPage = async (pageCheerio: CheerioAPI) => {
       const formatPage = async () => {
         // Remove JS and notice of the website
-        pageCheerio(
-          '#acontent .adsbygoogle, #acontent script, center',
-        ).remove();
+        pageCheerio('div.cgo, center').remove();
 
         // Load lazyloaded images
-        pageCheerio('#acontent img.imagecontent').each((i, el) => {
+        pageCheerio('#acontentl img.imagecontent').each((i, el) => {
           // Sometimes images are either in data-src or src
           const imgSrc =
             pageCheerio(el).attr('data-src') || pageCheerio(el).attr('src');
@@ -384,7 +382,7 @@ class Linovelib implements Plugin.PluginBase {
         });
 
         // Recover the original character
-        pageText = pageCheerio('#acontent').html() || '';
+        pageText = pageCheerio('#acontentl').html() || '';
         pageText = pageText.replace(/./g, char => skillgg[char] || char);
 
         return Promise.resolve();
@@ -441,7 +439,7 @@ class Linovelib implements Plugin.PluginBase {
     const url = `${this.site}/search/${encodeURI(searchTerm)}_${pageNo}.html`;
 
     const body = await fetchText(url);
-    if (body === '') throw Error('无法获取搜索结果，请检查网络');
+    if (body === '') throw Error('無法獲取搜索結果, 請檢查網絡');
 
     const pageCheerio = parseHTML(body);
 
@@ -527,22 +525,22 @@ class Linovelib implements Plugin.PluginBase {
       label: '排行榜',
       value: 'monthvisit',
       options: [
-        { label: '月点击榜', value: 'monthvisit' },
-        { label: '周点击榜', value: 'weekvisit' },
-        { label: '月推荐榜', value: 'monthvote' },
-        { label: '周推荐榜', value: 'weekvote' },
-        { label: '月鲜花榜', value: 'monthflower' },
-        { label: '周鲜花榜', value: 'weekflower' },
-        { label: '月鸡蛋榜', value: 'monthegg' },
-        { label: '周鸡蛋榜', value: 'weekegg' },
+        { label: '月點擊榜', value: 'monthvisit' },
+        { label: '周點擊榜', value: 'weekvisit' },
+        { label: '月推薦榜', value: 'monthvote' },
+        { label: '周推薦榜', value: 'weekvote' },
+        { label: '月鮮花榜', value: 'monthflower' },
+        { label: '周鮮花榜', value: 'weekflower' },
+        { label: '月鷄蛋榜', value: 'monthegg' },
+        { label: '周鷄蛋榜', value: 'weekegg' },
         { label: '最近更新', value: 'lastupdate' },
-        { label: '最新入库', value: 'postdate' },
+        { label: '最新入庫', value: 'postdate' },
         { label: '收藏榜', value: 'goodnum' },
-        { label: '新书榜', value: 'newhot' },
+        { label: '新書榜', value: 'newhot' },
       ],
       type: FilterTypes.Picker,
     },
   } satisfies Filters;
 }
 
-export default new Linovelib();
+export default new Linovelib_tw();

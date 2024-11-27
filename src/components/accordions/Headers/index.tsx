@@ -1,30 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import AccordionContainer from '../components/AccordionContainer';
-import { Alert, Box, InputAdornment, TextField } from '@mui/material';
+import {
+  Alert,
+  Box,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
 import useDebounce from '@hooks/useDebounce';
 
 export default function HeadersSection() {
   const [loading, setLoading] = useState(false);
   const [cookies, setCookies] = useState('');
   const debounceCookies = useDebounce(cookies, 500);
+  const [fetchMode, setFetchMode] = useState('proxy');
   const [alertVisible, setAlertVisble] = useState(false);
+  const [useUserAgent, setUseUserAgent] = useState(true);
   useEffect(() => {
     if (alertVisible) {
-      setTimeout(() => setAlertVisble(false), 1000);
+      const id = setTimeout(() => setAlertVisble(false), 1000);
+      return () => clearTimeout(id);
     }
   }, [alertVisible]);
 
   useEffect(() => {
     setLoading(true);
-    fetch('cookies', {
+    fetch('settings', {
       method: 'POST',
-      body: debounceCookies,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cookies: debounceCookies,
+        fetchMode: fetchMode,
+        useUserAgent,
+      }),
     })
       .then(() => setAlertVisble(true))
       .finally(() => setLoading(false));
-  }, [debounceCookies]);
+  }, [debounceCookies, fetchMode, useUserAgent]);
+
   return (
-    <AccordionContainer title="Headers" loading={loading}>
+    <AccordionContainer title="Settings" loading={loading}>
       {alertVisible ? (
         <Alert
           sx={{
@@ -34,20 +53,27 @@ export default function HeadersSection() {
             right: 0,
           }}
         >
-          Cookies updated
+          Settings updated
         </Alert>
       ) : null}
-      <TextField
-        size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">Headers</InputAdornment>
-          ),
-        }}
-        disabled
-        value={navigator.userAgent}
-        sx={{ width: '100%' }}
-      />
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
+          size="small"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">User Agent</InputAdornment>
+            ),
+          }}
+          disabled
+          value={navigator.userAgent}
+          sx={{ width: '100%' }}
+        />
+        <Checkbox
+          size="large"
+          checked={useUserAgent}
+          onChange={e => setUseUserAgent(e.target.checked)}
+        />
+      </Box>
       <Box sx={{ height: 10 }} />
       <TextField
         size="small"
@@ -62,6 +88,27 @@ export default function HeadersSection() {
         }}
         sx={{ width: '100%' }}
       />
+      <Box sx={{ height: 10 }} />
+      <div
+        style={{
+          alignContent: 'flex-start',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}
+      >
+        Fetch Mode:
+        <Select
+          variant="outlined"
+          label="Fetcher"
+          value={fetchMode}
+          onChange={e => setFetchMode(e.target.value)}
+        >
+          <MenuItem value="proxy">Proxy</MenuItem>
+          <MenuItem value="node-fetch">Node fetch</MenuItem>
+          <MenuItem value="curl">Curl</MenuItem>
+        </Select>
+      </div>
     </AccordionContainer>
   );
 }
