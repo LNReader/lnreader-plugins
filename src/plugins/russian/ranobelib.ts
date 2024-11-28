@@ -161,7 +161,7 @@ class RLIB implements Plugin.PluginBase {
               '/' +
               (branch_id || ''),
             releaseTime: dayjs(created_at).format('LLL'),
-            chapterNumber: chapter.index,
+            chapterNumber: parseFloat(chapter.number),
             page: branch_name[branch_id || '0'],
           }),
         ),

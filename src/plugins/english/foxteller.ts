@@ -9,7 +9,7 @@ class Foxteller implements Plugin.PluginBase {
   id = 'foxteller';
   name = 'Foxteller';
   site = 'https://www.foxteller.com';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/en/foxteller/icon.png';
 
   async safeFecth(url: string, init: any = {}): Promise<string> {
