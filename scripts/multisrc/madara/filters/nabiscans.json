@@ -1,0 +1,188 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "Aksiyon",
+          "value": "aksiyon"
+        },
+        {
+          "label": "Büyü",
+          "value": "buyu"
+        },
+        {
+          "label": "CocaColastic",
+          "value": "cocacolastic"
+        },
+        {
+          "label": "Doğaüstü",
+          "value": "dogaustu"
+        },
+        {
+          "label": "Dövüş Sanatları",
+          "value": "dovus-sanatlari"
+        },
+        {
+          "label": "Drama",
+          "value": "drama"
+        },
+        {
+          "label": "Fantastik",
+          "value": "fantastik"
+        },
+        {
+          "label": "Final",
+          "value": "final"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "Komedi",
+          "value": "komedi"
+        },
+        {
+          "label": "Macera",
+          "value": "macera"
+        },
+        {
+          "label": "Murim",
+          "value": "murim"
+        },
+        {
+          "label": "novel",
+          "value": "novel"
+        },
+        {
+          "label": "Okul Hayatı",
+          "value": "okul-hayati"
+        },
+        {
+          "label": "Ptj Serisi",
+          "value": "ptj-serisi"
+        },
+        {
+          "label": "Reenkarnasyon",
+          "value": "reenkarnasyon"
+        },
+        {
+          "label": "Romantizm",
+          "value": "romantizm"
+        },
+        {
+          "label": "Spor",
+          "value": "spor"
+        },
+        {
+          "label": "Sstem",
+          "value": "sstem"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "having all selected genres",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Yazar",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Çizer",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Yayınlanma Yılı",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "Hepsi",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Durumu",
+      "value": [],
+      "options": [
+        {
+          "label": "Devam Ediyor",
+          "value": "on-going"
+        },
+        {
+          "label": "Tamamlandı",
+          "value": "end"
+        },
+        {
+          "label": "İptal Edildi",
+          "value": "canceled"
+        },
+        {
+          "label": "Askıya Alındı",
+          "value": "on-hold"
+        },
+        {
+          "label": "Gelecek",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Sırala;",
+      "value": "",
+      "options": [
+        {
+          "label": "İlişkin",
+          "value": ""
+        },
+        {
+          "label": "En Sondan",
+          "value": "latest"
+        },
+        {
+          "label": "A-Z",
+          "value": "alphabet"
+        },
+        {
+          "label": "Oylama",
+          "value": "rating"
+        },
+        {
+          "label": "Popüler",
+          "value": "trending"
+        },
+        {
+          "label": "En Çok Okunan",
+          "value": "views"
+        },
+        {
+          "label": "Yeni",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}

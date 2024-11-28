@@ -1,7 +1,6 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
-import qs from 'qs';
 
 class Agitoon implements Plugin.PluginBase {
   id = 'agit.xyz';
@@ -29,7 +28,7 @@ class Agitoon implements Plugin.PluginBase {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         mode: 'get_data_novel_list_p',
         novel_menu: showLatestNovels ? '1' : '3',
         np_day: new Date().getDay(),
@@ -41,7 +40,7 @@ class Agitoon implements Plugin.PluginBase {
         np_genre_ex_2: '00',
         list_limit: 20 * (pageNo - 1),
         is_query_first: pageNo == 1,
-      }),
+      }).toString(),
     });
     if (!res.ok) {
       throw new Error(
@@ -95,13 +94,13 @@ class Agitoon implements Plugin.PluginBase {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         mode: 'get_data_novel_list_c',
         wr_id_p: novelPath,
         page_no: '1',
         cnt_list: '10000',
         order_type: 'Asc',
-      }),
+      }).toString(),
     });
 
     const resJson = (await res.json()) as responseBook;
@@ -145,11 +144,11 @@ class Agitoon implements Plugin.PluginBase {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       method: 'POST',
-      body: qs.stringify({
+      body: new URLSearchParams({
         mode: 'get_data_novel_list_p_sch',
         search_novel: searchTerm,
         list_limit: 0,
-      }),
+      }).toString(),
     });
     const resJson = (await rawResults.json()) as response;
     const novels: Plugin.NovelItem[] = [];

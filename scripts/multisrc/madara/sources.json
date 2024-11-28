@@ -68,12 +68,12 @@
   },
   {
     "id": "arnovel",
-    "sourceSite": "https://ar-novel.com/",
+    "sourceSite": "https://ar-no.com/",
     "sourceName": "ArNovel",
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
@@ -136,12 +136,12 @@
   },
   {
     "id": "riwyat",
-    "sourceSite": "https://riwyatspace.com/",
+    "sourceSite": "https://cenele.com/",
     "sourceName": "Riwyat",
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 3
+      "versionIncrements": 4
     }
   },
   {
@@ -252,8 +252,8 @@
     "sourceSite": "https://srankmanga.com/",
     "sourceName": "Srank Manga",
     "options": {
-        "useNewChapterEndpoint": true,
-        "versionIncrements": 1
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 1
     }
   },
   {
@@ -347,11 +347,11 @@
   },
   {
     "id": "galaxytranslations",
-    "sourceSite": "https://galaxytranslations11.com/",
+    "sourceSite": "https://darkstartranslations.com/",
     "sourceName": "Galaxy Translations",
     "options": {
       "useNewChapterEndpoint": true,
-      "versionIncrements": 2,
+      "versionIncrements": 3,
       "lang": "English"
     }
   },
@@ -377,8 +377,126 @@
     "sourceSite": "https://citrusaurora.com/",
     "sourceName": "Citrus Aurora",
     "options": {
+      "versionIncrements": 1,
       "useNewChapterEndpoint": true,
       "lang": "English"
+    }
+  },
+  {
+    "id": "duskblossoms",
+    "sourceSite": "https://duskblossoms.com/",
+    "sourceName": "Dusk Blossoms",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "fenrir",
+    "sourceSite": "https://fenrirtranslations.com/",
+    "sourceName": "Fenrir Translations",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "bellereservoir",
+    "sourceSite": "https://bellereservoir.com/",
+    "sourceName": "Belle Reservoir",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "traducciones",
+    "sourceSite": "https://traduccionesamistosas.eyudud.net/",
+    "sourceName": "Traducciones Amistosas",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "coralboutique",
+    "sourceSite": "https://coralboutique.xyz/",
+    "sourceName": "Coral Boutique",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "pasteltales",
+    "sourceSite": "https://pasteltales.com/",
+    "sourceName": "Pastel Tales",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "azraznovel",
+    "sourceSite": "https://araznovel.com/",
+    "sourceName": "Araz Novel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "noveloku",
+    "sourceSite": "https://noveloku.com.tr/",
+    "sourceName": "Novel oku",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "nabiscans",
+    "sourceSite": "https://nabiscans.com/",
+    "sourceName": "NABİ SCANS",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "ekitaplar",
+    "sourceSite": "https://e-kitaplar.com/",
+    "sourceName": "E-KİTAPLAR",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "novelokutr",
+    "sourceSite": "https://novelokutr.net/",
+    "sourceName": "Novelokutr",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "wooksteahouse",
+    "sourceSite": "https://wooksteahouse.com/",
+    "sourceName": "Wook's Teahouse",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "eternalune",
+    "sourceName": "Eternalune",
+    "sourceSite": "https://eternalune.com/",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
     }
   }
 ]

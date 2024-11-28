@@ -1,0 +1,340 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "Aksiyon",
+          "value": "aksiyon"
+        },
+        {
+          "label": "Aşırı Güçlü",
+          "value": "asiri-guclu"
+        },
+        {
+          "label": "Avcı",
+          "value": "avci"
+        },
+        {
+          "label": "Bilim Kurgu",
+          "value": "bilim-kurgu"
+        },
+        {
+          "label": "Büyü",
+          "value": "buyu"
+        },
+        {
+          "label": "Canavarlar",
+          "value": "canavarlar"
+        },
+        {
+          "label": "Doğaüstü",
+          "value": "dogaustu"
+        },
+        {
+          "label": "Dövüş Sanatları",
+          "value": "dovus-sanatlari"
+        },
+        {
+          "label": "Dram",
+          "value": "dram"
+        },
+        {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Fantastik",
+          "value": "fantastik"
+        },
+        {
+          "label": "Geri Dönen",
+          "value": "geri-donen"
+        },
+        {
+          "label": "Gerileme",
+          "value": "gerileme"
+        },
+        {
+          "label": "Gizem",
+          "value": "gizem"
+        },
+        {
+          "label": "Haremi",
+          "value": "haremi"
+        },
+        {
+          "label": "Hayaletler",
+          "value": "hayaletler"
+        },
+        {
+          "label": "Hayatın Dilimleri",
+          "value": "hayatin-dilimleri"
+        },
+        {
+          "label": "Hile Sistemleri",
+          "value": "hile-sistemleri"
+        },
+        {
+          "label": "İntikam",
+          "value": "intikam"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Kıyamet",
+          "value": "kiyamet"
+        },
+        {
+          "label": "Komedi",
+          "value": "komedi"
+        },
+        {
+          "label": "Korku",
+          "value": "korku"
+        },
+        {
+          "label": "Macera",
+          "value": "macera"
+        },
+        {
+          "label": "Manga",
+          "value": "manga"
+        },
+        {
+          "label": "Manhua",
+          "value": "manhua"
+        },
+        {
+          "label": "Manhwa",
+          "value": "manhwa"
+        },
+        {
+          "label": "Mecha",
+          "value": "mecha"
+        },
+        {
+          "label": "Murim",
+          "value": "murim"
+        },
+        {
+          "label": "Okul Hayatı",
+          "value": "okul-hayati"
+        },
+        {
+          "label": "Oyun",
+          "value": "oyun"
+        },
+        {
+          "label": "Psikolojik",
+          "value": "psikolojik"
+        },
+        {
+          "label": "Reenkarnasyon",
+          "value": "reenkarnasyon"
+        },
+        {
+          "label": "Roman",
+          "value": "roman"
+        },
+        {
+          "label": "Romantizm",
+          "value": "romantizm"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Şeytanlar",
+          "value": "seytanlar"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Sistem",
+          "value": "sistem"
+        },
+        {
+          "label": "Spor",
+          "value": "spor"
+        },
+        {
+          "label": "Suç",
+          "value": "suc"
+        },
+        {
+          "label": "Süper Güç",
+          "value": "super-guc"
+        },
+        {
+          "label": "Tamamlanmış",
+          "value": "tamamlanmis"
+        },
+        {
+          "label": "Tarihi",
+          "value": "tarihi"
+        },
+        {
+          "label": "Tıp",
+          "value": "tip"
+        },
+        {
+          "label": "Trajedi",
+          "value": "trajedi"
+        },
+        {
+          "label": "Video Oyunları",
+          "value": "video-oyunlari"
+        },
+        {
+          "label": "Webtoon",
+          "value": "webtoon"
+        },
+        {
+          "label": "Wuxia",
+          "value": "wuxia"
+        },
+        {
+          "label": "Yeniden Doğuş",
+          "value": "yeniden-dogus"
+        },
+        {
+          "label": "Yetişim",
+          "value": "yetisim"
+        },
+        {
+          "label": "Yetişkin",
+          "value": "yetiskin"
+        },
+        {
+          "label": "Yetişme",
+          "value": "yetisme"
+        },
+        {
+          "label": "Zaman Yolculuğu",
+          "value": "zaman-yolculugu"
+        },
+        {
+          "label": "Zeki Ana Karakter",
+          "value": "zeki-ana-karakter"
+        },
+        {
+          "label": "Zindanlar",
+          "value": "zindanlar"
+        },
+        {
+          "label": "Zombi",
+          "value": "zombi"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "VE seçilen tüm türlere sahip olmak",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Yazar",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Sanatçı",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Çıkış Yılı",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Yetişkinlere yönelik içerik",
+      "value": "",
+      "options": [
+        {
+          "label": "Tüm",
+          "value": ""
+        },
+        {
+          "label": "Yetişkinlere uygun içerik yok",
+          "value": "0"
+        },
+        {
+          "label": "Yalnızca yetişkinlere yönelik içerik",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Durum",
+      "value": [],
+      "options": [
+        {
+          "label": "Devam Ediyor",
+          "value": "on-going"
+        },
+        {
+          "label": "Tamamlandı",
+          "value": "end"
+        },
+        {
+          "label": "İptal edildi",
+          "value": "canceled"
+        },
+        {
+          "label": "Beklemede",
+          "value": "on-hold"
+        },
+        {
+          "label": "Yakında",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Sırala",
+      "value": "",
+      "options": [
+        {
+          "label": "Alaka",
+          "value": ""
+        },
+        {
+          "label": "En son",
+          "value": "latest"
+        },
+        {
+          "label": "A'dan Z'ye",
+          "value": "alphabet"
+        },
+        {
+          "label": "Puan",
+          "value": "rating"
+        },
+        {
+          "label": "Trendler",
+          "value": "trending"
+        },
+        {
+          "label": "Okunma Sayısı",
+          "value": "views"
+        },
+        {
+          "label": "Yeni",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}

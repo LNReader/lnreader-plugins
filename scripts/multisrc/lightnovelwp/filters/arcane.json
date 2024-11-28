@@ -22,52 +22,40 @@
           "value": "adventure"
         },
         {
-          "label": "Another World",
-          "value": "another-world"
-        },
-        {
-          "label": "Comdey",
-          "value": "comdey"
+          "label": "Apocalypse",
+          "value": "apocalypse"
         },
         {
           "label": "Comedy",
           "value": "comedy"
         },
         {
-          "label": "Dark Fantasy",
-          "value": "dark-fantasy"
+          "label": "Cyberpunk",
+          "value": "cyberpunk"
         },
         {
           "label": "Drama",
           "value": "drama"
         },
         {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
           "label": "Fantasy",
           "value": "fantasy"
         },
         {
-          "label": "Fantasy Fusion",
-          "value": "fantasy-fusion"
+          "label": "Fusion",
+          "value": "fusion"
+        },
+        {
+          "label": "Game World",
+          "value": "game-world"
         },
         {
           "label": "Harem",
           "value": "harem"
-        },
-        {
-          "label": "Historical",
-          "value": "historical"
-        },
-        {
-          "label": "Horror",
-          "value": "horror"
-        },
-        {
-          "label": "Hunter",
-          "value": "hunter"
-        },
-        {
-          "label": "Light Novel",
-          "value": "light-novel"
         },
         {
           "label": "Martial Arts",
@@ -78,39 +66,23 @@
           "value": "mature"
         },
         {
-          "label": "Misunderstanding",
-          "value": "misunderstanding"
+          "label": "Medieval",
+          "value": "medieval"
+        },
+        {
+          "label": "Misunderstandings",
+          "value": "misunderstandings"
         },
         {
           "label": "Modern",
           "value": "modern"
         },
         {
-          "label": "Modern Fantasy",
-          "value": "modern-fantasy"
-        },
-        {
-          "label": "Munchkin",
-          "value": "munchkin"
-        },
-        {
-          "label": "Murim",
-          "value": "murim"
-        },
-        {
-          "label": "mystery",
+          "label": "Mystery",
           "value": "mystery"
         },
         {
-          "label": "No Harem",
-          "value": "no-harem"
-        },
-        {
-          "label": "NO NTR",
-          "value": "no-ntr"
-        },
-        {
-          "label": "obsession",
+          "label": "Obsession",
           "value": "obsession"
         },
         {
@@ -130,7 +102,7 @@
           "value": "regret"
         },
         {
-          "label": "reincarnation",
+          "label": "Reincarnation",
           "value": "reincarnation"
         },
         {
@@ -142,11 +114,19 @@
           "value": "school-life"
         },
         {
+          "label": "Sci-Fi",
+          "value": "sci-fi"
+        },
+        {
           "label": "Seinen",
           "value": "seinen"
         },
         {
-          "label": "Slice of life",
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Slice of Life",
           "value": "slice-of-life"
         },
         {
@@ -158,12 +138,12 @@
           "value": "tragedy"
         },
         {
-          "label": "Transmigrated to Game",
-          "value": "transmigrated-to-game"
-        },
-        {
           "label": "Transmigration",
           "value": "transmigration"
+        },
+        {
+          "label": "Wuxia",
+          "value": "wuxia"
         }
       ]
     },
@@ -173,7 +153,15 @@
       "value": [],
       "options": [
         {
-          "label": "korean novel",
+          "label": "Chinese Novel",
+          "value": "chinese-novel"
+        },
+        {
+          "label": "Japanese Novel",
+          "value": "japanese-novel"
+        },
+        {
+          "label": "Korean Novel",
           "value": "korean-novel"
         },
         {
@@ -233,6 +221,10 @@
         {
           "label": "Popular",
           "value": "popular"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
         }
       ]
     }

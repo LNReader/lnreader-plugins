@@ -1,4 +1,60 @@
 /**
+ * Novel Updates -> Daoist Quest
+ * https://www.novelupdates.com/group/daoist-quest/
+ * Necessary to display chapterContent correctly
+ */
+.litrpg-box {
+    color: #fff;
+    font-weight: 400;
+    text-align: center;
+    margin: 15px auto;
+    max-width: fit-content;
+}
+.litrpg-frame {
+    border: solid #00219b;
+    box-shadow: 0 0 10px 1px #00219b;
+    border-radius: 5px;
+    background-color: #000000;
+}
+.litrpg-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125em;
+    padding: .875rem 0;
+    margin: 0 .875rem;
+    overflow: auto;
+}
+.litrpg-body ul {
+    text-align: left;
+}
+
+/**
+ * Novel Updates -> FictionRead
+ * https://www.novelupdates.com/group/fictionread/
+ * Necessary to display chapterContent correctly
+ */
+.letter-style {
+    min-width: 230px;
+    max-width: fit-content;
+    margin: 15px auto;
+    box-shadow: 0 0 10px 1px #5e636e;
+    border-radius: 5px;
+    font-family: 'Oswald', sans-serif;
+    background-color: #000000;
+    padding: 10px 30px 10px 30px;
+}
+.system {
+    background: linear-gradient(33deg, #334455 0%, #223344 100%);
+    border: 1px solid #aabbcc;
+    color: #fff;
+    font-family: Rajdhani,serif;
+    font-weight: 500;
+    margin: 0 auto;
+    padding: 1rem;
+    width: fit-content;
+}
+
+/**
  * Novel Updates -> Genesis Translations
  * https://www.novelupdates.com/group/genesis-translations/
  * Necessary to display chapterContent correctly
@@ -12,7 +68,7 @@
     border: solid #e0cc00;
     box-shadow: 0 0 10px 1px #e0cc00;
     border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
+    font-family: 'Oswald', sans-serif;
     background-color: #000000;
 }
 .game-prompt-gold-info-title {
@@ -36,7 +92,7 @@
     border: solid #00219b;
     box-shadow: 0 0 10px 1px #00219b;
     border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
+    font-family: 'Oswald', sans-serif;
     background-color: #000000;
 }
 .game-prompt-info-title {
@@ -59,7 +115,7 @@
     border: solid #00219b;
     box-shadow: 0 0 10px 1px #00219b;
     border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
+    font-family: 'Oswald', sans-serif;
     background-color: #000000;
 }
 .game-prompt-info-small-content {
@@ -75,7 +131,7 @@
     border: solid #c2c2c2;
     box-shadow: 0 0 10px 1px #737373;
     border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
+    font-family: 'Oswald', sans-serif;
     background-color: #000000;
 }
 .game-prompt-silver-info-content {
@@ -92,7 +148,7 @@
     border: solid #750b00e3;
     box-shadow: 0 0 20px 3px #750b0070;
     border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
+    font-family: 'Oswald', sans-serif;
     background-color: #000000;
 }
 .game-prompt-warning-title {
@@ -141,8 +197,8 @@
     --colors-novel-system-box-shadow: 9 23 134;
     background: linear-gradient(180deg,rgb(var(--colors-novel-system-box-bg-1)) 35%,rgb(var(--colors-novel-system-box-bg-2)) 214%);
     border: 1px solid rgb(var(--colors-novel-system-box-border));
-    color: #fffffd;
-    /*font-family: Rajdhani,serif;*/
+    color: #fff;
+    font-family: Rajdhani,serif;
     font-weight: 500;
     margin: 0 auto;
     padding: 1rem;
@@ -151,30 +207,4 @@
 }
 .text-center {
     text-align: center !important;
-}
-
-/**
- * Novel Updates -> FictionRead
- * https://www.novelupdates.com/group/fictionread/
- * Necessary to display chapterContent correctly
- */
-.letter-style {
-    min-width: 230px;
-    max-width: fit-content;
-    margin: 15px auto;
-    box-shadow: 0 0 10px 1px #5e636e;
-    border-radius: 5px;
-    /*font-family: 'Oswald', sans-serif;*/
-    background-color: #000000;
-    padding: 10px 30px 10px 30px;
-}
-.system {
-    background: linear-gradient(33deg, #334455 0%, #223344 100%);
-    border: 1px solid #aabbcc;
-    color: #fffffd;
-    /*font-family: Rajdhani,serif;*/
-    font-weight: 500;
-    margin: 0 auto;
-    padding: 1rem;
-    width: fit-content;
 }
