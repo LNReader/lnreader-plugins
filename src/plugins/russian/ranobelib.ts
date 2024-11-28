@@ -167,6 +167,16 @@ class RLIB implements Plugin.PluginBase {
         ),
       );
 
+      if (chapters.length && data.teams.length > 1) {
+        //For whatever reason, the chapters overlap with another page.
+        chapters.sort((chapterA, chapterB) => {
+          if (chapterA.page !== chapterB.page) {
+            return chapterA.page.localeCompare(chapterB.page);
+          }
+          return chapterA.chapterNumber - chapterB.chapterNumber;
+        });
+      }
+
       novel.chapters = chapters;
     }
 
