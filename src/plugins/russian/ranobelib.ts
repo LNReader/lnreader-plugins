@@ -18,7 +18,7 @@ class RLIB implements Plugin.PluginBase {
   name = 'RanobeLib';
   site = 'https://ranobelib.me';
   apiSite = 'https://api.mangalib.me/api/manga/';
-  version = '2.1.0';
+  version = '2.1.1';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
 
@@ -126,10 +126,10 @@ class RLIB implements Plugin.PluginBase {
       novel.genres = genres.join(', ');
     }
 
-    const branch_id: Record<number, string> = {};
+    const branch_name: Record<number, string> = {};
     if (data.teams.length) {
       data.teams.forEach(
-        ({ name, details }) => (branch_id[details?.branch_id || '0'] = name),
+        ({ name, details }) => (branch_name[details?.branch_id || '0'] = name),
       );
     }
 
@@ -144,25 +144,27 @@ class RLIB implements Plugin.PluginBase {
       const chapters: Plugin.ChapterItem[] = [];
 
       chaptersJSON.data.forEach(chapter =>
-        chapters.push({
-          name:
-            'Том ' +
-            chapter.volume +
-            ' Глава ' +
-            chapter.number +
-            (chapter.name ? ' ' + chapter.name : ''),
-          path:
-            novelPath +
-            '/' +
-            chapter.volume +
-            '/' +
-            chapter.number +
-            '/' +
-            (chapter.branches[0]?.branch_id || ''),
-          releaseTime: dayjs(chapter.branches[0].created_at).format('LLL'),
-          chapterNumber: chapter.index,
-          page: branch_id[chapter.branches[0].branch_id || '0'],
-        }),
+        chapter.branches.forEach(({ branch_id, created_at }) =>
+          chapters.push({
+            name:
+              'Том ' +
+              chapter.volume +
+              ' Глава ' +
+              chapter.number +
+              (chapter.name ? ' ' + chapter.name : ''),
+            path:
+              novelPath +
+              '/' +
+              chapter.volume +
+              '/' +
+              chapter.number +
+              '/' +
+              (branch_id || ''),
+            releaseTime: dayjs(created_at).format('LLL'),
+            chapterNumber: chapter.index,
+            page: branch_name[branch_id || '0'],
+          }),
+        ),
       );
 
       novel.chapters = chapters;
@@ -508,6 +510,42 @@ function jsonToHtml(json: HTML[], images, html = '') {
           '<p>' +
           (element.content ? jsonToHtml(element.content, images) : '<br>') +
           '</p>';
+        break;
+      case 'orderedList':
+        html +=
+          '<ol>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</ol>';
+        break;
+      case 'listItem':
+        html +=
+          '<li>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</li>';
+        break;
+      case 'blockquote':
+        html +=
+          '<blockquote>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</blockquote>';
+        break;
+      case 'italic':
+        html +=
+          '<i>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</i>';
+        break;
+      case 'bold':
+        html +=
+          '<b>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</b>';
+        break;
+      case 'underline':
+        html +=
+          '<u>' +
+          (element.content ? jsonToHtml(element.content, images) : '<br>') +
+          '</u>';
         break;
       case 'heading':
         html +=
