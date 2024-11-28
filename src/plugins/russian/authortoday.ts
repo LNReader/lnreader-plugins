@@ -14,7 +14,7 @@ class AuthorToday implements Plugin.PluginBase {
   site = 'https://author.today';
   apiSite = 'https://api.author.today/v1/';
   imageSite = 'https://cm.author.today/content/';
-  version = '1.1.0';
+  version = '1.1.1';
 
   async popularNovels(
     pageNo: number,
@@ -357,11 +357,13 @@ function decrypt(
   userId: number | string = '',
 ) {
   const key = encryptedKey.split('').reverse().join('') + '@_@' + userId;
+  const keyBytes = key.split('').map(char => char.charCodeAt());
+  const keyLength = keyBytes.length;
   let text = '';
 
   for (let i = 0; i < encrypt.length; i++) {
     text += String.fromCharCode(
-      encrypt.charCodeAt(i) ^ key.charCodeAt(i % key.length),
+      encrypt.charCodeAt(i) ^ keyBytes[i % keyLength],
     );
   }
 

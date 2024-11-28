@@ -9,12 +9,13 @@ import '@fontsource/roboto/700.css';
 import 'cheerio';
 import 'htmlparser2';
 import 'dayjs';
-import 'qs';
 import 'protobufjs';
 
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
   const [resource, config] = args;
+  if (resource.toString().includes('localhost'))
+    return await originalFetch(resource, config);
   const _res = await originalFetch('http://localhost:3001/' + resource, {
     ...config,
     credentials: 'include',

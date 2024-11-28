@@ -7,7 +7,7 @@ import { defaultCover } from '@libs/defaultCover';
 class RewayatClub implements Plugin.PagePlugin {
   id = 'rewayatclub';
   name = 'Rewayat Club';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ar/rewayatclub/icon.png';
   site = 'https://rewayat.club/';
 
@@ -15,9 +15,17 @@ class RewayatClub implements Plugin.PagePlugin {
     const novels: Plugin.NovelItem[] = [];
     data.results.map((item: NovelEntry) => {
       novels.push({
-        name: item.arabic,
-        path: `novel/${item.slug}`,
-        cover: `https://api.rewayat.club/${item.poster_url.slice(1)}`,
+        name: item.arabic || item.novel?.arabic || 'novel',
+        path: item.slug
+          ? `novel/${item.slug}`
+          : item.novel
+            ? `novel/${item.novel.slug}`
+            : 'novel',
+        cover: item.poster_url
+          ? `https://api.rewayat.club/${item.poster_url.slice(1)}`
+          : item.novel
+            ? `https://api.rewayat.club/${item.novel.poster_url.slice(1)}`
+            : defaultCover,
       });
     });
     return novels;
@@ -28,8 +36,16 @@ class RewayatClub implements Plugin.PagePlugin {
     { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = `https://api.rewayat.club/api/novels/`;
-
-    if (filters) {
+    let body: NovelData = {
+      count: 0,
+      next: '',
+      previous: '',
+      results: [],
+    };
+    if (showLatestNovels) {
+      link = `${this.site}api/chapters/weekly/list/?page=${page}`;
+      body = await fetchApi(link).then(r => r.json());
+    } else if (filters) {
       if (filters.categories.value !== '') {
         link += `?type=${filters.categories.value}`;
       }
@@ -41,10 +57,9 @@ class RewayatClub implements Plugin.PagePlugin {
           link += `&genre=${genre}`;
         });
       }
+      link += `&page=${page}`;
+      body = await fetchApi(link).then(r => r.json());
     }
-    link += `&page=${page}`;
-    const body = await fetchApi(link).then(r => r.json());
-    const loadedCheerio = parseHTML(body);
     return this.parseNovels(body);
   }
 
@@ -125,22 +140,12 @@ class RewayatClub implements Plugin.PagePlugin {
     };
   }
   async parseChapter(chapterUrl: string): Promise<string> {
-    const result = await fetchApi(new URL(chapterUrl, this.site).toString());
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
-    let chapterText = '';
-    loadedCheerio('div.v-card--flat').each((idx, ele) => {
-      loadedCheerio(ele)
-        .find('div.v-card__text')
-        .each((idx, textEle) => {
-          chapterText +=
-            loadedCheerio(textEle)
-              .find('p')
-              .map((_, pEle) => loadedCheerio(pEle).text().trim())
-              .get()
-              .join(' ') + ' ';
-        });
-    });
+    let link = this.site + 'api/chapters/' + chapterUrl.slice(6);
+    const result = await fetchApi(link).then(r => r.json());
+    let chapterText = result.content
+      .flat()
+      .join('')
+      .replace(/<p>\n|\n<p>\n/g, '');
     chapterText = chapterText.trim();
     return chapterText;
   }
@@ -152,8 +157,6 @@ class RewayatClub implements Plugin.PagePlugin {
     const searchUrl = `https://api.rewayat.club/api/novels/?type=0&ordering=-num_chapters&page=${page}&search=${searchTerm}`;
 
     const result = await fetchApi(searchUrl).then(r => r.json());
-    // const body = await result.text();
-    // const loadedCheerio = parseHTML(body);
     return this.parseNovels(result);
   }
 
@@ -220,11 +223,20 @@ interface NovelEntry {
     arabic: string;
     english: string;
   };
+  novel?: {
+    arabic: string;
+    english: string;
+    slug: string;
+    poster: string;
+    id: number;
+    poster_url: string;
+    original: boolean;
+  };
 }
 interface NovelData {
-  count: number;
-  next: string;
-  previous: string;
+  count?: number;
+  next?: string;
+  previous?: string;
   results: NovelEntry[];
 }
 interface ChapterEntry {

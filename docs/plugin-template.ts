@@ -1,10 +1,14 @@
-import { fetchApi } from '@libs/fetch';
+import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+// import { storage, localStorage, sessionStorage } from '@libs/storage';
+// import { encode, decode } from 'urlencode';
+// import dayjs from 'dayjs';
+// import { Parser } from 'htmlparser2';
 
 class TemplatePlugin implements Plugin.PluginBase {
   id = '';
@@ -14,6 +18,9 @@ class TemplatePlugin implements Plugin.PluginBase {
   version = '1.0.0';
   filters: Filters | undefined = undefined;
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
+
+  //flag indicates whether access to LocalStorage, SesesionStorage is required.
+  webStorageUtilized?: boolean;
 
   async popularNovels(
     pageNo: number,

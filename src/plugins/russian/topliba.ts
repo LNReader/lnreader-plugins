@@ -25,7 +25,6 @@ class TopLiba implements Plugin.PluginBase {
     });
 
     if (searchTerm) data.append('q', searchTerm);
-
     const body = await fetchApi(this.site + '/?' + data.toString()).then(res =>
       res.text(),
     );

@@ -7,8 +7,8 @@ class NovelBin implements Plugin.PluginBase {
   id = 'novelbin';
   name = 'Novel Bin';
   icon = 'src/en/novelbin/icon.png';
-  site = 'https://binnovel.com/';
-  version = '1.0.1';
+  site = 'https://novelbin.com/';
+  version = '1.1.0';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
@@ -43,11 +43,15 @@ class NovelBin implements Plugin.PluginBase {
 
   async popularNovels(
     page: number,
-    { filters }: Plugin.PopularNovelsOptions<Filters>,
+    { showLatestNovels, filters }: Plugin.PopularNovelsOptions<Filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = this.site;
-    if (filters.genre.value !== '') link += `gen/${filters.genre.value}`;
-    else link += `sort/${filters.sort.value}`;
+
+    if (showLatestNovels) link += 'sort/latest';
+    else {
+      if (filters.genre.value !== '') link += `genre/${filters.genre.value}`;
+      else link += `sort/${filters.sort.value}`;
+    }
 
     if (filters.complete.value) link += `/completed`;
 
@@ -159,7 +163,7 @@ class NovelBin implements Plugin.PluginBase {
     },
     genre: {
       value: '',
-      label: 'Genres',
+      label: "Genres (Cancels out 'Sort by')",
       options: [
         { label: 'None', value: '' },
         { label: 'Action', value: 'action' },
@@ -224,8 +228,8 @@ class NovelBin implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     complete: {
-      label: 'Show Completed Novels Only',
       value: false,
+      label: 'Show Completed Novels Only',
       type: FilterTypes.Switch,
     },
   } satisfies Filters;

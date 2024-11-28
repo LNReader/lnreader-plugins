@@ -21,40 +21,7 @@ jobs:
           echo "URL=$URL" >> $GITHUB_OUTPUT
           echo "Using URL: \`$URL\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Get User Agent
-        id: get_user_agent
-        run: |
-          CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
-          echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
-
-      - name: Check if URL is Valid
-        id: url_check
-        env:
-          URL: ${{ steps.get_url.outputs.URL }}
-          USER_AGENT: ${{ steps.get_user_agent.outputs.USER_AGENT }}
-        run: |
-          if [[ -z "$URL" ]]; then
-            echo "url_valid=false" >> $GITHUB_OUTPUT
-            echo "❌ Error: URL Not Found" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-          if ! curl --output /dev/null --silent --head --fail "$URL" -H "User-Agent: $USER_AGENT"; then
-            echo "url_valid=false" >> $GITHUB_OUTPUT
-            echo "❌ Error: Request Failed" >> $GITHUB_STEP_SUMMARY
-            echo "URL is invalid or cloudflare issue or site is down" >> $GITHUB_ENV
-            gh issue comment $ISSUE_NUMBER -b '
-            > [!WARNING]  
-            > **Unable to Check for Themes**
-            > This issue may be due to Cloudflare protection on the website, an invalid URL, or the website being down.
-            
-            *This message is for development purposes and can be ignored otherwise.*
-            ' -R $REPO
-            exit 1
-          fi
-          echo "url_valid=true" >> $GITHUB_OUTPUT
-
       - name: Get Base URL
-        if: steps.url_check.outputs.url_valid == 'true'
         id: get_base_url
         env:
           URL: ${{ steps.get_url.outputs.URL }}
@@ -63,8 +30,13 @@ jobs:
           echo "BASE_URL=$BASE_URL" >> $GITHUB_OUTPUT
           echo "Using Base URL: \`$BASE_URL\`" >> $GITHUB_STEP_SUMMARY
 
+      - name: Get User Agent
+        id: get_user_agent
+        run: |
+          CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
+          echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
+
       - name: Check Madara theme
-        if: steps.url_check.outputs.url_valid == 'true'
         id: check_madara
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -81,7 +53,6 @@ jobs:
           fi
 
       - name: Check Lighnovelwp theme
-        if: steps.url_check.outputs.url_valid == 'true'
         id: check_lighnovelwp
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -97,30 +68,35 @@ jobs:
             echo "lighnovelwp=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check if the site has multiple themes
-        if: steps.url_check.outputs.url_valid == 'true'
-        id: check_multiple_themes
+      - name: Check HotNovelPub theme
+        id: check_hotnovelpub
         env:
-          MADARA: ${{ steps.check_madara.outputs.madara }}
-          LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}
+          BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
+          USER_AGENT: ${{ steps.get_user_agent.outputs.USER_AGENT }}
         run: |
-          if [[ "$MADARA" == "true" && "$LIGHNOVELWP" == "true" ]]; then
-            echo "multiple_themes=true" >> $GITHUB_OUTPUT
-            echo "❌ Error: Multiple Themes Detected on Site" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-          echo "multiple_themes=false" >> $GITHUB_OUTPUT
+          if curl --location --silent --fail "https://api.$BASE_URL" -H "User-Agent: $USER_AGENT" | grep -q "Hello\!"; then
+          echo "hotnovelpub=true" >> $GITHUB_OUTPUT
+          echo "✅ HotNovelPub Theme Detected" >> $GITHUB_STEP_SUMMARY
+            elif curl --location --silent --fail "http://api.$BASE_URL" -H "User-Agent: $USER_AGENT" | grep -q "Hello\!"; then
+          echo "hotnovelpub=true" >> $GITHUB_OUTPUT
+          echo "✅ HotNovelPub Theme Detected" >> $GITHUB_STEP_SUMMARY
+            else
+          echo "hotnovelpub=false" >> $GITHUB_OUTPUT
+            fi
 
       - name: Add Label
-        if: steps.check_multiple_themes.outputs.multiple_themes == 'false'
         env:
           MADARA: ${{ steps.check_madara.outputs.madara }}
           LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}
+          HOTNOVELPUB: ${{ steps.check_hotnovelpub.outputs.hotnovelpub }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [[ "$MADARA" == "true" ]]; then
             gh issue edit $ISSUE_NUMBER --add-label "Theme: Madara" -R $REPO
           elif [[ "$LIGHNOVELWP" == "true" ]]; then
             gh issue edit $ISSUE_NUMBER --add-label "Theme: Lighnovelwp" -R $REPO
+          elif [[ "$HOTNOVELPUB" == "true" ]]; then
+            gh issue edit $ISSUE_NUMBER --add-label "Theme: Hotnovelpub" -R $REPO
           else
             echo "No Theme Detected" >> $GITHUB_STEP_SUMMARY
           fi

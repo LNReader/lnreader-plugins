@@ -167,7 +167,7 @@ class NovelFire implements Plugin.PluginBase {
       '.box-notification',
       /^nf/, // Regular expression to match tags starting with 'nf'
     ];
-    bloatElements.map(tag => {
+    bloatElements.forEach(tag => {
       if (tag instanceof RegExp) {
         loadedCheerio('*')
           .filter((_, el) =>

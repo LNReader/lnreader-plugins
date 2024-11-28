@@ -9,7 +9,7 @@ class Foxteller implements Plugin.PluginBase {
   id = 'foxteller';
   name = 'Foxteller';
   site = 'https://www.foxteller.com';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/foxteller/icon.png';
 
   async popularNovels(
@@ -227,7 +227,7 @@ class Foxteller implements Plugin.PluginBase {
         }
       });
 
-      return decodeURIComponent(escape(decodeBase64(base64)));
+      return decodeURIComponent(decodeBase64(base64));
     }
 
     throw new Error('This chapter is closed');
@@ -285,7 +285,7 @@ const base64Characters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
 function decodeBase64(encodedString: string) {
-  let output = '';
+  const hexcode = [];
   let i = 0;
 
   while (i < encodedString.length) {
@@ -295,17 +295,18 @@ function decodeBase64(encodedString: string) {
     const enc4 = base64Characters.indexOf(encodedString.charAt(i++));
 
     const chr1 = (enc1 << 2) | (enc2 >> 4);
-    output += String.fromCharCode(chr1);
+    const chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+    const chr3 = ((enc3 & 3) << 6) | enc4;
+
+    hexcode.push(chr1.toString(16).padStart(2, '0'));
 
     if (enc3 !== 64) {
-      const chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-      output += String.fromCharCode(chr2);
+      hexcode.push(chr2.toString(16).padStart(2, '0'));
     }
     if (enc4 !== 64) {
-      const chr3 = ((enc3 & 3) << 6) | enc4;
-      output += String.fromCharCode(chr3);
+      hexcode.push(chr3.toString(16).padStart(2, '0'));
     }
   }
 
-  return output;
+  return '%' + hexcode.join('%');
 }

@@ -10,13 +10,13 @@
   },
   {
     "id": "kolnovel",
-    "sourceSite": "https://kolnovel.online/",
+    "sourceSite": "https://kolnovel.org/",
     "sourceName": "Kol Novel",
     "options": {
       "lang": "Arabic",
       "reverseChapters": true,
       "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());",
-      "versionIncrements": 4
+      "versionIncrements": 5
     }
   },
   {
@@ -88,16 +88,6 @@
     "options": {
       "lang": "English",
       "reverseChapters": true
-    }
-  },
-  {
-    "id": "genesistls",
-    "sourceSite": "https://genesistls.com/",
-    "sourceName": "GenesisTls (Deprecated)",
-    "options": {
-      "lang": "English",
-      "reverseChapters": false,
-      "customJs": "$('.genesistls-watermark').remove();$('.epcontent p').each((i, el) => { if ($(el).html() === '&nbsp;') $(el).remove(); });"
     }
   },
   {
@@ -216,6 +206,35 @@
     "sourceName": "Better Novels",
     "options": {
       "lang": "Portuguese"
+    }
+  },
+  {
+    "id": "arcane",
+    "sourceSite": "https://arcanetranslations.com/",
+    "sourceName": "Arcane Translations",
+    "options": {
+      "reverseChapters": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "namevt",
+    "sourceSite": "https://namevt.com/",
+    "sourceName": "Namevt",
+    "options": {
+      "reverseChapters": true,
+      "seriesPath": "/seri/",
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "kodekslibrary",
+    "sourceSite": "https://www.kodekslibrary.com/",
+    "sourceName": "Kodeks Library",
+    "options": {
+      "reverseChapters": true,
+      "seriesPath": "series",
+      "lang": "Turkish"
     }
   }
 ]
