@@ -28,8 +28,30 @@ class RanobesPlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = 'multisrc/ranobes/ranobes/icon.png';
     this.site = metadata.sourceSite;
-    this.version = '2.0.1';
+    this.version = '2.0.2';
     this.options = metadata.options as RanobesOptions;
+  }
+
+  async safeFecth(url: string, init: any = {}): Promise<string> {
+    const r = await fetchApi(url, init);
+    if (!r.ok)
+      throw new Error(
+        'Could not reach site (' + r.status + ') try to open in webview.',
+      );
+    const data = await r.text();
+    const title = data.match(/<title>(.*?)<\/title>/)?.[1]?.trim();
+
+    if (
+      title &&
+      (title == 'Bot Verification' ||
+        title == 'You are being redirected...' ||
+        title == 'Un instant...' ||
+        title == 'Just a moment...' ||
+        title == 'Redirecting...')
+    )
+      throw new Error('Captcha error, please open in webview');
+
+    return data;
   }
 
   parseNovels(html: string) {
@@ -154,7 +176,7 @@ class RanobesPlugin implements Plugin.PluginBase {
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
     const link = `${this.site}/${this.options.path}/page/${page}/`;
-    const body = await fetchApi(link).then(r => r.text());
+    const body = await this.safeFecth(link);
     return this.parseNovels(body);
   }
 
@@ -162,8 +184,7 @@ class RanobesPlugin implements Plugin.PluginBase {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const baseUrl = this.site;
-    const result = await fetchApi(baseUrl + novelPath);
-    const html = await result.text();
+    const html = await this.safeFecth(baseUrl + novelPath);
     const novel: Plugin.SourceNovel & { totalPages: number } = {
       path: novelPath,
       name: '',
@@ -330,9 +351,7 @@ class RanobesPlugin implements Plugin.PluginBase {
         : '/' + novelPath.split('-').slice(1).join('-').split('.')[0];
     const firstUrl =
       this.site + '/chapters' + pagePath.replace(this.options.path + '/', '');
-    const pageBody = await fetchApi(firstUrl + '/page/' + page).then(r =>
-      r.text(),
-    );
+    const pageBody = await this.safeFecth(firstUrl + '/page/' + page);
 
     const baseUrl = this.site;
     let isScript = false;
@@ -408,8 +427,7 @@ class RanobesPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.site + chapterPath);
-    const html = await result.text();
+    const html = await this.safeFecth(this.site + chapterPath);
 
     const indexA = html.indexOf('<div class="text" id="arrticle">');
     const indexB = html.indexOf('<div class="category grey ellipses">', indexA);
@@ -424,7 +442,7 @@ class RanobesPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     let html;
     if (this.id === 'ranobes-ru') {
-      html = await fetchApi(this.site + '/index.php?do=search', {
+      html = await this.safeFecth(this.site + '/index.php?do=search', {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Referer: this.site + '/',
@@ -436,10 +454,10 @@ class RanobesPlugin implements Plugin.PluginBase {
           search_start: page.toString(),
           story: searchTerm,
         }).toString(),
-      }).then(res => res.text());
+      });
     } else {
       const link = `${this.site}/search/${searchTerm}/page/${page}`;
-      html = await fetchApi(link).then(r => r.text());
+      html = await this.safeFecth(link);
     }
     return this.parseNovels(html);
   }

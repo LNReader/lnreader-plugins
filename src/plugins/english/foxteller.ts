@@ -9,8 +9,30 @@ class Foxteller implements Plugin.PluginBase {
   id = 'foxteller';
   name = 'Foxteller';
   site = 'https://www.foxteller.com';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/en/foxteller/icon.png';
+
+  async safeFecth(url: string, init: any = {}): Promise<string> {
+    const r = await fetchApi(url, init);
+    if (!r.ok)
+      throw new Error(
+        'Could not reach site (' + r.status + ') try to open in webview.',
+      );
+    const data = await r.text();
+    const title = data.match(/<title>(.*?)<\/title>/)?.[1]?.trim();
+
+    if (
+      title &&
+      (title == 'Bot Verification' ||
+        title == 'You are being redirected...' ||
+        title == 'Un instant...' ||
+        title == 'Just a moment...' ||
+        title == 'Redirecting...')
+    )
+      throw new Error('Captcha error, please open in webview');
+
+    return data;
+  }
 
   async popularNovels(
     pageNo: number,
@@ -19,7 +41,7 @@ class Foxteller implements Plugin.PluginBase {
     const url =
       this.site + '/library?sort=' + filters?.order?.value || 'popularity';
 
-    const body = await fetchApi(url).then(res => res.text());
+    const body = await this.safeFecth(url);
     const novels: Plugin.NovelItem[] = [];
 
     const div = body.match(/<div class="col-md-6">([\s\S]*?)<\/div>/g) || [];
@@ -44,9 +66,7 @@ class Foxteller implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.resolveUrl(novelPath)).then(res =>
-      res.text(),
-    );
+    const body = await this.safeFecth(this.resolveUrl(novelPath));
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: '',
@@ -189,10 +209,9 @@ class Foxteller implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const res = await fetchApi(this.resolveUrl(chapterPath));
-    const body = await res.text();
+    const res = await this.safeFecth(this.resolveUrl(chapterPath));
     const novelID = chapterPath.split('/')[0];
-    const chapterID = body.match(/'chapter_id': '([\d]+)'/)?.[1];
+    const chapterID = res.match(/'chapter_id': '([\d]+)'/)?.[1];
 
     if (!chapterID) throw new Error('No chapter found');
 
@@ -203,7 +222,7 @@ class Foxteller implements Plugin.PluginBase {
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
         'Content-Type': 'application/json;charset=utf-8',
       },
-      Referer: res.url,
+      Referer: this.resolveUrl(chapterPath),
       body: JSON.stringify({ 'x1': novelID, 'x2': chapterID }),
     }).then(res => res.json());
 
@@ -234,7 +253,7 @@ class Foxteller implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const body = await fetchApi(this.site + '/search', {
+    const body = await this.safeFecth(this.site + '/search', {
       method: 'post',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -243,7 +262,7 @@ class Foxteller implements Plugin.PluginBase {
       },
       Referer: this.site,
       body: JSON.stringify({ query: searchTerm }),
-    }).then(res => res.text());
+    });
     const novels: Plugin.NovelItem[] = [];
 
     const items = body.match(/<a.*>([\s\S]*?)<\/a>/g) || [];
