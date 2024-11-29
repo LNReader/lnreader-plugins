@@ -5,16 +5,17 @@ import Toolbar from '@mui/material/Toolbar';
 import {
   Avatar,
   Backdrop,
-  Button,
   FormControl,
   InputAdornment,
+  Link,
   ListItem,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
   TextField,
+  Typography,
 } from '@mui/material';
-import { Search, Translate } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import { searchPlugins } from '@provider/plugins';
 import { Plugin } from '@typings/plugin';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
@@ -76,6 +77,10 @@ export default function Appbar() {
               display: 'block',
               position: 'relative',
               zIndex: 10,
+              width: {
+                xs: '80%',
+                md: '40%',
+              },
             }}
           >
             <TextField
@@ -91,7 +96,8 @@ export default function Appbar() {
                   </InputAdornment>
                 ),
               }}
-              sx={{ width: 434 }}
+              fullWidth
+              autoComplete="off"
               onFocus={() => {
                 setListVisible(true);
                 if (searchedPlugins.length === 0)
@@ -101,7 +107,7 @@ export default function Appbar() {
             {listVisible ? (
               <FixedSizeList
                 height={400}
-                width={434}
+                width={'100%'}
                 itemData={searchedPlugins}
                 itemSize={46}
                 itemCount={searchedPlugins.length}
@@ -121,23 +127,29 @@ export default function Appbar() {
             onClick={() => setListVisible(false)}
             sx={{ zIndex: 9 }}
             invisible={true}
-          ></Backdrop>
-          <InputAdornment position="end">
-            <Button variant="contained" endIcon={<Translate />}>
-              Language
-            </Button>
-          </InputAdornment>
+          />
           {plugin ? (
-            <Box sx={{ pl: 2, display: 'flex', alignItems: 'center' }}>
+            <Link
+              sx={{
+                pl: 2,
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+              }}
+              href={plugin.site}
+              target="_blank"
+            >
               <Avatar
                 sx={{ mr: 1 }}
                 src={resovleIcon(plugin.icon)}
                 variant="square"
               />
-              <a href={plugin.site} target="_blank">
+              <Typography
+                sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
+              >
                 {plugin.name} - v{plugin.version}
-              </a>
-            </Box>
+              </Typography>
+            </Link>
           ) : null}
         </Toolbar>
       </AppBar>
