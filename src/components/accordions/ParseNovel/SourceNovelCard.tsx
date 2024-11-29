@@ -11,10 +11,10 @@ import {
   Stack,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
 import CopiableItem from '@components/CopiableItem';
 import PathItem from '@components/PathItem';
-import Textarea from '@components/Textarea';
 
 const FlexRow = ({ children }: { children: ReactNode }) => (
   <Stack direction="row" gap={1} sx={{ alignItems: 'center' }}>
@@ -28,12 +28,12 @@ export default function SourceNovelCard({
   sourceNovel: Plugin.SourceNovel;
 }) {
   return (
-    <Card sx={{ display: 'flex', p: 1, width: '100%', textAlign: 'left' }}>
+    <Box sx={{ display: 'flex', p: 1, width: '100%', textAlign: 'left' }}>
       <CopiableItem content={sourceNovel.cover}>
         <Tooltip title={sourceNovel.cover}>
           <CardMedia
             component="img"
-            sx={{ width: 200, height: '100%' }}
+            sx={{ width: 300, height: 400, objectFit: 'cover' }}
             image={sourceNovel.cover}
           />
         </Tooltip>
@@ -99,14 +99,19 @@ export default function SourceNovelCard({
         </CardContent>
         <CardContent>
           <Typography>Summary</Typography>
-          <Textarea
-            sx={{ width: '100%' }}
-            maxRows={5}
-            value={sourceNovel.summary}
-            disabled
-          />
+          <Typography
+            sx={{
+              overflowY: 'auto',
+              height: 300,
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: 'rgba(0,0,0,0.1)',
+            }}
+          >
+            {sourceNovel.summary}
+          </Typography>
         </CardContent>
       </Box>
-    </Card>
+    </Box>
   );
 }

@@ -7,15 +7,17 @@ import {
   MenuItem,
   Select,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import useDebounce from '@hooks/useDebounce';
+import { FetchMode } from '@typings/types';
 
 export default function HeadersSection() {
   const [loading, setLoading] = useState(false);
   const [cookies, setCookies] = useState('');
   const debounceCookies = useDebounce(cookies, 500);
-  const [fetchMode, setFetchMode] = useState('proxy');
+  const [fetchMode, setFetchMode] = useState(FetchMode.PROXY);
   const [alertVisible, setAlertVisble] = useState(false);
   const [useUserAgent, setUseUserAgent] = useState(true);
   useEffect(() => {
@@ -57,17 +59,21 @@ export default function HeadersSection() {
         </Alert>
       ) : null}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <TextField
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">User Agent</InputAdornment>
-            ),
-          }}
-          disabled
-          value={navigator.userAgent}
-          sx={{ width: '100%' }}
-        />
+        <Tooltip title={navigator.userAgent}>
+          <TextField
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">User Agent</InputAdornment>
+                ),
+              },
+            }}
+            disabled
+            value={navigator.userAgent}
+            sx={{ width: '100%' }}
+          />
+        </Tooltip>
         <Checkbox
           size="large"
           checked={useUserAgent}
@@ -77,10 +83,12 @@ export default function HeadersSection() {
       <Box sx={{ height: 10 }} />
       <TextField
         size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">Cookies</InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">Cookies</InputAdornment>
+            ),
+          },
         }}
         value={cookies}
         onChange={e => {
@@ -102,11 +110,11 @@ export default function HeadersSection() {
           variant="outlined"
           label="Fetcher"
           value={fetchMode}
-          onChange={e => setFetchMode(e.target.value)}
+          onChange={e => setFetchMode(e.target.value as FetchMode)}
         >
-          <MenuItem value="proxy">Proxy</MenuItem>
-          <MenuItem value="node-fetch">Node fetch</MenuItem>
-          <MenuItem value="curl">Curl</MenuItem>
+          <MenuItem value={FetchMode.PROXY}>Proxy</MenuItem>
+          <MenuItem value={FetchMode.NODE_FETCH}>Node fetch</MenuItem>
+          <MenuItem value={FetchMode.CURL}>Curl</MenuItem>
         </Select>
       </div>
     </AccordionContainer>

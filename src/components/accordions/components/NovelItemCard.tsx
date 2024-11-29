@@ -13,7 +13,7 @@ import CopiableItem from '@components/CopiableItem';
 import PathItem from '@components/PathItem';
 export default function NovelItemCard({ item }: { item: Plugin.NovelItem }) {
   return (
-    <Card sx={{ display: 'flex', p: 1 }}>
+    <Box sx={{ display: 'flex', p: 1 }}>
       <CopiableItem content={item.cover}>
         <Tooltip title={item.cover}>
           <CardMedia
@@ -50,6 +50,6 @@ export default function NovelItemCard({ item }: { item: Plugin.NovelItem }) {
           <PathItem path={item.path} />
         </CardContent>
       </Box>
-    </Card>
+    </Box>
   );
 }

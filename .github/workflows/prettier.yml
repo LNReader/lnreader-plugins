@@ -18,7 +18,12 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          rm package.json
+          rm package-lock.json
+          npm init -y
+          npm pkg set type="module"
+          npm i prettier
 
       - name: Prettier
         run: npx prettier --check "./src/**/*.{ts,tsx,js,css}"
