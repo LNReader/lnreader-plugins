@@ -69,90 +69,93 @@ export default function Appbar() {
   }, [keyword]);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" color="inherit" elevation={0}>
-        <Toolbar>
-          <FormControl
-            sx={{
-              display: 'block',
-              position: 'relative',
-              zIndex: 10,
-              width: {
-                xs: '80%',
-                md: '40%',
-              },
+    <AppBar
+      sx={{ width: '100vw' }}
+      position="sticky"
+      color="inherit"
+      elevation={0}
+    >
+      <Toolbar>
+        <FormControl
+          sx={{
+            display: 'block',
+            position: 'relative',
+            zIndex: 10,
+            width: {
+              xs: '80%',
+              md: '40%',
+            },
+          }}
+        >
+          <TextField
+            size="small"
+            variant="outlined"
+            placeholder="Seach plugin"
+            value={keyword}
+            onChange={e => setKeyword(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
             }}
-          >
-            <TextField
-              size="small"
-              variant="outlined"
-              placeholder="Seach plugin"
-              value={keyword}
-              onChange={e => setKeyword(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-              fullWidth
-              autoComplete="off"
-              onFocus={() => {
-                setListVisible(true);
-                if (searchedPlugins.length === 0)
-                  setSearchPlugins(searchPlugins(keyword));
-              }}
-            />
-            {listVisible ? (
-              <FixedSizeList
-                height={400}
-                width={'100%'}
-                itemData={searchedPlugins}
-                itemSize={46}
-                itemCount={searchedPlugins.length}
-                overscanCount={5}
-                style={{
-                  position: 'absolute',
-                  boxShadow: '2px 10px 20px rgba(0, 0, 0, 0.2)',
-                  backgroundColor: 'white',
-                }}
-              >
-                {renderPlugin(setListVisible)}
-              </FixedSizeList>
-            ) : null}
-          </FormControl>
-          <Backdrop
-            open={listVisible}
-            onClick={() => setListVisible(false)}
-            sx={{ zIndex: 9 }}
-            invisible={true}
+            fullWidth
+            autoComplete="off"
+            onFocus={() => {
+              setListVisible(true);
+              if (searchedPlugins.length === 0)
+                setSearchPlugins(searchPlugins(keyword));
+            }}
           />
-          {plugin ? (
-            <Link
-              sx={{
-                pl: 2,
-                display: 'flex',
-                alignItems: 'center',
-                textDecoration: 'none',
+          {listVisible ? (
+            <FixedSizeList
+              height={400}
+              width={'100%'}
+              itemData={searchedPlugins}
+              itemSize={46}
+              itemCount={searchedPlugins.length}
+              overscanCount={5}
+              style={{
+                position: 'absolute',
+                boxShadow: '2px 10px 20px rgba(0, 0, 0, 0.2)',
+                backgroundColor: 'white',
               }}
-              href={plugin.site}
-              target="_blank"
             >
-              <Avatar
-                sx={{ mr: 1 }}
-                src={resovleIcon(plugin.icon)}
-                variant="square"
-              />
-              <Typography
-                sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
-              >
-                {plugin.name} - v{plugin.version}
-              </Typography>
-            </Link>
+              {renderPlugin(setListVisible)}
+            </FixedSizeList>
           ) : null}
-        </Toolbar>
-      </AppBar>
-    </Box>
+        </FormControl>
+        <Backdrop
+          open={listVisible}
+          onClick={() => setListVisible(false)}
+          sx={{ zIndex: 9 }}
+          invisible={true}
+        />
+        {plugin ? (
+          <Link
+            sx={{
+              pl: 2,
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+            }}
+            href={plugin.site}
+            target="_blank"
+          >
+            <Avatar
+              sx={{ mr: 1 }}
+              src={resovleIcon(plugin.icon)}
+              variant="square"
+            />
+            <Typography
+              sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
+            >
+              {plugin.name} - v{plugin.version}
+            </Typography>
+          </Link>
+        ) : null}
+      </Toolbar>
+    </AppBar>
   );
 }
