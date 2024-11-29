@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '20'
       - name: Install Dependencies
-        run: npm install --omit=dev
+        run: npm install --omit=dev --ignore-scripts
 
       - name: Publish Plugins
         run: |
