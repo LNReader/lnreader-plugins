@@ -28,7 +28,6 @@
     "protobufjs": "^7.2.6",
     "sanitize-html": "^2.12.1",
     "terser": "^5.36.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "urlencode": "^2.0.0"
   },
