@@ -126,6 +126,13 @@ class RLIB implements Plugin.PluginBase {
       novel.genres = genres.join(', ');
     }
 
+    const branch_name: Record<number, string> = { 0: 'главная страница' };
+    if (data.teams.length) {
+      data.teams.forEach(
+        ({ name, details }) => (branch_name[details?.branch_id || '0'] = name),
+      );
+    }
+
     const chaptersJSON: { data: DataChapter[] } = await fetchApi(
       this.apiSite + novelPath + '/chapters',
       {
@@ -155,7 +162,7 @@ class RLIB implements Plugin.PluginBase {
               (branch_id || ''),
             releaseTime: dayjs(created_at).format('LLL'),
             chapterNumber: chapter.index,
-            page: teams?.[0]?.name,
+            page: branch_name[branch_id || '0'] || 'Неизвестный',
           }),
         ),
       );
