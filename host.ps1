@@ -20,7 +20,7 @@ git reset
 rm -r -fo .js
 npm run clearMultisrc
 npm run generate
-npx tsc --module commonjs --moduleResolution node10 --noResolve --noCheck
+npx tsc --project tsconfig.production.json
 npm run json
 git add -f public/static .dist .js/src/plugins total.svg
 git commit -m "chore: Publish Plugins"
