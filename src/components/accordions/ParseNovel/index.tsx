@@ -54,16 +54,16 @@ export default function ParseNovel() {
           </Button>
         </Stack>
         {sourceNovel ? <SourceNovelCard sourceNovel={sourceNovel} /> : null}
-        {/* <Box sx={{ height: 20 }} />
-      {chapters.length ? <ChapterList chapters={chapters} /> : null}
-      <Box sx={{ height: 20 }} />
-      {sourceNovel?.totalPages ? (
-        <Pagination
-          count={sourceNovel.totalPages}
-          onChange={(e, page) => fetchPage(page)}
-          variant="outlined"
-        />
-      ) : null} */}
+        <Box sx={{ height: 20 }} />
+        {chapters.length ? <ChapterList chapters={chapters} /> : null}
+        <Box sx={{ height: 20 }} />
+        {sourceNovel?.totalPages ? (
+          <Pagination
+            count={sourceNovel.totalPages}
+            onChange={(e, page) => fetchPage(page)}
+            variant="outlined"
+          />
+        ) : null}
       </Box>
     </AccordionContainer>
   );
