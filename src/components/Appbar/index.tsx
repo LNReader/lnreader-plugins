@@ -28,11 +28,12 @@ function renderPlugin(setListVisible: (v: boolean) => void) {
   return function (props: ListChildComponentProps<Plugin.PluginBase[]>) {
     const { index, style, data } = props;
     const plugin = data[index];
-    const selectPlugin = useAppStore(state => state.selectPlugin);
+    const { selectPlugin, pluginItem } = useAppStore(state => state);
 
     return (
       <ListItem style={style} key={index} component="div" disablePadding>
         <ListItemButton
+          selected={plugin.id === pluginItem?.id}
           onClick={() => {
             selectPlugin({
               id: plugin.id,
