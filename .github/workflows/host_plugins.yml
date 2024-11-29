@@ -3,11 +3,10 @@ name: Publish Plugins
 on:
   push:
     branches:
-      - master
+      - fix/webui
 
 jobs:
   Publish:
-    if: github.repository == 'LNReader/lnreader-plugins'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
