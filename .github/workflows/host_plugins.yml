@@ -3,7 +3,7 @@ name: Publish Plugins
 on:
   push:
     branches:
-      - master
+      - fix/webui
 
 jobs:
   Publish:
@@ -15,9 +15,9 @@ jobs:
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Install Dependencies
-        run: npm install
+        run: npm install --omit=dev
 
       - name: Publish Plugins
         run: |
