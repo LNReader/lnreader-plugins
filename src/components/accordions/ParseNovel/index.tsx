@@ -9,7 +9,7 @@ import { useAppStore } from '@store';
 export default function ParseNovel() {
   const plugin = useAppStore(state => state.plugin);
   const [sourceNovel, setSouceNovel] = useState<
-    Plugin.SourceNovel | undefined
+    (Plugin.SourceNovel & { totalPages?: number }) | undefined
   >();
   const [chapters, setChapters] = useState<Plugin.ChapterItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,34 +37,34 @@ export default function ParseNovel() {
   };
   return (
     <AccordionContainer title="Parse Novel" loading={loading}>
-      <Stack direction={'row'} spacing={2}>
-        <TextField
-          value={novelPath}
-          onChange={e => setNovelPath(e.target.value)}
-          size="small"
-          label="Novel path"
-        />
-        <Button
-          disabled={plugin === undefined}
-          onClick={fetchNovel}
-          variant="contained"
-        >
-          Fetch
-        </Button>
-      </Stack>
-      {sourceNovel ? <SourceNovelCard sourceNovel={sourceNovel} /> : null}
-      <Box sx={{ height: 20 }} />
+      <Box sx={{ overflowX: 'auto', width: '100%' }}>
+        <Stack direction={'row'} spacing={2}>
+          <TextField
+            value={novelPath}
+            onChange={e => setNovelPath(e.target.value)}
+            size="small"
+            label="Novel path"
+          />
+          <Button
+            disabled={plugin === undefined}
+            onClick={fetchNovel}
+            variant="contained"
+          >
+            Fetch
+          </Button>
+        </Stack>
+        {sourceNovel ? <SourceNovelCard sourceNovel={sourceNovel} /> : null}
+        {/* <Box sx={{ height: 20 }} />
       {chapters.length ? <ChapterList chapters={chapters} /> : null}
       <Box sx={{ height: 20 }} />
-      {/* @ts-ignore */}
       {sourceNovel?.totalPages ? (
         <Pagination
-          // @ts-ignore
           count={sourceNovel.totalPages}
           onChange={(e, page) => fetchPage(page)}
           variant="outlined"
         />
-      ) : null}
+      ) : null} */}
+      </Box>
     </AccordionContainer>
   );
 }
