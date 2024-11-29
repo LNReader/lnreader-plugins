@@ -144,7 +144,7 @@ class RLIB implements Plugin.PluginBase {
       const chapters: Plugin.ChapterItem[] = [];
 
       chaptersJSON.data.forEach(chapter =>
-        chapter.branches.forEach(({ branch_id, created_at, teams }) =>
+        chapter.branches.forEach(({ branch_id, created_at }) =>
           chapters.push({
             name:
               'Том ' +
