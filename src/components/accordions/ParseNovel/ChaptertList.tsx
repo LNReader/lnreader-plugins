@@ -62,7 +62,7 @@ export default function ChapterList({
   chapters: Plugin.ChapterItem[];
 }) {
   return (
-    <Paper style={{ height: 400, width: '100%', textAlign: 'left' }}>
+    <Paper style={{ height: 400, minWidth: 600, textAlign: 'left' }}>
       <TableVirtuoso
         data={chapters}
         components={VirtuosoTableComponents}
