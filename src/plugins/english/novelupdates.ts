@@ -839,6 +839,7 @@ class NovelUpdates implements Plugin.PluginBase {
         loadedCheerio('.td-page-content').html() ||
         loadedCheerio('.reader-content').html() ||
         loadedCheerio('#content').html() ||
+        loadedCheerio('#the-content').html() ||
         loadedCheerio('article.post').html()!;
       if (chapterTitle && chapterContent) {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
