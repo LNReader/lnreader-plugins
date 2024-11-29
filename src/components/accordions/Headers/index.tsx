@@ -7,6 +7,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import useDebounce from '@hooks/useDebounce';
@@ -57,17 +58,21 @@ export default function HeadersSection() {
         </Alert>
       ) : null}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <TextField
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">User Agent</InputAdornment>
-            ),
-          }}
-          disabled
-          value={navigator.userAgent}
-          sx={{ width: '100%' }}
-        />
+        <Tooltip title={navigator.userAgent}>
+          <TextField
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">User Agent</InputAdornment>
+                ),
+              },
+            }}
+            disabled
+            value={navigator.userAgent}
+            sx={{ width: '100%' }}
+          />
+        </Tooltip>
         <Checkbox
           size="large"
           checked={useUserAgent}
@@ -77,10 +82,12 @@ export default function HeadersSection() {
       <Box sx={{ height: 10 }} />
       <TextField
         size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">Cookies</InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">Cookies</InputAdornment>
+            ),
+          },
         }}
         value={cookies}
         onChange={e => {

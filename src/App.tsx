@@ -35,7 +35,7 @@ function App() {
         <Container
           sx={{
             mt: 6,
-            width: { sm: 500, md: 1024, lg: '90vw' },
+            width: '90%',
           }}
         >
           <HeadersSection />
