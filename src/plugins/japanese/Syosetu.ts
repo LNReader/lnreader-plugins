@@ -1,4 +1,3 @@
-import * as cheerio from 'cheerio';
 import { load as loadCheerio } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
