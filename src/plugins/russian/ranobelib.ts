@@ -18,7 +18,7 @@ class RLIB implements Plugin.PluginBase {
   name = 'RanobeLib';
   site = 'https://ranobelib.me';
   apiSite = 'https://api.mangalib.me/api/manga/';
-  version = '2.1.1';
+  version = '2.1.2';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
 
@@ -126,7 +126,7 @@ class RLIB implements Plugin.PluginBase {
       novel.genres = genres.join(', ');
     }
 
-    const branch_name: Record<number, string> = {};
+    const branch_name: Record<number, string> = { 0: 'главная страница' };
     if (data.teams.length) {
       data.teams.forEach(
         ({ name, details }) => (branch_name[details?.branch_id || '0'] = name),
@@ -162,7 +162,7 @@ class RLIB implements Plugin.PluginBase {
               (branch_id || ''),
             releaseTime: dayjs(created_at).format('LLL'),
             chapterNumber: chapter.index,
-            page: branch_name[branch_id || '0'],
+            page: branch_name[branch_id || '0'] || 'Неизвестный',
           }),
         ),
       );
@@ -170,10 +170,14 @@ class RLIB implements Plugin.PluginBase {
       if (chapters.length && data.teams.length > 1) {
         //For whatever reason, the chapters overlap with another page.
         chapters.sort((chapterA, chapterB) => {
-          if (chapterA.page !== chapterB.page) {
+          if (
+            chapterA.page &&
+            chapterB.page &&
+            chapterA.page !== chapterB.page
+          ) {
             return chapterA.page.localeCompare(chapterB.page);
           }
-          return chapterA.chapterNumber - chapterB.chapterNumber;
+          return (chapterA.chapterNumber || 0) - (chapterB.chapterNumber || 0);
         });
       }
 
