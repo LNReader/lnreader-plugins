@@ -29,7 +29,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.2';
+  version = '1.0.3';
 
   _chapSite = 'https://chp.mvlempyr.net/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
@@ -348,7 +348,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       chapters: posts.map(chap => ({
         name: chap.acf.ch_name,
         path: 'chapter/' + chap.acf.novel_code + '-' + chap.acf.chapter_number,
-        date: chap.date,
+        releaseTime: chap.date,
         chapterNumber: chap.acf.chapter_number,
       })),
       status: loadedCheerio('div.novelstatustextmedium').text(),

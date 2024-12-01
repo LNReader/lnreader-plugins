@@ -14,4 +14,5 @@ export default {
   Turkish: 'Türkçe',
   Ukrainian: 'Українська',
   Vietnamese: 'Tiếng Việt',
+  Multi: 'Multi',
 };
