@@ -13,7 +13,7 @@ class Syosetu implements Plugin.PluginBase {
   icon = 'src/jp/syosetu/icon.png';
   site = 'https://yomou.syosetu.com/';
   novelPrefix = 'https://ncode.syosetu.com';
-  version = '1.1.0';
+  version = '1.1.1';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -69,15 +69,42 @@ class Syosetu implements Plugin.PluginBase {
     const novels = await getNovelsFromPage(pageNo);
     return novels;
   }
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+  private async parseChaptersFromPage(
+    loadedCheerio: cheerio.CheerioAPI,
+  ): Promise<Plugin.ChapterItem[]> {
     const chapters: Plugin.ChapterItem[] = [];
+
+    loadedCheerio('.p-eplist__sublist').each((_, element) => {
+      const chapterLink = loadedCheerio(element).find('a');
+      const chapterUrl = chapterLink.attr('href');
+      const chapterName = chapterLink.text().trim();
+      const releaseDate = loadedCheerio(element)
+        .find('.p-eplist__update')
+        .text()
+        .trim()
+        .split(' ')[0]
+        .replace(/\//g, '-');
+
+      if (chapterUrl) {
+        chapters.push({
+          name: chapterName,
+          releaseTime: releaseDate,
+          path: chapterUrl.replace(this.novelPrefix, ''),
+        });
+      }
+    });
+
+    return chapters;
+  }
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    // First fetch main page
     const result = await fetchApi(this.novelPrefix + novelPath, {
       headers: this.headers,
     });
     const body = await result.text();
     const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
-    // Parse novel status
+    // Parse status
     let status = 'Unknown';
     if (loadedCheerio('.c-announce').text().includes('連載中')) {
       status = 'Ongoing';
@@ -87,7 +114,7 @@ class Syosetu implements Plugin.PluginBase {
       status = 'On Hiatus';
     }
 
-    // Create novel object with basic metadata
+    // Create novel object with metadata
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('.p-novel__title').text(),
@@ -96,32 +123,77 @@ class Syosetu implements Plugin.PluginBase {
         .replace('作者：', '')
         .trim(),
       status: status,
-      artist: '', // Not available on syosetu
+      artist: '',
       cover: defaultCover,
+      chapters: [],
     };
 
     // Get summary if available
     novel.summary = loadedCheerio('#novel_ex').text().trim();
 
-    // Parse chapters using the correct selectors
-    loadedCheerio('.p-eplist__sublist').each((_, element) => {
-      const chapterLink = loadedCheerio(element).find('a');
-      const chapterUrl = chapterLink.attr('href');
-      const chapterName = chapterLink.text().trim();
-      const releaseDate = loadedCheerio(element)
-        .find('.p-eplist__update')
-        .text()
-        .trim()
-        .split(' ')[0] // Get just the date part
-        .replace(/\//g, '-'); // Format date as YYYY-MM-DD
-      if (chapterUrl) {
-        chapters.push({
-          name: chapterName,
-          releaseTime: releaseDate,
-          path: chapterUrl.replace(this.novelPrefix, ''),
+    const chapters: Plugin.ChapterItem[] = [];
+
+    // Get last page URL first
+    const lastPageLink = loadedCheerio('.c-pager__item--last').attr('href');
+
+    if (!lastPageLink) {
+      // If no pagination, just parse chapters from the current page
+      loadedCheerio('.p-eplist__sublist').each((_, element) => {
+        const chapterLink = loadedCheerio(element).find('a');
+        const chapterUrl = chapterLink.attr('href');
+        const chapterName = chapterLink.text().trim();
+        const releaseDate = loadedCheerio(element)
+          .find('.p-eplist__update')
+          .text()
+          .trim()
+          .split(' ')[0]
+          .replace(/\//g, '-');
+
+        if (chapterUrl) {
+          chapters.push({
+            name: chapterName,
+            releaseTime: releaseDate,
+            path: chapterUrl.replace(this.novelPrefix, ''),
+          });
+        }
+      });
+    } else {
+      const lastPageMatch = lastPageLink.match(/\?p=(\d+)/);
+      const totalPages = lastPageMatch ? parseInt(lastPageMatch[1]) : 1;
+
+      // Fetch all pages in parallel for better performance
+      const pagePromises = Array.from({ length: totalPages }, (_, i) =>
+        fetchApi(`${this.novelPrefix}${novelPath}?p=${i + 1}`).then(r =>
+          r.text(),
+        ),
+      );
+
+      const pageResults = await Promise.all(pagePromises);
+
+      // Process each page's chapters
+      pageResults.forEach(pageBody => {
+        const pageCheerio = loadCheerio(pageBody, { decodeEntities: false });
+        pageCheerio('.p-eplist__sublist').each((_, element) => {
+          const chapterLink = pageCheerio(element).find('a');
+          const chapterUrl = chapterLink.attr('href');
+          const chapterName = chapterLink.text().trim();
+          const releaseDate = pageCheerio(element)
+            .find('.p-eplist__update')
+            .text()
+            .trim()
+            .split(' ')[0]
+            .replace(/\//g, '-');
+
+          if (chapterUrl) {
+            chapters.push({
+              name: chapterName,
+              releaseTime: releaseDate,
+              path: chapterUrl.replace(this.novelPrefix, ''),
+            });
+          }
         });
-      }
-    });
+      });
+    }
 
     novel.chapters = chapters;
     return novel;
