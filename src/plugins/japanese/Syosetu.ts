@@ -3,6 +3,7 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@libs/novelStatus';
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -13,7 +14,7 @@ class Syosetu implements Plugin.PluginBase {
   icon = 'src/jp/syosetu/icon.png';
   site = 'https://yomou.syosetu.com/';
   novelPrefix = 'https://ncode.syosetu.com';
-  version = '1.1.1';
+  version = '1.1.2';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -106,13 +107,15 @@ class Syosetu implements Plugin.PluginBase {
 
     // Parse status
     let status = 'Unknown';
-    if (loadedCheerio('.c-announce').text().includes('連載中')) {
-      status = 'Ongoing';
-    } else if (loadedCheerio('.c-announce').text().includes('完結')) {
-      status = 'Completed';
-    } else if (loadedCheerio('.c-announce').text().includes('約2ヶ月以上')) {
-      status = 'On Hiatus';
+    if (loadedCheerio('.c-announce').text().includes('連載中') || loadedCheerio('.c-announce').text().includes('未完結')) {
+      status = NovelStatus.Ongoing;
     }
+    else if (loadedCheerio('.c-announce').text().includes('更新されていません')) {
+      status = NovelStatus.OnHiatus;
+    }
+    else if (loadedCheerio('.c-announce').text().includes('完結')) {
+      status = NovelStatus.Completed;
+    } 
 
     // Create novel object with metadata
     const novel: Plugin.SourceNovel = {
@@ -126,10 +129,14 @@ class Syosetu implements Plugin.PluginBase {
       artist: '',
       cover: defaultCover,
       chapters: [],
+      genres: loadedCheerio('meta[property="og:description"]')
+        .attr('content')
+        ?.split(' ')
+        .join(','), // Get genres from meta tag
     };
 
     // Get summary if available
-    novel.summary = loadedCheerio('#novel_ex').text().trim();
+    novel.summary = loadedCheerio('#novel_ex').html() || ''
 
     const chapters: Plugin.ChapterItem[] = [];
 
@@ -199,25 +206,23 @@ class Syosetu implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-    const result = await fetchApi(this.novelPrefix + chapterPath, {
-      headers: this.headers,
-    });
-    const body = await result.text();
+  const result = await fetchApi(this.novelPrefix + chapterPath, {
+    headers: this.headers,
+  });
+  const body = await result.text();
 
-    const cheerioQuery = loadCheerio(body, {
-      decodeEntities: false,
-    });
+  const cheerioQuery = loadCheerio(body, {
+    decodeEntities: false,
+  });
 
-    // Get the novel text content and process it
-    const chapterContent = cheerioQuery('.p-novel__body .js-novel-text')
-      .find('p')
-      .map((_, element) => {
-        return cheerioQuery(element).text();
-      })
-      .get()
-      .join('\n');
+  // Get the chapter title
+  const chapterTitle = cheerioQuery('.p-novel__title').html() || '';
+  
+  // Get the chapter content
+  const chapterContent = cheerioQuery('.p-novel__body .js-novel-text').html() || '';
 
-    return chapterContent || '';
+  // Combine title and content with proper HTML structure
+  return `<h1>${chapterTitle}</h1>${chapterContent}`;
   }
   async searchNovels(
     searchTerm: string,
