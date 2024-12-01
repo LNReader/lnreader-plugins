@@ -107,15 +107,18 @@ class Syosetu implements Plugin.PluginBase {
 
     // Parse status
     let status = 'Unknown';
-    if (loadedCheerio('.c-announce').text().includes('連載中') || loadedCheerio('.c-announce').text().includes('未完結')) {
+    if (
+      loadedCheerio('.c-announce').text().includes('連載中') ||
+      loadedCheerio('.c-announce').text().includes('未完結')
+    ) {
       status = NovelStatus.Ongoing;
-    }
-    else if (loadedCheerio('.c-announce').text().includes('更新されていません')) {
+    } else if (
+      loadedCheerio('.c-announce').text().includes('更新されていません')
+    ) {
       status = NovelStatus.OnHiatus;
-    }
-    else if (loadedCheerio('.c-announce').text().includes('完結')) {
+    } else if (loadedCheerio('.c-announce').text().includes('完結')) {
       status = NovelStatus.Completed;
-    } 
+    }
 
     // Create novel object with metadata
     const novel: Plugin.SourceNovel = {
@@ -206,23 +209,24 @@ class Syosetu implements Plugin.PluginBase {
     return novel;
   }
   async parseChapter(chapterPath: string): Promise<string> {
-  const result = await fetchApi(this.novelPrefix + chapterPath, {
-    headers: this.headers,
-  });
-  const body = await result.text();
+    const result = await fetchApi(this.novelPrefix + chapterPath, {
+      headers: this.headers,
+    });
+    const body = await result.text();
 
-  const cheerioQuery = loadCheerio(body, {
-    decodeEntities: false,
-  });
+    const cheerioQuery = loadCheerio(body, {
+      decodeEntities: false,
+    });
 
-  // Get the chapter title
-  const chapterTitle = cheerioQuery('.p-novel__title').html() || '';
-  
-  // Get the chapter content
-  const chapterContent = cheerioQuery('.p-novel__body .js-novel-text').html() || '';
+    // Get the chapter title
+    const chapterTitle = cheerioQuery('.p-novel__title').html() || '';
 
-  // Combine title and content with proper HTML structure
-  return `<h1>${chapterTitle}</h1>${chapterContent}`;
+    // Get the chapter content
+    const chapterContent =
+      cheerioQuery('.p-novel__body .js-novel-text').html() || '';
+
+    // Combine title and content with proper HTML structure
+    return `<h1>${chapterTitle}</h1>${chapterContent}`;
   }
   async searchNovels(
     searchTerm: string,
