@@ -136,7 +136,7 @@ class Syosetu implements Plugin.PluginBase {
     };
 
     // Get summary if available
-    novel.summary = loadedCheerio('#novel_ex').html() || ''
+    novel.summary = loadedCheerio('#novel_ex').html() || '';
 
     const chapters: Plugin.ChapterItem[] = [];
 
