@@ -18,7 +18,7 @@ class Genesis implements Plugin.PluginBase {
   icon = 'src/en/genesis/icon.png';
   customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
-  version = '1.0.5';
+  version = '1.0.6';
 
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
