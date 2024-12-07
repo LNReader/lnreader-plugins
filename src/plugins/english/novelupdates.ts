@@ -865,6 +865,40 @@ class NovelUpdates implements Plugin.PluginBase {
       );
     }
 
+    // Parse the HTML with Cheerio
+    const chapterCheerio = parseHTML(chapterText);
+
+    // Remove script tags
+    chapterCheerio('script').remove();
+
+    // Process the images
+    chapterCheerio('img').each((i, el) => {
+      const $el = chapterCheerio(el);
+
+      // Prioritize data-lazy-src or src for the main src attribute
+      const imgSrc = $el.attr('data-lazy-src') || $el.attr('src');
+
+      if (imgSrc) {
+        $el.attr('src', imgSrc); // Set the src value
+      }
+
+      // Prioritize data-lazy-srcset or srcset for the srcset attribute
+      const imgSrcset = $el.attr('data-lazy-srcset') || $el.attr('srcset');
+
+      if (imgSrcset) {
+        $el.attr('srcset', imgSrcset); // Set the srcset value
+      }
+
+      // Remove unnecessary lazy-loading attributes
+      $el.removeAttr(
+        'data-lazy-src data-lazy-srcset data-lazy-sizes data-ll-status',
+      );
+      $el.removeClass('lazyloaded'); // Remove lazy-loading classes
+    });
+
+    // Extract the updated HTML
+    chapterText = chapterCheerio.html();
+
     return chapterText;
   }
 
