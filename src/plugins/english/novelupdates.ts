@@ -380,6 +380,7 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'novelworldtranslations':
         bloatElements = ['.separator img'];
         bloatElements.forEach(tag => loadedCheerio(tag).remove());
+
         loadedCheerio('.entry-content a')
           .filter((_, el) => {
             return (
@@ -392,12 +393,23 @@ class NovelUpdates implements Plugin.PluginBase {
           .each((_, el) => {
             loadedCheerio(el).parent().remove();
           });
+
         chapterTitle =
           loadedCheerio('.entry-title').first().text() || 'Title not found';
         chapterContent = loadedCheerio('.entry-content')
           .html()!
           .replace(/&nbsp;/g, '')
           .replace(/\n/g, '<br>');
+
+        // Load the chapter content into Cheerio and clean up empty elements
+        const chapterCheerio = parseHTML(chapterContent);
+        chapterCheerio('span, p, div').each((_, el) => {
+          if (chapterCheerio(el).text().trim() === '') {
+            chapterCheerio(el).remove();
+          }
+        });
+        chapterContent = chapterCheerio.html()!;
+
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
       case 'raeitranslations':
