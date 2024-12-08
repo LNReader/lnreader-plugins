@@ -402,13 +402,13 @@ class NovelUpdates implements Plugin.PluginBase {
           .replace(/\n/g, '<br>');
 
         // Load the chapter content into Cheerio and clean up empty elements
-        const chapterCheerio = parseHTML(chapterContent);
-        chapterCheerio('span, p, div').each((_, el) => {
-          if (chapterCheerio(el).text().trim() === '') {
-            chapterCheerio(el).remove();
+        const chapterCheerio_novelworld = parseHTML(chapterContent);
+        chapterCheerio_novelworld('span, p, div').each((_, el) => {
+          if (chapterCheerio_novelworld(el).text().trim() === '') {
+            chapterCheerio_novelworld(el).remove();
           }
         });
-        chapterContent = chapterCheerio.html()!;
+        chapterContent = chapterCheerio_novelworld.html()!;
 
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
