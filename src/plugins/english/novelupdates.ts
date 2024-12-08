@@ -869,7 +869,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const chapterCheerio = parseHTML(chapterText);
 
     // Remove unwanted elements
-    chapterCheerio('noscript img').remove();
+    chapterCheerio('noscript').remove();
 
     // Process the images
     chapterCheerio('img').each((i, el) => {
