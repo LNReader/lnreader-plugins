@@ -868,6 +868,9 @@ class NovelUpdates implements Plugin.PluginBase {
     // Parse the HTML with Cheerio
     const chapterCheerio = parseHTML(chapterText);
 
+    // Remove unwanted elements
+    chapterCheerio('noscript img').remove();
+
     // Process the images
     chapterCheerio('img').each((i, el) => {
       const $el = chapterCheerio(el);
@@ -886,11 +889,8 @@ class NovelUpdates implements Plugin.PluginBase {
         $el.attr('srcset', imgSrcset); // Set the srcset value
       }
 
-      // Remove unnecessary lazy-loading attributes
-      $el.removeAttr(
-        'data-lazy-src data-lazy-srcset data-lazy-sizes data-ll-status',
-      );
-      $el.removeClass('lazyloaded'); // Remove lazy-loading classes
+      // Remove lazy-loading classes
+      $el.removeClass('lazyloaded');
     });
 
     // Extract the updated HTML
