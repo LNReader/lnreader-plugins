@@ -227,9 +227,9 @@ class NovelUpdates implements Plugin.PluginBase {
       // Last edited in 0.7.12 - 08/12/2024
       case 'darkstartranslations':
         chapterTitle =
-          loadedCheerio('.single-chapter-select option').first().text() ||
+          loadedCheerio('ol.breadcrumb li').last().text().trim() ||
           'Title not found';
-        chapterContent = loadedCheerio('.reading-content').html()!;
+        chapterContent = loadedCheerio('.text-left').html()!;
 
         // Load the extracted chapter content into Cheerio
         const chapterCheerio_darkstar = parseHTML(chapterContent);
