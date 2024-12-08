@@ -745,6 +745,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const outliers = [
       'anotivereads',
       'asuratls',
+      'darkstartranslations',
       'fictionread',
       'helscans',
       'infinitenoveltranslations',
