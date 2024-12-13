@@ -24,9 +24,7 @@ class novelOvh implements Plugin.PluginBase {
         : filters?.sort?.value || 'averageRating') +
       ',desc';
 
-    const { books }: { books: BooksEntity[] } = await fetchApi(url).then(res =>
-      res.json(),
-    );
+    const books: BooksEntity[] = await fetchApi(url).then(res => res.json());
 
     const novels: Plugin.NovelItem[] = [];
     books.forEach(novel =>
@@ -87,7 +85,7 @@ class novelOvh implements Plugin.PluginBase {
             ' ' +
             (chapter.name ||
               'Глава ' + (chapter.number || chapters.length - chapterIndex)),
-        path: novelPath + '/' + chapter.id + '/0',
+        path: novelPath + '/' + chapter.id,
         releaseTime: dayjs(chapter.createdAt).format('LLL'),
         chapterNumber: chapters.length - chapterIndex,
         page: branch_name[chapter.branchId] || 'Главная страница',

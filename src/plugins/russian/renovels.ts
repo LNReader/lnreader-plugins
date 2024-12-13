@@ -80,7 +80,7 @@ class ReN implements Plugin.PluginBase {
     }
 
     const totalPages =
-      (content.branches?.[0]?.count_chapters || content.count_chapters) / 100;
+      (content.branches?.[0]?.count_chapters || content.count_chapters) / 50;
     const branch_id = content.branches?.[0]?.id || content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
@@ -92,7 +92,7 @@ class ReN implements Plugin.PluginBase {
         this.site +
           '/api/titles/chapters/?branch_id=' +
           branch_id +
-          '&ordering=index&user_data=1&page=' +
+          '&ordering=index&user_data=1&count=50&page=' +
           (page + 1),
       ).then(res => res.json());
       let skip = false;
