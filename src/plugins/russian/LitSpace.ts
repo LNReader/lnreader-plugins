@@ -1,14 +1,20 @@
 import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 import { fetchApi } from '@libs/fetch';
-import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
+
+const headers: any = {
+  'Content-Type': 'application/json',
+  'X-Inertia': true,
+  'X-Inertia-Version': '6666cd76f96956469e7be39d750cc7d9',
+};
 
 class freedlit implements Plugin.PluginBase {
   id = 'freedlit.space';
   name = 'LitSpace';
   site = 'https://freedlit.space';
-  version = '1.0.0';
+  version = '1.1.0';
   icon = 'src/ru/freedlit/icon.png';
 
   async popularNovels(
@@ -18,137 +24,100 @@ class freedlit implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/get-books/all/list/' + page + '?sort=';
+    let url = this.site + '/get-books/?sort=';
     url += showLatestNovels ? 'recent' : filters?.sort?.value || 'popular';
-    url += '&status=' + (filters?.status?.value || 'all');
     url += '&access=' + (filters?.access?.value || 'all');
-    url += '&adult=' + (filters?.adult?.value || 'hide');
+    url += '&hideAdult=' + (filters?.hideAdult?.value || false);
+    url += '&page=' + page;
 
-    if (filters?.genre?.value?.include?.length) {
-      url += filters.genre.value.include
-        .map(id => '&genres_included[]=' + id)
-        .join('');
-    }
-
-    if (filters?.genre?.value?.exclude?.length) {
-      url += filters.genre.value.exclude
-        .map(id => '&genres_excluded[]=' + id)
-        .join('');
-    }
-
-    const body = await fetchApi(url).then(res => res.text());
-    const loadedCheerio = parseHTML(body);
+    const { books }: { books: Books } = await fetchApi(url).then(res =>
+      res.json(),
+    );
 
     const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('#bookListBlock > div > div').each((index, element) => {
-      const name = loadedCheerio(element).find('div > h4 > a').text()?.trim();
-      const cover = loadedCheerio(element)
-        .find('div > a > img')
-        .attr('src')
-        ?.trim();
-      const url = loadedCheerio(element)
-        .find('div > h4 > a')
-        .attr('href')
-        ?.trim();
-      if (!name || !url) return;
 
-      novels.push({ name, cover, path: url.replace(this.site, '') });
-    });
+    books.data.forEach(novel =>
+      novels.push({
+        name: novel.title,
+        cover: novel.cover
+          ? this.site + '/storage/' + novel.cover
+          : defaultCover,
+        path: novel.item_id.toString(),
+      }),
+    );
 
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.site + novelPath).then(res => res.text());
-    const loadedCheerio = parseHTML(body);
+    const {
+      props: { book },
+    }: { props: { book: DataEntity } } = await fetchApi(
+      this.resolveUrl(novelPath, true),
+      {
+        method: 'post',
+        headers,
+        Referer: this.site,
+      },
+    ).then(res => res.json());
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('.book-info h4').text(),
-      cover: loadedCheerio('.book-cover > div > img').attr('src')?.trim(),
-      summary: loadedCheerio('#nav-home').text()?.trim(),
-      author: loadedCheerio('.book-info h5 > a').text(),
-      genres: loadedCheerio('.genre-list > a')
-        .map((index, element) => loadedCheerio(element).text())
-        .get()
-        .join(','),
+      name: book.title,
+      cover: book.cover ? this.site + '/storage/' + book.cover : defaultCover,
+      summary: book.annotation,
+      author: book.authors_names?.[0]?.name || '',
+      genres: book.tags?.map?.(tags => tags.name)?.join?.(', ') || '',
     };
 
+    const { succes }: { succes: { items: chaptersData[] } } = await fetchApi(
+      this.site + '/api/bookpage/get-chapters',
+      {
+        method: 'post',
+        headers,
+        Referer: this.resolveUrl(novelPath),
+        body: JSON.stringify({ book_id: novelPath }),
+      },
+    ).then(res => res.json());
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio('a.chapter-line').each((chapterIndex, element) => {
-      const name = loadedCheerio(element).find('h6').text();
-      const url = loadedCheerio(element).attr('href');
-      if (!name || !url) return;
-
-      const releaseDate = loadedCheerio(element)
-        .find('span[class="date"]')
-        .text();
-      chapters.push({
-        name,
-        path: url.replace(this.site, ''),
-        releaseTime: this.parseDate(releaseDate),
-        chapterNumber: chapterIndex + 1,
-      });
-    });
+    if (succes?.items?.length) {
+      succes.items.forEach((chapter, chapterIndex) =>
+        chapters.push({
+          name: chapter.header,
+          path: novelPath + '/' + chapter.id,
+          releaseTime: dayjs(chapter.first_published_formated).format('LL'),
+          chapterNumber: chapterIndex + 1,
+        }),
+      );
+    }
 
     novel.chapters = chapters;
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(res =>
-      res.text(),
-    );
-    const loadedCheerio = parseHTML(body);
+    const [book_id, chapter_id] = chapterPath.split('/');
+    const { succes }: { succes: chapterContent } = await fetchApi(
+      this.site + '/api/bookpage/get-chapters',
+      {
+        method: 'post',
+        headers,
+        Referer: this.resolveUrl(chapterPath),
+        body: JSON.stringify({ book_id, chapter_id }),
+      },
+    ).then(res => res.json());
 
-    loadedCheerio('div.mobile-block').remove();
-    loadedCheerio('div.standart-block').remove();
-
-    const chapterText = loadedCheerio('div[class="chapter"]').html() || '';
+    const chapterText = succes.content;
     return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const url = this.site + '/search?query=' + searchTerm + '&type=all';
-    const body = await fetchApi(url).then(res => res.text());
-    const loadedCheerio = parseHTML(body);
-
-    const novels: Plugin.NovelItem[] = [];
-    loadedCheerio('#bookGridBlock > div').each((index, element) => {
-      const name = loadedCheerio(element).find('h4 > a').text()?.trim();
-      const cover = loadedCheerio(element).find('a > img').attr('src')?.trim();
-      const url = loadedCheerio(element).find('h4 > a').attr('href')?.trim();
-      if (!name || !url) return;
-
-      novels.push({ name, cover, path: url.replace(this.site, '') });
-    });
-
-    return novels;
+    return [];
   }
 
-  parseDate = (dateString: string | undefined = '') => {
-    const months: Record<string, number> = {
-      января: 1,
-      февраля: 2,
-      марта: 3,
-      апреля: 4,
-      мая: 5,
-      июня: 6,
-      июля: 7,
-      августа: 8,
-      сентября: 9,
-      октября: 10,
-      ноября: 11,
-      декабря: 12,
-    };
-
-    const [day, month, year] = dateString.split(' ');
-    if (day && months[month] && year) {
-      return dayjs(year + '-' + months[month] + '-' + day).format('LL');
-    }
-    return dateString || null;
-  };
+  resolveUrl = (path: string, isNovel?: boolean) =>
+    this.site + (isNovel ? '/book/' : '/reader/') + path;
 
   filters = {
     sort: {
@@ -156,104 +125,10 @@ class freedlit implements Plugin.PluginBase {
       value: 'popular',
       options: [
         { label: 'По популярности', value: 'popular' },
-        { label: 'По количеству комментариев', value: 'comments' },
-        { label: 'По количеству лайков', value: 'likes' },
+        { label: 'последние обновления', value: 'updated' },
         { label: 'По новизне', value: 'recent' },
         { label: 'По просмотрам', value: 'views' },
-      ],
-      type: FilterTypes.Picker,
-    },
-    genre: {
-      label: 'Жанры:',
-      value: { include: [], exclude: [] },
-      options: [
-        { label: 'Любой жанр', value: 'all' },
-        { label: 'Альтернативная история', value: 'alternative-history' },
-        { label: 'Антиутопия', value: 'dystopia' },
-        { label: 'Бизнес-литература', value: 'business-literature' },
-        { label: 'Боевая фантастика', value: 'combat-fiction' },
-        { label: 'Боевик', value: 'action' },
-        { label: 'Боевое фэнтези', value: 'combat-fantasy' },
-        { label: 'Бояръ-Аниме', value: 'boyar-anime' },
-        { label: 'Героическая фантастика', value: 'heroic-fiction' },
-        { label: 'Героическое фэнтези', value: 'heroic-fantasy' },
-        { label: 'Городское фэнтези', value: 'urban-fantasy' },
-        { label: 'Гримдарк', value: 'grimdark' },
-        { label: 'Детектив', value: 'mystery' },
-        { label: 'Детская литература', value: 'kids-literature' },
-        { label: 'Документальная проза', value: 'biography' },
-        { label: 'Историческая проза', value: 'historical-fiction' },
-        { label: 'Исторический детектив', value: 'historical-mystery' },
-        {
-          label: 'Исторический любовный роман',
-          value: 'historical-romantic-novel',
-        },
-        { label: 'Историческое фэнтези', value: 'historical-fantasy' },
-        { label: 'Киберпанк', value: 'cyberpunk' },
-        { label: 'Космическая фантастика', value: 'cosmic-fiction' },
-        { label: 'ЛитРПГ', value: 'litrpg' },
-        { label: 'Лоу / Низкое фэнтези', value: 'low-fantasy' },
-        { label: 'Любовное фэнтези', value: 'romantic-fantasy' },
-        { label: 'Любовный роман', value: 'romantic-novel' },
-        { label: 'Мистика', value: 'mystic' },
-        { label: 'Мистический детектив', value: 'mystic-detective' },
-        { label: 'Научная фантастика', value: 'science-fiction' },
-        { label: 'Подростковая проза', value: 'young-adult' },
-        { label: 'Политический роман', value: 'political-romance' },
-        { label: 'Попаданцы', value: 'accidental-travel' },
-        { label: 'Попаданцы в магические миры', value: 'magic-worlds-travel' },
-        { label: 'Попаданцы во времени', value: 'time-travel' },
-        { label: 'Порнотика', value: 'pornotica' },
-        { label: 'Постапокалипсис', value: 'post-apocalypse' },
-        { label: 'Поэзия', value: 'poetry' },
-        { label: 'Приключения', value: 'adventure' },
-        { label: 'Публицистика', value: 'journalism' },
-        { label: 'Пьеса', value: 'play' },
-        { label: 'Развитие личности', value: 'how-to-book' },
-        { label: 'Разное', value: 'other' },
-        { label: 'Реализм', value: 'Realism' },
-        { label: 'РеалРПГ', value: 'realrpg' },
-        { label: 'Репликация', value: 'replication' },
-        { label: 'Романтическая эротика', value: 'romantic-erotic-fiction' },
-        { label: 'Сказка', value: 'fairy-tale' },
-        { label: 'Слэш', value: 'slash' },
-        { label: 'Современная проза', value: 'modern-prose' },
-        { label: 'Современный любовный роман', value: 'modern-romantic-novel' },
-        { label: 'Социальная фантастика', value: 'social-fiction' },
-        { label: 'Стимпанк', value: 'steampunk' },
-        { label: 'Сценарий', value: 'scenario' },
-        { label: 'Сюаньхуань', value: 'xuanhuan' },
-        { label: 'Сянься', value: 'xianxia' },
-        { label: 'Тёмное фэнтези', value: 'dark-fantasy' },
-        { label: 'Триллер', value: 'thriller' },
-        { label: 'Уся', value: 'wuxia' },
-        { label: 'Фантастика', value: 'fiction' },
-        { label: 'Фантастический детектив', value: 'mystery-fiction' },
-        { label: 'Фанфик', value: 'fan-fiction' },
-        { label: 'Фемслэш', value: 'femslash' },
-        { label: 'Фэнтези', value: 'fantasy' },
-        { label: 'Хоррор', value: 'horror' },
-        { label: 'Шпионский детектив', value: 'spy-crime' },
-        { label: 'Эпическое фэнтези', value: 'epic-fantasy' },
-        { label: 'Эротика', value: 'erotic-fiction' },
-        { label: 'Эротическая фантастика', value: 'erotic-fiction' },
-        { label: 'Эротический фанфик', value: 'erotic-fan-fiction' },
-        { label: 'Эротическое фэнтези', value: 'erotic-fantasy' },
-        { label: 'Этническое фэнтези', value: 'ethnic-fantasy' },
-        { label: 'Юмор', value: 'humor' },
-        { label: 'Юмористическая фантастика', value: 'humor-fiction' },
-        { label: 'Юмористическое фэнтези', value: 'humor-fantasy' },
-        { label: 'RPS', value: 'rps' },
-      ],
-      type: FilterTypes.ExcludableCheckboxGroup,
-    },
-    status: {
-      label: 'Статус:',
-      value: 'all',
-      options: [
-        { label: 'Любой статус', value: 'all' },
-        { label: 'В процессе', value: 'in-process' },
-        { label: 'Завершено', value: 'finished' },
+        { label: 'По количеству лайков', value: 'likes' },
       ],
       type: FilterTypes.Picker,
     },
@@ -267,16 +142,106 @@ class freedlit implements Plugin.PluginBase {
       ],
       type: FilterTypes.Picker,
     },
-    adult: {
-      label: 'Возрастные ограничения:',
-      value: 'hide',
-      options: [
-        { label: 'Скрыть 18+', value: 'hide' },
-        { label: 'Показать +18', value: 'show' },
-      ],
-      type: FilterTypes.Picker,
+    hideAdult: {
+      label: 'Скрыть 18+',
+      value: true,
+      type: FilterTypes.Switch,
     },
   } satisfies Filters;
 }
 
 export default new freedlit();
+
+interface Books {
+  current_page: number;
+  data: DataEntity[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: string;
+  path: string;
+  per_page: number;
+  prev_page_url?: null;
+  to: number;
+  total: number;
+}
+interface DataEntity {
+  id: number;
+  item_id: number;
+  type: string;
+  form_id: number;
+  title: string;
+  authors: string;
+  cover: string;
+  access: string;
+  language: string;
+  rating: number;
+  intermediate_rating?: number;
+  first_published: string;
+  chapter_updated_at: string;
+  adults: number;
+  exclusive: number;
+  status: number;
+  total_views: number;
+  total_likes: number;
+  show_main_widget: number;
+  is_audio: boolean;
+  authors_names?: AuthorsNamesEntity[];
+  client_price?: number | null;
+  client_discount?: null;
+  seriesBook: boolean;
+  series_title: string;
+  main_author_link: string;
+  publisher_link?: null;
+  published_chapters_total: number;
+  total_characters: string;
+  total_author_sheet: number;
+  total_critics: number;
+  total_recommendations: number;
+  form_name: string;
+  genres?: GenresEntity[] | null;
+  tags?: TagsEntity[];
+  series_book_num: number;
+  series_book_id?: number | null;
+  annotation: string;
+  total_comments: number;
+  total_libraries: number;
+}
+interface AuthorsNamesEntity {
+  id: number;
+  url: string;
+  name: string;
+  type: string;
+}
+interface GenresEntity {
+  id: number;
+}
+interface TagsEntity {
+  id: number;
+  name: string;
+}
+
+interface chaptersData {
+  id: number;
+  header: string;
+  first_published_formated: string;
+  intro_snippet_end: number;
+}
+
+interface chapterContent {
+  id: number;
+  book_id: number;
+  header: string;
+  content: string;
+  number: number;
+  user_files?: null;
+  intro_snippet_end: number;
+  status: number;
+  first_published: number;
+  auto_publication?: null;
+  first_published_at?: null;
+  is_chapter_avalaible: boolean;
+  total_characters: number;
+  total_characters_clear: string;
+}

@@ -2,7 +2,7 @@ import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
-import { load as parseHTML } from 'cheerio';
+import { load, load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 export type RulateMetadata = {
@@ -10,6 +10,7 @@ export type RulateMetadata = {
   sourceSite: string;
   sourceName: string;
   filters?: Filters;
+  versionIncrements: number;
 };
 
 class RulatePlugin implements Plugin.PluginBase {
@@ -25,7 +26,7 @@ class RulatePlugin implements Plugin.PluginBase {
     this.name = metadata.sourceName;
     this.icon = `multisrc/rulate/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
-    this.version = '1.0.1';
+    this.version = '1.0.' + (1 + metadata.versionIncrements);
     this.filters = metadata.filters;
   }
 
@@ -90,89 +91,106 @@ class RulatePlugin implements Plugin.PluginBase {
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio(
-        'div[class="container"] > div > div > h1, div.span8:nth-child(1) > h1:nth-child(2)',
-      )
-        .text()
-        .trim(),
+      name: loadedCheerio('.span8 > h1, .book__title').text().trim(),
     };
     if (novel.name?.includes?.('[')) {
       novel.name = novel.name.split('[')[0].trim();
     }
     novel.cover =
-      this.site + loadedCheerio('div[class="images"] > div img').attr('src');
-    novel.summary = loadedCheerio('#Info > div:nth-child(3), .book-description')
+      this.site +
+      loadedCheerio('div[class="images"] > div img, .book__cover > img').attr(
+        'src',
+      );
+    novel.summary = loadedCheerio(
+      '#Info > div:nth-child(3), .book__description',
+    )
       .text()
       .trim();
-    novel.author = loadedCheerio(
-      '.book-stats-icons_author > span:nth-child(2) > a:nth-child(1)',
-    ).text();
     const genres: string[] = [];
 
-    loadedCheerio('div.span5 > p, .span5 > div:nth-child(2) > p').each(
-      function () {
-        switch (loadedCheerio(this).find('strong').text()) {
-          case 'Автор:':
-            novel.author = loadedCheerio(this).find('em > a').text().trim();
-            break;
-          case 'Выпуск:':
-            novel.status =
-              loadedCheerio(this).find('em').text().trim() === 'продолжается'
-                ? NovelStatus.Ongoing
-                : NovelStatus.Completed;
-            break;
-          case 'Тэги:':
-            loadedCheerio(this)
-              .find('em > a')
-              .each(function () {
-                genres.push(loadedCheerio(this).text());
-              });
-            break;
-          case 'Жанры:':
-            loadedCheerio(this)
-              .find('em > a')
-              .each(function () {
-                genres.push(loadedCheerio(this).text());
-              });
-            break;
-        }
-      },
-    );
+    loadedCheerio('div.span5 > p').each(function () {
+      switch (loadedCheerio(this).find('strong').text()) {
+        case 'Автор:':
+          novel.author = loadedCheerio(this).find('em > a').text().trim();
+          break;
+        case 'Выпуск:':
+          novel.status =
+            loadedCheerio(this).find('em').text().trim() === 'продолжается'
+              ? NovelStatus.Ongoing
+              : NovelStatus.Completed;
+          break;
+        case 'Тэги:':
+          loadedCheerio(this)
+            .find('em > a')
+            .each(function () {
+              genres.push(loadedCheerio(this).text());
+            });
+          break;
+        case 'Жанры:':
+          loadedCheerio(this)
+            .find('em > a')
+            .each(function () {
+              genres.push(loadedCheerio(this).text());
+            });
+          break;
+      }
+    });
 
     if (genres.length) {
       novel.genres = genres.reverse().join(',');
     }
 
     const chapters: Plugin.ChapterItem[] = [];
-    loadedCheerio('table > tbody > tr.chapter_row').each(
-      (chapterIndex, element) => {
+    if (this.id === 'rulate') {
+      loadedCheerio('table > tbody > tr.chapter_row').each(
+        (chapterIndex, element) => {
+          const chapterName = loadedCheerio(element)
+            .find('td[class="t"] > a')
+            .text()
+            .trim();
+          const releaseDate = loadedCheerio(element)
+            .find('td > span')
+            .attr('title')
+            ?.trim();
+          const chapterUrl = loadedCheerio(element)
+            .find('td[class="t"] > a')
+            .attr('href');
+
+          if (
+            !loadedCheerio(element).find('td > span[class="disabled"]')
+              .length &&
+            releaseDate &&
+            chapterUrl
+          ) {
+            chapters.push({
+              name: chapterName,
+              path: chapterUrl,
+              releaseTime: this.parseDate(releaseDate),
+              chapterNumber: chapterIndex + 1,
+            });
+          }
+        },
+      );
+    } else {
+      loadedCheerio('a.chapter').each((chapterIndex, element) => {
         const chapterName = loadedCheerio(element)
-          .find('td[class="t"] > a')
+          .find('div:nth-child(1) > span:nth-child(2)')
           .text()
           .trim();
-        const releaseDate = loadedCheerio(element)
-          .find('td > span')
-          .attr('title')
-          ?.trim();
-        const chapterUrl = loadedCheerio(element)
-          .find('td[class="t"] > a')
-          .attr('href');
+        const chapterUrl = loadedCheerio(element).attr('href');
+        const isPaid = loadedCheerio(element).find(
+          'span[data-can-buy="true"]',
+        ).length;
 
-        if (
-          !loadedCheerio(element).find('td > span[class="disabled"]').length &&
-          releaseDate &&
-          chapterUrl
-        ) {
+        if (!isPaid && chapterUrl) {
           chapters.push({
             name: chapterName,
             path: chapterUrl,
-            releaseTime: this.parseDate(releaseDate),
             chapterNumber: chapterIndex + 1,
           });
         }
-      },
-    );
-
+      });
+    }
     novel.chapters = chapters;
     return novel;
   }
@@ -192,7 +210,7 @@ class RulatePlugin implements Plugin.PluginBase {
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
 
-    const chapterText = loadedCheerio('.content-text').html();
+    const chapterText = loadedCheerio('.content-text, #read-text').html();
     return chapterText || '';
   }
 
