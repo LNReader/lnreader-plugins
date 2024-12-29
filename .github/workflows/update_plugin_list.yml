@@ -12,13 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # Checkout the master branch to start from there
+      - name: Checkout master branch
         uses: actions/checkout@v3
+        with:
+          ref: master
 
+      # Fetch the plugins/v3.0.0 branch to access the JSON file
+      - name: Fetch plugins/v3.0.0 branch
+        run: git fetch origin plugins/v3.0.0
+
+      # Checkout the plugins/v3.0.0 branch to read the JSON file
+      - name: Checkout plugins/v3.0.0 branch
+        run: git checkout plugins/v3.0.0
+
+      # Read plugin names from the JSON file in the plugins/v3.0.0 branch
       - name: Read plugin names from JSON
         run: |
           # Extract plugin names from .dist/plugins.json
           PLUGIN_OPTIONS=$(jq -r '.[] | .name' .dist/plugins.json | jq -R -s -c 'split("\n") | map(select(. != ""))')
+
+          # Switch back to master branch
+          git checkout master
 
           # Update the issue template with the extracted plugin names
           jq --argjson options "$PLUGIN_OPTIONS" '
@@ -45,12 +60,13 @@ jobs:
 
           mv updated_template.yml .github/ISSUE_TEMPLATE/report_issue.yml
 
+      # Commit and Push changes to master branch
       - name: Commit and Push Changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/ISSUE_TEMPLATE/report_issue.yml
           git commit -m "Update issue template with plugin dropdown options"
-          git push
+          git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
