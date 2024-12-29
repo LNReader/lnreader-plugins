@@ -31,7 +31,7 @@ jobs:
         run: |
           # Extract plugin names from .dist/plugins.json
           PLUGIN_OPTIONS=$(jq -r '.[] | .name' .dist/plugins.json | jq -R -s -c 'split("\n") | map(select(. != ""))')
-
+          echo $PLUGIN_OPTIONS
           # Switch back to master branch
           git checkout master
 
