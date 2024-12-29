@@ -29,36 +29,39 @@ jobs:
       # Read plugin names from the JSON file in the plugins/v3.0.0 branch
       - name: Read plugin names from JSON
         run: |
-          # Extract plugin names from .dist/plugins.json
-          PLUGIN_OPTIONS=$(jq -r '.[] | .name' .dist/plugins.json | jq -R -s -c 'split("\n") | map(select(. != ""))')
-          echo $PLUGIN_OPTIONS
-          # Switch back to master branch
-          git checkout master
+    # Extract plugin names from .dist/plugins.json
+    PLUGIN_OPTIONS=$(jq -r '.[] | .name' .dist/plugins.json | jq -R -s -c 'split("\n") | map(select(. != ""))')
 
-          # Update the issue template with the extracted plugin names
-          jq --argjson options "$PLUGIN_OPTIONS" '
-            (.body[] | select(.id == "source").attributes.placeholder) = "Example: Select a plugin from the list"
-            | .body |= map(
-                if .id == "source" then
-                  {
-                    type: "dropdown",
-                    id: "source",
-                    attributes: {
-                      label: "Plugin",
-                      description: "Select the plugin associated with the issue.",
-                      options: $options
-                    },
-                    validations: {
-                      required: true
-                    }
-                  }
-                else
-                  .
-                end
-              )
-          ' .github/ISSUE_TEMPLATE/report_issue.yml > updated_template.yml
+    # Debugging: Print the extracted plugin names
+    echo "$PLUGIN_OPTIONS"  # You can check this output to verify if the plugin names are extracted correctly
 
-          mv updated_template.yml .github/ISSUE_TEMPLATE/report_issue.yml
+    # Switch back to master branch
+    git checkout master
+
+    # Update the issue template with the extracted plugin names
+    jq --argjson options "$PLUGIN_OPTIONS" '
+      (.body[] | select(.id == "source").attributes.placeholder) = "Example: Select a plugin from the list"
+      | .body |= map(
+          if .id == "source" then
+            {
+              type: "dropdown",
+              id: "source",
+              attributes: {
+                label: "Plugin",
+                description: "Select the plugin associated with the issue.",
+                options: $options
+              },
+              validations: {
+                required: true
+              }
+            }
+          else
+            .
+          end
+        )
+    ' .github/ISSUE_TEMPLATE/report_issue.yml > updated_template.yml
+
+    mv updated_template.yml .github/ISSUE_TEMPLATE/report_issue.yml
 
       # Commit and Push changes to master branch
       - name: Commit and Push Changes
