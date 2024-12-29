@@ -8,8 +8,7 @@ body:
       label: Plugin
       description: Select the plugin associated with the issue.
       options:
-        - "ArNovel Id: arnovel"
-        - "Azora Id: azora"
+        {#CHANGE#}
     validations:
       required: true
 
