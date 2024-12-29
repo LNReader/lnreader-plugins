@@ -1,0 +1,56 @@
+name: Update Issue Template
+
+on:
+  workflow_run:
+    workflows:
+      - Publish Plugins
+    types:
+      - completed
+
+jobs:
+  update-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Read plugin names from JSON
+        run: |
+          # Extract plugin names from .dist/plugins.json
+          PLUGIN_OPTIONS=$(jq -r '.[] | .name' .dist/plugins.json | jq -R -s -c 'split("\n") | map(select(. != ""))')
+
+          # Update the issue template with the extracted plugin names
+          jq --argjson options "$PLUGIN_OPTIONS" '
+            (.body[] | select(.id == "source").attributes.placeholder) = "Example: Select a plugin from the list"
+            | .body |= map(
+                if .id == "source" then
+                  {
+                    type: "dropdown",
+                    id: "source",
+                    attributes: {
+                      label: "Plugin",
+                      description: "Select the plugin associated with the issue.",
+                      options: $options
+                    },
+                    validations: {
+                      required: true
+                    }
+                  }
+                else
+                  .
+                end
+              )
+          ' .github/ISSUE_TEMPLATE/report_issue.yml > updated_template.yml
+
+          mv updated_template.yml .github/ISSUE_TEMPLATE/report_issue.yml
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/ISSUE_TEMPLATE/report_issue.yml
+          git commit -m "Update issue template with plugin dropdown options"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

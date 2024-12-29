@@ -2,14 +2,14 @@ name: Issue report
 description: Report a source issue in LNReader
 labels: [Bug]
 body:
-  - type: input
+  - type: dropdown
     id: source
     attributes:
-      label: Source information
-      description: |
-        You can find the source name in **Browse → Sources**.
-      placeholder: |
-        Example: "ReadLightNovel"
+      label: Plugin
+      description: Select the plugin associated with the issue.
+      options:
+        - ArNovel
+        - Azora
     validations:
       required: true
 
