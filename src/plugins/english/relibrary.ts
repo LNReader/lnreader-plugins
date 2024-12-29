@@ -164,7 +164,19 @@ class ReLibraryPlugin implements Plugin.PluginBase {
   name = 'Re:Library';
   icon = 'src/en/relibrary/icon.png';
   site = 'https://re-library.com';
-  version = '1.0.0';
+  version = '1.1.0';
+
+  imageRequestInit: Plugin.ImageRequestInit = {
+    headers: {
+      Referer: ReLibraryPlugin.site,
+    },
+  };
+
+  private static trim_slashes(url: string): string {
+    while (url.startsWith('/')) url = url.slice(1);
+    while (url.endsWith('/')) url = url.slice(0, url.length - 1);
+    return url;
+  }
 
   private searchFunc = new FuzzySearch<Plugin.NovelItem>(item => [item.name], {
     sort: true,
@@ -187,10 +199,15 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       novel.cover =
         loadedCheerio(el)
           .find('table > tbody > tr > td > a > img')
-          .attr('src') || defaultCover;
+          .attr('src') ||
+        loadedCheerio(el)
+          .find('table > tbody > tr > td > a > img')
+          .attr('data-cfsrc') ||
+        defaultCover;
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
       }
+      novel.path = ReLibraryPlugin.trim_slashes(novel.path);
       novels.push(novel as Plugin.NovelItem);
     });
     return novels;
@@ -210,10 +227,15 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       novel.cover =
         loadedCheerio(el)
           .find('.entry-content > table > tbody > tr > td > img')
-          .attr('src') || defaultCover;
+          .attr('src') ||
+        loadedCheerio(el)
+          .find('.entry-table > table > tbody > tr > td > img')
+          .attr('data-cfsrc') ||
+        defaultCover;
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
       }
+      novel.path = ReLibraryPlugin.trim_slashes(novel.path);
       novels.push(novel as Plugin.NovelItem);
     });
     return novels;
@@ -236,7 +258,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novel: Partial<Plugin.SourceNovel> = {
-      path: novelPath,
+      path: ReLibraryPlugin.trim_slashes(novelPath),
     };
     // title:		.entry-content > header.entry-header > .entry-title
     // img:			.entry-content > table > tbody > tr > td > img
@@ -258,10 +280,16 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       throw new Error(`Invalid novel for url ${novelPath}`);
 
     // Find the cover
+    //
+    // the data-cfsrc is something I don't understand but after dumping all the imgs on the page it was here and there wasn't any `src` attr
     novel.cover =
-      loadedCheerio('.entry-content > table > tbody > tr > td > img').attr(
+      loadedCheerio('.entry-content > table > tbody > tr > td > a > img').attr(
         'src',
-      ) || defaultCover;
+      ) ||
+      loadedCheerio('.entry-content > table > tbody > tr > td > img').attr(
+        'data-cfsrc',
+      ) ||
+      defaultCover;
 
     // Genres in comma separated "list"
     novel.genres = (() => {
@@ -316,10 +344,10 @@ class ReLibraryPlugin implements Plugin.PluginBase {
           }
           chapters.push({
             name: loadedCheerio(chap_el).text(),
-            path: chap_path,
+            path: ReLibraryPlugin.trim_slashes(chap_path),
             chapterNumber: chapter_idx,
             // we KNOW that we can't get the released time (at least without any additional fetches), so set it to null purposfully
-            releaseTime: null,
+            releaseTime: undefined,
           });
         });
     });
@@ -370,6 +398,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
         if (path.startsWith(this.site)) {
           path = path.slice(this.site.length);
         }
+        path = ReLibraryPlugin.trim_slashes(path);
         novels.push({ name: e.text(), path: path, cover: defaultCover });
       }
     });
