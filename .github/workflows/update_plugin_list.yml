@@ -8,7 +8,7 @@ on:
       - completed
 
 jobs:
-  Update Template:
+  update_template:
   #   if: github.repository == 'LNReader/lnreader-plugins'
     runs-on: ubuntu-latest
     steps:
