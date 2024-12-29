@@ -14,10 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+          ref: master
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
       - name: Recreating report issue template 
         run: |
           bash ./.github/scripts/createOptions.sh
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/ISSUE_TEMPLATE/report_issue.yml
+          git commit -m "Update issue template with plugin dropdown options"
+          git push origin master
