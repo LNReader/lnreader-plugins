@@ -32,8 +32,8 @@ jobs:
         id: determine-label
         run: |
           # Map the selected plugin to its ID
-
-          LABELS=$(jq -r '.["$SELECTED_PLUGIN"]' ./.github/scripts/keys.json | tr ',' '\n')
+          QUERY=.[\"$SELECTED_PLUGIN\"]
+          LABELS=$( jq --arg keys "$QUERY" '. as $data | $keys | split(",") as $keyList | $keyList[] | . as $key | if $data[$key] != null then $data[$key] else empty end' ./.github/scripts/keys.json )
           echo "LABELS=$LABELS" >> $GITHUB_ENV
 
       - name: Add label to the issue
