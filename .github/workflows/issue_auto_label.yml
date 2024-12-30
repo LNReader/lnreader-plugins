@@ -32,7 +32,7 @@ jobs:
         id: determine-label
         run: |
           LABELS="$( jq --arg keys "${{ env.SELECTED_PLUGIN }}" '. as $data | $keys | split(", ") as $keyList | $keyList[] | . as $key | if $data[$key] != null then $data[$key] else empty end' ./.github/scripts/keys.json | sed 's/"//g' )"
-          echo "LABELS=$LABELS" >> $GITHUB_ENV
+          printf "LABELS<<EOF\n%s\nEOF\n" "$LABELS" >> $GITHUB_ENV
 
       - name: Add label to the issue
         if: env.LABELS != ''
