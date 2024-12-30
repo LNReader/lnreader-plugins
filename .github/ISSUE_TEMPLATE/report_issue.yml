@@ -9,210 +9,210 @@ body:
       description: Select the plugin associated with the issue.
       multiple: true
       options:
-        - ArNovel
-        - Azora
-        - dilar tube
-        - HizoManga
-        - Kol Novel
-        - Novel4Up
-        - Novels Paradise
-        - Olaoe.cyou
-        - Rewayat Club
-        - Riwyat
-        - Sunovels
-        - 69书吧
-        - Linovelib
-        - Linovelib(繁體)
-        - FirstKissNovel
-        - AllNovelFull
-        - Arcane Translations
-        - Archive Of Our Own
-        - Srank Manga
-        - Belle Reservoir
-        - BestLightNovel
-        - BoxNovel
-        - Citrus Aurora
-        - Coral Boutique
-        - CPUnovel
-        - DaoNovel
-        - DaoTranslate
-        - Divine Dao Library
-        - Dragon Tea
-        - Dream Big Translations
-        - Dusk Blossoms
-        - Early Novel
-        - ElloTL
-        - Eternalune
-        - FanNovel
-        - Fans Translations
-        - Fenrir Translations
-        - Foxaholic
-        - Foxteller
-        - Faq Wiki
-        - Free Web Novel
-        - Galaxy Translations
-        - Genesis
-        - Guavaread
-        - Hiraeth Translation
-        - HotNovelPub
-        - Ippotranslations
-        - KnoxT
-        - Lib Read
-        - LightNovelCave
-        - LightNovelPub
-        - LightNovelPub Vip
-        - Light Novel Updates
-        - LightNovelWord
-        - LightNovelHeaven
-        - LnMTL
-        - Ltnovel
-        - LunarLetters
-        - Meownovel
-        - Moonlight Novels
-        - MostNovel
-        - MTL-Novel
-        - MTL Novel
-        - MTL Reader
-        - MVLEMPYR
-        - MysticalSeries
-        - NeoSekai Translations
-        - Nitro Manga
-        - novelsOnline
-        - NobleMTL
-        - Novel Bin
-        - NovelBuddy.io
-        - Novel Fire
-        - NovelFull
-        - Novel Hall
-        - NovelMultiverse
-        - NovelsKnight
-        - NovelTranslate
-        - Novel Updates
-        - Panda Machine Translations
-        - Pastel Tales
-        - PawRead
-        - Rainofsnow
-        - Ranobes
-        - ReadNovelFull
-        - Re:Library
-        - Requiem Translations
-        - ReadLiteNovel
-        - Royal Road
-        - Salmon Latte
-        - Scribble Hub
-        - SleepyTranslations
-        - SonicMTL
-        - StorySeedling
-        - System Translation
-        - TranslatinOtaku
-        - Universal Novel
-        - VyNovel
-        - Webnovel
-        - WebNovelLover
-        - Web Novel Pub
-        - White Moonlight Novels
-        - Wook's Teahouse
-        - WordExcerpt
-        - WTR-LAB
-        - Wuxiafox
-        - Fans MTL
-        - Wuxiabox
-        - Wuxia Space
-        - WuxiaV
-        - Wuxia World
-        - WuxiaWorld.Site
-        - Zetro Translation
-        - Chireads
-        - HarkenEliwood
-        - KissWood
-        - Ligh Novel FR
-        - MTL Novel (FR)
-        - NovelDeGlace
-        - Novhell
-        - PhenixScans
-        - Warrior Legend Trad
-        - WorldNovel
-        - WuxiaLnScantrad
-        - Xiaowaz
-        - Baca Light Novel
-        - IndoWebNovel
-        - MeioNovel
-        - Risenovel
-        - MTL Novel (ID)
-        - NovelBookID
-        - NovelRingan
-        - SakuraNovel
-        - Sekte Novel
-        - WBNovel
-        - kakuyomu
-        - Syosetu
-        - Agitoon
-        - Novelki
-        - Better Novels
-        - Blog do Amon Novels
-        - Central Novel
-        - Kiniga
-        - LaNovels
-        - Light Novel Brasil
-        - MTL Novel (PT)
-        - Novel Mania
-        - Tsundoku Traduções
-        - Автор Тудей
-        - Bookhamster
-        - Bookriver
-        - Erolate
-        - EzNovels
-        - ficbook
-        - LitSpace
-        - Свободный Мир Ранобэ
-        - Jaomix
-        - MTL Novel (RU)
-        - Neobook
-        - НовелОВХ
-        - Ranobes (RU)
-        - Renovels
-        - RanobeLib
-        - RanobeHub
-        - РанобэРФ
-        - Rulate
-        - Ruvers
-        - NovelTL
-        - ТопЛиба
-        - Целлюлоза
-        - AllNovelRead
-        - Hasu Translations
-        - LightNovelDaily
-        - MTL Novel (ES)
-        - Novelas Ligera
-        - Oasis Translations
-        - Pancho Translations
-        - ReinoWuxia
-        - SkyNovels
-        - Traducciones Amistosas
-        - TuNovelaLigera
-        - Yuuki Tls
-        - Novel Lucky
-        - Novel PDF
-        - Araz Novel
-        - E-KİTAPLAR
-        - EpikNovel
-        - Kodeks Library
-        - NABİ SCANS
-        - Namevt
-        - Novel oku
-        - Novelokutr
-        - NovelTR
-        - ThNovels
-        - TurkceLightNovels
-        - WebNovelOku
-        - Смаколики
-        - Light Novel VN
-        - Hako
-        - Nettruyen
-        - Truyện Chữ
-        - Truyen Conect
-        - Truyện Full
-        - Komga
+        - "‎العربية: ArNovel"
+        - "‎العربية: Azora"
+        - "‎العربية: dilar tube"
+        - "‎العربية: HizoManga"
+        - "‎العربية: Kol Novel"
+        - "‎العربية: Novel4Up"
+        - "‎العربية: Novels Paradise"
+        - "‎العربية: Olaoe.cyou"
+        - "‎العربية: Rewayat Club"
+        - "‎العربية: Riwyat"
+        - "‎العربية: Sunovels"
+        - "中文, 汉语, 漢語: 69书吧"
+        - "中文, 汉语, 漢語: Linovelib"
+        - "中文, 汉语, 漢語: Linovelib(繁體)"
+        - "English: FirstKissNovel"
+        - "English: AllNovelFull"
+        - "English: Arcane Translations"
+        - "English: Archive Of Our Own"
+        - "English: Srank Manga"
+        - "English: Belle Reservoir"
+        - "English: BestLightNovel"
+        - "English: BoxNovel"
+        - "English: Citrus Aurora"
+        - "English: Coral Boutique"
+        - "English: CPUnovel"
+        - "English: DaoNovel"
+        - "English: DaoTranslate"
+        - "English: Divine Dao Library"
+        - "English: Dragon Tea"
+        - "English: Dream Big Translations"
+        - "English: Dusk Blossoms"
+        - "English: Early Novel"
+        - "English: ElloTL"
+        - "English: Eternalune"
+        - "English: FanNovel"
+        - "English: Fans Translations"
+        - "English: Fenrir Translations"
+        - "English: Foxaholic"
+        - "English: Foxteller"
+        - "English: Faq Wiki"
+        - "English: Free Web Novel"
+        - "English: Galaxy Translations"
+        - "English: Genesis"
+        - "English: Guavaread"
+        - "English: Hiraeth Translation"
+        - "English: HotNovelPub"
+        - "English: Ippotranslations"
+        - "English: KnoxT"
+        - "English: Lib Read"
+        - "English: LightNovelCave"
+        - "English: LightNovelPub"
+        - "English: LightNovelPub Vip"
+        - "English: Light Novel Updates"
+        - "English: LightNovelWord"
+        - "English: LightNovelHeaven"
+        - "English: LnMTL"
+        - "English: Ltnovel"
+        - "English: LunarLetters"
+        - "English: Meownovel"
+        - "English: Moonlight Novels"
+        - "English: MostNovel"
+        - "English: MTL-Novel"
+        - "English: MTL Novel"
+        - "English: MTL Reader"
+        - "English: MVLEMPYR"
+        - "English: MysticalSeries"
+        - "English: NeoSekai Translations"
+        - "English: Nitro Manga"
+        - "English: novelsOnline"
+        - "English: NobleMTL"
+        - "English: Novel Bin"
+        - "English: NovelBuddy.io"
+        - "English: Novel Fire"
+        - "English: NovelFull"
+        - "English: Novel Hall"
+        - "English: NovelMultiverse"
+        - "English: NovelsKnight"
+        - "English: NovelTranslate"
+        - "English: Novel Updates"
+        - "English: Panda Machine Translations"
+        - "English: Pastel Tales"
+        - "English: PawRead"
+        - "English: Rainofsnow"
+        - "English: Ranobes"
+        - "English: ReadNovelFull"
+        - "English: Re:Library"
+        - "English: Requiem Translations"
+        - "English: ReadLiteNovel"
+        - "English: Royal Road"
+        - "English: Salmon Latte"
+        - "English: Scribble Hub"
+        - "English: SleepyTranslations"
+        - "English: SonicMTL"
+        - "English: StorySeedling"
+        - "English: System Translation"
+        - "English: TranslatinOtaku"
+        - "English: Universal Novel"
+        - "English: VyNovel"
+        - "English: Webnovel"
+        - "English: WebNovelLover"
+        - "English: Web Novel Pub"
+        - "English: White Moonlight Novels"
+        - "English: Wook's Teahouse"
+        - "English: WordExcerpt"
+        - "English: WTR-LAB"
+        - "English: Wuxiafox"
+        - "English: Fans MTL"
+        - "English: Wuxiabox"
+        - "English: Wuxia Space"
+        - "English: WuxiaV"
+        - "English: Wuxia World"
+        - "English: WuxiaWorld.Site"
+        - "English: Zetro Translation"
+        - "Français: Chireads"
+        - "Français: HarkenEliwood"
+        - "Français: KissWood"
+        - "Français: Ligh Novel FR"
+        - "Français: MTL Novel (FR)"
+        - "Français: NovelDeGlace"
+        - "Français: Novhell"
+        - "Français: PhenixScans"
+        - "Français: Warrior Legend Trad"
+        - "Français: WorldNovel"
+        - "Français: WuxiaLnScantrad"
+        - "Français: Xiaowaz"
+        - "Bahasa Indonesia: Baca Light Novel"
+        - "Bahasa Indonesia: IndoWebNovel"
+        - "Bahasa Indonesia: MeioNovel"
+        - "Bahasa Indonesia: Risenovel"
+        - "Bahasa Indonesia: MTL Novel (ID)"
+        - "Bahasa Indonesia: NovelBookID"
+        - "Bahasa Indonesia: NovelRingan"
+        - "Bahasa Indonesia: SakuraNovel"
+        - "Bahasa Indonesia: Sekte Novel"
+        - "Bahasa Indonesia: WBNovel"
+        - "日本語: kakuyomu"
+        - "日本語: Syosetu"
+        - "조선말, 한국어: Agitoon"
+        - "Polski: Novelki"
+        - "Português: Better Novels"
+        - "Português: Blog do Amon Novels"
+        - "Português: Central Novel"
+        - "Português: Kiniga"
+        - "Português: LaNovels"
+        - "Português: Light Novel Brasil"
+        - "Português: MTL Novel (PT)"
+        - "Português: Novel Mania"
+        - "Português: Tsundoku Traduções"
+        - "Русский: Автор Тудей"
+        - "Русский: Bookhamster"
+        - "Русский: Bookriver"
+        - "Русский: Erolate"
+        - "Русский: EzNovels"
+        - "Русский: ficbook"
+        - "Русский: LitSpace"
+        - "Русский: Свободный Мир Ранобэ"
+        - "Русский: Jaomix"
+        - "Русский: MTL Novel (RU)"
+        - "Русский: Neobook"
+        - "Русский: НовелОВХ"
+        - "Русский: Ranobes (RU)"
+        - "Русский: Renovels"
+        - "Русский: RanobeLib"
+        - "Русский: RanobeHub"
+        - "Русский: РанобэРФ"
+        - "Русский: Rulate"
+        - "Русский: Ruvers"
+        - "Русский: NovelTL"
+        - "Русский: ТопЛиба"
+        - "Русский: Целлюлоза"
+        - "Español: AllNovelRead"
+        - "Español: Hasu Translations"
+        - "Español: LightNovelDaily"
+        - "Español: MTL Novel (ES)"
+        - "Español: Novelas Ligera"
+        - "Español: Oasis Translations"
+        - "Español: Pancho Translations"
+        - "Español: ReinoWuxia"
+        - "Español: SkyNovels"
+        - "Español: Traducciones Amistosas"
+        - "Español: TuNovelaLigera"
+        - "Español: Yuuki Tls"
+        - "ไทย: Novel Lucky"
+        - "ไทย: Novel PDF"
+        - "Türkçe: Araz Novel"
+        - "Türkçe: E-KİTAPLAR"
+        - "Türkçe: EpikNovel"
+        - "Türkçe: Kodeks Library"
+        - "Türkçe: NABİ SCANS"
+        - "Türkçe: Namevt"
+        - "Türkçe: Novel oku"
+        - "Türkçe: Novelokutr"
+        - "Türkçe: NovelTR"
+        - "Türkçe: ThNovels"
+        - "Türkçe: TurkceLightNovels"
+        - "Türkçe: WebNovelOku"
+        - "Українська: Смаколики"
+        - "Tiếng Việt: Light Novel VN"
+        - "Tiếng Việt: Hako"
+        - "Tiếng Việt: Nettruyen"
+        - "Tiếng Việt: Truyện Chữ"
+        - "Tiếng Việt: Truyen Conect"
+        - "Tiếng Việt: Truyện Full"
+        - "Multi: Komga"
     validations:
       required: true
 
