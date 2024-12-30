@@ -17,29 +17,28 @@ jobs:
       - name: Extract plugin names and IDs
         id: extract-plugins
         run: |
-          # Read the plugins.json file to map plugin names to IDs
-          PLUGIN_MAP=$(jq -r '.[] | "\(.name)=\(.id)"' .dist/plugins.json)
-          echo "$PLUGIN_MAP" > plugin_map.txt
+          cat ./.github/scripts/keys.json > plugin_map.txt
 
       - name: Extract the plugin from issue body
         id: parse-issue
         run: |
           # Extract the plugin from the issue body
           SELECTED_PLUGIN=$(jq -r '.issue.body' "$GITHUB_EVENT_PATH" | grep -oP '(?<=- Plugin:\s).*')
+          echo $GITHUB_EVENT_PATH
+          echo $SELECTED_PLUGIN
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
       - name: Determine corresponding label
         id: determine-label
         run: |
           # Map the selected plugin to its ID
-          LABEL=$(grep -oP "^$SELECTED_PLUGIN=.*" plugin_map.txt | cut -d= -f2)
+          LABEL=$(jq -r ".$SELECTED_PLUGIN" plugin_map.txt)
           echo "LABEL=$LABEL" >> $GITHUB_ENV
 
       - name: Add label to the issue
         if: env.LABEL != ''
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: ${{ env.LABEL }}
 
       - name: Handle missing label
