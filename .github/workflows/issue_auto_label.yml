@@ -23,6 +23,7 @@ jobs:
         id: parse-issue
         run: |
           # Extract the plugin from the issue body
+          echo "Issue body: ${{ github.event.issue.body }}"
           SELECTED_PLUGIN=$(jq -r '.issue.body' "$GITHUB_EVENT_PATH" | grep -oP '(?<=- Plugin:\s).*')
           echo $GITHUB_EVENT_PATH
           echo $SELECTED_PLUGIN
