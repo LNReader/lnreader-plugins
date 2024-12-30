@@ -1,7 +1,7 @@
 version=`node -e "console.log(require('./package.json').version);"`
 dist="plugins/v$version"
 
-PLUGINS=$(curl -s https://raw.githubusercontent.com/LNReader/lnreader-plugins/{$dist}/.dist/plugins.min.json | jq '[.[] | {(.name): .id}]' | jq 'reduce .[] as $item ({}; . * $item)')
+PLUGINS=$(curl -s https://raw.githubusercontent.com/LNReader/lnreader-plugins/{$dist}/.dist/plugins.min.json | jq '[.[] | {(.lang + ": " + .name): .id}]' | jq 'reduce .[] as $item ({}; . * $item)')
 
 KEYS=$(echo $PLUGINS | jq 'keys_unsorted')
 
@@ -15,8 +15,8 @@ node -e "
         savedKeys = Object.keys(keys);
     } catch(err) {console.log(err)}
     if(!sameKeys(newKeys, savedKeys) && Array.isArray(newKeys)) {
-        const text = newKeys.join('\n        - ');
-        fs.writeFileSync('.github/ISSUE_TEMPLATE/report_issue.yml', rawText.replace(/{#CHANGE#}/g,'- '+ text ));
+        const text = newKeys.join('\"\n        - \"');
+        fs.writeFileSync('.github/ISSUE_TEMPLATE/report_issue.yml', rawText.replace(/{#CHANGE#}/g,'- \"'+ text + '\"' ));
         fs.writeFileSync('.github/scripts/keys.json', JSON.stringify($PLUGINS));
     }
     function sameKeys(a, b) {
