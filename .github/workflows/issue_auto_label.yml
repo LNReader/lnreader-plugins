@@ -23,7 +23,8 @@ jobs:
         id: parse-issue
         run: |
           # Extract the plugin from the issue body
-          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1)
+          BODY=$(echo "Issue body: ${{ github.event.issue.body }}")
+          SELECTED_PLUGIN=$(echo "$BODY" | grep "### Plugin" -A 2 | tail -n 1)
           echo "Selected Plugins: ${{ SELECTED_PLUGIN }}"
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
