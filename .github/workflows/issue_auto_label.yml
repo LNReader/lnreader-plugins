@@ -8,6 +8,7 @@ on:
 
 jobs:
   auto-label:
+    if: ${{ github.event.issue.body && contains(github.event.issue.body, '### Plugin') }}
     runs-on: ubuntu-latest
 
     steps:
