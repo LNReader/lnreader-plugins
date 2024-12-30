@@ -13,6 +13,22 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Select the severity of the issue you want to report.
+      multiple: false
+      options:
+        - Wrong formatting
+        - Wrong content
+        - Missing chapter
+        - Missing images
+        - Can't load novels
+        - Other
+    validations:
+      required: true
+
   - type: textarea
     id: reproduce-steps
     attributes:
@@ -91,5 +107,4 @@ body:
           required: true
         - label: If this is an issue with the app itself, I should be opening an issue in the [app repository](https://github.com/LNReader/lnreader/issues/new/choose).
           required: true
-        - label: I will fill out all of the requested information in this form.
-          required: true
+        

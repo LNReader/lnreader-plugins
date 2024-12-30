@@ -14,16 +14,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Extract plugin names and IDs
-        id: extract-plugins
+      - name: Extract the severity from issue body
+        id: extract-severity
         run: |
-          cat ./.github/scripts/keys.json > plugin_map.txt
+          USER_SELECTED_SEVERITY=$(echo "${{ github.event.issue.body }}" | grep "### Severity" -A 2 | tail -n 1 | sed 's/[[:space:]]*$//')
+          SELECTED_SEVERITY=""
+
+          case "$USER_SELECTED_SEVERITY" in
+              "Wrong formatting"|"Wrong content"|"Missing chapter"|"Missing images"|"Can't load novels")
+                  SELECTED_SEVERITY="$USER_SELECTED_SEVERITY"
+                  ;;
+              *)
+                  SELECTED_SEVERITY="Other"
+                  ;;
+          esac
+          echo "SELECTED_SEVERITY=$SELECTED_SEVERITY" >> $GITHUB_ENV
 
       - name: Extract the plugin from issue body
         id: parse-issue
-        run: |
-          # Extract the plugin from the issue body
-          
+        run: |          
           SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1 | sed 's/[[:space:]]*$//')
           
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
@@ -38,7 +47,10 @@ jobs:
         if: env.LABELS != ''
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          labels: ${{ env.LABELS }}
+          labels: |
+            BUG
+            ${{ env.SELECTED_SEVERITY }}
+            ${{ env.LABELS }}
 
       - name: Handle missing label
         if: env.LABELS == ''
