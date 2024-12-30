@@ -7,6 +7,7 @@ body:
     attributes:
       label: Plugin
       description: Select the plugin associated with the issue.
+      multiple: true
       options:
         {#CHANGE#}
     validations:
