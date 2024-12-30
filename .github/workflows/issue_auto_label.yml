@@ -24,7 +24,7 @@ jobs:
         run: |
           # Extract the plugin from the issue body
           
-          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1)
+          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1 | sed 's/[[:space:]]*$//')
           
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
