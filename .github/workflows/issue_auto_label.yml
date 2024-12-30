@@ -23,15 +23,15 @@ jobs:
         id: parse-issue
         run: |
           # Extract the plugin from the issue body
-          SELECTED_PLUGINS=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1)
-          echo "Selected Plugins: ${{ SELECTED_PLUGINS }}"
-          echo "SELECTED_PLUGINS=$SELECTED_PLUGINS" >> $GITHUB_ENV
+          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1)
+          echo "Selected Plugins: ${{ SELECTED_PLUGIN }}"
+          echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
       - name: Determine corresponding label
         id: determine-label
         run: |
           # Map the selected plugin to its ID
-          LABEL=$(jq -r ".$SELECTED_PLUGINS" plugin_map.txt)
+          LABEL=$(jq -r ".$SELECTED_PLUGIN" plugin_map.txt)
           echo "LABEL=$LABEL" >> $GITHUB_ENV
 
       - name: Add label to the issue
