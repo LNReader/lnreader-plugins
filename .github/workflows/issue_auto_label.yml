@@ -23,8 +23,8 @@ jobs:
         id: parse-issue
         run: |
           # Extract the plugin from the issue body
-          BODY=$(echo "Issue body: ${{ github.event.issue.body }}")
-          SELECTED_PLUGIN=$(echo "$BODY" | grep "### Plugin" -A 2 | tail -n 1)
+          
+          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1)
           
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
@@ -32,15 +32,16 @@ jobs:
         id: determine-label
         run: |
           # Map the selected plugin to its ID
-          LABEL=$(jq -r ".$SELECTED_PLUGIN" plugin_map.txt)
-          echo "LABEL=$LABEL" >> $GITHUB_ENV
+
+          LABELS=$(jq -r '.["$SELECTED_PLUGIN"]' ./.github/scripts/keys.json | tr ',' '\n')
+          echo "LABELS=$LABELS" >> $GITHUB_ENV
 
       - name: Add label to the issue
-        if: env.LABEL != ''
+        if: env.LABELS != ''
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          labels: ${{ env.LABEL }}
+          labels: ${{ env.LABELS }}
 
       - name: Handle missing label
-        if: env.LABEL == ''
+        if: env.LABELS == ''
         run: echo "No matching label found for the selected plugin."
