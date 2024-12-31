@@ -29,12 +29,12 @@ class freedlit implements Plugin.PluginBase {
     url += '&access=' + (filters?.access?.value || 'all');
     url += '&hideAdult=' + (filters?.hideAdult?.value || false);
     url += '&page=' + page;
-
-    const { books }: { books: Books } = await fetchApi(url).then(res =>
-      res.json(),
-    );
-
     const novels: Plugin.NovelItem[] = [];
+
+    const { books }: { books: Books } = await fetchApi(url).then(res => {
+      this.getToken(res.headers);
+      return res.json();
+    });
 
     books.data.forEach(novel =>
       novels.push({
@@ -55,11 +55,13 @@ class freedlit implements Plugin.PluginBase {
     }: { props: { book: DataEntity } } = await fetchApi(
       this.resolveUrl(novelPath, true),
       {
-        method: 'post',
         headers,
-        Referer: this.site,
+        Referer: this.resolveUrl(novelPath, true),
       },
-    ).then(res => res.json());
+    ).then(res => {
+      this.getToken(res.headers);
+      return res.json();
+    });
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -70,7 +72,7 @@ class freedlit implements Plugin.PluginBase {
       genres: book.tags?.map?.(tags => tags.name)?.join?.(', ') || '',
     };
 
-    const { succes }: { succes: { items: chaptersData[] } } = await fetchApi(
+    const { success }: { success: { items: chaptersData[] } } = await fetchApi(
       this.site + '/api/bookpage/get-chapters',
       {
         method: 'post',
@@ -78,11 +80,14 @@ class freedlit implements Plugin.PluginBase {
         Referer: this.resolveUrl(novelPath),
         body: JSON.stringify({ book_id: novelPath }),
       },
-    ).then(res => res.json());
+    ).then(res => {
+      this.getToken(res.headers);
+      return res.json();
+    });
     const chapters: Plugin.ChapterItem[] = [];
 
-    if (succes?.items?.length) {
-      succes.items.forEach((chapter, chapterIndex) =>
+    if (success?.items?.length) {
+      success.items.forEach((chapter, chapterIndex) =>
         chapters.push({
           name: chapter.header,
           path: novelPath + '/' + chapter.id,
@@ -98,6 +103,10 @@ class freedlit implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const [book_id, chapter_id] = chapterPath.split('/');
+    if (!headers['X-XSRF-TOKEN']) {
+      await fetchApi(this.site).then(res => this.getToken(res.headers));
+    }
+
     const { succes }: { succes: chapterContent } = await fetchApi(
       this.site + '/api/bookpage/get-chapters',
       {
@@ -106,18 +115,55 @@ class freedlit implements Plugin.PluginBase {
         Referer: this.resolveUrl(chapterPath),
         body: JSON.stringify({ book_id, chapter_id }),
       },
-    ).then(res => res.json());
+    ).then(res => {
+      this.getToken(res.headers);
+      return res.json();
+    });
 
     const chapterText = succes.content;
     return chapterText;
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    return [];
+    const { success }: { success: book[] } = await fetchApi(
+      this.site + '/api/search?query=' + searchTerm,
+    ).then(res => {
+      this.getToken(res.headers);
+      return res.json();
+    });
+    const novels: Plugin.NovelItem[] = [];
+
+    if (success?.length) {
+      success.forEach(novel => {
+        if (novel.type === 'book' && novel.title) {
+          novels.push({
+            name: novel.title,
+            cover: novel.cover
+              ? this.site + '/storage/' + novel.cover
+              : defaultCover,
+            path: novel.id.toString(),
+          });
+        }
+      });
+    }
+
+    return novels;
   }
 
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + (isNovel ? '/book/' : '/reader/') + path;
+
+  getToken = (header: any) => {
+    const cookies = header.map['set-cookie'];
+    for (const cookie of cookies.split('; ') as string[]) {
+      const [key, val] = cookie.split('=');
+      if (key === 'XSRF-TOKEN') {
+        headers['X-XSRF-TOKEN'] = decodeURIComponent(val);
+        return;
+      }
+    }
+    if (!headers['X-XSRF-TOKEN']) throw new Error('Failed to find the token');
+  };
 
   filters = {
     sort: {
@@ -244,4 +290,22 @@ interface chapterContent {
   is_chapter_avalaible: boolean;
   total_characters: number;
   total_characters_clear: string;
+}
+
+export interface book {
+  id: number;
+  cover?: string | null;
+  title?: string | null;
+  type: string;
+  authors_names?: AuthorsNamesEntity[];
+  form_name?: string | null;
+  relevance: number;
+  for_blog?: number | null;
+  for_book?: number | null;
+  items_count?: number | null;
+  name?: string | null;
+  blog_category_id?: number | null;
+  author_name?: string | null;
+  user_link?: string | null;
+  img?: string | null;
 }
