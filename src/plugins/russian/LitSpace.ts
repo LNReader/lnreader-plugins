@@ -2,7 +2,6 @@ import { Plugin } from '@typings/plugin';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { fetchApi } from '@libs/fetch';
-import dayjs from 'dayjs';
 
 const headers: any = {
   'Content-Type': 'application/json',
@@ -91,7 +90,7 @@ class freedlit implements Plugin.PluginBase {
         chapters.push({
           name: chapter.header,
           path: novelPath + '/' + chapter.id,
-          releaseTime: dayjs(chapter.first_published_formated).format('LL'),
+          releaseTime: chapter.first_published_formated,
           chapterNumber: chapterIndex + 1,
         }),
       );
@@ -108,7 +107,7 @@ class freedlit implements Plugin.PluginBase {
     }
 
     const { success }: { success: chapterContent } = await fetchApi(
-      this.site + '/api/bookpage/get-chapters',
+      this.site + '/reader/get-content',
       {
         method: 'post',
         headers,
@@ -154,7 +153,7 @@ class freedlit implements Plugin.PluginBase {
     this.site + (isNovel ? '/book/' : '/reader/') + path;
 
   getToken = (header: any) => {
-    const cookies = header.map['set-cookie'];
+    const cookies = header.map['set-cookie'] || '';
     for (const cookie of cookies.split('; ') as string[]) {
       const [key, val] = cookie.split('=');
       if (key === 'XSRF-TOKEN') {

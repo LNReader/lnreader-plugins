@@ -2,7 +2,7 @@ import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
-import { load, load as parseHTML } from 'cheerio';
+import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
 export type RulateMetadata = {
