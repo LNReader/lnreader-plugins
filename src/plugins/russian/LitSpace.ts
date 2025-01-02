@@ -107,7 +107,7 @@ class freedlit implements Plugin.PluginBase {
       await fetchApi(this.site).then(res => this.getToken(res.headers));
     }
 
-    const { succes }: { succes: chapterContent } = await fetchApi(
+    const { success }: { success: chapterContent } = await fetchApi(
       this.site + '/api/bookpage/get-chapters',
       {
         method: 'post',
@@ -120,7 +120,7 @@ class freedlit implements Plugin.PluginBase {
       return res.json();
     });
 
-    const chapterText = succes.content;
+    const chapterText = success.content;
     return chapterText;
   }
 
