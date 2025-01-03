@@ -9,7 +9,7 @@ class Jaomix implements Plugin.PluginBase {
   id = 'jaomix.ru';
   name = 'Jaomix';
   site = 'https://jaomix.ru';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/ru/jaomix/icon.png';
 
   async popularNovels(
@@ -126,9 +126,10 @@ class Jaomix implements Plugin.PluginBase {
     const loadedCheerio = parseHTML(body);
 
     loadedCheerio('div[class="adblock-service"]').remove();
-    const chapterText = loadedCheerio('div[class="entry-content"]').html();
+    const chapterText =
+      loadedCheerio('div[class="entry-content"]').html() || '';
 
-    return chapterText || '';
+    return chapterText.replace(/<a[^>]*>(.*?)<\/a>/gi, '$1');
   }
 
   async searchNovels(
