@@ -8,7 +8,8 @@ class NovelBin implements Plugin.PluginBase {
   name = 'Novel Bin';
   icon = 'src/en/novelbin/icon.png';
   site = 'https://novelbin.com/';
-  version = '1.1.0';
+  subsite = "https://novelbin.lanovels.net/";
+  version = '1.2.0';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
@@ -100,27 +101,18 @@ class NovelBin implements Plugin.PluginBase {
     const novelId = loadedCheerio('#rating').attr('data-novel-id');
 
     const getChapters = async (id: string) => {
-      const chapterListUrl = this.site + 'ajax/chapter-archive?novelId=' + id;
-
-      const data = await fetchApi(chapterListUrl);
-      const chapterdata = await data.text();
-
-      loadedCheerio = parseHTML(chapterdata);
-
-      const chapter: Plugin.ChapterItem[] = [];
-
-      loadedCheerio('ul.list-chapter > li').each((i, el) => {
+      const data = await fetchApi(this.site + 'ajax/chapter-archive?novelId=' + id);
+      loadedCheerio = parseHTML(await data.text());
+      
+      return loadedCheerio('ul.list-chapter > li').map((i, el) => {
         const chapterName = loadedCheerio(el).find('a').attr('title');
         const chapterUrl = loadedCheerio(el).find('a').attr('href');
-
-        if (!chapterName || !chapterUrl) return;
-
-        chapter.push({
+        const segments = chapterUrl?.split('/').filter(Boolean);
+        return chapterName && segments ? {
           name: chapterName,
-          path: chapterUrl.replace(this.site, ''),
-        });
-      });
-      return chapter;
+          path: segments.slice(2).join('/')
+        } : null;
+      }).get().filter(Boolean);
     };
 
     if (novelId) {
@@ -131,7 +123,10 @@ class NovelBin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(r => r.text());
+    const isSubsite = chapterPath.includes('subsite=1');
+    const path = (isSubsite ? this.subsite : this.site) + chapterPath;
+    
+    const body = await fetchApi(path).then(r => r.text());
 
     const loadedCheerio = parseHTML(body);
 
