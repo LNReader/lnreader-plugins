@@ -11,7 +11,7 @@ class ReN implements Plugin.PluginBase {
   name = 'Renovels';
   icon = 'src/ru/renovels/icon.png';
   site = 'https://renovels.org';
-  version = '1.0.2';
+  version = '1.0.3';
 
   async popularNovels(
     pageNo: number,
@@ -20,7 +20,7 @@ class ReN implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/api/search/catalog/?count=30&ordering=-';
+    let url = this.site + '/api/v2/search/catalog/?count=30&ordering=-';
     url += showLatestNovels ? 'chapter_date' : filters?.sort?.value || 'rating';
 
     Object.entries(filters || {}).forEach(([type, { value }]: any) => {
@@ -41,12 +41,13 @@ class ReN implements Plugin.PluginBase {
 
     url += '&page=' + pageNo;
 
-    const { content }: { content: responseNovels[] } = await fetchApi(url).then(
+    const { results }: { results: responseNovels[] } = await fetchApi(url).then(
       res => res.json(),
     );
-    const novels: Plugin.NovelItem[] = content.map(novel => ({
+    const novels: Plugin.NovelItem[] = results.map(novel => ({
       name: novel.main_name || novel.secondary_name,
-      cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
+      cover:
+        this.site + (novel.cover.high || novel.cover.mid || novel.cover.low),
       path: novel.dir,
     }));
 
@@ -63,7 +64,9 @@ class ReN implements Plugin.PluginBase {
       name: content.main_name || content.secondary_name || content.another_name,
       summary: content.description,
       cover:
-        this.site + (content.img.high || content.img.mid || content.img.low),
+        this.site +
+        '/media/' +
+        (content.cover.high || content.cover.mid || content.cover.low),
       status:
         content.status.name === 'Продолжается'
           ? NovelStatus.Ongoing
@@ -80,7 +83,7 @@ class ReN implements Plugin.PluginBase {
     }
 
     const totalPages =
-      (content.branches?.[0]?.count_chapters || content.count_chapters) / 50;
+      (content.branches?.[0]?.count_chapters || content.count_chapters) / 100;
     const branch_id = content.branches?.[0]?.id || content.id;
     const chapters: Plugin.ChapterItem[] = [];
 
@@ -92,7 +95,7 @@ class ReN implements Plugin.PluginBase {
         this.site +
           '/api/titles/chapters/?branch_id=' +
           branch_id +
-          '&ordering=index&user_data=1&count=50&page=' +
+          '&ordering=index&user_data=1&count=100&page=' +
           (page + 1),
       ).then(res => res.json());
       let skip = false;
@@ -133,16 +136,17 @@ class ReN implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number | undefined = 1,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}/api/search/?query=${searchTerm}&count=100&field=titles&page=${pageNo}`;
-    const { content }: { content: responseNovels[] } = await fetchApi(url).then(
+    const url = `${this.site}/api/v2/search/?query=${searchTerm}&count=100&field=titles&page=${pageNo}`;
+    const { results }: { results: responseNovels[] } = await fetchApi(url).then(
       res => res.json(),
     );
     const novels: Plugin.NovelItem[] = [];
 
-    content.forEach(novel =>
+    results.forEach(novel =>
       novels.push({
         name: novel.main_name || novel.secondary_name,
-        cover: this.site + (novel.img.high || novel.img.mid || novel.img.low),
+        cover:
+          this.site + (novel.cover.high || novel.cover.mid || novel.cover.low),
         path: novel.dir,
       }),
     );
@@ -951,27 +955,25 @@ export default new ReN();
 
 type responseNovels = {
   id: number;
-  secondary_name: string;
   main_name: string;
+  secondary_name: string;
+  type: ItemEntity;
+  status: ItemEntity;
+  translate_status: ItemEntity;
   dir: string;
-  is_licensed: boolean;
   issue_year: number;
   avg_rating: string;
-  admin_rating: string;
-  type: string;
-  total_views: number;
   total_votes: number;
-  cover_high: string;
-  cover_mid: string;
-  cover_low: string;
+  total_views: number;
+  count_bookmarks: number;
+  is_licensed: boolean;
+  is_legal: boolean;
+  cover: Img;
+  count_chapters: number;
   is_yaoi: boolean;
   is_erotic: boolean;
-  bookmark_type?: null;
-  genres?: ItemEntity[] | null;
-  img: Img;
-  categories?: ItemEntity[] | null;
-  rus_name?: string;
-  en_name?: string;
+  bookmark_type: null;
+  is_forbidden: boolean;
 };
 
 type Img = {
@@ -982,7 +984,7 @@ type Img = {
 
 type responseNovel = {
   id: number;
-  img: Img;
+  cover: Img;
   secondary_name: string;
   main_name: string;
   another_name: string;
