@@ -60,8 +60,8 @@ class TruyenFull implements Plugin.PagePlugin {
       for (const status of filters.status.value) {
         url += `/${status}`;
       }
-      url += `/trang-${pageNo}`;
     }
+    url += `/trang-${pageNo}`;
 
     const result = await fetchApi(url);
     const body = await result.text();
