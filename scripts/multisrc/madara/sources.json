@@ -4,7 +4,9 @@
     "sourceSite": "https://boxnovel.com/",
     "sourceName": "BoxNovel",
     "options": {
-      "useNewChapterEndpoint": true
+      "useNewChapterEndpoint": true,
+      "customJs": "chapterText.find(.cha-tit > div).remove()",
+      "versionIncrements": 1
     }
   },
   {
