@@ -52,7 +52,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     if (this.options?.hasLocked) {
       this.pluginSettings = {
         hideLocked: {
-          value: false,
+          value: '',
           label: 'Hide locked chapters',
           type: 'Switch',
         },
