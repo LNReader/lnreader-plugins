@@ -30,6 +30,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Update issue template with plugin dropdown options"
+            git commit -m "[skip ci] Update issue template with plugin dropdown options"
             git push origin master
           fi
