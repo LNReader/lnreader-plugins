@@ -42,7 +42,13 @@ jobs:
         id: determine-label
         run: |
           LABELS="$( jq --arg keys "${{ env.SELECTED_PLUGIN }}" '. as $data | $keys | split(", ") as $keyList | $keyList[] | . as $key | if $data[$key] != null then $data[$key] else empty end' ./.github/scripts/keys.json | sed 's/"//g' )"
-          printf "LABELS<<EOF\n%s\nEOF\n" "$LABELS" >> $GITHUB_ENV
+
+          # Add "Plugin: " in front of each label
+          LABELS_WITH_PREFIX="$(echo "$LABELS" | sed 's/^/Plugin: /')"
+          
+          # Save to GitHub environment
+          printf "LABELS<<EOF\n%s\nEOF\n" "$LABELS_WITH_PREFIX" >> $GITHUB_ENV
+
 
       - name: Add label to the issue
         if: env.LABELS != ''
@@ -50,7 +56,7 @@ jobs:
         with:
           labels: |
             BUG
-            ${{ env.SELECTED_SEVERITY }}
+            Severity: ${{ env.SELECTED_SEVERITY }}
             ${{ env.LABELS }}
 
       - name: Handle missing label
