@@ -10,18 +10,20 @@ jobs:
     # if: github.repository == 'LNReader/lnreader-plugins'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - name: Install Dependencies
-        run: npm install --omit=dev --ignore-scripts
+      - name: Test
+        run: echo "Hello World"
+      # - uses: actions/checkout@v3
+      #   with:
+      #     token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '20'
+      # - name: Install Dependencies
+      #   run: npm install --omit=dev --ignore-scripts
 
-      - name: Publish Plugins
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          npm run host-linux
-        shell: bash
+      # - name: Publish Plugins
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      #     npm run host-linux
+      #   shell: bash
