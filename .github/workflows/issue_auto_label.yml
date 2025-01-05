@@ -41,11 +41,11 @@ jobs:
       - name: Determine corresponding label
         id: determine-label
         run: |
-          LABELS="$( jq --arg keys "${{ env.SELECTED_PLUGIN }}" '. as $data | $keys | split(", ") as $keyList | $keyList[] | . as $key | if $data[$key] != null then $data[$key] else empty end' ./.github/scripts/keys.json | sed 's/"//g' )"
+          LABELS="$( jq --arg keys "${{ env.SELECTED_PLUGIN }}" '. as $data | $keys | split(", ") as $keyList | $keyList[] | . as $key | if $data[$key] != null then "\($key)[\($data[$key])]" else empty end' ./.github/scripts/keys.json | sed 's/"//g' | sed 's/^[^:]*: //' )"
 
           # Add "Plugin: " in front of each label
           LABELS_WITH_PREFIX="$(echo "$LABELS" | sed 's/^/Plugin: /')"
-          
+
           # Save to GitHub environment
           printf "LABELS<<EOF\n%s\nEOF\n" "$LABELS_WITH_PREFIX" >> $GITHUB_ENV
 
