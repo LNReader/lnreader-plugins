@@ -24,6 +24,8 @@ To add a new source you need to add it to sources.json:
    exists in the languages (check folder names in "plugins/"))
   - useNewChapterEndpoint: if the source uses the new chapter endpoint
   - versionIncrements: needs to be updated everytime the site url is updated
+  - customJS: custom javascript that will be excuted when getting the text (if
+   the site has a custom copyright that need to be removed)
 
 ### icon
 

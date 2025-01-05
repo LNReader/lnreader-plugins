@@ -14,6 +14,7 @@ type MadaraOptions = {
   lang?: string;
   orderBy?: string;
   versionIncrements?: number;
+  customJs?: string;
 };
 
 export type MadaraMetadata = {
@@ -45,40 +46,27 @@ class MadaraPlugin implements Plugin.PluginBase {
   }
 
   translateDragontea(text: Cheerio<AnyNode>): Cheerio<AnyNode> {
-    if (this.id === 'dragontea') {
-      const $ = parseHTML(text.html() || '');
-      let sanitizedText = $.html() || '';
-      sanitizedText = sanitizedText.replace('\n', '');
-      sanitizedText = sanitizedText.replace(/<br\s*\/?>/g, '\n');
-      text.html(sanitizedText);
-      text.find(':not(:has(*))').each((i, el) => {
-        // Select only the deepest elements to avoid reversing the text twice
-        const $el = $(el);
-        const alphabet =
-          'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-        const reversedAlphabet =
-          'zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA'.split('');
-        const text = $el.text().normalize('NFD'); // Normalize the string to separate the accents
-        const reversedText = text.split('');
-        const reversedLetters = [...reversedText]
-          .map(letter => {
-            const baseLetter = letter.normalize('NFC');
-            const index = alphabet.indexOf(baseLetter);
-            return index !== -1
-              ? reversedAlphabet[index] + letter.slice(baseLetter.length)
-              : letter;
-          })
-          .join('');
-        $el.html(
-          $el
-            .html()
-            ?.replace($el.text(), reversedLetters)
-            .replace('\n', '<br>') || '',
-        );
-      });
-    }
+    if (this.id !== 'dragontea') return text;
+    
+    const $ = parseHTML(text.html()?.replace('\n', '').replace(/<br\s*\/?>/g, '\n') || '');
+    const reverseAlpha = 'zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA';
+    const forwardAlpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+    text.html($.html());
+    text.find('*').addBack().contents().filter((_, el) => el.nodeType === 3).each((_, el) => {
+      const $el = $(el);
+      const translated = $el.text().normalize('NFD').split('')
+        .map(char => {
+          const base = char.normalize('NFC');
+          const idx = forwardAlpha.indexOf(base);
+          return idx >= 0 ? reverseAlpha[idx] + char.slice(base.length) : char;
+        })
+        .join('');
+      $el.replaceWith(translated.replace('\n', '<br>'));
+    });
+    
     return text;
-  }
+   }
 
   getHostname(url: string): string {
     url = url.split('/')[2];
@@ -258,6 +246,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     if (this.options?.useNewChapterEndpoint) {
       html = await fetchApi(this.site + novelPath + 'ajax/chapters/', {
         method: 'POST',
+        referrer: this.site + novelPath
       }).then(res => res.text());
     } else {
       const novelId =
@@ -318,10 +307,15 @@ class MadaraPlugin implements Plugin.PluginBase {
       loadedCheerio('.entry-content') ||
       loadedCheerio('.c-blog-post > div > div:nth-child(2)');
 
-    if (this.id === 'riwyat') {
-      chapterText.find('span[style*="opacity: 0; position: fixed;"]').remove();
+    if (this.options?.customJs) {
+      try {
+        // CustomJS HERE
+      } catch (error) {
+        console.error('Error executing customJs:', error);
+        throw error;
+      }
     }
-    chapterText.find('div.text-right').attr('style', 'text-align: right;');
+
     return this.translateDragontea(chapterText).html() || '';
   }
 

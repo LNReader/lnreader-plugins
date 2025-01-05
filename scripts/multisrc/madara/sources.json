@@ -4,7 +4,9 @@
     "sourceSite": "https://boxnovel.com/",
     "sourceName": "BoxNovel",
     "options": {
-      "useNewChapterEndpoint": true
+      "useNewChapterEndpoint": true,
+      "customJs": "chapterText.find(.cha-tit > div).remove()",
+      "versionIncrements": 1
     }
   },
   {
@@ -141,7 +143,8 @@
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 4
+      "versionIncrements": 5,
+      "customJs": "chapterText.find('span[style*=\"opacity: 0; position: fixed;\"]').remove();"
     }
   },
   {
@@ -301,11 +304,12 @@
   },
   {
     "id": "azora",
-    "sourceSite": "https://azorago.com/",
+    "sourceSite": "https://azoramoon.com/",
     "sourceName": "Azora",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "versionIncrements": 1
     }
   },
   {
@@ -496,6 +500,15 @@
     "sourceSite": "https://eternalune.com/",
     "options": {
       "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "fortuneeternal",
+    "sourceSite": "https://fortuneeternal.com",
+    "sourceName": "Fortune Eternal",
+    "options": {
+      "lang": "Korean",
       "useNewChapterEndpoint": true
     }
   }
