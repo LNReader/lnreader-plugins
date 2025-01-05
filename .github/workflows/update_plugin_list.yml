@@ -9,7 +9,7 @@ on:
 
 jobs:
   update_template:
-    if: true && github.event.workflow_run.conclusion == 'success'
+    if: github.repository == 'LNReader/lnreader-plugins' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
