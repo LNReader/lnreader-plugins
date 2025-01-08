@@ -197,7 +197,8 @@
     "options": {
       "lang": "English",
       "reverseChapters": true,
-      "customJs": "\n        $('div.entry-content > p').each(function () {\n          $(this).text($(this).text().replace(/[\\u1000-\\u105F]/g, function (c) {\n            return String.fromCharCode(c.charCodeAt(0) - 4063);\n          }));\n        });\n"
+      "customJs": "\n        $('div.entry-content script').remove();\n        $('div.entry-content > p').each(function () {\n          $(this).text($(this).text().replace(/[\\u1000-\\u105F]/g, function (c) {\n            return String.fromCharCode(c.charCodeAt(0) - 4063);\n          }));\n        });\n",
+      "versionIncrements": 1
     }
   },
   {
