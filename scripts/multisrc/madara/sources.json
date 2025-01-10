@@ -5,8 +5,8 @@
     "sourceName": "BoxNovel",
     "options": {
       "useNewChapterEndpoint": true,
-      "customJs": "chapterText.find('.cha-tit > div').remove()",
-      "versionIncrements": 2
+      "customJs": "chapterText.find('p').first().next('div').remove()",
+      "versionIncrements": 3
     }
   },
   {
