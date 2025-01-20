@@ -132,7 +132,6 @@ class ReadFromPlugin implements Plugin.PluginBase {
     let moreNovelInfo = this.loadedNovelCache.find(
       novel => novel.path === novelPath,
     );
-    console.log(moreNovelInfo, this.loadedNovelCache);
     if (!moreNovelInfo)
       moreNovelInfo = (await this.searchNovels(novel.name, 1)).find(
         novel => novel.path === novelPath,
