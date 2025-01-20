@@ -150,6 +150,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
     let text = await data.text();
     let loadedCheerio = loadCheerio(text);
     loadedCheerio('#textToRead > span:empty').remove();
+    loadedCheerio('#textToRead > center').remove();
     return loadedCheerio('#textToRead').html() || '';
   }
 
