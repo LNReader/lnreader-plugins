@@ -16,6 +16,12 @@ class ReadFromPlugin implements Plugin.PluginBase {
   //flag indicates whether access to LocalStorage, SesesionStorage is required.
   webStorageUtilized?: boolean;
 
+  loadedNovelCache: (Plugin.NovelItem & {
+    summary: string;
+    genres: string;
+    author: string;
+  })[] = [];
+
   parseNovels(
     loadedCheerio: CheerioAPI,
     isSearch?: boolean,
@@ -24,7 +30,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
     genres: string;
     author: string;
   })[] {
-    return loadedCheerio(
+    let ret = loadedCheerio(
       (isSearch ? 'div.text' : '#dle-content') + ' > article.box',
     )
       .map((i, el) => {
@@ -57,6 +63,13 @@ class ReadFromPlugin implements Plugin.PluginBase {
         };
       })
       .toArray();
+
+    this.loadedNovelCache.push(...ret);
+    while (this.loadedNovelCache.length > 100) {
+      this.loadedNovelCache.shift();
+    }
+
+    return ret;
   }
 
   async popularNovels(
@@ -112,9 +125,13 @@ class ReadFromPlugin implements Plugin.PluginBase {
       chapterNumber: 1,
     });
 
-    let moreNovelInfo = (await this.searchNovels(novel.name, 1)).find(
+    let moreNovelInfo = this.loadedNovelCache.find(
       novel => novel.path === novelPath,
     );
+    if (!moreNovelInfo)
+      moreNovelInfo = (await this.searchNovels(novel.name, 1)).find(
+        novel => novel.path === novelPath,
+      );
     if (moreNovelInfo) {
       novel.summary = moreNovelInfo.summary;
       novel.genres = moreNovelInfo.genres;
