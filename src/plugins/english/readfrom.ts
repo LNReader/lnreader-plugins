@@ -51,17 +51,19 @@ class ReadFromPlugin implements Plugin.PluginBase {
             loadedCheerio(summary).text().trim() +
             loadedCheerio(summary).find('span.coll-hidden').text(),
           genres: loadedCheerio(el)
-            .find(isSearch ? 'h5.title > a' : 'h2.title > a')
+            .find(isSearch ? 'h5.title > a' : 'h2 > a')
             .filter((i, el) => el.attribs['title']?.startsWith?.('Genre - '))
             .map((i, el) => loadedCheerio(el).text())
             .toArray()
             .join(', '),
-          author: loadedCheerio(el)
-            .find('h5.title > a')
-            .filter((i, el) =>
-              el.attribs['title']?.startsWith?.('Book author - '),
-            )
-            .text(),
+          author: isSearch
+            ? loadedCheerio(el)
+                .find('h5.title > a')
+                .filter((i, el) =>
+                  el.attribs['title']?.startsWith?.('Book author - '),
+                )
+                .text()
+            : loadedCheerio(el).find('h4 > a').text(),
         };
       })
       .toArray();
