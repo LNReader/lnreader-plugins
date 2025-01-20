@@ -34,7 +34,9 @@ class ReadFromPlugin implements Plugin.PluginBase {
       (isSearch ? 'div.text' : '#dle-content') + ' > article.box',
     )
       .map((i, el) => {
-        let summary = loadedCheerio(el).find('div.text5')[0];
+        let summary = loadedCheerio(el).find(
+          isSearch ? 'div.text5' : 'div.text3',
+        )[0];
         loadedCheerio(summary).find('.coll-ellipsis').remove();
         loadedCheerio(summary).find('a').remove();
         return {
@@ -49,7 +51,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
             loadedCheerio(summary).text().trim() +
             loadedCheerio(summary).find('span.coll-hidden').text(),
           genres: loadedCheerio(el)
-            .find('h5.title > a')
+            .find(isSearch ? 'h5.title > a' : 'h2.title > a')
             .filter((i, el) => el.attribs['title']?.startsWith?.('Genre - '))
             .map((i, el) => loadedCheerio(el).text())
             .toArray()
@@ -128,6 +130,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
     let moreNovelInfo = this.loadedNovelCache.find(
       novel => novel.path === novelPath,
     );
+    console.log(moreNovelInfo, this.loadedNovelCache);
     if (!moreNovelInfo)
       moreNovelInfo = (await this.searchNovels(novel.name, 1)).find(
         novel => novel.path === novelPath,
