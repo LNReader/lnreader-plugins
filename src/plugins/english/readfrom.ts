@@ -142,7 +142,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
     return this.parseNovels(loadCheerio(text), true);
   }
 
-  resolveUrl = (path: string, isNovel?: boolean) => this.site + path;
+  resolveUrl = (path: string, isNovel?: boolean) => this.site + '/' + path;
 }
 
 export default new ReadFromPlugin();
