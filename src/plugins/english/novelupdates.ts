@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.12';
+  version = '0.7.13';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -281,6 +281,13 @@ class NovelUpdates implements Plugin.PluginBase {
         const footnotes_genesis = data_genesis[data_genesis[0].footnotes];
 
         chapterText = content_genesis + footnotes_genesis ?? '';
+        break;
+      case 'greenztl':
+        const chapterId_greenz = url.split('/').pop();
+        const url_greenz = `https://api.greenztl.com/api//chapters/${chapterId_greenz}`;
+        const json_greenz = await fetchApi(url_greenz).then(r => r.json());
+
+        chapterText = json_greenz.currentChapter.content;
         break;
       case 'helscans':
         chapterTitle =
