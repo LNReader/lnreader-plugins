@@ -51,7 +51,7 @@ class NovelBuddy implements Plugin.PluginBase {
       path: novelPath,
       name: loadedCheerio('.name h1').text().trim() || 'Untitled',
       cover: 'https:' + loadedCheerio('.img-cover img').attr('data-src'),
-      summary: loadedCheerio('.section-body.summary').text().trim(),
+      summary: loadedCheerio('.section-body.summary .content').text().trim(),
       chapters: [],
     };
 
