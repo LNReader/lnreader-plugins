@@ -282,6 +282,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
         chapterText = content_genesis + footnotes_genesis ?? '';
         break;
+      // Last edited in 0.7.13 - 21/01/2025
       case 'greenztl':
         const chapterId_greenz = url.split('/').pop();
         const url_greenz = `https://api.greenztl.com/api//chapters/${chapterId_greenz}`;
@@ -539,6 +540,7 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterContent = loadedCheerio('.chp_raw').html()!;
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
+      // Last edited in 0.7.13 - 21/01/2025
       case 'skydemonorder':
         /**
          * Check for age verification
@@ -549,14 +551,18 @@ class NovelUpdates implements Plugin.PluginBase {
         if (ageVerification_skydemon.includes('age verification required')) {
           throw new Error('Age verification required, please open in webview.');
         }
-        chapterTitle = `${loadedCheerio('header h2').first().text().trim() || 'Title not found'} | ${loadedCheerio('header h3').first().text().trim() || 'Title not found'}`;
+        chapterTitle = `${loadedCheerio('header .font-medium.text-sm').first().text().trim()}`;
         chapterContent = loadedCheerio('#startContainer + * > *')
           .first()
           .html()!;
         if (!chapterContent) {
           chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><br>There could be missing content, please check in webview.`;
         }
-        chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        if (chapterTitle) {
+          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        } else {
+          chapterText = chapterContent;
+        }
         break;
       case 'stabbingwithasyringe':
         /**
