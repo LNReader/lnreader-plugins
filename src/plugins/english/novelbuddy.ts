@@ -6,7 +6,7 @@ class NovelBuddy implements Plugin.PluginBase {
   id = 'novelbuddy';
   name = 'NovelBuddy.io';
   site = 'https://novelbuddy.io/';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/en/novelbuddy/icon.png';
 
   parseNovels(loadedCheerio: CheerioAPI) {
@@ -51,7 +51,7 @@ class NovelBuddy implements Plugin.PluginBase {
       path: novelPath,
       name: loadedCheerio('.name h1').text().trim() || 'Untitled',
       cover: 'https:' + loadedCheerio('.img-cover img').attr('data-src'),
-      summary: loadedCheerio('.section-body.summary').text().trim(),
+      summary: loadedCheerio('.section-body.summary .content').text().trim(),
       chapters: [],
     };
 
