@@ -211,6 +211,36 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterContent = loadedCheerio('#spliced-comic').html()!;
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
+      // Last edited in 0.7.13 - 21/01/2025
+      case 'arcanetranslations':
+        bloatElements = ['.bottomnav'];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
+        chapterTitle = loadedCheerio('.epwrapper .cat-series').first().text();
+
+        loadedCheerio('.entry-content div').each((_, element) => {
+          const el = loadedCheerio(element);
+          const style = el.attr('style');
+
+          if (!style) return; // Skip elements without inline styles
+
+          // Check for specific styles
+          if (/border:.*#00219b/.test(style)) {
+            // Check if 'border' contains '#00219b'
+            el.removeAttr('style').addClass('arcane_box_blue');
+          } else if (
+            style.includes('text-transform: uppercase') &&
+            /text-shadow:.*blue/.test(style) // Check if 'text-shadow' contains 'blue'
+          ) {
+            el.removeAttr('style').addClass('arcane_title_blue');
+          } else if (/text-shadow:.*blue/.test(style)) {
+            // Check if 'text-shadow' contains 'blue'
+            el.removeAttr('style').addClass('arcane_text_blue');
+          }
+        });
+
+        chapterContent = loadedCheerio('.entry-content').html()!;
+        chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        break;
       case 'asuratls':
         const titleElement_asura = loadedCheerio('.post-body div b').first();
         chapterTitle = titleElement_asura.text() || 'Title not found';
@@ -757,6 +787,7 @@ class NovelUpdates implements Plugin.PluginBase {
      */
     const outliers = [
       'anotivereads',
+      'arcanetranslations',
       'asuratls',
       'darkstartranslations',
       'fictionread',
@@ -774,6 +805,7 @@ class NovelUpdates implements Plugin.PluginBase {
       isBlogspot = false;
     }
 
+    // Last edited in 0.7.13 - 21/01/2025
     /**
      * Blogspot sites:
      * - ¼-Assed
@@ -785,7 +817,7 @@ class NovelUpdates implements Plugin.PluginBase {
      *
      * WordPress sites:
      * - Anomlaously Creative (Outlier)
-     * - Arcane Translations
+     * - Arcane Translations (Outlier)
      * - Blossom Translation
      * - Darkstar Translations (Outlier)
      * - Dumahs Translations
