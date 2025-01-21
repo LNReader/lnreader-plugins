@@ -147,7 +147,7 @@ class ReadFromPlugin implements Plugin.PluginBase {
     )[0];
 
     if (seriesElm) {
-      let seriesText = loadedCheerio(seriesElm).text();
+      let seriesText = loadedCheerio(seriesElm).text().trim();
 
       novel.summary = seriesText + '\n\n' + novel.summary;
     }
