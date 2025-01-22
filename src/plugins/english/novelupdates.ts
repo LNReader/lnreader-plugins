@@ -226,7 +226,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
             if (/border:.*#00219b/.test(style)) {
               el.removeAttr('style').addClass('arcane_box_blue'); // Blue box
-            } else if (/border:.white/.test(style)) {
+            } else if (/border:.*white/.test(style)) {
               el.removeAttr('style').addClass('arcane_box_white'); // White box
             } else if (
               style.includes('text-transform: uppercase') &&
