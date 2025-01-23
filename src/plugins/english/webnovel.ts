@@ -64,7 +64,11 @@ class Webnovel implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (filters?.fanfic_search.value) {
-      return this.searchNovels(filters.fanfic_search.value, pageNo, 'fanfic');
+      return this.searchNovelsInternal(
+        filters.fanfic_search.value,
+        pageNo,
+        'fanfic',
+      );
     }
     let url = this.site + '/stories/';
     const params = new URLSearchParams();
@@ -215,6 +219,13 @@ class Webnovel implements Plugin.PluginBase {
   }
 
   async searchNovels(
+    searchTerm: string,
+    pageNo: number,
+  ): Promise<Plugin.NovelItem[]> {
+    return this.searchNovelsInternal(searchTerm, pageNo);
+  }
+
+  async searchNovelsInternal(
     searchTerm: string,
     pageNo: number,
     type?: string,
