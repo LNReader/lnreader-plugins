@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class Webnovel implements Plugin.PluginBase {
   id = 'webnovel';
   name = 'Webnovel';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/en/webnovel/icon.png';
   site = 'https://www.webnovel.com';
   headers = {
@@ -63,6 +63,13 @@ class Webnovel implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    if (filters?.fanfic_search.value) {
+      return this.searchNovelsInternal(
+        filters.fanfic_search.value,
+        pageNo,
+        'fanfic',
+      );
+    }
     let url = this.site + '/stories/';
     const params = new URLSearchParams();
 
@@ -215,9 +222,17 @@ class Webnovel implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
+    return this.searchNovelsInternal(searchTerm, pageNo);
+  }
+
+  async searchNovelsInternal(
+    searchTerm: string,
+    pageNo: number,
+    type?: string,
+  ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.replace(/\s+/g, '+');
 
-    const url = `${this.site}/search?keywords=${searchTerm}&pageIndex=${pageNo}`;
+    const url = `${this.site}/search?keywords=${searchTerm}&pageIndex=${pageNo}${type ? `&type=${type}` : ''}`;
     const result = await fetchApi(url, {
       headers: this.headers,
     });
@@ -305,6 +320,11 @@ class Webnovel implements Plugin.PluginBase {
         { label: 'MTL (Machine Translation)', value: '3' },
       ],
       type: FilterTypes.Picker,
+    },
+    fanfic_search: {
+      label: 'Search fanfics (Overrides other filters)',
+      value: '',
+      type: FilterTypes.TextInput,
     },
   } satisfies Filters;
 }
