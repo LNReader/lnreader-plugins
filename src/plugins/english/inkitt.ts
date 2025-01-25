@@ -1,14 +1,8 @@
-import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
-// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
-// import { storage, localStorage, sessionStorage } from '@libs/storage';
-// import { encode, decode } from 'urlencode';
-// import dayjs from 'dayjs';
-// import { Parser } from 'htmlparser2';
 
 class InkittPlugin implements Plugin.PluginBase {
   id = 'inkitt';
@@ -71,9 +65,6 @@ class InkittPlugin implements Plugin.PluginBase {
       path: novelPath,
       name: loadedCheerio('h1.story-title').text(),
     };
-
-    // TODO: get here data from the site and
-    // un-comment and fill-in the relevant fields
 
     novel.author = loadedCheerio('a.author-link').text();
 
