@@ -18,7 +18,7 @@ class Genesis implements Plugin.PluginBase {
   icon = 'src/en/genesis/icon.png';
   customCSS = 'src/en/genesis/customCSS.css';
   site = 'https://genesistudio.com';
-  version = '1.0.6';
+  version = '1.0.7';
 
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
@@ -149,7 +149,7 @@ class Genesis implements Plugin.PluginBase {
     if (
       id &&
       chapter_title &&
-      chapter_number &&
+      chapter_number >= 0 &&
       required_tier !== null &&
       date_created
     ) {
@@ -335,8 +335,11 @@ class Genesis implements Plugin.PluginBase {
       .filter((node: { type: string }) => node.type === 'data')
       .map((node: { data: any }) => node.data)[0];
     const content = data[data[0].gs] ?? data[19];
+    const notes = data[data[0].notes];
     const footnotes = data[data[0].footnotes];
-    return content + (footnotes ?? '');
+    return (
+      content + (notes ? `<h2>Notes</h2>${notes}` : '') + (footnotes ?? '')
+    );
   }
 
   async searchNovels(
