@@ -25,7 +25,7 @@ async function main() {
     console.log(err);
   }
   if (!sameKeys(newKeys, savedKeys) && Array.isArray(newKeys)) {
-    const text = newKeys.join('"\n       - "');
+    const text = newKeys.join('"\n        - "');
     fs.writeFileSync(
       '.github/ISSUE_TEMPLATE/report_issue.yml',
       rawText.replace(/{#CHANGE#}/g, '- "' + text + '"'),
