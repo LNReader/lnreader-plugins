@@ -87,6 +87,7 @@ class FictionZonePlugin implements Plugin.PagePlugin {
       last = a;
     }
     this.cachedNovelIds.set(novelPath, last.toString());
+    // @ts-ignore
     novel.chapters = loadedCheerio(
       'div.chapters > div.list-wrapper > div.items > a.chapter',
     )
