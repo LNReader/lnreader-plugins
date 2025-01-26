@@ -10,7 +10,7 @@ class FictionZonePlugin implements Plugin.PagePlugin {
   name = 'Fiction Zone';
   icon = 'src/en/fictionzone/icon.png';
   site = 'https://fictionzone.net';
-  version = '1.0.0';
+  version = '1.0.1';
   filters: Filters | undefined = undefined;
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
@@ -93,8 +93,8 @@ class FictionZonePlugin implements Plugin.PagePlugin {
       .map((i, el) => {
         const chapterName = loadedCheerio(el).find('span.chapter-title').text();
         const chapterUrl = loadedCheerio(el)
-          .attr('href')!
-          .replace(/^\//, '')
+          .attr('href')
+          ?.replace(/^\//, '')
           .replace(/\/$/, '');
         const uploadTime = this.parseAgoDate(
           loadedCheerio(el).find('span.update-date').text(),
@@ -103,10 +103,11 @@ class FictionZonePlugin implements Plugin.PagePlugin {
         return {
           name: chapterName,
           releaseTime: uploadTime,
-          path: chapterUrl!.replace(/^\//, '').replace(/\/$/, ''),
+          path: chapterUrl?.replace(/^\//, '').replace(/\/$/, ''),
         };
       })
-      .toArray();
+      .toArray()
+      .filter(chap => !!chap.path);
     novel.totalPages = parseInt(
       loadedCheerio('div.chapters ul.el-pager > li:last-child').text(),
     );
