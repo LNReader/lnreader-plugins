@@ -32,7 +32,7 @@ class Novelight implements Plugin.PluginBase {
       const novel = {
         name: novelName,
         cover: novelCover ?? defaultCover,
-        path: novelUrl,
+        path: novelUrl.replace('/', ''),
       };
 
       novels.push(novel);
@@ -80,27 +80,12 @@ class Novelight implements Plugin.PluginBase {
     );
 
     const chaptersRaw = await fetchApi(
-      `${this.site}/book/ajax/chapter-pagination?book_id=${bookId}&page=${totalPages - parseInt(page) + 1}`,
+      `${this.site}/book/ajax/chapter-pagination?csrfmiddlewaretoken=${csrftoken}&book_id=${bookId}&page=${totalPages - parseInt(page) + 1}`,
       {
         headers: {
-          'Host': this.site.replace('https://', ''),
-          'User-Agent':
-            'Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0',
-          'Accept': '*/*',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Accept-Encoding': 'gzip, deflate, br, zstd',
+          'Host': this.site.replace('https://', '').replace('/', ''),
           'Referer': this.site + novelPath,
           'X-Requested-With': 'XMLHttpRequest',
-          'Sec-GPC': '1',
-          'Connection': 'keep-alive',
-          'Content-Type': 'application/json',
-          'Cookie': `csrftoken=${csrftoken}`,
-          'Sec-Fetch-Dest': 'empty',
-          'Sec-Fetch-Mode': 'cors',
-          'Sec-Fetch-Site': 'same-origin',
-          'Priority': 'u=0',
-          'Pragma': 'no-cache',
-          'Cache-Control': 'no-cache',
         },
       },
     )
@@ -170,7 +155,7 @@ class Novelight implements Plugin.PluginBase {
       const novel = {
         name: novelName,
         cover: novelCover ?? defaultCover,
-        path: novelUrl,
+        path: novelUrl.replace('/', ''),
       };
 
       novels.push(novel);
