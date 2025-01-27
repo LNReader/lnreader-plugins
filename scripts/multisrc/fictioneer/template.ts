@@ -43,8 +43,13 @@ class FictioneerPlugin implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    if (pageNo !== 1) return [];
-    const req = await fetchApi(this.site + '/' + this.options.browsePage + '/');
+    const req = await fetchApi(
+      this.site +
+        '/' +
+        this.options.browsePage +
+        '/' +
+        (pageNo === 1 ? '' : 'page/' + pageNo + '/'),
+    );
     const body = await req.text();
     const loadedCheerio = loadCheerio(body);
 
@@ -82,6 +87,7 @@ class FictioneerPlugin implements Plugin.PluginBase {
       .text()
       .split('|')[0]
       .replace('Author: ', '')
+      .replace('by ', '')
       .trim();
     novel.cover = loadedCheerio('figure.story__thumbnail > a').attr('href');
     novel.genres = loadedCheerio('div.tag-group > a')
@@ -107,6 +113,12 @@ class FictioneerPlugin implements Plugin.PluginBase {
       })
       .toArray();
 
+    const status = loadedCheerio('span.story__status').text().trim();
+    if (status === 'Ongoing') novel.status = NovelStatus.Ongoing;
+    if (status === 'Completed') novel.status = NovelStatus.Completed;
+    if (status === 'Cancelled') novel.status = NovelStatus.Cancelled;
+    if (status === 'Hiatus') novel.status = NovelStatus.OnHiatus;
+
     return novel;
   }
 
@@ -122,9 +134,9 @@ class FictioneerPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    if (pageNo !== 1) return [];
     const req = await fetchApi(
-      this.site + `?s=${encodeURIComponent(searchTerm)}&post_type=fcn_story`,
+      this.site +
+        `/${pageNo === 1 ? '' : 'page/' + pageNo + '/'}?s=${encodeURIComponent(searchTerm)}&post_type=fcn_story`,
     );
     const body = await req.text();
     const loadedCheerio = loadCheerio(body);
