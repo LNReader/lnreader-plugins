@@ -9,7 +9,7 @@ import { NovelStatus } from '@libs/novelStatus';
 class Novelight implements Plugin.PagePlugin {
   id = 'novelight';
   name = 'Novelight';
-  version = '1.0.9';
+  version = '1.0.0';
   icon = 'src/en/novelight/icon.png';
   site = 'https://novelight.net/';
 
