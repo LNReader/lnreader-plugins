@@ -34,12 +34,20 @@
           "value": "drama"
         },
         {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
           "label": "entertainment",
           "value": "entertainment"
         },
         {
           "label": "Fantasy",
           "value": "fantasy"
+        },
+        {
+          "label": "Funny",
+          "value": "funny"
         },
         {
           "label": "Gender Bender",
@@ -64,6 +72,10 @@
         {
           "label": "Isekai",
           "value": "isekai"
+        },
+        {
+          "label": "Jose",
+          "value": "jose"
         },
         {
           "label": "Josei",
@@ -138,6 +150,10 @@
           "value": "survival"
         },
         {
+          "label": "Tragedy",
+          "value": "tragedy"
+        },
+        {
           "label": "Transmigration",
           "value": "transmigration"
         },
@@ -152,6 +168,10 @@
         {
           "label": "Xianxia",
           "value": "xianxia"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "xuanhuan"
         },
         {
           "label": "Yaoi",

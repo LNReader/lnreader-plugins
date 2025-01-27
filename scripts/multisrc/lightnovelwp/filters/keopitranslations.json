@@ -6,19 +6,15 @@
       "value": [],
       "options": [
         {
-          "label": "Action",
-          "value": "action"
-        },
-        {
-          "label": "Adventure",
-          "value": "adventure"
+          "label": "Adult",
+          "value": "adult"
         },
         {
           "label": "Comedy",
           "value": "comedy"
         },
         {
-          "label": "drama",
+          "label": "Drama",
           "value": "drama"
         },
         {
@@ -26,44 +22,28 @@
           "value": "fantasy"
         },
         {
-          "label": "Harem",
-          "value": "harem"
+          "label": "Historical",
+          "value": "historical"
         },
         {
-          "label": "Martial Arts",
-          "value": "martial-arts"
+          "label": "Josei",
+          "value": "josei"
         },
         {
-          "label": "Mystery",
-          "value": "mystery"
+          "label": "Mature",
+          "value": "mature"
         },
         {
-          "label": "Psychological",
-          "value": "psychological"
+          "label": "Modern",
+          "value": "modern"
         },
         {
           "label": "Romance",
           "value": "romance"
         },
         {
-          "label": "School Life",
-          "value": "school-life"
-        },
-        {
-          "label": "Seinen",
-          "value": "seinen"
-        },
-        {
-          "label": "Shounen",
-          "value": "shounen"
-        },
-        {
-          "label": "Slice of Life",
-          "value": "slice-of-life"
-        },
-        {
-          "label": "Thriller",
-          "value": "thriller"
+          "label": "Smut",
+          "value": "smut"
         }
       ]
     },
@@ -72,14 +52,6 @@
       "label": "Type",
       "value": [],
       "options": [
-        {
-          "label": "Chinese Novel",
-          "value": "chinese-novel"
-        },
-        {
-          "label": "Dropped",
-          "value": "dropped"
-        },
         {
           "label": "Web Novel",
           "value": "web-novel"
@@ -137,10 +109,6 @@
         {
           "label": "Popular",
           "value": "popular"
-        },
-        {
-          "label": "Rating",
-          "value": "rating"
         }
       ]
     }

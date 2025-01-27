@@ -6,6 +6,14 @@
       "value": [],
       "options": [
         {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "Shounen Ai",
+          "value": "shounen-ai"
+        },
+        {
           "label": "Wuxia",
           "value": "wuxia"
         },
@@ -18,12 +26,24 @@
           "value": "xuanhuan"
         },
         {
+          "label": "أبطال خارقين",
+          "value": "أبطال-خارقين"
+        },
+        {
           "label": "أكشن",
           "value": "action"
         },
         {
+          "label": "ألعاب",
+          "value": "ألعاب"
+        },
+        {
           "label": "إثارة",
           "value": "excitement"
+        },
+        {
+          "label": "إسلامي",
+          "value": "إسلامي"
         },
         {
           "label": "إنتقال الى عالم أخر",
@@ -34,12 +54,36 @@
           "value": "etchi"
         },
         {
+          "label": "اكاديمي",
+          "value": "اكاديمي"
+        },
+        {
+          "label": "اكشن",
+          "value": "اكشن"
+        },
+        {
           "label": "الخيال العلمي",
           "value": "sci-fi"
         },
         {
+          "label": "انتقام",
+          "value": "انتقام"
+        },
+        {
+          "label": "بطل مضاد",
+          "value": "بطل-مضاد"
+        },
+        {
+          "label": "بناء مملكة",
+          "value": "بناء-مملكة"
+        },
+        {
           "label": "بوليسي",
           "value": "policy"
+        },
+        {
+          "label": "تاريخ",
+          "value": "تاريخ"
         },
         {
           "label": "تاريخي",
@@ -50,8 +94,20 @@
           "value": "تحقيق"
         },
         {
+          "label": "تشويق",
+          "value": "تشويق"
+        },
+        {
           "label": "تقمص شخصيات",
           "value": "rpg"
+        },
+        {
+          "label": "تلاعب",
+          "value": "تلاعب"
+        },
+        {
+          "label": "تناسخ",
+          "value": "تناسخ"
         },
         {
           "label": "جريمة",
@@ -74,6 +130,22 @@
           "value": "school-life"
         },
         {
+          "label": "خارق للطبيعة",
+          "value": "خارق-للطبيعة"
+        },
+        {
+          "label": "خيال",
+          "value": "خيال"
+        },
+        {
+          "label": "خيال علمي",
+          "value": "خيال-علمي"
+        },
+        {
+          "label": "خيالي",
+          "value": "خيالي"
+        },
+        {
           "label": "خيالي(فانتازيا)",
           "value": "fantasy"
         },
@@ -82,16 +154,48 @@
           "value": "drama"
         },
         {
+          "label": "درامي",
+          "value": "درامي"
+        },
+        {
           "label": "رعب",
           "value": "horror"
+        },
+        {
+          "label": "رعب كوني",
+          "value": "رعب-كوني"
+        },
+        {
+          "label": "رعب نفسي",
+          "value": "رعب-نفسي"
         },
         {
           "label": "رومانسي",
           "value": "romantic"
         },
         {
+          "label": "رومنسية",
+          "value": "رومنسية"
+        },
+        {
+          "label": "زيانشيا",
+          "value": "زيانشيا"
+        },
+        {
+          "label": "ستيم بانك",
+          "value": "ستيم-بانك"
+        },
+        {
           "label": "سحر",
           "value": "magic"
+        },
+        {
+          "label": "سفر عبر الزمن",
+          "value": "سفر-عبر-الزمن"
+        },
+        {
+          "label": "سياسة",
+          "value": "سياسة"
         },
         {
           "label": "سينن",
@@ -118,12 +222,24 @@
           "value": "supernatural"
         },
         {
+          "label": "عائلي",
+          "value": "عائلي"
+        },
+        {
           "label": "غموض",
           "value": "mysteries"
         },
         {
+          "label": "فانتازي",
+          "value": "فانتازي"
+        },
+        {
           "label": "فانتازيا",
           "value": "فانتازيا"
+        },
+        {
+          "label": "فنتازيا",
+          "value": "فنتازيا"
         },
         {
           "label": "فنون القتال",
@@ -134,6 +250,10 @@
           "value": "قصة-قصيرة"
         },
         {
+          "label": "قوة خارقة",
+          "value": "قوة-خارقة"
+        },
+        {
           "label": "قوى خارقة",
           "value": "superpower"
         },
@@ -142,12 +262,32 @@
           "value": "comedy"
         },
         {
+          "label": "كوميديا",
+          "value": "كوميديا"
+        },
+        {
+          "label": "كوميدية",
+          "value": "كوميدية"
+        },
+        {
           "label": "مأساوي",
           "value": "tragedy"
         },
         {
+          "label": "مؤامرة",
+          "value": "مؤامرة"
+        },
+        {
           "label": "ما بعد الكارثة",
           "value": "after-the-disaster"
+        },
+        {
+          "label": "ما بعد نهاية العالم",
+          "value": "ما-بعد-نهاية-العالم"
+        },
+        {
+          "label": "مضاد البطل",
+          "value": "مضاد-البطل"
         },
         {
           "label": "مغامرة",
@@ -162,12 +302,20 @@
           "value": "mature"
         },
         {
+          "label": "نظام",
+          "value": "نظام"
+        },
+        {
           "label": "نفسي",
           "value": "psychological"
         },
         {
           "label": "ون شوت",
           "value": "ون-شوت"
+        },
+        {
+          "label": "ووكسيا",
+          "value": "ووكسيا"
         }
       ]
     },
@@ -185,6 +333,10 @@
           "value": "light-novel"
         },
         {
+          "label": "رواية مؤلفة",
+          "value": "رواية-مؤلفة"
+        },
+        {
           "label": "رواية ويب",
           "value": "web-novel"
         },
@@ -199,6 +351,10 @@
         {
           "label": "كورية",
           "value": "korean"
+        },
+        {
+          "label": "مؤلفة",
+          "value": "مؤلفة"
         },
         {
           "label": "ون شوت",
@@ -261,6 +417,10 @@
         {
           "label": "الرائجة",
           "value": "popular"
+        },
+        {
+          "label": "التقييم",
+          "value": "rating"
         }
       ]
     }
