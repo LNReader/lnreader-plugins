@@ -1,19 +1,40 @@
+import { CheerioAPI, load as loadCheerio, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
-import { load as loadCheerio } from 'cheerio';
+import { NovelStatus } from '@libs/novelStatus';
+import { Filters } from '../../../src/libs/filterInputs';
 
-class DaoistQuestPlugin implements Plugin.PluginBase {
-  id = 'daoistquest';
-  name = 'Daoist Quest';
-  icon = 'src/en/daoistquest/icon.png';
-  site = 'https://daoist.quest';
-  version = '1.0.0';
+type FictioneerOptions = {
+  browsePage: string;
+  lang?: string;
+  versionIncrements?: number;
+};
+
+export type FictioneerMetadata = {
+  id: string;
+  sourceSite: string;
+  sourceName: string;
+  options: FictioneerOptions;
+};
+
+class FictioneerPlugin implements Plugin.PluginBase {
+  id: string;
+  name: string;
+  icon: string;
+  site: string;
+  version: string;
+  options: FictioneerOptions;
   filters: Filters | undefined = undefined;
-  imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
-  //flag indicates whether access to LocalStorage, SesesionStorage is required.
-  webStorageUtilized?: boolean;
+  constructor(metadata: FictioneerMetadata) {
+    this.id = metadata.id;
+    this.name = metadata.sourceName;
+    this.icon = `multisrc/fictioneer/${metadata.id.toLowerCase()}/icon.png`;
+    this.site = metadata.sourceSite;
+    const versionIncrements = metadata.options?.versionIncrements || 0;
+    this.version = `1.0.${0 + versionIncrements}`;
+    this.options = metadata.options;
+  }
 
   async popularNovels(
     pageNo: number,
@@ -23,11 +44,13 @@ class DaoistQuestPlugin implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
-    const req = await fetchApi(this.site + '/collection/novels/');
+    const req = await fetchApi(this.site + '/' + this.options.browsePage + '/');
     const body = await req.text();
     const loadedCheerio = loadCheerio(body);
 
-    return loadedCheerio('#featured-list > li > div > div')
+    return loadedCheerio(
+      '#featured-list > li > div > div, #list-of-stories > li > div > div',
+    )
       .map((i, el) => {
         const novelName = loadedCheerio(el).find('h3 > a').text();
         const novelCover = loadedCheerio(el)
@@ -126,5 +149,3 @@ class DaoistQuestPlugin implements Plugin.PluginBase {
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + '/' + path + '/';
 }
-
-export default new DaoistQuestPlugin();
