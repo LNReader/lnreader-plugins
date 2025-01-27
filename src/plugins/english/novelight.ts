@@ -156,7 +156,6 @@ class Novelight implements Plugin.PagePlugin {
     const body = await fetchApi(this.site + chapterPath).then(r => r.text());
     const loadedCheerio = parseHTML(body);
     const chapterText = loadedCheerio('.chapter-content').html() || '';
-    console.log(body);
 
     return chapterText.replace(
       /class="advertisment"/g,
