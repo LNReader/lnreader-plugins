@@ -3,13 +3,24 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import dayjs from 'dayjs';
+import { storage } from '@libs/storage';
+import { NovelStatus } from '@libs/novelStatus';
 
-class Novelight implements Plugin.PluginBase {
+class Novelight implements Plugin.PagePlugin {
   id = 'novelight';
   name = 'Novelight';
   version = '1.0.9';
   icon = 'src/en/novelight/icon.png';
   site = 'https://novelight.net/';
+
+  hideLocked = storage.get('hideLocked');
+  pluginSettings = {
+    hideLocked: {
+      value: '',
+      label: 'Hide locked chapters',
+      type: 'Switch',
+    },
+  };
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}catalog/?ordering=popularity&page=${page}`;
@@ -40,6 +51,7 @@ class Novelight implements Plugin.PluginBase {
 
     return novels;
   }
+
   async parseNovel(
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
@@ -56,14 +68,33 @@ class Novelight implements Plugin.PluginBase {
       chapters: [],
     };
 
-    const info = loadedCheerio('div.mini-info').children();
-
-    novel.author = loadedCheerio(info[5].children[3]).text().trim();
-    novel.status = loadedCheerio(info[0].children[3]).text().trim();
-    novel.genres = loadedCheerio(info[6])
-      .map((a, ex) => loadedCheerio(ex).text())
-      .toArray()
-      .join(',');
+    const info = loadedCheerio('div.mini-info > .item').toArray();
+    let status = '';
+    let translation = '';
+    for (let child of info) {
+      let type = loadedCheerio(child).find('.sub-header').text().trim();
+      if (type === 'Status') {
+        status = loadedCheerio(child).find('div.info').text().trim();
+      }
+      if (type === 'Translation') {
+        translation = loadedCheerio(child).find('div.info').text().trim();
+      }
+      if (type === 'Author') {
+        novel.author = loadedCheerio(child).find('div.info').text().trim();
+      }
+      if (type === 'Genres') {
+        novel.genres = loadedCheerio(child)
+          .find('div.info > a')
+          .map((i, el) => loadedCheerio(el).text())
+          .toArray()
+          .join(', ');
+      }
+    }
+    if (status === 'cancelled') novel.status = NovelStatus.Cancelled;
+    else if (status === 'releasing' || translation === 'ongoing')
+      novel.status = NovelStatus.Ongoing;
+    else if (status === 'completed' && translation === 'completed')
+      novel.status = NovelStatus.Completed;
 
     return novel;
   }
@@ -91,17 +122,15 @@ class Novelight implements Plugin.PluginBase {
     )
       .then(r => r.json())
       .then(r => r.html);
-    // console.log(parseHTML('<html>' + chaptersRaw + '</html>')('a'));
-    console.log(chaptersRaw);
 
     const chapter: Plugin.ChapterItem[] = [];
 
     parseHTML('<html>' + chaptersRaw + '</html>')('a').each((idx, ele) => {
       const title = parseHTML(ele)('.title').text().trim();
-      // console.log(ele);
+      const isLocked = !!parseHTML(ele)('.cost').text().trim();
+      if (this.hideLocked && isLocked) return;
 
       let date;
-
       try {
         date = dayjs(
           parseHTML(ele)('.date').text().trim(),
@@ -109,14 +138,13 @@ class Novelight implements Plugin.PluginBase {
         ).toISOString();
       } catch (error) {}
 
-      const chapterName = title;
+      const chapterName = isLocked ? '🔒 ' + title : title;
       const chapterUrl = ele.attribs.href;
       chapter.push({
         name: chapterName,
         path: chapterUrl,
         page: page,
         releaseTime: date,
-        chapterNumber: parseInt(title.split('-')[0].replace(/[^0-9]/g, '')),
       });
     });
 
