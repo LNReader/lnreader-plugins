@@ -19,11 +19,11 @@ class BakaInUa implements Plugin.PluginBase {
     const body = await result.text();
     const $ = parseHTML(body);
 
-    $('#fiction-list > ol > li> div').each((index, elem) => {
+    $('#fiction-list > ol > li > div > div').each((index, elem) => {
       novels.push({
-        path: $(elem).find('div>a').attr('href'),
-        name: $(elem).find('div>a>h2').text(),
-        cover: this.site + $(elem).find('div>a>div>div>div>img').attr('src'),
+        path: $(elem).find('a').attr('href'),
+        name: $(elem).find('a>h2').text(),
+        cover: $(elem).find('a>div>div>div>img').attr('src'),
       });
     });
     return novels;
