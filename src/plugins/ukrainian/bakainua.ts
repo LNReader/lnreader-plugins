@@ -23,7 +23,7 @@ class BakaInUa implements Plugin.PluginBase {
       novels.push({
         path: $(elem).find('a').attr('href'),
         name: $(elem).find('a>h2').text(),
-        cover: $(elem).find('a>div>div>div>img').attr('src'),
+        cover: this.site + $(elem).find('a>div>div>div>img').attr('src'),
       });
     });
     return novels;
