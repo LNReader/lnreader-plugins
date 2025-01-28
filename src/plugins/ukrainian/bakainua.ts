@@ -7,12 +7,9 @@ class BakaInUa implements Plugin.PluginBase {
   name = 'BakaInUA';
   icon = 'src/uk/bakainua/icon.png';
   site = 'https://baka.in.ua';
-  version = '1.0.0';
+  version = '1.0.1';
 
-  async popularNovels(
-    pageNo: number,
-    { showLatestNovels }: Plugin.PopularNovelsOptions<typeof this.filters>,
-  ): Promise<Plugin.NovelItem[]> {
+  async popularNovels(): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
 
     const result = await fetchApi(this.site + '/fictions/alphabetical');
@@ -41,6 +38,7 @@ class BakaInUa implements Plugin.PluginBase {
         this.site +
         $('div.from-stone-50.to-stone-100>div.relative>img').attr('src'),
       summary: $('p.text-sm.leading-relaxed').text(),
+      status: $('div.bg-stone-100:nth-child(3)>p:nth-child(2)').text(),
     };
 
     let chapters: Plugin.ChapterItem[] = [];
@@ -55,7 +53,7 @@ class BakaInUa implements Plugin.PluginBase {
         chapters.push(chapter);
       });
 
-    novel.chapters = chapters;
+    novel.chapters = chapters.reverse();
     return novel;
   }
 
@@ -66,11 +64,22 @@ class BakaInUa implements Plugin.PluginBase {
     return $('section.w-full').html();
   }
 
-  async searchNovels(
-    searchTerm: string,
-    pageNo: number,
-  ): Promise<Plugin.NovelItem[]> {
-    return []; //TODO
+  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
+    let novels: Plugin.NovelItem[] = [];
+
+    const result = await fetchApi(
+      this.site + '/search?search%5B%5D=' + searchTerm,
+    );
+    const body = await result.text();
+    const $ = parseHTML(body);
+    $('ul>section>div>div').each((index, elem) => {
+      novels.push({
+        path: $(elem).find('div:nth-child(2)>a').attr('href'),
+        name: $(elem).find('div:nth-child(2)>a').text().trim(),
+        cover: this.site + $(elem).find('div:nth-child(1)>img').attr('src'),
+      });
+    });
+    return novels;
   }
 }
 
