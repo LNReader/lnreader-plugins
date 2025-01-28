@@ -61,7 +61,7 @@ class BakaInUa implements Plugin.PluginBase {
     const result = await fetchApi(this.site + '/' + chapterUrl);
     const body = await result.text();
     const $ = parseHTML(body);
-    return $('section.w-full').html();
+    return $('#user-content').html();
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
