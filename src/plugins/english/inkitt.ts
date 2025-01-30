@@ -75,7 +75,6 @@ class InkittPlugin implements Plugin.PluginBase {
     const status = loadedCheerio('div.dlc > dl:has(dt:contains("Status")) > dd')
       .text()
       .trim();
-    console.log(status);
     if (status === 'Complete') novel.status = NovelStatus.Completed;
     if (status === 'Ongoing') novel.status = NovelStatus.Ongoing;
 
