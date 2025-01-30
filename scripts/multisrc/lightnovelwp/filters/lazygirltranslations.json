@@ -6,10 +6,6 @@
       "value": [],
       "options": [
         {
-          "label": "Acting",
-          "value": "acting"
-        },
-        {
           "label": "Action",
           "value": "action"
         },
@@ -22,7 +18,7 @@
           "value": "adventure"
         },
         {
-          "label": "Bl",
+          "label": "BL",
           "value": "bl"
         },
         {
@@ -34,28 +30,12 @@
           "value": "drama"
         },
         {
-          "label": "Ecchi",
-          "value": "ecchi"
-        },
-        {
-          "label": "entertainment",
-          "value": "entertainment"
-        },
-        {
           "label": "Fantasy",
           "value": "fantasy"
         },
         {
-          "label": "Funny",
-          "value": "funny"
-        },
-        {
           "label": "Gender Bender",
           "value": "gender-bender"
-        },
-        {
-          "label": "Ghost",
-          "value": "ghost"
         },
         {
           "label": "Harem",
@@ -70,20 +50,8 @@
           "value": "horror"
         },
         {
-          "label": "Isekai",
-          "value": "isekai"
-        },
-        {
-          "label": "Jose",
-          "value": "jose"
-        },
-        {
           "label": "Josei",
           "value": "josei"
-        },
-        {
-          "label": "Male protagonist",
-          "value": "male-protagonist"
         },
         {
           "label": "Martial Arts",
@@ -102,10 +70,6 @@
           "value": "psychological"
         },
         {
-          "label": "Reincarnation",
-          "value": "reincarnation"
-        },
-        {
           "label": "Romance",
           "value": "romance"
         },
@@ -114,16 +78,12 @@
           "value": "school-life"
         },
         {
-          "label": "Sci-Fi",
+          "label": "Sci-fi",
           "value": "sci-fi"
         },
         {
           "label": "Shoujo",
           "value": "shoujo"
-        },
-        {
-          "label": "Shounen",
-          "value": "shounen"
         },
         {
           "label": "Shounen Ai",
@@ -138,28 +98,16 @@
           "value": "smut"
         },
         {
-          "label": "Sprited animal",
-          "value": "sprited-animal"
+          "label": "Sports",
+          "value": "sports"
         },
         {
           "label": "Supernatural",
           "value": "supernatural"
         },
         {
-          "label": "Survival",
-          "value": "survival"
-        },
-        {
           "label": "Tragedy",
           "value": "tragedy"
-        },
-        {
-          "label": "Transmigration",
-          "value": "transmigration"
-        },
-        {
-          "label": "Unlimited flow",
-          "value": "unlimited-flow"
         },
         {
           "label": "Wuxia",
@@ -170,16 +118,8 @@
           "value": "xianxia"
         },
         {
-          "label": "Xuanhuan",
-          "value": "xuanhuan"
-        },
-        {
           "label": "Yaoi",
           "value": "yaoi"
-        },
-        {
-          "label": "Yuri",
-          "value": "yuri"
         }
       ]
     },
@@ -189,20 +129,8 @@
       "value": [],
       "options": [
         {
-          "label": "Chinese",
-          "value": "chinese"
-        },
-        {
           "label": "Chinese Novel",
           "value": "chinese-novel"
-        },
-        {
-          "label": "Korean Novel",
-          "value": "korean-novel"
-        },
-        {
-          "label": "Published Novel (KR)",
-          "value": "published-novel-kr"
         },
         {
           "label": "Web Novel",
@@ -261,6 +189,10 @@
         {
           "label": "Popular",
           "value": "popular"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
         }
       ]
     }

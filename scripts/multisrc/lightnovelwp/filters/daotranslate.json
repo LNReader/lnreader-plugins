@@ -34,12 +34,20 @@
           "value": "drama"
         },
         {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
           "label": "Family",
           "value": "family"
         },
         {
           "label": "Fantasy",
           "value": "fantasy"
+        },
+        {
+          "label": "Gender Bender",
+          "value": "gender-bender"
         },
         {
           "label": "Growth",
@@ -158,6 +166,10 @@
           "value": "son-in-law"
         },
         {
+          "label": "Sports",
+          "value": "sports"
+        },
+        {
           "label": "Supernatural",
           "value": "supernatural"
         },
@@ -188,6 +200,10 @@
         {
           "label": "Wuxia",
           "value": "wuxia"
+        },
+        {
+          "label": "Xianxia",
+          "value": "xianxia"
         },
         {
           "label": "Xuanhuan",

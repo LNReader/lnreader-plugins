@@ -37,7 +37,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${4 + versionIncrements}`;
+    this.version = `1.1.${5 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
   }
@@ -50,7 +50,10 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   }
 
   async safeFecth(url: string, search: boolean): Promise<string> {
-    const r = await fetchApi(url);
+    const urlParts = url.split('://');
+    const protocol = urlParts.shift();
+    const sanitizedUri = urlParts[0].replace(/\/\//g, '/');
+    const r = await fetchApi(protocol + '://' + sanitizedUri);
     if (!r.ok && search != true)
       throw new Error(
         'Could not reach site (' + r.status + ') try to open in webview.',
@@ -67,7 +70,9 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           title == 'Just a moment...' ||
           title == 'Redirecting...'))
     )
-      throw new Error('Captcha error, please open in webview');
+      throw new Error(
+        'Captcha error, please open in webview (or the website has changed url)',
+      );
 
     return data;
   }
@@ -85,10 +90,22 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
         const novelCover =
           article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/?>/) || [];
 
+        let novelPath;
+        if (novelUrl.includes(this.site)) {
+          novelPath = novelUrl.replace(this.site, '');
+        } else {
+          // TODO: report website new url to server
+          let novelParts = novelUrl.split('/');
+          novelParts.shift();
+          novelParts.shift();
+          novelParts.shift();
+          novelPath = novelParts.join('/');
+        }
+
         novels.push({
           name: novelName,
           cover: novelCover[2] || novelCover[1] || defaultCover,
-          path: novelUrl.replace(this.site, ''),
+          path: novelPath,
         });
       }
     });
@@ -103,7 +120,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
       showLatestNovels,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    const seriesPath = this.options?.seriesPath ?? 'series/';
+    const seriesPath = this.options?.seriesPath ?? '/series/';
     let url = this.site + seriesPath + '?page=' + pageNo;
     if (!filters) filters = this.filters || {};
     if (showLatestNovels) url += '&order=latest';
@@ -133,7 +150,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     };
     let isParsingGenres = false;
     let isReadingGenre = false;
-    let isReadingSummary = false;
+    let isReadingSummary = 0;
     let isParsingInfo = false;
     let isReadingInfo = false;
     let isReadingAuthor = false;
@@ -166,7 +183,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           (attribs['class'] === 'entry-content' ||
             attribs['itemprop'] === 'description')
         ) {
-          isReadingSummary = true;
+          isReadingSummary++;
         } // author and status
         else if (attribs['class'] === 'spe' || attribs['class'] === 'serl') {
           isParsingInfo = true;
@@ -194,6 +211,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           } else if (attribs['class'] === 'epl-price') {
             isReadingChapterInfo = 4;
           }
+        } else if (isReadingSummary && name === 'div') {
+          isReadingSummary++;
         }
       },
       ontext(data) {
@@ -203,7 +222,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
             novel.genres += data + ', ';
           }
         } // summary
-        else if (isReadingSummary) {
+        else if (isReadingSummary === 1) {
           novel.summary += data.trim();
         } // author and status
         else if (isParsingInfo) {
@@ -322,7 +341,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           if (name === 'br') {
             novel.summary += '\n';
           } else if (name === 'div') {
-            isReadingSummary = false;
+            isReadingSummary--;
           }
         } // author and status
         else if (isParsingInfo) {
@@ -391,7 +410,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     }
     return (
       data
-        .match(/<div.*class="epcontent ([\s\S]*?)<div.*class="bottomnav"/g)?.[0]
+        .match(/<div.*class="epcontent ([\s\S]*?)<div.*class="?bottomnav/g)?.[0]
         .match(/<p.*>([\s\S]*?)<\/p>/g)
         ?.join('\n') || ''
     );

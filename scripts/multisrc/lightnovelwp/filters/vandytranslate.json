@@ -6,10 +6,6 @@
       "value": [],
       "options": [
         {
-          "label": "Acting",
-          "value": "acting"
-        },
-        {
           "label": "Action",
           "value": "action"
         },
@@ -22,10 +18,6 @@
           "value": "adventure"
         },
         {
-          "label": "Bl",
-          "value": "bl"
-        },
-        {
           "label": "Comedy",
           "value": "comedy"
         },
@@ -34,28 +26,8 @@
           "value": "drama"
         },
         {
-          "label": "Ecchi",
-          "value": "ecchi"
-        },
-        {
-          "label": "entertainment",
-          "value": "entertainment"
-        },
-        {
           "label": "Fantasy",
           "value": "fantasy"
-        },
-        {
-          "label": "Funny",
-          "value": "funny"
-        },
-        {
-          "label": "Gender Bender",
-          "value": "gender-bender"
-        },
-        {
-          "label": "Ghost",
-          "value": "ghost"
         },
         {
           "label": "Harem",
@@ -66,24 +38,12 @@
           "value": "historical"
         },
         {
-          "label": "Horror",
-          "value": "horror"
-        },
-        {
           "label": "Isekai",
           "value": "isekai"
         },
         {
-          "label": "Jose",
-          "value": "jose"
-        },
-        {
           "label": "Josei",
           "value": "josei"
-        },
-        {
-          "label": "Male protagonist",
-          "value": "male-protagonist"
         },
         {
           "label": "Martial Arts",
@@ -94,16 +54,20 @@
           "value": "mature"
         },
         {
+          "label": "Medical",
+          "value": "medical"
+        },
+        {
+          "label": "Modern",
+          "value": "modern"
+        },
+        {
           "label": "Mystery",
           "value": "mystery"
         },
         {
           "label": "Psychological",
           "value": "psychological"
-        },
-        {
-          "label": "Reincarnation",
-          "value": "reincarnation"
         },
         {
           "label": "Romance",
@@ -114,8 +78,12 @@
           "value": "school-life"
         },
         {
-          "label": "Sci-Fi",
+          "label": "Sci-fi",
           "value": "sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
         },
         {
           "label": "Shoujo",
@@ -134,52 +102,20 @@
           "value": "slice-of-life"
         },
         {
-          "label": "Smut",
-          "value": "smut"
-        },
-        {
-          "label": "Sprited animal",
-          "value": "sprited-animal"
-        },
-        {
           "label": "Supernatural",
           "value": "supernatural"
-        },
-        {
-          "label": "Survival",
-          "value": "survival"
         },
         {
           "label": "Tragedy",
           "value": "tragedy"
         },
         {
-          "label": "Transmigration",
-          "value": "transmigration"
-        },
-        {
-          "label": "Unlimited flow",
-          "value": "unlimited-flow"
-        },
-        {
           "label": "Wuxia",
           "value": "wuxia"
         },
         {
-          "label": "Xianxia",
-          "value": "xianxia"
-        },
-        {
-          "label": "Xuanhuan",
-          "value": "xuanhuan"
-        },
-        {
           "label": "Yaoi",
           "value": "yaoi"
-        },
-        {
-          "label": "Yuri",
-          "value": "yuri"
         }
       ]
     },
@@ -189,16 +125,8 @@
       "value": [],
       "options": [
         {
-          "label": "Chinese",
-          "value": "chinese"
-        },
-        {
-          "label": "Chinese Novel",
-          "value": "chinese-novel"
-        },
-        {
-          "label": "Korean Novel",
-          "value": "korean-novel"
+          "label": "Martial Arts",
+          "value": "martial-arts"
         },
         {
           "label": "Published Novel (KR)",
@@ -261,6 +189,10 @@
         {
           "label": "Popular",
           "value": "popular"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
         }
       ]
     }

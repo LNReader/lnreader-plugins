@@ -10,10 +10,6 @@
           "value": "fan-fiction"
         },
         {
-          "label": "fanqienovel",
-          "value": "fanqienovel"
-        },
-        {
           "label": "fanstay",
           "value": "fanstay"
         },
@@ -22,52 +18,16 @@
           "value": "fantasy"
         },
         {
-          "label": "football",
-          "value": "football"
-        },
-        {
           "label": "horror",
           "value": "horror"
-        },
-        {
-          "label": "Huyen Huyen",
-          "value": "huyen-huyen"
-        },
-        {
-          "label": "light novel",
-          "value": "light-novel"
-        },
-        {
-          "label": "living",
-          "value": "living"
         },
         {
           "label": "martial arts",
           "value": "martial-arts"
         },
         {
-          "label": "Mature",
-          "value": "mature"
-        },
-        {
-          "label": "military",
-          "value": "military"
-        },
-        {
           "label": "military history",
           "value": "military-history"
-        },
-        {
-          "label": "Mystical Demons",
-          "value": "mystical-demons"
-        },
-        {
-          "label": "nba",
-          "value": "nba"
-        },
-        {
-          "label": "roamnce",
-          "value": "roamnce"
         },
         {
           "label": "romance",
@@ -82,64 +42,16 @@
           "value": "sci-fi-online-games"
         },
         {
-          "label": "Science fiction",
-          "value": "science-fiction"
-        },
-        {
           "label": "Science fiction online game",
           "value": "science-fiction-online-game"
-        },
-        {
-          "label": "speech",
-          "value": "speech"
         },
         {
           "label": "Sports",
           "value": "sports"
         },
         {
-          "label": "tanmi doujin",
-          "value": "tanmi-doujin"
-        },
-        {
-          "label": "Terrifying supernatural",
-          "value": "terrifying-supernatural"
-        },
-        {
-          "label": "urabn",
-          "value": "urabn"
-        },
-        {
           "label": "urban",
           "value": "urban"
-        },
-        {
-          "label": "Urban Fiction",
-          "value": "urban-fiction"
-        },
-        {
-          "label": "urban;romance",
-          "value": "urbanromance"
-        },
-        {
-          "label": "wuxia",
-          "value": "wuxia"
-        },
-        {
-          "label": "wuxia fairy",
-          "value": "wuxia-fairy"
-        },
-        {
-          "label": "Xuan Feng weak initiation",
-          "value": "xuan-feng-weak-initiation"
-        },
-        {
-          "label": "Xuanhuan",
-          "value": "xuanhuan"
-        },
-        {
-          "label": "Youth Campus",
-          "value": "youth-campus"
         }
       ]
     },
@@ -169,6 +81,10 @@
           "value": "entertainment"
         },
         {
+          "label": "f",
+          "value": "f"
+        },
+        {
           "label": "falo",
           "value": "falo"
         },
@@ -181,12 +97,20 @@
           "value": "fan-fiction"
         },
         {
+          "label": "fanqie",
+          "value": "fanqie"
+        },
+        {
           "label": "fanqienovel",
           "value": "fanqienovel"
         },
         {
           "label": "Fantasy",
           "value": "fantasy"
+        },
+        {
+          "label": "faoo",
+          "value": "faoo"
         },
         {
           "label": "Football",
@@ -255,6 +179,10 @@
         {
           "label": "qimao",
           "value": "qimao"
+        },
+        {
+          "label": "qq",
+          "value": "qq"
         },
         {
           "label": "romance",
