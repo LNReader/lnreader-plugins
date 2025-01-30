@@ -84,11 +84,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
     articles.forEach(article => {
       const [, novelUrl, novelName] =
-        article.match(/<a href="(.*?)".*title="(.*?)"/) || [];
+        article.match(/<a href="([^\"]*)".*? title="([^\"]*)"/) || [];
 
       if (novelName && novelUrl) {
         const novelCover =
-          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/?>/) || [];
+          article.match(/<img [^>]*?src="([^\"]*)"[^>]*?(?: data-src="([^\"]*)")?[^>]*>/) || [];
 
         let novelPath;
         if (novelUrl.includes(this.site)) {
@@ -410,8 +410,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     }
     return (
       data
-        .match(/<div.*class="epcontent ([\s\S]*?)<div.*class="?bottomnav/g)?.[0]
-        .match(/<p.*>([\s\S]*?)<\/p>/g)
+        .match(/<div.*?class="epcontent ([^]*?)<div.*?class="?bottomnav/g)?.[0]
+        .match(/<p[^>]*>([^]*?)<\/p>/g)
         ?.join('\n') || ''
     );
   }
