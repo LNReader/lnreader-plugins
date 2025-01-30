@@ -9,7 +9,7 @@ class InkittPlugin implements Plugin.PluginBase {
   name = 'Inkitt';
   icon = 'src/en/inkitt/icon.png';
   site = 'https://www.inkitt.com';
-  version = '1.0.0';
+  version = '1.0.1';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   //flag indicates whether access to LocalStorage, SesesionStorage is required.
@@ -53,7 +53,7 @@ class InkittPlugin implements Plugin.PluginBase {
   }
 
   getPath(novel: any) {
-    return novel.category_one + '/' + novel.id;
+    return (novel.category_one || novel.genres[0]) + '/' + novel.id;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
@@ -66,13 +66,15 @@ class InkittPlugin implements Plugin.PluginBase {
       name: loadedCheerio('h1.story-title').text(),
     };
 
-    novel.author = loadedCheerio('a.author-link').text();
+    novel.author = loadedCheerio('dl > dd > a.author-link').text();
 
     novel.genres = loadedCheerio('dd.genres > a')
       .map((i, el) => loadedCheerio(el).text())
       .toArray()
       .join(', ');
-    const status = loadedCheerio('div.dlc > dl > dd').text().trim();
+    const status = loadedCheerio('div.dlc > dl:has(dt:contains("Status")) > dd')
+      .text()
+      .trim();
     if (status === 'Complete') novel.status = NovelStatus.Completed;
     if (status === 'Ongoing') novel.status = NovelStatus.Ongoing;
 
