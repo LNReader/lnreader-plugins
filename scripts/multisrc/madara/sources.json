@@ -6,7 +6,7 @@
     "options": {
       "useNewChapterEndpoint": true,
       "customJs": "chapterText.remove('div:has(a)')",
-      "versionIncrements": 4
+      "versionIncrements": 5
     }
   },
   {
