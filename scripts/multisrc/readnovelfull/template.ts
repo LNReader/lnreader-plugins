@@ -1,4 +1,4 @@
-import { CheerioAPI, load } from 'cheerio';
+import { CheerioAPI, load as parseHTML, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -6,6 +6,10 @@ import { NovelStatus } from '@libs/novelStatus';
 type ReadNovelFullOptions = {
   lang?: string;
   versionIncrements?: number;
+  popularPage?: string;
+  latestPage?: string;
+  searchPage?: string;
+  ajaxChapterList?: boolean;
 };
 
 export type ReadNovelFullMetadata = {
@@ -48,12 +52,19 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   parseNovels($: CheerioAPI): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
 
-    $('.list-novel > .row').each((i, elem) => {
+    $('.list-novel > .row, .list-truyen > .row').each((i, elem) => {
       const novelName = $(elem).find('h3').text();
-      const coverUrl = $(elem).find('img').attr('src');
+      let coverUrl = $(elem).find('img').attr('src');
       const novelUrl = this.site + $(elem).find('a').attr('href');
 
-      if (novelUrl) {
+      if (
+        coverUrl &&
+        !(coverUrl.includes('https://') || coverUrl.includes('http://'))
+      ) {
+        coverUrl = this.site + coverUrl;
+      }
+
+      if (novelUrl && novelName.trim()) {
         novels.push({
           name: novelName,
           cover: coverUrl,
@@ -69,12 +80,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/novel-list/most-popular-novel?page=' + pageNo;
+    let url = this.site + '/' + this.options?.popularPage + '?page=' + pageNo;
 
     if (!filters) filters = {};
 
     if (showLatestNovels) {
-      url += this.site + '/novel-list/latest-release-novel?page=' + pageNo;
+      url = this.site + '/' + this.options?.latestPage + '?page=' + pageNo;
     }
 
     const $ = await this.getCheerio(url, false);
@@ -85,22 +96,29 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     let $ = await this.getCheerio(this.site + novelPath, false);
 
-    const novel: Plugin.SourceNovel = {
+    const novel: Plugin.SourceNovel & { totalPages?: number } = {
       path: novelPath.replace(this.site, ''),
       name: 'Untitled',
     };
 
-    novel.name = $('h3').text().trim();
+    novel.name = $('h3.title').first().text().trim();
     novel.cover = $('.book > img').attr('src');
+    if (
+      novel.cover &&
+      !(novel.cover.includes('https://') || novel.cover.includes('http://'))
+    ) {
+      novel.cover = this.site + novel.cover;
+    }
 
-    $('ul.info.info-meta > li').each(function () {
+    $('ul.info.info-meta > li, .info > div').each(function () {
       const detailName = $(this)
         .find('h3')
+        .first()
         .text()
         .toLowerCase()
         .replace(':', '');
 
-      const detail = $(this).text().split(':')[1].trim();
+      const detail = $(this).text().split(':')[1].trim().toLowerCase();
 
       switch (detailName) {
         case 'author':
@@ -129,37 +147,72 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     });
 
     novel.summary = $('.desc-text').text();
-
-    const novelId = $('#rating').attr('data-novel-id');
-    const chaptersUrl = this.site + '/ajax/chapter-archive?novelId=' + novelId;
-
-    $ = await this.getCheerio(chaptersUrl, false);
-
     const chapters: Plugin.ChapterItem[] = [];
 
-    $('.panel-body')
-      .find('li')
-      .each(function () {
-        const chapterName = $(this).find('a').attr('title') || '';
-        const chapterUrl = $(this).find('a').attr('href') || '';
-        const chapterNumber = Number(chapterName.match(/Chapter (\d*)/g)?.[1]);
+    const novelId = $('#rating').attr('data-novel-id');
+    if (this.options?.ajaxChapterList) {
+      const chaptersUrl =
+        this.site + '/ajax/chapter-archive?novelId=' + novelId;
 
-        chapters.push({
-          name: chapterName,
-          path: chapterUrl,
-          chapterNumber,
+      $ = await this.getCheerio(chaptersUrl, false);
+
+      $('.panel-body')
+        .find('li')
+        .each(function () {
+          const chapterName = $(this).find('a').attr('title') || '';
+          const chapterUrl = $(this).find('a').attr('href') || '';
+
+          chapters.push({
+            name: chapterName,
+            path: chapterUrl,
+          });
         });
-      });
+    } else {
+      chapters.push(...this.parsePageChapters($));
+      novel.totalPages = parseInt(
+        ($('ul.pagination > li.last > a').attr('data-page') ??
+          $('ul.pagination > li.last > a')
+            .attr('href')
+            ?.match(/\?page_num=(\d+)/)?.[1])!,
+      );
+    }
 
     novel.chapters = chapters;
 
     return novel;
   }
 
+  parsePageChapters($: CheerioAPI) {
+    const chapters: Plugin.ChapterItem[] = [];
+    $('.list-chapter')
+      .find('li')
+      .each(function () {
+        const chapterName = $(this).find('a').attr('title') || '';
+        const chapterUrl = $(this).find('a').attr('href') || '';
+
+        chapters.push({
+          name: chapterName,
+          path: chapterUrl,
+        });
+      });
+    return chapters;
+  }
+
+  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+    const $ = await this.getCheerio(
+      this.site + novelPath + '?page=' + page,
+      false,
+    );
+    const chapters = this.parsePageChapters($);
+    return {
+      chapters,
+    };
+  }
+
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
 
-    return $('#chr-content').html();
+    return $('#chr-content, #chapter-content').html()!;
   }
 
   async searchNovels(
@@ -167,7 +220,13 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     page: number,
   ): Promise<Plugin.NovelItem[]> {
     const url =
-      this.site + '/novel-list/search?keyword=' + searchTerm + '&page=' + page;
+      this.site +
+      '/' +
+      this.options?.searchPage +
+      '?keyword=' +
+      searchTerm +
+      '&page=' +
+      page;
     const $ = await this.getCheerio(url, true);
 
     return this.parseNovels($);

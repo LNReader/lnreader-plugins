@@ -4,7 +4,31 @@
     "sourceSite": "https://readnovelfull.com",
     "sourceName": "ReadNovelFull",
     "options": {
-      "versionIncrements": 1
+      "versionIncrements": 1,
+      "popularPage": "novel-list/most-popular-novel",
+      "latestPage": "novel-list/latest-release-novel",
+      "searchPage": "novel-list/search",
+      "ajax-chapter-list": true
+    }
+  },
+  {
+    "id": "allnovel",
+    "sourceSite": "https://allnovel.org",
+    "sourceName": "AllNovel",
+    "options": {
+      "popularPage": "most-popular",
+      "latestPage": "latest-release-novel",
+      "searchPage": "search"
+    }
+  },
+  {
+    "id": "lightnovelplus",
+    "sourceSite": "https://lightnovelplus.com",
+    "sourceName": "LightNovelPlus",
+    "options": {
+      "popularPage": "book/bookclass.html?type=hot_novel&language=en",
+      "latestPage": "book/bookclass.html?type=last_release&language=en",
+      "searchPage": "book/search.html"
     }
   }
 ]
