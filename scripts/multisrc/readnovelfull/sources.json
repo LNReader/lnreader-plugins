@@ -5,9 +5,9 @@
     "sourceName": "ReadNovelFull",
     "options": {
       "versionIncrements": 1,
-      "popularPage": "novel-list/most-popular-novel",
-      "latestPage": "novel-list/latest-release-novel",
-      "searchPage": "novel-list/search",
+      "popularPage": "novel-list/most-popular-novel?page=%%PAGE%%",
+      "latestPage": "novel-list/latest-release-novel?page=%%PAGE%%",
+      "searchPage": "novel-list/search?keyword=%%SEARCH%%&page=%%PAGE%%",
       "ajax-chapter-list": true
     }
   },
@@ -16,9 +16,9 @@
     "sourceSite": "https://allnovel.org",
     "sourceName": "AllNovel",
     "options": {
-      "popularPage": "most-popular",
-      "latestPage": "latest-release-novel",
-      "searchPage": "search"
+      "popularPage": "most-popular?page=%%PAGE%%",
+      "latestPage": "latest-release-novel?page=%%PAGE%%",
+      "searchPage": "search?keyword=%%SEARCH%%&page=%%PAGE%%"
     }
   },
   {
@@ -26,9 +26,9 @@
     "sourceSite": "https://lightnovelplus.com",
     "sourceName": "LightNovelPlus",
     "options": {
-      "popularPage": "book/bookclass.html?type=hot_novel&language=en",
-      "latestPage": "book/bookclass.html?type=last_release&language=en",
-      "searchPage": "book/search.html"
+      "popularPage": "book/bookclass.html?type=hot_novel&language=en&page_num=%%PAGE%%",
+      "latestPage": "book/bookclass.html?type=last_release&language=en&page_num=%%PAGE%%",
+      "searchPage": "book/search.html?keyword=%%SEARCH%%&page_num=%%PAGE%%&language=en"
     }
   }
 ]

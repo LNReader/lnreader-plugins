@@ -6,9 +6,9 @@ import { NovelStatus } from '@libs/novelStatus';
 type ReadNovelFullOptions = {
   lang?: string;
   versionIncrements?: number;
-  popularPage?: string;
-  latestPage?: string;
-  searchPage?: string;
+  popularPage: string;
+  latestPage: string;
+  searchPage: string;
   ajaxChapterList?: boolean;
 };
 
@@ -16,7 +16,7 @@ export type ReadNovelFullMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
-  options?: ReadNovelFullOptions;
+  options: ReadNovelFullOptions;
   filters?: any;
 };
 
@@ -26,7 +26,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   icon: string;
   site: string;
   version: string;
-  options?: ReadNovelFullOptions;
+  options: ReadNovelFullOptions;
 
   constructor(metadata: ReadNovelFullMetadata) {
     this.id = metadata.id;
@@ -80,12 +80,18 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site + '/' + this.options?.popularPage + '?page=' + pageNo;
+    let url =
+      this.site +
+      '/' +
+      this.options.popularPage.replace('%%PAGE%%', pageNo.toString());
 
     if (!filters) filters = {};
 
     if (showLatestNovels) {
-      url = this.site + '/' + this.options?.latestPage + '?page=' + pageNo;
+      url =
+        this.site +
+        '/' +
+        this.options.latestPage.replace('%%PAGE%%', pageNo.toString());
     }
 
     const $ = await this.getCheerio(url, false);
@@ -222,11 +228,9 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     const url =
       this.site +
       '/' +
-      this.options?.searchPage +
-      '?keyword=' +
-      searchTerm +
-      '&page=' +
-      page;
+      this.options?.searchPage
+        .replace('%%SEARCH%%', searchTerm)
+        .replace('%%PAGE%%', page.toString());
     const $ = await this.getCheerio(url, true);
 
     return this.parseNovels($);
