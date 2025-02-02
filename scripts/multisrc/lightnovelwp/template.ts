@@ -42,7 +42,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${5 + versionIncrements}`;
+    this.version = `1.1.${6 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
 
@@ -96,14 +96,14 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     html = load(html).html(); // fix "'" beeing replaced by "&#8217;" (html entities)
     const novels: Plugin.NovelItem[] = [];
 
-    const articles = html.match(/<article([\s\S]*?)<\/article>/g) || [];
+    const articles = html.match(/<article([^]*?)<\/article>/g) || [];
     articles.forEach(article => {
       const [, novelUrl, novelName] =
-        article.match(/<a href="(.*?)".*title="(.*?)"/) || [];
+        article.match(/<a href="([^\"]*)".*? title="([^\"]*)"/) || [];
 
       if (novelName && novelUrl) {
         const novelCover =
-          article.match(/<img.*src="(.*?)"(?:\sdata-src="(.*?)")?.*\/?>/) || [];
+          article.match(/<img [^>]*?src="([^\"]*)"[^>]*?(?: data-src="([^\"]*)")?[^>]*>/) || [];
 
         let novelPath;
         if (novelUrl.includes(this.site)) {
@@ -434,8 +434,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     }
     return (
       data
-        .match(/<div.*class="epcontent ([\s\S]*?)<div.*class="?bottomnav/g)?.[0]
-        .match(/<p.*>([\s\S]*?)<\/p>/g)
+        .match(/<div.*?class="epcontent ([^]*?)<div.*?class="?bottomnav/g)?.[0]
+        .match(/<p[^>]*>([^]*?)<\/p>/g)
         ?.join('\n') || ''
     );
   }
