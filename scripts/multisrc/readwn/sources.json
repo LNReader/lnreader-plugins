@@ -36,7 +36,10 @@
   {
     "id": "wuxiaspace",
     "sourceSite": "https://www.wuxiaspot.com",
-    "sourceName": "Wuxia Space"
+    "sourceName": "Wuxia Space",
+    "options": {
+      "versionIncrements": 1
+    }
   },
   {
     "id": "wuxiav",

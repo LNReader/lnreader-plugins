@@ -105,7 +105,8 @@
     "sourceName": "NovelsKnight",
     "options": {
       "lang": "English",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {

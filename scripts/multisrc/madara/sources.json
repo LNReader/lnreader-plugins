@@ -84,7 +84,8 @@
     "sourceName": "MeioNovel",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Indonesian"
+      "lang": "Indonesian",
+      "versionIncrements": 1
     }
   },
   {
