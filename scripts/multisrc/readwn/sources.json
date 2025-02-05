@@ -35,12 +35,15 @@
   },
   {
     "id": "wuxiaspace",
-    "sourceSite": "https://www.wuxiaspace.com",
-    "sourceName": "Wuxia Space"
+    "sourceSite": "https://www.wuxiaspot.com",
+    "sourceName": "Wuxia Space",
+    "options": {
+      "versionIncrements": 1
+    }
   },
   {
     "id": "wuxiav",
     "sourceSite": "https://www.wuxiav.com",
-    "sourceName": "WuxiaV" 
+    "sourceName": "WuxiaV"
   }
 ]

@@ -101,11 +101,12 @@
   },
   {
     "id": "novelsknight",
-    "sourceSite": "https://novelsknight.com/",
+    "sourceSite": "https://faloonovels.online/",
     "sourceName": "NovelsKnight",
     "options": {
       "lang": "English",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {

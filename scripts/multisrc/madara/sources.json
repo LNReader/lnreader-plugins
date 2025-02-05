@@ -80,11 +80,12 @@
   },
   {
     "id": "meionovel",
-    "sourceSite": "https://meionovel.id/",
+    "sourceSite": "https://meionovels.com/",
     "sourceName": "MeioNovel",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Indonesian"
+      "lang": "Indonesian",
+      "versionIncrements": 1
     }
   },
   {
