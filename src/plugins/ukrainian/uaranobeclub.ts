@@ -2,7 +2,7 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 
 const UA_RANOBE_ID = 'uaranobeclub' as const;
-const SITE = 'https://uaranobe.club/' as const;
+const UA_RANOBE_URL = 'https://uaranobe.club/' as const;
 
 type Writing = {
   id: string;
@@ -75,7 +75,7 @@ class UaRanobeClubApi {
     query: string,
     variables: TVariables,
   ): Promise<TData> {
-    const response = await fetchApi(`${SITE}graphql`, {
+    const response = await fetchApi(`${UA_RANOBE_URL}graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ class UaRanobeClubApi {
 class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
   name = 'UA Ranobe Club';
-  site = SITE;
+  site = UA_RANOBE_URL;
   version = '1.0.1';
   icon = `src/uk/${this.id}/icon.png`;
 
@@ -208,7 +208,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: SITE + slug,
+        path: '/' + slug,
       }),
     );
 
@@ -216,7 +216,7 @@ class UaRanobeClub implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const slug = novelPath.split(SITE).join('');
+    const slug = novelPath.split('/').join('');
 
     const data: Writing = await UaRanobeClubApi.fetchNovel(slug);
 
@@ -224,7 +224,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       data.scanlators?.[0]?.scanlator?.episodes?.map(
         ({ title, seqTitle, slug: chapterSlug, subId }) => ({
           name: `${seqTitle}. ${title}`,
-          path: SITE + chapterSlug + `#${slug}`,
+          path: '/' + chapterSlug + `#${slug}`,
           chapterNumber: parseInt(subId, 10), // Предполагаем, что subId это число
         }),
       ) || [];
@@ -233,7 +233,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       genres: data.genres?.map(({ genre }) => genre.name).join(',') || '',
       chapters,
       name: data.title,
-      path: SITE + data.slug,
+      path: UA_RANOBE_URL + data.slug,
       summary: data.description,
       cover: data.image,
     };
@@ -242,7 +242,7 @@ class UaRanobeClub implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const [slug, writingSlug] = chapterPath.split(SITE).join('').split('#');
+    const [slug, writingSlug] = chapterPath.split('/').join('').split('#');
     const chapterText = await UaRanobeClubApi.fetchChapter(slug, writingSlug);
 
     return chapterText;
@@ -254,7 +254,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: SITE + slug,
+        path: '/' + slug,
       }),
     );
 
