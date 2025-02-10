@@ -196,7 +196,7 @@ class UaRanobeClubApi {
 
 class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
-  name = 'UA Ranobe Club 2';
+  name = 'UA Ranobe Club';
   site = UA_RANOBE_URL;
   version = '1.1.3';
   icon = `src/uk/${this.id}/icon.png`;
