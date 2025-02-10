@@ -220,10 +220,8 @@ class UaRanobeClub implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const slug = novelPath.split(UA_RANOBE_URL).join('');
 
-    console.log('parseNovel', novelPath, slug);
-
     const data: Writing = await UaRanobeClubApi.fetchNovel(slug);
-    console.log('parseNovel', slug);
+
     const chapters: Plugin.ChapterItem[] =
       data.scanlators?.[0]?.scanlator?.episodes?.map(
         ({ title, seqTitle, slug: chapterSlug, subId }) => ({
