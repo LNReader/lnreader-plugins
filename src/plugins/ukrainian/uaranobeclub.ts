@@ -198,7 +198,7 @@ class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
   name = 'UA Ranobe Club';
   site = UA_RANOBE_URL;
-  version = '1.0.1';
+  version = '1.1.0';
   icon = `src/uk/${this.id}/icon.png`;
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
