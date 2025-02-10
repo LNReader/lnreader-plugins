@@ -196,9 +196,9 @@ class UaRanobeClubApi {
 
 class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
-  name = 'UA Ranobe Club';
+  name = 'UA Ranobe Club 2';
   site = UA_RANOBE_URL;
-  version = '1.1.1';
+  version = '1.1.3';
   icon = `src/uk/${this.id}/icon.png`;
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
@@ -210,7 +210,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: '/' + slug,
+        path: UA_RANOBE_URL + slug,
       }),
     );
 
@@ -218,9 +218,9 @@ class UaRanobeClub implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const slug = novelPath.split('/').join('');
+    const slug = novelPath.split(UA_RANOBE_URL).join('');
 
-    console.log('parseNovel', slug);
+    console.log('parseNovel', novelPath, slug);
 
     const data: Writing = await UaRanobeClubApi.fetchNovel(slug);
     console.log('parseNovel', slug);
@@ -246,7 +246,10 @@ class UaRanobeClub implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const [slug, writingSlug] = chapterPath.split('/').join('').split('#');
+    const [slug, writingSlug] = chapterPath
+      .split(UA_RANOBE_URL)
+      .join('')
+      .split('#');
     const chapterText = await UaRanobeClubApi.fetchChapter(slug, writingSlug);
 
     return chapterText;
@@ -263,7 +266,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: '/' + slug,
+        path: UA_RANOBE_URL + slug,
       }),
     );
 
