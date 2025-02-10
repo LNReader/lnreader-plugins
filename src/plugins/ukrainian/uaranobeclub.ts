@@ -161,7 +161,7 @@ class UaRanobeClubApi {
       typeof variables
     >(query, variables);
 
-    return response.data.writingBySlug;
+    return response?.data?.writingBySlug ?? '';
   }
 
   static async fetchListWithNovel(
@@ -198,7 +198,7 @@ class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
   name = 'UA Ranobe Club';
   site = UA_RANOBE_URL;
-  version = '1.1.0';
+  version = '1.1.1';
   icon = `src/uk/${this.id}/icon.png`;
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
@@ -220,13 +220,15 @@ class UaRanobeClub implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const slug = novelPath.split('/').join('');
 
-    const data: Writing = await UaRanobeClubApi.fetchNovel(slug);
+    console.log('parseNovel', slug);
 
+    const data: Writing = await UaRanobeClubApi.fetchNovel(slug);
+    console.log('parseNovel', slug);
     const chapters: Plugin.ChapterItem[] =
       data.scanlators?.[0]?.scanlator?.episodes?.map(
         ({ title, seqTitle, slug: chapterSlug, subId }) => ({
           name: `${seqTitle}. ${title}`,
-          path: '/' + chapterSlug + `#${slug}`,
+          path: UA_RANOBE_URL + chapterSlug + `#${slug}`,
           chapterNumber: parseInt(subId, 10), // Предполагаем, что subId это число
         }),
       ) || [];
