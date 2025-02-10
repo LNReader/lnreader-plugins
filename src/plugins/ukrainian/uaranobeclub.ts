@@ -201,8 +201,10 @@ class UaRanobeClub implements Plugin.PluginBase {
   version = '1.0.1';
   icon = `src/uk/${this.id}/icon.png`;
 
-  async popularNovels(): Promise<Plugin.NovelItem[]> {
-    const data = await UaRanobeClubApi.fetchListWithNovel(0, '');
+  async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
+    const skip = (page - 1) * 10;
+
+    const data = await UaRanobeClubApi.fetchListWithNovel(skip, '');
 
     const novelItems: Plugin.NovelItem[] = (data?.writings ?? []).map(
       ({ title, image, slug }) => ({
@@ -248,8 +250,13 @@ class UaRanobeClub implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const data = await UaRanobeClubApi.fetchListWithNovel(0, searchTerm);
+  async searchNovels(
+    searchTerm: string,
+    page: number,
+  ): Promise<Plugin.NovelItem[]> {
+    const skip = (page - 1) * 10;
+
+    const data = await UaRanobeClubApi.fetchListWithNovel(skip, searchTerm);
     const novelItems: Plugin.NovelItem[] = (data?.writings ?? []).map(
       ({ title, image, slug }) => ({
         name: title,
