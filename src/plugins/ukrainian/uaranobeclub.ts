@@ -75,7 +75,7 @@ class UaRanobeClubApi {
     query: string,
     variables: TVariables,
   ): Promise<TData> {
-    const response = await fetchApi(`${SITE}/graphql`, {
+    const response = await fetchApi(`${SITE}graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
