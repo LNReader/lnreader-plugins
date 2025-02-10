@@ -198,7 +198,7 @@ class UaRanobeClub implements Plugin.PluginBase {
   id = UA_RANOBE_ID;
   name = 'UA Ranobe Club';
   site = UA_RANOBE_URL;
-  version = '1.1.3';
+  version = '1.1.4';
   icon = `src/uk/${this.id}/icon.png`;
 
   async popularNovels(page: number): Promise<Plugin.NovelItem[]> {
@@ -210,7 +210,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: UA_RANOBE_URL + slug,
+        path: slug,
       }),
     );
 
@@ -228,7 +228,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       data.scanlators?.[0]?.scanlator?.episodes?.map(
         ({ title, seqTitle, slug: chapterSlug, subId }) => ({
           name: `${seqTitle}. ${title}`,
-          path: UA_RANOBE_URL + chapterSlug + `#${slug}`,
+          path: chapterSlug + `#${slug}`,
           chapterNumber: parseInt(subId, 10), // Предполагаем, что subId это число
         }),
       ) || [];
@@ -237,7 +237,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       genres: data.genres?.map(({ genre }) => genre.name).join(',') || '',
       chapters,
       name: data.title,
-      path: UA_RANOBE_URL + data.slug,
+      path: data.slug,
       summary: data.description,
       cover: data.image,
     };
@@ -266,7 +266,7 @@ class UaRanobeClub implements Plugin.PluginBase {
       ({ title, image, slug }) => ({
         name: title,
         cover: image,
-        path: UA_RANOBE_URL + slug,
+        path: slug,
       }),
     );
 
