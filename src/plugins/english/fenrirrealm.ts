@@ -117,9 +117,9 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     status: {
       type: FilterTypes.Picker,
       label: 'Status',
-      value: 'all',
+      value: 'any',
       options: [
-        { label: 'All', value: 'all' },
+        { label: 'All', value: 'any' },
         { label: 'Ongoing', value: 'ongoing' },
         {
           label: 'Completed',
@@ -140,6 +140,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     genres: {
       type: FilterTypes.CheckboxGroup,
       label: 'Genres',
+      value: [],
       options: [
         { 'label': 'Action', 'value': '1' },
         { 'label': 'Adult', 'value': '2' },
