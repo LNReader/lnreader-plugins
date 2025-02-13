@@ -72,11 +72,14 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       this.site + '/api/novels/chapter-list/' + novelPath,
     ).then(r => r.json());
 
-    novel.chapters = chapters.map(c => ({
-      name: c.title,
-      path: novelPath + '/' + c.slug,
-      releaseTime: c.created_at,
-    }));
+    novel.chapters = chapters
+      .map(c => ({
+        name: c.title,
+        path: novelPath + '/' + c.slug,
+        releaseTime: c.created_at,
+        chapterNumber: c.number,
+      }))
+      .sort((a, b) => a.chapterNumber - b.chapterNumber);
     return novel;
   }
 
