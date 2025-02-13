@@ -1,7 +1,7 @@
-import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class FenrirRealmPlugin implements Plugin.PluginBase {
   id = 'fenrir';
@@ -9,7 +9,6 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   icon = 'src/en/fenrirrealm/icon.png';
   site = 'https://fenrirealm.com';
   version = '1.0.7';
-  filters: Filters | undefined = undefined;
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   //flag indicates whether access to LocalStorage, SesesionStorage is required.
@@ -23,10 +22,13 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     // let sort = "updated";
-    let sort = 'popular';
+    let sort = filters.sort.value;
     if (showLatestNovels) sort = 'latest';
+    const genresFilter = filters.genres.value
+      .map(g => '&genres%5B%5D=' + g)
+      .join('');
     const res = await fetchApi(
-      `${this.site}/api/novels/filter?page=${pageNo}&per_page=20&status=any&order=${sort}`,
+      `${this.site}/api/novels/filter?page=${pageNo}&per_page=20&status=${filters.status.value}&order=${sort}${genresFilter}`,
     ).then(r => r.json());
 
     return res.data.map(r => this.parseNovelFromApi(r));
@@ -110,6 +112,115 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
 
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + '/series/' + path;
+
+  filters = {
+    status: {
+      type: FilterTypes.Picker,
+      label: 'Status',
+      value: 'all',
+      options: [
+        { label: 'All', value: 'all' },
+        { label: 'Ongoing', value: 'ongoing' },
+        {
+          label: 'Completed',
+          value: 'completed',
+        },
+      ],
+    },
+    sort: {
+      type: FilterTypes.Picker,
+      label: 'Sort',
+      value: 'popular',
+      options: [
+        { label: 'Popular', value: 'popular' },
+        { label: 'Latest', value: 'latest' },
+        { label: 'Updated', value: 'updated' },
+      ],
+    },
+    genres: {
+      type: FilterTypes.CheckboxGroup,
+      label: 'Genres',
+      options: [
+        { 'label': 'Action', 'value': '1' },
+        { 'label': 'Adult', 'value': '2' },
+        {
+          'label': 'Adventure',
+          'value': '3',
+        },
+        { 'label': 'Comedy', 'value': '4' },
+        { 'label': 'Drama', 'value': '5' },
+        {
+          'label': 'Ecchi',
+          'value': '6',
+        },
+        { 'label': 'Fantasy', 'value': '7' },
+        { 'label': 'Gender Bender', 'value': '8' },
+        {
+          'label': 'Harem',
+          'value': '9',
+        },
+        { 'label': 'Historical', 'value': '10' },
+        { 'label': 'Horror', 'value': '11' },
+        {
+          'label': 'Josei',
+          'value': '12',
+        },
+        { 'label': 'Martial Arts', 'value': '13' },
+        { 'label': 'Mature', 'value': '14' },
+        {
+          'label': 'Mecha',
+          'value': '15',
+        },
+        { 'label': 'Mystery', 'value': '16' },
+        { 'label': 'Psychological', 'value': '17' },
+        {
+          'label': 'Romance',
+          'value': '18',
+        },
+        { 'label': 'School Life', 'value': '19' },
+        { 'label': 'Sci-fi', 'value': '20' },
+        {
+          'label': 'Seinen',
+          'value': '21',
+        },
+        { 'label': 'Shoujo', 'value': '22' },
+        { 'label': 'Shoujo Ai', 'value': '23' },
+        {
+          'label': 'Shounen',
+          'value': '24',
+        },
+        { 'label': 'Shounen Ai', 'value': '25' },
+        { 'label': 'Slice of Life', 'value': '26' },
+        {
+          'label': 'Smut',
+          'value': '27',
+        },
+        { 'label': 'Sports', 'value': '28' },
+        { 'label': 'Supernatural', 'value': '29' },
+        {
+          'label': 'Tragedy',
+          'value': '30',
+        },
+        { 'label': 'Wuxia', 'value': '31' },
+        { 'label': 'Xianxia', 'value': '32' },
+        {
+          'label': 'Xuanhuan',
+          'value': '33',
+        },
+        { 'label': 'Yaoi', 'value': '34' },
+        { 'label': 'Yuri', 'value': '35' },
+      ],
+    },
+  } satisfies Filters;
 }
 
 export default new FenrirRealmPlugin();
+
+//paste into console on site to load
+async function getUpdatedGenres() {
+  const data = await fetch(
+    'https://fenrirealm.com/api/novels/taxonomy/genres',
+  ).then(d => d.json());
+  const genreData = data.map(g => ({ label: g.name, value: g.id.toString() }));
+  console.log(JSON.stringify(genreData));
+}
