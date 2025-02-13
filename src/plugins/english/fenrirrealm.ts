@@ -94,7 +94,9 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
           (c.locked?.price ? '🔒 ' : '') +
           'Chapter ' +
           c.number +
-          (c.title ? ' - ' + c.title : ''),
+          (c.title && c.title.trim() != 'Chapter ' + c.number
+            ? ' - ' + c.title
+            : ''),
         path: novelPath + '/chapter-' + c.number,
         releaseTime: c.created_at,
         chapterNumber: c.number,
