@@ -76,7 +76,6 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       name: c.title,
       path: novelPath + '/' + c.slug,
       releaseTime: c.created_at,
-      chapterNumber: c.number,
     }));
     return novel;
   }
