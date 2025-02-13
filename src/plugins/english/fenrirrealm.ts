@@ -35,9 +35,11 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const html = await fetchApi(`${this.site}/series/${novelPath}`).then(r =>
-      r.text(),
-    );
+    const html = await fetchApi(`${this.site}/series/${novelPath}`, {
+      headers: {
+        'User-Agent': '',
+      },
+    }).then(r => r.text());
     const loadedCheerio = loadCheerio(html);
 
     loadedCheerio(
@@ -84,9 +86,11 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const page = await fetchApi(this.site + '/series/' + chapterPath).then(r =>
-      r.text(),
-    );
+    const page = await fetchApi(this.site + '/series/' + chapterPath, {
+      headers: {
+        'User-Agent': '',
+      },
+    }).then(r => r.text());
     return loadCheerio(page)('#reader-area').html();
   }
 
