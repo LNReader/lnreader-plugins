@@ -2,14 +2,24 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { load as loadCheerio } from 'cheerio';
 import { Filters, FilterTypes } from '@libs/filterInputs';
+import { storage } from '@libs/storage';
 
 class FenrirRealmPlugin implements Plugin.PluginBase {
   id = 'fenrir';
   name = 'Fenrir Realm';
   icon = 'src/en/fenrirrealm/icon.png';
   site = 'https://fenrirealm.com';
-  version = '1.0.7';
+  version = '1.0.8';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
+
+  hideLocked = storage.get('hideLocked');
+  pluginSettings = {
+    hideLocked: {
+      value: '',
+      label: 'Hide locked chapters',
+      type: 'Switch',
+    },
+  };
 
   //flag indicates whether access to LocalStorage, SesesionStorage is required.
   webStorageUtilized?: boolean;
@@ -70,14 +80,24 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       .first()
       .text();
 
-    const chapters = await fetchApi(
+    let chapters = await fetchApi(
       this.site + '/api/novels/chapter-list/' + novelPath,
     ).then(r => r.json());
 
+    if (this.hideLocked) {
+      chapters = chapters.filter(c => !c.locked?.price);
+    }
+
     novel.chapters = chapters
       .map(c => ({
-        name: c.title,
-        path: novelPath + '/' + c.slug,
+        name:
+          (c.locked?.price ? '🔒 ' : '') +
+          'Chapter ' +
+          c.number +
+          (c.title && c.title.trim() != 'Chapter ' + c.number
+            ? ' - ' + c.title
+            : ''),
+        path: novelPath + '/chapter-' + c.number,
         releaseTime: c.created_at,
         chapterNumber: c.number,
       }))
