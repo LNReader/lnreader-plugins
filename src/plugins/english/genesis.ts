@@ -52,6 +52,13 @@ class Genesis implements Plugin.PluginBase {
     return this.parseNovels(json);
   }
 
+  // Helper function to extract novel data from nodes
+  extractData(nodes: any[]): any {
+    return nodes
+      .filter((node: { type: string }) => node.type === 'data')
+      .map((node: { data: any }) => node.data)[0];
+  }
+
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = `${this.site}${novelPath}/__data.json?x-sveltekit-invalidated=001`;
 
@@ -60,7 +67,7 @@ class Genesis implements Plugin.PluginBase {
     const nodes = json.nodes;
 
     // Extract the main novel data from the nodes
-    const data = this.extractNovelData(nodes);
+    const data = this.extractData(nodes);
 
     // Initialize the novel object with default values
     const novel: Plugin.SourceNovel = {
@@ -80,13 +87,6 @@ class Genesis implements Plugin.PluginBase {
     novel.chapters = this.extractChapters(data);
 
     return novel;
-  }
-
-  // Helper function to extract novel data from nodes
-  extractNovelData(nodes: any[]): any {
-    return nodes
-      .filter((node: { type: string }) => node.type === 'data')
-      .map((node: { data: any }) => node.data)[0];
   }
 
   // Helper function to populate novel metadata
@@ -115,52 +115,73 @@ class Genesis implements Plugin.PluginBase {
 
   // Helper function to extract and format chapters
   extractChapters(data: any): Plugin.ChapterItem[] {
+    const chapterKey = 'chapters';
+    const chapters: Plugin.ChapterItem[] = [];
+
+    // Iterate over each property in data to find chapter containers
     for (const key in data) {
       const value = data[key];
 
-      // Change string here if the chapters are stored under a different key
-      const chapterKey = 'chapters';
+      // Look for an object with a 'chapters' key
+      if (value && typeof value === 'object' && chapterKey in value) {
+        const chaptersIndexKey = value[chapterKey];
+        const chapterData = data[chaptersIndexKey];
+        if (!chapterData || typeof chapterData !== 'object') continue;
 
-      if (typeof value === 'object' && value !== null && chapterKey in value) {
-        const chapterData = data[value[chapterKey]];
-        const freeChapterData = chapterData.free;
-        const premiumChapterData = chapterData.premium;
+        // Dynamically get chapter indices from every category (free, premium, etc.)
+        let allChapterIndices: number[] = [];
+        for (const category of Object.keys(chapterData)) {
+          const chapterIndices = data[chapterData[category]];
+          if (Array.isArray(chapterIndices)) {
+            allChapterIndices = allChapterIndices.concat(chapterIndices);
+          }
+        }
 
-        const allChapterData = [
-          ...data[freeChapterData],
-          ...data[premiumChapterData],
-        ];
-
-        return allChapterData
+        // Format each chapter and add only valid ones
+        const formattedChapters = allChapterIndices
           .map((index: number) => data[index])
           .map((chapter: any) => this.formatChapter(chapter, data))
           .filter((chapter): chapter is Plugin.ChapterItem => chapter !== null);
+
+        chapters.push(...formattedChapters);
       }
     }
 
-    return [];
+    return chapters;
   }
 
   // Helper function to format an individual chapter
   formatChapter(chapter: any, data: any): Plugin.ChapterItem | null {
-    // Ensure required fields are present and valid
-    if (
-      data[chapter.id] &&
-      data[chapter.chapter_title] &&
-      data[chapter.chapter_number] >= 0 &&
-      data[chapter.required_tier] !== null &&
-      data[chapter.date_created]
-    ) {
-      const number = parseInt(data[chapter.chapter_number], 10) || 0;
-      const requiredTier = parseInt(data[chapter.required_tier], 10) || 0;
+    const { id, chapter_title, chapter_number, required_tier, date_created } =
+      chapter;
 
-      // Only process chapters with a 'requiredTier' of 0
+    // Destructure from data using computed property names based on chapter keys
+    const {
+      [id]: chapterId,
+      [chapter_title]: chapterTitle,
+      [chapter_number]: chapterNumberVal,
+      [required_tier]: requiredTierVal,
+      [date_created]: dateCreated,
+    } = data;
+
+    // Validate required fields
+    if (
+      chapterId &&
+      chapterTitle &&
+      chapterNumberVal >= 0 &&
+      requiredTierVal !== null &&
+      dateCreated
+    ) {
+      const chapterNumber = parseInt(String(chapterNumberVal), 10) || 0;
+      const requiredTier = parseInt(String(requiredTierVal), 10) || 0;
+
+      // Only process chapters that do not require a premium tier
       if (requiredTier === 0) {
         return {
-          name: `Chapter ${number} - ${data[chapter.chapter_title]}`,
-          path: `/viewer/${data[chapter.id]}`,
-          releaseTime: data[chapter.date_created],
-          chapterNumber: number,
+          name: `Chapter ${chapterNumber} - ${chapterTitle}`,
+          path: `/viewer/${chapterId}`,
+          releaseTime: dateCreated,
+          chapterNumber: chapterNumber,
         };
       }
     }
@@ -384,17 +405,51 @@ class Genesis implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const url = `${this.site}${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
+
+    // Fetch the novel's data in JSON format
     const json = await fetchApi(url).then(r => r.json());
     const nodes = json.nodes;
-    const data = nodes
-      .filter((node: { type: string }) => node.type === 'data')
-      .map((node: { data: any }) => node.data)[0];
-    const content = data[data[0].gs] ?? data[19];
-    const notes = data[data[0].notes];
-    const footnotes = data[data[0].footnotes];
-    return (
-      content + (notes ? `<h2>Notes</h2>${notes}` : '') + (footnotes ?? '')
-    );
+
+    // Extract the main novel data from the nodes
+    const data = this.extractData(nodes);
+
+    const contentKey = 'content';
+    const notesKey = 'notes';
+    const footnotesKey = 'footnotes';
+
+    // Iterate over each property in data to find chapter containers
+    for (const key in data) {
+      const mapping = data[key];
+
+      // Look for an object with a 'chapters' key
+      if (
+        mapping &&
+        typeof mapping === 'object' &&
+        contentKey in mapping &&
+        notesKey in mapping &&
+        footnotesKey in mapping
+      ) {
+        // Use the found mapping object to determine the actual keys.
+        const contentMappingKey = mapping[contentKey];
+        const notesMappingKey = mapping[notesKey];
+        const footnotesMappingKey = mapping[footnotesKey];
+
+        // Retrieve the chapter's content, notes, and footnotes using the mapping.
+        // Provide a fallback for content if needed.
+        const content = data[contentMappingKey] ?? data[19];
+        const notes = data[notesMappingKey];
+        const footnotes = data[footnotesMappingKey];
+
+        return (
+          content +
+          (notes ? `<b>Notes</b>${notes}` : '') +
+          (footnotes ? `<b>Footnotes</b>${footnotes}` : '')
+        );
+      }
+    }
+
+    // If no mapping object was found, return an empty string or handle appropriately.
+    return '';
   }
 
   async searchNovels(
