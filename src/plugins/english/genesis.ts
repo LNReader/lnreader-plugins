@@ -442,8 +442,8 @@ class Genesis implements Plugin.PluginBase {
 
         return (
           content +
-          (notes ? `<b>Notes</b>${notes}` : '') +
-          (footnotes ? `<b>Footnotes</b>${footnotes}` : '')
+          (notes ? `<b>Notes</b><br>${notes}` : '') +
+          (footnotes ? `<b>Footnotes</b><br>${footnotes}` : '')
         );
       }
     }
