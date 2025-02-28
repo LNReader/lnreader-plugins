@@ -41,7 +41,7 @@ class Genesis implements Plugin.PluginBase {
     if (pageNo !== 1) return [];
     let link = `${this.site}/api/novels/search?`;
     if (showLatestNovels) {
-      link += 'sort=Recent';
+      link += 'serialization=All&sort=Recent';
     } else {
       if (filters!.genres.value) {
         link += filters!.genres.value;
