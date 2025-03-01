@@ -36,17 +36,25 @@ class Genesis implements Plugin.PluginBase {
 
   async popularNovels(
     pageNo: number,
-    { showLatestNovels, filters }: Plugin.PopularNovelsOptions,
-  ): Promise<Plugin.SourceNovel[]> {
+    {
+      showLatestNovels,
+      filters,
+    }: Plugin.PopularNovelsOptions<typeof this.filters>,
+  ): Promise<Plugin.NovelItem[]> {
     if (pageNo !== 1) return [];
     let link = `${this.site}/api/novels/search?`;
     if (showLatestNovels) {
       link += 'serialization=All&sort=Recent';
     } else {
-      if (filters!.genres.value) {
-        link += filters!.genres.value;
+      if (filters?.genres.value.length) {
+        link += 'genres=' + filters.genres.value.join('&genres=') + '&';
       }
-      link += `&${filters!.storyStatus.value}&${filters!.sort.value}`;
+      if (filters?.storyStatus.value) {
+        link += 'serialization=' + `${filters.storyStatus.value}` + '&';
+      }
+      if (filters?.sort.value) {
+        link += 'sort=' + `${filters.sort.value}`;
+      }
     }
     const json = await fetchApi(link).then(r => r.json());
     return this.parseNovels(json);
@@ -465,21 +473,21 @@ class Genesis implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Sort Results By',
-      value: 'sort=Popular',
+      value: 'Popular',
       options: [
-        { label: 'Popular', value: 'sort=Popular' },
-        { label: 'Recent', value: 'sort=Recent' },
-        { label: 'Views', value: 'sort=Views' },
+        { label: 'Popular', value: 'Popular' },
+        { label: 'Recent', value: 'Recent' },
+        { label: 'Views', value: 'Views' },
       ],
       type: FilterTypes.Picker,
     },
     storyStatus: {
       label: 'Status',
-      value: 'serialization=All',
+      value: 'All',
       options: [
-        { label: 'All', value: 'serialization=All' },
-        { label: 'Ongoing', value: 'serialization=Ongoing' },
-        { label: 'Completed', value: 'serialization=Completed' },
+        { label: 'All', value: 'All' },
+        { label: 'Ongoing', value: 'Ongoing' },
+        { label: 'Completed', value: 'Completed' },
       ],
       type: FilterTypes.Picker,
     },
@@ -487,18 +495,18 @@ class Genesis implements Plugin.PluginBase {
       label: 'Genres',
       value: [],
       options: [
-        { label: 'Action', value: 'genres=Action' },
-        { label: 'Comedy', value: 'genres=Comedy' },
-        { label: 'Drama', value: 'genres=Drama' },
-        { label: 'Fantasy', value: 'genres=Fantasy' },
-        { label: 'Harem', value: 'genres=Harem' },
-        { label: 'Martial Arts', value: 'genres=Martial+Arts' },
-        { label: 'Modern', value: 'genres=Modern' },
-        { label: 'Mystery', value: 'genres=Mystery' },
-        { label: 'Psychological', value: 'genres=Psychological' },
-        { label: 'Romance', value: 'genres=Romance' },
-        { label: 'Slice of life', value: 'genres=Slice+of+Life' },
-        { label: 'Tragedy', value: 'genres=Tragedy' },
+        { label: 'Action', value: 'Action' },
+        { label: 'Comedy', value: 'Comedy' },
+        { label: 'Drama', value: 'Drama' },
+        { label: 'Fantasy', value: 'Fantasy' },
+        { label: 'Harem', value: 'Harem' },
+        { label: 'Martial Arts', value: 'Martial Arts' },
+        { label: 'Modern', value: 'Modern' },
+        { label: 'Mystery', value: 'Mystery' },
+        { label: 'Psychological', value: 'Psychological' },
+        { label: 'Romance', value: 'Romance' },
+        { label: 'Slice of life', value: 'Slice of Life' },
+        { label: 'Tragedy', value: 'Tragedy' },
       ],
       type: FilterTypes.CheckboxGroup,
     },
