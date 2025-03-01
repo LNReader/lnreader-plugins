@@ -75,8 +75,9 @@ class NovelUpdates implements Plugin.PluginBase {
       link += '&sort=' + filters?.sort.value;
 
       link += '&order=' + filters?.order.value;
-    } else if (
-      filters?.language.value.length ||
+    }
+    if (
+      (!showLatestNovels && filters?.language.value.length) ||
       filters?.genres.value.include?.length ||
       filters?.genres.value.exclude?.length ||
       filters?.storyStatus.value !== ''
