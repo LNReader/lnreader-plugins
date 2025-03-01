@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.14';
+  version = '0.7.15';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -43,30 +43,21 @@ class NovelUpdates implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}`;
-    if (
-      filters?.language.value.length ||
-      filters?.novelType.value.length ||
-      filters?.genres.value.include?.length ||
-      filters?.genres.value.exclude?.length ||
-      filters?.reading_lists.value.length ||
-      filters?.storyStatus.value !== ''
+    if (showLatestNovels) {
+      link += 'series-finder/?sf=1&sort=sdate&order=desc';
+    } else if (
+      filters?.sort.value === 'popmonth' ||
+      filters?.sort.value === 'popular'
+    ) {
+      link += 'series-ranking/?rank=' + filters.sort.value;
+    } else if (
+      filters?.sort.value !== 'popmonth' &&
+      filters?.sort.value !== 'popular'
     ) {
       link += 'series-finder/?sf=1';
 
-      if (filters?.language.value.length) {
-        link += '&org=' + filters.language.value.join(',');
-      }
-
       if (filters?.novelType.value.length) {
         link += '&nt=' + filters.novelType.value.join(',');
-      }
-
-      if (filters?.genres.value.include?.length) {
-        link += '&gi=' + filters.genres.value.include.join(',');
-      }
-
-      if (filters?.genres.value.exclude?.length) {
-        link += '&ge=' + filters.genres.value.exclude.join(',');
       }
 
       if (
@@ -81,17 +72,30 @@ class NovelUpdates implements Plugin.PluginBase {
         link += '&mRLi=' + filters?.reading_list_operator.value;
       }
 
-      if (filters?.storyStatus.value.length) {
-        link += '&ss=' + filters.storyStatus.value;
-      }
-
       link += '&sort=' + filters?.sort.value;
 
       link += '&order=' + filters?.order.value;
-    } else if (showLatestNovels) {
-      link += 'latest-series/?st=1';
-    } else {
-      link += 'series-ranking/?rank=week';
+    } else if (
+      filters?.language.value.length ||
+      filters?.genres.value.include?.length ||
+      filters?.genres.value.exclude?.length ||
+      filters?.storyStatus.value !== ''
+    ) {
+      if (filters?.language.value.length) {
+        link += '&org=' + filters.language.value.join(',');
+      }
+
+      if (filters?.genres.value.include?.length) {
+        link += '&gi=' + filters.genres.value.include.join(',');
+      }
+
+      if (filters?.genres.value.exclude?.length) {
+        link += '&ge=' + filters.genres.value.exclude.join(',');
+      }
+
+      if (filters?.storyStatus.value.length) {
+        link += '&ss=' + filters.storyStatus.value;
+      }
     }
 
     link += '&pg=' + page;
@@ -1011,8 +1015,10 @@ class NovelUpdates implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Sort Results By',
-      value: 'sdate',
+      value: 'popmonth',
       options: [
+        { label: 'Popular (Month)', value: 'popmonth' },
+        { label: 'Popular (All)', value: 'popular' },
         { label: 'Last Updated', value: 'sdate' },
         { label: 'Rating', value: 'srate' },
         { label: 'Rank', value: 'srank' },
@@ -1025,7 +1031,7 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     order: {
-      label: 'Order',
+      label: 'Order (Not for Popular)',
       value: 'desc',
       options: [
         { label: 'Descending', value: 'desc' },
