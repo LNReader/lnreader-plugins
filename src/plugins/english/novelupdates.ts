@@ -56,15 +56,15 @@ class NovelUpdates implements Plugin.PluginBase {
     ) {
       link += 'series-finder/?sf=1';
 
-      if (filters?.novelType.value.length) {
-        link += '&nt=' + filters.novelType.value.join(',');
-      }
-
       if (
         filters?.genres.value.include?.length ||
         filters?.genres.value.exclude?.length
       ) {
         link += '&mgi=' + filters.genre_operator.value;
+      }
+
+      if (filters?.novelType.value.length) {
+        link += '&nt=' + filters.novelType.value.join(',');
       }
 
       if (filters?.reading_lists.value.length) {
@@ -1051,34 +1051,8 @@ class NovelUpdates implements Plugin.PluginBase {
       ],
       type: FilterTypes.Picker,
     },
-    language: {
-      label: 'Language',
-      value: [],
-      options: [
-        { label: 'Chinese', value: '495' },
-        { label: 'Filipino', value: '9181' },
-        { label: 'Indonesian', value: '9179' },
-        { label: 'Japanese', value: '496' },
-        { label: 'Khmer', value: '18657' },
-        { label: 'Korean', value: '497' },
-        { label: 'Malaysian', value: '9183' },
-        { label: 'Thai', value: '9954' },
-        { label: 'Vietnamese', value: '9177' },
-      ],
-      type: FilterTypes.CheckboxGroup,
-    },
-    novelType: {
-      label: 'Novel Type',
-      value: [],
-      options: [
-        { label: 'Light Novel', value: '2443' },
-        { label: 'Published Novel', value: '26874' },
-        { label: 'Web Novel', value: '2444' },
-      ],
-      type: FilterTypes.CheckboxGroup,
-    },
     genre_operator: {
-      label: 'Genre (And/Or)',
+      label: 'Genre (And/Or) (Not for Popular)',
       value: 'and',
       options: [
         { label: 'And', value: 'and' },
@@ -1131,8 +1105,34 @@ class NovelUpdates implements Plugin.PluginBase {
         { label: 'Yuri', value: '922' },
       ],
     },
+    language: {
+      label: 'Language',
+      value: [],
+      options: [
+        { label: 'Chinese', value: '495' },
+        { label: 'Filipino', value: '9181' },
+        { label: 'Indonesian', value: '9179' },
+        { label: 'Japanese', value: '496' },
+        { label: 'Khmer', value: '18657' },
+        { label: 'Korean', value: '497' },
+        { label: 'Malaysian', value: '9183' },
+        { label: 'Thai', value: '9954' },
+        { label: 'Vietnamese', value: '9177' },
+      ],
+      type: FilterTypes.CheckboxGroup,
+    },
+    novelType: {
+      label: 'Novel Type (Not for Popular)',
+      value: [],
+      options: [
+        { label: 'Light Novel', value: '2443' },
+        { label: 'Published Novel', value: '26874' },
+        { label: 'Web Novel', value: '2444' },
+      ],
+      type: FilterTypes.CheckboxGroup,
+    },
     reading_list_operator: {
-      label: 'Reading List (Include/Exclude)',
+      label: 'Reading List (Include/Exclude) (Not for Popular)',
       value: 'include',
       options: [
         { label: 'Include', value: 'include' },
@@ -1141,7 +1141,7 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     reading_lists: {
-      label: 'Reading Lists',
+      label: 'Reading Lists (Not for Popular)',
       value: [],
       options: [{ label: 'All Reading Lists', value: '-1' }],
       type: FilterTypes.CheckboxGroup,
