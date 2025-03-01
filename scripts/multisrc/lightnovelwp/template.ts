@@ -103,7 +103,9 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
 
       if (novelName && novelUrl) {
         const novelCover =
-          article.match(/<img [^>]*?src="([^\"]*)"[^>]*?(?: data-src="([^\"]*)")?[^>]*>/) || [];
+          article.match(
+            /<img [^>]*?src="([^\"]*)"[^>]*?(?: data-src="([^\"]*)")?[^>]*>/,
+          ) || [];
 
         let novelPath;
         if (novelUrl.includes(this.site)) {
