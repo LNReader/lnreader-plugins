@@ -19,28 +19,31 @@
   },
   {
     "id": "wuxiamtl",
-    "sourceSite": "https://www.fansmtl.org",
+    "sourceSite": "https://www.fanmtl.com",
     "sourceName": "Fans MTL",
     "options": {
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
     "id": "fannovel",
-    "sourceSite": "https://www.fannovels.org",
+    "sourceSite": "https://www.fanmtl.com",
     "sourceName": "FanNovel",
+    "options": {
+      "versionIncrements": 2
+    }
+  },
+  {
+    "id": "wuxiaspace",
+    "sourceSite": "https://www.wuxiaspot.com",
+    "sourceName": "Wuxia Space",
     "options": {
       "versionIncrements": 1
     }
   },
   {
-    "id": "wuxiaspace",
-    "sourceSite": "https://www.wuxiaspace.com",
-    "sourceName": "Wuxia Space"
-  },
-  {
     "id": "wuxiav",
     "sourceSite": "https://www.wuxiav.com",
-    "sourceName": "WuxiaV" 
+    "sourceName": "WuxiaV"
   }
 ]

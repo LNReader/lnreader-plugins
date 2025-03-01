@@ -9,8 +9,8 @@ class WarriorLegendTradPlugin implements Plugin.PluginBase {
   id = 'warriorlegendtrad';
   name = 'Warrior Legend Trad';
   icon = 'src/fr/warriorlegendtrad/icon.png';
-  site = 'https://warriorlegendtrad.fr';
-  version = '1.0.0';
+  site = 'https://warriorlegendtrad.wordpress.com';
+  version = '1.0.1';
 
   regexAuthors = [/Auteur\u00A0:([^\n]*)/];
 

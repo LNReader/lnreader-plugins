@@ -10,16 +10,36 @@
           "value": "action"
         },
         {
+          "label": "Adult",
+          "value": "adult"
+        },
+        {
           "label": "Adventure",
           "value": "adventure"
+        },
+        {
+          "label": "Billionaire",
+          "value": "billionaire"
         },
         {
           "label": "Comedy",
           "value": "comedy"
         },
         {
+          "label": "Contemporary",
+          "value": "contemporary"
+        },
+        {
           "label": "Drama",
           "value": "drama"
+        },
+        {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Family",
+          "value": "family"
         },
         {
           "label": "Fantasy",
@@ -30,12 +50,44 @@
           "value": "gender-bender"
         },
         {
+          "label": "Growth",
+          "value": "growth"
+        },
+        {
           "label": "Harem",
           "value": "harem"
         },
         {
+          "label": "Hidden Identity",
+          "value": "hidden-identity"
+        },
+        {
+          "label": "Historical",
+          "value": "historical"
+        },
+        {
           "label": "Horror",
           "value": "horror"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Korean",
+          "value": "korean"
+        },
+        {
+          "label": "Magic",
+          "value": "magic"
+        },
+        {
+          "label": "Manhwa",
+          "value": "manhwa"
+        },
+        {
+          "label": "Marriage",
+          "value": "marriage"
         },
         {
           "label": "Martial Arts",
@@ -46,12 +98,40 @@
           "value": "mature"
         },
         {
+          "label": "Mecha",
+          "value": "mecha"
+        },
+        {
+          "label": "Murim",
+          "value": "murim"
+        },
+        {
           "label": "Mystery",
           "value": "mystery"
         },
         {
+          "label": "Overpowered",
+          "value": "overpowered"
+        },
+        {
           "label": "Psychological",
           "value": "psychological"
+        },
+        {
+          "label": "Regression",
+          "value": "regression"
+        },
+        {
+          "label": "Reincarnation",
+          "value": "reincarnation"
+        },
+        {
+          "label": "Revenge",
+          "value": "revenge"
+        },
+        {
+          "label": "Rich",
+          "value": "rich"
         },
         {
           "label": "Romance",
@@ -70,6 +150,10 @@
           "value": "seinen"
         },
         {
+          "label": "Shoujo",
+          "value": "shoujo"
+        },
+        {
           "label": "Shounen",
           "value": "shounen"
         },
@@ -78,16 +162,52 @@
           "value": "slice-of-life"
         },
         {
+          "label": "Son-in-Law",
+          "value": "son-in-law"
+        },
+        {
+          "label": "Sports",
+          "value": "sports"
+        },
+        {
           "label": "Supernatural",
           "value": "supernatural"
+        },
+        {
+          "label": "Superpower",
+          "value": "superpower"
         },
         {
           "label": "Tragedy",
           "value": "tragedy"
         },
         {
+          "label": "Urban",
+          "value": "urban"
+        },
+        {
+          "label": "Virtual Game",
+          "value": "virtual-game"
+        },
+        {
+          "label": "Warrior",
+          "value": "warrior"
+        },
+        {
+          "label": "Webtoons",
+          "value": "webtoons"
+        },
+        {
           "label": "Wuxia",
           "value": "wuxia"
+        },
+        {
+          "label": "Xianxia",
+          "value": "xianxia"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "xuanhuan"
         }
       ]
     },
@@ -96,6 +216,46 @@
       "label": "Type",
       "value": [],
       "options": [
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        {
+          "label": "Adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "Chinese Novel",
+          "value": "chinese-novel"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "Korean Novel",
+          "value": "korean-novel"
+        },
+        {
+          "label": "Light Novel (KR)",
+          "value": "light-novel-kr"
+        },
+        {
+          "label": "Martial Arts",
+          "value": "martial-arts"
+        },
+        {
+          "label": "Published Novel (KR)",
+          "value": "published-novel-kr"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "Supernatural",
+          "value": "supernatural"
+        },
         {
           "label": "Web Novel",
           "value": "web-novel"

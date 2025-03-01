@@ -6,7 +6,7 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 class NovelFull implements Plugin.PluginBase {
   id = 'novelfull';
   name = 'NovelFull';
-  version = '1.0.0';
+  version = '1.0.2';
   icon = 'src/en/novelfull/icon.png';
   site = 'https://novelfull.com/';
 
@@ -16,8 +16,12 @@ class NovelFull implements Plugin.PluginBase {
     loadedCheerio('.col-truyen-main .list-truyen .row').each((idx, ele) => {
       const novelName = loadedCheerio(ele).find('h3.truyen-title > a').text();
 
-      const novelCover =
-        this.site + loadedCheerio(ele).find('img').attr('src')?.slice(1);
+      // Images from the site are now lazy loaded, so we need to check data-cfsrc as well
+      let novelCover =
+        loadedCheerio(ele).find('img').attr('src') ??
+        loadedCheerio(ele).find('img').attr('data-cfsrc');
+
+      novelCover = novelCover ? this.site + novelCover.slice(1) : undefined;
 
       const novelUrl = loadedCheerio(ele)
         .find('h3.truyen-title > a')
@@ -60,10 +64,19 @@ class NovelFull implements Plugin.PluginBase {
 
     let loadedCheerio = parseHTML(body);
 
+    // Images from the site are now lazy loaded, so we need to check data-cfsrc as well (and fallback to other locations)
+    let cover =
+      loadedCheerio('div.book > img').attr('src') ??
+      loadedCheerio('div.book > img').attr('data-cfsrc') ??
+      loadedCheerio('div.book > noscript > img').attr('src') ??
+      loadedCheerio('meta[name="image"]').attr('content');
+
+    cover = cover ? this.site + cover.slice(1) : undefined;
+
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('div.book > img').attr('alt') || 'Untitled',
-      cover: this.site + loadedCheerio('div.book > img').attr('src'),
+      cover: cover,
       summary: loadedCheerio('div.desc-text').text().trim(),
       status: loadedCheerio('h3:contains("Status")').next().text(),
       chapters: [],
@@ -119,7 +132,10 @@ class NovelFull implements Plugin.PluginBase {
     loadedCheerio('#chapter-content div.ads').remove();
     const chapterText = loadedCheerio('#chapter-content').html() || '';
 
-    return chapterText;
+    return chapterText.replace(
+      /If you find any errors \(\s*Ads popup, ads redirect, broken links, non-standard content, etc\.\.\s*\), Please let us know \S* report chapter \S* so we can fix it as soon as possible\./,
+      '',
+    );
   }
 
   async searchNovels(

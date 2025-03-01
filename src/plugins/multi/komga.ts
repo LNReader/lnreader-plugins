@@ -9,7 +9,7 @@ class KomgaPlugin implements Plugin.PluginBase {
   id = 'komga';
   name = 'Komga';
   icon = 'src/multi/komga/icon.png';
-  version = '1.0.0';
+  version = '1.0.1';
 
   site = storage.get('url');
   email = storage.get('email');
@@ -212,6 +212,11 @@ class KomgaPlugin implements Plugin.PluginBase {
       if (src && !src.startsWith('http')) {
         $(img).attr('src', `${baseUrl}${src}`);
       }
+    });
+
+    // Replace <a> tags with the text inside so its not blue
+    $('a').each((_, a) => {
+      $(a).replaceWith($(a).text());
     });
 
     return $.xml();

@@ -6,9 +6,16 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
-  site = 'https://freewebnovel.com';
-  version = '1.0.3';
+  site = 'https://freewebnovel.com/';
+  version = '1.1.2';
   icon = 'src/en/freewebnovel/icon.png';
+
+  lastSearch: number | null = null;
+  searchInterval = 3200;
+
+  async sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url);
@@ -24,7 +31,8 @@ class FreeWebNovel implements Plugin.PluginBase {
       .map((index, element) => ({
         name: loadedCheerio(element).find('.tit').text() || '',
         cover: this.site + loadedCheerio(element).find('img').attr('src'),
-        path: loadedCheerio(element).find('h3 > a').attr('href') || '',
+        path:
+          loadedCheerio(element).find('h3 > a').attr('href')?.slice(1) || '',
       }))
       .get()
       .filter(novel => novel.name && novel.path);
@@ -38,12 +46,12 @@ class FreeWebNovel implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let url = this.site;
-    if (showLatestNovels) url += '/latest-release-novels/';
+    if (showLatestNovels) url += 'sort/latest-novels/';
     else {
-      if (filters && filters.genres && filters.genres.value !== 'all')
+      if (filters && filters.genres && filters.genres.value !== '')
         url += filters.genres.value;
       else {
-        url += '/most-popular-novels/';
+        url += 'most-popular/';
         if (page != 1) return [];
         page = 0;
       }
@@ -92,7 +100,7 @@ class FreeWebNovel implements Plugin.PluginBase {
           loadedCheerio(element).attr('title') ||
           'Chapter ' + (chapterIndex + 1),
         path:
-          loadedCheerio(element).attr('href') ||
+          loadedCheerio(element).attr('href')?.slice(1) ||
           novelPath.replace(
             '.html',
             '/chapter-' + (chapterIndex + 1) + '.html',
@@ -123,15 +131,18 @@ class FreeWebNovel implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    const r = await fetchApi(this.site + '/search/', {
+    const now = Date.now();
+    if (this.lastSearch && now - this.lastSearch <= this.searchInterval) {
+      await this.sleep(this.searchInterval);
+    }
+    const r = await fetchApi(this.site + 'search', {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Referer: this.site,
-        Origin: this.site,
       },
       method: 'POST',
       body: new URLSearchParams({ searchkey: searchTerm }).toString(),
     });
+    this.lastSearch = Date.now();
     if (!r.ok)
       throw new Error(
         'Could not reach site (' + r.status + ') try to open in webview.',
@@ -151,44 +162,44 @@ class FreeWebNovel implements Plugin.PluginBase {
     genres: {
       type: FilterTypes.Picker,
       label: 'Genre',
-      value: 'all',
+      value: '',
       options: [
-        { label: 'Action', value: '/genres/Action/' },
-        { label: 'Adult', value: '/genres/Adult/' },
-        { label: 'Adventure', value: '/genres/Adventure/' },
-        { label: 'Comedy', value: '/genres/Comedy/' },
-        { label: 'Drama', value: '/genres/Drama/' },
-        { label: 'Eastern', value: '/genres-novel/Eastern' },
-        { label: 'Ecchi', value: '/genres/Ecchi/' },
-        { label: 'Fantasy', value: '/genres/Fantasy/' },
-        { label: 'Gender Bender', value: '/genres/Gender+Bender/' },
-        { label: 'Harem', value: '/genres/Harem/' },
-        { label: 'Historical', value: '/genres/Historical/' },
-        { label: 'Horror', value: '/genres/Horror/' },
-        { label: 'Josei', value: '/genres/Josei/' },
-        { label: 'Game', value: '/genres/Game/' },
-        { label: 'Martial Arts', value: '/genres/Martial+Arts/' },
-        { label: 'Mature', value: '/genres/Mature/' },
-        { label: 'Mecha', value: '/genres/Mecha/' },
-        { label: 'Mystery', value: '/genres/Mystery/' },
-        { label: 'Psychological', value: '/genres/Psychological/' },
-        { label: 'Reincarnation', value: '/genres-novel/Reincarnation' },
-        { label: 'Romance', value: '/genres/Romance/' },
-        { label: 'School Life', value: '/genres/School+Life/' },
-        { label: 'Sci-fi', value: '/genres/Sci-fi/' },
-        { label: 'Seinen', value: '/genres/Seinen/' },
-        { label: 'Shoujo', value: '/genres/Shoujo/' },
-        { label: 'Shounen Ai', value: '/genres/Shounen+Ai/' },
-        { label: 'Shounen', value: '/genres/Shounen/' },
-        { label: 'Slice of Life', value: '/genres/Slice+of+Life/' },
-        { label: 'Smut', value: '/genres/Smut/' },
-        { label: 'Sports', value: '/genres/Sports/' },
-        { label: 'Supernatural', value: '/genres/Supernatural/' },
-        { label: 'Tragedy', value: '/genres/Tragedy/' },
-        { label: 'Wuxia', value: '/genres/Wuxia/' },
-        { label: 'Xianxia', value: '/genres/Xianxia/' },
-        { label: 'Xuanhuan', value: '/genres/Xuanhuan/' },
-        { label: 'Yaoi', value: '/genres/Yaoi/' },
+        { label: 'Action', value: 'genre/Action/' },
+        { label: 'Adult', value: 'genre/Adult/' },
+        { label: 'Adventure', value: 'genre/Adventure/' },
+        { label: 'Comedy', value: 'genre/Comedy/' },
+        { label: 'Drama', value: 'genre/Drama/' },
+        { label: 'Eastern', value: 'genre/Eastern' },
+        { label: 'Ecchi', value: 'genre/Ecchi/' },
+        { label: 'Fantasy', value: 'genre/Fantasy/' },
+        { label: 'Gender Bender', value: 'genre/Gender+Bender/' },
+        { label: 'Harem', value: 'genre/Harem/' },
+        { label: 'Historical', value: 'genre/Historical/' },
+        { label: 'Horror', value: 'genre/Horror/' },
+        { label: 'Josei', value: 'genre/Josei/' },
+        { label: 'Game', value: 'genre/Game/' },
+        { label: 'Martial Arts', value: 'genre/Martial+Arts/' },
+        { label: 'Mature', value: 'genre/Mature/' },
+        { label: 'Mecha', value: 'genre/Mecha/' },
+        { label: 'Mystery', value: 'genre/Mystery/' },
+        { label: 'Psychological', value: 'genre/Psychological/' },
+        { label: 'Reincarnation', value: 'genre/Reincarnation' },
+        { label: 'Romance', value: 'genre/Romance/' },
+        { label: 'School Life', value: 'genre/School+Life/' },
+        { label: 'Sci-fi', value: 'genre/Sci-fi/' },
+        { label: 'Seinen', value: 'genre/Seinen/' },
+        { label: 'Shoujo', value: 'genre/Shoujo/' },
+        { label: 'Shounen Ai', value: 'genre/Shounen+Ai/' },
+        { label: 'Shounen', value: 'genre/Shounen/' },
+        { label: 'Slice of Life', value: 'genre/Slice+of+Life/' },
+        { label: 'Smut', value: 'genre/Smut/' },
+        { label: 'Sports', value: 'genre/Sports/' },
+        { label: 'Supernatural', value: 'genre/Supernatural/' },
+        { label: 'Tragedy', value: 'genre/Tragedy/' },
+        { label: 'Wuxia', value: 'genre/Wuxia/' },
+        { label: 'Xianxia', value: 'genre/Xianxia/' },
+        { label: 'Xuanhuan', value: 'genre/Xuanhuan/' },
+        { label: 'Yaoi', value: 'genre/Yaoi/' },
       ],
     },
   } satisfies Filters;
