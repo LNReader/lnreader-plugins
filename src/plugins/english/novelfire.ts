@@ -211,11 +211,10 @@ class NovelFire implements Plugin.PluginBase {
       });
 
       // Format the chapter with title and word count
-      const chapterTitle = parsedContent.title?.trim() || 'Title not found';
       const wordCount = parsedContent.word_count || 0;
       const cleanContent = parsedContent.content || '';
 
-      return `<h2>${chapterTitle}</h2><p>${wordCount} words</p><hr><br>${cleanContent}`;
+      return `<p>${wordCount} words</p><hr><br>${cleanContent}`;
     } catch (error) {
       throw new Error(`Parsing chapter failed: ${error}`);
     }
