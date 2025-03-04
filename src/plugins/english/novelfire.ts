@@ -3,6 +3,7 @@ import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { parse } from '@postlight/parser';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
@@ -204,26 +205,20 @@ class NovelFire implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    const loadedCheerio = parseHTML(body);
+    try {
+      const parsedContent = await parse(url, {
+        html: body,
+      });
 
-    const bloatElements = [
-      '.box-ads',
-      '.box-notification',
-      /^nf/, // Regular expression to match tags starting with 'nf'
-    ];
-    bloatElements.forEach(tag => {
-      if (tag instanceof RegExp) {
-        loadedCheerio('*')
-          .filter((_, el) =>
-            tag.test(loadedCheerio(el).prop('tagName')!.toLowerCase()),
-          )
-          .remove();
-      } else {
-        loadedCheerio(tag).remove();
-      }
-    });
+      // Format the chapter with title and word count
+      const chapterTitle = parsedContent.title?.trim() || 'Title not found';
+      const wordCount = parsedContent.word_count || 0;
+      const cleanContent = parsedContent.content || '';
 
-    return loadedCheerio('#content').html()!;
+      return `<h2>${chapterTitle}</h2><p>${wordCount} words</p><hr><br>${cleanContent}`;
+    } catch (error) {
+      throw new Error(`Parsing chapter failed: ${error}`);
+    }
   }
 
   async searchNovels(
