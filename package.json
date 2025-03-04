@@ -23,7 +23,7 @@
   "author": "LNReader",
   "license": "MIT",
   "dependencies": {
-    "@postlight/parser": "^2.2.3",
+    "@extractus/article-extractor": "^8.0.17",
     "terser": "^5.36.0",
     "typescript": "^5.7.2"
   },

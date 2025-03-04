@@ -3,7 +3,7 @@ import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import { parse } from '@postlight/parser';
+import { extractFromHtml } from '@extractus/article-extractor';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
@@ -206,15 +206,9 @@ class NovelFire implements Plugin.PluginBase {
     const body = await result.text();
 
     try {
-      const parsedContent = await parse(url, {
-        html: body,
-      });
+      const parsedContent = await extractFromHtml(body, url);
 
-      // Format the chapter with title and word count
-      const wordCount = parsedContent.word_count || 0;
-      const cleanContent = parsedContent.content || '';
-
-      return `<p>${wordCount} words</p><hr><br>${cleanContent}`;
+      return parsedContent?.content || 'No Content Found';
     } catch (error) {
       throw new Error(`Parsing chapter failed: ${error}`);
     }
