@@ -18,7 +18,7 @@ fi
 
 git reset
 rm -rf .js
-npm run clearMultisrc
+npm run clearMultisrc-windows
 npm run generate
 npx tsc --project tsconfig.production.json
 npm run json
