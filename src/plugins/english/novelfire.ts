@@ -3,15 +3,12 @@ import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import {
-  extractFromHtml,
-  setSanitizeHtmlOptions,
-} from '@extractus/article-extractor';
+import { extractFromHtml } from '@extractus/article-extractor';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.1';
+  version = '1.1.0';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
