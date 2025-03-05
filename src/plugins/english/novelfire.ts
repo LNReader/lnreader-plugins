@@ -3,7 +3,10 @@ import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
-import { extractFromHtml } from '@extractus/article-extractor';
+import {
+  extractFromHtml,
+  setSanitizeHtmlOptions,
+} from '@extractus/article-extractor';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
@@ -205,7 +208,14 @@ class NovelFire implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
+    const allowAllOptions = {
+      allowedTags: false,
+      allowedAttributes: false,
+    };
+
     try {
+      setSanitizeHtmlOptions(allowAllOptions);
+
       const parsedContent = await extractFromHtml(body, url);
 
       return parsedContent?.content || 'No Content Found';
