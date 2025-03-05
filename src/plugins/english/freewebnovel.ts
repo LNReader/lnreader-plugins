@@ -7,11 +7,11 @@ class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com/';
-  version = '1.1.2';
+  version = '1.1.3';
   icon = 'src/en/freewebnovel/icon.png';
 
   lastSearch: number | null = null;
-  searchInterval = 3200;
+  searchInterval = 3400;
 
   async sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -123,11 +123,8 @@ class FreeWebNovel implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText
-      .replace(
-        /<p>\s*(?:(?:This (?:chapter is updated by|content is taken from)|Follow current novels on|Updated from) )?(?:[ƒfF][Rrɾг][Eēeё][Eēёe][Wwω][Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵv][Eёeē][LlℓɭI\|]\.\s?[Cƈcç][O૦σøoѳ][M๓ɱm]|ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ)\.?/g,
-        '<p>',
-      )
-      .replace(/<p>\s*Visit for the best novel reading experience\.?/g, '<p>');
+      .replace(/>([^<\.]+?\.)?[^\.<]*\s*[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/, '>$1'),
+      );
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
