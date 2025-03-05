@@ -61,6 +61,9 @@
             ],
             "@store": [
                 "./src/store"
+            ],
+            "@config": [
+                "./src/config"
             ]
         } /* Specify a set of entries that re-map imports to additional lookup locations. */,
         // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
@@ -154,6 +157,7 @@
         "./src/libs/**",
         "./src/provider/**",
         "./src/store/**",
-        "./src/types/**"
+        "./src/types/**",
+        "./src/config/**"
     ],
 }
