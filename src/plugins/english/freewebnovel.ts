@@ -14,7 +14,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   searchInterval = 3400;
 
   async sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async getCheerio(url: string): Promise<CheerioAPI> {
@@ -31,10 +31,11 @@ class FreeWebNovel implements Plugin.PluginBase {
       .map((index, element) => ({
         name: loadedCheerio(element).find('.tit').text() || '',
         cover: this.site + loadedCheerio(element).find('img').attr('src'),
-        path: loadedCheerio(element).find('h3 > a').attr('href')?.slice(1) || '',
+        path:
+          loadedCheerio(element).find('h3 > a').attr('href')?.slice(1) || '',
       }))
       .get()
-      .filter((novel) => novel.name && novel.path);
+      .filter(novel => novel.name && novel.path);
   }
 
   async popularNovels(
@@ -122,9 +123,9 @@ class FreeWebNovel implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText.replace(
-      />([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/g,
-      '>$1',
-    );
+        />([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/g,
+        '>$1',
+      );
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
