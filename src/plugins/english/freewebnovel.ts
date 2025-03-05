@@ -123,7 +123,7 @@ class FreeWebNovel implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText
-      .replace(/>([^<\.]+?\.)?[^\.<]*\s*[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/, '>$1'),
+      .replace(/>([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/, '>$1'),
       );
   }
 
