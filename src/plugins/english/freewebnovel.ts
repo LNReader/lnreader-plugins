@@ -123,9 +123,9 @@ class FreeWebNovel implements Plugin.PluginBase {
 
     const chapterText = loadedCheerio('div.txt').html() || '';
     return chapterText.replace(
-        />([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/g,
-        '>$1',
-      );
+      />([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/g,
+      '>$1',
+    );
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
