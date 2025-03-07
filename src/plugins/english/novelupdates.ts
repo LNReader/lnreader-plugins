@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '6.7.16';
+  version = '7.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -82,7 +82,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
     const body = await result.text();
-    const loadedCheerio = parseHTML(body);
+    let loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -107,41 +107,46 @@ class NovelUpdates implements Plugin.PluginBase {
     const summary = loadedCheerio('#editdescription').text().trim();
     novel.summary = summary + `\n\nType: ${type}`;
 
+    const chapter: Plugin.ChapterItem[] = [];
     const novelId = loadedCheerio('input#mypostid').attr('value')!;
     const formData = new FormData();
     formData.append('action', 'nd_getchapters');
     formData.append('mygrr', '0');
     formData.append('mypostid', novelId);
 
-    const chaptersHtml = await fetchApi(`${this.site}wp-admin/admin-ajax.php`, {
+    const link = `${this.site}wp-admin/admin-ajax.php`;
+
+    const text = await fetchApi(link, {
       method: 'POST',
       body: formData,
     }).then(data => data.text());
 
-    const chaptersCheerio = parseHTML(chaptersHtml);
-    const chapters: Plugin.ChapterItem[] = [];
+    loadedCheerio = parseHTML(text);
 
-    chaptersCheerio('li.sp_li_chp').each((_, el) => {
-      const chapterName = chaptersCheerio(el)
-        .text()
-        .replace('v', 'volume ')
-        .replace('c', ' chapter ')
-        .replace('part', 'part ')
-        .replace('ss', 'SS')
-        .replace(/\b\w/g, l => l.toUpperCase())
-        .trim();
+    const nameReplacements: Record<string, string> = {
+      'v': 'volume ',
+      'c': ' chapter ',
+      'part': 'part ',
+      'ss': 'SS',
+    };
 
-      const chapterPath =
-        'https:' + chaptersCheerio(el).find('a').first().next().attr('href');
+    loadedCheerio('li.sp_li_chp').each((i, el) => {
+      let chapterName = loadedCheerio(el).text();
+      for (const name in nameReplacements) {
+        chapterName = chapterName.replace(name, nameReplacements[name]);
+      }
+      chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
+      const chapterUrl =
+        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
 
-      if (chapterPath)
-        chapters.push({
-          name: chapterName,
-          path: chapterPath.replace(this.site, ''),
-        });
+      chapter.push({
+        name: chapterName,
+        path: chapterUrl.replace(this.site, ''),
+      });
     });
 
-    novel.chapters = chapters.reverse();
+    novel.chapters = chapter.reverse();
+
     return novel;
   }
 
