@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.15';
+  version = '0.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -580,7 +580,7 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterContent = loadedCheerio('.chp_raw').html()!;
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         break;
-      // Last edited in 0.7.13 - 21/01/2025
+      // Last edited in 0.7.16 - 07/03/2025
       case 'skydemonorder':
         /**
          * Check for age verification
@@ -592,12 +592,7 @@ class NovelUpdates implements Plugin.PluginBase {
           throw new Error('Age verification required, please open in webview.');
         }
         chapterTitle = `${loadedCheerio('header .font-medium.text-sm').first().text().trim()}`;
-        chapterContent = loadedCheerio('#startContainer + * > *')
-          .first()
-          .html()!;
-        if (!chapterContent) {
-          chapterContent = `${loadedCheerio('#chapter-body').html()!}<hr><br>There could be missing content, please check in webview.`;
-        }
+        chapterContent = loadedCheerio('.text-left').html()!;
         if (chapterTitle) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         } else {
