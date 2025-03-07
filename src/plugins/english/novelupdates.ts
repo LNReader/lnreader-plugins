@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '4.7.16';
+  version = '1.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -285,14 +285,10 @@ class NovelUpdates implements Plugin.PluginBase {
               notesKey in mapping &&
               footnotesKey in mapping
             ) {
-              // Use the found mapping object to determine the actual keys.
-              const contentMappingKey = mapping[contentKey];
-              const notesMappingKey = mapping[notesKey];
-              const footnotesMappingKey = mapping[footnotesKey];
               // Retrieve the chapter's content, notes, and footnotes using the mapping.
-              const content = data[contentMappingKey];
-              const notes = data[notesMappingKey];
-              const footnotes = data[footnotesMappingKey];
+              const content = data[mapping[contentKey]];
+              const notes = data[mapping[notesKey]];
+              const footnotes = data[mapping[footnotesKey]];
               // Combine the parts with appropriate formatting
               chapterText =
                 content +
@@ -707,16 +703,11 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    let result = await fetchApi(this.site + chapterPath);
-    if (result.status >= 100 && result.status < 200) {
-      // Re-fetch to get the final response
-      result = await fetchApi(result.url);
-    }
+    const result = await fetchApi(this.site + chapterPath);
     if (result.status >= 400 || !result) {
       // Check if the chapter url is wrong or the site is genuinely down
       throw new Error(
-        `Could not reach site (${result.status}), try to open in webview. 
-        Chapter path: ${chapterPath}`,
+        `Could not reach site ${result.url} (${result.status}), try to open in webview.`,
       );
     }
     const body = await result.text();
