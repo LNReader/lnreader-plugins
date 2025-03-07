@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.16';
+  version = '1.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -264,42 +264,46 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       case 'genesistudio': {
         const url = `${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
-        // Fetch the chapter's data in JSON format
-        const json = await fetchApi(url).then(r => r.json());
-        const nodes = json.nodes;
-        const data = nodes
-          .filter((node: { type: string }) => node.type === 'data')
-          .map((node: { data: any }) => node.data)[0];
-        // Look for chapter container with required fields
-        const contentKey = 'content';
-        const notesKey = 'notes';
-        const footnotesKey = 'footnotes';
-        // Iterate over each property in data to find chapter containers
-        for (const key in data) {
-          const mapping = data[key];
-          // Check container for keys that match the required fields
-          if (
-            mapping &&
-            typeof mapping === 'object' &&
-            contentKey in mapping &&
-            notesKey in mapping &&
-            footnotesKey in mapping
-          ) {
-            // Use the found mapping object to determine the actual keys.
-            const contentMappingKey = mapping[contentKey];
-            const notesMappingKey = mapping[notesKey];
-            const footnotesMappingKey = mapping[footnotesKey];
-            // Retrieve the chapter's content, notes, and footnotes using the mapping.
-            const content = data[contentMappingKey];
-            const notes = data[notesMappingKey];
-            const footnotes = data[footnotesMappingKey];
-            // Combine the parts with appropriate formatting
-            chapterText =
-              content +
-              (notes ? `<h2>Notes</h2><br>${notes}` : '') +
-              (footnotes ?? '');
-            break;
+        try {
+          // Fetch the chapter's data in JSON format
+          const json = await fetchApi(url).then(r => r.json());
+          const nodes = json.nodes;
+          const data = nodes
+            .filter((node: { type: string }) => node.type === 'data')
+            .map((node: { data: any }) => node.data)[0];
+          // Look for chapter container with required fields
+          const contentKey = 'content';
+          const notesKey = 'notes';
+          const footnotesKey = 'footnotes';
+          // Iterate over each property in data to find chapter containers
+          for (const key in data) {
+            const mapping = data[key];
+            // Check container for keys that match the required fields
+            if (
+              mapping &&
+              typeof mapping === 'object' &&
+              contentKey in mapping &&
+              notesKey in mapping &&
+              footnotesKey in mapping
+            ) {
+              // Use the found mapping object to determine the actual keys.
+              const contentMappingKey = mapping[contentKey];
+              const notesMappingKey = mapping[notesKey];
+              const footnotesMappingKey = mapping[footnotesKey];
+              // Retrieve the chapter's content, notes, and footnotes using the mapping.
+              const content = data[contentMappingKey];
+              const notes = data[notesMappingKey];
+              const footnotes = data[footnotesMappingKey];
+              // Combine the parts with appropriate formatting
+              chapterText =
+                content +
+                (notes ? `<h2>Notes</h2><br>${notes}` : '') +
+                (footnotes ?? '');
+              break;
+            }
           }
+        } catch (error) {
+          throw new Error(`Failed to fetch chapter data: ${error}`);
         }
         break;
       }
