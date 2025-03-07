@@ -294,6 +294,7 @@ class NovelUpdates implements Plugin.PluginBase {
               content +
               (notes ? `<h2>Notes</h2><br>${notes}` : '') +
               (footnotes ?? '');
+            break;
           }
         }
         break;
