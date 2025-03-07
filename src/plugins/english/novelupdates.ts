@@ -2,6 +2,7 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { storage } from '@libs/storage';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
@@ -10,6 +11,11 @@ class NovelUpdates implements Plugin.PluginBase {
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
+  imageRequestInit?: Plugin.ImageRequestInit | undefined = {
+    headers: {
+      'referrer': this.site,
+    },
+  };
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -995,7 +1001,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     // Extract shortlink and update path if available
     const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
@@ -1177,6 +1183,13 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.CheckboxGroup,
     },
   } satisfies Filters;
+
+  pluginSettings = {
+    trackChapters: {
+      value: '',
+      label: 'Track chapters read status',
+    },
+  };
 }
 
 export default new NovelUpdates();
