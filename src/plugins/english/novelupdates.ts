@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '7.7.16';
+  version = '8.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -716,7 +716,10 @@ class NovelUpdates implements Plugin.PluginBase {
     if (result.status >= 400 || !result) {
       // Check if the chapter url is wrong or the site is genuinely down
       throw new Error(
-        `Could not reach site (${result.status}), try to open in webview. Url: ${result.url}`,
+        `Could not reach site (${result.status}), try to open in webview. 
+        Chapter path: ${chapterPath}.
+        Site + Chapter path: ${this.site + chapterPath}.
+        Result url: ${result.url}`,
       );
     }
     const body = await result.text();
