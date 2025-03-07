@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '5.7.16';
+  version = '6.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -707,15 +707,11 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    let result = await fetchApi(this.site + chapterPath);
-    if (result.status >= 100 && result.status < 200) {
-      // Re-fetch to get the final response
-      result = await fetchApi(result.url);
-    }
+    const result = await fetchApi(this.site + chapterPath);
     if (result.status >= 400 || !result) {
       // Check if the chapter url is wrong or the site is genuinely down
       throw new Error(
-        `Could not reach site (${result.status}), try to open in webview. Url: ${chapterPath}`,
+        `Could not reach site (${result.status}), try to open in webview. Url: ${result.url}`,
       );
     }
     const body = await result.text();
