@@ -84,6 +84,10 @@ class NovelFire implements Plugin.PluginBase {
 
       const loadedCheerio = parseHTML(body);
 
+      if (loadedCheerio.text().includes('You are being rate limited')) {
+        throw new NovelFireThrottlingError();
+      }
+
       const chapters = loadedCheerio('.chapter-list li')
         .map((index, ele) => {
           const chapterName =
@@ -103,8 +107,48 @@ class NovelFire implements Plugin.PluginBase {
       return chapters;
     };
 
-    // Parse all pages in parallel
-    const chaptersArray = await Promise.all(pagesArray.map(parsePage));
+    // When pages > ~30, we get rate limited. To mitigate, split into chunks and retry chunk on rate limit with delay.
+    const chunkSize = 5; // 5 pages per chunk was tested to be a good balance between speed and rate limiting.
+    const retryCount = 10;
+    const sleepTime = 3.5; // Rate limit seems to be around ~10s, so usually 3 retries should be enough for another ~30 pages.
+
+    const chaptersArray: Plugin.ChapterItem[][] = [];
+
+    for (let i = 0; i < pagesArray.length; i += chunkSize) {
+      const pagesArrayChunk = pagesArray.slice(i, i + chunkSize);
+
+      const firstPage = pagesArrayChunk[0];
+      const lastPage = pagesArrayChunk[pagesArrayChunk.length - 1];
+
+      let attempt = 0;
+
+      while (attempt < retryCount) {
+        try {
+          // Parse all pages in chunk in parallel
+          const chaptersArrayChunk = await Promise.all(
+            pagesArrayChunk.map(parsePage),
+          );
+
+          chaptersArray.push(...chaptersArrayChunk);
+          break;
+        } catch (err) {
+          if (err instanceof NovelFireThrottlingError) {
+            attempt += 1;
+            console.warn(
+              `[pages=${firstPage}-${lastPage}] Novel Fire is rate limiting requests. Retry attempt ${attempt + 1} in ${sleepTime} seconds...`,
+            );
+            if (attempt === retryCount) {
+              throw err;
+            }
+
+            // Sleep for X second before retrying
+            await new Promise(resolve => setTimeout(resolve, sleepTime * 1000));
+          } else {
+            throw err;
+          }
+        }
+      }
+    }
 
     // Merge all chapters into a single array
     for (const chapters of chaptersArray) {
@@ -361,3 +405,11 @@ class NovelFire implements Plugin.PluginBase {
 }
 
 export default new NovelFire();
+
+// Custom error for when Novel Fire is rate limiting requests
+class NovelFireThrottlingError extends Error {
+  constructor(message = 'Novel Fire is rate limiting requests') {
+    super(message);
+    this.name = 'NovelFireError';
+  }
+}

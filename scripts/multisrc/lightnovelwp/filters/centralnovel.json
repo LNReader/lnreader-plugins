@@ -150,6 +150,10 @@
           "value": "seinen"
         },
         {
+          "label": "Shoujo",
+          "value": "shoujo"
+        },
+        {
           "label": "Shounen",
           "value": "shounen"
         },
@@ -293,6 +297,10 @@
         {
           "label": "Populares",
           "value": "popular"
+        },
+        {
+          "label": "Avaliação",
+          "value": "rating"
         }
       ]
     }
