@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '8.7.16';
+  version = '4.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -82,7 +82,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
     const body = await result.text();
-    let loadedCheerio = parseHTML(body);
+    const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -107,46 +107,41 @@ class NovelUpdates implements Plugin.PluginBase {
     const summary = loadedCheerio('#editdescription').text().trim();
     novel.summary = summary + `\n\nType: ${type}`;
 
-    const chapter: Plugin.ChapterItem[] = [];
     const novelId = loadedCheerio('input#mypostid').attr('value')!;
     const formData = new FormData();
     formData.append('action', 'nd_getchapters');
     formData.append('mygrr', '0');
     formData.append('mypostid', novelId);
 
-    const link = `${this.site}wp-admin/admin-ajax.php`;
-
-    const text = await fetchApi(link, {
+    const chaptersHtml = await fetchApi(`${this.site}wp-admin/admin-ajax.php`, {
       method: 'POST',
       body: formData,
     }).then(data => data.text());
 
-    loadedCheerio = parseHTML(text);
+    const chaptersCheerio = parseHTML(chaptersHtml);
+    const chapters: Plugin.ChapterItem[] = [];
 
-    const nameReplacements: Record<string, string> = {
-      'v': 'volume ',
-      'c': ' chapter ',
-      'part': 'part ',
-      'ss': 'SS',
-    };
+    chaptersCheerio('li.sp_li_chp').each((_, el) => {
+      const chapterName = chaptersCheerio(el)
+        .text()
+        .replace('v', 'volume ')
+        .replace('c', ' chapter ')
+        .replace('part', 'part ')
+        .replace('ss', 'SS')
+        .replace(/\b\w/g, l => l.toUpperCase())
+        .trim();
 
-    loadedCheerio('li.sp_li_chp').each((i, el) => {
-      let chapterName = loadedCheerio(el).text();
-      for (const name in nameReplacements) {
-        chapterName = chapterName.replace(name, nameReplacements[name]);
-      }
-      chapterName = chapterName.replace(/\b\w/g, l => l.toUpperCase()).trim();
-      const chapterUrl =
-        'https:' + loadedCheerio(el).find('a').first().next().attr('href');
+      const chapterPath =
+        'https:' + chaptersCheerio(el).find('a').first().next().attr('href');
 
-      chapter.push({
-        name: chapterName,
-        path: chapterUrl.replace(this.site, ''),
-      });
+      if (chapterPath)
+        chapters.push({
+          name: chapterName,
+          path: chapterPath.replace(this.site, ''),
+        });
     });
 
-    novel.chapters = chapter.reverse();
-
+    novel.chapters = chapters.reverse();
     return novel;
   }
 
@@ -712,14 +707,16 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const result = await fetchApi(this.site + chapterPath);
+    let result = await fetchApi(this.site + chapterPath);
+    if (result.status >= 100 && result.status < 200) {
+      // Re-fetch to get the final response
+      result = await fetchApi(result.url);
+    }
     if (result.status >= 400 || !result) {
       // Check if the chapter url is wrong or the site is genuinely down
       throw new Error(
         `Could not reach site (${result.status}), try to open in webview. 
-        Chapter path: ${chapterPath}.
-        Site + Chapter path: ${this.site + chapterPath}.
-        Result url: ${result.url}`,
+        Chapter path: ${chapterPath}`,
       );
     }
     const body = await result.text();
