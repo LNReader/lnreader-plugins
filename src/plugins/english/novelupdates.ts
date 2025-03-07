@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.7.16';
+  version = '2.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -726,10 +726,10 @@ class NovelUpdates implements Plugin.PluginBase {
     ) {
       throw new Error('Captcha error, please open in webview.');
     }
-    if (!result.ok) {
+    if (result.status >= 400 || !result) {
       // Check if the chapter url is wrong or the site is genuinely down
       throw new Error(
-        `Could not reach site (${result.status}), try to open in webview.`,
+        `Could not reach site (${result.status}), try to open in webview. Url: ${url}`,
       );
     }
 
