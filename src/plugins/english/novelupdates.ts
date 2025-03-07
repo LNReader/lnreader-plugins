@@ -264,7 +264,7 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       case 'genesistudio': {
         const url = `${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
-        // Fetch and parse JSON data
+        // Fetch the chapter's data in JSON format
         const json = await fetchApi(url).then(r => r.json());
         const nodes = json.nodes;
         const data = nodes
@@ -277,7 +277,7 @@ class NovelUpdates implements Plugin.PluginBase {
         // Iterate over each property in data to find chapter containers
         for (const key in data) {
           const mapping = data[key];
-          // Look for an object with a 'chapters' key
+          // Check container for keys that match the required fields
           if (
             mapping &&
             typeof mapping === 'object' &&
@@ -285,10 +285,14 @@ class NovelUpdates implements Plugin.PluginBase {
             notesKey in mapping &&
             footnotesKey in mapping
           ) {
+            // Use the found mapping object to determine the actual keys.
+            const contentMappingKey = mapping[contentKey];
+            const notesMappingKey = mapping[notesKey];
+            const footnotesMappingKey = mapping[footnotesKey];
             // Retrieve the chapter's content, notes, and footnotes using the mapping.
-            const content = data[mapping[contentKey]];
-            const notes = data[mapping[notesKey]];
-            const footnotes = data[mapping[footnotesKey]];
+            const content = data[contentMappingKey];
+            const notes = data[notesMappingKey];
+            const footnotes = data[footnotesMappingKey];
             // Combine the parts with appropriate formatting
             chapterText =
               content +
