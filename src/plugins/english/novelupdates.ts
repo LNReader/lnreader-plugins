@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '4.7.16';
+  version = '5.7.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -122,7 +122,7 @@ class NovelUpdates implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     chaptersCheerio('li.sp_li_chp').each((_, el) => {
-      const name = chaptersCheerio(el)
+      const chapterName = chaptersCheerio(el)
         .text()
         .replace('v', 'volume ')
         .replace('c', ' chapter ')
@@ -131,15 +131,14 @@ class NovelUpdates implements Plugin.PluginBase {
         .replace(/\b\w/g, l => l.toUpperCase())
         .trim();
 
-      const path =
-        'https:' +
-        chaptersCheerio(el)
-          .find('a')
-          .first()
-          .next()
-          .attr('href')
-          ?.replace(this.site, '');
-      if (path) chapters.push({ name, path });
+      const chapterPath =
+        'https:' + chaptersCheerio(el).find('a').first().next().attr('href');
+
+      if (chapterPath)
+        chapters.push({
+          name: chapterName,
+          path: chapterPath.replace(this.site, ''),
+        });
     });
 
     novel.chapters = chapters.reverse();
