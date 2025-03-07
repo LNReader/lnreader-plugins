@@ -1,4 +1,4 @@
-import { Cheerio, CheerioAPI, load as parseHTML } from 'cheerio';
+import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
@@ -271,24 +271,29 @@ class NovelUpdates implements Plugin.PluginBase {
           .filter((node: { type: string }) => node.type === 'data')
           .map((node: { data: any }) => node.data)[0];
         // Look for chapter container with required fields
+        const contentKey = 'content';
+        const notesKey = 'notes';
+        const footnotesKey = 'footnotes';
+        // Iterate over each property in data to find chapter containers
         for (const key in data) {
           const mapping = data[key];
+          // Look for an object with a 'chapters' key
           if (
             mapping &&
             typeof mapping === 'object' &&
-            'content' in mapping &&
-            'notes' in mapping &&
-            'footnotes' in mapping
+            contentKey in mapping &&
+            notesKey in mapping &&
+            footnotesKey in mapping
           ) {
-            // Get actual content using the mapping references
-            const content = data[mapping.content] ?? data[19];
-            const notes = data[mapping.notes];
-            const footnotes = data[mapping.footnotes];
+            // Retrieve the chapter's content, notes, and footnotes using the mapping.
+            const content = data[mapping[contentKey]];
+            const notes = data[mapping[notesKey]];
+            const footnotes = data[mapping[footnotesKey]];
             // Combine the parts with appropriate formatting
             chapterText =
               content +
-              (notes ? `<b>Notes</b><br>${notes}` : '') +
-              (footnotes ? `<b>Footnotes</b><br>${footnotes}` : '');
+              (notes ? `<h2>Notes</h2><br>${notes}` : '') +
+              (footnotes ?? '');
           }
         }
         break;
