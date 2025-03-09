@@ -3,11 +3,15 @@ import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import {
+  extractFromHtml,
+  setSanitizeHtmlOptions,
+} from '@extractus/article-extractor';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.1';
+  version = '1.1.0';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
@@ -204,26 +208,20 @@ class NovelFire implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    const loadedCheerio = parseHTML(body);
+    const allowAllOptions = {
+      allowedTags: false,
+      allowedAttributes: false,
+    };
 
-    const bloatElements = [
-      '.box-ads',
-      '.box-notification',
-      /^nf/, // Regular expression to match tags starting with 'nf'
-    ];
-    bloatElements.forEach(tag => {
-      if (tag instanceof RegExp) {
-        loadedCheerio('*')
-          .filter((_, el) =>
-            tag.test(loadedCheerio(el).prop('tagName')!.toLowerCase()),
-          )
-          .remove();
-      } else {
-        loadedCheerio(tag).remove();
-      }
-    });
+    try {
+      setSanitizeHtmlOptions(allowAllOptions);
 
-    return loadedCheerio('#content').html()!;
+      const parsedContent = await extractFromHtml(body, url);
+
+      return parsedContent?.content || 'No Content Found';
+    } catch (error) {
+      throw new Error(`Parsing chapter failed: ${error}`);
+    }
   }
 
   async searchNovels(
