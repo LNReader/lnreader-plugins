@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.7.15';
+  version = '0.8.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -990,6 +990,38 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterText;
   }
 
+  async syncChapterProgress(
+    novel: Plugin.SourceNovel,
+    chapter: Plugin.ChapterItem,
+  ): Promise<boolean> {
+    try {
+      // Get HTML content
+      const result = await fetchApi(this.site + novel.path);
+      const loadedCheerio = parseHTML(await result.text());
+
+      // Extract IDs
+      const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
+      const novelId = shortlink?.match(/\?p=(\d+)/)?.[1];
+      const chapterId = chapter.path.match(/\/(\d+)\//)?.[1];
+
+      if (!novelId || !chapterId) {
+        throw new Error(
+          `Invalid novel path (${novel.path}) or chapter path (${chapter.path})`,
+        );
+      }
+
+      // Update reading progress
+      await fetchApi(
+        `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
+      );
+      return true;
+    } catch (error) {
+      throw new Error(
+        `Failed to sync chapter progress: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
+  }
+
   async searchNovels(
     searchTerm: string,
     page: number,
@@ -1147,6 +1179,14 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.CheckboxGroup,
     },
   } satisfies Filters;
+
+  pluginSettings = {
+    syncChapterProgress: {
+      value: '',
+      label: 'Sync chapter progress with plugin site',
+      type: 'Switch',
+    },
+  };
 }
 
 export default new NovelUpdates();

@@ -62,26 +62,41 @@ class MadaraPlugin implements Plugin.PluginBase {
 
   translateDragontea(text: Cheerio<AnyNode>): Cheerio<AnyNode> {
     if (this.id !== 'dragontea') return text;
-    
-    const $ = parseHTML(text.html()?.replace('\n', '').replace(/<br\s*\/?>/g, '\n') || '');
+
+    const $ = parseHTML(
+      text
+        .html()
+        ?.replace('\n', '')
+        .replace(/<br\s*\/?>/g, '\n') || '',
+    );
     const reverseAlpha = 'zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA';
     const forwardAlpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
+
     text.html($.html());
-    text.find('*').addBack().contents().filter((_, el) => el.nodeType === 3).each((_, el) => {
-      const $el = $(el);
-      const translated = $el.text().normalize('NFD').split('')
-        .map(char => {
-          const base = char.normalize('NFC');
-          const idx = forwardAlpha.indexOf(base);
-          return idx >= 0 ? reverseAlpha[idx] + char.slice(base.length) : char;
-        })
-        .join('');
-      $el.replaceWith(translated.replace('\n', '<br>'));
-    });
-    
+    text
+      .find('*')
+      .addBack()
+      .contents()
+      .filter((_, el) => el.nodeType === 3)
+      .each((_, el) => {
+        const $el = $(el);
+        const translated = $el
+          .text()
+          .normalize('NFD')
+          .split('')
+          .map(char => {
+            const base = char.normalize('NFC');
+            const idx = forwardAlpha.indexOf(base);
+            return idx >= 0
+              ? reverseAlpha[idx] + char.slice(base.length)
+              : char;
+          })
+          .join('');
+        $el.replaceWith(translated.replace('\n', '<br>'));
+      });
+
     return text;
-   }
+  }
 
   getHostname(url: string): string {
     url = url.split('/')[2];
@@ -261,7 +276,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     if (this.options?.useNewChapterEndpoint) {
       html = await fetchApi(this.site + novelPath + 'ajax/chapters/', {
         method: 'POST',
-        referrer: this.site + novelPath
+        referrer: this.site + novelPath,
       }).then(res => res.text());
     } else {
       const novelId =

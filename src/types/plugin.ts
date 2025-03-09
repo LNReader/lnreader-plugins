@@ -85,6 +85,10 @@ export namespace Plugin {
      */
     parseNovel(novelPath: string): Promise<SourceNovel>;
     parseChapter(chapterPath: string): Promise<string>;
+    syncChapterProgress?(
+      novel: Plugin.SourceNovel,
+      chapter: Plugin.ChapterItem,
+    ): Promise<boolean>;
     searchNovels(searchTerm: string, pageNo: number): Promise<NovelItem[]>;
     resolveUrl?(path: string, isNovel?: boolean): string;
   };
