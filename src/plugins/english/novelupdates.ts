@@ -43,22 +43,47 @@ class NovelUpdates implements Plugin.PluginBase {
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
     let link = `${this.site}`;
-    if (
-      filters?.language.value.length ||
-      filters?.novelType.value.length ||
-      filters?.genres.value.include?.length ||
-      filters?.genres.value.exclude?.length ||
-      filters?.reading_lists.value.length ||
-      filters?.storyStatus.value !== ''
+    if (showLatestNovels) {
+      link += 'series-finder/?sf=1&sort=sdate&order=desc';
+    } else if (
+      filters?.sort.value === 'popmonth' ||
+      filters?.sort.value === 'popular'
+    ) {
+      link += 'series-ranking/?rank=' + filters.sort.value;
+    } else if (
+      filters?.sort.value !== 'popmonth' &&
+      filters?.sort.value !== 'popular'
     ) {
       link += 'series-finder/?sf=1';
 
-      if (filters?.language.value.length) {
-        link += '&org=' + filters.language.value.join(',');
+      if (
+        filters?.genres.value.include?.length ||
+        filters?.genres.value.exclude?.length
+      ) {
+        link += '&mgi=' + filters.genre_operator.value;
       }
 
       if (filters?.novelType.value.length) {
         link += '&nt=' + filters.novelType.value.join(',');
+      }
+
+      if (filters?.reading_lists.value.length) {
+        link += '&hd=' + filters?.reading_lists.value.join(',');
+        link += '&mRLi=' + filters?.reading_list_operator.value;
+      }
+
+      link += '&sort=' + filters?.sort.value;
+
+      link += '&order=' + filters?.order.value;
+    }
+    if (
+      (!showLatestNovels && filters?.language.value.length) ||
+      filters?.genres.value.include?.length ||
+      filters?.genres.value.exclude?.length ||
+      filters?.storyStatus.value !== ''
+    ) {
+      if (filters?.language.value.length) {
+        link += '&org=' + filters.language.value.join(',');
       }
 
       if (filters?.genres.value.include?.length) {
@@ -69,29 +94,9 @@ class NovelUpdates implements Plugin.PluginBase {
         link += '&ge=' + filters.genres.value.exclude.join(',');
       }
 
-      if (
-        filters?.genres.value.include?.length ||
-        filters?.genres.value.exclude?.length
-      ) {
-        link += '&mgi=' + filters.genre_operator.value;
-      }
-
-      if (filters?.reading_lists.value.length) {
-        link += '&hd=' + filters?.reading_lists.value.join(',');
-        link += '&mRLi=' + filters?.reading_list_operator.value;
-      }
-
       if (filters?.storyStatus.value.length) {
         link += '&ss=' + filters.storyStatus.value;
       }
-
-      link += '&sort=' + filters?.sort.value;
-
-      link += '&order=' + filters?.order.value;
-    } else if (showLatestNovels) {
-      link += 'latest-series/?st=1';
-    } else {
-      link += 'series-ranking/?rank=week';
     }
 
     link += '&pg=' + page;
@@ -1019,8 +1024,10 @@ class NovelUpdates implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Sort Results By',
-      value: 'sdate',
+      value: 'popmonth',
       options: [
+        { label: 'Popular (Month)', value: 'popmonth' },
+        { label: 'Popular (All)', value: 'popular' },
         { label: 'Last Updated', value: 'sdate' },
         { label: 'Rating', value: 'srate' },
         { label: 'Rank', value: 'srank' },
@@ -1033,7 +1040,7 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     order: {
-      label: 'Order',
+      label: 'Order (Not for Popular)',
       value: 'desc',
       options: [
         { label: 'Descending', value: 'desc' },
@@ -1052,34 +1059,8 @@ class NovelUpdates implements Plugin.PluginBase {
       ],
       type: FilterTypes.Picker,
     },
-    language: {
-      label: 'Language',
-      value: [],
-      options: [
-        { label: 'Chinese', value: '495' },
-        { label: 'Filipino', value: '9181' },
-        { label: 'Indonesian', value: '9179' },
-        { label: 'Japanese', value: '496' },
-        { label: 'Khmer', value: '18657' },
-        { label: 'Korean', value: '497' },
-        { label: 'Malaysian', value: '9183' },
-        { label: 'Thai', value: '9954' },
-        { label: 'Vietnamese', value: '9177' },
-      ],
-      type: FilterTypes.CheckboxGroup,
-    },
-    novelType: {
-      label: 'Novel Type',
-      value: [],
-      options: [
-        { label: 'Light Novel', value: '2443' },
-        { label: 'Published Novel', value: '26874' },
-        { label: 'Web Novel', value: '2444' },
-      ],
-      type: FilterTypes.CheckboxGroup,
-    },
     genre_operator: {
-      label: 'Genre (And/Or)',
+      label: 'Genre (And/Or) (Not for Popular)',
       value: 'and',
       options: [
         { label: 'And', value: 'and' },
@@ -1132,8 +1113,34 @@ class NovelUpdates implements Plugin.PluginBase {
         { label: 'Yuri', value: '922' },
       ],
     },
+    language: {
+      label: 'Language',
+      value: [],
+      options: [
+        { label: 'Chinese', value: '495' },
+        { label: 'Filipino', value: '9181' },
+        { label: 'Indonesian', value: '9179' },
+        { label: 'Japanese', value: '496' },
+        { label: 'Khmer', value: '18657' },
+        { label: 'Korean', value: '497' },
+        { label: 'Malaysian', value: '9183' },
+        { label: 'Thai', value: '9954' },
+        { label: 'Vietnamese', value: '9177' },
+      ],
+      type: FilterTypes.CheckboxGroup,
+    },
+    novelType: {
+      label: 'Novel Type (Not for Popular)',
+      value: [],
+      options: [
+        { label: 'Light Novel', value: '2443' },
+        { label: 'Published Novel', value: '26874' },
+        { label: 'Web Novel', value: '2444' },
+      ],
+      type: FilterTypes.CheckboxGroup,
+    },
     reading_list_operator: {
-      label: 'Reading List (Include/Exclude)',
+      label: 'Reading List (Include/Exclude) (Not for Popular)',
       value: 'include',
       options: [
         { label: 'Include', value: 'include' },
@@ -1142,7 +1149,7 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.Picker,
     },
     reading_lists: {
-      label: 'Reading Lists',
+      label: 'Reading Lists (Not for Popular)',
       value: [],
       options: [{ label: 'All Reading Lists', value: '-1' }],
       type: FilterTypes.CheckboxGroup,
