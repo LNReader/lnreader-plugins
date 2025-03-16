@@ -90,7 +90,7 @@ class FictioneerPlugin implements Plugin.PluginBase {
       .replace('by ', '')
       .trim();
     novel.cover = loadedCheerio('figure.story__thumbnail > a').attr('href');
-    novel.genres = loadedCheerio('div.tag-group > a')
+    novel.genres = loadedCheerio('div.tag-group > a, section.tag-group > a')
       .map((i, el) => loadedCheerio(el).text())
       .toArray()
       .join(',');
