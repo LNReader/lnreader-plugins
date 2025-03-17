@@ -994,23 +994,21 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async syncChapterStatus(
-    novel: Plugin.SourceNovel,
-    chapter: Plugin.ChapterItem,
+    novelPath: string,
+    chapterPath: string,
   ): Promise<boolean> {
     try {
       // Get HTML content
-      const result = await fetchApi(this.site + novel.path);
+      const result = await fetchApi(this.site + novelPath);
       const loadedCheerio = parseHTML(await result.text());
 
       // Extract IDs
       const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
       const novelId = shortlink?.match(/\?p=(\d+)/)?.[1];
-      const chapterId = chapter.path.match(/\/(\d+)\//)?.[1];
+      const chapterId = chapterPath.match(/\/(\d+)\//)?.[1];
 
       if (!novelId || !chapterId) {
-        throw new Error(
-          `Invalid novel path (${novel.path}) or chapter path (${chapter.path})`,
-        );
+        return false;
       }
 
       // Update reading progress
@@ -1019,9 +1017,7 @@ class NovelUpdates implements Plugin.PluginBase {
       );
       return true;
     } catch (error) {
-      throw new Error(
-        `Failed to sync chapter progress: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      return false;
     }
   }
 
