@@ -2,6 +2,7 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { storage } from '@libs/storage';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
@@ -10,6 +11,8 @@ class NovelUpdates implements Plugin.PluginBase {
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
+
+  syncChapter = storage.get('syncChapter');
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -990,7 +993,7 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async syncChapterProgress(
+  async syncChapterStatus(
     novel: Plugin.SourceNovel,
     chapter: Plugin.ChapterItem,
   ): Promise<boolean> {
@@ -1181,7 +1184,7 @@ class NovelUpdates implements Plugin.PluginBase {
   } satisfies Filters;
 
   pluginSettings = {
-    syncChapterProgress: {
+    syncChapter: {
       value: '',
       label: 'Sync chapter progress with plugin site',
       type: 'Switch',

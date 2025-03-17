@@ -72,8 +72,10 @@ export namespace Plugin {
     imageRequestInit?: ImageRequestInit;
     filters?: Filters;
     version: string;
-    //flag indicates whether access to LocalStorage, SesesionStorage is required.
+    // Flag indicates whether access to LocalStorage, SesesionStorage is required.
     webStorageUtilized?: boolean;
+    // Flag indicates whether chapter status is synced.
+    syncChapter?: boolean;
     popularNovels(
       pageNo: number,
       options: PopularNovelsOptions<Filters>,
@@ -85,7 +87,7 @@ export namespace Plugin {
      */
     parseNovel(novelPath: string): Promise<SourceNovel>;
     parseChapter(chapterPath: string): Promise<string>;
-    syncChapterProgress?(
+    syncChapterStatus?(
       novel: Plugin.SourceNovel,
       chapter: Plugin.ChapterItem,
     ): Promise<boolean>;
