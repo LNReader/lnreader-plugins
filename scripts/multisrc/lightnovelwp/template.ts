@@ -42,7 +42,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${6 + versionIncrements}`;
+    this.version = `1.1.${7 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
 
@@ -446,7 +446,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = this.site + 'page/' + page + '/?s=' + searchTerm;
+    const url =
+      this.site + 'page/' + page + '/?s=' + encodeURIComponent(searchTerm);
     const html = await this.safeFecth(url, true);
     return this.parseNovels(html);
   }
