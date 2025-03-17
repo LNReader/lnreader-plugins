@@ -98,6 +98,14 @@ class FictioneerPlugin implements Plugin.PluginBase {
 
     novel.chapters = loadedCheerio('li.chapter-group__list-item._publish')
       .filter((i, el) => !el.attribs['class'].includes('_password'))
+      .filter(
+        (i, el) =>
+          !loadedCheerio(el)
+            .find('i')
+            .first()!
+            .attr('class')!
+            .includes('fa-lock'),
+      )
       .map((i, el) => {
         const chapterName = loadedCheerio(el).find('a').text();
         const chapterUrl = loadedCheerio(el)
