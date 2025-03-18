@@ -3,7 +3,7 @@ name: Publish Plugins
 on:
   push:
     branches:
-      - master
+      - patch-2
 
 jobs:
   Publish:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
