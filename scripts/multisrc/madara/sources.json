@@ -499,12 +499,12 @@
   },
   {
     "id": "fortuneeternal",
-    "sourceSite": "https://fortuneeternal.com",
+    "sourceSite": "https://www.fortuneeternal.com",
     "sourceName": "Fortune Eternal",
     "options": {
       "lang": "Korean",
       "useNewChapterEndpoint": true,
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
