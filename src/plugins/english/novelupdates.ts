@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.3';
+  version = '1.9.4';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -268,44 +268,19 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       }
       case 'genesistudio': {
-        const url = `${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
-        try {
-          // Fetch the chapter's data in JSON format
-          const json = await fetchApi(url).then(r => r.json());
-          const nodes = json.nodes;
-          const data = nodes
-            .filter((node: { type: string }) => node.type === 'data')
-            .map((node: { data: any }) => node.data)[0];
-          // Look for chapter container with required fields
-          const contentKey = 'content';
-          const notesKey = 'notes';
-          const footnotesKey = 'footnotes';
-          // Iterate over each property in data to find chapter containers
-          for (const key in data) {
-            const mapping = data[key];
-            // Check container for keys that match the required fields
-            if (
-              mapping &&
-              typeof mapping === 'object' &&
-              contentKey in mapping &&
-              notesKey in mapping &&
-              footnotesKey in mapping
-            ) {
-              // Retrieve the chapter's content, notes, and footnotes using the mapping.
-              const content = data[mapping[contentKey]];
-              const notes = data[mapping[notesKey]];
-              const footnotes = data[mapping[footnotesKey]];
-              // Combine the parts with appropriate formatting
-              chapterText =
-                content +
-                (notes ? `<h2>Notes</h2><br>${notes}` : '') +
-                (footnotes ?? '');
-              break;
-            }
-          }
-        } catch (error) {
-          throw new Error(`Failed to fetch chapter data: ${error}`);
-        }
+        const url_genesis = `${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
+        const json_genesis = await fetchApi(url_genesis).then(r => r.json());
+
+        const nodes_genesis = json_genesis.nodes;
+        const data_genesis = nodes_genesis
+          .filter((node: { type: string }) => node.type === 'data')
+          .map((node: { data: any }) => node.data)[0];
+
+        /** May change in the future */
+        const content_genesis = data_genesis[19];
+        const footnotes_genesis = data_genesis[data_genesis[0].footnotes];
+
+        chapterText = content_genesis + footnotes_genesis ?? '';
         break;
       }
       // Last edited in 0.7.13 - 21/01/2025
