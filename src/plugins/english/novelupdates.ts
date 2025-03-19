@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.12';
+  version = '1.9.13';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -712,7 +712,7 @@ class NovelUpdates implements Plugin.PluginBase {
     );
 
     // Manually set WordPress flag for known sites
-    const manualWordPress = ['etherreads', 'soafp', 'greenztl2'];
+    const manualWordPress = ['etherreads', 'greenztl2', 'soafp', 'vampiramtl'];
     if (!isWordPress && domainParts.some(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
