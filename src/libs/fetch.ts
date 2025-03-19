@@ -21,6 +21,7 @@ const makeInit = async (init?: FetchInit) => {
     'Accept-Language': '*',
     'Sec-Fetch-Mode': 'cors',
     'Accept-Encoding': 'gzip, deflate',
+    'Upgrade-Insecure-Requests': '1',
   };
   if (init?.headers) {
     if (init.headers instanceof Headers) {
@@ -62,7 +63,7 @@ export async function fetchApi(
   while (attempt < maxRetries) {
     const response = await fetch(url, init as RequestInit);
 
-    // 🟢 Handle Early Hints (103) by retrying
+    // Handle Early Hints (103) by retrying
     if (response.status === 103) {
       console.warn(
         `Received 103 Early Hints, retrying... (${attempt + 1}/${maxRetries})`,
@@ -72,10 +73,10 @@ export async function fetchApi(
       continue;
     }
 
-    // 🟢 Return successful responses (200-299)
+    // Return successful responses (200-299)
     if (response.ok) return response;
 
-    // 🔴 Handle other errors
+    // Handle other errors
     console.error(
       `Fetch failed with status ${response.status}: ${response.statusText}`,
     );
