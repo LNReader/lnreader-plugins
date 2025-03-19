@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.10';
+  version = '1.9.11';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -788,6 +788,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Dumahs Translations
      * - ElloMTL
      * - Femme Fables
+     * - Gadgetized Panda Translation
      * - Gem Novels
      * - Goblinslate
      * - GreenzTL (Outlier)
@@ -828,7 +829,10 @@ class NovelUpdates implements Plugin.PluginBase {
             '.sidebar',
             '.swg-button-v2-light',
             '.wp-block-buttons',
+            '.wp-block-columns',
             '.wp-block-image',
+            '.wp-block-separator',
+            '.wp-block-spacer',
             '.wp-dark-mode-switcher',
             '.wp-next-post-navi',
             '#hpk',
