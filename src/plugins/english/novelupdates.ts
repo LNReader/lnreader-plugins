@@ -1011,7 +1011,7 @@ class NovelUpdates implements Plugin.PluginBase {
         return false;
       }
 
-      // Update reading progress
+      // Chapter sync
       await fetchApi(
         `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
       );
