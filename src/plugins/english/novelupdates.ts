@@ -106,6 +106,12 @@ class NovelUpdates implements Plugin.PluginBase {
     const type = loadedCheerio('#showtype').text().trim();
     const summary = loadedCheerio('#editdescription').text().trim();
     novel.summary = summary + `\n\nType: ${type}`;
+    const rating = loadedCheerio('.seriesother .uvotes')
+      .text()
+      .match(/(\d+\.\d+) \/ \d+\.\d+/)?.[1];
+    if (rating) {
+      novel.rating = parseFloat(rating);
+    }
 
     const novelId = loadedCheerio('input#mypostid').attr('value')!;
     const formData = new FormData();
