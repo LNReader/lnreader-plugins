@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.2';
+  version = '1.9.3';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -683,8 +683,6 @@ class NovelUpdates implements Plugin.PluginBase {
         break;
       }
       case 'zetrotranslation': {
-        bloatElements = ['hr', 'p:contains("\u00a0")'];
-        bloatElements.forEach(tag => loadedCheerio(tag).remove());
         chapterContent = loadedCheerio('.text-left').html()!;
         const titleElement = loadedCheerio('.text-left h2').first();
         if (titleElement.length) {
