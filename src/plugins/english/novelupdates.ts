@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.1';
+  version = '1.9.2';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -581,7 +581,7 @@ class NovelUpdates implements Plugin.PluginBase {
           throw new Error('Age verification required, please open in webview.');
         }
         chapterTitle = `${loadedCheerio('header .font-medium.text-sm').first().text().trim()}`;
-        chapterContent = loadedCheerio('.text-left').html()!;
+        chapterContent = loadedCheerio('#chapter-body').html()!;
         if (chapterTitle) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         } else {
@@ -730,7 +730,7 @@ class NovelUpdates implements Plugin.PluginBase {
     // Check if the chapter url is wrong or the site is down
     if (!result.ok) {
       throw new Error(
-        `Could not reach site (${result.status}), try to open in webview.`,
+        `Could not reach site ${result.url} (${result.status}), try to open in webview.`,
       );
     }
 
