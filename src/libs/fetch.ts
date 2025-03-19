@@ -21,7 +21,6 @@ const makeInit = async (init?: FetchInit) => {
     'Accept-Language': '*',
     'Sec-Fetch-Mode': 'cors',
     'Accept-Encoding': 'gzip, deflate',
-    'Upgrade-Insecure-Requests': '1',
   };
   if (init?.headers) {
     if (init.headers instanceof Headers) {
