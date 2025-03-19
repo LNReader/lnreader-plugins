@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.4';
+  version = '1.9.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -682,12 +682,18 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterContent = '';
     let chapterText = '';
 
-    const result = await fetchApi(this.site + chapterPath);
-    const body = await result.text();
-    const url = result.url;
-    const domain = url.toLowerCase().split('/')[2].split('.');
+    try {
+      const result = await fetchApi(this.site + chapterPath);
+      const body = await result.text();
+      const url = result.url;
+      const domain = url.toLowerCase().split('/')[2].split('.');
 
-    const loadedCheerio = parseHTML(body);
+      const loadedCheerio = parseHTML(body);
+    } catch (error) {
+      throw new Error(
+        `Could not reach site ${this.site + chapterPath} (${error}), try to open in webview.`,
+      );
+    }
 
     // Check for Captcha
     const title = loadedCheerio('title').text().toLowerCase().trim();
