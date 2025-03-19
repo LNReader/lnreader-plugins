@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.0';
+  version = '1.9.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -710,12 +710,6 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterText = '';
 
     const result = await fetchApi(this.site + chapterPath);
-    if (result.status >= 400 || !result) {
-      // Check if the chapter url is wrong or the site is genuinely down
-      throw new Error(
-        `Could not reach site ${result.url} (${result.status}), try to open in webview.`,
-      );
-    }
     const body = await result.text();
     const url = result.url;
     const domain = url.toLowerCase().split('/')[2].split('.');
@@ -732,6 +726,12 @@ class NovelUpdates implements Plugin.PluginBase {
       title == 'you are being redirected...'
     ) {
       throw new Error('Captcha error, please open in webview.');
+    }
+    // Check if the chapter url is wrong or the site is down
+    if (!result.ok) {
+      throw new Error(
+        `Could not reach site (${result.status}), try to open in webview.`,
+      );
     }
 
     // Detect if the site is a Blogspot site
