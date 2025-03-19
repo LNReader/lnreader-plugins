@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.8';
+  version = '1.9.9';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -793,7 +793,7 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Femme Fables
        * - Gem Novels
        * - Goblinslate
-       * - GreenzTL
+       * - GreenzTL (Outlier)
        * - Hel Scans (Outlier)
        * - ippotranslations
        * - JATranslations
@@ -847,19 +847,18 @@ class NovelUpdates implements Plugin.PluginBase {
 
         // Extract title
         const titleSelectors = isBlogspot
-          ? ['.entry-title', '.post-title']
+          ? ['.entry-title', '.post-title', 'head title']
           : [
               '.entry-title',
-              '.entry-title-main',
               '.chapter__title',
-              '.sp-title',
               '.title-content',
               '.wp-block-post-title',
               '.title_story',
-              '.active',
-              'head title',
-              'h1.leading-none ~ h2',
               '#chapter-heading',
+              'head title',
+              'h1:first-of-type',
+              'h2:first-of-type',
+              '.active',
             ];
         let chapterTitle = titleSelectors
           .map(sel => loadedCheerio(sel).first().text())
@@ -875,19 +874,13 @@ class NovelUpdates implements Plugin.PluginBase {
         const contentSelectors = isBlogspot
           ? ['.content-post', '.entry-content', '.post-body']
           : [
-              '.rdminimal',
-              '.entry-content',
               '.chapter__content',
-              '.prevent-select',
+              '.entry-content',
               '.text_story',
+              '.post-content',
               '.contenta',
               '.single_post',
-              '.post-entry',
               '.main-content',
-              '.post-content',
-              '.content',
-              '.page-body',
-              '.td-page-content',
               '.reader-content',
               '#content',
               '#the-content',
