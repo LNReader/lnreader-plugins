@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.13';
+  version = '1.9.14';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -712,7 +712,7 @@ class NovelUpdates implements Plugin.PluginBase {
     );
 
     // Manually set WordPress flag for known sites
-    const manualWordPress = ['etherreads', 'greenztl2', 'soafp', 'vampiramtl'];
+    const manualWordPress = ['etherreads', 'greenztl2', 'soafp'];
     if (!isWordPress && domainParts.some(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
@@ -731,6 +731,7 @@ class NovelUpdates implements Plugin.PluginBase {
       'sacredtexttranslations',
       'stabbingwithasyringe',
       'tinytranslation',
+      'vampiramtl',
       'zetrotranslation',
     ];
     if (domainParts.some(d => outliers.includes(d))) {
@@ -759,7 +760,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Gadgetized Panda Translation
      * - Gem Novels
      * - Goblinslate
-     * - GreenzTL (Outlier)
+     * - GreenzTL
      * - Hel Scans (Outlier)
      * - ippotranslations
      * - JATranslations
