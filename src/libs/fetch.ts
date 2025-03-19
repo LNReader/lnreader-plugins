@@ -63,7 +63,7 @@ export async function fetchApi(
     const response = await fetch(url, init as RequestInit);
 
     // Handle Early Hints (103) by retrying
-    if (response.status === 103) {
+    if (response.status === 103 || response.status === 302) {
       console.warn(
         `Received 103 Early Hints, retrying... (${attempt + 1}/${maxRetries})`,
       );
