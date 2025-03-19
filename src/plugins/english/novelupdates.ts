@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '1.9.5';
+  version = '1.9.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -677,78 +677,64 @@ class NovelUpdates implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    let bloatElements = [];
-    let chapterTitle = '';
-    let chapterContent = '';
     let chapterText = '';
 
     try {
       const result = await fetchApi(this.site + chapterPath);
-      const body = await result.text();
-      const url = result.url;
-      const domain = url.toLowerCase().split('/')[2].split('.');
-
-      const loadedCheerio = parseHTML(body);
-
-      // Check for Captcha
-      const title = loadedCheerio('title').text().toLowerCase().trim();
-      if (
-        title == 'bot verification' ||
-        title == 'just a moment...' ||
-        title == 'redirecting...' ||
-        title == 'un instant...' ||
-        title == 'you are being redirected...'
-      ) {
-        throw new Error('Captcha error, please open in webview.');
-      }
-      // Check if the chapter url is wrong or the site is down
       if (!result.ok) {
         throw new Error(
-          `Could not reach site ${result.url} (${result.status}), try to open in webview.`,
+          `Failed to fetch: ${result.status} ${result.statusText}`,
         );
       }
 
-      // Detect if the site is a Blogspot site
-      const blogspotSources = [
-        loadedCheerio('meta[name="google-adsense-platform-domain"]').attr(
-          'content',
-        ),
-        loadedCheerio('meta[name="generator"]').attr('content'),
-      ];
+      const body = await result.text();
+      const url = result.url;
+      const domainParts = url.toLowerCase().split('/')[2].split('.');
 
-      const blogspotKeywords = ['blogspot', 'blogger'];
-      let isBlogspot = blogspotSources.some(
-        source =>
-          source &&
-          blogspotKeywords.some(keyword =>
-            source.toLowerCase().includes(keyword),
+      const loadedCheerio = parseHTML(body);
+
+      // Handle CAPTCHA cases
+      const blockedTitles = [
+        'bot verification',
+        'just a moment...',
+        'redirecting...',
+        'un instant...',
+        'you are being redirected...',
+      ];
+      const title = loadedCheerio('title').text().trim().toLowerCase();
+      if (blockedTitles.includes(title)) {
+        throw new Error('Captcha detected, please open in webview.');
+      }
+
+      // Detect platforms
+      let isBlogspot = ['blogspot', 'blogger'].some(keyword =>
+        [
+          loadedCheerio('meta[name="google-adsense-platform-domain"]').attr(
+            'content',
           ),
+          loadedCheerio('meta[name="generator"]').attr('content'),
+        ].some(meta => meta?.toLowerCase().includes(keyword)),
       );
 
-      // Detect if the site is a WordPress site
-      const wordpressSources = [
-        loadedCheerio('#dcl_comments-js-extra').html(),
-        loadedCheerio('meta[name="generator"]').attr('content'),
-        loadedCheerio('.powered-by').text(),
-        loadedCheerio('footer').text(),
-      ];
-
-      const wordpressKeywords = ['wordpress', 'site kit by google'];
-      let isWordPress = wordpressSources.some(
-        source =>
-          source &&
-          wordpressKeywords.some(keyword =>
-            source.toLowerCase().includes(keyword),
-          ),
+      let isWordPress = ['wordpress', 'site kit by google'].some(keyword =>
+        [
+          loadedCheerio('#dcl_comments-js-extra').html(),
+          loadedCheerio('meta[name="generator"]').attr('content'),
+          loadedCheerio('.powered-by').text(),
+          loadedCheerio('footer').text(),
+        ].some(meta => meta?.toLowerCase().includes(keyword)),
       );
 
-      // In case sites are not detected correctly
+      // Manually set WordPress flag for known sites
       const manualWordPress = ['etherreads', 'soafp'];
-      if (!isWordPress && domain.find(wp => manualWordPress.includes(wp))) {
+      if (
+        !isWordPress &&
+        domainParts.some(wp => manualWordPress.includes(wp))
+      ) {
         isWordPress = true;
       }
 
-      // Sites that are WordPress or Blogspot but have different structure
+      // Handle outlier sites
       const outliers = [
         'anotivereads',
         'arcanetranslations',
@@ -764,184 +750,134 @@ class NovelUpdates implements Plugin.PluginBase {
         'tinytranslation',
         'zetrotranslation',
       ];
-      if (domain.find(d => outliers.includes(d))) {
+      if (domainParts.some(d => outliers.includes(d))) {
         isWordPress = false;
         isBlogspot = false;
       }
 
-      // Last edited in 0.7.13 - 21/01/2025
-      /**
-       * Blogspot sites:
-       * - ¼-Assed
-       * - AsuraTls (Outlier)
-       * - FictionRead (Outlier)
-       * - Novel World Translations (Outlier)
-       * - SacredText TL (Outlier)
-       * - Toasteful
-       *
-       * WordPress sites:
-       * - Anomlaously Creative (Outlier)
-       * - Arcane Translations (Outlier)
-       * - Blossom Translation
-       * - Darkstar Translations (Outlier)
-       * - Dumahs Translations
-       * - ElloMTL
-       * - Femme Fables
-       * - Gem Novels
-       * - Goblinslate
-       * - Hel Scans (Outlier)
-       * - ippotranslations
-       * - JATranslations
-       * - Light Novels Translations
-       * - Mirilu - Novel Reader Attempts Translating (Outlier)
-       * - Neosekai Translations
-       * - Shanghai Fantasy
-       * - Soafp (Manually added)
-       * - Stabbing with a Syringe (Outlier)
-       * - StoneScape
-       * - TinyTL (Outlier)
-       * - Wonder Novels
-       * - Yong Library
-       * - Zetro Translation (Outlier)
-       */
+      // Fetch chapter content based on detected platform
       if (!isWordPress && !isBlogspot) {
-        chapterText = await this.getChapterBody(loadedCheerio, domain, url);
-      } else if (isBlogspot) {
-        bloatElements = [
-          '.button-container',
-          '.ChapterNav',
-          '.ch-bottom',
-          '.separator',
-        ];
+        chapterText = await this.getChapterBody(
+          loadedCheerio,
+          domainParts,
+          url,
+        );
+      } else {
+        let chapterTitle = '';
+        let chapterContent = '';
+
+        const bloatElements = isBlogspot
+          ? ['.button-container', '.ChapterNav', '.ch-bottom', '.separator']
+          : [
+              '.ad',
+              '.author-avatar',
+              '.chapter-warning',
+              '.entry-meta',
+              '.ezoic-ad',
+              '.mb-center',
+              '.modern-footnotes-footnote__note',
+              '.patreon-widget',
+              '.post-cats',
+              '.pre-bar',
+              '.sharedaddy',
+              '.sidebar',
+              '.swg-button-v2-light',
+              '.wp-block-buttons',
+              '.wp-block-image',
+              '.wp-dark-mode-switcher',
+              '.wp-next-post-navi',
+              '#hpk',
+              '#jp-post-flair',
+              '#textbox',
+            ];
+
         bloatElements.forEach(tag => loadedCheerio(tag).remove());
+
+        // Extract title
+        const titleSelectors = isBlogspot
+          ? ['.entry-title', '.post-title']
+          : [
+              '.entry-title',
+              '.entry-title-main',
+              '.chapter__title',
+              '.sp-title',
+              '.title-content',
+              '.wp-block-post-title',
+              '.title_story',
+              '.active',
+              'head title',
+              'h1.leading-none ~ h2',
+            ];
         chapterTitle =
-          loadedCheerio('.entry-title').first().text() ||
-          loadedCheerio('.post-title').first().text() ||
-          'Title not found';
-        chapterContent =
-          loadedCheerio('.content-post').html() ||
-          loadedCheerio('.entry-content').html() ||
-          loadedCheerio('.post-body').html()!;
-        if (chapterTitle && chapterContent) {
-          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
-        }
-      } else if (isWordPress) {
-        bloatElements = [
-          '.ad',
-          '.author-avatar',
-          '.chapter-warning',
-          '.entry-meta',
-          '.ezoic-ad',
-          '.mb-center',
-          '.modern-footnotes-footnote__note',
-          '.patreon-widget',
-          '.post-cats',
-          '.pre-bar',
-          '.sharedaddy',
-          '.sidebar',
-          '.swg-button-v2-light',
-          '.wp-block-buttons',
-          '.wp-block-image',
-          '.wp-dark-mode-switcher',
-          '.wp-next-post-navi',
-          '#hpk',
-          '#jp-post-flair',
-          '#textbox',
-        ];
-        bloatElements.forEach(tag => loadedCheerio(tag).remove());
-        chapterTitle =
-          loadedCheerio('.entry-title').first().text() ||
-          loadedCheerio('.entry-title-main').first().text() ||
-          loadedCheerio('.chapter__title').first().text() ||
-          loadedCheerio('.sp-title').first().text() ||
-          loadedCheerio('.title-content').first().text() ||
-          loadedCheerio('.wp-block-post-title').first().text() ||
-          loadedCheerio('.title_story').first().text() ||
-          loadedCheerio('.active').first().text() ||
-          loadedCheerio('head title').first().text() ||
-          loadedCheerio('h1.leading-none ~ h2').first().text() ||
-          'Title not found';
+          titleSelectors
+            .map(sel => loadedCheerio(sel).first().text())
+            .find(text => text) || 'Title not found';
+
+        // Extract subtitle (if any)
         const chapterSubtitle =
           loadedCheerio('.cat-series').first().text() ||
-          loadedCheerio('h1.leading-none ~ span').first().text() ||
-          '';
-        if (chapterSubtitle) {
-          chapterTitle = chapterSubtitle;
-        }
+          loadedCheerio('h1.leading-none ~ span').first().text();
+        if (chapterSubtitle) chapterTitle = chapterSubtitle;
+
+        // Extract content
+        const contentSelectors = isBlogspot
+          ? ['.content-post', '.entry-content', '.post-body']
+          : [
+              '.rdminimal',
+              '.entry-content',
+              '.chapter__content',
+              '.prevent-select',
+              '.text_story',
+              '.contenta',
+              '.single_post',
+              '.post-entry',
+              '.main-content',
+              '.post-content',
+              '.content',
+              '.page-body',
+              '.td-page-content',
+              '.reader-content',
+              '#content',
+              '#the-content',
+              'article.post',
+            ];
         chapterContent =
-          loadedCheerio('.rdminimal').html() ||
-          loadedCheerio('.entry-content').html() ||
-          loadedCheerio('.chapter__content').html() ||
-          loadedCheerio('.prevent-select').html() ||
-          loadedCheerio('.text_story').html() ||
-          loadedCheerio('.contenta').html() ||
-          loadedCheerio('.single_post').html() ||
-          loadedCheerio('.post-entry').html() ||
-          loadedCheerio('.main-content').html() ||
-          loadedCheerio('.post-content').html() ||
-          loadedCheerio('.content').html() ||
-          loadedCheerio('.page-body').html() ||
-          loadedCheerio('.td-page-content').html() ||
-          loadedCheerio('.reader-content').html() ||
-          loadedCheerio('#content').html() ||
-          loadedCheerio('#the-content').html() ||
-          loadedCheerio('article.post').html()!;
+          contentSelectors
+            .map(sel => loadedCheerio(sel).html())
+            .find(html => html) || '';
+
         if (chapterTitle && chapterContent) {
           chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
         }
       }
 
+      // Fallback content extraction
       if (!chapterText) {
-        // Remove unnecessary tags
-        const tags = ['nav', 'header', 'footer', '.hidden'];
-        tags.map(tag => loadedCheerio(tag).remove());
+        ['nav', 'header', 'footer', '.hidden'].forEach(tag =>
+          loadedCheerio(tag).remove(),
+        );
         chapterText = loadedCheerio('body').html() || 'Text not found';
       }
 
-      if (chapterText) {
-        // Convert relative urls to absolute
-        chapterText = chapterText.replace(
-          /href="\//g,
-          `href="${this.getLocation(result.url)}/`,
-        );
-      }
+      // Convert relative URLs to absolute
+      chapterText = chapterText.replace(
+        /href="\//g,
+        `href="${this.getLocation(result.url)}/`,
+      );
 
-      // Parse the HTML with Cheerio
+      // Process images
       const chapterCheerio = parseHTML(chapterText);
-
-      // Remove unwanted elements
       chapterCheerio('noscript').remove();
-
-      // Process the images
       chapterCheerio('img').each((_, el) => {
         const $el = chapterCheerio(el);
-
-        // Prioritize data-lazy-src or src for the main src attribute
-        const imgSrc = $el.attr('data-lazy-src') || $el.attr('src');
-
-        if (imgSrc) {
-          $el.attr('src', imgSrc); // Set the src value
-        }
-
-        // Prioritize data-lazy-srcset or srcset for the srcset attribute
-        const imgSrcset = $el.attr('data-lazy-srcset') || $el.attr('srcset');
-
-        if (imgSrcset) {
-          $el.attr('srcset', imgSrcset); // Set the srcset value
-        }
-
-        // Remove lazy-loading classes
+        $el.attr('src', $el.attr('data-lazy-src') || $el.attr('src'));
+        $el.attr('srcset', $el.attr('data-lazy-srcset') || $el.attr('srcset'));
         $el.removeClass('lazyloaded');
       });
 
-      // Extract the updated HTML
-      chapterText = chapterCheerio.html();
-
-      return chapterText;
+      return chapterCheerio.html() || 'Text not found';
     } catch (error) {
-      throw new Error(
-        `Could not reach site ${this.site + chapterPath} (${error}), try to open in webview.`,
-      );
+      throw new Error(`Failed to fetch ${this.site + chapterPath}: ${error}`);
     }
   }
 

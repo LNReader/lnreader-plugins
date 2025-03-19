@@ -46,12 +46,43 @@ const makeInit = async (init?: FetchInit) => {
  * Fetch with (Android) User Agent
  * @param url
  * @param init
+ * @param maxRetries
  * @returns response as normal fetch
  */
-export async function fetchApi(url: string, init?: FetchInit) {
+export async function fetchApi(
+  url: string,
+  init?: FetchInit,
+  maxRetries = 3,
+): Promise<Response> {
   init = await makeInit(init);
   console.log(url, init);
-  return await fetch(url, init as RequestInit);
+
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    const response = await fetch(url, init as RequestInit);
+
+    // 🟢 Handle Early Hints (103) by retrying
+    if (response.status === 103) {
+      console.warn(
+        `Received 103 Early Hints, retrying... (${attempt + 1}/${maxRetries})`,
+      );
+      attempt++;
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait before retrying
+      continue;
+    }
+
+    // 🟢 Return successful responses (200-299)
+    if (response.ok) return response;
+
+    // 🔴 Handle other errors
+    console.error(
+      `Fetch failed with status ${response.status}: ${response.statusText}`,
+    );
+    throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
+  }
+
+  throw new Error(`Max retries reached for ${url}`);
 }
 
 /**
