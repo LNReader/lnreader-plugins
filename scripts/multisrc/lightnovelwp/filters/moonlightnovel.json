@@ -18,8 +18,8 @@
           "value": "adventure"
         },
         {
-          "label": "Amnesia",
-          "value": "amnesia"
+          "label": "Apocalypse",
+          "value": "apocalypse"
         },
         {
           "label": "Childcare",
@@ -30,24 +30,16 @@
           "value": "comedy"
         },
         {
+          "label": "Contemporary Romance",
+          "value": "contemporary-romance"
+        },
+        {
           "label": "Drama",
           "value": "drama"
         },
         {
           "label": "Fantasy",
           "value": "fantasy"
-        },
-        {
-          "label": "fantasy of",
-          "value": "fantasy-of"
-        },
-        {
-          "label": "Fate",
-          "value": "fate"
-        },
-        {
-          "label": "Fiction",
-          "value": "fiction"
         },
         {
           "label": "Gender Bender",
@@ -74,10 +66,6 @@
           "value": "josei"
         },
         {
-          "label": "Magic",
-          "value": "magic"
-        },
-        {
           "label": "Martial Arts",
           "value": "martial-arts"
         },
@@ -98,6 +86,10 @@
           "value": "mystery"
         },
         {
+          "label": "Omegaverse",
+          "value": "omegaverse"
+        },
+        {
           "label": "Psychological",
           "value": "psychological"
         },
@@ -110,24 +102,12 @@
           "value": "revenge"
         },
         {
-          "label": "Rofan",
-          "value": "rofan"
-        },
-        {
           "label": "Romance",
           "value": "romance"
         },
         {
-          "label": "Romance Fantasy",
-          "value": "romance-fantasy"
-        },
-        {
-          "label": "Romantic Comedy",
-          "value": "romantic-comedy"
-        },
-        {
-          "label": "Royalty",
-          "value": "royalty"
+          "label": "salvation",
+          "value": "salvation"
         },
         {
           "label": "School Life",
@@ -136,6 +116,10 @@
         {
           "label": "Sci-fi",
           "value": "sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
         },
         {
           "label": "Shoujo",
@@ -162,16 +146,16 @@
           "value": "supernatural"
         },
         {
-          "label": "Suspense",
-          "value": "suspense"
-        },
-        {
           "label": "Tragedy",
           "value": "tragedy"
         },
         {
           "label": "Transmigration",
           "value": "transmigration"
+        },
+        {
+          "label": "Western Style",
+          "value": "western-style"
         },
         {
           "label": "Xianxia",
@@ -184,10 +168,6 @@
         {
           "label": "Yaoi",
           "value": "yaoi"
-        },
-        {
-          "label": "Younger Man",
-          "value": "younger-man"
         },
         {
           "label": "Yuri",
@@ -223,14 +203,6 @@
         {
           "label": "Web Novel",
           "value": "web-novel"
-        },
-        {
-          "label": "Web Novel (KR)",
-          "value": "web-novel-kr"
-        },
-        {
-          "label": "Webnovel",
-          "value": "webnovel"
         }
       ]
     },

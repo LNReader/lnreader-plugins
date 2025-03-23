@@ -7,8 +7,8 @@ class LibReadPlugin implements Plugin.PluginBase {
   id = 'libread';
   name = 'Lib Read';
   icon = 'src/en/libread/icon.png';
-  site = 'https://libread.org';
-  version = '1.0.0';
+  site = 'https://libread.com';
+  version = '1.1.0';
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url);

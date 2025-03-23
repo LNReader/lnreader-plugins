@@ -18,12 +18,20 @@
           "value": "comedy"
         },
         {
+          "label": "drama",
+          "value": "drama"
+        },
+        {
           "label": "Fantasy",
           "value": "fantasy"
         },
         {
           "label": "Harem",
           "value": "harem"
+        },
+        {
+          "label": "Martial Arts",
+          "value": "martial-arts"
         },
         {
           "label": "Mystery",
@@ -46,8 +54,16 @@
           "value": "seinen"
         },
         {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
           "label": "Slice of Life",
           "value": "slice-of-life"
+        },
+        {
+          "label": "Thriller",
+          "value": "thriller"
         }
       ]
     },
@@ -56,6 +72,10 @@
       "label": "Type",
       "value": [],
       "options": [
+        {
+          "label": "Chinese Novel",
+          "value": "chinese-novel"
+        },
         {
           "label": "Dropped",
           "value": "dropped"

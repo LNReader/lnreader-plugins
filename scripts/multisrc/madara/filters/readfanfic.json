@@ -114,6 +114,10 @@
           "value": "one-shot"
         },
         {
+          "label": "Original Novel",
+          "value": "original-novel"
+        },
+        {
           "label": "Psychological",
           "value": "psychological"
         },
@@ -178,12 +182,12 @@
           "value": "tragedy"
         },
         {
-          "label": "Webtoon",
-          "value": "webtoon"
+          "label": "Translated Novel",
+          "value": "translated-novel"
         },
         {
-          "label": "Wuxia",
-          "value": "wuxia"
+          "label": "Webtoon",
+          "value": "webtoon"
         },
         {
           "label": "Yaoi",
@@ -207,7 +211,7 @@
     },
     "artist": {
       "type": "Text",
-      "label": "Artist",
+      "label": "Team",
       "value": ""
     },
     "release": {
@@ -240,12 +244,12 @@
       "value": [],
       "options": [
         {
-          "label": "OnGoing",
-          "value": "on-going"
+          "label": "Completed",
+          "value": "complete"
         },
         {
-          "label": "Completed",
-          "value": "end"
+          "label": "Ongoing",
+          "value": "on-going"
         },
         {
           "label": "Canceled",
@@ -254,10 +258,6 @@
         {
           "label": "On Hold",
           "value": "on-hold"
-        },
-        {
-          "label": "Upcoming",
-          "value": "upcoming"
         }
       ]
     },

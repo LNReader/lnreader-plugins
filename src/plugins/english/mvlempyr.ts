@@ -29,7 +29,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.3';
+  version = '1.0.5';
 
   _chapSite = 'https://chp.mvlempyr.net/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
@@ -99,7 +99,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       ret.push(this.parseNovelHtmlNew(realNovelInfo));
     }
 
-    console.log(ret);
+    // console.log(ret);
     return ret;
   }
 
@@ -341,19 +341,28 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     return {
       path: novelPath,
       name:
-        loadedCheerio('div.image-container.w-embed > img').attr('alt') ||
-        'Untitled',
-      cover: loadedCheerio('div.image-container.w-embed > img').attr('src'),
-      summary: loadedCheerio('div.synopsis.w-richtext').text().trim(),
+        loadedCheerio(
+          '.novelpaewrapper div.image-container.w-embed > img',
+        ).attr('alt') || 'Untitled',
+      cover: loadedCheerio(
+        '.novelpaewrapper div.image-container.w-embed > img',
+      ).attr('src'),
+      summary: loadedCheerio('.novelpaewrapper div.synopsis.w-richtext')
+        .text()
+        .trim(),
       chapters: posts.map(chap => ({
         name: chap.acf.ch_name,
         path: 'chapter/' + chap.acf.novel_code + '-' + chap.acf.chapter_number,
         releaseTime: chap.date,
         chapterNumber: chap.acf.chapter_number,
       })),
-      status: loadedCheerio('div.novelstatustextmedium').text(),
-      author: loadedCheerio('div.mobileauthorname').text(),
-      genres: loadedCheerio('div.novelgenre.mobile > div > div > a > div')
+      status: loadedCheerio(
+        '.novelpaewrapper div.novelstatustextmedium',
+      ).text(),
+      author: loadedCheerio('.novelpaewrapper div.mobileauthorname').text(),
+      genres: loadedCheerio(
+        '.novelpaewrapper div.novelgenre.mobile > div > div > a > div',
+      )
         .map((i, el) => loadedCheerio(el).text())
         .toArray()
         .join(','),

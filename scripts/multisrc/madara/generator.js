@@ -27,7 +27,7 @@ const generator = function generator(source) {
   });
 
   const pluginScript = `
-${madaraTemplate}
+${madaraTemplate.replace('// CustomJS HERE', source.options?.customJs || '')}
 const plugin = new MadaraPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();

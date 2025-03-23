@@ -10,13 +10,13 @@
   },
   {
     "id": "kolnovel",
-    "sourceSite": "https://kolnovel.org/",
+    "sourceSite": "https://kolbook.xyz/",
     "sourceName": "Kol Novel",
     "options": {
       "lang": "Arabic",
       "reverseChapters": true,
-      "customJs": "let ignore = $('article > style').text().trim().split(',');ignore.push(...(ignore.pop()?.match(/^\\.\\w+/) || []));ignore.map(tag => $(`p${tag}`).remove());",
-      "versionIncrements": 5
+      "customJs": "$('article > style').text().match(/\\.\\w+(?=\\s*[,{])/g)?.forEach(tag => $(`p${tag}`).remove());$('.epcontent .code-block').remove();",
+      "versionIncrements": 7
     }
   },
   {
@@ -48,7 +48,7 @@
   },
   {
     "id": "daotranslate",
-    "sourceSite": "https://daotranslate.net/",
+    "sourceSite": "https://daotranslate.com/",
     "sourceName": "DaoTranslate",
     "options": {
       "lang": "English",
@@ -101,11 +101,12 @@
   },
   {
     "id": "novelsknight",
-    "sourceSite": "https://novelsknight.com/",
+    "sourceSite": "https://faloonovels.online/",
     "sourceName": "NovelsKnight",
     "options": {
       "lang": "English",
-      "reverseChapters": true
+      "reverseChapters": true,
+      "versionIncrements": 1
     }
   },
   {
@@ -149,9 +150,9 @@
     "sourceSite": "https://moonlightnovel.com/",
     "sourceName": "Moonlight Novels",
     "options": {
+      "versionIncrements": 1,
       "lang": "English",
-      "reverseChapters": true,
-      "seriesPath": "/novels/"
+      "reverseChapters": true
     }
   },
   {
@@ -197,7 +198,8 @@
     "options": {
       "lang": "English",
       "reverseChapters": true,
-      "customJs": "\n        $('div.entry-content > p').each(function () {\n          $(this).text($(this).text().replace(/[\\u1000-\\u105F]/g, function (c) {\n            return String.fromCharCode(c.charCodeAt(0) - 4063);\n          }));\n        });\n"
+      "customJs": "\n        $('div.entry-content script').remove();\n        $('div.entry-content > p').each((_,el) => {\n          const url = this.site + chapterPath.slice(0, -1);\n          const encode = url.length * url.charCodeAt(url.length - 1) * 2 % 3;\n\n          const offsets = new Map([[0, 4223], [1, 12415], [2, 7007]]);\n          const offset = offsets.get(encode) ?? 4223;\n\n          $(el).text($(el).text().split('').map(char => {\n            let code = char.charCodeAt(0);\n            return (code < offset || code > offset+255) ? char : String.fromCharCode(code-offset);\n          }).join(''));\n        });\n",
+      "versionIncrements": 2
     }
   },
   {
@@ -214,7 +216,8 @@
     "sourceName": "Arcane Translations",
     "options": {
       "reverseChapters": true,
-      "lang": "English"
+      "lang": "English",
+      "hasLocked": true
     }
   },
   {
@@ -223,7 +226,7 @@
     "sourceName": "Namevt",
     "options": {
       "reverseChapters": true,
-      "seriesPath": "/seri/",
+      "seriesPath": "seri",
       "lang": "Turkish"
     }
   },
@@ -233,8 +236,34 @@
     "sourceName": "Kodeks Library",
     "options": {
       "reverseChapters": true,
-      "seriesPath": "series",
       "lang": "Turkish"
+    }
+  },
+  {
+    "id": "vandytranslate",
+    "sourceSite": "https://vandytranslate.com",
+    "sourceName": "Vandy Translate",
+    "options": {
+      "reverseChapters": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "lazygirltranslations",
+    "sourceSite": "https://lazygirltranslations.com",
+    "sourceName": "Lazy Girl Translations",
+    "options": {
+      "reverseChapters": false,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "keopi",
+    "sourceSite": "https://keopitranslations.com",
+    "sourceName": "Keopi Translations",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
     }
   }
 ]

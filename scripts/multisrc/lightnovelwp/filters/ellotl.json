@@ -2,28 +2,97 @@
   "filters": {
     "genre[]": {
       "type": "Checkbox",
-      "label": "Genres",
+      "label": "Genre",
       "value": [],
       "options": [
-        { "label": "Action", "value": "action" },
-        { "label": "Adventure", "value": "adventure" },
-        { "label": "Comedy", "value": "comedy" },
-        { "label": "Drama", "value": "drama" },
-        { "label": "Ecchi", "value": "ecchi" },
-        { "label": "Fantasy", "value": "fantasy" },
-        { "label": "Gender Bender", "value": "gender-bender" },
-        { "label": "Harem", "value": "harem" },
-        { "label": "Martial Arts", "value": "martial-arts" },
-        { "label": "Mature", "value": "mature" },
-        { "label": "Mystery", "value": "mystery" },
-        { "label": "Psychological", "value": "psychological" },
-        { "label": "Romance", "value": "romance" },
-        { "label": "School Life", "value": "school-life" },
-        { "label": "Seinen", "value": "seinen" },
-        { "label": "Shounen", "value": "shounen" },
-        { "label": "Slice of Life", "value": "slice-of-life" },
-        { "label": "Supernatural", "value": "supernatural" },
-        { "label": "Tragedy", "value": "tragedy" }
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        {
+          "label": "Adult",
+          "value": "adult"
+        },
+        {
+          "label": "Adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "Comedy",
+          "value": "comedy"
+        },
+        {
+          "label": "Drama",
+          "value": "drama"
+        },
+        {
+          "label": "Ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "Gender Bender",
+          "value": "gender-bender"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "Hunter",
+          "value": "hunter"
+        },
+        {
+          "label": "Martial Arts",
+          "value": "martial-arts"
+        },
+        {
+          "label": "Mature",
+          "value": "mature"
+        },
+        {
+          "label": "Modern Fantasy",
+          "value": "modern-fantasy"
+        },
+        {
+          "label": "Mystery",
+          "value": "mystery"
+        },
+        {
+          "label": "Psychological",
+          "value": "psychological"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "School Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
+        },
+        {
+          "label": "Supernatural",
+          "value": "supernatural"
+        },
+        {
+          "label": "Tragedy",
+          "value": "tragedy"
+        }
       ]
     },
     "type[]": {
@@ -31,10 +100,46 @@
       "label": "Type",
       "value": [],
       "options": [
-        { "label": "Japanese Web Novel", "value": "japanese-web-novel" },
-        { "label": "Korean Web Novel", "value": "korean-web-novel" },
-        { "label": "Light Novel (JP)", "value": "light-novel-jp" },
-        { "label": "Web Novel", "value": "web-novel" }
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "Genius",
+          "value": "genius"
+        },
+        {
+          "label": "Hunter",
+          "value": "hunter"
+        },
+        {
+          "label": "Japanese Web Novel",
+          "value": "japanese-web-novel"
+        },
+        {
+          "label": "Korean Web Novel",
+          "value": "korean-web-novel"
+        },
+        {
+          "label": "Light Novel (JP)",
+          "value": "light-novel-jp"
+        },
+        {
+          "label": "Mage",
+          "value": "mage"
+        },
+        {
+          "label": "Modern Fantasy",
+          "value": "modern-fantasy"
+        },
+        {
+          "label": "Reincarnation",
+          "value": "reincarnation"
+        },
+        {
+          "label": "Web Novel",
+          "value": "web-novel"
+        }
       ]
     },
     "status": {
@@ -42,23 +147,57 @@
       "label": "Status",
       "value": "",
       "options": [
-        { "label": "All", "value": "" },
-        { "label": "Ongoing", "value": "ongoing" },
-        { "label": "Hiatus", "value": "hiatus" },
-        { "label": "Completed", "value": "completed" }
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "Ongoing",
+          "value": "ongoing"
+        },
+        {
+          "label": "Hiatus",
+          "value": "hiatus"
+        },
+        {
+          "label": "Completed",
+          "value": "completed"
+        }
       ]
     },
     "order": {
       "type": "Picker",
-      "label": "Sort",
-      "value": "popular",
+      "label": "Order by",
+      "value": "",
       "options": [
-        { "label": "Popular", "value": "popular" },
-        { "label": "A-Z", "value": "title" },
-        { "label": "Z-A", "value": "titlereverse" },
-        { "label": "Latest Update", "value": "update" },
-        { "label": "Latest Added", "value": "latest" },
-        { "label": "Rating", "value": "rating" }
+        {
+          "label": "Default",
+          "value": ""
+        },
+        {
+          "label": "A-Z",
+          "value": "title"
+        },
+        {
+          "label": "Z-A",
+          "value": "titlereverse"
+        },
+        {
+          "label": "Latest Update",
+          "value": "update"
+        },
+        {
+          "label": "Latest Added",
+          "value": "latest"
+        },
+        {
+          "label": "Popular",
+          "value": "popular"
+        },
+        {
+          "label": "Rating",
+          "value": "rating"
+        }
       ]
     }
   }
