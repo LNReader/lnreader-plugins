@@ -3,6 +3,7 @@ import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
+import { storage } from '@libs/storage';
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
   id = 'scribblehub';
@@ -10,6 +11,8 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
   icon = 'src/en/scribblehub/icon.png';
   site = 'https://www.scribblehub.com/';
   version = '1.1.0';
+
+  syncChapter = storage.get('syncChapter');
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -176,31 +179,33 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async trackProgress(novelPath: string, chapterPath: string): Promise<void> {
-    // Extract the novelId from the novelPath
-    const novelIdMatch = novelPath.match(/series\/(\d+)\//);
-    const novelId = novelIdMatch ? novelIdMatch[1] : null;
+  async syncChapterStatus(
+    novelPath: string,
+    chapterPath: string,
+  ): Promise<boolean> {
+    try {
+      // Extract IDs from paths
+      const novelId = novelPath.match(/series\/(\d+)\//)?.[1];
+      const chapterId = chapterPath.match(/chapter\/(\d+)\//)?.[1];
 
-    // Extract the chapterId from the chapterPath
-    const chapterIdMatch = chapterPath.match(/chapter\/(\d+)\//);
-    const chapterId = chapterIdMatch ? chapterIdMatch[1] : null;
+      // Validation
+      if (!novelId || !chapterId) return false;
 
-    const link = `${this.site}wp-admin/admin-ajax.php`;
-
-    if (novelId && chapterId) {
       const formData = new FormData();
       formData.append('action', 'wi_addchangerl');
       formData.append('strCID', chapterId);
       formData.append('strSID', novelId);
 
-      await fetchApi(link, {
+      // Chapter sync
+      const syncUrl = `${this.site}wp-admin/admin-ajax.php`;
+      await fetchApi(syncUrl, {
         method: 'POST',
         body: formData,
       });
-    } else {
-      throw new Error(
-        `Invalid novelPath (${novelPath}) or chapterPath (${chapterPath}).`,
-      );
+
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 
@@ -326,6 +331,14 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.ExcludableCheckboxGroup,
     },
   } satisfies Filters;
+
+  pluginSettings = {
+    syncChapter: {
+      value: '',
+      label: 'Sync chapter progress with plugin site',
+      type: 'Switch',
+    },
+  };
 }
 
 export default new ScribbleHubPlugin();

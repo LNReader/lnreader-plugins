@@ -909,21 +909,21 @@ class NovelUpdates implements Plugin.PluginBase {
     try {
       // Get HTML content
       const result = await fetchApi(this.site + novelPath);
-      const loadedCheerio = parseHTML(await result.text());
+      const body = await result.text();
+      const loadedCheerio = parseHTML(body);
 
       // Extract IDs
       const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
       const novelId = shortlink?.match(/\?p=(\d+)/)?.[1];
       const chapterId = chapterPath.match(/\/(\d+)\//)?.[1];
 
-      if (!novelId || !chapterId) {
-        return false;
-      }
+      // Validation
+      if (!novelId || !chapterId) return false;
 
       // Chapter sync
-      await fetchApi(
-        `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`,
-      );
+      const syncUrl = `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`;
+      await fetchApi(syncUrl);
+
       return true;
     } catch (error) {
       return false;
