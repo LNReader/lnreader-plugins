@@ -4,6 +4,7 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
 import { storage } from '@libs/storage';
+import ChapterItem = Plugin.ChapterItem;
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
   id = 'scribblehub';
@@ -179,14 +180,14 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
-  async syncChapterStatus(
+  async handleChapterEvent(
     novelPath: string,
-    chapterPath: string,
+    chapter: ChapterItem,
   ): Promise<boolean> {
     try {
       // Extract IDs from paths
       const novelId = novelPath.match(/series\/(\d+)\//)?.[1];
-      const chapterId = chapterPath.match(/chapter\/(\d+)\//)?.[1];
+      const chapterId = chapter.path.match(/chapter\/(\d+)\//)?.[1];
 
       // Validation
       if (!novelId || !chapterId) return false;

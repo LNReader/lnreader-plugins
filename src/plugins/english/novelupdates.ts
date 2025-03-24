@@ -3,6 +3,7 @@ import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { storage } from '@libs/storage';
+import ChapterItem = Plugin.ChapterItem;
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
@@ -902,9 +903,9 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterCheerio.html()!;
   }
 
-  async syncChapterStatus(
+  async handleChapterEvent(
     novelPath: string,
-    chapterPath: string,
+    chapter: ChapterItem,
   ): Promise<boolean> {
     try {
       // Get HTML content
@@ -915,7 +916,7 @@ class NovelUpdates implements Plugin.PluginBase {
       // Extract IDs
       const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
       const novelId = shortlink?.match(/\?p=(\d+)/)?.[1];
-      const chapterId = chapterPath.match(/\/(\d+)\//)?.[1];
+      const chapterId = chapter.path.match(/\/(\d+)\//)?.[1];
 
       // Validation
       if (!novelId || !chapterId) return false;
