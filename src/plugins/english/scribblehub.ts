@@ -4,7 +4,6 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
 import { storage } from '@libs/storage';
-import ChapterItem = Plugin.ChapterItem;
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
   id = 'scribblehub';
@@ -182,7 +181,7 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
 
   async handleChapterEvent(
     novelPath: string,
-    chapter: ChapterItem,
+    chapter: Plugin.ChapterItem,
   ): Promise<boolean> {
     try {
       // Extract IDs from paths

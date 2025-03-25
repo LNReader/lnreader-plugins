@@ -3,7 +3,6 @@ import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { storage } from '@libs/storage';
-import ChapterItem = Plugin.ChapterItem;
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
@@ -905,7 +904,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   async handleChapterEvent(
     novelPath: string,
-    chapter: ChapterItem,
+    chapter: Plugin.ChapterItem,
   ): Promise<boolean> {
     try {
       // Get HTML content
