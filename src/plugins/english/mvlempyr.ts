@@ -371,12 +371,15 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       summary: loadedCheerio('.novelpaewrapper div.synopsis.w-richtext')
         .text()
         .trim(),
-      chapters: posts.map(chap => ({
-        name: chap.acf.ch_name,
-        path: 'chapter/' + chap.acf.novel_code + '-' + chap.acf.chapter_number,
-        releaseTime: chap.date,
-        chapterNumber: chap.acf.chapter_number,
-      })),
+      chapters: posts
+        .map(chap => ({
+          name: chap.acf.ch_name,
+          path:
+            'chapter/' + chap.acf.novel_code + '-' + chap.acf.chapter_number,
+          releaseTime: chap.date,
+          chapterNumber: chap.acf.chapter_number,
+        }))
+        .reverse(),
       status: loadedCheerio(
         '.novelpaewrapper div.novelstatustextmedium',
       ).text(),
