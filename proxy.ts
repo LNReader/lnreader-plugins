@@ -160,10 +160,12 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
     fetch(_url.href, {
       headers: headers,
     })
-      .then(res2 => res2.text())
-      .then(res2 => {
-        res.statusCode = 200;
-        res.write(res2);
+      .then(async res2 => [res2, await res2.text()] as const)
+      .then(([res2, text]) => {
+        res.statusCode = res2.status;
+        res.setHeader('Content-Type', res2.headers.get('Content-Type'));
+        res.setHeader('X-Wp-Totalpages', res2.headers.get('X-Wp-Totalpages'));
+        res.write(text);
         res.end();
       })
       .catch(err => {
