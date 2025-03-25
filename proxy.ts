@@ -18,7 +18,13 @@ const settings: ServerSetting = {
     'sec-fetch-dest',
     'pragma',
   ],
-  disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
+  disAllowResponseHeaders: [
+    'link',
+    'set-cookie',
+    'set-cookie2',
+    'content-encoding',
+    'content-length',
+  ],
   useUserAgent: true,
 };
 
@@ -160,10 +166,15 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
     fetch(_url.href, {
       headers: headers,
     })
-      .then(res2 => res2.text())
-      .then(res2 => {
-        res.statusCode = 200;
-        res.write(res2);
+      .then(async res2 => [res2, await res2.text()] as const)
+      .then(([res2, text]) => {
+        res.statusCode = res2.status;
+        res2.headers.forEach((val, key) => {
+          if (!settings.disAllowResponseHeaders.includes(key)) {
+            res.setHeader(key, val);
+          }
+        });
+        res.write(text);
         res.end();
       })
       .catch(err => {
