@@ -29,7 +29,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.6';
+  version = '1.0.7';
 
   _chapSite = 'https://chap.mvlempyr.space/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
