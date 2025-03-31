@@ -79,13 +79,24 @@ class ReaperScans implements Plugin.PluginBase {
       headers: { RSC: '1' },
     });
     const body = await result.text();
+    return this.extractChapterContent(body);
+  }
 
-    const content = body
+  private extractChapterContent(chapter: string): string {
+    const content = chapter
       .split('\n')
       .find(e => e.substring(0, 50).includes('<p'))!;
-    return content.substring(
-      content.indexOf('<'),
-      content.lastIndexOf('>') + 1,
+    const prefix = content.substring(0, content.indexOf('<'));
+    const commonPrefix = prefix.substring(
+      prefix.indexOf(':'),
+      prefix.indexOf(','),
+    );
+
+    const deduplicated = content.split(commonPrefix)[1];
+    console.log(prefix, commonPrefix, content.length, deduplicated.length);
+    return deduplicated.substring(
+      deduplicated.indexOf('<'),
+      deduplicated.lastIndexOf('>') + 1,
     );
   }
 
