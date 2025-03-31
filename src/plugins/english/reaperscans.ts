@@ -65,7 +65,7 @@ class ReaperScans implements Plugin.PluginBase {
       summary: novel.description,
       genres: novel.tags.join(','),
       path: novelPath,
-      chapters: chapters.map(chapter => ({
+      chapters: chapters.reverse().map(chapter => ({
         path: `${novelPath}/${chapter.chapter_slug}`,
         name: chapter.chapter_name,
         chapterNumber: Number.parseFloat(chapter.index),
