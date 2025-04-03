@@ -1,5 +1,4 @@
-import { load as parseHTML, CheerioAPI } from 'cheerio';
-import * as cheerio from 'cheerio';
+import { load as parseHTML } from 'cheerio';
 import { fetchText } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
