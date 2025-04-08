@@ -1,13 +1,15 @@
-import { Parser } from 'htmlparser2';
+import { Parser, parseDocument } from 'htmlparser2';
+import { selectOne, selectAll } from 'css-select';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
+import serialize from 'dom-serializer';
 
 class RoyalRoad implements Plugin.PluginBase {
   id = 'royalroad';
   name = 'Royal Road';
-  version = '2.1.4';
+  version = '2.2.0';
   icon = 'src/en/royalroad/icon.png';
   site = 'https://www.royalroad.com/';
 
@@ -16,7 +18,6 @@ class RoyalRoad implements Plugin.PluginBase {
     let tempNovel = {} as Plugin.NovelItem;
     tempNovel.name = '';
     let isParsingNovel = false;
-    let isNovelName = false;
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class']?.includes('fiction-list-item')) {
@@ -25,10 +26,10 @@ class RoyalRoad implements Plugin.PluginBase {
         if (isParsingNovel) {
           if (name === 'a' && attribs['class']?.includes('bold')) {
             tempNovel.path = attribs['href'].slice(1);
-            isNovelName = true;
           }
           if (name === 'img') {
             tempNovel.cover = attribs['src'];
+            tempNovel.name = attribs['alt']
           }
           if (tempNovel.path && tempNovel.name) {
             novels.push(tempNovel);
@@ -37,14 +38,8 @@ class RoyalRoad implements Plugin.PluginBase {
           }
         }
       },
-      ontext(data) {
-        if (isNovelName) {
-          tempNovel.name += data;
-        }
-      },
       onclosetag(name) {
-        if (name === 'i') {
-          isNovelName = false;
+        if (name === 'h2') {
           isParsingNovel = false;
         }
       },
@@ -232,26 +227,41 @@ class RoyalRoad implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
-    const parts: string[] = [];
-    const regexPatterns: RegExp[] = [
-      /<style>\n\s+.(.+?){[^]+?display: none;/,
-      /(<div class="portlet solid author-note-portlet"[^]+?)<div class="margin-bottom-20/,
-      /(<div class="chapter-inner chapter-content"[^]+?)<div class="portlet light t-center-/,
-      /(<\/div>\s+<div class="portlet solid author-note-portlet"[^]+?)<div class="row margin-bottom-10/,
-    ];
 
-    const extractContent = (patterns: RegExp[]) => {
-      patterns.forEach(regex => {
-        const match = html.match(regex)?.[1];
-        if (match) parts.push(match);
+    const document = parseDocument(html);
+
+    const match = html.match(/<style>\n\s+.(.+?){[^.]+?display: none;/);
+    const hidden = match ? match[1] : undefined;
+    if (hidden) {
+      selectAll(`.${hidden}`, document).forEach(node => {
+        node.parent?.children.splice(node.parent.children.indexOf(node), 1);
       });
-    };
-    extractContent(regexPatterns);
-    const cleanup = new RegExp(`<p class="${parts[0]}.+?</p>`, 'g');
-    const chapterText = parts.slice(1).join('<hr>');
-    return chapterText
-      .replace(cleanup, '')
-      .replace(/<p class="[^><]+>/g, '<p>');
+    }
+
+    const content = selectOne('.chapter-content', document);
+    if (!content || !content.parent) return '';
+
+    const container = content.parent;
+    const contentIdx = container.children.indexOf(content);
+    const notes = selectAll('.author-note-portlet', container);
+
+    if (!notes.length) return serialize(content.children);
+
+    const beforeNotes = notes
+      .filter(note => container.children.indexOf(note) < contentIdx)
+      .map(note => `<div class="author-note-before">${serialize(note.children)}</div>`)
+      .join('\n');
+    
+    const afterNotes = notes
+      .filter(note => container.children.indexOf(note) > contentIdx)
+      .map(note => `<div class="author-note-after">${serialize(note.children)}</div>`)
+      .join('\n');
+    
+    return [
+      beforeNotes && `${beforeNotes}\n`,
+      serialize(content.children),
+      afterNotes && `\n${afterNotes}`
+    ].filter(Boolean).join('');
   }
 
   async searchNovels(
