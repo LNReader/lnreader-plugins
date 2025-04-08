@@ -265,5 +265,15 @@
       "lang": "English",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "TCSega",
+    "sourceSite": "https://teamchmantranslations.com",
+    "sourceName": "TC & Sega",
+    "options": {
+      "lang": "Spanish",
+      "reverseChapters": true
+    }
   }
+
 ]
