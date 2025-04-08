@@ -236,7 +236,7 @@ class RoyalRoad implements Plugin.PluginBase {
     const regexPatterns: RegExp[] = [
       /<style>\n\s+.(.+?){[^]+?display: none;/,
       /(<div class="portlet solid author-note-portlet"[^]+?)<div class="margin-bottom-20/,
-      /(<div class="chapter-inner chapter-content"[^]+?)<div class="portlet light t-center-3/,
+      /(<div class="chapter-inner chapter-content"[^]+?)<div class="portlet light t-center/,
       /(<\/div>\s+<div class="portlet solid author-note-portlet"[^]+?)<div class="row margin-bottom-10/,
     ];
 
@@ -258,7 +258,12 @@ class RoyalRoad implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const searchUrl = `${this.site}fictions/search?page=${page}&title=${encodeURIComponent(searchTerm)}`;
+    const params = new URLSearchParams({
+      page: page.toString(),
+      title: searchTerm,
+      globalFilters: 'true',
+    });
+    const searchUrl = `${this.site}fictions/search?${params.toString()}`;
 
     const body = await fetchApi(searchUrl).then(r => r.text());
     return this.parseNovels(body);
