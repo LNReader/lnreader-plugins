@@ -29,7 +29,7 @@ class RoyalRoad implements Plugin.PluginBase {
           }
           if (name === 'img') {
             tempNovel.cover = attribs['src'];
-            tempNovel.name = attribs['alt']
+            tempNovel.name = attribs['alt'];
           }
           if (tempNovel.path && tempNovel.name) {
             novels.push(tempNovel);
@@ -249,19 +249,27 @@ class RoyalRoad implements Plugin.PluginBase {
 
     const beforeNotes = notes
       .filter(note => container.children.indexOf(note) < contentIdx)
-      .map(note => `<div class="author-note-before">${serialize(note.children)}</div>`)
+      .map(
+        note =>
+          `<div class="author-note-before">${serialize(note.children)}</div>`,
+      )
       .join('\n');
-    
+
     const afterNotes = notes
       .filter(note => container.children.indexOf(note) > contentIdx)
-      .map(note => `<div class="author-note-after">${serialize(note.children)}</div>`)
+      .map(
+        note =>
+          `<div class="author-note-after">${serialize(note.children)}</div>`,
+      )
       .join('\n');
-    
+
     return [
       beforeNotes && `${beforeNotes}\n`,
       serialize(content.children),
-      afterNotes && `\n${afterNotes}`
-    ].filter(Boolean).join('');
+      afterNotes && `\n${afterNotes}`,
+    ]
+      .filter(Boolean)
+      .join('');
   }
 
   async searchNovels(
