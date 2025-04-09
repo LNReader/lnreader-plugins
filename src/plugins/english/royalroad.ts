@@ -245,12 +245,15 @@ class RoyalRoad implements Plugin.PluginBase {
     const parser = new Parser({
       onopentag(name, attribs) {
         depth++;
-        if (isHiddenContent || (hiddenClass && attribs['class']?.includes(hiddenClass))) {
-            if (!isHiddenContent) {
-                isHiddenContent = true;
-                hiddenDepth = depth;
-            }
-            return;
+        if (
+          isHiddenContent ||
+          (hiddenClass && attribs['class']?.includes(hiddenClass))
+        ) {
+          if (!isHiddenContent) {
+            isHiddenContent = true;
+            hiddenDepth = depth;
+          }
+          return;
         }
 
         if (attribs['class']?.includes('chapter-content')) {
@@ -278,7 +281,7 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       ontext(text) {
         if (isHiddenContent) {
-            return;
+          return;
         }
 
         if (isChapterContent) {
@@ -290,11 +293,11 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       onclosetag(name) {
         if (isHiddenContent) {
-            if (depth === hiddenDepth) {
-                isHiddenContent = false;
-            }
-            depth--;
-            return;
+          if (depth === hiddenDepth) {
+            isHiddenContent = false;
+          }
+          depth--;
+          return;
         }
 
         if (isChapterContent && depth === contentDepth) {
@@ -310,8 +313,8 @@ class RoyalRoad implements Plugin.PluginBase {
           notesHtml = '';
         } else if (isChapterContent || isAuthorNote) {
           const closingTag = `</${name}>`;
-           if (isChapterContent) chapterHtml += closingTag;
-           if (isAuthorNote) notesHtml += closingTag;
+          if (isChapterContent) chapterHtml += closingTag;
+          if (isAuthorNote) notesHtml += closingTag;
         }
         depth--;
       },
@@ -320,11 +323,7 @@ class RoyalRoad implements Plugin.PluginBase {
     parser.write(html);
     parser.end();
 
-    return [
-        beforeNotes.trim(),
-        chapterHtml.trim(),
-        afterNotes.trim(),
-    ]
+    return [beforeNotes.trim(), chapterHtml.trim(), afterNotes.trim()]
       .filter(Boolean)
       .join('\n');
   }
