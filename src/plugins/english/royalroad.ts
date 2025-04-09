@@ -99,7 +99,7 @@ class RoyalRoad implements Plugin.PluginBase {
       summary: '',
       chapters: [],
     };
-    const baseUrl = this.site
+    const baseUrl = this.site;
     let isNovelName = false;
     let isAuthorName = false;
     let isDescription = false;
