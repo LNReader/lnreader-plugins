@@ -1,0 +1,200 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Kategori",
+      "value": [],
+      "options": [
+        {
+          "label": "Aksiyon",
+          "value": "aksiyon"
+        },
+        {
+          "label": "Büyü",
+          "value": "buyu"
+        },
+        {
+          "label": "Doğa Üstü",
+          "value": "doga-ustu"
+        },
+        {
+          "label": "Doğaüstü",
+          "value": "dogaustu"
+        },
+        {
+          "label": "Dövüş Sanatları",
+          "value": "dovus-sanatlari"
+        },
+        {
+          "label": "Dram",
+          "value": "dram"
+        },
+        {
+          "label": "Fantastik",
+          "value": "fantastik"
+        },
+        {
+          "label": "Geriye Dönüş",
+          "value": "geriye-donus"
+        },
+        {
+          "label": "Gizem",
+          "value": "gizem"
+        },
+        {
+          "label": "Kara Büyü",
+          "value": "kara-buyu"
+        },
+        {
+          "label": "Korku",
+          "value": "korku"
+        },
+        {
+          "label": "Macera",
+          "value": "macera"
+        },
+        {
+          "label": "Murim",
+          "value": "murim"
+        },
+        {
+          "label": "Okul",
+          "value": "okul"
+        },
+        {
+          "label": "Psikolojik",
+          "value": "psikolojik"
+        },
+        {
+          "label": "Romantizm",
+          "value": "romantizm"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Trajedi",
+          "value": "trajedi"
+        }
+      ]
+    },
+    "type[]": {
+      "type": "Checkbox",
+      "label": "Tür",
+      "value": [],
+      "options": [
+        {
+          "label": "Akademi",
+          "value": "akademi"
+        },
+        {
+          "label": "Aksiyon",
+          "value": "aksiyon"
+        },
+        {
+          "label": "Dahi",
+          "value": "dahi"
+        },
+        {
+          "label": "Dövüş Sanatları",
+          "value": "dovus-sanatlari"
+        },
+        {
+          "label": "Element",
+          "value": "element"
+        },
+        {
+          "label": "Fantastik",
+          "value": "fantastik"
+        },
+        {
+          "label": "Geriye Dönüş",
+          "value": "geriye-donus"
+        },
+        {
+          "label": "Güçlü Ana Karakter",
+          "value": "guclu-ana-karakter"
+        },
+        {
+          "label": "Kılıç Ustası",
+          "value": "kilic-ustasi"
+        },
+        {
+          "label": "Savaşçı",
+          "value": "savasci"
+        },
+        {
+          "label": "Yaratıklar",
+          "value": "yaratiklar"
+        },
+        {
+          "label": "Zaman Döngüsü",
+          "value": "zaman-dongusu"
+        }
+      ]
+    },
+    "status": {
+      "type": "Picker",
+      "label": "Durum",
+      "value": "",
+      "options": [
+        {
+          "label": "Hepsi",
+          "value": ""
+        },
+        {
+          "label": "Ongoing",
+          "value": "ongoing"
+        },
+        {
+          "label": "Hiatus",
+          "value": "hiatus"
+        },
+        {
+          "label": "Completed",
+          "value": "completed"
+        }
+      ]
+    },
+    "order": {
+      "type": "Picker",
+      "label": "Sırala",
+      "value": "",
+      "options": [
+        {
+          "label": "Temizle",
+          "value": ""
+        },
+        {
+          "label": "A-Z",
+          "value": "title"
+        },
+        {
+          "label": "Z-A",
+          "value": "titlereverse"
+        },
+        {
+          "label": "Son Güncellenenler",
+          "value": "update"
+        },
+        {
+          "label": "Yeni Eklenenler",
+          "value": "latest"
+        },
+        {
+          "label": "Popüler",
+          "value": "popular"
+        },
+        {
+          "label": "Puan",
+          "value": "rating"
+        }
+      ]
+    }
+  }
+}

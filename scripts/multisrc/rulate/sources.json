@@ -7548,7 +7548,8 @@
         ],
         "type": "CheckboxGroup"
       }
-    }
+    },
+    "versionIncrements": 0
   },
   {
     "id": "erolate",
@@ -10015,6 +10016,7 @@
         ],
         "type": "CheckboxGroup"
       }
-    }
+    },
+    "versionIncrements": 1
   }
 ]

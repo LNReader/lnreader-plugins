@@ -1,15 +1,14 @@
 import { Plugin } from '@typings/plugin';
 import { fetchApi } from '@libs/fetch';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import qs from 'qs';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class LibReadPlugin implements Plugin.PluginBase {
   id = 'libread';
   name = 'Lib Read';
   icon = 'src/en/libread/icon.png';
-  site = 'https://libread.org';
-  version = '1.0.0';
+  site = 'https://libread.com';
+  version = '1.1.0';
 
   async getCheerio(url: string): Promise<CheerioAPI> {
     const r = await fetchApi(url);
@@ -131,7 +130,7 @@ class LibReadPlugin implements Plugin.PluginBase {
         Origin: this.site,
       },
       method: 'POST',
-      body: qs.stringify({ searchkey: searchTerm }),
+      body: new URLSearchParams({ searchkey: searchTerm }).toString(),
     });
     if (!r.ok)
       throw new Error(

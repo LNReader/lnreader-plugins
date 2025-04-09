@@ -2,11 +2,12 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { storage } from '@libs/storage';
 
 class Webnovel implements Plugin.PluginBase {
   id = 'webnovel';
   name = 'Webnovel';
-  version = '1.0.0';
+  version = '1.0.3';
   icon = 'src/en/webnovel/icon.png';
   site = 'https://www.webnovel.com';
   headers = {
@@ -16,6 +17,14 @@ class Webnovel implements Plugin.PluginBase {
   imageRequestInit?: Plugin.ImageRequestInit | undefined = {
     headers: {
       'referrer': this.site,
+    },
+  };
+  hideLocked = storage.get('hideLocked');
+  pluginSettings = {
+    hideLocked: {
+      value: '',
+      label: 'Hide locked chapters',
+      type: 'Switch',
     },
   };
 
@@ -63,6 +72,13 @@ class Webnovel implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
+    if (filters?.fanfic_search.value) {
+      return this.searchNovelsInternal(
+        filters.fanfic_search.value,
+        pageNo,
+        'fanfic',
+      );
+    }
     let url = this.site + '/stories/';
     const params = new URLSearchParams();
 
@@ -136,12 +152,11 @@ class Webnovel implements Plugin.PluginBase {
             (loadedCheerio(ele_c).find('a').attr('title')?.trim() ||
               'No Title Found');
           const chapterPath = loadedCheerio(ele_c).find('a').attr('href');
+          const locked = loadedCheerio(ele_c).find('svg').length;
 
-          if (chapterPath) {
+          if (chapterPath && !(locked && this.hideLocked)) {
             chapters.push({
-              name: loadedCheerio(ele_c).find('svg').length
-                ? `${chapterName} 🔒`
-                : chapterName,
+              name: locked ? `${chapterName} 🔒` : chapterName,
               path: chapterPath,
             });
           }
@@ -215,9 +230,17 @@ class Webnovel implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
+    return this.searchNovelsInternal(searchTerm, pageNo);
+  }
+
+  async searchNovelsInternal(
+    searchTerm: string,
+    pageNo: number,
+    type?: string,
+  ): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.replace(/\s+/g, '+');
 
-    const url = `${this.site}/search?keywords=${searchTerm}&pageIndex=${pageNo}`;
+    const url = `${this.site}/search?keywords=${encodeURIComponent(searchTerm)}&pageIndex=${pageNo}${type ? `&type=${type}` : ''}`;
     const result = await fetchApi(url, {
       headers: this.headers,
     });
@@ -305,6 +328,11 @@ class Webnovel implements Plugin.PluginBase {
         { label: 'MTL (Machine Translation)', value: '3' },
       ],
       type: FilterTypes.Picker,
+    },
+    fanfic_search: {
+      label: 'Search fanfics (Overrides other filters)',
+      value: '',
+      type: FilterTypes.TextInput,
     },
   } satisfies Filters;
 }
