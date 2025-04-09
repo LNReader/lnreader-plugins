@@ -1,10 +1,8 @@
-import { Parser, parseDocument } from 'htmlparser2';
-import { selectOne, selectAll } from 'css-select';
+import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
-import serialize from 'dom-serializer';
 
 class RoyalRoad implements Plugin.PluginBase {
   id = 'royalroad';
@@ -228,48 +226,107 @@ class RoyalRoad implements Plugin.PluginBase {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
 
-    const document = parseDocument(html);
+    let isChapterContent = false;
+    let isAuthorNote = false;
+    let isBeforeNote = true;
+    let isHiddenContent = false;
+    let chapterHtml = '';
+    let notesHtml = '';
+    let beforeNotes = '';
+    let afterNotes = '';
+    let depth = 0;
+    let noteDepth = 0;
+    let contentDepth = 0;
+    let hiddenDepth = 0;
 
     const match = html.match(/<style>\n\s+.(.+?){[^.]+?display: none;/);
-    const hidden = match ? match[1] : undefined;
-    if (hidden) {
-      selectAll(`.${hidden}`, document).forEach(node => {
-        node.parent?.children.splice(node.parent.children.indexOf(node), 1);
-      });
-    }
+    const hiddenClass = match?.[1]?.trim();
 
-    const content = selectOne('.chapter-content', document);
-    if (!content || !content.parent) return '';
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        depth++;
+        if (isHiddenContent || (hiddenClass && attribs['class']?.includes(hiddenClass))) {
+            if (!isHiddenContent) {
+                isHiddenContent = true;
+                hiddenDepth = depth;
+            }
+            return;
+        }
 
-    const container = content.parent;
-    const contentIdx = container.children.indexOf(content);
-    const notes = selectAll('.author-note-portlet', container);
+        if (attribs['class']?.includes('chapter-content')) {
+          isChapterContent = true;
+          isBeforeNote = false;
+          contentDepth = depth;
+          return;
+        }
+        if (attribs['class']?.includes('author-note-portlet')) {
+          isAuthorNote = true;
+          noteDepth = depth;
+          notesHtml = '';
+          return;
+        }
 
-    if (!notes.length) return serialize(content.children);
+        if (isChapterContent || isAuthorNote) {
+          let tag = `<${name}`;
+          for (const attr in attribs) {
+            tag += ` ${attr}="${attribs[attr].replace(/"/g, '&quot;')}"`;
+          }
+          tag += '>';
+          if (isChapterContent) chapterHtml += tag;
+          if (isAuthorNote) notesHtml += tag;
+        }
+      },
+      ontext(text) {
+        if (isHiddenContent) {
+            return;
+        }
 
-    const beforeNotes = notes
-      .filter(note => container.children.indexOf(note) < contentIdx)
-      .map(
-        note =>
-          `<div class="author-note-before">${serialize(note.children)}</div>`,
-      )
-      .join('\n');
+        if (isChapterContent) {
+          chapterHtml += text;
+        }
+        if (isAuthorNote) {
+          notesHtml += text;
+        }
+      },
+      onclosetag(name) {
+        if (isHiddenContent) {
+            if (depth === hiddenDepth) {
+                isHiddenContent = false;
+            }
+            depth--;
+            return;
+        }
 
-    const afterNotes = notes
-      .filter(note => container.children.indexOf(note) > contentIdx)
-      .map(
-        note =>
-          `<div class="author-note-after">${serialize(note.children)}</div>`,
-      )
-      .join('\n');
+        if (isChapterContent && depth === contentDepth) {
+          isChapterContent = false;
+        } else if (isAuthorNote && depth === noteDepth) {
+          isAuthorNote = false;
+          const fullNote = `<div class="author-note-${isBeforeNote ? 'before' : 'after'}">${notesHtml}</div>`;
+          if (isBeforeNote) {
+            beforeNotes += fullNote + '\n';
+          } else {
+            afterNotes += fullNote + '\n';
+          }
+          notesHtml = '';
+        } else if (isChapterContent || isAuthorNote) {
+          const closingTag = `</${name}>`;
+           if (isChapterContent) chapterHtml += closingTag;
+           if (isAuthorNote) notesHtml += closingTag;
+        }
+        depth--;
+      },
+    });
+
+    parser.write(html);
+    parser.end();
 
     return [
-      beforeNotes && `${beforeNotes}\n`,
-      serialize(content.children),
-      afterNotes && `\n${afterNotes}`,
+        beforeNotes.trim(),
+        chapterHtml.trim(),
+        afterNotes.trim(),
     ]
       .filter(Boolean)
-      .join('');
+      .join('\n');
   }
 
   async searchNovels(
