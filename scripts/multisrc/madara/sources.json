@@ -1,10 +1,12 @@
 [
   {
     "id": "boxnovel",
-    "sourceSite": "https://boxnovel.com/",
+    "sourceSite": "https://novgo.co/",
     "sourceName": "BoxNovel",
     "options": {
-      "useNewChapterEndpoint": true
+      "useNewChapterEndpoint": true,
+      "customJs": "chapterText.find('div:has(a)').remove()",
+      "versionIncrements": 6
     }
   },
   {
@@ -68,21 +70,22 @@
   },
   {
     "id": "arnovel",
-    "sourceSite": "https://ar-novel.com/",
+    "sourceSite": "https://ar-no.com/",
     "sourceName": "ArNovel",
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 1
+      "versionIncrements": 2
     }
   },
   {
     "id": "meionovel",
-    "sourceSite": "https://meionovel.id/",
+    "sourceSite": "https://meionovels.com/",
     "sourceName": "MeioNovel",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Indonesian"
+      "lang": "Indonesian",
+      "versionIncrements": 1
     }
   },
   {
@@ -141,7 +144,8 @@
     "options": {
       "useNewChapterEndpoint": true,
       "lang": "Arabic",
-      "versionIncrements": 4
+      "versionIncrements": 5,
+      "customJs": "chapterText.find('span[style*=\"opacity: 0; position: fixed;\"]').remove();"
     }
   },
   {
@@ -194,7 +198,9 @@
     "id": "zetroTL",
     "sourceSite": "https://zetrotranslation.com/",
     "sourceName": "Zetro Translation",
-    "options": {}
+    "options": {
+      "hasLocked": true
+    }
   },
   {
     "id": "webnoveloku",
@@ -301,11 +307,12 @@
   },
   {
     "id": "azora",
-    "sourceSite": "https://azorago.com/",
+    "sourceSite": "https://azoramoon.com/",
     "sourceName": "Azora",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "versionIncrements": 1
     }
   },
   {
@@ -392,15 +399,6 @@
     }
   },
   {
-    "id": "fenrir",
-    "sourceSite": "https://fenrirtranslations.com/",
-    "sourceName": "Fenrir Translations",
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "English"
-    }
-  },
-  {
     "id": "bellereservoir",
     "sourceSite": "https://bellereservoir.com/",
     "sourceName": "Belle Reservoir",
@@ -435,5 +433,140 @@
       "useNewChapterEndpoint": true,
       "lang": "English"
     }
+  },
+  {
+    "id": "azraznovel",
+    "sourceSite": "https://araznovel.com/",
+    "sourceName": "Araz Novel",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "noveloku",
+    "sourceSite": "https://noveloku.com.tr/",
+    "sourceName": "Novel oku",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "nabiscans",
+    "sourceSite": "https://nabiscans.com/",
+    "sourceName": "NABİ SCANS",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "ekitaplar",
+    "sourceSite": "https://e-kitaplar.com/",
+    "sourceName": "E-KİTAPLAR",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "novelokutr",
+    "sourceSite": "https://novelokutr.net/",
+    "sourceName": "Novelokutr",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "Turkish"
+    }
+  },
+  {
+    "id": "wooksteahouse",
+    "sourceSite": "https://wooksteahouse.com/",
+    "sourceName": "Wook's Teahouse",
+    "options": {
+      "useNewChapterEndpoint": true,
+      "lang": "English"
+    }
+  },
+  {
+    "id": "eternalune",
+    "sourceName": "Eternalune",
+    "sourceSite": "https://eternalune.com/",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "fortuneeternal",
+    "sourceSite": "https://www.fortuneeternal.com",
+    "sourceName": "Fortune Eternal",
+    "options": {
+      "lang": "Korean",
+      "useNewChapterEndpoint": true,
+      "versionIncrements": 2
+    }
+  },
+  {
+    "id": "ragnarscans",
+    "sourceSite": "https://ragnarscans.com/",
+    "sourceName": "Ragnar Scans",
+    "options": {
+      "lang": "Turkish",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "readfanfic",
+    "sourceSite": "https://readfanfic.com/",
+    "sourceName": "Read Fanfic",
+    "options": {
+      "lang": "English"
+    }
+  },
+  {
+    "id": "violetlily",
+    "sourceSite": "https://violetlilytranslation.com/",
+    "sourceName": "Violet Lily",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "sweetescape",
+    "sourceSite": "https://sweetescapetranslations.com/",
+    "sourceName": "Sweet Escape",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "WebNovelTraslation",
+    "sourceSite": "https://webnoveltranslations.com/",
+    "sourceName": "Web Novel Translation",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "AnimesHoy12",
+    "sourceSite": "https://animeshoy12.com/",
+    "sourceName": "AnimesHoy12",
+    "options": {
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "Kakikata",
+    "sourceSite": "https://kakikata.com.tr/",
+    "sourceName": "kakikata",
+    "options": {
+      "lang": "Turkish",
+      "useNewChapterEndpoint": true
+    }
   }
+
 ]

@@ -80,7 +80,13 @@ export default function PopularNovels() {
 
   return (
     <AccordionContainer title="Popular Novels" loading={loading}>
-      <Stack direction={'row'} spacing={2} alignItems={'center'}>
+      <Stack
+        direction={'row'}
+        useFlexGap
+        sx={{ flexWrap: 'wrap' }}
+        spacing={2}
+        alignItems={'center'}
+      >
         <FormGroup>
           <FormControlLabel
             control={
@@ -140,13 +146,12 @@ export default function PopularNovels() {
         sx={{
           width: '100%',
           overflowX: 'auto',
+          display: 'flex',
         }}
       >
-        <Stack sx={{ width: 'max-content' }} direction={'row'} spacing={2}>
-          {novels.map((novel, index) => (
-            <NovelItemCard key={'novelItem_' + index} item={novel} />
-          ))}
-        </Stack>
+        {novels.map((novel, index) => (
+          <NovelItemCard key={'novelItem_' + index} item={novel} />
+        ))}
       </Box>
     </AccordionContainer>
   );

@@ -14,6 +14,10 @@
           "value": "adventure"
         },
         {
+          "label": "Anime",
+          "value": "anime"
+        },
+        {
           "label": "Anime & Comics",
           "value": "anime-comics"
         },
@@ -22,12 +26,20 @@
           "value": "comedy"
         },
         {
+          "label": "Comic",
+          "value": "comic"
+        },
+        {
           "label": "Drama",
           "value": "drama"
         },
         {
           "label": "Fan-Fiction",
           "value": "fan-fiction"
+        },
+        {
+          "label": "Fanfiction",
+          "value": "fanfiction"
         },
         {
           "label": "Fantasy",
@@ -46,12 +58,20 @@
           "value": "isekai"
         },
         {
+          "label": "Manga",
+          "value": "manga"
+        },
+        {
           "label": "Martial Arts",
           "value": "martial-arts"
         },
         {
           "label": "Mystery",
           "value": "mystery"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
         },
         {
           "label": "School Life",
@@ -68,6 +88,10 @@
         {
           "label": "Supernatural",
           "value": "supernatural"
+        },
+        {
+          "label": "System",
+          "value": "system"
         },
         {
           "label": "Tragedy",
@@ -91,7 +115,12 @@
       "type": "Checkbox",
       "label": "Type",
       "value": [],
-      "options": []
+      "options": [
+        {
+          "label": "Webnovel (FF)",
+          "value": "webnovel-ff"
+        }
+      ]
     },
     "status": {
       "type": "Picker",

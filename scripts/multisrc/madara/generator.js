@@ -27,13 +27,13 @@ const generator = function generator(source) {
   });
 
   const pluginScript = `
-${madaraTemplate}
+${madaraTemplate.replace('// CustomJS HERE', source.options?.customJs || '')}
 const plugin = new MadaraPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();
   return {
     lang: source.options?.lang || 'English',
-    filename: source.sourceName,
+    filename: source.sourceName.replace(/[^\w]/g, ''),
     pluginScript,
   };
 };

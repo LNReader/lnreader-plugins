@@ -3,6 +3,7 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@libs/novelStatus';
 // const novelStatus = require('@libs/novelStatus');
 // const isUrlAbsolute = require('@libs/isAbsoluteUrl');
 // const parseDate = require('@libs/parseDate');
@@ -13,7 +14,7 @@ class Syosetu implements Plugin.PluginBase {
   icon = 'src/jp/syosetu/icon.png';
   site = 'https://yomou.syosetu.com/';
   novelPrefix = 'https://ncode.syosetu.com';
-  version = '1.1.0';
+  version = '1.1.2';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -69,83 +70,141 @@ class Syosetu implements Plugin.PluginBase {
     const novels = await getNovelsFromPage(pageNo);
     return novels;
   }
-  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+  private async parseChaptersFromPage(
+    loadedCheerio: cheerio.CheerioAPI,
+  ): Promise<Plugin.ChapterItem[]> {
     const chapters: Plugin.ChapterItem[] = [];
+
+    loadedCheerio('.p-eplist__sublist').each((_, element) => {
+      const chapterLink = loadedCheerio(element).find('a');
+      const chapterUrl = chapterLink.attr('href');
+      const chapterName = chapterLink.text().trim();
+      const releaseDate = loadedCheerio(element)
+        .find('.p-eplist__update')
+        .text()
+        .trim()
+        .split(' ')[0]
+        .replace(/\//g, '-');
+
+      if (chapterUrl) {
+        chapters.push({
+          name: chapterName,
+          releaseTime: releaseDate,
+          path: chapterUrl.replace(this.novelPrefix, ''),
+        });
+      }
+    });
+
+    return chapters;
+  }
+  async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    // First fetch main page
     const result = await fetchApi(this.novelPrefix + novelPath, {
       headers: this.headers,
     });
     const body = await result.text();
     const loadedCheerio = loadCheerio(body, { decodeEntities: false });
 
-    // create novel object
+    // Parse status
+    let status = 'Unknown';
+    if (
+      loadedCheerio('.c-announce').text().includes('連載中') ||
+      loadedCheerio('.c-announce').text().includes('未完結')
+    ) {
+      status = NovelStatus.Ongoing;
+    } else if (
+      loadedCheerio('.c-announce').text().includes('更新されていません')
+    ) {
+      status = NovelStatus.OnHiatus;
+    } else if (loadedCheerio('.c-announce').text().includes('完結')) {
+      status = NovelStatus.Completed;
+    }
+
+    // Create novel object with metadata
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: loadedCheerio('.novel_title').text(),
-      author: loadedCheerio('.novel_writername').text().replace('作者：', ''),
+      name: loadedCheerio('.p-novel__title').text(),
+      author: loadedCheerio('.p-novel__author')
+        .text()
+        .replace('作者：', '')
+        .trim(),
+      status: status,
+      artist: '',
       cover: defaultCover,
+      chapters: [],
+      genres: loadedCheerio('meta[property="og:description"]')
+        .attr('content')
+        ?.split(' ')
+        .join(','), // Get genres from meta tag
     };
 
-    // Get all the chapters
-    const cqGetChapters = loadedCheerio('.novel_sublist2');
-    if (cqGetChapters.length !== 0) {
-      // has more than 1 chapter
-      novel.summary = loadedCheerio('#novel_ex')
-        .text()
-        .replace(/<\s*br.*?>/g, '\n');
-      cqGetChapters.each((_, e) => {
-        const chapterA = loadedCheerio(e).find('a');
-        const [chapterName, releaseDate, chapterUrl] = [
-          // set the variables
-          chapterA.text(),
-          loadedCheerio(e)
-            .find('dt') // get title
-            .text() // get text
-            .replace(/（.）/g, '') // remove "(edited)" mark
-            .trim(), // trim spaces
-          chapterA.attr('href'),
-        ];
+    // Get summary if available
+    novel.summary = loadedCheerio('#novel_ex').html() || '';
+
+    const chapters: Plugin.ChapterItem[] = [];
+
+    // Get last page URL first
+    const lastPageLink = loadedCheerio('.c-pager__item--last').attr('href');
+
+    if (!lastPageLink) {
+      // If no pagination, just parse chapters from the current page
+      loadedCheerio('.p-eplist__sublist').each((_, element) => {
+        const chapterLink = loadedCheerio(element).find('a');
+        const chapterUrl = chapterLink.attr('href');
+        const chapterName = chapterLink.text().trim();
+        const releaseDate = loadedCheerio(element)
+          .find('.p-eplist__update')
+          .text()
+          .trim()
+          .split(' ')[0]
+          .replace(/\//g, '-');
+
         if (chapterUrl) {
           chapters.push({
             name: chapterName,
             releaseTime: releaseDate,
-            path: chapterUrl,
+            path: chapterUrl.replace(this.novelPrefix, ''),
           });
         }
       });
     } else {
-      /**
-       * Because there are oneshots on the site, they have to be treated with special care
-       * that's what pisses me off in Shosetsu app. They have this extension,
-       * but every oneshot is set as "there are no chapters" and all contents are thrown into the description!!
-       */
-      // get summary for oneshot chapter
+      const lastPageMatch = lastPageLink.match(/\?p=(\d+)/);
+      const totalPages = lastPageMatch ? parseInt(lastPageMatch[1]) : 1;
 
-      const nameResult = await fetchApi(
-        this.searchUrl() + `&word=${novel.name}`,
-        {
-          headers: this.headers,
-        },
+      // Fetch all pages in parallel for better performance
+      const pagePromises = Array.from({ length: totalPages }, (_, i) =>
+        fetchApi(`${this.novelPrefix}${novelPath}?p=${i + 1}`).then(r =>
+          r.text(),
+        ),
       );
-      const nameBody = await nameResult.text();
-      const summaryQuery = loadCheerio(nameBody, {
-        decodeEntities: false,
-      });
-      const foundText = summaryQuery('.searchkekka_box')
-        .first()
-        .find('.ex')
-        .text()
-        .replace(/\s{2,}/g, '\n');
-      novel.summary = foundText;
 
-      // add single chapter
-      chapters.push({
-        name: 'Oneshot',
-        releaseTime: loadedCheerio('head')
-          .find("meta[name='WWWC']")
-          .attr('content'), // get date from metadata
-        path: novelPath, // set chapterUrl to oneshot so that chapterScraper knows it's a one-shot,
+      const pageResults = await Promise.all(pagePromises);
+
+      // Process each page's chapters
+      pageResults.forEach(pageBody => {
+        const pageCheerio = loadCheerio(pageBody, { decodeEntities: false });
+        pageCheerio('.p-eplist__sublist').each((_, element) => {
+          const chapterLink = pageCheerio(element).find('a');
+          const chapterUrl = chapterLink.attr('href');
+          const chapterName = chapterLink.text().trim();
+          const releaseDate = pageCheerio(element)
+            .find('.p-eplist__update')
+            .text()
+            .trim()
+            .split(' ')[0]
+            .replace(/\//g, '-');
+
+          if (chapterUrl) {
+            chapters.push({
+              name: chapterName,
+              releaseTime: releaseDate,
+              path: chapterUrl.replace(this.novelPrefix, ''),
+            });
+          }
+        });
       });
     }
+
     novel.chapters = chapters;
     return novel;
   }
@@ -155,15 +214,21 @@ class Syosetu implements Plugin.PluginBase {
     });
     const body = await result.text();
 
-    // create cheerioQuery
     const cheerioQuery = loadCheerio(body, {
       decodeEntities: false,
     });
 
-    const chapterText =
-      cheerioQuery('#novel_honbun') // get chapter text
-        .html() || '';
-    return chapterText;
+    // Get the chapter title
+    const chapterTitle = cheerioQuery('.p-novel__title').html() || '';
+
+    // Get the chapter content
+    const chapterContent =
+      cheerioQuery(
+        '.p-novel__body .p-novel__text:not([class*="p-novel__text--"])',
+      ).html() || '';
+
+    // Combine title and content with proper HTML structure
+    return `<h1>${chapterTitle}</h1>${chapterContent}`;
   }
   async searchNovels(
     searchTerm: string,

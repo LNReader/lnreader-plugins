@@ -3,20 +3,21 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
+import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 
 class RoyalRoad implements Plugin.PluginBase {
   id = 'royalroad';
   name = 'Royal Road';
-  version = '2.1.2';
+  version = '2.2.0';
   icon = 'src/en/royalroad/icon.png';
   site = 'https://www.royalroad.com/';
 
   parseNovels(html: string) {
     const novels: Plugin.NovelItem[] = [];
     let tempNovel = {} as Plugin.NovelItem;
+    const baseUrl = this.site;
     tempNovel.name = '';
     let isParsingNovel = false;
-    let isNovelName = false;
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class']?.includes('fiction-list-item')) {
@@ -25,10 +26,13 @@ class RoyalRoad implements Plugin.PluginBase {
         if (isParsingNovel) {
           if (name === 'a' && attribs['class']?.includes('bold')) {
             tempNovel.path = attribs['href'].slice(1);
-            isNovelName = true;
           }
           if (name === 'img') {
+            tempNovel.name = attribs['alt'];
             tempNovel.cover = attribs['src'];
+            if (tempNovel.cover && !isUrlAbsolute(tempNovel.cover)) {
+              tempNovel.cover = baseUrl + tempNovel.cover.slice(1);
+            }
           }
           if (tempNovel.path && tempNovel.name) {
             novels.push(tempNovel);
@@ -37,14 +41,8 @@ class RoyalRoad implements Plugin.PluginBase {
           }
         }
       },
-      ontext(data) {
-        if (isNovelName) {
-          tempNovel.name += data;
-        }
-      },
       onclosetag(name) {
         if (name === 'h2') {
-          isNovelName = false;
           isParsingNovel = false;
         }
       },
@@ -61,25 +59,32 @@ class RoyalRoad implements Plugin.PluginBase {
       showLatestNovels,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = `${this.site}fictions/search`;
-    link += `?page=${page}`;
+    const params = new URLSearchParams({
+      page: page.toString(),
+    });
+    if (showLatestNovels) {
+      params.append('orderBy', 'last_update');
+    }
     if (!filters) filters = this.filters || {};
-    if (showLatestNovels) link += '&orderBy=last_update';
     for (const key in filters) {
       if (filters[key as keyof typeof filters].value === '') continue;
       if (key === 'genres' || key === 'tags' || key === 'content_warnings') {
-        if (filters[key].value.include)
+        if (filters[key].value.include) {
           for (const include of filters[key].value.include) {
-            link += `&tagsAdd=${include}`;
+            params.append('tagsAdd', include);
           }
-        if (filters[key].value.exclude)
+        }
+        if (filters[key].value.exclude) {
           for (const exclude of filters[key].value.exclude) {
-            link += `&tagsRemove=${exclude}`;
+            params.append('tagsRemove', exclude);
           }
-      } else if (typeof filters[key as keyof typeof filters] === 'object')
-        link += `&${key}=${filters[key as keyof typeof filters].value}`;
+        }
+      } else {
+        params.append(key, String(filters[key as keyof typeof filters].value));
+      }
     }
 
+    const link = `${this.site}fictions/search?${params.toString()}`;
     const body = await fetchApi(link).then(r => r.text());
 
     return this.parseNovels(body);
@@ -94,6 +99,7 @@ class RoyalRoad implements Plugin.PluginBase {
       summary: '',
       chapters: [],
     };
+    const baseUrl = this.site;
     let isNovelName = false;
     let isAuthorName = false;
     let isDescription = false;
@@ -110,6 +116,9 @@ class RoyalRoad implements Plugin.PluginBase {
       onopentag(name, attribs) {
         if (name === 'img' && attribs['class']?.includes('thumbnail')) {
           novel.cover = attribs['src'];
+          if (novel.cover && !isUrlAbsolute(novel.cover)) {
+            novel.cover = baseUrl + novel.cover.slice(1);
+          }
         }
         if (name === 'span' && attribs['class']?.includes('label-sm')) {
           isSpan++;
@@ -232,33 +241,116 @@ class RoyalRoad implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
-    const parts: string[] = [];
-    const regexPatterns: RegExp[] = [
-      /<style>\n\s+.(.+?){[^]+?display: none;/,
-      /(<div class="portlet solid author-note-portlet"[^]+?)<div class="margin-bottom-20/,
-      /(<div class="chapter-inner chapter-content"[^]+?)<div class="portlet light t-center-3/,
-      /(<\/div>\s+<div class="portlet solid author-note-portlet"[^]+?)<div class="row margin-bottom-10/,
-    ];
 
-    const extractContent = (patterns: RegExp[]) => {
-      patterns.forEach(regex => {
-        const match = html.match(regex)?.[1];
-        if (match) parts.push(match);
-      });
-    };
-    extractContent(regexPatterns);
-    const cleanup = new RegExp(`<p class="${parts[0]}.+?</p>`, 'g');
-    const chapterText = parts.slice(1).join('<hr>');
-    return chapterText
-      .replace(cleanup, '')
-      .replace(/<p class="[^><]+>/g, '<p>');
+    let isChapterContent = false;
+    let isAuthorNote = false;
+    let isBeforeNote = true;
+    let isHiddenContent = false;
+    let chapterHtml = '';
+    let notesHtml = '';
+    let beforeNotes = '';
+    let afterNotes = '';
+    let depth = 0;
+    let noteDepth = 0;
+    let contentDepth = 0;
+    let hiddenDepth = 0;
+
+    const match = html.match(/<style>\n\s+.(.+?){[^.]+?display: none;/);
+    const hiddenClass = match?.[1]?.trim();
+
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        depth++;
+        if (
+          isHiddenContent ||
+          (hiddenClass && attribs['class']?.includes(hiddenClass))
+        ) {
+          if (!isHiddenContent) {
+            isHiddenContent = true;
+            hiddenDepth = depth;
+          }
+          return;
+        }
+
+        if (attribs['class']?.includes('chapter-content')) {
+          isChapterContent = true;
+          isBeforeNote = false;
+          contentDepth = depth;
+          return;
+        }
+        if (attribs['class']?.includes('author-note-portlet')) {
+          isAuthorNote = true;
+          noteDepth = depth;
+          notesHtml = '';
+          return;
+        }
+
+        if (isChapterContent || isAuthorNote) {
+          let tag = `<${name}`;
+          for (const attr in attribs) {
+            tag += ` ${attr}="${attribs[attr].replace(/"/g, '&quot;')}"`;
+          }
+          tag += '>';
+          if (isChapterContent) chapterHtml += tag;
+          if (isAuthorNote) notesHtml += tag;
+        }
+      },
+      ontext(text) {
+        if (isHiddenContent) {
+          return;
+        }
+        if (isChapterContent) {
+          chapterHtml += text;
+        }
+        if (isAuthorNote) {
+          notesHtml += text;
+        }
+      },
+      onclosetag(name) {
+        if (isHiddenContent) {
+          if (depth === hiddenDepth) {
+            isHiddenContent = false;
+          }
+          depth--;
+          return;
+        }
+
+        if (isChapterContent && depth === contentDepth) {
+          isChapterContent = false;
+        } else if (isAuthorNote && depth === noteDepth) {
+          isAuthorNote = false;
+          const fullNote = `<div class="author-note-${isBeforeNote ? 'before' : 'after'}">${notesHtml}</div>`;
+          if (isBeforeNote) {
+            beforeNotes += fullNote + '\n';
+          } else {
+            afterNotes += fullNote + '\n';
+          }
+          notesHtml = '';
+        } else if (isChapterContent || isAuthorNote) {
+          const closingTag = `</${name}>`;
+          if (isChapterContent) chapterHtml += closingTag;
+          if (isAuthorNote) notesHtml += closingTag;
+        }
+        depth--;
+      },
+    });
+    parser.write(html);
+    parser.end();
+    return [beforeNotes.trim(), chapterHtml.trim(), afterNotes.trim()]
+      .filter(Boolean)
+      .join('\n');
   }
 
   async searchNovels(
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const searchUrl = `${this.site}fictions/search?page=${page}&title=${searchTerm}`;
+    const params = new URLSearchParams({
+      page: page.toString(),
+      title: searchTerm,
+      globalFilters: 'true',
+    });
+    const searchUrl = `${this.site}fictions/search?${params.toString()}`;
 
     const body = await fetchApi(searchUrl).then(r => r.text());
     return this.parseNovels(body);

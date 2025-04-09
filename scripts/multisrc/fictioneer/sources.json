@@ -1,0 +1,51 @@
+[
+  {
+    "id": "daoistquest",
+    "sourceSite": "https://daoist.quest",
+    "sourceName": "Daoist Quest",
+    "options": {
+      "browsePage": "collection/novels",
+      "versionIncrements": 1
+    }
+  },
+  {
+    "id": "novelib",
+    "sourceSite": "https://novelib.com",
+    "sourceName": "NovelLib",
+    "options": {
+      "browsePage": "browse"
+    }
+  },
+  {
+    "id": "lilyonthevalley",
+    "sourceSite": "https://lilyonthevalley.com",
+    "sourceName": "Lily on the Valley",
+    "options": {
+      "browsePage": "stories"
+    }
+  },
+  {
+    "id": "penguinsquad",
+    "sourceSite": "https://penguin-squad.com",
+    "sourceName": "Penguin Squad",
+    "options": {
+      "browsePage": "novels"
+    }
+  },
+  {
+    "id": "prizmatranslation",
+    "sourceSite": "https://prizmatranslation.com",
+    "sourceName": "Prizma",
+    "options": {
+      "browsePage": "home/all-novels"
+    }
+  },
+  {
+    "id": "dearestrosalie",
+    "sourceSite": "https://dearestrosalie.com",
+    "sourceName": "Dearest Rosalie",
+    "options": {
+      "browsePage": "stories"
+    }
+  }
+]

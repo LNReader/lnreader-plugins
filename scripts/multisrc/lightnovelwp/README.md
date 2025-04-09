@@ -1,4 +1,4 @@
-# Madara multisrc generator
+# LightnovelWP multisrc generator
 
 ## Compatiblity
 
@@ -39,11 +39,11 @@ To add an icon to the source you can just run `npm run icons` to generate all ic
 Or you can manualy find the icon of the site \
 (try the favicon of the site (https://site.com/favicon.ico) most of the times it redirects you to an image named something like "cropped-site-32x32.png" try to access "cropped-site.png" or "site.png" if that did not work you can try to access "https://site.com/wp-json/" at the end of this very long file there should be a "site_icon_url" value
 ) (don't forget to convert it to png)
-and add it to the folder "public/static/multisrc/madara/{sourceID}/icon.png"
+and add it to the folder "public/static/multisrc/lightnovelwp/{sourceID}/icon.png"
 
 ### filters
 
 To add filters to a source you need to run the script "get_filters.js" \
-(`npx node scripts/multisrc/madara/get_filters.js`
+(`npx node scripts/multisrc/lightnovelwp/get_filters.js`
 (if you are at the root of the project) (and you have ran "npm install" before))
 and follow the instructions (url is easier and faster but sometimes it doesn't work)
