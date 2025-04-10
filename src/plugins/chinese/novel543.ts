@@ -30,7 +30,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   name = 'Novel543';
   site = 'https://www.novel543.com/';
   version = '1.0.0';
-  icon = 'src/cn/novel543/icon.ico';
+  icon = 'src/cn/novel543/icon.png';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
