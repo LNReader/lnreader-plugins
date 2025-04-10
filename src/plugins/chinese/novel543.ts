@@ -32,6 +32,12 @@ class Novel543Plugin implements Plugin.PluginBase {
   version = '1.0.0';
   icon = 'src/cn/novel543/icon.png';
 
+  imageRequestInit = {
+    headers: {
+      Referer: this.site,
+    },
+  };
+
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
@@ -316,10 +322,6 @@ class Novel543Plugin implements Plugin.PluginBase {
     });
 
     return novels;
-  }
-
-  async fetchImage(url: string): Promise<string | undefined> {
-    return await fetchFile(url);
   }
 }
 
