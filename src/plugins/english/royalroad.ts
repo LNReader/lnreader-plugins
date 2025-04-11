@@ -110,7 +110,7 @@ class RoyalRoad implements Plugin.PluginBase {
       InScript,
     }
 
-    let currentState: ParsingState = ParsingState.Idle;
+    let state: ParsingState = ParsingState.Idle;
     let scriptContent = '';
     let statusText = '';
     let statusSpanCounter = 0;
@@ -122,31 +122,31 @@ class RoyalRoad implements Plugin.PluginBase {
       onopentag(name, attribs) {
         switch (name) {
           case 'h1':
-            currentState = ParsingState.InTitle;
+            state = ParsingState.InTitle;
             break;
           case 'a':
             if (
               attribs['href']?.startsWith('/profile/') &&
               novel.author === ''
             ) {
-              currentState = ParsingState.InAuthor;
-            } else if (currentState === ParsingState.InTags) {
-              currentState = ParsingState.InTagLink;
+              state = ParsingState.InAuthor;
+            } else if (state === ParsingState.InTags) {
+              state = ParsingState.InTagLink;
             }
             break;
           case 'div':
             if (attribs['class'] === 'description') {
-              currentState = ParsingState.InDescription;
+              state = ParsingState.InDescription;
               novel.summary = '';
             }
             break;
           case 'span':
             if (attribs['class']?.includes('tags')) {
-              currentState = ParsingState.InTags;
+              state = ParsingState.InTags;
             } else if (attribs['class']?.includes('label-sm')) {
               statusSpanCounter++;
               if (statusSpanCounter === 2) {
-                currentState = ParsingState.InStatusSpan;
+                state = ParsingState.InStatusSpan;
                 statusText = '';
               }
             }
@@ -160,16 +160,16 @@ class RoyalRoad implements Plugin.PluginBase {
             }
             break;
           case 'script':
-            currentState = ParsingState.InScript;
+            state = ParsingState.InScript;
             scriptContent = '';
             break;
         }
       },
       ontext(text) {
         const trimmedText = text.trim();
-        if (!trimmedText && currentState !== ParsingState.InScript) return;
+        if (!trimmedText && state !== ParsingState.InScript) return;
 
-        switch (currentState) {
+        switch (state) {
           case ParsingState.InTitle:
             novel.name += text;
             break;
@@ -193,37 +193,37 @@ class RoyalRoad implements Plugin.PluginBase {
       onclosetag(name) {
         switch (name) {
           case 'h1':
-            if (currentState === ParsingState.InTitle) {
+            if (state === ParsingState.InTitle) {
               novel.name = novel.name.trim();
-              currentState = ParsingState.Idle;
+              state = ParsingState.Idle;
             }
             break;
           case 'a':
-            if (currentState === ParsingState.InTagLink) {
-              currentState = ParsingState.InTags;
-            } else if (currentState === ParsingState.InAuthor) {
-              currentState = ParsingState.Idle;
+            if (state === ParsingState.InTagLink) {
+              state = ParsingState.InTags;
+            } else if (state === ParsingState.InAuthor) {
+              state = ParsingState.Idle;
             }
             break;
           case 'div':
-            if (currentState === ParsingState.InDescription) {
+            if (state === ParsingState.InDescription) {
               if (novel.summary) {
                 novel.summary = novel.summary.trim();
               }
-              currentState = ParsingState.Idle;
+              state = ParsingState.Idle;
             }
             break;
           case 'span':
-            if (currentState === ParsingState.InTags) {
+            if (state === ParsingState.InTags) {
               novel.genres = genreArray.join(', ');
-              currentState = ParsingState.Idle;
-            } else if (currentState === ParsingState.InStatusSpan) {
-              currentState = ParsingState.Idle;
+              state = ParsingState.Idle;
+            } else if (state === ParsingState.InStatusSpan) {
+              state = ParsingState.Idle;
             }
             break;
           case 'script':
-            if (currentState === ParsingState.InScript) {
-              currentState = ParsingState.Idle;
+            if (state === ParsingState.InScript) {
+              state = ParsingState.Idle;
               const chapterMatch = scriptContent.match(
                 /window\.chapters\s*=\s*(\[.*?\]);/,
               );
@@ -294,60 +294,75 @@ class RoyalRoad implements Plugin.PluginBase {
       InHidden,
     }
 
-    let currentState = ChapterParsingState.Idle;
+    let state = ChapterParsingState.Idle;
     let stateDepth = 0;
     let depth = 0;
-    let isBeforeNote = true;
 
     let chapterHtml = '';
     let notesHtml = '';
     let beforeNotes = '';
     let afterNotes = '';
+    let isBeforeChapter = true;
 
     const match = html.match(/<style>\n\s+.(.+?){[^.]+?display: none;/);
     const hiddenClass = match?.[1]?.trim();
+    let stateBeforeHidden: {
+      state: ChapterParsingState;
+      depth: number;
+    } | null = null;
 
     const parser = new Parser({
       onopentag(name, attribs) {
         depth++;
+        const classes = attribs['class'] || '';
 
-        if (hiddenClass && attribs['class']?.includes(hiddenClass)) {
-          currentState = ChapterParsingState.InHidden;
+        if (
+          state !== ChapterParsingState.InHidden &&
+          hiddenClass &&
+          classes.includes(hiddenClass)
+        ) {
+          stateBeforeHidden = { state: state, depth: stateDepth };
+          state = ChapterParsingState.InHidden;
           stateDepth = depth;
           return;
         }
-        if (currentState === ChapterParsingState.Idle) {
-          if (attribs['class']?.includes('chapter-content')) {
-            currentState = ChapterParsingState.InChapter;
-            stateDepth = depth;
-            isBeforeNote = false;
+
+        switch (state) {
+          case ChapterParsingState.Idle:
+            if (classes.includes('chapter-content')) {
+              state = ChapterParsingState.InChapter;
+              stateDepth = depth;
+              isBeforeChapter = false;
+            } else if (classes.includes('author-note-portlet')) {
+              state = ChapterParsingState.InNote;
+              stateDepth = depth;
+              notesHtml = '';
+            }
+            break;
+          case ChapterParsingState.InHidden:
             return;
-          } else if (attribs['class']?.includes('author-note-portlet')) {
-            currentState = ChapterParsingState.InNote;
-            stateDepth = depth;
-            notesHtml = '';
-            return;
-          }
         }
 
         if (
-          currentState === ChapterParsingState.InChapter ||
-          currentState === ChapterParsingState.InNote
+          state === ChapterParsingState.InChapter ||
+          state === ChapterParsingState.InNote
         ) {
           let tag = `<${name}`;
           for (const attr in attribs) {
-            tag += ` ${attr}="${attribs[attr].replace(/"/g, '&quot;')}"`;
+            const value = attribs[attr].replace(/"/g, '&quot;');
+            tag += ` ${attr}="${value}"`;
           }
           tag += '>';
-          if (currentState === ChapterParsingState.InChapter) {
+
+          if (state === ChapterParsingState.InChapter) {
             chapterHtml += tag;
-          } else if (currentState === ChapterParsingState.InNote) {
+          } else {
             notesHtml += tag;
           }
         }
       },
       ontext(text) {
-        switch (currentState) {
+        switch (state) {
           case ChapterParsingState.InChapter:
             chapterHtml += text;
             break;
@@ -358,33 +373,45 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       onclosetag(name) {
         if (depth === stateDepth) {
-          switch (currentState) {
+          switch (state) {
             case ChapterParsingState.InHidden:
-              currentState = ChapterParsingState.InChapter;
+              if (!stateBeforeHidden) {
+                state = ChapterParsingState.Idle; // Attempt recovery
+                stateDepth = 0;
+              } else {
+                state = stateBeforeHidden.state;
+                stateDepth = stateBeforeHidden.depth;
+                stateBeforeHidden = null;
+              }
+              depth--;
               return;
             case ChapterParsingState.InChapter:
-              currentState = ChapterParsingState.Idle;
+              state = ChapterParsingState.Idle;
+              stateDepth = 0;
+              depth--;
               return;
             case ChapterParsingState.InNote:
-              const fullNote = `<div class="author-note-${
-                isBeforeNote ? 'before' : 'after'
-              }">${notesHtml}</div>`;
-              if (isBeforeNote) {
-                beforeNotes += fullNote + '\n';
+              const noteClass = `author-note-${isBeforeChapter ? 'before' : 'after'}`;
+              const fullNote = `<div class="${noteClass}">${notesHtml.trim()}</div>`;
+              if (isBeforeChapter) {
+                beforeNotes += fullNote;
               } else {
-                afterNotes += fullNote + '\n';
+                afterNotes += fullNote;
               }
-              currentState = ChapterParsingState.Idle;
+              notesHtml = '';
+              state = ChapterParsingState.Idle;
+              stateDepth = 0;
+              depth--;
               return;
           }
         }
 
         if (
-          currentState === ChapterParsingState.InChapter ||
-          currentState === ChapterParsingState.InNote
+          state === ChapterParsingState.InChapter ||
+          state === ChapterParsingState.InNote
         ) {
           const closingTag = `</${name}>`;
-          if (currentState === ChapterParsingState.InChapter) {
+          if (state === ChapterParsingState.InChapter) {
             chapterHtml += closingTag;
           } else {
             notesHtml += closingTag;
@@ -392,15 +419,13 @@ class RoyalRoad implements Plugin.PluginBase {
         }
         depth--;
       },
-      onerror(error) {
-        console.error('HTML Parser Error:', error);
-      },
     });
     parser.write(html);
     parser.end();
-    return [beforeNotes.trim(), chapterHtml.trim(), afterNotes.trim()]
+
+    return [beforeNotes, chapterHtml.trim(), afterNotes]
       .filter(Boolean)
-      .join('\n');
+      .join('\n<hr class="notes-separator">\n');
   }
 
   async searchNovels(
