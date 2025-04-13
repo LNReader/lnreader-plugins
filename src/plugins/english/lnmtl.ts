@@ -290,7 +290,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     parser.write(html);
     parser.end();
     const chapterText = chapterTextParts.join('');
-    return chapterText.replace(/„/g, '"');
+    return chapterText.replace(/„/g, '“');
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
