@@ -8,7 +8,7 @@ import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 class RoyalRoad implements Plugin.PluginBase {
   id = 'royalroad';
   name = 'Royal Road';
-  version = '2.2.2';
+  version = '2.2.3';
   icon = 'src/en/royalroad/icon.png';
   site = 'https://www.royalroad.com/';
 
@@ -147,7 +147,7 @@ class RoyalRoad implements Plugin.PluginBase {
             break;
           case 'hr':
             if (state === ParsingState.InDescription) {
-              summaryParts.push('\n---\n');
+              summaryParts.push('\n\n---\n\n');
             }
             break;
           case 'br':
@@ -229,7 +229,6 @@ class RoyalRoad implements Plugin.PluginBase {
               novel.summary = summaryParts
                 .join('')
                 .replace(/&nbsp;/g, ' ')
-                .replace(/\s*\n\s*/g, '\n')
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
               summaryParts.length = 0;
@@ -332,7 +331,13 @@ class RoyalRoad implements Plugin.PluginBase {
       depth: number;
     } | null = null;
 
-    const parser = new Parser({
+    class AlternateParser extends Parser {
+      public checkVoidElement(name: string): boolean {
+        return this.isVoidElement(name);
+      }
+    }
+    
+    const parser = new AlternateParser({
       onopentag(name, attribs) {
         depth++;
         const classes = attribs['class'] || '';
@@ -429,9 +434,7 @@ class RoyalRoad implements Plugin.PluginBase {
           state === ChapterParsingState.InChapter ||
           state === ChapterParsingState.InNote
         ) {
-          // Avoid adding closing tags for self-closing elements
-          const selfClosingTags = ['img', 'br', 'hr'];
-          if (!selfClosingTags.includes(name)) {
+          if (!parser.checkVoidElement(name)) {
             const closingTag = `</${name}>`;
             if (state === ChapterParsingState.InChapter) {
               chapterHtmlParts.push(closingTag);
