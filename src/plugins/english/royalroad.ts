@@ -1,4 +1,4 @@
-import { Parser, ParserOptions } from 'htmlparser2';
+import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
