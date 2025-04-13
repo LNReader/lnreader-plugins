@@ -1,4 +1,4 @@
-import { Parser } from 'htmlparser2';
+import { Parser, ParserOptions } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { Filters, FilterTypes } from '@libs/filterInputs';
@@ -16,32 +16,35 @@ class RoyalRoad implements Plugin.PluginBase {
     const baseUrl = this.site;
     const novels: Plugin.NovelItem[] = [];
     let tempNovel = {} as Plugin.NovelItem;
-    let isParsingNovel = false;
+    let state: ParsingState = ParsingState.Idle;
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class']?.includes('fiction-list-item')) {
-          isParsingNovel = true;
+          state = ParsingState.Novel;
         }
-        if (isParsingNovel) {
-          if (name === 'a') {
-            tempNovel.path = attribs['href'].split('/').slice(1, 3).join('/');
-          }
-          if (name === 'img') {
-            tempNovel.name = attribs['alt'];
-            tempNovel.cover = attribs['src'];
-            if (tempNovel.cover && !isUrlAbsolute(tempNovel.cover)) {
-              tempNovel.cover = baseUrl + tempNovel.cover.slice(1);
+        if (state !== ParsingState.Novel) return;
+
+        switch (name) {
+          case 'a':
+            if (attribs['href']) {
+              tempNovel.path = attribs['href'].split('/').slice(1, 3).join('/');
             }
-          }
-          if (tempNovel.path && tempNovel.name) {
-            novels.push(tempNovel);
-            tempNovel = {} as Plugin.NovelItem;
-          }
+            break;
+          case 'img':
+            if (attribs['src']) {
+              tempNovel.name = attribs['alt'] || '';
+              tempNovel.cover = !isUrlAbsolute(attribs['src'])
+                ? baseUrl + attribs['src'].slice(1)
+                : attribs['src'];
+            }
+            break;
         }
       },
       onclosetag(name) {
-        if (name === 'h2') {
-          isParsingNovel = false;
+        if (name === 'figure') {
+          novels.push(tempNovel);
+          tempNovel = {} as Plugin.NovelItem;
+          state = ParsingState.Idle;
         }
       },
     });
@@ -100,17 +103,6 @@ class RoyalRoad implements Plugin.PluginBase {
       chapters: [],
     };
     const baseUrl = this.site;
-
-    enum ParsingState {
-      Idle,
-      InTitle,
-      InAuthor,
-      InDescription,
-      InTags,
-      InTagLink,
-      InStatusSpan,
-      InScript,
-    }
 
     let state: ParsingState = ParsingState.Idle;
     let statusText = '';
@@ -307,14 +299,7 @@ class RoyalRoad implements Plugin.PluginBase {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
 
-    enum ChapterParsingState {
-      Idle,
-      InNote,
-      InChapter,
-      InHidden,
-    }
-
-    let state = ChapterParsingState.Idle;
+    let state = ParsingState.Idle;
     let stateDepth = 0;
     let depth = 0;
 
@@ -327,7 +312,7 @@ class RoyalRoad implements Plugin.PluginBase {
     const match = html.match(/<style>\n\s+.(.+?){[^{]+?display: none;/);
     const hiddenClass = match?.[1]?.trim();
     let stateBeforeHidden: {
-      state: ChapterParsingState;
+      state: ParsingState;
       depth: number;
     } | null = null;
 
@@ -336,42 +321,39 @@ class RoyalRoad implements Plugin.PluginBase {
         return this.isVoidElement(name);
       }
     }
-    
+
     const parser = new AlternateParser({
       onopentag(name, attribs) {
         depth++;
         const classes = attribs['class'] || '';
 
         if (
-          state !== ChapterParsingState.InHidden &&
+          state !== ParsingState.InHidden &&
           hiddenClass &&
           classes.includes(hiddenClass)
         ) {
           stateBeforeHidden = { state: state, depth: stateDepth };
-          state = ChapterParsingState.InHidden;
+          state = ParsingState.InHidden;
           stateDepth = depth;
           return;
         }
 
         switch (state) {
-          case ChapterParsingState.Idle:
+          case ParsingState.Idle:
             if (classes.includes('chapter-content')) {
-              state = ChapterParsingState.InChapter;
+              state = ParsingState.InChapter;
               stateDepth = depth;
               isBeforeChapter = false;
             } else if (classes.includes('author-note-portlet')) {
-              state = ChapterParsingState.InNote;
+              state = ParsingState.InNote;
               stateDepth = depth;
             }
             break;
-          case ChapterParsingState.InHidden:
+          case ParsingState.InHidden:
             return;
         }
 
-        if (
-          state === ChapterParsingState.InChapter ||
-          state === ChapterParsingState.InNote
-        ) {
+        if (state === ParsingState.InChapter || state === ParsingState.InNote) {
           let tag = `<${name}`;
           for (const attr in attribs) {
             const value = attribs[attr].replace(/"/g, '&quot;');
@@ -379,7 +361,7 @@ class RoyalRoad implements Plugin.PluginBase {
           }
           tag += '>';
 
-          if (state === ChapterParsingState.InChapter) {
+          if (state === ParsingState.InChapter) {
             chapterHtmlParts.push(tag);
           } else {
             notesHtmlParts.push(tag);
@@ -388,10 +370,10 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       ontext(text) {
         switch (state) {
-          case ChapterParsingState.InChapter:
+          case ParsingState.InChapter:
             chapterHtmlParts.push(text);
             break;
-          case ChapterParsingState.InNote:
+          case ParsingState.InNote:
             notesHtmlParts.push(text);
             break;
         }
@@ -399,9 +381,9 @@ class RoyalRoad implements Plugin.PluginBase {
       onclosetag(name) {
         if (depth === stateDepth) {
           switch (state) {
-            case ChapterParsingState.InHidden:
+            case ParsingState.InHidden:
               if (!stateBeforeHidden) {
-                state = ChapterParsingState.Idle; // Attempt recovery
+                state = ParsingState.Idle; // Attempt recovery
                 stateDepth = 0;
               } else {
                 state = stateBeforeHidden.state;
@@ -410,12 +392,12 @@ class RoyalRoad implements Plugin.PluginBase {
               }
               depth--;
               return;
-            case ChapterParsingState.InChapter:
-              state = ChapterParsingState.Idle;
+            case ParsingState.InChapter:
+              state = ParsingState.Idle;
               stateDepth = 0;
               depth--;
               return;
-            case ChapterParsingState.InNote:
+            case ParsingState.InNote:
               const noteClass = `author-note-${isBeforeChapter ? 'before' : 'after'}`;
               const notesHtml = notesHtmlParts.join('').trim();
               const fullNote = `<div class="${noteClass}">${notesHtml}</div>`;
@@ -425,18 +407,18 @@ class RoyalRoad implements Plugin.PluginBase {
                 afterNotesParts.push(fullNote);
               }
               notesHtmlParts.length = 0;
-              state = ChapterParsingState.Idle;
+              state = ParsingState.Idle;
               stateDepth = 0;
               depth--;
               return;
           }
         } else if (
-          state === ChapterParsingState.InChapter ||
-          state === ChapterParsingState.InNote
+          state === ParsingState.InChapter ||
+          state === ParsingState.InNote
         ) {
           if (!parser.checkVoidElement(name)) {
             const closingTag = `</${name}>`;
-            if (state === ChapterParsingState.InChapter) {
+            if (state === ParsingState.InChapter) {
               chapterHtmlParts.push(closingTag);
             } else {
               notesHtmlParts.push(closingTag);
@@ -947,3 +929,18 @@ type VolumeEntry = {
   cover: string;
   order: number;
 };
+
+enum ParsingState {
+  Idle,
+  InTitle,
+  InAuthor,
+  InDescription,
+  InTags,
+  InTagLink,
+  InStatusSpan,
+  InScript,
+  InNote,
+  InChapter,
+  InHidden,
+  Novel,
+}
