@@ -316,12 +316,6 @@ class RoyalRoad implements Plugin.PluginBase {
       depth: number;
     } | null = null;
 
-    class AlternateParser extends Parser {
-      public checkVoidElement(name: string): boolean {
-        return this.isVoidElement(name);
-      }
-    }
-
     const parser = new AlternateParser({
       onopentag(name, attribs) {
         depth++;
@@ -913,6 +907,12 @@ class RoyalRoad implements Plugin.PluginBase {
 }
 
 export default new RoyalRoad();
+
+class AlternateParser extends Parser {
+  public checkVoidElement(name: string): boolean {
+    return this.isVoidElement(name);
+  }
+}
 
 type ChapterEntry = {
   id: number;
