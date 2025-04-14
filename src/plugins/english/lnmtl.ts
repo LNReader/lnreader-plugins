@@ -161,7 +161,6 @@ class LnMTLPlugin implements Plugin.PagePlugin {
             break;
           case ParsingState.InGenres:
             genreArray.push(data.trim());
-            novel.genres = genreArray.join(', ');
             break;
         }
       },
@@ -184,6 +183,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       },
       onend() {
         novel.summary = summaryParts.join('');
+        novel.genres = genreArray.join(', ');
       },
     });
 
@@ -196,14 +196,14 @@ class LnMTLPlugin implements Plugin.PagePlugin {
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const result = await fetchApi(this.site + novelPath);
     const html = await result.text().then(r => r.replace(/>\s+</g, '><'));
-    let isScript = false;
+    let state: ParsingState = ParsingState.Idle;
     let volume: VolumeEntry = {
       id: '',
       title: '',
     };
     const parser = new Parser({
       ontext(data) {
-        if (isScript) {
+        if (state === ParsingState.InScript) {
           const volumes = JSON.parse(
             data.match(/lnmtl.volumes = (.+])(?=;)/)![1] || '',
           );
@@ -212,10 +212,10 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       },
       onclosetag(name) {
         if (name === 'main') {
-          isScript = true;
+          state = ParsingState.InScript;
         }
         if (name === 'script') {
-          isScript = false;
+          state = ParsingState.Idle;
         }
       },
     });

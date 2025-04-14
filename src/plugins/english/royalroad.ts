@@ -42,8 +42,10 @@ class RoyalRoad implements Plugin.PluginBase {
       },
       onclosetag(name) {
         if (name === 'figure') {
-          novels.push(tempNovel);
-          tempNovel = {} as Plugin.NovelItem;
+          if (tempNovel.path && tempNovel.name) {
+            novels.push(tempNovel);
+            tempNovel = {} as Plugin.NovelItem;
+          }
           state = ParsingState.Idle;
         }
       },
