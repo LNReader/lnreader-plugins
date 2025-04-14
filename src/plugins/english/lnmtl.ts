@@ -25,11 +25,12 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       page: page.toString(),
     });
 
-    const response = await fetchApi(`${this.site}novel?${params.toString()}`);
+    const link = `${this.site}novel?${params.toString()}`;
+    const response = await fetchApi(link);
     const html = await response.text();
     const baseUrl = this.site;
     let state: ParsingState = ParsingState.Idle;
-    let tempNovel = {} as Plugin.NovelItem;
+    let tempNovel: Partial<Plugin.NovelItem> = {};
     const novels: Plugin.NovelItem[] = [];
 
     const parser = new Parser({
@@ -52,8 +53,8 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       onclosetag(name) {
         if (name === 'div') {
           if (tempNovel.path && tempNovel.name) {
-            novels.push(tempNovel);
-            tempNovel = {} as Plugin.NovelItem;
+            novels.push(tempNovel as Plugin.NovelItem);
+            tempNovel = {};
           }
           state = ParsingState.Idle;
         }
@@ -72,12 +73,9 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     const body = await fetchApi(this.site + novelPath);
     const html = await body.text().then(r => r.replace(/>\s+</g, '><'));
 
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Partial<Plugin.SourceNovel> & { totalPages: number } = {
       path: novelPath,
-      name: '',
       totalPages: 1,
-      author: '',
-      status: '',
       chapters: [],
     };
 
@@ -152,10 +150,10 @@ class LnMTLPlugin implements Plugin.PagePlugin {
             break;
           case ParsingState.InPanelValue:
             if (isAuthorKey && panelValueCount === 1) {
-              novel.author += data.trim();
+              novel.author = (novel.author || '') + data.trim();
               isAuthorKey = false;
             } else if (isStatusKey && panelValueCount === 2) {
-              novel.status += data.trim();
+              novel.status = (novel.status || '') + data.trim();
               isStatusKey = false;
             }
             break;
@@ -190,7 +188,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     parser.write(html);
     parser.end();
 
-    return novel;
+    return novel as Plugin.SourceNovel & { totalPages: number };
   }
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {

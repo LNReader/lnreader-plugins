@@ -15,7 +15,7 @@ class RoyalRoad implements Plugin.PluginBase {
   parseNovels(html: string) {
     const baseUrl = this.site;
     const novels: Plugin.NovelItem[] = [];
-    let tempNovel = {} as Plugin.NovelItem;
+    let tempNovel: Partial<Plugin.NovelItem> = {};
     let state: ParsingState = ParsingState.Idle;
     const parser = new Parser({
       onopentag(name, attribs) {
@@ -43,8 +43,8 @@ class RoyalRoad implements Plugin.PluginBase {
       onclosetag(name) {
         if (name === 'figure') {
           if (tempNovel.path && tempNovel.name) {
-            novels.push(tempNovel);
-            tempNovel = {} as Plugin.NovelItem;
+            novels.push(tempNovel as Plugin.NovelItem);
+            tempNovel = {};
           }
           state = ParsingState.Idle;
         }
@@ -98,11 +98,8 @@ class RoyalRoad implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const result = await fetchApi(this.site + novelPath);
     const html = await result.text();
-    const novel: Plugin.SourceNovel = {
+    const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
-      name: '',
-      author: '',
-      chapters: [],
     };
     const baseUrl = this.site;
 
@@ -125,10 +122,7 @@ class RoyalRoad implements Plugin.PluginBase {
             state = ParsingState.InTitle;
             break;
           case 'a':
-            if (
-              attribs['href']?.startsWith('/profile/') &&
-              novel.author === ''
-            ) {
+            if (attribs['href']?.startsWith('/profile/') && !novel.author) {
               state = ParsingState.InAuthor;
             } else if (state === ParsingState.InTags) {
               state = ParsingState.InTagLink;
@@ -294,7 +288,7 @@ class RoyalRoad implements Plugin.PluginBase {
     parser.write(html);
     parser.end();
 
-    return novel;
+    return novel as Plugin.NovelItem;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
