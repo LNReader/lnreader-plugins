@@ -8,7 +8,7 @@ class LnMTLPlugin implements Plugin.PagePlugin {
   name = 'LnMTL';
   icon = 'src/en/lnmtl/icon.png';
   site = 'https://lnmtl.com/';
-  version = '2.0.0';
+  version = '2.1.0';
 
   async sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,47 +18,52 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     page: number,
     { filters }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let link = this.site + 'novel?';
-    link += `orderBy=${filters.order.value}`;
-    link += `&order=${filters.sort.value}`;
-    link += `&filter=${filters.storyStatus.value}`;
-    link += `&page=${page}`;
+    const params = new URLSearchParams({
+      orderBy: filters.order.value,
+      order: filters.sort.value,
+      filter: filters.storyStatus.value,
+      page: page.toString(),
+    });
 
-    const body = await fetchApi(link);
-    const html = await body.text();
+    const link = `${this.site}novel?${params.toString()}`;
+    const response = await fetchApi(link);
+    const html = await response.text();
     const baseUrl = this.site;
-    let isParsingNovel = false;
-    let tempNovel = {} as Plugin.NovelItem;
+    let state: ParsingState = ParsingState.Idle;
+    let tempNovel: Partial<Plugin.NovelItem> = {};
     const novels: Plugin.NovelItem[] = [];
+
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class']?.includes('media-left')) {
-          isParsingNovel = true;
+          state = ParsingState.Novel;
         }
-        if (isParsingNovel) {
-          switch (name) {
-            case 'a':
-              tempNovel.path = attribs['href'].slice(baseUrl.length);
-              break;
-            case 'img':
-              tempNovel.name = attribs['alt'];
-              tempNovel.cover = attribs['src'];
-              break;
-          }
-          if (tempNovel.path && tempNovel.name) {
-            novels.push(tempNovel);
-            tempNovel = {} as Plugin.NovelItem;
-          }
+        if (state !== ParsingState.Novel) return;
+
+        switch (name) {
+          case 'a':
+            tempNovel.path = attribs['href'].replace(baseUrl, '');
+            break;
+          case 'img':
+            tempNovel.name = attribs['alt'];
+            tempNovel.cover = attribs['src'];
+            break;
         }
       },
       onclosetag(name) {
         if (name === 'div') {
-          isParsingNovel = false;
+          if (tempNovel.path && tempNovel.name) {
+            novels.push(tempNovel as Plugin.NovelItem);
+            tempNovel = {};
+          }
+          state = ParsingState.Idle;
         }
       },
     });
+
     parser.write(html);
     parser.end();
+
     return novels;
   }
 
@@ -68,124 +73,135 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     const body = await fetchApi(this.site + novelPath);
     const html = await body.text().then(r => r.replace(/>\s+</g, '><'));
 
-    const novel: Plugin.SourceNovel & { totalPages: number } = {
+    const novel: Partial<Plugin.SourceNovel> & { totalPages: number } = {
       path: novelPath,
-      name: '',
       totalPages: 1,
-      summary: '',
-      author: '',
-      status: '',
       chapters: [],
     };
 
-    let isScript = false;
-    let isDescription = false;
-    let isSource = false;
-    let isPanelKey = false;
-    let isPanelValue = 0;
+    let state = ParsingState.Idle;
+    let panelValueCount = 0;
+    let listCount = 0;
     let isAuthorKey = false;
     let isStatusKey = false;
-    let isList = 0;
-    let isGenres = false;
+    const summaryParts: string[] = [];
     const genreArray: string[] = [];
     const parser = new Parser({
       onopentag(name, attribs) {
-        if (name === 'img' && attribs['class']?.includes('img-rounded')) {
-          novel.name = attribs['title'];
-          novel.cover = attribs['src'];
-        }
-        if (name === 'ul' && attribs['class']?.includes('list-inline')) {
-          isList++;
-        }
-      },
-      onopentagname(name) {
-        if (name === 'dt') {
-          isPanelKey = true;
-        }
-        if (name === 'dd') {
-          isPanelValue++;
-        }
-        if (isList === 1 && name === 'li') {
-          isGenres = true;
-        }
-      },
-      onattribute(name, value) {
-        if (name === 'class' && value === 'description') {
-          isDescription = true;
-        }
-        if (name === 'class' && value === 'source') {
-          isDescription = false;
-          isSource = true;
-        }
-        if (name === 'class' && value === 'progress') {
-          isSource = false;
+        switch (name) {
+          case 'img':
+            if (attribs['class']?.includes('img-rounded')) {
+              novel.name = attribs['title'];
+              novel.cover = attribs['src'];
+            }
+            break;
+          case 'dt':
+            state = ParsingState.InPanelKey;
+            break;
+          case 'dd':
+            state = ParsingState.InPanelValue;
+            panelValueCount++;
+            break;
+          case 'ul':
+            if (attribs['class']?.includes('list-inline')) {
+              listCount++;
+            }
+            break;
+          case 'li':
+            if (listCount === 1) {
+              state = ParsingState.InGenres;
+            }
+            break;
+          default:
+            if (attribs['class']) {
+              const map: Record<string, ParsingState> = {
+                description: ParsingState.InDescription,
+                source: ParsingState.InSource,
+                progress: ParsingState.Idle,
+              };
+              state = map[attribs['class']] ?? state;
+            }
         }
       },
       ontext(data) {
-        if (isScript) {
-          const volume = JSON.parse(
-            data.match(/lnmtl.volumes = (.+])(?=;)/)![1] || '',
-          );
-          novel.totalPages = volume.length;
-        }
-        if (isDescription) {
-          novel.summary += data.trim() + '\n\n';
-        }
-        if (isSource) {
-          novel.summary += data;
-        }
-        if (isPanelKey) {
-          switch (data) {
-            case 'Authors':
-              isAuthorKey = true;
-              break;
-            case 'Current status':
-              isStatusKey = true;
-              break;
-          }
-        }
-        if (isAuthorKey && isPanelValue === 1) {
-          novel.author += data.trim();
-          isAuthorKey = false;
-        }
-        if (isStatusKey && isPanelValue === 2) {
-          novel.status += data.trim();
-          isStatusKey = false;
-        }
-        if (isGenres) {
-          genreArray.push(data.trim());
-          novel.genres = genreArray.join(', ');
+        switch (state) {
+          case ParsingState.InScript:
+            const volume = JSON.parse(
+              data.match(/lnmtl.volumes = (.+])(?=;)/)![1] || '',
+            );
+            novel.totalPages = volume.length;
+            break;
+          case ParsingState.InDescription:
+            summaryParts.push(data.trim());
+            summaryParts.push('\n\n');
+            break;
+          case ParsingState.InSource:
+            summaryParts.push(data);
+            break;
+          case ParsingState.InPanelKey:
+            switch (data) {
+              case 'Authors':
+                isAuthorKey = true;
+                break;
+              case 'Current status':
+                isStatusKey = true;
+                break;
+            }
+            break;
+          case ParsingState.InPanelValue:
+            if (isAuthorKey && panelValueCount === 1) {
+              novel.author = (novel.author || '') + data.trim();
+              isAuthorKey = false;
+            } else if (isStatusKey && panelValueCount === 2) {
+              novel.status = (novel.status || '') + data.trim();
+              isStatusKey = false;
+            }
+            break;
+          case ParsingState.InGenres:
+            genreArray.push(data.trim());
+            break;
         }
       },
       onclosetag(name) {
-        if (name === 'ul') {
-          isGenres = false;
-        }
-        if (name === 'main') {
-          isPanelKey = false;
-          isScript = true;
-        }
-        if (name === 'script') {
-          isScript = false;
+        switch (name) {
+          case 'ul':
+            if (state === ParsingState.InGenres) {
+              state = ParsingState.Idle;
+            }
+            break;
+          case 'main':
+            state = ParsingState.InScript;
+            break;
+          case 'script':
+            if (state === ParsingState.InScript) {
+              state = ParsingState.Idle;
+            }
+            break;
         }
       },
+      onend() {
+        novel.summary = summaryParts.join('');
+        novel.genres = genreArray.join(', ');
+      },
     });
+
     parser.write(html);
     parser.end();
-    return novel;
+
+    return novel as Plugin.SourceNovel & { totalPages: number };
   }
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     const result = await fetchApi(this.site + novelPath);
     const html = await result.text().then(r => r.replace(/>\s+</g, '><'));
-    let isScript = false;
+    let state: ParsingState = ParsingState.Idle;
     let volume: VolumeEntry = {
       id: '',
       title: '',
     };
     const parser = new Parser({
       ontext(data) {
-        if (isScript) {
+        if (state === ParsingState.InScript) {
           const volumes = JSON.parse(
             data.match(/lnmtl.volumes = (.+])(?=;)/)![1] || '',
           );
@@ -194,13 +210,14 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       },
       onclosetag(name) {
         if (name === 'main') {
-          isScript = true;
+          state = ParsingState.InScript;
         }
         if (name === 'script') {
-          isScript = false;
+          state = ParsingState.Idle;
         }
       },
     });
+
     parser.write(html);
     parser.end();
 
@@ -240,35 +257,37 @@ class LnMTLPlugin implements Plugin.PagePlugin {
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.site + chapterPath);
     const html = await result.text();
-    let isText = false;
-    let chapterText = '';
+
+    let state: ParsingState = ParsingState.Idle;
+    const chapterTextParts: string[] = [];
     const parser = new Parser({
       onopentag(name, attribs) {
         if (name === 'sentence' && attribs['class']?.includes('translated')) {
-          isText = true;
-          chapterText += '<p>';
+          state = ParsingState.Chapter;
+          chapterTextParts.push('<p>');
         }
       },
       onopentagname(name) {
         if (name === 'nav') {
-          isText = false;
+          state = ParsingState.Idle;
         }
       },
       ontext(data) {
-        if (isText) {
-          chapterText += data;
+        if (state === ParsingState.Chapter) {
+          chapterTextParts.push(data);
         }
       },
       onclosetag(name) {
         if (name === 'sentence') {
-          chapterText += '</p>';
-          isText = false;
+          chapterTextParts.push('</p>');
+          state = ParsingState.Idle;
         }
       },
     });
+
     parser.write(html);
     parser.end();
-
+    const chapterText = chapterTextParts.join('');
     return chapterText.replace(/„/g, '“');
   }
 
@@ -276,40 +295,47 @@ class LnMTLPlugin implements Plugin.PagePlugin {
     const html = await fetchApi(this.site)
       .then(b => b.text())
       .then(r => r.replace(/>\s+</g, '><'));
-    let isScript = false;
-    let isFooter = false;
-    let list = '';
+
+    let state = ParsingState.Idle;
+    const listPart = new Set<string>();
     const parser = new Parser({
       onopentag(name, attribs) {
         if (
-          isFooter &&
+          state === ParsingState.InFooter &&
           name === 'script' &&
           attribs['type']?.includes('application/javascript')
         ) {
-          isScript = true;
+          state = ParsingState.InScript;
         }
       },
       ontext(data) {
-        if (isScript) {
-          list = data.match(/prefetch: '\/(.*json)/)![1];
+        if (state === ParsingState.InScript) {
+          const match = data.match(/prefetch: '\/(.*?\.json)/);
+          if (match) {
+            listPart.add(match[1]);
+          }
         }
       },
       onclosetag(name) {
-        if (name === 'footer') {
-          isFooter = true;
-        }
-        if (name === 'script') {
-          isScript = false;
-        }
-        if (name === 'body') {
-          isFooter = false;
+        switch (name) {
+          case 'footer':
+            state = ParsingState.InFooter;
+            break;
+          case 'script':
+            if (state === ParsingState.InScript) {
+              state = ParsingState.Idle;
+            }
+            break;
         }
       },
     });
+
     parser.write(html);
     parser.end();
 
-    const search = await fetchApi(`${this.site}${list}`);
+    const search = await fetchApi(
+      `${this.site}${Array.from(listPart).join('')}`,
+    );
     const data = await search.json();
 
     const nov = data.filter((res: { name: string }) =>
@@ -378,3 +404,16 @@ type VolumeEntry = {
   id: string;
   title: string;
 };
+
+enum ParsingState {
+  Idle,
+  InFooter,
+  InScript,
+  InDescription,
+  InSource,
+  InPanelKey,
+  InPanelValue,
+  InGenres,
+  Novel,
+  Chapter,
+}
