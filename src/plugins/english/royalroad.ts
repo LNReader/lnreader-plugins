@@ -312,7 +312,22 @@ class RoyalRoad implements Plugin.PluginBase {
       depth: number;
     } | null = null;
 
-    const parser = new AlternateParser({
+    type EscapeChar = '&' | '<' | '>' | '"' | "'";
+    const escapeRegex = /[&<>"']/g;
+    const escapeMap: Record<EscapeChar, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+    const escapeHtml = (text: string): string =>
+      escapeRegex.test(text)
+        ? ((escapeRegex.lastIndex = 0),
+          text.replace(escapeRegex, char => escapeMap[char as EscapeChar]))
+        : text;
+
+    const parser = new Parser({
       onopentag(name, attribs) {
         depth++;
         const classes = attribs['class'] || '';
@@ -361,10 +376,10 @@ class RoyalRoad implements Plugin.PluginBase {
       ontext(text) {
         switch (state) {
           case ParsingState.InChapter:
-            chapterHtmlParts.push(text);
+            chapterHtmlParts.push(escapeHtml(text));
             break;
           case ParsingState.InNote:
-            notesHtmlParts.push(text);
+            notesHtmlParts.push(escapeHtml(text));
             break;
         }
       },
@@ -383,6 +398,7 @@ class RoyalRoad implements Plugin.PluginBase {
               depth--;
               return;
             case ParsingState.InChapter:
+              chapterHtmlParts.push(`</div>`);
               state = ParsingState.Idle;
               stateDepth = 0;
               depth--;
@@ -406,7 +422,7 @@ class RoyalRoad implements Plugin.PluginBase {
           state === ParsingState.InChapter ||
           state === ParsingState.InNote
         ) {
-          if (!parser.checkVoidElement(name)) {
+          if (!parser['isVoidElement'](name)) {
             const closingTag = `</${name}>`;
             if (state === ParsingState.InChapter) {
               chapterHtmlParts.push(closingTag);
@@ -903,12 +919,6 @@ class RoyalRoad implements Plugin.PluginBase {
 }
 
 export default new RoyalRoad();
-
-class AlternateParser extends Parser {
-  public checkVoidElement(name: string): boolean {
-    return this.isVoidElement(name);
-  }
-}
 
 type ChapterEntry = {
   id: number;

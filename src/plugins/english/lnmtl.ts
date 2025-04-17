@@ -260,6 +260,22 @@ class LnMTLPlugin implements Plugin.PagePlugin {
 
     let state: ParsingState = ParsingState.Idle;
     const chapterTextParts: string[] = [];
+
+    type EscapeChar = '&' | '<' | '>' | '"' | "'";
+    const escapeRegex = /[&<>"']/g;
+    const escapeMap: Record<EscapeChar, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+    const escapeHtml = (text: string): string =>
+      escapeRegex.test(text)
+        ? ((escapeRegex.lastIndex = 0),
+          text.replace(escapeRegex, char => escapeMap[char as EscapeChar]))
+        : text;
+
     const parser = new Parser({
       onopentag(name, attribs) {
         if (name === 'sentence' && attribs['class']?.includes('translated')) {
@@ -274,11 +290,11 @@ class LnMTLPlugin implements Plugin.PagePlugin {
       },
       ontext(data) {
         if (state === ParsingState.Chapter) {
-          chapterTextParts.push(data);
+          chapterTextParts.push(escapeHtml(data));
         }
       },
       onclosetag(name) {
-        if (name === 'sentence') {
+        if (name === 'sentence' && state === ParsingState.Chapter) {
           chapterTextParts.push('</p>');
           state = ParsingState.Idle;
         }
