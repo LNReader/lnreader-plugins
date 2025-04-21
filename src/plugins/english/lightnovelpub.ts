@@ -74,10 +74,11 @@ class LightNovelPub implements Plugin.PagePlugin {
     novelPath: string,
   ): Promise<Plugin.SourceNovel & { totalPages: number }> {
     const body = await fetchApi(this.site + novelPath).then(r => r.text());
-    const novel: Partial<Plugin.SourceNovel> & Partial<{ totalPages: number }> = {
-      path: novelPath,
-      chapters: [],
-    };
+    const novel: Partial<Plugin.SourceNovel> & Partial<{ totalPages: number }> =
+      {
+        path: novelPath,
+        chapters: [],
+      };
     let state: ParsingState = ParsingState.Idle;
     const summaryParts: string[] = [];
     const genreArray: string[] = [];
@@ -142,7 +143,7 @@ class LightNovelPub implements Plugin.PagePlugin {
       ontext(data) {
         switch (state) {
           case ParsingState.TotalChapters:
-            if (!novel.totalPages){
+            if (!novel.totalPages) {
               novel.totalPages = Math.ceil(parseInt(data, 10) / 100);
             }
             break;
@@ -167,7 +168,7 @@ class LightNovelPub implements Plugin.PagePlugin {
         switch (name) {
           case 'strong':
             if (state === ParsingState.TotalChapters) {
-              state = ParsingState.HeaderStats
+              state = ParsingState.HeaderStats;
             } else if (state === ParsingState.Status) {
               state = ParsingState.Idle;
             }
@@ -244,20 +245,20 @@ class LightNovelPub implements Plugin.PagePlugin {
     const chapters: Plugin.ChapterItem[] = [];
     let tempChapter: Partial<Plugin.ChapterItem> = {};
     let state: ParsingState = ParsingState.Idle;
-    
+
     const parser = new Parser({
       onopentag(name, attribs) {
         if (attribs['class'] === 'chapter-list') {
           state = ParsingState.ChapterList;
           return;
         }
-        
+
         switch (state) {
           case ParsingState.ChapterList:
             if (name === 'li') {
               state = ParsingState.ChapterItem;
               tempChapter = {
-                chapterNumber: Number(attribs['data-orderno'] || 0)
+                chapterNumber: Number(attribs['data-orderno'] || 0),
               };
             }
             break;
@@ -269,7 +270,7 @@ class LightNovelPub implements Plugin.PagePlugin {
                 break;
               case 'time':
                 tempChapter.releaseTime = dayjs(
-                  attribs['datetime']
+                  attribs['datetime'],
                 ).toISOString();
                 break;
             }
@@ -298,28 +299,80 @@ class LightNovelPub implements Plugin.PagePlugin {
         }
       },
     });
-    
+
     parser.write(body);
     parser.end();
-    
+
     return { chapters };
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
     const html = await fetchApi(this.site + chapterPath).then(r => r.text());
-    const parts: string[] = [];
-    const regexPatterns: RegExp[] = [
-      /(<div id="chapter-container[^]+?)<div class="chapternav/,
-    ];
-    const extractContent = (patterns: RegExp[]) => {
-      patterns.forEach(regex => {
-        const match = html.match(regex)?.[1];
-        if (match) parts.push(match);
-      });
+
+    let depth = 0;
+    let state: ParsingState = ParsingState.Idle;
+    const chapterHtml: string[] = [];
+
+    type EscapeChar = '&' | '<' | '>' | '"' | "'";
+    const escapeRegex = /[&<>"']/g;
+    const escapeMap: Record<EscapeChar, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
     };
-    extractContent(regexPatterns);
-    const chapterText = parts.join();
-    return chapterText.replace(/(?<=\/p>).*?(?=<p>)/g, '');
+    const escapeHtml = (text: string): string =>
+      text.replace(escapeRegex, char => escapeMap[char as EscapeChar]);
+
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        switch (state) {
+          case ParsingState.Idle:
+            if (name === 'div' && attribs['id'] === 'chapter-container') {
+              state = ParsingState.Chapter;
+              depth++;
+            }
+            break;
+          case ParsingState.Chapter:
+            if (name === 'div') depth++;
+            break;
+          default:
+            return;
+        }
+
+        if (state === ParsingState.Chapter) {
+          const attr = Object.keys(attribs).map(key => {
+            const value = attribs[key].replace(/"/g, '&quot;');
+            return ` ${key}="${value}"`;
+          });
+          chapterHtml.push(`<${name}${attr.join('')}>`);
+        }
+      },
+
+      ontext(text) {
+        if (state === ParsingState.Chapter) {
+          chapterHtml.push(escapeHtml(text));
+        }
+      },
+
+      onclosetag(name) {
+        if (state === ParsingState.Chapter) {
+          if (!parser['isVoidElement'](name)) {
+            chapterHtml.push(`</${name}>`);
+          }
+          if (name === 'div') depth--;
+          if (depth === 0) {
+            state = ParsingState.Stopped;
+          }
+        }
+      },
+    });
+
+    parser.write(html);
+    parser.end();
+
+    return chapterHtml.join('');
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
@@ -432,9 +485,11 @@ enum ParsingState {
   Novel,
   HeaderStats,
   Status,
-  TotalChapters,
+  Stopped,
+  Chapter,
   ChapterItem,
   ChapterList,
+  TotalChapters,
   NovelName,
   AuthorName,
   Summary,
