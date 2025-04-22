@@ -86,7 +86,8 @@ class PawRead implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const result = await fetchApi(this.site + novelPath + '/');
+    const slash =  novelPath.endsWith('/') ? '' : '/';
+    const result = await fetchApi(this.site + novelPath + slash);
     const body = await result.text();
 
     const novel: Partial<Plugin.SourceNovel> = {
@@ -110,7 +111,7 @@ class PawRead implements Plugin.PluginBase {
             if (attribs.class?.includes('item-box')) {
               state = ParsingState.Chapter;
               const path = attribs.onclick.match(/\d+/)![0];
-              tempChapter.path = `${novelPath}/${path}.html`;
+              tempChapter.path = `${novelPath}${slash}${path}.html`;
               return;
             }
             if (state === ParsingState.Chapter) depth++;
