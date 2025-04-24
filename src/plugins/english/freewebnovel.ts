@@ -61,6 +61,7 @@ class FreeWebNovel implements Plugin.PluginBase {
     } else {
       if (page !== 1) return [];
       path = 'most-popular/';
+      page = 0;
     }
 
     const url = `${this.site}${path}${page}`;
