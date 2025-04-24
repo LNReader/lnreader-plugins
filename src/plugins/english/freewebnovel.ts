@@ -7,7 +7,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com/';
-  version = '1.1.3';
+  version = '1.2.0';
   icon = 'src/en/freewebnovel/icon.png';
 
   lastSearch: number | null = null;
@@ -26,16 +26,23 @@ class FreeWebNovel implements Plugin.PluginBase {
     return parseHTML(await r.text());
   }
 
-  parseNovels(loadedCheerio: CheerioAPI): Plugin.NovelItem[] {
+  parseNovels(loadedCheerio: CheerioAPI) {
     return loadedCheerio('.li-row')
-      .map((index, element) => ({
-        name: loadedCheerio(element).find('.tit').text() || '',
-        cover: this.site + loadedCheerio(element).find('img').attr('src'),
-        path:
-          loadedCheerio(element).find('h3 > a').attr('href')?.slice(1) || '',
-      }))
-      .get()
-      .filter(novel => novel.name && novel.path);
+      .toArray()
+      .map(el => {
+        const row = loadedCheerio(el);
+        const name = row.find('.tit').text().trim();
+        const path = row.find('h3 > a').attr('href')?.slice(1);
+        if (!name || !path) return null;
+
+        const coverSrc = row.find('img').attr('src') || '';
+        const cover = coverSrc.startsWith('http')
+          ? coverSrc
+          : this.site + coverSrc;
+
+        return { name, cover, path };
+      })
+      .filter(Boolean) as Plugin.NovelItem[];
   }
 
   async popularNovels(
@@ -45,87 +52,96 @@ class FreeWebNovel implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ): Promise<Plugin.NovelItem[]> {
-    let url = this.site;
-    if (showLatestNovels) url += 'sort/latest-novels/';
-    else {
-      if (filters && filters.genres && filters.genres.value !== '')
-        url += filters.genres.value;
-      else {
-        url += 'most-popular/';
-        if (page != 1) return [];
-        page = 0;
-      }
-    }
-    url += page;
+    let path: string;
 
-    const $ = await this.getCheerio(url);
-    return this.parseNovels($);
+    if (showLatestNovels) {
+      path = 'sort/latest-novels/';
+    } else if (filters?.genres?.value) {
+      path = filters.genres.value;
+    } else {
+      if (page !== 1) return [];
+      path = 'most-popular/';
+      page = 0;
+    }
+
+    const url = `${this.site}${path}${page}`;
+    const loadedCheerio = await this.getCheerio(url);
+    return this.parseNovels(loadedCheerio);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const loadedCheerio = await this.getCheerio(this.site + novelPath);
 
-    const novel: Plugin.SourceNovel = {
+    const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
-      name: loadedCheerio('h1.tit').text(),
-      cover: this.site + loadedCheerio('.pic > img').attr('src'),
-      summary: loadedCheerio('.inner').text().trim(),
     };
 
-    novel.genres = loadedCheerio('[title=Genre]')
-      .next()
-      .text()
-      .replace(/[\t\n]/g, '');
+    const img = loadedCheerio('.m-imgtxt img');
+    novel.name = img.attr('title');
+    novel.cover = this.site + img.attr('src');
 
-    novel.author = loadedCheerio('[title=Author]')
-      .next()
-      .text()
-      .replace(/[\t\n]/g, '');
+    loadedCheerio('.m-imgtxt .item').each((i, el) => {
+      const item = loadedCheerio(el);
+      const title = item.find('span').attr('title');
 
-    novel.status = loadedCheerio('[title=Status]')
-      .next()
-      .text()
-      .replace(/[\t\n]/g, '');
+      switch (title) {
+        case 'Author':
+          novel.author = item.find('.right a').text();
+          break;
+        case 'Status':
+          novel.status = item.find('.right span').text();
+          break;
+        case 'Genre':
+          novel.genres = item
+            .find('.right a')
+            .map((_, el) => loadedCheerio(el).text())
+            .toArray()
+            .join(', ');
+          break;
+      }
+    });
 
-    novel.genres = loadedCheerio('[title=Genre]')
-      .next()
-      .text()
-      .trim()
-      .replace(/[\t\n]/g, ',')
-      .replace(/, /g, ',');
+    novel.summary = loadedCheerio('.inner p')
+      .toArray()
+      .map(p => loadedCheerio(p).text().trim())
+      .join('\n');
 
     const chapters: Plugin.ChapterItem[] = loadedCheerio('#idData > li > a')
-      .map((chapterIndex, element) => ({
-        name:
-          loadedCheerio(element).attr('title') ||
-          'Chapter ' + (chapterIndex + 1),
-        path:
-          loadedCheerio(element).attr('href')?.slice(1) ||
-          novelPath.replace(
-            '.html',
-            '/chapter-' + (chapterIndex + 1) + '.html',
-          ),
-        releaseTime: null,
-        chapterNumber: chapterIndex + 1,
-      }))
-      .get();
+      .toArray()
+      .map((el, i) => {
+        const a = loadedCheerio(el);
+        const name = a.attr('title') || `Chapter ${i + 1}`;
+        const href = a.attr('href');
+        const path =
+          href?.slice(1) ||
+          novelPath.replace('.html', `/chapter-${i + 1}.html`);
+
+        return {
+          name,
+          path,
+          releaseTime: null,
+          chapterNumber: i + 1,
+        };
+      });
 
     novel.chapters = chapters;
-    return novel;
+    return novel as Plugin.SourceNovel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
     const loadedCheerio = await this.getCheerio(this.site + chapterPath);
-
-    // remove freewebnovel signature
-    if (loadedCheerio('style').text().includes('p:nth-last-child(1)'))
-      loadedCheerio('div.txt').find('p:last-child').remove();
+    const script = loadedCheerio('.footer')
+      .prev()
+      .text()
+      .match(/e\("([^]+?)"/)?.[1];
 
     const chapterText = loadedCheerio('div.txt').html() || '';
-    return chapterText.replace(
-      />([^<\.]+?\.)?[^\.<]*?\b[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<]*/g,
-      '>$1',
-    );
+    return chapterText
+      .replace(script!, '')
+      .replace(
+        />([^<\.]+?\.)?[^\.<]*?[ƒfF][Rrɾг][Eēeё]+[Wwω𝑤]+[Eёēe][Bbɓ][Nnɳη][Oø૦ѳσo][Vѵνv][Eёeē][^<,!\?;:\"”“’‘\(\)\-\d]*/g,
+        '>$1',
+      );
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
@@ -133,18 +149,20 @@ class FreeWebNovel implements Plugin.PluginBase {
     if (this.lastSearch && now - this.lastSearch <= this.searchInterval) {
       await this.sleep(this.searchInterval);
     }
+
     const r = await fetchApi(this.site + 'search', {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
       method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ searchkey: searchTerm }).toString(),
     });
+
     this.lastSearch = Date.now();
-    if (!r.ok)
+
+    if (!r.ok) {
       throw new Error(
-        'Could not reach site (' + r.status + ') try to open in webview.',
+        `Could not reach site ('${r.status}') try to open in webview.`,
       );
+    }
 
     const loadedCheerio = parseHTML(await r.text());
     const alertText =
