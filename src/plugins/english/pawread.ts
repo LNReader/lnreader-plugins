@@ -86,7 +86,7 @@ class PawRead implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const slash =  novelPath.endsWith('/') ? '' : '/';
+    const slash = novelPath.endsWith('/') ? '' : '/';
     const result = await fetchApi(this.site + novelPath + slash);
     const body = await result.text();
 
