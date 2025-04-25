@@ -1,14 +1,13 @@
 import { Plugin } from '@typings/plugin';
 import { fetchApi } from '@libs/fetch';
 import { Parser } from 'htmlparser2';
-import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com/';
-  version = '1.2.0';
+  version = '2.0.0';
   icon = 'src/en/freewebnovel/icon.png';
 
   lastSearch: number | null = null;
@@ -45,6 +44,7 @@ class FreeWebNovel implements Plugin.PluginBase {
             break;
           case 'img':
             const coverSrc = attribs.src || '';
+            tempNovel.name = attribs.title;
             tempNovel.cover = coverSrc.startsWith('http')
               ? coverSrc
               : baseUrl + coverSrc;
@@ -55,10 +55,10 @@ class FreeWebNovel implements Plugin.PluginBase {
       onclosetag(name) {
         if (name === 'div') {
           if (tempNovel.name && tempNovel.path) {
-            novels.push(tempNovel as Plugin.NovelItem);
-            tempNovel = {};
-            state = ParsingState.Idle;
+            novels.push({ ...tempNovel } as Plugin.NovelItem);
           }
+          tempNovel = {};
+          state = ParsingState.Idle;
         }
       },
     });
@@ -100,24 +100,39 @@ class FreeWebNovel implements Plugin.PluginBase {
       path: novelPath,
     };
 
+    let i = 0;
     let state: ParsingState = ParsingState.Idle;
     let tempChapter: Partial<Plugin.ChapterItem> = {};
     const chapter: Plugin.ChapterItem[] = [];
     const summaryParts: string[] = [];
+    const statusParts: string[] = [];
+    const authorParts: string[] = [];
     const genreArray: string[] = [];
 
     const parser = new Parser({
       onopentag(name, attribs) {
-        if (attribs.class === 'm-imgtxt') {
-          state = ParsingState.NovelInfo;
-        }
-        if (state === ParsingState.NovelInfo) {
-          switch (name) {
-            case 'img':
+        switch (name) {
+          case 'div':
+            switch (attribs.class) {
+              case 'm-imgtxt':
+                state = ParsingState.NovelInfo;
+                break;
+              case 'inner':
+                state = ParsingState.Summary;
+                break;
+              case 'm-desc':
+                state = ParsingState.Idle;
+                break;
+            }
+            break;
+          case 'img':
+            if (state === ParsingState.NovelInfo) {
               novel.name = attribs.title;
               novel.cover = baseUrl + attribs.src;
-              break;
-            case 'span':
+            }
+            break;
+          case 'span':
+            if (state === ParsingState.NovelInfo) {
               if (attribs.title) {
                 const map: Record<string, ParsingState> = {
                   'Genre': ParsingState.Genre,
@@ -126,103 +141,194 @@ class FreeWebNovel implements Plugin.PluginBase {
                 };
                 state = map[attribs.title] ?? state;
               }
-              break;
-          }
-        }
-        if (attribs.class === 'inner') {
-          state = ParsingState.Summary;
+            }
+            break;
+          case 'ul':
+            if (attribs.id === 'idData') {
+              state = ParsingState.ChapterList;
+            }
+            break;
+          case 'a':
+            if (state === ParsingState.ChapterList) {
+              i++;
+              const href = attribs.href;
+              state = ParsingState.Chapter;
+
+              tempChapter.name = attribs.title || `Chapter ${i}`;
+              tempChapter.releaseTime = null;
+              tempChapter.chapterNumber = i;
+              tempChapter.path =
+                href?.slice(1) ||
+                novelPath.replace('.html', `/chapter-${i}.html`);
+            }
+            break;
+          default:
+            return;
         }
       },
 
       ontext(text) {
         switch (state) {
-          case ParsingState.Summary:
-            summaryParts.push(text.trim());
-            break;
           case ParsingState.Genre:
             genreArray.push(text);
             break;
-          case ParsingState.Status:
-            const statusText = text;
-            break;
           case ParsingState.Author:
-            novel.author = (novel.author || '') + text;
+            authorParts.push(text);
             break;
+          case ParsingState.Status:
+            statusParts.push(text.trim());
+            break;
+          case ParsingState.Summary:
+            summaryParts.push(text.trim());
+            break;
+          default:
+            return;
         }
+      },
+
+      onclosetag(name) {
+        switch (name) {
+          case 'div':
+            switch (state) {
+              case ParsingState.Genre:
+              case ParsingState.Author:
+              case ParsingState.Status:
+                state = ParsingState.NovelInfo;
+                break;
+              case ParsingState.Summary:
+                state = ParsingState.Idle;
+            }
+          case 'a':
+            if (state === ParsingState.Chapter) {
+              if (tempChapter.name && tempChapter.path) {
+                chapter.push({ ...tempChapter } as Plugin.ChapterItem);
+              }
+              tempChapter = {};
+              state = ParsingState.ChapterList;
+            }
+            break;
+          case 'ul':
+            if (state === ParsingState.ChapterList) {
+              state = ParsingState.Idle;
+            }
+            break;
+          default:
+            return;
+        }
+      },
+
+      onend() {
+        novel.chapters = chapter;
+        novel.genres = genreArray.join('');
+        novel.author = authorParts.join('');
+        novel.summary = summaryParts.join('\n');
+        novel.status = statusParts
+          .join('')
+          .toLowerCase()
+          .replace(/\b\w/g, char => char.toUpperCase());
       },
     });
 
+    parser.write(body);
+    parser.end();
+
     return novel as Plugin.SourceNovel;
   }
-  // async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-  //   const loadedCheerio = await this.getHtml(this.site + novelPath);
 
-  //   const novel: Partial<Plugin.SourceNovel> = {
-  //     path: novelPath,
-  //   };
+  async parseChapter(chapterPath: string): Promise<string> {
+    const html = await this.getHtml(this.site + chapterPath);
+    const match = html.match(/e\("([^]+?)"/);
+    const check = match ? match[1] : '';
+    const body = check ? html.replace(check, '') : html;
 
-  //   const img = loadedCheerio('.m-imgtxt img');
-  //   novel.name = img.attr('title');
-  //   novel.cover = this.site + img.attr('src');
+    let depth = 0;
+    let state: ParsingState = ParsingState.Idle;
+    const chapterHtml: string[] = [];
+    let skipClosingTag = false;
+    let currentTagToSkip = '';
 
-  //   loadedCheerio('.m-imgtxt .item').each((i, el) => {
-  //     const item = loadedCheerio(el);
-  //     const title = item.find('span').attr('title');
+    type EscapeChar = '&' | '<' | '>' | '"' | "'" | ' ';
+    const escapeRegex = /[&<>"' ]/g;
+    const escapeMap: Record<EscapeChar, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      ' ': '&nbsp;',
+    };
+    const escapeHtml = (text: string): string =>
+      text.replace(escapeRegex, char => escapeMap[char as EscapeChar]);
 
-  //     switch (title) {
-  //       case 'Author':
-  //         novel.author = item.find('.right a').text();
-  //         break;
-  //       case 'Status':
-  //         novel.status = item.find('.right span').text();
-  //         break;
-  //       case 'Genre':
-  //         novel.genres = item
-  //           .find('.right a')
-  //           .map((_, el) => loadedCheerio(el).text())
-  //           .toArray()
-  //           .join(', ');
-  //         break;
-  //     }
-  //   });
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        switch (state) {
+          case ParsingState.Idle:
+            if (attribs.id === 'article') {
+              state = ParsingState.Chapter;
+              depth++;
+            }
+            break;
+          case ParsingState.Chapter:
+            if (name === 'div') depth++;
+            break;
+          default:
+            return;
+        }
 
-  //   novel.summary = loadedCheerio('.inner p')
-  //     .toArray()
-  //     .map(p => loadedCheerio(p).text().trim())
-  //     .join('\n');
+        if (state === ParsingState.Chapter) {
+          const attrKeys = Object.keys(attribs);
 
-  //   const chapters: Plugin.ChapterItem[] = loadedCheerio('#idData > li > a')
-  //     .toArray()
-  //     .map((el, i) => {
-  //       const a = loadedCheerio(el);
-  //       const name = a.attr('title') || `Chapter ${i + 1}`;
-  //       const href = a.attr('href');
-  //       const path =
-  //         href?.slice(1) ||
-  //         novelPath.replace('.html', `/chapter-${i + 1}.html`);
+          if (attrKeys.length === 0) {
+            chapterHtml.push(`<${name}>`);
+          } else if (attrKeys.every(key => attribs[key].trim() === '')) {
+            // Handle tags with empty attributes as text content
+            skipClosingTag = true;
+            currentTagToSkip = name;
+            const uppercaseName = name.replace(/\b\w/g, char =>
+              char.toUpperCase(),
+            );
+            chapterHtml.push(
+              escapeHtml(`<${uppercaseName} ${attrKeys.join(' ')}>`),
+            );
+          } else {
+            // Normal tag with attributes
+            const attrString = attrKeys
+              .map(key => ` ${key}="${attribs[key].replace(/"/g, '&quot;')}"`)
+              .join('');
+            chapterHtml.push(`<${name}${attrString}>`);
+          }
+        }
+      },
 
-  //       return {
-  //         name,
-  //         path,
-  //         releaseTime: null,
-  //         chapterNumber: i + 1,
-  //       };
-  //     });
+      ontext(text) {
+        if (state === ParsingState.Chapter) {
+          chapterHtml.push(escapeHtml(text));
+        }
+      },
 
-  //   novel.chapters = chapters;
-  //   return novel as Plugin.SourceNovel;
-  // }
+      onclosetag(name) {
+        if (state !== ParsingState.Chapter) return;
 
-  // async parseChapter(chapterPath: string): Promise<string> {
-  //   const loadedCheerio = await this.getHtml(this.site + chapterPath);
-  //   const script = loadedCheerio('.footer')
-  //     .prev()
-  //     .text()
-  //     .match(/e\("([^]+?)"/)?.[1];
+        if (!parser['isVoidElement'](name)) {
+          if (skipClosingTag && name === currentTagToSkip) {
+            skipClosingTag = false;
+            currentTagToSkip = '';
+          } else {
+            chapterHtml.push(`</${name}>`);
+          }
+        }
 
-  //   const chapterText = loadedCheerio('div.txt').html() || '';
-  //   return chapterText.replace(script!, '');
-  // }
+        if (name === 'div') depth--;
+        if (depth === 0) state = ParsingState.Stopped;
+      },
+    });
+
+    parser.write(body);
+    parser.end();
+
+    return chapterHtml.join('');
+  }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const now = Date.now();
@@ -244,14 +350,11 @@ class FreeWebNovel implements Plugin.PluginBase {
       );
     }
 
-    const loadedCheerio = await r.text();
-    const alertText =
-      loadedCheerio('script')
-        .text()
-        .match(/alert\((.*?)\)/)?.[1] || '';
+    const body = await r.text();
+    const alertText = body.match(/alert\((.*?)\)/)?.[1] || '';
     if (alertText) throw new Error(alertText);
 
-    return this.parseNovels(loadedCheerio);
+    return this.parseNovels(body);
   }
 
   filters = {
@@ -311,4 +414,7 @@ enum ParsingState {
   Status,
   Summary,
   NovelInfo,
+  ChapterList,
+  Chapter,
+  Stopped,
 }
