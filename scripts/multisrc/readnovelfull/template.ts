@@ -9,8 +9,6 @@ type ReadNovelFullOptions = {
   versionIncrements?: number;
   latestPage: string;
   searchPage: string;
-  ajaxChapterList?: boolean;
-  ajaxChapterParam?: string;
   novelListing?: string;
   chapterListing?: string;
   TypeParam?: string;
@@ -19,6 +17,7 @@ type ReadNovelFullOptions = {
   pageParam?: string;
   langParam?: string;
   urlLangCode?: string;
+  ajaxChapterParam?: string;
 };
 
 export type ReadNovelFullMetadata = {
@@ -154,26 +153,24 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     let $ = await this.getCheerio(this.site + novelPath, false);
     const baseUrl = this.site;
 
-    const novel: Plugin.SourceNovel & { totalPages?: number } = {
-      path: novelPath.replace(this.site, ''),
-      name: 'Untitled',
+    const novel: Partial<Plugin.SourceNovel> = {
+      path: novelPath,
     };
 
     novel.name = $('h3.title').first().text().trim();
-    const coverUrl = $('.book > img').attr('src');
+    const coverUrl =
+      $('.book img').attr('data-src') || $('.book img').attr('src');
     if (coverUrl) {
       novel.cover = new URL(coverUrl, baseUrl).href;
     }
 
-    $('ul.info.info-meta > li, .info > div').each(function () {
-      const detailName = $(this)
-        .find('h3')
-        .first()
-        .text()
-        .toLowerCase()
-        .replace(':', '');
-
-      const detail = $(this).text().split(':')[1].trim().toLowerCase();
+    $('ul.info.info-meta li, .info div').each(function () {
+      const detailText = $(this).text().split(':');
+      const detailName = detailText[0].trim().toLowerCase();
+      const detail = detailText[1]
+        ?.split(',')
+        .map(g => g.trim())
+        .join(', ');
 
       switch (detailName) {
         case 'author':
@@ -183,21 +180,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           novel.genres = detail;
           break;
         case 'status':
-          switch (detail) {
-            case 'completed':
-              novel.status = NovelStatus.Completed;
-              break;
-            case 'ongoing':
-              novel.status = NovelStatus.Ongoing;
-              break;
-            case 'hiatus':
-              novel.status = NovelStatus.OnHiatus;
-              break;
-            default:
-              novel.status = NovelStatus.Unknown;
-              break;
-          }
-          break;
+          const map: Record<string, string> = {
+            completed: NovelStatus.Completed,
+            ongoing: NovelStatus.Ongoing,
+            hiatus: NovelStatus.OnHiatus,
+          };
+          novel.status = map[detail.toLowerCase()] ?? NovelStatus.Unknown;
       }
     });
 
@@ -211,79 +199,44 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             .join('\n\n')
         : summaryDiv.text().trim(); // --- Else (no <p> tags, assume <br>) ---
 
-    console.log(novel.summary);
-
     const chapters: Plugin.ChapterItem[] = [];
 
-    const novelId = $('#rating').attr('data-novel-id');
-    if (this.options?.ajaxChapterList) {
+    const dataNovelId = $('#rating').attr('data-novel-id');
+    const idMatch = novelPath.match(/\d+/);
+    const novelId = dataNovelId || (idMatch ? idMatch[0] : null);
+
+    if (novelId) {
       const ajaxParam = this.options.ajaxChapterParam || 'novelId';
-      const chapterListing = this.options.chapterListing || 'chapter-archive';
+      const chapterListing =
+        this.options.chapterListing || 'ajax/chapter-archive';
+
       const params = new URLSearchParams({
-        [ajaxParam]: novelId!.toString(),
+        [ajaxParam]: novelId.toString(),
       });
-      const chaptersUrl = `${this.site}ajax/${chapterListing}?${params.toString()}`;
+      const chaptersUrl = `${this.site}${chapterListing}?${params.toString()}`;
 
       $ = await this.getCheerio(chaptersUrl, false);
 
-      $('.panel-body')
-        .find('li')
-        .each(function () {
-          const chapterName = $(this).find('a').attr('title') || '';
-          const chapterHref = $(this).find('a').attr('href') || '';
+      const listing = $('.panel-body li a, select option');
 
-          const chapterUrlObject = new URL(chapterHref, baseUrl);
-          const chapterUrl = chapterUrlObject.pathname.slice(1);
+      listing.each((_, el) => {
+        const $el = $(el);
+        const chapterName = $el.attr('title') || $el.text() || '';
+        const chapterHref = $el.attr('href') || $el.attr('value') || '';
 
-          chapters.push({
-            name: chapterName,
-            path: chapterUrl,
-          });
-        });
-    } else {
-      chapters.push(...this.parsePageChapters($));
-      novel.totalPages = parseInt(
-        ($('ul.pagination > li.last > a').attr('data-page') ??
-          $('ul.pagination > li.last > a')
-            .attr('href')
-            ?.match(/\?page_num=(\d+)/)?.[1])!,
-      );
-    }
-
-    novel.chapters = chapters;
-
-    return novel;
-  }
-
-  parsePageChapters($: CheerioAPI) {
-    const baseUrl = this.site;
-    const chapters: Plugin.ChapterItem[] = [];
-    $('.list-chapter')
-      .find('li')
-      .each(function () {
-        const chapterName = $(this).find('a').attr('title') || '';
-        const chapterHref = $(this).find('a').attr('href') || '';
-
-        const chapterUrlObject = new URL(chapterHref, baseUrl);
+        const chapterUrlObject = new URL(chapterHref, this.site);
         const chapterUrl = chapterUrlObject.pathname.slice(1);
 
         chapters.push({
           name: chapterName,
           path: chapterUrl,
+          releaseTime: null,
         });
       });
-    return chapters;
-  }
+    }
+    novel.chapters = chapters;
 
-  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
-    const $ = await this.getCheerio(
-      this.site + novelPath + '?page=' + page,
-      false,
-    );
-    const chapters = this.parsePageChapters($);
-    return {
-      chapters,
-    };
+    return novel as Plugin.SourceNovel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {

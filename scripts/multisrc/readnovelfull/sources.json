@@ -5,8 +5,7 @@
     "sourceName": "ReadNovelFull",
     "options": {
       "latestPage": "novel-list/latest-release-novel",
-      "searchPage": "novel-list/search",
-      "ajaxChapterList": true
+      "searchPage": "novel-list/search"
     }
   },
   {
@@ -15,7 +14,8 @@
     "sourceName": "AllNovel",
     "options": {
       "latestPage": "latest-release-novel",
-      "searchPage": "search"
+      "searchPage": "search",
+      "chapterListing": "ajax-chapter-option"
     }
   },
   {
@@ -31,8 +31,7 @@
       "pageParam": "page_num",
       "langParam": "language",
       "urlLangCode": "en",
-      "ajaxChapterParam": "bookId",
-      "ajaxChapterList": true
+      "ajaxChapterParam": "bookId"
     }
   },
   {
@@ -41,8 +40,7 @@
     "sourceName": "BoxNovel",
     "options": {
       "latestPage": "sort/nov-love-daily-update",
-      "searchPage": "search",
-      "ajaxChapterList": true
+      "searchPage": "search"
     }
   }
 ]
