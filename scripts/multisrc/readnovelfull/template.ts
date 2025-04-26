@@ -10,7 +10,9 @@ type ReadNovelFullOptions = {
   latestPage: string;
   searchPage: string;
   ajaxChapterList?: boolean;
+  ajaxChapterParam?: string;
   novelListing?: string;
+  chapterListing?: string;
   TypeParam?: string;
   genreParam?: string;
   genreKey?: string;
@@ -79,9 +81,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
         let novelCover: string | undefined;
 
         const novelUrlObject = new URL(rawHref, baseUrl);
-        novelPath = novelUrlObject.pathname.startsWith('/')
-          ? novelUrlObject.pathname.slice(1)
-          : novelUrlObject.pathname;
+        novelPath = novelUrlObject.pathname.slice(1);
 
         if (rawCover) {
           novelCover = new URL(rawCover, baseUrl).href;
@@ -217,7 +217,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     const novelId = $('#rating').attr('data-novel-id');
     if (this.options?.ajaxChapterList) {
-      const chaptersUrl = this.site + 'ajax/chapter-archive?novelId=' + novelId;
+      const ajaxParam = this.options.ajaxChapterParam || 'novelId';
+      const chapterListing = this.options.chapterListing || 'chapter-archive';
+      const params = new URLSearchParams({
+        [ajaxParam]: novelId!.toString(),
+      });
+      const chaptersUrl = `${this.site}ajax/${chapterListing}?${params.toString()}`;
 
       $ = await this.getCheerio(chaptersUrl, false);
 
@@ -228,9 +233,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           const chapterHref = $(this).find('a').attr('href') || '';
 
           const chapterUrlObject = new URL(chapterHref, baseUrl);
-          const chapterUrl = chapterUrlObject.pathname.startsWith('/')
-            ? chapterUrlObject.pathname.slice(1)
-            : chapterUrlObject.pathname;
+          const chapterUrl = chapterUrlObject.pathname.slice(1);
 
           chapters.push({
             name: chapterName,
@@ -262,9 +265,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
         const chapterHref = $(this).find('a').attr('href') || '';
 
         const chapterUrlObject = new URL(chapterHref, baseUrl);
-        const chapterUrl = chapterUrlObject.pathname.startsWith('/')
-          ? chapterUrlObject.pathname.slice(1)
-          : chapterUrlObject.pathname;
+        const chapterUrl = chapterUrlObject.pathname.slice(1);
 
         chapters.push({
           name: chapterName,

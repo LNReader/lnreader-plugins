@@ -6,7 +6,7 @@
     "options": {
       "latestPage": "novel-list/latest-release-novel",
       "searchPage": "novel-list/search",
-      "ajax-chapter-list": true
+      "ajaxChapterList": true
     }
   },
   {
@@ -24,12 +24,15 @@
     "sourceName": "LightNovelPlus",
     "options": {
       "novelListing": "book/bookclass.html",
+      "chapterListing": "get_chapter_list",
       "searchPage": "book/search.html",
       "latestPage": "last_release",
       "genreParam": "category_novel",
       "pageParam": "page_num",
       "langParam": "language",
-      "urlLangCode": "en"
+      "urlLangCode": "en",
+      "ajaxChapterParam": "bookId",
+      "ajaxChapterList": true
     }
   },
   {
@@ -39,7 +42,7 @@
     "options": {
       "latestPage": "sort/nov-love-daily-update",
       "searchPage": "search",
-      "ajax-chapter-list": true
+      "ajaxChapterList": true
     }
   }
 ]
