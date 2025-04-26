@@ -1,15 +1,5 @@
 [
   {
-    "id": "boxnovel",
-    "sourceSite": "https://novgo.co/",
-    "sourceName": "BoxNovel",
-    "options": {
-      "useNewChapterEndpoint": true,
-      "customJs": "chapterText.find('div:has(a)').remove()",
-      "versionIncrements": 6
-    }
-  },
-  {
     "id": "novelTL",
     "sourceSite": "https://noveltranslate.com/",
     "sourceName": "NovelTranslate",
