@@ -8,6 +8,26 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+function extractValueFromHref(href, baseUrl, name, isGenre = false) {
+  const fullUrl = new URL(decodeURI(href), baseUrl);
+  const params = fullUrl.searchParams;
+
+  if (isGenre && params.get('type') === 'category_novel' && params.has('id')) {
+    return params.get('id');
+  }
+
+  const value = params.has('type')
+    ? params.get('type')
+    : fullUrl.pathname.substring(1) || '';
+
+  if (!value) {
+    console.warn(
+      `Skipping option for ${name}: Could not determine value from href "${href}"`,
+    );
+  }
+  return value;
+}
+
 function getFilters(name, html, baseUrl) {
   const $ = cheerio.load(html);
   const filters = {
@@ -40,30 +60,13 @@ function getFilters(name, html, baseUrl) {
 
     if (!href || !label || title === 'Latest Release') return;
 
-    try {
-      const fullUrl = new URL(decodeURI(href), baseUrl);
-      const params = fullUrl.searchParams;
+    const value = extractValueFromHref(href, baseUrl, name);
 
-      const value = params.has('type')
-        ? params.get('type')
-        : (fullUrl.pathname.startsWith('/')
-            ? fullUrl.pathname.substring(1)
-            : fullUrl.pathname) || '';
-
-      if (value) {
-        typeOptions.push({ label, value });
-        if (title === 'Most Popular') {
-          defaultValue = value;
-        }
-      } else {
-        console.warn(
-          `Skipping type option "${label}" for ${name}: Could not determine value from href "${href}"`,
-        );
+    if (value) {
+      typeOptions.push({ label, value });
+      if (title === 'Most Popular') {
+        defaultValue = value;
       }
-    } catch (error) {
-      console.error(
-        `Error processing type URL (${href}) for ${name}: ${error.message}`,
-      );
     }
   });
   filters.filters.type.options = typeOptions;
@@ -78,36 +81,18 @@ function getFilters(name, html, baseUrl) {
 
     if (!href || !label) return;
 
-    try {
-      const fullUrl = new URL(decodeURI(href), baseUrl);
-      const params = fullUrl.searchParams;
+    const value = extractValueFromHref(href, baseUrl, name, true);
 
-      const value =
-        params.get('type') === 'category_novel' && params.has('id')
-          ? params.get('id')
-          : (fullUrl.pathname.startsWith('/')
-              ? fullUrl.pathname.substring(1)
-              : fullUrl.pathname) || '';
-
-      if (value) {
-        genreOptions.push({ label, value });
-      } else {
-        console.warn(
-          `Skipping genre option "${label}" for ${name}: Could not determine value from href "${href}"`,
-        );
-      }
-    } catch (error) {
-      console.error(
-        `Error processing genre URL (${href}) for ${name}: ${error.message}`,
-      );
+    if (value) {
+      genreOptions.push({ label, value });
     }
   });
-  filters.filters.genre.options = genreOptions; // Genre has no default
+  filters.filters.genres.options = genreOptions; // Genre has no default
 
   // --- Validation and Saving ---
   if (
     filters.filters.type.options.length === 0 ||
-    filters.filters.genre.options.length === 0
+    filters.filters.genres.options.length === 0
   ) {
     console.warn(
       `🚨Warning for ${name}: Type or Genre options might be incomplete or empty. (${path.join(__dirname, 'filters', name + '.json')})🚨`,
@@ -144,73 +129,97 @@ async function getFiltersFromURL(name, url) {
   }
 }
 
-async function askGetFilter() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+const EREASE_PREV_LINE = '\x1b[1A\r\x1b[2K';
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
-  const EREASE_PREV_LINE = '\x1b[1A\r\x1b[2K';
-  rl.question(
-    'Enter the id of the site (same one as in sources.json): ',
-    async name => {
-      rl.question(
-        EREASE_PREV_LINE +
-          "Do you want to get the filters from a URL or the html text? (if url dosen't work try html) (url/html): ",
-        async method => {
-          if (method.toLowerCase() === 'url') {
-            const sources = JSON.parse(
-              fs.readFileSync(path.join(__dirname, 'sources.json'), 'utf-8'),
-            );
-            const source = sources.find(s => s.id === name);
-            if (source && source.sourceSite) {
-              console.log('Getting filters from', source.sourceSite);
-              try {
-                await getFiltersFromURL(name, source.sourceSite);
-              } catch (e) {
+async function askGetFilter() {
+  try {
+    const sources = JSON.parse(
+      fs.readFileSync(path.join(__dirname, 'sources.json'), 'utf-8'),
+    );
+
+    rl.question(
+      'Enter the id of the site (same one as in sources.json): ',
+      async name => {
+        const baseUrl = await getBaseUrl(name, sources);
+
+        rl.question(
+          EREASE_PREV_LINE +
+            "Do you want to get the filters from a URL or the html text? (if url doesn't work try html) (url/html): ",
+          async method => {
+            if (method.toLowerCase() === 'url') {
+              if (baseUrl) {
+                console.log('Getting filters from', baseUrl);
+                try {
+                  await getFiltersFromURL(name, baseUrl);
+                } catch (e) {
+                  console.error('Error while getting filters from', baseUrl);
+                  console.log(e.message || e);
+                }
+              } else {
                 console.error(
-                  'Error while getting filters from',
-                  source.sourceSite,
+                  'Cannot get filters from URL: Base URL is not available.',
                 );
-                console.log(e.message || e);
               }
               rl.close();
             } else {
               rl.question(
-                EREASE_PREV_LINE +
-                  'Enter the URL (same one as in sources.json): ',
-                async url => {
-                  rl.close();
+                EREASE_PREV_LINE + 'Enter the absolute path to the HTML file: ',
+                async filePath => {
                   try {
-                    await getFiltersFromURL(name, url);
+                    const html = fs.readFileSync(filePath, 'utf-8');
+                    if (baseUrl) {
+                      console.log('Using base URL:', baseUrl);
+                    } else {
+                      console.error(
+                        'Cannot get filters from HTML: Base URL is not available.',
+                      );
+                    }
+                    getFilters(name, html, baseUrl);
                   } catch (e) {
-                    console.error('Error while getting filters from', url);
-                    console.log(e.message || e);
+                    console.error(
+                      'Error reading HTML file or getting filters:',
+                      e.message || e,
+                    );
+                  } finally {
+                    rl.close();
                   }
                 },
               );
             }
-          } else {
-            process.stdout.write(
-              EREASE_PREV_LINE +
-                `Enter the html text from the page at {sourceSite}/?s=&post_type=wp-manga (at the end press ENTER then press CTRL+C): `,
-            );
-            let html = '';
-            rl.on('SIGINT', () => {
-              console.log('Stopeed reading input, creating filters file');
-              getFilters(name, html, url);
-              rl.close();
-            });
-            rl.on('line', line => {
-              html += line + '\n';
-            });
-          }
-        },
-      );
-    },
-  );
+          },
+        );
+      },
+    );
+  } catch (e) {
+    console.error('Error reading sources.json:', e.message || e);
+    rl.close();
+  }
 }
 
 askGetFilter();
+
+async function getBaseUrl(name, sources) {
+  const source = sources.find(s => s.id === name);
+  if (source && source.sourceSite) {
+    console.log('Using base URL from sources.json:', source.sourceSite);
+    return source.sourceSite;
+  } else {
+    console.warn(
+      `Source with id "${name}" not found or missing sourceSite in sources.json.`,
+    );
+    return new Promise(resolve => {
+      rl.question(
+        EREASE_PREV_LINE + 'Enter the base URL for the site: ',
+        manualBaseUrl => {
+          resolve(manualBaseUrl);
+        },
+      );
+    });
+  }
+}
 
 export { getFiltersFromURL };

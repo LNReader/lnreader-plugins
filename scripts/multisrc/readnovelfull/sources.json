@@ -24,14 +24,13 @@
     "sourceName": "LightNovelPlus",
     "options": {
       "novelListing": "book/bookclass.html",
-      "chapterListing": "get_chapter_list",
       "searchPage": "book/search.html",
+      "chapterListing": "get_chapter_list",
+      "chapterParam": "bookId",
       "latestPage": "last_release",
-      "genreParam": "category_novel",
       "pageParam": "page_num",
       "langParam": "language",
-      "urlLangCode": "en",
-      "ajaxChapterParam": "bookId"
+      "urlLangCode": "en"
     }
   },
   {
@@ -41,6 +40,16 @@
     "options": {
       "latestPage": "sort/nov-love-daily-update",
       "searchPage": "search"
+    }
+  },
+  {
+    "id": "novelfull",
+    "sourceSite": "https://novelfull.com/",
+    "sourceName": "NovelFull",
+    "options": {
+      "latestPage": "latest-release-novel",
+      "searchPage": "search",
+      "chapterListing": "ajax-chapter-option"
     }
   }
 ]

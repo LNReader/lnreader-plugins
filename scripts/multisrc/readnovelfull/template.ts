@@ -9,15 +9,15 @@ type ReadNovelFullOptions = {
   versionIncrements?: number;
   latestPage: string;
   searchPage: string;
-  novelListing?: string;
   chapterListing?: string;
-  TypeParam?: string;
+  chapterParam?: string;
+  pageParam?: string;
+  novelListing?: string;
+  typeParam?: string;
   genreParam?: string;
   genreKey?: string;
-  pageParam?: string;
   langParam?: string;
   urlLangCode?: string;
-  ajaxChapterParam?: string;
 };
 
 export type ReadNovelFullMetadata = {
@@ -43,7 +43,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readnovelfull/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `2.0.${0 + versionIncrements}`;
+    this.version = `2.0.${1 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
@@ -62,7 +62,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   parseNovels($: CheerioAPI): Plugin.NovelItem[] {
     const baseUrl = this.site;
 
-    const novels = $('.list-novel .row, .list-truyen .row')
+    const novels = $('.archive .list-novel .row, .archive .list-truyen .row')
       .toArray()
       .map(el => {
         const $el = $(el);
@@ -70,18 +70,18 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
         const novelName = $el.find('h3').text()?.trim();
         const rawHref = $el.find('a').attr('href');
         const rawCover =
-          $el.find('img').attr('data-src') || $el.find('img').attr('src');
+          $el.find('img').attr('src') ??
+          $el.find('img').attr('data-cfsrc') ??
+          $el.find('img').attr('data-src');
 
         if (!novelName || !rawHref) {
           return null;
         }
 
-        let novelPath: string;
-        let novelCover: string | undefined;
-
         const novelUrlObject = new URL(rawHref, baseUrl);
-        novelPath = novelUrlObject.pathname.slice(1);
+        const novelPath = novelUrlObject.pathname.slice(1);
 
+        let novelCover: string | undefined;
         if (rawCover) {
           novelCover = new URL(rawCover, baseUrl).href;
         }
@@ -107,12 +107,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     if (this.options.novelListing) {
       // URL structure with parameters
       const params = new URLSearchParams();
-      const typeParam = this.options.TypeParam || 'type'; // Default to 'type' if not specified
+      const typeParam = this.options.typeParam || 'type'; // Default to 'type' if not specified
 
       if (showLatestNovels) {
         params.append(typeParam, this.options.latestPage);
       } else if (filters.genres.value.length) {
-        params.append(typeParam, this.options.genreParam!);
+        params.append(typeParam, this.options.genreParam || 'category_novel'); // same below
         const genreKey = this.options.genreKey || 'id'; // Default to 'id' if not specified
         params.append(genreKey, filters.genres.value);
       } else {
@@ -136,7 +136,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
       if (showLatestNovels) {
         basePage = this.options.latestPage;
-      } else if (filters?.genres?.value?.length) {
+      } else if (filters.genres.value.length) {
         basePage = filters.genres.value;
       } else {
         basePage = filters.type.value;
@@ -159,7 +159,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     novel.name = $('h3.title').first().text().trim();
     const coverUrl =
-      $('.book img').attr('data-src') || $('.book img').attr('src');
+      $('.book img').attr('src') ??
+      $('.book img').attr('data-cfsrc') ??
+      $('.book img').attr('data-src') ??
+      $('.book noscript img').attr('src') ??
+      $('meta[name="image"]').attr('content');
+
     if (coverUrl) {
       novel.cover = new URL(coverUrl, baseUrl).href;
     }
@@ -206,13 +211,14 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     const novelId = dataNovelId || (idMatch ? idMatch[0] : null);
 
     if (novelId) {
-      const ajaxParam = this.options.ajaxChapterParam || 'novelId';
       const chapterListing =
         this.options.chapterListing || 'ajax/chapter-archive';
 
+      const ajaxParam = this.options.chapterParam || 'novelId';
       const params = new URLSearchParams({
         [ajaxParam]: novelId.toString(),
       });
+
       const chaptersUrl = `${this.site}${chapterListing}?${params.toString()}`;
 
       $ = await this.getCheerio(chaptersUrl, false);
@@ -241,8 +247,8 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const $ = await this.getCheerio(this.site + chapterPath, false);
-
-    return $('#chr-content, #chapter-content').html()!;
+    $('div.ads, div.unlock-buttons').remove();
+    return $('#chr-content, #chapter-content').html()! || '';
   }
 
   async searchNovels(
