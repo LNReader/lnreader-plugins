@@ -7,7 +7,7 @@ class FreeWebNovel implements Plugin.PluginBase {
   id = 'FWN.com';
   name = 'Free Web Novel';
   site = 'https://freewebnovel.com/';
-  version = '2.0.0';
+  version = '2.0.1';
   icon = 'src/en/freewebnovel/icon.png';
 
   lastSearch: number | null = null;
@@ -219,9 +219,9 @@ class FreeWebNovel implements Plugin.PluginBase {
 
       onend() {
         novel.chapters = chapter;
-        novel.genres = genreArray.join('');
-        novel.author = authorParts.join('');
-        novel.summary = summaryParts.join('\n');
+        novel.genres = genreArray.join('').trim();
+        novel.author = authorParts.join('').trim();
+        novel.summary = summaryParts.join('\n\n');
         novel.status = statusParts
           .join('')
           .toLowerCase()

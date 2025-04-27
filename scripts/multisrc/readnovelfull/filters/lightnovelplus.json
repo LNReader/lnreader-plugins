@@ -1,0 +1,130 @@
+{
+  "filters": {
+    "type": {
+      "type": "Picker",
+      "label": "Novel Listing",
+      "value": "hot_novel",
+      "options": [
+        {
+          "label": "Hot Novel",
+          "value": "hot_novel"
+        },
+        {
+          "label": "Novel Completed",
+          "value": "completed_novel"
+        }
+      ]
+    },
+    "genres": {
+      "type": "Picker",
+      "label": "Genre",
+      "value": "",
+      "options": [
+        {
+          "label": "Fantasy",
+          "value": "60"
+        },
+        {
+          "label": "Action",
+          "value": "132"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "61"
+        },
+        {
+          "label": "Romance",
+          "value": "59"
+        },
+        {
+          "label": "Adventure",
+          "value": "62"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "64"
+        },
+        {
+          "label": "Modern",
+          "value": "66"
+        },
+        {
+          "label": "Mystery",
+          "value": "63"
+        },
+        {
+          "label": "Romance",
+          "value": "68"
+        },
+        {
+          "label": "Fantasy",
+          "value": "70"
+        },
+        {
+          "label": "Historical",
+          "value": "74"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "75"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "76"
+        },
+        {
+          "label": "Mystery",
+          "value": "77"
+        },
+        {
+          "label": "Adventure",
+          "value": "116"
+        },
+        {
+          "label": "LGBT+",
+          "value": "182"
+        },
+        {
+          "label": "Fantasy Romance",
+          "value": "134"
+        },
+        {
+          "label": "Video Games",
+          "value": "243"
+        },
+        {
+          "label": "Sci-fi Romance",
+          "value": "252"
+        },
+        {
+          "label": "Historical Romance",
+          "value": "256"
+        },
+        {
+          "label": "Magical Realism",
+          "value": "331"
+        },
+        {
+          "label": "Eastern Fantasy",
+          "value": "334"
+        },
+        {
+          "label": "Contemporary Romance",
+          "value": "344"
+        },
+        {
+          "label": "Games",
+          "value": "503"
+        },
+        {
+          "label": "Urban",
+          "value": "504"
+        },
+        {
+          "label": "Harem",
+          "value": "517"
+        }
+      ]
+    }
+  }
+}
