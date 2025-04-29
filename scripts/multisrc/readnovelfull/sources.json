@@ -51,5 +51,16 @@
       "searchPage": "search",
       "chapterListing": "ajax-chapter-option"
     }
+  },
+  {
+    "id": "libread",
+    "sourceSite": "https://libread.com/",
+    "sourceName": "Lib Read",
+    "options": {
+      "latestPage": "sort/latest-novels",
+      "searchPage": "search",
+      "searchKey": "searchkey",
+      "noAjax": true
+    }
   }
 ]

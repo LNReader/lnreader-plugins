@@ -18,6 +18,9 @@ type ReadNovelFullOptions = {
   genreKey?: string;
   langParam?: string;
   urlLangCode?: string;
+  searchKey?: string;
+  postSearch?: boolean;
+  noAjax?: boolean;
 };
 
 export type ReadNovelFullMetadata = {
@@ -62,12 +65,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   parseNovels($: CheerioAPI): Plugin.NovelItem[] {
     const baseUrl = this.site;
 
-    const novels = $('.archive .list-novel .row, .archive .list-truyen .row')
+    const novels = $('.archive .row, .li-row')
       .toArray()
       .map(el => {
         const $el = $(el);
 
-        const novelName = $el.find('h3').text()?.trim();
+        const novelName = $el.find('h3 a').text()?.trim();
         const rawHref = $el.find('a').attr('href');
         const rawCover =
           $el.find('img').attr('src') ??
@@ -210,7 +213,23 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     const idMatch = novelPath.match(/\d+/);
     const novelId = dataNovelId || (idMatch ? idMatch[0] : null);
 
-    if (novelId) {
+    if (this.options.noAjax) {
+      $('#idData li a').each((i, el) => {
+        const name = $(el).attr('title') || `Chapter ${i + 1}`;
+        const path =
+          $(el).attr('href')?.slice(1) ||
+          novelPath.replace('.html', `/chapter-${i}.html`);
+
+        chapters.push({
+          name: name,
+          path: path,
+          releaseTime: null,
+          chapterNumber: i + 1,
+        });
+      });
+    }
+
+    if (novelId && chapters.length === 0) {
       const chapterListing =
         this.options.chapterListing || 'ajax/chapter-archive';
 
@@ -256,9 +275,10 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     page: number,
   ): Promise<Plugin.NovelItem[]> {
     const pageParam = this.options.pageParam || 'page';
+    const searchKey = this.options.searchKey || 'keyword';
 
     const params = new URLSearchParams({
-      keyword: searchTerm,
+      [searchKey]: searchTerm,
       [pageParam]: page.toString(),
     });
 
