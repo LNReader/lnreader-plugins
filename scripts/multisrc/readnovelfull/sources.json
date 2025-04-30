@@ -60,6 +60,7 @@
       "latestPage": "sort/latest-novels",
       "searchPage": "search",
       "searchKey": "searchkey",
+      "postSearch": true,
       "noAjax": true
     }
   }

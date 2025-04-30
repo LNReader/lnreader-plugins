@@ -51,15 +51,17 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.filters = metadata.filters;
   }
 
-  async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
-    const r = await fetchApi(url);
-    if (!r.ok && search != true)
+  async getCheerio(
+    url: string,
+    search = false,
+    options?: RequestInit,
+  ): Promise<CheerioAPI> {
+    const r = await fetchApi(url, options);
+    if (!r.ok && !search)
       throw new Error(
-        'Could not reach site (' + r.status + ') try to open in webview.',
+        `Could not reach site (${r.status}) try to open in webview.`,
       );
-    const $ = load(await r.text());
-
-    return $;
+    return load(await r.text());
   }
 
   parseNovels($: CheerioAPI): Plugin.NovelItem[] {
@@ -104,51 +106,51 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     pageNo: number,
     { filters, showLatestNovels }: Plugin.PopularNovelsOptions,
   ): Promise<Plugin.NovelItem[]> {
-    let url = '';
-    const pageParam = this.options.pageParam || 'page';
+    const {
+      pageParam = 'page',
+      novelListing,
+      typeParam = 'type',
+      latestPage,
+      genreParam = 'category_novel',
+      genreKey = 'id',
+      langParam,
+      urlLangCode,
+    } = this.options;
 
-    if (this.options.novelListing) {
+    let url = '';
+
+    if (novelListing) {
       // URL structure with parameters
       const params = new URLSearchParams();
-      const typeParam = this.options.typeParam || 'type'; // Default to 'type' if not specified
 
       if (showLatestNovels) {
-        params.append(typeParam, this.options.latestPage);
+        params.append(typeParam, latestPage);
       } else if (filters.genres.value.length) {
-        params.append(typeParam, this.options.genreParam || 'category_novel'); // same below
-        const genreKey = this.options.genreKey || 'id'; // Default to 'id' if not specified
+        params.append(typeParam, genreParam);
         params.append(genreKey, filters.genres.value);
       } else {
         params.append(typeParam, filters.type.value);
       }
 
       // Add language parameter if specified
-      if (this.options.langParam && this.options.urlLangCode) {
-        params.append(this.options.langParam, this.options.urlLangCode);
+      if (langParam && urlLangCode) {
+        params.append(langParam, urlLangCode);
       }
 
       params.append(pageParam, pageNo.toString());
-
-      url = `${this.site}${this.options.novelListing}?${params.toString()}`;
+      url = `${this.site}${novelListing}?${params.toString()}`;
     } else {
       // URL structure with path segments
-      let basePage = '';
-      const params = new URLSearchParams({
-        [pageParam]: pageNo.toString(),
-      });
+      const basePage = showLatestNovels
+        ? latestPage
+        : filters.genres.value.length
+          ? filters.genres.value
+          : filters.type.value;
 
-      if (showLatestNovels) {
-        basePage = this.options.latestPage;
-      } else if (filters.genres.value.length) {
-        basePage = filters.genres.value;
-      } else {
-        basePage = filters.type.value;
-      }
-
-      url = `${this.site}${basePage}?${params.toString()}`;
+      url = `${this.site}${basePage}?${pageParam}=${pageNo}`;
     }
 
-    const $ = await this.getCheerio(url, false);
+    const $ = await this.getCheerio(url);
     return this.parseNovels($);
   }
 
@@ -274,21 +276,32 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
-    const pageParam = this.options.pageParam || 'page';
-    const searchKey = this.options.searchKey || 'keyword';
+    const {
+      pageParam = 'page',
+      searchKey = 'keyword',
+      postSearch,
+      langParam,
+      urlLangCode,
+      searchPage,
+    } = this.options;
 
     const params = new URLSearchParams({
       [searchKey]: searchTerm,
-      [pageParam]: page.toString(),
+      ...(langParam && { [langParam]: urlLangCode! }),
+      ...(!postSearch && { [pageParam]: page.toString() }),
     });
 
-    if (this.options.langParam) {
-      params.append(this.options.langParam, this.options.urlLangCode!);
-    }
+    const url = `${this.site}${searchPage}${!postSearch ? `?${params.toString()}` : ''}`;
 
-    const url = `${this.site}${this.options.searchPage}?${params.toString()}`;
-    const $ = await this.getCheerio(url, true);
+    const fetchOptions = postSearch
+      ? {
+          method: 'POST',
+          body: params,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        }
+      : undefined;
 
+    const $ = await this.getCheerio(url, true, fetchOptions);
     return this.parseNovels($);
   }
 }
