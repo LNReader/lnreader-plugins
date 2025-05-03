@@ -63,5 +63,15 @@
       "postSearch": true,
       "noAjax": true
     }
+  },
+  {
+    "id": "anf.net",
+    "sourceSite": "https://novgo.net/",
+    "sourceName": "AllNovelFull",
+    "options": {
+      "latestPage": "latest-release-novel",
+      "searchPage": "search",
+      "chapterListing": "ajax-chapter-option"
+    }
   }
 ]

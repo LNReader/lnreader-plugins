@@ -163,249 +163,183 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
+      chapters: [],
     };
+    const summaryParts: string[] = [];
+    const infoParts: string[] = [];
     const chapters: Plugin.ChapterItem[] = [];
     let novelId: string | null = null;
-
-    let state: ParsingState = ParsingState.Idle;
-    let currentText = '';
-    let currentDetailName = '';
-    let summaryParts: string[] = [];
-    let hasPTagsInSummary = false;
     let tempChapter: Partial<Plugin.ChapterItem> = {};
-    let chapterIndex = 0; // For direct chapter parsing
+    let i = 0;
+
+    const stateStack: ParsingState[] = [ParsingState.Idle];
+    const currentState = () => stateStack[stateStack.length - 1];
+    const pushState = (state: ParsingState) => stateStack.push(state);
+    const popState = () =>
+      stateStack.length > 1 ? stateStack.pop() : currentState();
 
     const parser = new Parser({
       onopentag: (name, attribs) => {
-        // Novel Name
-        if (name === 'h3' && attribs.class === 'title') {
-          state = ParsingState.NovelName;
-        }
-
-        // Cover
-        if (name === 'div' && attribs.class === 'book') {
-          state = ParsingState.Cover;
-        }
-        if (state === ParsingState.Cover && name === 'img') {
-          const coverUrl =
-            attribs.src ?? attribs['data-cfsrc'] ?? attribs['data-src'];
-          if (coverUrl) {
-            novel.cover = new URL(coverUrl, baseUrl).href;
-          }
-          // Maybe check noscript tag later if needed
-        }
-        if (name === 'meta' && attribs.name === 'image' && !novel.cover) {
-          if (attribs.content) {
-            novel.cover = new URL(attribs.content, baseUrl).href;
-          }
-        }
-
-        // Info Section (Author, Genre, Status)
-        if (name === 'ul' && attribs.class?.includes('info-meta')) {
-          state = ParsingState.Info;
-        }
-        if (state === ParsingState.Info && name === 'li') {
-          currentText = ''; // Reset text for each list item
-        }
-        if (name === 'div' && attribs.class === 'info') {
-          // Handle alternative info structure
-          state = ParsingState.Info;
-        }
-        if (state === ParsingState.Info && name === 'div' && !attribs.class) {
-          // Inside the alternative info div
-          currentText = '';
-        }
-
-        // Summary
-        if (name === 'div' && attribs.class === 'desc-text') {
-          state = ParsingState.Summary;
-          summaryParts = []; // Reset summary parts
-          hasPTagsInSummary = false;
-        }
-        if (state === ParsingState.Summary && name === 'p') {
-          state = ParsingState.SummaryP;
-          hasPTagsInSummary = true;
-          currentText = '';
-        }
-
-        // Chapters - Check for novelId first
-        if (name === 'div' && attribs.id === 'rating') {
-          state = ParsingState.ChaptersAjaxCheck;
-          novelId = attribs['data-novel-id'] || null;
-        }
-
-        // Chapters - Direct parsing if noAjax option is true
-        if (this.options.noAjax && name === 'ul' && attribs.id === 'idData') {
-          state = ParsingState.ChapterListDirect;
-        }
-        if (state === ParsingState.ChapterListDirect && name === 'li') {
-          tempChapter = {}; // Reset for new chapter
-        }
-        if (state === ParsingState.ChapterListDirect && name === 'a') {
-          state = ParsingState.Chapter;
-          tempChapter.name = attribs.title || `Chapter ${chapterIndex + 1}`;
-          const chapterPathRaw = attribs.href;
-          tempChapter.path = chapterPathRaw?.startsWith('/')
-            ? chapterPathRaw.slice(1)
-            : novelPath.replace('.html', `/chapter-${chapterIndex}.html`); // Fallback path construction
-          tempChapter.releaseTime = null;
-          tempChapter.chapterNumber = chapterIndex + 1;
-          chapterIndex++;
+        const state = currentState();
+        switch (name) {
+          case 'div':
+            switch (attribs.class) {
+              case 'books':
+                pushState(ParsingState.NovelName);
+                break;
+              case 'book':
+                pushState(ParsingState.Cover);
+                break;
+              case 'info':
+                pushState(ParsingState.Info);
+                break;
+              case 'desc-text':
+                pushState(ParsingState.Summary);
+                break;
+            }
+            if (attribs.id === 'rating') {
+              popState();
+              novelId = attribs['data-novel-id'] || null;
+            }
+            break;
+          case 'img':
+            if (state === ParsingState.Cover) {
+              const coverUrl =
+                attribs.src ?? attribs['data-cfsrc'] ?? attribs['data-src'];
+              if (coverUrl) {
+                novel.cover = new URL(coverUrl, baseUrl).href;
+              }
+            }
+            break;
+          case 'meta':
+            if (attribs.name === 'image' && !novel.cover) {
+              if (attribs.content) {
+                novel.cover = new URL(attribs.content, baseUrl).href;
+              }
+            }
+            break;
+          case 'ul':
+            if (attribs.class?.includes('info-meta')) {
+              pushState(ParsingState.Info);
+            } else if (this.options.noAjax && attribs.id === 'idData') {
+              pushState(ParsingState.ChapterListDirect);
+            }
+            break;
+          case 'br':
+            if (state === ParsingState.Summary) {
+              summaryParts.push('\n');
+            }
+            break;
+          case 'a':
+            if (state === ParsingState.ChapterListDirect) {
+              pushState(ParsingState.Chapter);
+              i++;
+              tempChapter.name = attribs.title || `Chapter ${i}`;
+              const chapterPathRaw = attribs.href;
+              tempChapter.path = chapterPathRaw?.startsWith('/')
+                ? chapterPathRaw.substring(1)
+                : novelPath.replace('.html', `/chapter-${i}.html`);
+              tempChapter.releaseTime = null;
+              tempChapter.chapterNumber = i;
+            }
+            break;
         }
       },
       ontext: text => {
-        const trimmedText = text.trim();
-        if (!trimmedText) return; // Ignore whitespace-only text nodes
-
-        switch (state) {
+        switch (currentState()) {
           case ParsingState.NovelName:
-            novel.name = trimmedText;
-            // Once name is found, we can likely go back to Idle,
-            // but keep it open in case of multi-line titles? Let's reset on tag close.
+            novel.name = (novel.name || '') + text;
             break;
           case ParsingState.Info:
-            // Accumulate text within <li> or <div> before splitting
-            currentText += text;
+            infoParts.push(text);
             break;
           case ParsingState.Summary:
-            // Only collect if no <p> tags are found inside
-            if (!hasPTagsInSummary) {
-              summaryParts.push(trimmedText);
-            }
-            break;
-          case ParsingState.SummaryP:
-            currentText += text; // Accumulate text within <p>
-            break;
-          case ParsingState.Author:
-          case ParsingState.Genre:
-          case ParsingState.Status:
-            // Text directly follows the detail name span/tag
-            const detail = text
-              .split(',')
-              .map(g => g.trim())
-              .join(', ');
-            if (state === ParsingState.Author) novel.author = detail;
-            if (state === ParsingState.Genre) novel.genres = detail;
-            if (state === ParsingState.Status) {
-              const map: Record<string, string> = {
-                completed: NovelStatus.Completed,
-                ongoing: NovelStatus.Ongoing,
-                hiatus: NovelStatus.OnHiatus,
-              };
-              novel.status = map[detail.toLowerCase()] ?? NovelStatus.Unknown;
-            }
-            state = ParsingState.Info; // Go back to info state after getting value
+            summaryParts.push(text);
             break;
         }
       },
       onclosetag: name => {
+        const state = currentState();
         switch (name) {
           case 'h3':
-            if (state === ParsingState.NovelName) state = ParsingState.Idle;
+            if (state === ParsingState.NovelName) popState();
             break;
           case 'div':
-            // Use state to determine context, not attribs
-            if (state === ParsingState.Cover) state = ParsingState.Idle; // Assuming cover div closes
-            if (state === ParsingState.Summary) state = ParsingState.Idle; // Assuming summary div closes
             if (state === ParsingState.Info) {
-              // Check if we were in the general info state
-              // Handle splitting for alternative structure (assuming it closes the .info div)
-              const parts = currentText.split(':');
-              if (parts.length > 1) {
-                const detailName = parts[0].trim().toLowerCase();
-                const detail = parts[1]
-                  .split(',')
-                  .map(g => g.trim())
-                  .join(', ');
-                switch (detailName) {
-                  case 'author':
-                    novel.author = detail;
-                    break;
-                  case 'genre':
-                    novel.genres = detail;
-                    break;
-                  case 'status':
-                    const map: Record<string, string> = {
-                      completed: NovelStatus.Completed,
-                      ongoing: NovelStatus.Ongoing,
-                      hiatus: NovelStatus.OnHiatus,
-                    };
-                    novel.status =
-                      map[detail.toLowerCase()] ?? NovelStatus.Unknown;
-                    break;
-                }
-              }
-              currentText = ''; // Reset text
-              state = ParsingState.Idle; // Exit info state
+              infoParts.push('\n');
+            } else if (
+              state === ParsingState.Cover ||
+              state === ParsingState.Summary
+            ) {
+              popState();
             }
-            break;
-          case 'ul':
-            // Use state to determine context
-            if (state === ParsingState.Info) state = ParsingState.Idle; // Assuming info ul closes
-            if (state === ParsingState.ChapterListDirect)
-              state = ParsingState.Idle; // Assuming chapter ul closes
             break;
           case 'li':
             if (state === ParsingState.Info) {
-              // Process accumulated text for standard <li> structure
-              const parts = currentText.split(':');
-              if (parts.length > 1) {
-                const detailName = parts[0].trim().toLowerCase();
-                const detail = parts[1]
-                  .split(',')
-                  .map(g => g.trim())
-                  .join(', ');
-                switch (detailName) {
-                  case 'author':
-                    novel.author = detail;
-                    break;
-                  case 'genre':
-                    novel.genres = detail;
-                    break;
-                  case 'status':
-                    const map: Record<string, string> = {
-                      completed: NovelStatus.Completed,
-                      ongoing: NovelStatus.Ongoing,
-                      hiatus: NovelStatus.OnHiatus,
-                    };
-                    novel.status =
-                      map[detail.toLowerCase()] ?? NovelStatus.Unknown;
-                    break;
-                }
-              }
-              currentText = ''; // Reset for next li
+              infoParts.push('\n');
             }
-            if (state === ParsingState.Chapter) {
-              // Closing <li> after <a>
-              if (tempChapter.name && tempChapter.path) {
-                chapters.push({ ...tempChapter } as Plugin.ChapterItem);
-              }
-              tempChapter = {};
-              state = ParsingState.ChapterListDirect; // Go back to list state
+            break;
+          case 'ul':
+            if (
+              state === ParsingState.Info ||
+              state === ParsingState.ChapterListDirect
+            ) {
+              popState();
             }
             break;
           case 'p':
             if (state === ParsingState.SummaryP) {
-              summaryParts.push(currentText.trim());
-              currentText = '';
-              state = ParsingState.Summary; // Go back to summary state
+              summaryParts.push('\n\n');
+              popState();
             }
             break;
           case 'a':
             if (state === ParsingState.Chapter) {
-              // Chapter data is pushed on <li> close tag for direct parsing
-              // state = ParsingState.ChapterListDirect; // Handled in li closetag
+              if (tempChapter.name && tempChapter.path) {
+                chapters.push({ ...tempChapter } as Plugin.ChapterItem);
+              }
+              tempChapter = {};
+              popState();
             }
             break;
         }
       },
       onend: () => {
-        // Finalize summary
-        novel.summary = summaryParts
-          .join(hasPTagsInSummary ? '\n\n' : ' ')
-          .trim();
+        novel.name = novel.name.trim();
+        novel.summary = summaryParts.join('').trim();
 
-        // If novelId wasn't found in #rating, try extracting from path
+        infoParts
+          .join('')
+          .split('\n')
+          .filter(line => line.includes(':'))
+          .forEach(line => {
+            const parts = line.split(':');
+            const detailName = parts[0].trim().toLowerCase();
+            const detail = parts[1]
+              .split(',')
+              .map(g => g.trim())
+              .join(', ');
+
+            switch (detailName) {
+              case 'author':
+                novel.author = detail;
+                break;
+              case 'genre':
+                novel.genres = detail;
+                break;
+              case 'status':
+                const map: Record<string, string> = {
+                  completed: NovelStatus.Completed,
+                  ongoing: NovelStatus.Ongoing,
+                  hiatus: NovelStatus.OnHiatus,
+                };
+                novel.status = map[detail.toLowerCase()] ?? NovelStatus.Unknown;
+                break;
+              default:
+                return;
+            }
+          });
+
         if (!novelId) {
           const idMatch = novelPath.match(/\d+/);
           novelId = idMatch ? idMatch[0] : null;
@@ -416,45 +350,64 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     parser.write(body);
     parser.end();
 
-    // AJAX Chapter Loading (kept using Cheerio for simplicity for now)
-    // Ensure novelId is not null before proceeding
     if (!this.options.noAjax && novelId !== null && chapters.length === 0) {
       const chapterListing =
         this.options.chapterListing || 'ajax/chapter-archive';
       const ajaxParam = this.options.chapterParam || 'novelId';
-      // novelId is confirmed not null here
-      const params = new URLSearchParams({
-        [ajaxParam]: novelId,
-      });
+      const params = new URLSearchParams({ [ajaxParam]: novelId });
       const chaptersUrl = `${this.site}${chapterListing}?${params.toString()}`;
 
-      try {
-        // Use getCheerio specifically for the AJAX request
-        const $ = await this.getCheerio(chaptersUrl, false);
-        const listing = $('.panel-body li a, select option');
+      const ajaxResult = await fetchApi(chaptersUrl);
+      const ajaxBody = await ajaxResult.text();
+      let tempAjaxChapter: Partial<Plugin.ChapterItem> = {};
 
-        listing.each((_, el) => {
-          const $el = $(el);
-          const chapterName = $el.attr('title') || $el.text() || '';
-          const chapterHref = $el.attr('href') || $el.attr('value') || '';
+      const ajaxChapterParser = new Parser({
+        onopentag: (name, attribs) => {
+          let chapterHref: string | undefined;
+          let initialName: string | undefined;
 
-          if (chapterHref) {
-            const chapterUrlObject = new URL(chapterHref, this.site);
-            const chapterUrl = chapterUrlObject.pathname.slice(1);
-            chapters.push({
-              name: chapterName.trim(),
-              path: chapterUrl,
-              releaseTime: null,
-            });
+          if (name === 'a' && attribs.href) {
+            chapterHref = attribs.href;
+            initialName = attribs.title || '';
+          } else if (name === 'option' && attribs.value) {
+            chapterHref = attribs.value;
+            initialName = '';
           }
-        });
-      } catch (ajaxError) {
-        console.error('Failed to fetch or parse AJAX chapters:', ajaxError);
-        // Decide how to handle AJAX errors, maybe throw or return novel without chapters
-      }
+
+          if (chapterHref !== undefined) {
+            pushState(ParsingState.Chapter);
+            const chapterUrlObject = new URL(chapterHref, this.site);
+            tempAjaxChapter.path = chapterUrlObject.pathname.slice(1);
+            tempAjaxChapter.name = initialName;
+          }
+        },
+        ontext: text => {
+          if (
+            currentState() === ParsingState.Chapter &&
+            !tempAjaxChapter.name
+          ) {
+            tempAjaxChapter.name += text.trim();
+          }
+        },
+        onclosetag: name => {
+          if (
+            (name === 'a' || name === 'option') &&
+            currentState() === ParsingState.Chapter
+          ) {
+            if (tempAjaxChapter.name && tempAjaxChapter.path) {
+              chapters.push({ ...tempAjaxChapter }) as Plugin.ChapterItem;
+            }
+            tempAjaxChapter = {};
+            popState();
+          }
+        },
+      });
+
+      ajaxChapterParser.write(ajaxBody);
+      ajaxChapterParser.end();
+      novel.chapters = chapters;
     }
 
-    novel.chapters = chapters;
     return novel as Plugin.SourceNovel;
   }
 
@@ -504,13 +457,13 @@ enum ParsingState {
   NovelName,
   Cover,
   Info,
-  Author,
-  Genre,
-  Status,
+  // Author, // Removed - handled within Info
+  // Genre, // Removed - handled within Info
+  // Status, // Removed - handled within Info
   Summary,
-  SummaryP,
-  ChaptersAjaxCheck, // State to check for novelId for potential AJAX call
+  SummaryP, // State for being inside a <p> tag within the Summary div
+  ChaptersAjaxCheck, // State to check for novelId for potential AJAX call (though maybe not needed as a state)
   ChapterListDirect, // State for parsing chapters directly from #idData
-  ChapterListAjax, // State for parsing chapters from AJAX response
-  Chapter,
+  // ChapterListAjax, // Not needed as a state, handled after parsing body
+  Chapter, // Represents being inside a chapter link/tag within ChapterListDirect
 }
