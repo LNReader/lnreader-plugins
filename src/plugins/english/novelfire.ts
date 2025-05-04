@@ -7,7 +7,7 @@ import { Plugin } from '@typings/plugin';
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.2';
+  version = '1.0.3';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
 
@@ -174,7 +174,7 @@ class NovelFire implements Plugin.PluginBase {
         .toArray()
         .join(','),
       summary:
-        loadedCheerio('.summary .content .txt')
+        loadedCheerio('.summary .content')
           .html()!
           .replace(/<\/p>/g, '\n\n')
           .replace(/<br\s*\/?>/gi, '\n')
