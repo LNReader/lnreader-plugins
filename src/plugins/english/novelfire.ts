@@ -49,7 +49,7 @@ class NovelFire implements Plugin.PluginBase {
       params.append('page', pageNo.toString());
       url += `?${params.toString()}`;
     } else {
-      url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=all-time-rank&page=${pageNo}`;
+      url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=rank-top&page=${pageNo}`;
     }
 
     const loadedCheerio = await this.getCheerio(url, false);
@@ -288,16 +288,16 @@ class NovelFire implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Sort Results By',
-      value: 'all-time-rank',
+      value: 'rank-top',
       options: [
-        { label: 'All Time Rank', value: 'all-time-rank' },
-        { label: 'Monthly Rank', value: 'monthly-rank' },
-        { label: 'Daily Rank', value: 'daily-rank' },
+        { label: 'Rank (Top)', value: 'rank-top' },
+        { label: 'Rating Score (Top)', value: 'rating-score-top' },
         { label: 'Bookmark Count (Most)', value: 'bookmark' },
         { label: 'Review Count (Most)', value: 'review' },
-        { label: 'Last Updated (Newest)', value: 'date' },
         { label: 'Title (A>Z)', value: 'abc' },
         { label: 'Title (Z>A)', value: 'cba' },
+        { label: 'Last Updated (Newest)', value: 'date' },
+        { label: 'Chapter Count (Most)', value: 'chapter-count-most' },
       ],
       type: FilterTypes.Picker,
     },
