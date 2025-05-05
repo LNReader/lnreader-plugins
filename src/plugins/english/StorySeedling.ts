@@ -1,6 +1,7 @@
+import { CheerioAPI, load } from 'cheerio';
 import { Plugin } from '@typings/plugin';
 import { fetchApi } from '@libs/fetch';
-import { load as parseHTML } from 'cheerio';
+import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 
 class StorySeedlingPlugin implements Plugin.PluginBase {
@@ -8,12 +9,23 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   name = 'StorySeedling';
   icon = 'src/en/storyseedling/icon.png';
   site = 'https://storyseedling.com/';
-  version = '1.0.2';
+  version = '1.0.3';
+
+  async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
+    const r = await fetchApi(url);
+    if (!r.ok && search != true)
+      throw new Error(
+        'Could not reach site (' + r.status + ') try to open in webview.',
+      );
+    const $ = load(await r.text());
+
+    return $;
+  }
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
     const body = await fetchApi(this.site + 'browse').then(r => r.text());
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = load(body);
 
     const postValue = loadedCheerio('div[ax-load][x-data]')
       .attr('x-data')
@@ -44,69 +56,117 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const site = this.site;
-    const novel: Plugin.SourceNovel = {
+    let $ = await this.getCheerio(this.site + novelPath, false);
+    const baseUrl = this.site;
+
+    const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
-      name: '',
     };
 
-    const body = await fetchApi(this.site + novelPath).then(r => r.text());
-    const loadedCheerio = parseHTML(body);
+    novel.name = $('h1').text().trim();
+    const coverUrl = $('img[x-ref="art"].w-full.rounded.shadow-md').attr('src');
 
-    novel.name = loadedCheerio('h1').text().trim();
-
-    //novel.artist = "";
-    //novel.author = "";
-    novel.cover = loadedCheerio(
-      'img[x-ref="art"].w-full.rounded.shadow-md',
-    ).attr('src');
-    if (!novel.cover) {
-      novel.cover = defaultCover;
+    if (coverUrl) {
+      novel.cover = new URL(coverUrl, baseUrl).href;
     }
 
     const genres: string[] = [];
-    loadedCheerio(
+    $(
       'section[x-data="{ tab: location.hash.substr(1) || \'chapters\' }"].relative > div > div > div.flex.flex-wrap > a',
     ).each(function () {
-      genres.push(loadedCheerio(this).text().trim());
+      genres.push($(this).text().trim());
     });
     novel.genres = genres.join(', ');
-    // novel.status = NovelStatus.Completed;
-    novel.summary = loadedCheerio('div.mb-4.order-2:not(.lg\\:grid-in-buttons)')
-      .text()
-      .trim()
-      .replace(/(\r\n|\n|\r)/gm, '');
+
+    novel.author = $('div.mb-1 a').text().trim();
+
+    const rawStatus = $('div.gap-2 span.text-sm').text().trim();
+    const map: Record<string, string> = {
+      ongoing: NovelStatus.Ongoing,
+      hiatus: NovelStatus.OnHiatus,
+      dropped: NovelStatus.Cancelled,
+      cancelled: NovelStatus.Cancelled,
+      completed: NovelStatus.Completed,
+    };
+    novel.status = map[rawStatus.toLowerCase()] ?? NovelStatus.Unknown;
+
+    const summaryDiv = $('div.mb-4.order-2:not(.lg\\:grid-in-buttons)');
+    const pTagSummary = summaryDiv.find('p');
+    novel.summary =
+      pTagSummary.length > 0
+        ? pTagSummary
+            .map((_, el) => $(el).text().trim())
+            .get()
+            .join('\n\n')
+        : summaryDiv.text().trim(); // --- Else (no <p> tags) ---
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    loadedCheerio(
-      'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
-    ).each(function () {
-      if (loadedCheerio(this).find('> div').length == 2) {
-        return;
-      }
-      const name = loadedCheerio(this).find('.truncate').text().trim();
-      const url = loadedCheerio(this).attr('href') as string;
-      const releaseTime = loadedCheerio(this)
-        .find('div > div > small')
-        .text()
-        .trim();
-      const chapterNumber = name.split('-')[0].trim().split(' ')[1];
+    // const dataNovelId = novelPath.slice(novelPath.indexOf('/') + 1);
+    const xdata = $('.bg-accent div[ax-load][x-data]').attr('x-data');
+    // expected data format: toc('000000', 'xxxxxxxxxx') (6 numbers, 10 hex)
+    if (xdata) {
+      const listXdata = xdata?.split("'");
+      const dataNovelId = listXdata[1];
+      const dataNovelN = listXdata[3];
+      const idMatch = novelPath.match(/\d+/); // Error checking in case of extraneous slashes
+      const novelId = dataNovelId || (idMatch ? idMatch[0] : null);
 
-      chapters.push({
-        name: name,
-        path: url.replace(site, ''),
-        releaseTime,
-        chapterNumber: parseInt(chapterNumber),
-      });
-    });
+      if (novelId) {
+        const chapterListing = 'ajax'; // Currently URL is only ajax
+
+        const formData = new FormData();
+        formData.append('post', dataNovelN);
+        formData.append('id', dataNovelId);
+        formData.append('action', 'series_toc');
+
+        const chaptersUrl = `${this.site}${chapterListing}`;
+        const refererUrl = `${this.site}${novel.path}`;
+
+        $ = await fetchApi(chaptersUrl, {
+          method: 'POST',
+          referrer: refererUrl,
+          referrerPolicy: 'origin',
+          body: formData,
+        }).then(r => r.json());
+
+        console.log($);
+      }
+    }
+
+    // $(
+    //   'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
+    // ).each(function () {
+    // $(
+    //   'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
+    // ).each(function () {
+    //   if ($(this).find('> div').length == 2) {
+    //     return;
+    //   }
+    //   const name = $(this).find('.truncate').text().trim();
+    //   const url = $(this).attr('href') as string;
+    //   const releaseTime = $(this)
+    //     .find('div > div > small')
+    //     .text()
+    //     .trim();
+    //   const chapterNumber = name.split('-')[0].trim().split(' ')[1];
+
+    // chapters.push({
+    //   name: name,
+    //   path: url.replace(site, ''),
+    //   releaseTime,
+    //   chapterNumber: parseInt(chapterNumber),
+    // });
+    // });
     novel.chapters = chapters;
-    return novel;
+
+    return novel as Plugin.SourceNovel;
   }
+
   async parseChapter(chapterPath: string): Promise<string> {
     const body = await fetchApi(this.site + chapterPath).then(r => r.text());
 
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = load(body);
     const t = loadedCheerio('div.justify-center > div.mb-4');
     const chapterText = t.html() || '';
 
@@ -120,7 +180,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     const novels: Plugin.NovelItem[] = [];
 
     const body = await fetchApi(this.site + 'browse').then(r => r.text());
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = load(body);
 
     const postValue = loadedCheerio('div[ax-load][x-data]')
       .attr('x-data')
