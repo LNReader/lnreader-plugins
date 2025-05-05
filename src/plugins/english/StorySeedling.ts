@@ -56,7 +56,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let $ = await this.getCheerio(this.site + novelPath, false);
+    const $ = await this.getCheerio(this.site + novelPath, false);
     const baseUrl = this.site;
 
     const novel: Partial<Plugin.SourceNovel> = {
@@ -102,7 +102,6 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
 
     const chapters: Plugin.ChapterItem[] = [];
 
-    // const dataNovelId = novelPath.slice(novelPath.indexOf('/') + 1);
     const xdata = $('.bg-accent div[ax-load][x-data]').attr('x-data');
     // expected data format: toc('000000', 'xxxxxxxxxx') (6 numbers, 10 hex)
     if (xdata) {
@@ -123,41 +122,35 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
         const chaptersUrl = `${this.site}${chapterListing}`;
         const refererUrl = `${this.site}${novel.path}`;
 
-        $ = await fetchApi(chaptersUrl, {
+        let results = await fetchApi(chaptersUrl, {
           method: 'POST',
           referrer: refererUrl,
           referrerPolicy: 'origin',
           body: formData,
-        }).then(r => r.json());
+        })
+          .then(r => r.json())
+          .catch(e => console.log('Chapter Parse Error: ' + e));
 
-        console.log($);
+        results = results.data;
+        results.each(function (chap) {
+          if (chap.url == null) {
+            return;
+          }
+          const name = chap.title.text().trim();
+          const url = chap.url as string;
+          const releaseTime = chap.date.text().trim();
+          const chapterNumber = chap.slug;
+
+          chapters.push({
+            name: name,
+            path: url.replace(baseUrl, ''),
+            releaseTime,
+            chapterNumber: parseInt(chapterNumber),
+          });
+        });
       }
     }
 
-    // $(
-    //   'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
-    // ).each(function () {
-    // $(
-    //   'div.grid.w-full.grid-cols-1.gap-4.md\\:grid-cols-2 > a',
-    // ).each(function () {
-    //   if ($(this).find('> div').length == 2) {
-    //     return;
-    //   }
-    //   const name = $(this).find('.truncate').text().trim();
-    //   const url = $(this).attr('href') as string;
-    //   const releaseTime = $(this)
-    //     .find('div > div > small')
-    //     .text()
-    //     .trim();
-    //   const chapterNumber = name.split('-')[0].trim().split(' ')[1];
-
-    // chapters.push({
-    //   name: name,
-    //   path: url.replace(site, ''),
-    //   releaseTime,
-    //   chapterNumber: parseInt(chapterNumber),
-    // });
-    // });
     novel.chapters = chapters;
 
     return novel as Plugin.SourceNovel;
