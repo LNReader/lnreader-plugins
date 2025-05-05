@@ -129,25 +129,27 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
           body: formData,
         })
           .then(r => r.json())
-          .catch(e => console.log('Chapter Parse Error: ' + e));
+          .catch(e => (novel.summary = novel.summary + '\n\n' + e));
 
-        results = results.data;
-        results.each(function (chap) {
-          if (chap.url == null) {
-            return;
-          }
-          const name = chap.title.text().trim();
-          const url = chap.url as string;
-          const releaseTime = chap.date.text().trim();
-          const chapterNumber = chap.slug;
+        if (results.data) {
+          results = results.data;
+          results.each(function (chap: any) {
+            if (chap.url == null) {
+              return;
+            }
+            const name = chap.title.text().trim();
+            const url = chap.url as string;
+            const releaseTime = chap.date.text().trim();
+            const chapterNumber = chap.slug;
 
-          chapters.push({
-            name: name,
-            path: url.replace(baseUrl, ''),
-            releaseTime,
-            chapterNumber: parseInt(chapterNumber),
+            chapters.push({
+              name: name,
+              path: url.replace(baseUrl, ''),
+              releaseTime,
+              chapterNumber: parseInt(chapterNumber),
+            });
           });
-        });
+        }
       }
     }
 
