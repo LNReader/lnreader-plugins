@@ -129,7 +129,11 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
           body: formData,
         })
           .then(r => r.json())
-          .catch(e => (novel.summary = novel.summary + '\n\n' + e));
+          .catch(
+            e =>
+              (novel.summary =
+                'Chapter Parse Error: ' + e + '\n\n' + novel.summary),
+          );
 
         if (results.data) {
           results = results.data;
@@ -159,11 +163,21 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchApi(this.site + chapterPath).then(r => r.text());
+    const $ = await this.getCheerio(this.site + chapterPath, false);
 
-    const loadedCheerio = load(body);
-    const t = loadedCheerio('div.justify-center > div.mb-4');
-    const chapterText = t.html() || '';
+    const xdata = $('div[ax-load][x-data]').attr('x-data');
+
+    const t = $('div.justify-center > div.mb-4');
+    let chapterText = t.html() || '';
+
+    if (xdata) {
+      chapterText =
+        chapterText +
+        "\n\n Error parsing chapter: Turnstile detected. Advise just reading in web view until there's a fix.";
+      //   const listXdata = xdata?.split("'");
+      //   const dataNovelId = listXdata[1];
+      //   const dataNovelN = listXdata[3];
+    }
 
     return chapterText;
   }
