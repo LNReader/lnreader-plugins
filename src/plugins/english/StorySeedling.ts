@@ -133,13 +133,13 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
 
         if (results.data) {
           results = results.data;
-          results.each(function (chap: any) {
+          results.forEach(function (chap: any) {
             if (chap.url == null) {
               return;
             }
-            const name = chap.title.text().trim();
+            const name = chap.title;
             const url = chap.url as string;
-            const releaseTime = chap.date.text().trim();
+            const releaseTime = chap.date;
             const chapterNumber = chap.slug;
 
             chapters.push({
