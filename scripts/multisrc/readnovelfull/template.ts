@@ -48,7 +48,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readnovelfull/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `2.0.${2 + versionIncrements}`;
+    this.version = `2.1.${0 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
@@ -74,7 +74,6 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   }
 
   parseNovels(html: string) {
-    const baseUrl = this.site;
     const novels: Plugin.NovelItem[] = [];
     let tempNovel: Partial<Plugin.NovelItem> = {};
     let depth: number;
@@ -92,12 +91,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           attribs.class?.includes('archive') ||
           attribs.class === 'col-content'
         ) {
-          pushState(ParsingState.NovelItem);
+          pushState(ParsingState.NovelList);
           depth = -1;
         }
 
         if (
-          state !== ParsingState.NovelItem &&
+          state !== ParsingState.NovelList &&
           state !== ParsingState.NovelName
         )
           return;
@@ -105,11 +104,11 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           case 'img':
             const cover = attribs.src;
             if (cover) {
-              tempNovel.cover = new URL(cover, baseUrl).href;
+              tempNovel.cover = new URL(cover, this.site).href;
             }
             break;
           case 'h3':
-            if (state === ParsingState.NovelItem) {
+            if (state === ParsingState.NovelList) {
               pushState(ParsingState.NovelName);
             }
             break;
@@ -117,7 +116,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             if (state === ParsingState.NovelName) {
               const href = attribs.href;
               if (href) {
-                tempNovel.path = new URL(href, baseUrl).pathname.substring(1);
+                tempNovel.path = new URL(href, this.site).pathname.substring(1);
                 tempNovel.name = attribs.title;
               }
             }
@@ -133,13 +132,13 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       onclosetag: name => {
         const state = currentState();
         if (name === 'a' && state === ParsingState.NovelName) {
-          if (tempNovel.path) {
+          if (tempNovel.name && tempNovel.path) {
             novels.push({ ...tempNovel } as Plugin.NovelItem);
           }
           tempNovel = {};
           popState();
         }
-        if (name === 'div' && state === ParsingState.NovelItem) {
+        if (name === 'div' && state === ParsingState.NovelList) {
           depth--;
           if (depth < 0) popState();
         }
@@ -226,7 +225,6 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     const url = this.site + novelPath;
     const result = await fetchApi(url);
     const body = await result.text();
-    const baseUrl = this.site;
 
     const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
@@ -280,7 +278,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
                 attribs.src ?? attribs['data-cfsrc'] ?? attribs['data-src'];
               const name = attribs.title;
               if (cover) {
-                novel.cover = new URL(cover, baseUrl).href;
+                novel.cover = new URL(cover, this.site).href;
               }
               if (name) {
                 novel.name = name;
@@ -325,7 +323,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
               tempChapter.releaseTime = null;
               tempChapter.chapterNumber = i;
               tempChapter.path =
-                href?.slice(1) ||
+                href?.substring(1) ||
                 novelPath.replace('.html', `/chapter-${i}.html`);
             }
             break;
@@ -461,124 +459,87 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     if (this.options.noAjax && chapters.length > 0) {
       novel.chapters = chapters;
-    }
-
-    if (!this.options.noAjax && novelId !== null && chapters.length === 0) {
+    } else if (novelId !== null) {
       const chapterListing =
         this.options.chapterListing || 'ajax/chapter-archive';
       const ajaxParam = this.options.chapterParam || 'novelId';
       const params = new URLSearchParams({ [ajaxParam]: novelId });
       const chaptersUrl = `${this.site}${chapterListing}?${params.toString()}`;
 
-      try {
-        const ajaxResult = await fetchApi(chaptersUrl);
-        if (!ajaxResult.ok) {
-          console.error(`Failed to fetch chapters: ${ajaxResult.status}`);
-          // Assign empty chapters array or handle error as appropriate
-          novel.chapters = [];
-        } else {
-          const ajaxBody = await ajaxResult.text();
-          const ajaxChapters: Plugin.ChapterItem[] = [];
-          let tempAjaxChapter: Partial<Plugin.ChapterItem> = {};
-          let isInsideChapterLink = false; // Track if inside <a> or <option>
+      const ajaxResult = await fetchApi(chaptersUrl);
+      if (!ajaxResult.ok) {
+        console.error(`Failed to fetch chapters: ${ajaxResult.status}`);
+        novel.chapters = [];
+      } else {
+        const ajaxBody = await ajaxResult.text();
+        const ajaxChapters: Plugin.ChapterItem[] = [];
+        let tempAjaxChapter: Partial<Plugin.ChapterItem> = {};
 
-          const ajaxChapterParser = new Parser({
-            onopentag: (name, attribs) => {
-              let chapterHref: string | undefined;
-              let initialName: string | undefined;
+        const ajaxParser = new Parser({
+          onopentag: (name, attribs) => {
+            let chapterHref: string | undefined;
+            let initialName: string | undefined;
 
-              if (name === 'a' && attribs.href) {
-                chapterHref = attribs.href;
-                initialName = attribs.title || ''; // Use title if available
-                isInsideChapterLink = true;
-                pushState(ParsingState.Chapter);
-              } else if (name === 'option' && attribs.value) {
-                // Handle chapters listed in <select><option> tags
-                chapterHref = attribs.value;
-                initialName = ''; // Text content will be the name
-                isInsideChapterLink = true;
-                pushState(ParsingState.Chapter);
-              }
+            if (name === 'a' && attribs.href) {
+              chapterHref = attribs.href;
+              initialName = attribs.title || '';
+              pushState(ParsingState.Chapter);
+            } else if (name === 'option' && attribs.value) {
+              chapterHref = attribs.value;
+              initialName = '';
+              pushState(ParsingState.Chapter);
+            }
 
-              if (chapterHref !== undefined) {
-                try {
-                  const chapterUrlObject = new URL(chapterHref, this.site);
-                  tempAjaxChapter.path = chapterUrlObject.pathname.slice(1);
-                  tempAjaxChapter.name = initialName?.trim(); // Trim initial name
-                } catch (e) {
-                  console.error(`Invalid AJAX chapter URL: ${chapterHref}`, e);
-                  tempAjaxChapter = {}; // Reset on error
-                  isInsideChapterLink = false;
-                  popState(); // Pop state if URL is invalid
-                }
-              }
-            },
-            ontext: text => {
-              const cleanText = text.trim();
-              // Capture text only if inside a chapter link and name wasn't set by title/attribute
-              if (
-                currentState() === ParsingState.Chapter &&
-                isInsideChapterLink &&
-                !tempAjaxChapter.name && // Only if name is not already set
-                cleanText
-              ) {
-                // Append text content for option tags or links without titles
-                tempAjaxChapter.name = (tempAjaxChapter.name || '') + cleanText;
-              }
-            },
-            onclosetag: name => {
-              if (
-                (name === 'a' || name === 'option') &&
-                currentState() === ParsingState.Chapter &&
-                isInsideChapterLink
-              ) {
-                if (tempAjaxChapter.name && tempAjaxChapter.path) {
-                  // Trim final name before pushing
-                  tempAjaxChapter.name = tempAjaxChapter.name.trim();
-                  tempAjaxChapter.releaseTime = null;
-                  ajaxChapters.push({
-                    ...tempAjaxChapter,
-                  } as Plugin.ChapterItem);
-                }
-                tempAjaxChapter = {}; // Reset for next chapter
-                isInsideChapterLink = false;
-                popState();
-              }
-            },
-          });
+            if (chapterHref !== undefined) {
+              const href = new URL(chapterHref, this.site);
+              tempAjaxChapter.path = href.pathname.substring(1);
+              tempAjaxChapter.name = initialName;
+            }
+          },
 
-          ajaxChapterParser.write(ajaxBody);
-          ajaxChapterParser.end();
-          novel.chapters = ajaxChapters; // Assign parsed AJAX chapters
-        }
-      } catch (error) {
-        console.error('Error fetching or parsing AJAX chapters:', error);
-        novel.chapters = []; // Assign empty on error
+          ontext: text => {
+            const cleanText = text.trim();
+            if (
+              currentState() === ParsingState.Chapter &&
+              !tempAjaxChapter.name &&
+              cleanText
+            ) {
+              tempAjaxChapter.name += cleanText;
+            }
+          },
+
+          onclosetag: name => {
+            if (
+              (name === 'a' || name === 'option') &&
+              currentState() === ParsingState.Chapter
+            ) {
+              if (tempAjaxChapter.name && tempAjaxChapter.path) {
+                tempAjaxChapter.name = tempAjaxChapter.name.trim();
+                tempAjaxChapter.releaseTime = null;
+                ajaxChapters.push({
+                  ...tempAjaxChapter,
+                } as Plugin.ChapterItem);
+              }
+              tempAjaxChapter = {};
+              popState();
+            }
+          },
+        });
+
+        ajaxParser.write(ajaxBody);
+        ajaxParser.end();
+        novel.chapters = ajaxChapters;
       }
-    } else if (chapters.length > 0) {
-      // Assign chapters parsed from initial HTML if noAjax or AJAX failed/not needed
-      novel.chapters = chapters;
-    } else {
-      // Ensure chapters is always an array
-      novel.chapters = [];
-    }
-
-    // Basic validation before returning
-    if (!novel.name) {
-      console.warn(`Novel name missing for path: ${novelPath}`);
-      // Consider throwing an error or returning a specific indicator if name is critical
     }
 
     return novel as Plugin.SourceNovel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    // This function still uses Cheerio, so getCheerio is needed
     const $ = await this.getCheerio(this.site + chapterPath, false);
-    $('div.ads, div.unlock-buttons').remove(); // Example: remove ads/buttons
-    // Prioritize more specific selectors if available
+    $('div.ads, div.unlock-buttons').remove();
     const content = $('#chr-content').html() || $('#chapter-content').html();
-    return content || ''; // Return empty string if no content found
+    return content || '';
   }
 
   async searchNovels(
@@ -626,7 +587,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     const html = await result.text();
 
-    // Check for alert error messages
+    // Check for alert error messages, ported over from cheerio TODO: confirm behaviour
     const alertText = html.match(/alert\((.*?)\)/)?.[1] || '';
     if (alertText) throw new Error(alertText);
 
@@ -645,5 +606,5 @@ enum ParsingState {
   Chapter,
   ChapterList,
   NovelName,
-  NovelItem,
+  NovelList,
 }
