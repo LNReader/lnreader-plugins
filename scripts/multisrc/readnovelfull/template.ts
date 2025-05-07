@@ -22,6 +22,7 @@ type ReadNovelFullOptions = {
   searchKey?: string;
   postSearch?: boolean;
   noAjax?: boolean;
+  noPages?: string[];
 };
 
 export type ReadNovelFullMetadata = {
@@ -52,6 +53,13 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.filters = metadata.filters;
   }
 
+  lastSearch: number | null = null;
+  searchInterval = 3400;
+
+  async sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async getCheerio(
     url: string,
     search = false,
@@ -65,10 +73,11 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     return load(await r.text());
   }
 
-  parseNovels(html: string): Plugin.NovelItem[] {
+  parseNovels(html: string) {
     const baseUrl = this.site;
     const novels: Plugin.NovelItem[] = [];
     let tempNovel: Partial<Plugin.NovelItem> = {};
+    let depth: number;
 
     const stateStack: ParsingState[] = [ParsingState.Idle];
     const currentState = () => stateStack[stateStack.length - 1];
@@ -79,12 +88,17 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     const parser = new Parser({
       onopentag: (name, attribs) => {
         const state = currentState();
-        if (attribs.class === 'archive' || attribs.class === 'li-row')
+        if (
+          attribs.class?.includes('archive') ||
+          attribs.class === 'col-content'
+        ) {
           pushState(ParsingState.NovelItem);
+          depth = -1;
+        }
 
         if (
           state !== ParsingState.NovelItem &&
-          state !== ParsingState.NovelTitle
+          state !== ParsingState.NovelName
         )
           return;
         switch (name) {
@@ -96,18 +110,20 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             break;
           case 'h3':
             if (state === ParsingState.NovelItem) {
-              popState();
-              pushState(ParsingState.NovelTitle);
+              pushState(ParsingState.NovelName);
             }
             break;
           case 'a':
-            if (state === ParsingState.NovelTitle) {
+            if (state === ParsingState.NovelName) {
               const href = attribs.href;
               if (href) {
-                tempNovel.href = new URL(href, baseUrl).pathname.substring(1);
+                tempNovel.path = new URL(href, baseUrl).pathname.substring(1);
                 tempNovel.name = attribs.title;
               }
             }
+            break;
+          case 'div':
+            depth++;
             break;
           default:
             return;
@@ -115,12 +131,17 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       },
 
       onclosetag: name => {
-        if (name === 'a' && currentState() === ParsingState.NovelTitle) {
-          if (tempNovel.name && tempNovel.path) {
+        const state = currentState();
+        if (name === 'a' && state === ParsingState.NovelName) {
+          if (tempNovel.path) {
             novels.push({ ...tempNovel } as Plugin.NovelItem);
           }
           tempNovel = {};
           popState();
+        }
+        if (name === 'div' && state === ParsingState.NovelItem) {
+          depth--;
+          if (depth < 0) popState();
         }
       },
     });
@@ -144,7 +165,19 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       genreKey = 'id',
       langParam,
       urlLangCode,
+      noPages = [],
     } = this.options;
+
+    // Skip Pagination for FWN & LR
+    if (
+      pageNo !== 1 &&
+      !showLatestNovels &&
+      !filters.genres.value.length &&
+      noPages.length > 0 &&
+      noPages.includes(filters.type.value)
+    ) {
+      return [];
+    }
 
     let url = '';
 
@@ -200,11 +233,15 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       chapters: [],
     };
     const summaryParts: string[] = [];
+    const statusParts: string[] = [];
+    const authorParts: string[] = [];
+    const genreArray: string[] = [];
     const infoParts: string[] = [];
     const chapters: Plugin.ChapterItem[] = [];
     let novelId: string | null = null;
     let tempChapter: Partial<Plugin.ChapterItem> = {};
     let i = 0;
+    let depth: number;
 
     const stateStack: ParsingState[] = [ParsingState.Idle];
     const currentState = () => stateStack[stateStack.length - 1];
@@ -219,64 +256,53 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           case 'div':
             switch (attribs.class) {
               case 'books':
-                pushState(ParsingState.NovelName);
-                break;
-              case 'book':
+              case 'm-imgtxt':
                 pushState(ParsingState.Cover);
-                break;
-              case 'info':
-                // Check if already in Info state to avoid nested pushes if structure allows
-                if (state !== ParsingState.Info) {
-                  pushState(ParsingState.Info);
-                }
-                break;
+                return;
+              case 'inner':
               case 'desc-text':
+                if (state === ParsingState.Cover) popState();
                 pushState(ParsingState.Summary);
                 break;
+              case 'info':
+                pushState(ParsingState.Info);
+                depth = 0;
+                break;
             }
-            if (attribs.id === 'rating') {
-              // Ensure we pop back to a sensible state before processing rating
-              if (state === ParsingState.Info || state === ParsingState.Cover) {
-                popState();
-              }
-              novelId = attribs['data-novel-id'] || null;
+            if (!this.options.noAjax && attribs.id === 'rating') {
+              novelId = attribs['data-novel-id'];
             }
+            if (state === ParsingState.Info) depth++;
             break;
           case 'img':
             if (state === ParsingState.Cover) {
-              const coverUrl =
+              const cover =
                 attribs.src ?? attribs['data-cfsrc'] ?? attribs['data-src'];
-              if (coverUrl) {
-                try {
-                  novel.cover = new URL(coverUrl, baseUrl).href;
-                } catch (e) {
-                  console.error(`Invalid cover URL: ${coverUrl}`, e);
-                }
+              const name = attribs.title;
+              if (cover) {
+                novel.cover = new URL(cover, baseUrl).href;
+              }
+              if (name) {
+                novel.name = name;
+              } else {
+                popState();
               }
             }
             break;
-          case 'meta':
-            if (attribs.name === 'image' && !novel.cover) {
-              if (attribs.content) {
-                try {
-                  novel.cover = new URL(attribs.content, baseUrl).href;
-                } catch (e) {
-                  console.error(
-                    `Invalid meta image URL: ${attribs.content}`,
-                    e,
-                  );
-                }
-              }
+          case 'h3':
+            if (state === ParsingState.Cover) {
+              pushState(ParsingState.NovelName);
             }
             break;
-          case 'ul':
-            if (attribs.class?.includes('info-meta')) {
-              // Check if already in Info state to avoid nested pushes
-              if (state !== ParsingState.Info) {
-                pushState(ParsingState.Info);
-              }
-            } else if (this.options.noAjax && attribs.id === 'idData') {
-              pushState(ParsingState.ChapterList);
+          case 'span':
+            if (state === ParsingState.Cover && attribs.title) {
+              const newState = {
+                'Genre': ParsingState.Genres,
+                'Author': ParsingState.Author,
+                'Status': ParsingState.Status,
+              }[attribs.title];
+
+              if (newState) pushState(newState);
             }
             break;
           case 'br':
@@ -284,88 +310,77 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
               summaryParts.push('\n');
             }
             break;
+          case 'ul':
+            if (this.options.noAjax && attribs.id === 'idData') {
+              pushState(ParsingState.ChapterList);
+            }
+            break;
           case 'a':
             if (state === ParsingState.ChapterList) {
-              pushState(ParsingState.Chapter);
               i++;
+              const href = attribs.href;
+              pushState(ParsingState.Chapter);
+
               tempChapter.name = attribs.title || `Chapter ${i}`;
-              const chapterPathRaw = attribs.href;
-              if (chapterPathRaw) {
-                try {
-                  const chapterUrl = new URL(chapterPathRaw, baseUrl);
-                  tempChapter.path = chapterUrl.pathname.slice(1);
-                } catch (e) {
-                  console.error(`Invalid chapter URL: ${chapterPathRaw}`, e);
-                  // Fallback or default path if URL is invalid
-                  tempChapter.path = novelPath.replace(
-                    '.html',
-                    `/chapter-${i}.html`,
-                  );
-                }
-              } else {
-                // Fallback if href is missing
-                tempChapter.path = novelPath.replace(
-                  '.html',
-                  `/chapter-${i}.html`,
-                );
-              }
-              tempChapter.releaseTime = null; // Assuming release time isn't available here
+              tempChapter.releaseTime = null;
               tempChapter.chapterNumber = i;
+              tempChapter.path =
+                href?.slice(1) ||
+                novelPath.replace('.html', `/chapter-${i}.html`);
             }
             break;
         }
       },
-      ontext: text => {
-        const cleanText = text.trim();
-        if (!cleanText) return; // Ignore whitespace-only text nodes
+
+      ontext: data => {
+        const text = data.trim();
+        if (!text) return;
 
         switch (currentState()) {
           case ParsingState.NovelName:
-            novel.name = (novel.name || '') + cleanText;
-            break;
-          case ParsingState.Info:
-            // Append with space to separate text nodes within the same info block
-            infoParts.push(cleanText + ' ');
+            novel.name = (novel.name || '') + text;
             break;
           case ParsingState.Summary:
-            summaryParts.push(cleanText);
+            summaryParts.push(data);
+            break;
+          case ParsingState.Info:
+            infoParts.push(text);
+            break;
+          case ParsingState.Genres:
+            genreArray.push(data);
+            break;
+          case ParsingState.Author:
+            authorParts.push(data);
+            break;
+          case ParsingState.Status:
+            statusParts.push(text);
             break;
         }
       },
+
       onclosetag: name => {
         const state = currentState();
         switch (name) {
-          case 'h3':
-            if (state === ParsingState.NovelName) popState();
-            break;
           case 'div':
-            // Pop state only if it matches the opening tag's purpose
-            if (
-              state === ParsingState.Cover ||
-              state === ParsingState.Summary ||
-              state === ParsingState.Info // Pop Info state when its div closes
-            ) {
+            switch (state) {
+              case ParsingState.Info:
+                depth--;
+                infoParts.push('\n');
+                if (depth < 0) {
+                  popState();
+                }
+                break;
+              case ParsingState.Genres:
+              case ParsingState.Author:
+              case ParsingState.Status:
+              case ParsingState.Summary:
+                popState();
+                break;
+            }
+            break;
+          case 'h3':
+            if (state === ParsingState.NovelName) {
               popState();
-            }
-            break;
-          case 'li':
-            // Add newline after each list item in Info for better splitting later
-            if (state === ParsingState.Info) {
-              infoParts.push('\n');
-            }
-            break;
-          case 'ul':
-            if (
-              state === ParsingState.Info ||
-              state === ParsingState.ChapterList
-            ) {
-              popState();
-            }
-            break;
-          case 'p':
-            // Add paragraph breaks in summary
-            if (state === ParsingState.Summary) {
-              summaryParts.push('\n\n');
             }
             break;
           case 'a':
@@ -377,82 +392,77 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
               popState();
             }
             break;
+          case 'ul':
+            if (state === ParsingState.ChapterList) {
+              popState();
+            }
+            break;
+          default:
+            return;
         }
       },
+
       onend: () => {
-        novel.name = novel.name?.trim();
-        // Join summary parts, trim, and replace multiple newlines with single ones if needed
-        novel.summary = summaryParts
-          .join('')
-          .replace(/\n{3,}/g, '\n\n')
-          .trim();
+        if (infoParts.length) {
+          infoParts
+            .join('')
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.includes(':'))
+            .forEach(line => {
+              const parts = line.split(':');
+              const detailName = parts[0].trim().toLowerCase();
+              const detail = parts[1]
+                .split(',')
+                .map(g => g.trim())
+                .join(', ');
 
-        // Process info parts: join, split by newline, filter, and parse
-        infoParts
-          .join('') // Join parts (already includes spaces/newlines)
-          .split('\n') // Split into potential lines
-          .map(line => line.trim()) // Trim each line
-          .filter(line => line.includes(':')) // Keep lines with a colon separator
-          .forEach(line => {
-            const parts = line.split(':');
-            const detailName = parts[0].trim().toLowerCase();
-            // Join remaining parts in case value contains ':' and trim
-            const detail = parts.slice(1).join(':').trim();
+              switch (detailName) {
+                case 'author':
+                  novel.author = detail;
+                  break;
+                case 'genre':
+                  novel.genres = detail;
+                  break;
+                case 'status':
+                  const map: Record<string, string> = {
+                    ongoing: NovelStatus.Ongoing,
+                    hiatus: NovelStatus.OnHiatus,
+                    dropped: NovelStatus.Cancelled,
+                    cancelled: NovelStatus.Cancelled,
+                    completed: NovelStatus.Completed,
+                  };
+                  novel.status =
+                    map[detail.toLowerCase()] ?? NovelStatus.Unknown;
+                  break;
+                default:
+                  return;
+              }
+            });
 
-            switch (detailName) {
-              case 'author':
-              case 'author(s)': // Handle variations
-                novel.author = detail;
-                break;
-              case 'genre':
-              case 'genre(s)': // Handle variations
-                novel.genres = detail
-                  .split(',')
-                  .map(g => g.trim())
-                  .filter(Boolean)
-                  .join(', ');
-                break;
-              case 'status':
-                const statusText = detail.toLowerCase();
-                if (statusText.includes('completed')) {
-                  novel.status = NovelStatus.Completed;
-                } else if (statusText.includes('ongoing')) {
-                  novel.status = NovelStatus.Ongoing;
-                } else if (statusText.includes('hiatus')) {
-                  novel.status = NovelStatus.OnHiatus;
-                } else {
-                  novel.status = NovelStatus.Unknown;
-                }
-                break;
-              // Add cases for other details like 'artist', 'alternative names', etc. if needed
-              default:
-                // Optionally log unrecognized details
-                // console.log(`Unrecognized detail: ${detailName}`);
-                break;
-            }
-          });
-
-        // Fallback for novelId if not found via data attribute
-        if (!novelId) {
-          const idMatch = novelPath.match(/\d+/);
-          novelId = idMatch ? idMatch[0] : null;
-          // Alternative: try extracting from URL if path format is consistent
-          // Example: if path is always like /novel-name-123.html
-          // const pathParts = novelPath.split('-');
-          // novelId = pathParts[pathParts.length - 1]?.split('.')[0];
+          if (!novelId) {
+            const idMatch = novelPath.match(/\d+/);
+            novelId = idMatch ? idMatch[0] : null;
+          }
+        } else {
+          novel.genres = genreArray.join('').trim();
+          novel.author = authorParts.join('').trim();
+          novel.status = statusParts
+            .join('')
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase());
         }
+        novel.summary = summaryParts.join('\n\n').trim();
       },
     });
 
     parser.write(body);
     parser.end();
 
-    // Assign chapters parsed directly if available (noAjax case)
     if (this.options.noAjax && chapters.length > 0) {
       novel.chapters = chapters;
     }
 
-    // Fetch chapters via AJAX if needed and not already parsed
     if (!this.options.noAjax && novelId !== null && chapters.length === 0) {
       const chapterListing =
         this.options.chapterListing || 'ajax/chapter-archive';
@@ -525,6 +535,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
                 if (tempAjaxChapter.name && tempAjaxChapter.path) {
                   // Trim final name before pushing
                   tempAjaxChapter.name = tempAjaxChapter.name.trim();
+                  tempAjaxChapter.releaseTime = null;
                   ajaxChapters.push({
                     ...tempAjaxChapter,
                   } as Plugin.ChapterItem);
@@ -574,6 +585,11 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     searchTerm: string,
     page: number,
   ): Promise<Plugin.NovelItem[]> {
+    const now = Date.now();
+    if (this.lastSearch && now - this.lastSearch <= this.searchInterval) {
+      await this.sleep(this.searchInterval);
+    }
+
     const {
       pageParam = 'page',
       searchKey = 'keyword',
@@ -600,25 +616,34 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       : undefined;
 
     const result = await fetchApi(url, fetchOptions);
+    this.lastSearch = Date.now();
+
     if (!result.ok) {
-      console.warn(`Search request failed (${result.status}): ${url}`);
-      return [];
+      throw new Error(
+        `Could not reach site ('${result.status}') try to open in webview.`,
+      );
     }
+
     const html = await result.text();
+
+    // Check for alert error messages
+    const alertText = html.match(/alert\((.*?)\)/)?.[1] || '';
+    if (alertText) throw new Error(alertText);
+
     return this.parseNovels(html);
   }
 }
 
 enum ParsingState {
   Idle,
-  NovelName,
-  Cover,
   Info,
+  Cover,
+  Author,
+  Genres,
+  Status,
   Summary,
-  ChapterList,
   Chapter,
-  NovelItem, // Added for novel list item
-  NovelTitle, // Added for novel title within item
-  NovelLink, // Added for novel link within item
-  NovelCover, // Added for novel cover within item
+  ChapterList,
+  NovelName,
+  NovelItem,
 }

@@ -61,7 +61,8 @@
       "searchPage": "search",
       "searchKey": "searchkey",
       "postSearch": true,
-      "noAjax": true
+      "noAjax": true,
+      "noPages": ["sort/most-popular"]
     }
   },
   {

@@ -3,7 +3,7 @@
     "type": {
       "type": "Picker",
       "label": "Novel Type",
-      "value": "sort/latest-release",
+      "value": "sort/most-popular",
       "options": [
         {
           "label": "All",
@@ -24,6 +24,10 @@
         {
           "label": "English Novel",
           "value": "sort/latest-release/english-novel/"
+        },
+        {
+          "label": "Most Popular",
+          "value": "sort/most-popular"
         }
       ]
     },
