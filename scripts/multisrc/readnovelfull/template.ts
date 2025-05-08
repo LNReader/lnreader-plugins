@@ -1,4 +1,3 @@
-import { CheerioAPI, load } from 'cheerio';
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
@@ -60,19 +59,6 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async getCheerio(
-    url: string,
-    search = false,
-    options?: RequestInit,
-  ): Promise<CheerioAPI> {
-    const r = await fetchApi(url, options);
-    if (!r.ok && !search)
-      throw new Error(
-        `Could not reach site (${r.status}: ${r.statusText}) try to open in webview.`,
-      );
-    return load(await r.text());
-  }
-
   parseNovels(html: string) {
     const novels: Plugin.NovelItem[] = [];
     let tempNovel: Partial<Plugin.NovelItem> = {};
@@ -100,6 +86,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           state !== ParsingState.NovelName
         )
           return;
+
         switch (name) {
           case 'img':
             const cover = attribs.src;
@@ -393,9 +380,17 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
               popState();
             }
             break;
+          case 'li':
+            if (state === ParsingState.Info) {
+              infoParts.push('\n');
+            }
+            break;
           case 'ul':
-            if (state === ParsingState.ChapterList) {
-              popState();
+            switch (state) {
+              case ParsingState.Info:
+              case ParsingState.ChapterList:
+                popState();
+                break;
             }
             break;
           default:
@@ -586,10 +581,15 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             }
             break;
           case ParsingState.Chapter:
-            if (name === 'div') depth++;
-            if (attrib?.includes('unlock-buttons') || attrib?.includes('ads')) {
-              pushState(ParsingState.Hidden);
-              depthHide = 0;
+            if (name === 'div') {
+              depth++;
+              if (
+                attrib?.includes('unlock-buttons') ||
+                attrib?.includes('ads')
+              ) {
+                pushState(ParsingState.Hidden);
+                depthHide = 0;
+              }
             }
             break;
           case ParsingState.Hidden:
@@ -656,12 +656,6 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
     return chapterHtml.join('');
   }
-  // async parseChapter(chapterPath: string): Promise<string> {
-  //   const $ = await this.getCheerio(this.site + chapterPath, false);
-  //   $('div.ads, div.unlock-buttons').remove();
-  //   const content = $('#chr-content').html() || $('#chapter-content').html();
-  //   return content || '';
-  // }
 
   async searchNovels(
     searchTerm: string,
