@@ -92,7 +92,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           attribs.class === 'col-content'
         ) {
           pushState(ParsingState.NovelList);
-          depth = -1;
+          depth = 0;
         }
 
         if (
@@ -309,6 +309,9 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             }
             break;
           case 'ul':
+            if (attribs.class?.includes('info-meta')) {
+              pushState(ParsingState.Info);
+            }
             if (this.options.noAjax && attribs.id === 'idData') {
               pushState(ParsingState.ChapterList);
             }
@@ -497,14 +500,14 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             }
           },
 
-          ontext: text => {
-            const cleanText = text.trim();
+          ontext: data => {
+            const text = data.trim();
             if (
               currentState() === ParsingState.Chapter &&
               !tempAjaxChapter.name &&
-              cleanText
+              text
             ) {
-              tempAjaxChapter.name += cleanText;
+              tempAjaxChapter.name += text;
             }
           },
 
@@ -536,11 +539,129 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const $ = await this.getCheerio(this.site + chapterPath, false);
-    $('div.ads, div.unlock-buttons').remove();
-    const content = $('#chr-content').html() || $('#chapter-content').html();
-    return content || '';
+    const response = await fetchApi(this.site + chapterPath);
+    const html = await response.text();
+    const match = html.match(/e\("([^]+?)"/);
+    const check = match ? match[1] : '';
+    const body = check ? html.replace(check, '') : html;
+
+    let depth: number;
+    let depthHide: number;
+    const chapterHtml: string[] = [];
+    let skipClosingTag = false;
+    let currentTagToSkip = '';
+
+    const stateStack: ParsingState[] = [ParsingState.Idle];
+    const currentState = () => stateStack[stateStack.length - 1];
+    const pushState = (state: ParsingState) => stateStack.push(state);
+    const popState = () =>
+      stateStack.length > 1 ? stateStack.pop() : currentState();
+
+    type EscapeChar = '&' | '<' | '>' | '"' | "'" | ' ';
+    const escapeRegex = /[&<>"' ]/g;
+    const escapeMap: Record<EscapeChar, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      ' ': '&nbsp;',
+    };
+    const escapeHtml = (text: string): string =>
+      text.replace(escapeRegex, char => escapeMap[char as EscapeChar]);
+
+    const parser = new Parser({
+      onopentag(name, attribs) {
+        const state = currentState();
+        const attrib = attribs.class?.trim();
+        switch (state) {
+          case ParsingState.Idle:
+            if (
+              attrib === 'txt' ||
+              attribs.id === 'chr-content' ||
+              attribs.id === 'chapter-content'
+            ) {
+              pushState(ParsingState.Chapter);
+              depth = 0;
+            }
+            break;
+          case ParsingState.Chapter:
+            if (name === 'div') depth++;
+            if (attrib?.includes('unlock-buttons') || attrib?.includes('ads')) {
+              pushState(ParsingState.Hidden);
+              depthHide = 0;
+            }
+            break;
+          case ParsingState.Hidden:
+            if (name === 'div') depthHide++;
+            break;
+          default:
+            return;
+        }
+
+        if (currentState() === ParsingState.Chapter) {
+          const attrKeys = Object.keys(attribs);
+
+          if (attrKeys.length === 0) {
+            chapterHtml.push(`<${name}>`);
+          } else if (attrKeys.every(key => attribs[key].trim() === '')) {
+            // Handle tags with empty attributes as text content
+            // eg: novel/rising-up-from-a-nobleman-to-intergalactic-warlord/chapter-184
+            skipClosingTag = true;
+            currentTagToSkip = name;
+            const uppercaseName = name.replace(/\b\w/g, char =>
+              char.toUpperCase(),
+            );
+            chapterHtml.push(
+              escapeHtml(`<${uppercaseName} ${attrKeys.join(' ')}>`),
+            );
+          } else {
+            // Normal tag with attributes
+            const attrString = attrKeys
+              .map(key => ` ${key}="${attribs[key].replace(/"/g, '&quot;')}"`)
+              .join('');
+            chapterHtml.push(`<${name}${attrString}>`);
+          }
+        }
+      },
+
+      ontext(text) {
+        if (currentState() === ParsingState.Chapter) {
+          chapterHtml.push(escapeHtml(text));
+        }
+      },
+
+      onclosetag(name) {
+        const state = currentState();
+        if (name === 'div' && state === ParsingState.Hidden) depthHide--;
+        if (depthHide < 0) popState();
+        if (state !== ParsingState.Chapter) return;
+
+        if (!parser['isVoidElement'](name)) {
+          if (skipClosingTag && name === currentTagToSkip) {
+            skipClosingTag = false;
+            currentTagToSkip = '';
+          } else {
+            chapterHtml.push(`</${name}>`);
+          }
+        }
+
+        if (name === 'div') depth--;
+        if (depth < 0) pushState(ParsingState.Stopped);
+      },
+    });
+
+    parser.write(body);
+    parser.end();
+
+    return chapterHtml.join('');
   }
+  // async parseChapter(chapterPath: string): Promise<string> {
+  //   const $ = await this.getCheerio(this.site + chapterPath, false);
+  //   $('div.ads, div.unlock-buttons').remove();
+  //   const content = $('#chr-content').html() || $('#chapter-content').html();
+  //   return content || '';
+  // }
 
   async searchNovels(
     searchTerm: string,
@@ -602,7 +723,9 @@ enum ParsingState {
   Author,
   Genres,
   Status,
+  Hidden,
   Summary,
+  Stopped,
   Chapter,
   ChapterList,
   NovelName,
