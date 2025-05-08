@@ -536,9 +536,6 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const response = await fetchApi(this.site + chapterPath);
     const html = await response.text();
-    const match = html.match(/e\("([^]+?)"/);
-    const check = match ? match[1] : '';
-    const body = check ? html.replace(check, '') : html;
 
     let depth: number;
     let depthHide: number;
@@ -581,7 +578,9 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             }
             break;
           case ParsingState.Chapter:
-            if (name === 'div') {
+            if (name === 'sub') {
+              pushState(ParsingState.Hidden);
+            } else if (name === 'div') {
               depth++;
               if (
                 attrib?.includes('unlock-buttons') ||
@@ -593,7 +592,12 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             }
             break;
           case ParsingState.Hidden:
-            if (name === 'div') depthHide++;
+            if (name === 'sub') {
+              // Allow nesting of hidden states if a sub is inside a div
+              pushState(ParsingState.Hidden);
+            } else if (name === 'div') {
+              depthHide++;
+            }
             break;
           default:
             return;
@@ -633,9 +637,21 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
       onclosetag(name) {
         const state = currentState();
-        if (name === 'div' && state === ParsingState.Hidden) depthHide--;
-        if (depthHide < 0) popState();
-        if (state !== ParsingState.Chapter) return;
+
+        if (state === ParsingState.Hidden) {
+          if (name === 'sub') {
+            popState();
+          } else if (name === 'div') {
+            depthHide--;
+            if (depthHide < 0) {
+              popState();
+            }
+          }
+        }
+
+        if (state !== ParsingState.Chapter) {
+          return;
+        }
 
         if (!parser['isVoidElement'](name)) {
           if (skipClosingTag && name === currentTagToSkip) {
@@ -646,12 +662,16 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           }
         }
 
-        if (name === 'div') depth--;
-        if (depth < 0) pushState(ParsingState.Stopped);
+        if (name === 'div') {
+          depth--;
+          if (depth < 0) {
+            pushState(ParsingState.Stopped);
+          }
+        }
       },
     });
 
-    parser.write(body);
+    parser.write(html);
     parser.end();
 
     return chapterHtml.join('');
