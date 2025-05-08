@@ -89,7 +89,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
 
         switch (name) {
           case 'img':
-            const cover = attribs.src;
+            const cover = attribs['data-src'] || attribs.src;
             if (cover) {
               tempNovel.cover = new URL(cover, this.site).href;
             }

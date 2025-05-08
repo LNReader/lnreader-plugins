@@ -66,6 +66,19 @@
     }
   },
   {
+    "id": "FWN.com",
+    "sourceSite": "https://freewebnovel.com/",
+    "sourceName": "Free Web Novel",
+    "options": {
+      "latestPage": "sort/latest-novels",
+      "searchPage": "search",
+      "searchKey": "searchkey",
+      "postSearch": true,
+      "noAjax": true,
+      "noPages": ["sort/most-popular"]
+    }
+  },
+  {
     "id": "anf.net",
     "sourceSite": "https://novgo.net/",
     "sourceName": "AllNovelFull",
