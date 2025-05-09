@@ -62,7 +62,8 @@
       "searchKey": "searchkey",
       "postSearch": true,
       "noAjax": true,
-      "noPages": ["sort/most-popular"]
+      "noPages": ["sort/most-popular"],
+      "pageAsPath": true
     }
   },
   {
@@ -75,7 +76,8 @@
       "searchKey": "searchkey",
       "postSearch": true,
       "noAjax": true,
-      "noPages": ["sort/most-popular"]
+      "noPages": ["sort/most-popular"],
+      "pageAsPath": true
     }
   },
   {
