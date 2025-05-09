@@ -51,5 +51,41 @@
       "searchPage": "search",
       "chapterListing": "ajax-chapter-option"
     }
+  },
+  {
+    "id": "libread",
+    "sourceSite": "https://libread.com/",
+    "sourceName": "Lib Read",
+    "options": {
+      "latestPage": "sort/latest-novels",
+      "searchPage": "search",
+      "searchKey": "searchkey",
+      "postSearch": true,
+      "noAjax": true,
+      "noPages": ["sort/most-popular"]
+    }
+  },
+  {
+    "id": "FWN.com",
+    "sourceSite": "https://freewebnovel.com/",
+    "sourceName": "Free Web Novel",
+    "options": {
+      "latestPage": "sort/latest-novels",
+      "searchPage": "search",
+      "searchKey": "searchkey",
+      "postSearch": true,
+      "noAjax": true,
+      "noPages": ["sort/most-popular"]
+    }
+  },
+  {
+    "id": "anf.net",
+    "sourceSite": "https://novgo.net/",
+    "sourceName": "AllNovelFull",
+    "options": {
+      "latestPage": "latest-release-novel",
+      "searchPage": "search",
+      "chapterListing": "ajax-chapter-option"
+    }
   }
 ]
