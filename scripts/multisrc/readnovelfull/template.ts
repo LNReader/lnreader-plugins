@@ -22,6 +22,7 @@ type ReadNovelFullOptions = {
   postSearch?: boolean;
   noAjax?: boolean;
   noPages?: string[];
+  pageAsPath?: boolean;
 };
 
 export type ReadNovelFullMetadata = {
@@ -47,7 +48,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readnovelfull/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `2.1.${0 + versionIncrements}`;
+    this.version = `2.1.${1 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
@@ -152,6 +153,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
       langParam,
       urlLangCode,
       noPages = [],
+      pageAsPath = false,
     } = this.options;
 
     // Skip Pagination for FWN & LR
@@ -195,7 +197,15 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
           ? filters.genres.value
           : filters.type.value;
 
-      url = `${this.site}${basePage}?${pageParam}=${pageNo}`;
+      if (pageAsPath) {
+        if (pageNo > 1) {
+          url = `${this.site}${basePage}/${pageNo.toString()}`;
+        } else {
+          url = `${this.site}${basePage}`;
+        }
+      } else {
+        url = `${this.site}${basePage}?${pageParam}=${pageNo.toString()}`;
+      }
     }
 
     const result = await fetchApi(url);
