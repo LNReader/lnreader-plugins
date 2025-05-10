@@ -48,7 +48,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/readnovelfull/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `2.1.${1 + versionIncrements}`;
+    this.version = `2.1.${2 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
   }
@@ -655,6 +655,7 @@ class ReadNovelFullPlugin implements Plugin.PluginBase {
             depthHide--;
             if (depthHide < 0) {
               popState();
+              depth--;
             }
           }
         }
