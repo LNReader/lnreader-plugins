@@ -126,7 +126,7 @@ class RLIB implements Plugin.PluginBase {
       novel.genres = genres.join(', ');
     }
 
-    const branch_name: Record<number, string> = { 0: 'Главная страница' };
+    const branch_name: Record<string, string> = { '0': 'Главная страница' };
     if (data.teams.length) {
       data.teams.forEach(
         ({ name, details }) => (branch_name[details?.branch_id || '0'] = name),
@@ -159,10 +159,12 @@ class RLIB implements Plugin.PluginBase {
               '/' +
               chapter.number +
               '/' +
-              (branch_id || ''),
+              (branch_id === null ? '0' : branch_id),
             releaseTime: dayjs(created_at).format('LLL'),
             chapterNumber: chapter.index,
-            page: branch_name[branch_id || '0'] || 'Неизвестный',
+            page:
+              branch_name[branch_id === null ? '0' : branch_id] ||
+              'Неизвестный',
           }),
         ),
       );
@@ -205,10 +207,12 @@ class RLIB implements Plugin.PluginBase {
       ).then(res => res.json());
       chapterText =
         result?.data?.content?.type == 'doc'
-          ? jsonToHtml(result.data.content.content, result.data.attachments)
+          ? jsonToHtml(
+              result.data.content.content,
+              result.data.attachments || [],
+            )
           : result?.data?.content;
     }
-
     return chapterText;
   }
 
@@ -493,7 +497,7 @@ class RLIB implements Plugin.PluginBase {
 
 export default new RLIB();
 
-function jsonToHtml(json: HTML[], images, html = '') {
+function jsonToHtml(json: HTML[], images: Attachment[], html = '') {
   json.forEach(element => {
     switch (element.type) {
       case 'hardBreak':
@@ -504,14 +508,16 @@ function jsonToHtml(json: HTML[], images, html = '') {
         break;
       case 'image':
         if (element.attrs?.images?.length) {
-          element.attrs.images.forEach(({ image }) => {
-            const file = images.find(
-              file => file.name == image || file.id == image,
-            );
-            if (file) {
-              html += `<img src='${file.url}'>`;
-            }
-          });
+          element.attrs.images.forEach(
+            ({ image }: { image: string | number }) => {
+              const file = images.find(
+                (f: Attachment) => f.name == image || f.id == image,
+              );
+              if (file) {
+                html += `<img src='${file.url}'>`;
+              }
+            },
+          );
         } else if (element.attrs) {
           const attrs = Object.entries(element.attrs)
             .filter(attr => attr?.[1])
@@ -586,9 +592,10 @@ type HTML = {
 };
 
 type Attrs = {
-  src: string;
-  alt: string | null;
-  title: string | null;
+  src?: string;
+  alt?: string | null;
+  title?: string | null;
+  images?: { image: string | number }[];
 };
 
 type authorization = {
@@ -710,7 +717,7 @@ type Subscription = {
 };
 
 type Attachment = {
-  id?: string;
+  id?: string | null; // Allow null for id
   filename: string;
   name: string;
   extension: string;
