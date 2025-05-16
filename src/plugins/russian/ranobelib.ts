@@ -17,7 +17,7 @@ class RLIB implements Plugin.PluginBase {
   id = 'RLIB';
   name = 'RanobeLib';
   site = 'https://ranobelib.me';
-  apiSite = 'https://api.mangalib.me/api/manga/';
+  apiSite = 'https://api.cdnlibs.org/api/manga/';
   version = '2.1.2';
   icon = 'src/ru/ranobelib/icon.png';
   webStorageUtilized = true;
