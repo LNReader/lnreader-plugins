@@ -15,7 +15,7 @@
     "icons": "npm run clearMultisrc && npm run generate && npx tsc --project tsconfig.production.json && npm run json && node ./scripts/icon_reloading.js",
     "json": "node ./scripts/json_plugins.js",
     "lint": "npx eslint .",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prettier": "prettier --write \"./**/*.{js,ts}\"",
     "start": "node importPlugins.js && vite",
     "test": "exit 0"
