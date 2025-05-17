@@ -2,6 +2,7 @@ import { FetchMode, ServerSetting } from './src/types/types';
 import { Connect } from 'vite';
 import httpProxy from 'http-proxy';
 import { exec } from 'child_process';
+import { brotliDecompressSync, gunzipSync } from 'zlib';
 
 const proxy = httpProxy.createProxyServer({});
 
@@ -18,7 +19,13 @@ const settings: ServerSetting = {
     'sec-fetch-dest',
     'pragma',
   ],
-  disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
+  disAllowResponseHeaders: [
+    'link',
+    'set-cookie',
+    'set-cookie2',
+    'content-encoding',
+    'content-length',
+  ],
   useUserAgent: true,
 };
 
@@ -160,10 +167,15 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
     fetch(_url.href, {
       headers: headers,
     })
-      .then(res2 => res2.text())
-      .then(res2 => {
-        res.statusCode = 200;
-        res.write(res2);
+      .then(async res2 => [res2, await res2.text()] as const)
+      .then(([res2, text]) => {
+        res.statusCode = res2.status;
+        res2.headers.forEach((val, key) => {
+          if (!settings.disAllowResponseHeaders.includes(key)) {
+            res.setHeader(key, val);
+          }
+        });
+        res.write(text);
         res.end();
       })
       .catch(err => {
@@ -200,19 +212,67 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     proxyRequest(req, res);
     return false;
   }
-  for (const _header in proxyRes.headers) {
-    if (!settings.disAllowResponseHeaders.includes(_header)) {
-      res.setHeader(_header, proxyRes.headers[_header] as string);
+
+  const contentEncoding = proxyRes.headers['content-encoding'];
+  const isBrotli =
+    contentEncoding &&
+    (Array.isArray(contentEncoding)
+      ? contentEncoding.some(enc => enc.includes('br'))
+      : contentEncoding.includes('br'));
+
+  const isGzip =
+    contentEncoding &&
+    (Array.isArray(contentEncoding)
+      ? contentEncoding.some(enc => enc.includes('gzip'))
+      : contentEncoding.includes('gzip'));
+
+  if (isBrotli || isGzip) {
+    delete proxyRes.headers['content-encoding'];
+    delete proxyRes.headers['content-length'];
+
+    for (const _header in proxyRes.headers) {
+      if (!settings.disAllowResponseHeaders.includes(_header)) {
+        res.setHeader(_header, proxyRes.headers[_header] as string);
+      }
     }
+
+    const chunks: Buffer[] = [];
+    proxyRes.on('data', chunk => chunks.push(Buffer.from(chunk)));
+    proxyRes.on('end', async function () {
+      try {
+        const buffer = Buffer.concat(chunks);
+        let decompressed;
+
+        if (isBrotli) {
+          decompressed = brotliDecompressSync(buffer);
+        } else {
+          decompressed = gunzipSync(buffer);
+        }
+
+        res.write(Buffer.from(decompressed));
+        res.end();
+      } catch (err) {
+        console.error(err);
+        res.statusCode = 500;
+        res.end(`Error decompressing ${isBrotli ? 'Brotli' : 'GZIP'} content`);
+      }
+    });
+  } else {
+    for (const _header in proxyRes.headers) {
+      if (!settings.disAllowResponseHeaders.includes(_header)) {
+        res.setHeader(_header, proxyRes.headers[_header] as string);
+      }
+    }
+    for (const _header in settings.disAllowedRequestHeaders) {
+      delete proxyRes.headers[_header];
+    }
+    proxyRes.on('data', function (chunk) {
+      res.write(chunk);
+    });
+    proxyRes.on('end', function () {
+      res.end();
+    });
   }
-  for (const _header in settings.disAllowedRequestHeaders) {
-    delete proxyRes.headers[_header];
-  }
-  proxyRes.on('data', function (chunk) {
-    res.write(chunk);
-  });
-  proxyRes.on('end', function () {
-    res.end();
-  });
 });
+
 export { proxyHandlerMiddle, proxySettingMiddleware };

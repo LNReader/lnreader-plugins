@@ -5,11 +5,24 @@ import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 
 class Shu69 implements Plugin.PluginBase {
+  private fetchOptions = {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0',
+      'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,us;q=0.5',
+      'Referer': 'https://www.69shu.xyz/', // Referer
+      'DNT': '1', // Do Not Track
+      'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
+    },
+  };
+
   id = '69shu';
   name = '69书吧';
   icon = 'src/cn/69shu/icon.png';
   site = 'https://www.69shu.xyz';
-  version = '0.2.0';
+  version = '0.2.2';
 
   async popularNovels(
     pageNo: number,
@@ -27,7 +40,7 @@ class Shu69 implements Plugin.PluginBase {
       url = `${this.site}/sort/${filters.sort.value}/${pageNo}.html`;
     }
 
-    const body = await fetchText(url);
+    const body = await fetchText(url, this.fetchOptions);
     if (body === '') throw Error('无法获取小说列表，请检查网络');
 
     const loadedCheerio = parseHTML(body);
@@ -44,7 +57,7 @@ class Shu69 implements Plugin.PluginBase {
       const novel = {
         name: novelName,
         cover: novelCover,
-        path: url,
+        path: url.replace(this.site, ''),
       };
 
       novels.push(novel);
@@ -56,7 +69,7 @@ class Shu69 implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
 
-    const body = await fetchText(url);
+    const body = await fetchText(url, this.fetchOptions);
     if (body === '') throw Error('无法获取小说内容，请检查网络');
 
     const loadedCheerio = parseHTML(body);
@@ -88,43 +101,100 @@ class Shu69 implements Plugin.PluginBase {
 
     const allUrl = loadedCheerio('dd.all > a').attr('href');
     if (allUrl) {
-      const chaptersUrl = this.site + allUrl;
-      const chaptersBody = await fetchText(chaptersUrl);
+      // --- Start: Fetch chapters with pagination (Sequential) ---
+      let currentChaptersUrl = new URL(allUrl, this.site).toString();
+      let hasMorePages = true;
 
-      const chaptersLoadedCheerio = parseHTML(chaptersBody);
+      while (hasMorePages) {
+        const chaptersBody = await fetchText(
+          currentChaptersUrl,
+          this.fetchOptions,
+        );
+        const chaptersLoadedCheerio = parseHTML(chaptersBody);
 
-      chaptersLoadedCheerio('dd').each((i, el) => {
-        const chapterUrl = chaptersLoadedCheerio(el).find('a').attr('href');
-        const chapterName = chaptersLoadedCheerio(el).find('a').text().trim();
-        if (chapterUrl) {
-          chapters.push({
-            name: chapterName,
-            path: chapterUrl,
-          });
+        // Extract chapters from the current page
+        chaptersLoadedCheerio('dl.panel-chapterlist dd').each((i, el) => {
+          const chapterUrl = chaptersLoadedCheerio(el).find('a').attr('href');
+          const chapterName = chaptersLoadedCheerio(el).find('a').text().trim();
+          if (chapterUrl) {
+            // Ensure relative path, handle both absolute/relative cases
+            const relativeChapterUrl = chapterUrl.startsWith('http')
+              ? chapterUrl.replace(this.site, '')
+              : chapterUrl;
+            // Avoid duplicates if the same chapter appears on multiple pages (unlikely but safe)
+            if (!chapters.some(chap => chap.path === relativeChapterUrl)) {
+              chapters.push({
+                name: chapterName,
+                path: relativeChapterUrl,
+              });
+            }
+          }
+        });
+
+        // Find the link to the next page using the text "下一页"
+        const nextPageLinkElement = chaptersLoadedCheerio(
+          'div.listpage a.onclick',
+        ).filter((i, el) =>
+          chaptersLoadedCheerio(el).text().includes('下一页'),
+        );
+        const nextPageLink = nextPageLinkElement.attr('href');
+
+        if (nextPageLink && nextPageLink !== 'javascript:void(0);') {
+          // Check if it's a valid relative or absolute URL before creating the URL object
+          try {
+            const absoluteNextPageUrl = new URL(
+              nextPageLink,
+              this.site,
+            ).toString();
+            if (absoluteNextPageUrl === currentChaptersUrl) {
+              // Break if the next page URL is the same as the current one (prevents infinite loops)
+              hasMorePages = false;
+            } else {
+              currentChaptersUrl = absoluteNextPageUrl;
+            }
+          } catch (e) {
+            // Handle cases where the link might be invalid or unexpected
+            console.warn(`Invalid next page link found: ${nextPageLink}`);
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
         }
-      });
+      }
+      // --- End: Fetch chapters with pagination (Sequential) ---
     } else {
+      // Fallback if no "all chapters" link is found
       loadedCheerio(
         'div.panel.hidden-xs > dl.panel-chapterlist:nth-child(2) > dd',
       ).each((i, el) => {
         const chapterUrl = loadedCheerio(el).find('a').attr('href');
         const chapterName = loadedCheerio(el).find('a').text().trim();
         if (chapterUrl) {
+          const relativeChapterUrl = chapterUrl.startsWith('http')
+            ? chapterUrl.replace(this.site, '')
+            : chapterUrl;
           chapters.push({
             name: chapterName,
-            path: chapterUrl,
+            path: relativeChapterUrl,
           });
         }
       });
     }
 
-    novel.chapters = chapters;
+    // Remove duplicates just in case (though less likely with sequential fetching)
+    const uniqueChapters = chapters.filter(
+      (chapter, index, self) =>
+        index === self.findIndex(c => c.path === chapter.path),
+    );
+
+    novel.chapters = uniqueChapters;
 
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const body = await fetchText(this.site + chapterPath);
+    const chapterUrl = new URL(chapterPath, this.site).toString();
+    const body = await fetchText(chapterUrl, this.fetchOptions); // Header hinzugefügt
 
     const loadedCheerio = parseHTML(body);
 
@@ -150,10 +220,16 @@ class Shu69 implements Plugin.PluginBase {
     const formData = new FormData();
     formData.append('searchkey', searchTerm);
 
-    const body = await fetchText(searchUrl, {
+    const searchOptions = {
+      ...this.fetchOptions,
       method: 'post',
       body: formData,
-    });
+      headers: {
+        ...this.fetchOptions.headers,
+      },
+    };
+
+    const body = await fetchText(searchUrl, searchOptions);
     if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
     const loadedCheerio = parseHTML(body);
@@ -171,7 +247,7 @@ class Shu69 implements Plugin.PluginBase {
       const novel = {
         name: novelName,
         cover: novelCover,
-        path: url,
+        path: url.replace(this.site, ''),
       };
 
       novels.push(novel);

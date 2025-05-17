@@ -1,15 +1,26 @@
-/* eslint-disable no-case-declarations */
-import { load as parseHTML } from 'cheerio';
+import { CheerioAPI, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { NovelStatus } from '@libs/novelStatus';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';
   name = 'Novel Fire';
-  version = '1.0.2';
+  version = '1.0.4';
   icon = 'src/en/novelfire/icon.png';
   site = 'https://novelfire.net/';
+
+  async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
+    const r = await fetchApi(url);
+    if (!r.ok && search != true)
+      throw new Error(
+        'Could not reach site (' + r.status + ') try to open in webview.',
+      );
+    const $ = load(await r.text());
+
+    return $;
+  }
 
   async popularNovels(
     pageNo: number,
@@ -38,12 +49,10 @@ class NovelFire implements Plugin.PluginBase {
       params.append('page', pageNo.toString());
       url += `?${params.toString()}`;
     } else {
-      url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=all-time-rank&page=${pageNo}`;
+      url += `?ctgcon=and&totalchapter=0&ratcon=min&rating=0&status=-1&sort=rank-top&page=${pageNo}`;
     }
 
-    const result = await fetchApi(url);
-    const body = await result.text();
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = await this.getCheerio(url, false);
 
     return loadedCheerio('.novel-item')
       .map((index, ele) => {
@@ -82,7 +91,7 @@ class NovelFire implements Plugin.PluginBase {
       const result = await fetchApi(url);
       const body = await result.text();
 
-      const loadedCheerio = parseHTML(body);
+      const loadedCheerio = load(body);
 
       if (loadedCheerio.text().includes('You are being rate limited')) {
         throw new NovelFireThrottlingError();
@@ -159,44 +168,63 @@ class NovelFire implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const url = this.site + novelPath;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const $ = await this.getCheerio(this.site + novelPath, false);
+    const baseUrl = this.site;
 
-    const loadedCheerio = parseHTML(body);
-
-    const novel: Plugin.SourceNovel = {
+    const novel: Partial<Plugin.SourceNovel> = {
       path: novelPath,
-      name: loadedCheerio('.novel-title').text() || 'No Title Found',
-      cover: loadedCheerio('.cover > img').attr('data-src'),
-      genres: loadedCheerio('.categories .property-item')
-        .map((i, el) => loadedCheerio(el).text())
-        .toArray()
-        .join(','),
-      summary:
-        loadedCheerio('.summary .content .txt')
-          .html()!
-          .replace(/<\/p>/g, '\n\n')
-          .replace(/<br\s*\/?>/gi, '\n')
-          .replace(/<[^>]+>/g, '')
-          .trim() || 'No Summary Found',
-      author:
-        loadedCheerio('.author .property-item > span').text() ||
-        'No Author Found',
-      status:
-        loadedCheerio('.header-stats .ongoing').text() ||
-        loadedCheerio('.header-stats .completed').text() ||
-        'No Status Found',
     };
 
-    const totalChapters = loadedCheerio('.header-stats .icon-book-open')
+    novel.name =
+      $('.novel-title').text().trim() ??
+      $('.cover > img').attr('alt') ??
+      'No Titled Found';
+    const coverUrl =
+      $('.cover > img').attr('data-src') ?? $('.cover > img').attr('src');
+
+    if (coverUrl) {
+      novel.cover = new URL(coverUrl, baseUrl).href;
+    }
+
+    novel.genres = $('.categories .property-item')
+      .map((i, el) => $(el).text())
+      .toArray()
+      .join(',');
+
+    let summary = $('.summary .content').text().trim();
+
+    if (summary) {
+      summary = summary.replace('Show More', '');
+      novel.summary = summary;
+    } else {
+      novel.summary = 'No Summary Found';
+    }
+
+    novel.author =
+      $('.author .property-item > span').text() || 'No Author Found';
+
+    const rawStatus =
+      $('.header-stats .ongoing').text() ||
+      $('.header-stats .completed').text() ||
+      'Unknown';
+    const map: Record<string, string> = {
+      ongoing: NovelStatus.Ongoing,
+      hiatus: NovelStatus.OnHiatus,
+      dropped: NovelStatus.Cancelled,
+      cancelled: NovelStatus.Cancelled,
+      completed: NovelStatus.Completed,
+      unknown: NovelStatus.Unknown,
+    };
+    novel.status = map[rawStatus.toLowerCase()] ?? NovelStatus.Unknown;
+
+    const totalChapters = $('.header-stats .icon-book-open')
       .parent()
       .text()
       .trim();
     const pages = Math.ceil(parseInt(totalChapters) / 100);
     novel.chapters = await this.parseChapters(novelPath, pages);
 
-    return novel;
+    return novel as Plugin.SourceNovel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
@@ -204,7 +232,7 @@ class NovelFire implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = load(body);
 
     const bloatElements = [
       '.box-ads',
@@ -234,7 +262,7 @@ class NovelFire implements Plugin.PluginBase {
     const result = await fetchApi(url);
     const body = await result.text();
 
-    const loadedCheerio = parseHTML(body);
+    const loadedCheerio = load(body);
 
     return loadedCheerio('.novel-list.chapters .novel-item')
       .map((index, ele) => {
@@ -260,16 +288,16 @@ class NovelFire implements Plugin.PluginBase {
   filters = {
     sort: {
       label: 'Sort Results By',
-      value: 'all-time-rank',
+      value: 'rank-top',
       options: [
-        { label: 'All Time Rank', value: 'all-time-rank' },
-        { label: 'Monthly Rank', value: 'monthly-rank' },
-        { label: 'Daily Rank', value: 'daily-rank' },
+        { label: 'Rank (Top)', value: 'rank-top' },
+        { label: 'Rating Score (Top)', value: 'rating-score-top' },
         { label: 'Bookmark Count (Most)', value: 'bookmark' },
         { label: 'Review Count (Most)', value: 'review' },
-        { label: 'Last Updated (Newest)', value: 'date' },
         { label: 'Title (A>Z)', value: 'abc' },
         { label: 'Title (Z>A)', value: 'cba' },
+        { label: 'Last Updated (Newest)', value: 'date' },
+        { label: 'Chapter Count (Most)', value: 'chapter-count-most' },
       ],
       type: FilterTypes.Picker,
     },
