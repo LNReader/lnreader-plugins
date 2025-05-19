@@ -31,5 +31,21 @@
     "options": {
       "browsePage": "novels"
     }
+  },
+  {
+    "id": "prizmatranslation",
+    "sourceSite": "https://prizmatranslation.com",
+    "sourceName": "Prizma",
+    "options": {
+      "browsePage": "home/all-novels"
+    }
+  },
+  {
+    "id": "dearestrosalie",
+    "sourceSite": "https://dearestrosalie.com",
+    "sourceName": "Dearest Rosalie",
+    "options": {
+      "browsePage": "stories"
+    }
   }
 ]

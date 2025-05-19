@@ -1,15 +1,5 @@
 [
   {
-    "id": "boxnovel",
-    "sourceSite": "https://novgo.co/",
-    "sourceName": "BoxNovel",
-    "options": {
-      "useNewChapterEndpoint": true,
-      "customJs": "chapterText.find('div:has(a)').remove()",
-      "versionIncrements": 6
-    }
-  },
-  {
     "id": "novelTL",
     "sourceSite": "https://noveltranslate.com/",
     "sourceName": "NovelTranslate",
@@ -541,5 +531,32 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "WebNovelTraslation",
+    "sourceSite": "https://webnoveltranslations.com/",
+    "sourceName": "Web Novel Translation",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "AnimesHoy12",
+    "sourceSite": "https://animeshoy12.com/",
+    "sourceName": "AnimesHoy12",
+    "options": {
+      "lang": "Spanish"
+    }
+  },
+  {
+    "id": "Kakikata",
+    "sourceSite": "https://kakikata.com.tr/",
+    "sourceName": "kakikata",
+    "options": {
+      "lang": "Turkish",
+      "useNewChapterEndpoint": true
+    }
   }
+
 ]
