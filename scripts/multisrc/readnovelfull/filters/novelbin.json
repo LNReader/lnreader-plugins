@@ -1,0 +1,263 @@
+{
+  "filters": {
+    "type": {
+      "type": "Picker",
+      "label": "Novel Listing",
+      "value": "sort/top-view-novel",
+      "options": [
+        {
+          "label": "Hot Novel",
+          "value": "sort/top-hot-novel"
+        },
+        {
+          "label": "Completed Novel",
+          "value": "sort/completed"
+        },
+        {
+          "label": "Most Popular",
+          "value": "sort/top-view-novel"
+        }
+      ]
+    },
+    "genres": {
+      "type": "Picker",
+      "label": "Genre (Cancels out 'Novel Listing')",
+      "value": "",
+      "options": [
+        {
+          "label": "Action",
+          "value": "genre/action"
+        },
+        {
+          "label": "Adventure",
+          "value": "genre/adventure"
+        },
+        {
+          "label": "Anime & comics",
+          "value": "genre/anime-&-comics"
+        },
+        {
+          "label": "Comedy",
+          "value": "genre/comedy"
+        },
+        {
+          "label": "Drama",
+          "value": "genre/drama"
+        },
+        {
+          "label": "Eastern",
+          "value": "genre/eastern"
+        },
+        {
+          "label": "Fan-fiction",
+          "value": "genre/fan-fiction"
+        },
+        {
+          "label": "Fanfiction",
+          "value": "genre/fanfiction"
+        },
+        {
+          "label": "Fantasy",
+          "value": "genre/fantasy"
+        },
+        {
+          "label": "Game",
+          "value": "genre/game"
+        },
+        {
+          "label": "Games",
+          "value": "genre/games"
+        },
+        {
+          "label": "Gender bender",
+          "value": "genre/gender-bender"
+        },
+        {
+          "label": "General",
+          "value": "genre/general"
+        },
+        {
+          "label": "Harem",
+          "value": "genre/harem"
+        },
+        {
+          "label": "Historical",
+          "value": "genre/historical"
+        },
+        {
+          "label": "Horror",
+          "value": "genre/horror"
+        },
+        {
+          "label": "Isekai",
+          "value": "genre/isekai"
+        },
+        {
+          "label": "Josei",
+          "value": "genre/josei"
+        },
+        {
+          "label": "Litrpg",
+          "value": "genre/litrpg"
+        },
+        {
+          "label": "Magic",
+          "value": "genre/magic"
+        },
+        {
+          "label": "Magical realism",
+          "value": "genre/magical-realism"
+        },
+        {
+          "label": "Martial arts",
+          "value": "genre/martial-arts"
+        },
+        {
+          "label": "Mature",
+          "value": "genre/mature"
+        },
+        {
+          "label": "Mecha",
+          "value": "genre/mecha"
+        },
+        {
+          "label": "Military",
+          "value": "genre/military"
+        },
+        {
+          "label": "Modern life",
+          "value": "genre/modern-life"
+        },
+        {
+          "label": "Myster",
+          "value": "genre/myster"
+        },
+        {
+          "label": "Mystery",
+          "value": "genre/mystery"
+        },
+        {
+          "label": "Other",
+          "value": "genre/other"
+        },
+        {
+          "label": "Other",
+          "value": "genre/other"
+        },
+        {
+          "label": "Psychological",
+          "value": "genre/psychological"
+        },
+        {
+          "label": "Reincarnation",
+          "value": "genre/reincarnation"
+        },
+        {
+          "label": "Romance",
+          "value": "genre/romance"
+        },
+        {
+          "label": "Romance.smut",
+          "value": "genre/romance.smut"
+        },
+        {
+          "label": "School life",
+          "value": "genre/school-life"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "genre/sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "genre/seinen"
+        },
+        {
+          "label": "Shoujo",
+          "value": "genre/shoujo"
+        },
+        {
+          "label": "Shoujo ai",
+          "value": "genre/shoujo-ai"
+        },
+        {
+          "label": "Shounen",
+          "value": "genre/shounen"
+        },
+        {
+          "label": "Shounen ai",
+          "value": "genre/shounen-ai"
+        },
+        {
+          "label": "Slice of life",
+          "value": "genre/slice-of-life"
+        },
+        {
+          "label": "Smut",
+          "value": "genre/smut"
+        },
+        {
+          "label": "Sports",
+          "value": "genre/sports"
+        },
+        {
+          "label": "Supernatural",
+          "value": "genre/supernatural"
+        },
+        {
+          "label": "System",
+          "value": "genre/system"
+        },
+        {
+          "label": "Thriller",
+          "value": "genre/thriller"
+        },
+        {
+          "label": "Tragedy",
+          "value": "genre/tragedy"
+        },
+        {
+          "label": "Urban",
+          "value": "genre/urban"
+        },
+        {
+          "label": "Urban life",
+          "value": "genre/urban-life"
+        },
+        {
+          "label": "Video games",
+          "value": "genre/video-games"
+        },
+        {
+          "label": "War",
+          "value": "genre/war"
+        },
+        {
+          "label": "Wuxia",
+          "value": "genre/wuxia"
+        },
+        {
+          "label": "Xianxia",
+          "value": "genre/xianxia"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "genre/xuanhuan"
+        },
+        {
+          "label": "Yaoi",
+          "value": "genre/yaoi"
+        },
+        {
+          "label": "Yuri",
+          "value": "genre/yuri"
+        }
+      ]
+    },
+    "complete": {
+      "type": "Switch",
+      "label": "Show Completed Novels Only",
+      "value": false
+    }
+  }
+}
