@@ -2,14 +2,17 @@ import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
+import { storage } from '@libs/storage';
 
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.0';
+  version = '0.10.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
+
+  syncChapter = storage.get('syncChapter');
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -899,6 +902,34 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterCheerio.html()!;
   }
 
+  async handleChapterEvent(
+    novelPath: string,
+    chapter: Plugin.ChapterItem,
+  ): Promise<boolean> {
+    try {
+      // Get HTML content
+      const result = await fetchApi(this.site + novelPath);
+      const body = await result.text();
+      const loadedCheerio = parseHTML(body);
+
+      // Extract IDs
+      const shortlink = loadedCheerio('link[rel="shortlink"]').attr('href');
+      const novelId = shortlink?.match(/\?p=(\d+)/)?.[1];
+      const chapterId = chapter.path.match(/\/(\d+)\//)?.[1];
+
+      // Validation
+      if (!novelId || !chapterId) return false;
+
+      // Chapter sync
+      const syncUrl = `${this.site}readinglist_update.php?rid=${chapterId}&sid=${novelId}&checked=yes`;
+      await fetchApi(syncUrl);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async searchNovels(
     searchTerm: string,
     page: number,
@@ -1054,6 +1085,14 @@ class NovelUpdates implements Plugin.PluginBase {
       type: FilterTypes.CheckboxGroup,
     },
   } satisfies Filters;
+
+  pluginSettings = {
+    syncChapter: {
+      value: '',
+      label: 'Sync chapter progress with plugin site',
+      type: 'Switch',
+    },
+  };
 }
 
 export default new NovelUpdates();

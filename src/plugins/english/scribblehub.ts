@@ -3,13 +3,16 @@ import { fetchApi } from '@libs/fetch';
 import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import dayjs from 'dayjs';
+import { storage } from '@libs/storage';
 
 class ScribbleHubPlugin implements Plugin.PluginBase {
   id = 'scribblehub';
   name = 'Scribble Hub';
   icon = 'src/en/scribblehub/icon.png';
   site = 'https://www.scribblehub.com/';
-  version = '1.0.2';
+  version = '1.1.0';
+
+  syncChapter = storage.get('syncChapter');
 
   parseNovels(loadedCheerio: CheerioAPI) {
     const novels: Plugin.NovelItem[] = [];
@@ -176,6 +179,36 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
     return chapterText;
   }
 
+  async handleChapterEvent(
+    novelPath: string,
+    chapter: Plugin.ChapterItem,
+  ): Promise<boolean> {
+    try {
+      // Extract IDs from paths
+      const novelId = novelPath.match(/series\/(\d+)\//)?.[1];
+      const chapterId = chapter.path.match(/chapter\/(\d+)\//)?.[1];
+
+      // Validation
+      if (!novelId || !chapterId) return false;
+
+      const formData = new FormData();
+      formData.append('action', 'wi_addchangerl');
+      formData.append('strCID', chapterId);
+      formData.append('strSID', novelId);
+
+      // Chapter sync
+      const syncUrl = `${this.site}wp-admin/admin-ajax.php`;
+      await fetchApi(syncUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const url = `${this.site}?s=${encodeURIComponent(searchTerm)}&post_type=fictionposts`;
     const result = await fetchApi(url);
@@ -298,6 +331,14 @@ class ScribbleHubPlugin implements Plugin.PluginBase {
       type: FilterTypes.ExcludableCheckboxGroup,
     },
   } satisfies Filters;
+
+  pluginSettings = {
+    syncChapter: {
+      value: '',
+      label: 'Sync chapter progress with plugin site',
+      type: 'Switch',
+    },
+  };
 }
 
 export default new ScribbleHubPlugin();
