@@ -206,7 +206,7 @@ class AuthorToday implements Plugin.PluginBase {
           if (tempChapter.path) {
             chapters?.push(tempChapter);
           }
-          tempChapter = {} as Plugin.NovelItem;
+          tempChapter = {} as Plugin.ChapterItem;
           isParsingChapter = false;
         }
       },
