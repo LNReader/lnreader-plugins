@@ -89,5 +89,14 @@
       "searchPage": "search",
       "chapterListing": "ajax-chapter-option"
     }
+  },
+  {
+    "id": "novelbin",
+    "sourceSite": "https://novelbin.com/",
+    "sourceName": "Novel Bin",
+    "options": {
+      "latestPage": "sort/latest",
+      "searchPage": "search"
+    }
   }
 ]
