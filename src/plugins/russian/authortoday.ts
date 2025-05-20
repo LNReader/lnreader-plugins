@@ -11,7 +11,6 @@ class AuthorToday implements Plugin.PluginBase {
   name = 'Автор Тудей';
   icon = 'src/ru/authortoday/icon.png';
   site = 'https://author.today';
-  imageSite = 'https://cm.author.today/content/';
   version = '1.2.0';
 
   private userAgent =
@@ -218,6 +217,12 @@ class AuthorToday implements Plugin.PluginBase {
     if (!novel.cover) {
       novel.cover = defaultCover;
     }
+    if (!chapters.length) {
+      chapters.push({
+        name: 'Рассказ',
+        path: workID,
+      });
+    }
     novel.chapters = chapters;
     return novel;
   }
@@ -227,10 +232,15 @@ class AuthorToday implements Plugin.PluginBase {
       headers: { 'User-Agent': this.userAgent },
     }).then(res => res.text());
 
+    let [workID, chapterID] = chapterPath.split('/');
     const userRaw = html.match(/userId:(.*?),/)?.[1]?.trim();
     const userId = userRaw === 'null' ? '' : userRaw;
 
-    const [workID, chapterID] = chapterPath.split('/');
+    if (!chapterID) {
+      chapterID = html.match(/chapterId:(.*?),/)?.[1]?.trim() || '';
+    }
+    if (!chapterID) throw new Error('Chapter ID not found');
+
     const chapter = await fetchApi(
       this.site + '/reader/' + workID + '/chapter?id=' + chapterID,
       {
@@ -428,13 +438,13 @@ function decrypt(
   return text;
 }
 
-interface Result {
+type Result = {
   isSuccessful: boolean;
   isWarning: boolean;
   messages: string | null;
   data: Data;
-}
+};
 
-interface Data {
+type Data = {
   text: string;
-}
+};
