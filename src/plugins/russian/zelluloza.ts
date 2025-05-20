@@ -9,7 +9,7 @@ class Zelluloza implements Plugin.PluginBase {
   id = 'zelluloza';
   name = 'Целлюлоза';
   site = 'https://zelluloza.ru';
-  version = '1.0.2';
+  version = '1.0.3';
   icon = 'src/ru/zelluloza/icon.png';
 
   async popularNovels(
@@ -21,17 +21,28 @@ class Zelluloza implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const sort = showLatestNovels ? '0' : filters?.sort?.value || '3';
 
-    const path = filters?.genres?.value
-      ? `/search/genres/${filters.genres.value}/?page=${pageNo}`
-      : `/top/freebooks/?sort_order=${sort}&page=${pageNo}`;
+    const genres = filters?.genres?.value || '0';
 
-    const body = await fetchApi(this.site + path).then(res => res.text());
+    const body = await fetchApi(this.site + '/ajaxcall/', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Referer: this.site + '/search/done/#result',
+        Origin: this.site,
+      },
+      method: 'POST',
+      body: new URLSearchParams({
+        op: 'morebooks',
+        par1: '',
+        par2: `206:0:${genres}:0.${sort}.0.0.0.0.0.0.0.0.0.0.0..0..:${pageNo}`,
+        par4: '',
+      }).toString(),
+    }).then(res => res.text());
     const loadedCheerio = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('section[class="book-card-item"]').each((index, element) => {
+    loadedCheerio('div[style="display: flex;"]').each((index, element) => {
       novels.push({
-        name: loadedCheerio(element).find('span[itemprop="name"]').text() || '',
+        name: loadedCheerio(element).find('a[class="txt"]').attr('title') || '',
         cover:
           this.site +
           loadedCheerio(element).find('img[class="shadow"]').attr('src'),
@@ -45,7 +56,7 @@ class Zelluloza implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const body = await fetchApi(this.resolveUrl(novelPath, true)).then(res =>
+    const body = await fetchApi(this.resolveUrl(novelPath)).then(res =>
       res.text(),
     );
     const loadedCheerio = parseHTML(body);
@@ -54,7 +65,10 @@ class Zelluloza implements Plugin.PluginBase {
       path: novelPath,
       name: loadedCheerio('h2[class="bookname"]').text().trim(),
       cover: this.site + loadedCheerio('img[class="shadow"]').attr('src'),
-      genres: loadedCheerio('.gnres').text()?.split?.(': ')?.[1],
+      genres: loadedCheerio('.gnres span[itemprop="genre"]')
+        .map((index, element) => loadedCheerio(element).text())
+        .get()
+        .join(','),
       summary:
         loadedCheerio('#bann_full').text() ||
         loadedCheerio('#bann_short').text(),
@@ -153,7 +167,7 @@ class Zelluloza implements Plugin.PluginBase {
 
     loadedCheerio('div[style="display: flex;"]').each((index, element) => {
       novels.push({
-        name: loadedCheerio(element).find('span[itemprop="name"]').text() || '',
+        name: loadedCheerio(element).find('a[class="txt"]').attr('title') || '',
         cover:
           this.site +
           loadedCheerio(element).find('img[class="shadow"]').attr('src'),
@@ -191,6 +205,7 @@ class Zelluloza implements Plugin.PluginBase {
         { label: 'По длительности чтения', value: '1' },
         { label: 'По количеству читателей', value: '2' },
         { label: 'По популярности', value: '4' },
+        { label: 'Самые продаваемые', value: '5' },
       ],
       type: FilterTypes.Picker,
     },
