@@ -17,7 +17,7 @@ class Neobook implements Plugin.PluginBase {
   name = 'Neobook';
   site = 'https://neobook.org';
   apiSite = 'https://api.neobook.org/';
-  version = '1.0.1';
+  version = '1.0.2';
   icon = 'src/ru/neobook/icon.png';
 
   async fetchNovels(
@@ -29,7 +29,7 @@ class Neobook implements Plugin.PluginBase {
     searchTerm?: string,
   ): Promise<Plugin.NovelItem[]> {
     const formData = new FormData();
-    formData.append('version', '4.0');
+    formData.append('version', '4.4');
     formData.append('uid', '0');
     formData.append('utoken', '');
     formData.append('resource', 'general');
@@ -52,6 +52,7 @@ class Neobook implements Plugin.PluginBase {
       {
         method: 'post',
         body: formData,
+        referrer: this.site,
       },
     ).then(res => res.json());
     const novels: Plugin.NovelItem[] = [];

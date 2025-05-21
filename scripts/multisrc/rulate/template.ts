@@ -102,7 +102,7 @@ class RulatePlugin implements Plugin.PluginBase {
         'src',
       );
     novel.summary = loadedCheerio(
-      '#Info > div:nth-child(3), .book__description',
+      '#Info > div:nth-child(4) > p:nth-child(1), .book__description',
     )
       .text()
       .trim();

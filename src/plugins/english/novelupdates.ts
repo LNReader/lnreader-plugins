@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.0';
+  version = '0.9.1';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -799,7 +799,7 @@ class NovelUpdates implements Plugin.PluginBase {
             '.sidebar',
             '.swg-button-v2-light',
             '.wp-block-buttons',
-            '.wp-block-columns',
+            //'.wp-block-columns',
             '.wp-dark-mode-switcher',
             '.wp-next-post-navi',
             '#hpk',
