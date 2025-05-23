@@ -5,8 +5,8 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// https://app.novelcool.com/
 const app = {
-  // https://app.novelcool.com/
   userAgent:
     'Android/Package:com.zuoyou.novel - Version Name:2.3 - Phone Info:sdk_gphone_x86_64(Android Version:13)',
   package_name: 'com.zuoyou.novel',
@@ -33,7 +33,7 @@ export default plugin;
     `.trim();
 
   return {
-    lang: source.options?.lang || 'English',
+    lang: source.options.lang,
     filename: source.sourceName,
     pluginScript,
   };
