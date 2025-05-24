@@ -6,39 +6,9 @@
     "options": { "lang": "English", "langCode": "en" }
   },
   {
-    "id": "novelcool-es",
-    "sourceName": "NovelCool (ES)",
-    "sourceSite": "https://es.novelcool.com",
-    "options": { "lang": "Spanish", "langCode": "es" }
-  },
-  {
-    "id": "novelcool-pt",
-    "sourceName": "NovelCool (PT)",
-    "sourceSite": "https://br.novelcool.com",
-    "options": { "lang": "Portuguese", "langCode": "br" }
-  },
-  {
-    "id": "novelcool-it",
-    "sourceName": "NovelCool (IT)",
-    "sourceSite": "https://it.novelcool.com",
-    "options": { "lang": "Italian", "langCode": "it" }
-  },
-  {
     "id": "novelcool-ru",
     "sourceName": "NovelCool (RU)",
     "sourceSite": "https://ru.novelcool.com",
     "options": { "lang": "Russian", "langCode": "ru" }
-  },
-  {
-    "id": "novelcool-de",
-    "sourceName": "NovelCool (DE)",
-    "sourceSite": "https://de.novelcool.com",
-    "options": { "lang": "German", "langCode": "de" }
-  },
-  {
-    "id": "novelcool-fr",
-    "sourceName": "NovelCool (FR)",
-    "sourceSite": "https://fr.novelcool.com",
-    "options": { "lang": "French", "langCode": "fr" }
   }
 ]
