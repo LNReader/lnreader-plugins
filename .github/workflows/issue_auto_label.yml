@@ -34,7 +34,7 @@ jobs:
       - name: Extract the plugin from issue body
         id: parse-issue
         run: |          
-          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | grep "### Plugin" -A 2 | tail -n 1 | sed 's/[[:space:]]*$//')
+          SELECTED_PLUGIN=$(echo "${{ github.event.issue.body }}" | awk '/### Plugin/ {f=1; next} f && NF {print; exit}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
           
           echo "SELECTED_PLUGIN=$SELECTED_PLUGIN" >> $GITHUB_ENV
 
