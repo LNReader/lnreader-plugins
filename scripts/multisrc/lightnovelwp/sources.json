@@ -16,7 +16,7 @@
       "lang": "Arabic",
       "reverseChapters": true,
       "customJs": "$('article > style').text().match(/\\.\\w+(?=\\s*[,{])/g)?.forEach(tag => $(`p${tag}`).remove());$('.epcontent .code-block').remove();",
-      "versionIncrements": 7
+      "versionIncrements": 8
     }
   },
   {
