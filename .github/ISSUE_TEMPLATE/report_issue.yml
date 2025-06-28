@@ -1,3 +1,6 @@
+# DO NOT EDIT
+# THIS FILE IS AUTO GENERATED FROM blank_report_issue.yml in the .github/scripts folder.
+
 name: Issue report
 description: Report a source issue in LNReader
 labels: [Bug]
@@ -232,7 +235,6 @@ body:
         - "Türkçe: NABİ SCANS"
         - "Türkçe: Namevt"
         - "Türkçe: Novel oku"
-        - "Türkçe: Novelokutr"
         - "Türkçe: NovelTR"
         - "Türkçe: Ragnar Scans"
         - "Türkçe: ThNovels"
@@ -307,7 +309,18 @@ body:
       description: |
         You can find your LNReader version in **More → About**.
       placeholder: |
-        Example: "1.1.19"
+        Example: "2.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: |
+        You can find your Plugin version in **Browse → Installed** and scrolling to the desired source.
+      placeholder: |
+        Example: "1.0.1"
     validations:
       required: true
 
@@ -318,7 +331,7 @@ body:
       description: |
         You can find this somewhere in your Android settings.
       placeholder: |
-        Example: "Android 11"
+        Example: "Android 15"
     validations:
       required: true
 
@@ -339,7 +352,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have updated the app to version **[1.1.19](https://github.com/LNReader/lnreader/releases/latest)**.
+        - label: I have updated the app to version **[2.0.0](https://github.com/LNReader/lnreader/releases/tag/v2.0.0-beta.3).**
           required: true
         - label: I have updated all installed extensions.
           required: true
