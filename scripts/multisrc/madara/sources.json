@@ -461,15 +461,6 @@
     }
   },
   {
-    "id": "novelokutr",
-    "sourceSite": "https://novelokutr.net/",
-    "sourceName": "Novelokutr",
-    "options": {
-      "useNewChapterEndpoint": true,
-      "lang": "Turkish"
-    }
-  },
-  {
     "id": "wooksteahouse",
     "sourceSite": "https://wooksteahouse.com/",
     "sourceName": "Wook's Teahouse",
@@ -558,5 +549,4 @@
       "useNewChapterEndpoint": true
     }
   }
-
 ]
