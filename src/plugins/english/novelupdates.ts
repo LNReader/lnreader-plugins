@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.5';
+  version = '0.10.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -718,13 +718,26 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterText;
     try {
       const requestUrl = this.site + chapterPath;
+      console.log('Request URL:', requestUrl);
+      console.log('Fetch Options:', this.fetchOptions);
 
       // Perform a HEAD request to get the redirected URL
-      const headResponse = await fetchApi(requestUrl, {
-        ...this.fetchOptions,
-        method: 'HEAD',
-      });
-      const redirectedUrl = headResponse.url;
+      let redirectedUrl;
+      try {
+        const headResponse = await fetchApi(requestUrl, {
+          ...this.fetchOptions,
+          method: 'HEAD',
+        });
+        redirectedUrl = headResponse.url;
+        console.log('Redirected URL:', redirectedUrl);
+      } catch (error) {
+        const err = error as any;
+        console.error('HEAD Request Error:', {
+          message: err.message,
+          stack: err.stack,
+        });
+        throw new Error(`Failed to resolve redirect: ${err.message}`);
+      }
 
       // Enhance headers for the target site
       const enhancedFetchOptions = {
@@ -745,13 +758,25 @@ class NovelUpdates implements Plugin.PluginBase {
         enhancedFetchOptions,
       );
 
+      const headersObj: Record<string, string> = {};
+      result?.headers.forEach((value, key) => {
+        headersObj[key] = value;
+      });
+      console.log('Response Headers:', headersObj);
+      console.log('Final URL:', result?.url);
+
       if (!result?.ok) {
-        throw new Error(`HTTP error: ${result?.status} ${result?.statusText}`);
+        throw new Error(
+          `HTTP error: ${result?.status} ${result?.statusText} (URL: ${result?.url})`,
+        );
       }
 
       const body = await result?.text();
+      console.log('Response Body (first 500 chars):', body.substring(0, 500));
+
       const loadedCheerio = parseHTML(body);
       const title = loadedCheerio('title').text().trim().toLowerCase();
+      console.log('Page Title:', title);
 
       const blockedTitles = [
         'bot verification',
@@ -761,6 +786,7 @@ class NovelUpdates implements Plugin.PluginBase {
         'you are being redirected...',
       ];
       if (blockedTitles.includes(title)) {
+        console.log('Falling back to webview for URL:', redirectedUrl);
         throw new Error(
           `Captcha detected, please open in webview: ${redirectedUrl}`,
         );
@@ -921,15 +947,31 @@ class NovelUpdates implements Plugin.PluginBase {
     options: any,
     maxRetries = 3,
   ): Promise<Response> {
+    let result;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const result = await fetchApi(url, options);
-        if (result.status === 0) {
-          throw new Error('Invalid response status: 0');
+        console.log(`Fetch Attempt ${attempt} for URL:`, url);
+        result = await fetchApi(url, options);
+        console.log('Response Status:', result?.status);
+
+        if (!result || result.status === 0 || result.status === undefined) {
+          throw new Error(
+            'Invalid response status: ' + (result?.status || 'undefined'),
+          );
         }
-        return result;
+        break; // Success, exit retry loop
       } catch (error) {
+        const err = error as any;
+        console.error(`Fetch Attempt ${attempt} Error:`, {
+          message: err.message,
+          stack: err.stack,
+        });
+
         if (attempt === maxRetries) {
+          console.log(
+            'Max retries reached, falling back to webview for URL:',
+            url,
+          );
           throw new Error(
             `Network request failed after ${maxRetries} attempts, please open in webview.`,
           );
@@ -937,7 +979,7 @@ class NovelUpdates implements Plugin.PluginBase {
         await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay between retries
       }
     }
-    throw new Error('Unreachable');
+    return result!;
   }
 
   private extractPlatformContent(
