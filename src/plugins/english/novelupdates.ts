@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.1';
+  version = '0.10.2';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -721,19 +721,50 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Request URL:', requestUrl);
       console.log('Fetch Options:', this.fetchOptions);
 
-      const result = await fetchApi(requestUrl, this.fetchOptions);
+      // Perform a HEAD request to get the redirected URL
+      let redirectedUrl;
+      try {
+        const headResponse = await fetchApi(requestUrl, {
+          ...this.fetchOptions,
+          method: 'HEAD',
+        });
+        redirectedUrl = headResponse.url;
+        console.log('Redirected URL:', redirectedUrl);
+      } catch (error) {
+        const err = error as any;
+        console.error('HEAD Request Error:', {
+          message: err.message,
+          stack: err.stack,
+        });
+        throw new Error(`Failed to resolve redirect: ${err.message}`);
+      }
+
+      // Enhance headers for the target site
+      const enhancedFetchOptions = {
+        headers: {
+          ...this.fetchOptions.headers,
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Referer': 'https://www.novelupdates.com/',
+        },
+      };
+
+      // Fetch the redirected URL
+      const result = await fetchApi(redirectedUrl, enhancedFetchOptions);
       console.log('Response Status:', result.status);
-
-      const headersObj: Record<string, string> = {};
-      result.headers.forEach((value, key) => {
-        headersObj[key] = value;
-      });
-      console.log('Response Headers:', headersObj);
-
-      console.log('Redirected URL:', result.url);
+      console.log(
+        'Response Headers:',
+        Object.fromEntries(result.headers.entries()),
+      );
+      console.log('Final URL:', result.url);
 
       if (!result.ok) {
-        throw new Error(`HTTP error: ${result.status} ${result.statusText}`);
+        throw new Error(
+          `HTTP error: ${result.status} ${result.statusText} (URL: ${result.url})`,
+        );
       }
 
       const body = await result.text();
@@ -751,7 +782,10 @@ class NovelUpdates implements Plugin.PluginBase {
         'you are being redirected...',
       ];
       if (blockedTitles.includes(title)) {
-        throw new Error('Captcha detected, please open in webview.');
+        console.log('Falling back to webview for URL:', redirectedUrl);
+        throw new Error(
+          `Captcha detected, please open in webview: ${redirectedUrl}`,
+        );
       }
 
       const url = result.url;
