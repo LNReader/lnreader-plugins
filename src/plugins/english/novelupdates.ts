@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.3';
+  version = '0.10.4';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -752,24 +752,54 @@ class NovelUpdates implements Plugin.PluginBase {
         },
       };
 
-      // Fetch the redirected URL
-      const result = await fetchApi(redirectedUrl, enhancedFetchOptions);
-      console.log('Response Status:', result.status);
+      // Retry fetch with delay to handle intermittent failures
+      let result;
+      const maxRetries = 3;
+      let attempt = 0;
+      while (attempt < maxRetries) {
+        try {
+          console.log(`Fetch Attempt ${attempt + 1} for URL:`, redirectedUrl);
+          result = await fetchApi(redirectedUrl, enhancedFetchOptions);
+          console.log('Response Status:', result.status);
+
+          if (result.status === 0) {
+            throw new Error('Invalid response status: 0');
+          }
+          break; // Success, exit retry loop
+        } catch (error) {
+          const err = error as any;
+          attempt++;
+          console.error(`Fetch Attempt ${attempt} Error:`, {
+            message: err.message,
+            stack: err.stack,
+          });
+          if (attempt === maxRetries) {
+            console.log(
+              'Max retries reached, falling back to webview for URL:',
+              redirectedUrl,
+            );
+            throw new Error(
+              `Network request failed after ${maxRetries} attempts, please open in webview.`,
+            );
+          }
+          await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay between retries
+        }
+      }
 
       const headersObj: Record<string, string> = {};
-      result.headers.forEach((value, key) => {
+      result?.headers.forEach((value, key) => {
         headersObj[key] = value;
       });
       console.log('Response Headers:', headersObj);
-      console.log('Final URL:', result.url);
+      console.log('Final URL:', result?.url);
 
-      if (!result.ok) {
+      if (!result?.ok) {
         throw new Error(
-          `HTTP error: ${result.status} ${result.statusText} (URL: ${result.url})`,
+          `HTTP error: ${result?.status} ${result?.statusText} (URL: ${result?.url})`,
         );
       }
 
-      const body = await result.text();
+      const body = await result?.text();
       console.log('Response Body (first 500 chars):', body.substring(0, 500));
 
       const loadedCheerio = parseHTML(body);
@@ -790,8 +820,8 @@ class NovelUpdates implements Plugin.PluginBase {
         );
       }
 
-      const url = result.url;
-      const domainParts = url.toLowerCase().split('/')[2].split('.');
+      const url = result?.url;
+      const domainParts = url?.toLowerCase().split('/')[2].split('.');
 
       // Detect platforms
       let isBlogspot = ['blogspot', 'blogger'].some(keyword =>
