@@ -747,7 +747,7 @@ class NovelUpdates implements Plugin.PluginBase {
           'Sec-Fetch-Mode': 'navigate',
           'Sec-Fetch-Site': 'none',
           'Sec-Fetch-User': '?1',
-          'Accept-Encoding': 'gzip, deflate, br',
+          'Accept-Encoding': 'gzip, deflate',
           'Referer': 'https://www.novelupdates.com/',
         },
       };
