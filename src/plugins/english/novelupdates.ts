@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.5';
+  version = '0.10.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -719,82 +719,49 @@ class NovelUpdates implements Plugin.PluginBase {
     try {
       const requestUrl = this.site + chapterPath;
       console.log('Request URL:', requestUrl);
-      console.log('Fetch Options:', this.fetchOptions);
 
-      const maxRetries = 3;
-
-      // Perform a GET request to get the redirected URL
-      let redirectedUrl;
-      let headAttempt = 0;
-
-      while (headAttempt < maxRetries) {
-        try {
-          console.log(
-            `Attempt ${headAttempt + 1} to resolve redirect for:`,
-            requestUrl,
-          );
-
-          // Use a GET request. It is much more reliable than HEAD.
-          const resolveRedirectResponse = await fetchApi(requestUrl, {
-            ...this.fetchOptions,
-            method: 'GET', // Use GET instead of HEAD
-          });
-
-          // The .url property will contain the final URL after all redirects
-          redirectedUrl = resolveRedirectResponse.url;
-          console.log('Successfully resolved Redirected URL:', redirectedUrl);
-          break; // Success, exit the loop
-        } catch (error) {
-          const err = error as any;
-          headAttempt++;
-          console.error(`Redirect Resolution Attempt ${headAttempt} Error:`, {
-            message: err.message,
-            stack: err.stack,
-          });
-
-          if (headAttempt >= maxRetries) {
-            console.error('Max retries reached for redirect resolution.');
-            throw new Error(
-              `Failed to resolve redirect for ${requestUrl} after ${maxRetries} attempts: ${err.message}`,
-            );
-          }
-          // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 1500));
-        }
-      }
-
-      // If redirectedUrl is still not set after retries, throw a definitive error.
-      if (!redirectedUrl) {
-        throw new Error(
-          'Could not determine the final URL after multiple attempts.',
-        );
-      }
-
-      // Enhance headers for the target site
+      // --- CORRECTED LOGIC: Build the full headers immediately ---
+      // These headers are needed from the very first request to pass anti-bot checks.
       const enhancedFetchOptions = {
+        ...this.fetchOptions, // Make sure your base options are included
+        method: 'GET', // We are only doing GET requests now
         headers: {
           ...this.fetchOptions.headers,
+          'Accept':
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+          'Accept-Encoding': 'gzip, deflate',
           'Sec-Fetch-Dest': 'document',
           'Sec-Fetch-Mode': 'navigate',
           'Sec-Fetch-Site': 'none',
           'Sec-Fetch-User': '?1',
-          'Accept-Encoding': 'gzip, deflate',
+          'Upgrade-Insecure-Requests': '1',
+          // This Referer is critical for many sites that check where traffic comes from.
           'Referer': 'https://www.novelupdates.com/',
         },
       };
+      console.log('Using Enhanced Fetch Options:', enhancedFetchOptions);
 
-      // Retry fetch with delay to handle intermittent failures
+      // --- A single, robust retry loop for the entire fetch process ---
       let result;
+      const maxRetries = 3;
       let attempt = 0;
       while (attempt < maxRetries) {
         try {
-          console.log(`Fetch Attempt ${attempt + 1} for URL:`, redirectedUrl);
-          result = await fetchApi(redirectedUrl, enhancedFetchOptions);
-          console.log('Response Status:', result.status);
+          console.log(`Fetch Attempt ${attempt + 1} for URL:`, requestUrl);
 
-          if (result.status === 0) {
-            throw new Error('Invalid response status: 0');
+          // The single fetch call now uses the *original* URL and the *enhanced* options.
+          // fetch will handle the redirects for us.
+          result = await fetchApi(requestUrl, enhancedFetchOptions);
+
+          console.log('Response Status:', result.status);
+          console.log('Final URL after redirects:', result.url); // This is your 'redirectedUrl'
+
+          if (!result.ok) {
+            throw new Error(
+              `HTTP error: ${result.status} ${result.statusText}`,
+            );
           }
+
           break; // Success, exit retry loop
         } catch (error) {
           const err = error as any;
@@ -803,36 +770,30 @@ class NovelUpdates implements Plugin.PluginBase {
             message: err.message,
             stack: err.stack,
           });
-          if (attempt === maxRetries) {
+          if (attempt >= maxRetries) {
             console.log(
               'Max retries reached, falling back to webview for URL:',
-              redirectedUrl,
+              requestUrl,
             );
             throw new Error(
-              `Network request failed after ${maxRetries} attempts, please open in webview.`,
+              `Network request failed after ${maxRetries} attempts. Please open in webview.`,
             );
           }
-          await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay between retries
+          await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay
         }
       }
 
+      // Since the loop only breaks on success, 'result' must be a valid response here.
       const headersObj: Record<string, string> = {};
       result?.headers.forEach((value, key) => {
         headersObj[key] = value;
       });
       console.log('Response Headers:', headersObj);
-      console.log('Final URL:', result?.url);
-
-      if (!result?.ok) {
-        throw new Error(
-          `HTTP error: ${result?.status} ${result?.statusText} (URL: ${result?.url})`,
-        );
-      }
 
       const body = await result?.text();
-      console.log('Response Body (first 500 chars):', body.substring(0, 500));
+      console.log('Response Body (first 500 chars):', body?.substring(0, 500));
 
-      const loadedCheerio = parseHTML(body);
+      const loadedCheerio = parseHTML(body || '');
       const title = loadedCheerio('title').text().trim().toLowerCase();
       console.log('Page Title:', title);
 
@@ -843,10 +804,10 @@ class NovelUpdates implements Plugin.PluginBase {
         'un instant...',
         'you are being redirected...',
       ];
-      if (blockedTitles.includes(title)) {
-        console.log('Falling back to webview for URL:', redirectedUrl);
+      if (blockedTitles.some(blocked => title.includes(blocked))) {
+        console.log('Falling back to webview for URL:', result?.url);
         throw new Error(
-          `Captcha detected, please open in webview: ${redirectedUrl}`,
+          `Captcha or bot-check detected, please open in webview: ${result?.url}`,
         );
       }
 
@@ -881,7 +842,7 @@ class NovelUpdates implements Plugin.PluginBase {
       ];
       if (
         !isWordPress &&
-        domainParts.some(wp => manualWordPress.includes(wp))
+        domainParts?.some(wp => manualWordPress.includes(wp))
       ) {
         isWordPress = true;
       }
@@ -903,7 +864,7 @@ class NovelUpdates implements Plugin.PluginBase {
         'vampiramtl',
         'zetrotranslation',
       ];
-      if (domainParts.some(d => outliers.includes(d))) {
+      if (domainParts?.some(d => outliers.includes(d))) {
         isWordPress = false;
         isBlogspot = false;
       }
@@ -951,8 +912,8 @@ class NovelUpdates implements Plugin.PluginBase {
       if (!isWordPress && !isBlogspot) {
         chapterText = await this.getChapterBody(
           loadedCheerio,
-          domainParts,
-          url,
+          domainParts || [],
+          url || '',
         );
       } else {
         const bloatElements = isBlogspot
@@ -1045,7 +1006,7 @@ class NovelUpdates implements Plugin.PluginBase {
       // Convert relative URLs to absolute
       chapterText = chapterText.replace(
         /href="\//g,
-        `href="${this.getLocation(result.url)}/`,
+        `href="${this.getLocation(result?.url || '')}/`,
       );
 
       // Process images
