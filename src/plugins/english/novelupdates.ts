@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.4';
+  version = '0.10.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -718,26 +718,13 @@ class NovelUpdates implements Plugin.PluginBase {
     let chapterText;
     try {
       const requestUrl = this.site + chapterPath;
-      console.log('Request URL:', requestUrl);
-      console.log('Fetch Options:', this.fetchOptions);
 
       // Perform a HEAD request to get the redirected URL
-      let redirectedUrl;
-      try {
-        const headResponse = await fetchApi(requestUrl, {
-          ...this.fetchOptions,
-          method: 'HEAD',
-        });
-        redirectedUrl = headResponse.url;
-        console.log('Redirected URL:', redirectedUrl);
-      } catch (error) {
-        const err = error as any;
-        console.error('HEAD Request Error:', {
-          message: err.message,
-          stack: err.stack,
-        });
-        throw new Error(`Failed to resolve redirect: ${err.message}`);
-      }
+      const headResponse = await fetchApi(requestUrl, {
+        ...this.fetchOptions,
+        method: 'HEAD',
+      });
+      const redirectedUrl = headResponse.url;
 
       // Enhance headers for the target site
       const enhancedFetchOptions = {
@@ -753,58 +740,18 @@ class NovelUpdates implements Plugin.PluginBase {
       };
 
       // Retry fetch with delay to handle intermittent failures
-      let result;
-      const maxRetries = 3;
-      let attempt = 0;
-      while (attempt < maxRetries) {
-        try {
-          console.log(`Fetch Attempt ${attempt + 1} for URL:`, redirectedUrl);
-          result = await fetchApi(redirectedUrl, enhancedFetchOptions);
-          console.log('Response Status:', result.status);
-
-          if (result.status === 0) {
-            throw new Error('Invalid response status: 0');
-          }
-          break; // Success, exit retry loop
-        } catch (error) {
-          const err = error as any;
-          attempt++;
-          console.error(`Fetch Attempt ${attempt} Error:`, {
-            message: err.message,
-            stack: err.stack,
-          });
-          if (attempt === maxRetries) {
-            console.log(
-              'Max retries reached, falling back to webview for URL:',
-              redirectedUrl,
-            );
-            throw new Error(
-              `Network request failed after ${maxRetries} attempts, please open in webview.`,
-            );
-          }
-          await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay between retries
-        }
-      }
-
-      const headersObj: Record<string, string> = {};
-      result?.headers.forEach((value, key) => {
-        headersObj[key] = value;
-      });
-      console.log('Response Headers:', headersObj);
-      console.log('Final URL:', result?.url);
+      const result = await this.fetchWithRetry(
+        redirectedUrl,
+        enhancedFetchOptions,
+      );
 
       if (!result?.ok) {
-        throw new Error(
-          `HTTP error: ${result?.status} ${result?.statusText} (URL: ${result?.url})`,
-        );
+        throw new Error(`HTTP error: ${result?.status} ${result?.statusText}`);
       }
 
       const body = await result?.text();
-      console.log('Response Body (first 500 chars):', body.substring(0, 500));
-
       const loadedCheerio = parseHTML(body);
       const title = loadedCheerio('title').text().trim().toLowerCase();
-      console.log('Page Title:', title);
 
       const blockedTitles = [
         'bot verification',
@@ -814,7 +761,6 @@ class NovelUpdates implements Plugin.PluginBase {
         'you are being redirected...',
       ];
       if (blockedTitles.includes(title)) {
-        console.log('Falling back to webview for URL:', redirectedUrl);
         throw new Error(
           `Captcha detected, please open in webview: ${redirectedUrl}`,
         );
@@ -925,83 +871,7 @@ class NovelUpdates implements Plugin.PluginBase {
           url,
         );
       } else {
-        const bloatElements = isBlogspot
-          ? ['.button-container', '.ChapterNav', '.ch-bottom', '.separator']
-          : [
-              '.ad',
-              '.author-avatar',
-              '.chapter-warning',
-              '.entry-meta',
-              '.ezoic-ad',
-              '.mb-center',
-              '.modern-footnotes-footnote__note',
-              '.patreon-widget',
-              '.post-cats',
-              '.pre-bar',
-              '.sharedaddy',
-              '.sidebar',
-              '.swg-button-v2-light',
-              '.wp-block-buttons',
-              //'.wp-block-columns',
-              '.wp-dark-mode-switcher',
-              '.wp-next-post-navi',
-              '#hpk',
-              '#jp-post-flair',
-              '#textbox',
-            ];
-
-        bloatElements.forEach(tag => loadedCheerio(tag).remove());
-
-        // Extract title
-        const titleSelectors = isBlogspot
-          ? ['.entry-title', '.post-title', 'head title']
-          : [
-              '.entry-title',
-              '.chapter__title',
-              '.title-content',
-              '.wp-block-post-title',
-              '.title_story',
-              '#chapter-heading',
-              'head title',
-              'h1:first-of-type',
-              'h2:first-of-type',
-              '.active',
-            ];
-        let chapterTitle = titleSelectors
-          .map(sel => loadedCheerio(sel).first().text())
-          .find(text => text);
-
-        // Extract subtitle (if any)
-        const chapterSubtitle =
-          loadedCheerio('.cat-series').first().text() ||
-          loadedCheerio('h1.leading-none ~ span').first().text();
-        if (chapterSubtitle) chapterTitle = chapterSubtitle;
-
-        // Extract content
-        const contentSelectors = isBlogspot
-          ? ['.content-post', '.entry-content', '.post-body']
-          : [
-              '.chapter__content',
-              '.entry-content',
-              '.text_story',
-              '.post-content',
-              '.contenta',
-              '.single_post',
-              '.main-content',
-              '.reader-content',
-              '#content',
-              '#the-content',
-              'article.post',
-            ];
-        const chapterContent = contentSelectors
-          .map(sel => loadedCheerio(sel).html()!)
-          .find(html => html);
-
-        if (chapterTitle) {
-          chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
-        } else {
-          chapterText = chapterContent;
-        }
+        chapterText = this.extractPlatformContent(loadedCheerio, isBlogspot);
       }
 
       // Fallback content extraction
@@ -1043,6 +913,113 @@ class NovelUpdates implements Plugin.PluginBase {
     } catch (error) {
       console.error('Fetch Error:', error);
       throw new Error(`Network request failed: ${error}`);
+    }
+  }
+
+  private async fetchWithRetry(
+    url: string,
+    options: any,
+    maxRetries = 3,
+  ): Promise<Response> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await fetchApi(url, options);
+        if (result.status === 0) {
+          throw new Error('Invalid response status: 0');
+        }
+        return result;
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw new Error(
+            `Network request failed after ${maxRetries} attempts, please open in webview.`,
+          );
+        }
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay between retries
+      }
+    }
+    throw new Error('Unreachable');
+  }
+
+  private extractPlatformContent(
+    loadedCheerio: any,
+    isBlogspot: boolean,
+  ): string {
+    const bloatElements = isBlogspot
+      ? ['.button-container', '.ChapterNav', '.ch-bottom', '.separator']
+      : [
+          '.ad',
+          '.author-avatar',
+          '.chapter-warning',
+          '.entry-meta',
+          '.ezoic-ad',
+          '.mb-center',
+          '.modern-footnotes-footnote__note',
+          '.patreon-widget',
+          '.post-cats',
+          '.pre-bar',
+          '.sharedaddy',
+          '.sidebar',
+          '.swg-button-v2-light',
+          '.wp-block-buttons',
+          //'.wp-block-columns',
+          '.wp-dark-mode-switcher',
+          '.wp-next-post-navi',
+          '#hpk',
+          '#jp-post-flair',
+          '#textbox',
+        ];
+
+    bloatElements.forEach(tag => loadedCheerio(tag).remove());
+
+    // Extract title
+    const titleSelectors = isBlogspot
+      ? ['.entry-title', '.post-title', 'head title']
+      : [
+          '.entry-title',
+          '.chapter__title',
+          '.title-content',
+          '.wp-block-post-title',
+          '.title_story',
+          '#chapter-heading',
+          'head title',
+          'h1:first-of-type',
+          'h2:first-of-type',
+          '.active',
+        ];
+    let chapterTitle = titleSelectors
+      .map(sel => loadedCheerio(sel).first().text())
+      .find(text => text);
+
+    // Extract subtitle (if any)
+    const chapterSubtitle =
+      loadedCheerio('.cat-series').first().text() ||
+      loadedCheerio('h1.leading-none ~ span').first().text();
+    if (chapterSubtitle) chapterTitle = chapterSubtitle;
+
+    // Extract content
+    const contentSelectors = isBlogspot
+      ? ['.content-post', '.entry-content', '.post-body']
+      : [
+          '.chapter__content',
+          '.entry-content',
+          '.text_story',
+          '.post-content',
+          '.contenta',
+          '.single_post',
+          '.main-content',
+          '.reader-content',
+          '#content',
+          '#the-content',
+          'article.post',
+        ];
+    const chapterContent = contentSelectors
+      .map(sel => loadedCheerio(sel).html()!)
+      .find(html => html);
+
+    if (chapterTitle) {
+      return `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+    } else {
+      return chapterContent;
     }
   }
 
