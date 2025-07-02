@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.5';
+  version = '0.10.4';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -721,53 +721,22 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Request URL:', requestUrl);
       console.log('Fetch Options:', this.fetchOptions);
 
-      const maxRetries = 3;
-
-      // Perform a GET request to get the redirected URL
+      // Perform a HEAD request to get the redirected URL
       let redirectedUrl;
-      let headAttempt = 0;
-
-      while (headAttempt < maxRetries) {
-        try {
-          console.log(
-            `Attempt ${headAttempt + 1} to resolve redirect for:`,
-            requestUrl,
-          );
-
-          // Use a GET request. It is much more reliable than HEAD.
-          const resolveRedirectResponse = await fetchApi(requestUrl, {
-            ...this.fetchOptions,
-            method: 'GET', // Use GET instead of HEAD
-          });
-
-          // The .url property will contain the final URL after all redirects
-          redirectedUrl = resolveRedirectResponse.url;
-          console.log('Successfully resolved Redirected URL:', redirectedUrl);
-          break; // Success, exit the loop
-        } catch (error) {
-          const err = error as any;
-          headAttempt++;
-          console.error(`Redirect Resolution Attempt ${headAttempt} Error:`, {
-            message: err.message,
-            stack: err.stack,
-          });
-
-          if (headAttempt >= maxRetries) {
-            console.error('Max retries reached for redirect resolution.');
-            throw new Error(
-              `Failed to resolve redirect for ${requestUrl} after ${maxRetries} attempts: ${err.message}`,
-            );
-          }
-          // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 1500));
-        }
-      }
-
-      // If redirectedUrl is still not set after retries, throw a definitive error.
-      if (!redirectedUrl) {
-        throw new Error(
-          'Could not determine the final URL after multiple attempts.',
-        );
+      try {
+        const headResponse = await fetchApi(requestUrl, {
+          ...this.fetchOptions,
+          method: 'HEAD',
+        });
+        redirectedUrl = headResponse.url;
+        console.log('Redirected URL:', redirectedUrl);
+      } catch (error) {
+        const err = error as any;
+        console.error('HEAD Request Error:', {
+          message: err.message,
+          stack: err.stack,
+        });
+        throw new Error(`Failed to resolve redirect: ${err.message}`);
       }
 
       // Enhance headers for the target site
@@ -785,6 +754,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
       // Retry fetch with delay to handle intermittent failures
       let result;
+      const maxRetries = 3;
       let attempt = 0;
       while (attempt < maxRetries) {
         try {
