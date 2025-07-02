@@ -4,9 +4,21 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
 class NovelUpdates implements Plugin.PluginBase {
+  private fetchOptions = {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0',
+      'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,us;q=0.5',
+      'DNT': '1', // Do Not Track
+      'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
+    },
+  };
+
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.1';
+  version = '0.10.0';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -562,6 +574,42 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       }
+      // Last edited in 0.10.0 by Batorian - 02/07/2025
+      case 'stellarrealm': {
+        // Remove ad-related bloat elements
+        bloatElements = [
+          '.my-6.py-4.border-t.border-b.border-border\\/20.ad-container',
+        ];
+        bloatElements.forEach(tag => loadedCheerio(tag).remove());
+
+        // Extract the data-page attribute from <div id="app">
+        const dataPage = loadedCheerio('#app').attr('data-page');
+        if (!dataPage) {
+          throw new Error('data-page attribute not found on stellarrealm.net');
+        }
+
+        // Parse the JSON from data-page
+        const pageData = JSON.parse(dataPage) as {
+          component: string;
+          props: {
+            chapter: {
+              id: number;
+              title: string;
+              content: string;
+            };
+          };
+        };
+
+        chapterTitle = pageData.props.chapter.title;
+        chapterContent = pageData.props.chapter.content;
+
+        // Clean up content (e.g., remove inline styles or scripts if needed)
+        const chapterCheerio = parseHTML(chapterContent);
+        chapterCheerio('script, style').remove();
+        chapterContent = chapterCheerio.html()!;
+
+        break;
+      }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
       case 'tinytranslation': {
         bloatElements = [
@@ -665,7 +713,7 @@ class NovelUpdates implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     let chapterText;
 
-    const result = await fetchApi(this.site + chapterPath);
+    const result = await fetchApi(this.site + chapterPath, this.fetchOptions);
     const body = await result.text();
     const url = result.url;
     const domainParts = url.toLowerCase().split('/')[2].split('.');
@@ -712,7 +760,12 @@ class NovelUpdates implements Plugin.PluginBase {
     );
 
     // Manually set WordPress flag for known sites
-    const manualWordPress = ['etherreads', 'greenztl2', 'soafp'];
+    const manualWordPress = [
+      'etherreads',
+      'greenztl2',
+      'noicetranslations',
+      'soafp',
+    ];
     if (!isWordPress && domainParts.some(wp => manualWordPress.includes(wp))) {
       isWordPress = true;
     }
