@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.2';
+  version = '0.10.3';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -755,10 +755,12 @@ class NovelUpdates implements Plugin.PluginBase {
       // Fetch the redirected URL
       const result = await fetchApi(redirectedUrl, enhancedFetchOptions);
       console.log('Response Status:', result.status);
-      console.log(
-        'Response Headers:',
-        Object.fromEntries(result.headers.entries()),
-      );
+
+      const headersObj: Record<string, string> = {};
+      result.headers.forEach((value, key) => {
+        headersObj[key] = value;
+      });
+      console.log('Response Headers:', headersObj);
       console.log('Final URL:', result.url);
 
       if (!result.ok) {
