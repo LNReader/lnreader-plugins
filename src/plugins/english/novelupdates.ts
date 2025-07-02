@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.3';
+  version = '0.10.4';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -747,7 +747,7 @@ class NovelUpdates implements Plugin.PluginBase {
           'Sec-Fetch-Mode': 'navigate',
           'Sec-Fetch-Site': 'none',
           'Sec-Fetch-User': '?1',
-          'Accept-Encoding': 'gzip, deflate, br',
+          'Accept-Encoding': 'gzip, deflate', // Exclude Brotli to ensure compatibility
           'Referer': 'https://www.novelupdates.com/',
         },
       };
@@ -769,8 +769,32 @@ class NovelUpdates implements Plugin.PluginBase {
         );
       }
 
+      // Check for compression
+      const contentEncoding = headersObj['content-encoding']?.toLowerCase();
+      console.log('Content-Encoding:', contentEncoding);
+
       const body = await result.text();
-      console.log('Response Body (first 500 chars):', body.substring(0, 500));
+      // Check if the response looks like binary/compressed
+      const isBinary = /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(
+        body.substring(0, 100),
+      );
+      console.log('Is Response Binary:', isBinary);
+      console.log('Response Body (first 1000 chars):', body.substring(0, 1000));
+
+      // Early CAPTCHA detection
+      if (
+        isBinary ||
+        body.includes('cf-chl-bypass') ||
+        body.includes('beacon.min.js')
+      ) {
+        console.log(
+          'Cloudflare challenge detected, falling back to webview for URL:',
+          redirectedUrl,
+        );
+        throw new Error(
+          `Cloudflare challenge detected, please open in webview: ${redirectedUrl}`,
+        );
+      }
 
       const loadedCheerio = parseHTML(body);
       const title = loadedCheerio('title').text().trim().toLowerCase();
