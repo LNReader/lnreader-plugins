@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.6';
+  version = '0.10.7';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -722,21 +722,37 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Fetch Options:', this.fetchOptions);
 
       // Perform a HEAD request to get the redirected URL
-      let redirectedUrl;
+      let redirectedUrl = requestUrl; // Default fallback
       try {
         const headResponse = await fetchApi(requestUrl, {
           ...this.fetchOptions,
           method: 'HEAD',
         });
-        redirectedUrl = headResponse.url;
-        console.log('Redirected URL:', redirectedUrl);
+
+        // Check if we got a valid response
+        if (
+          headResponse &&
+          headResponse.status &&
+          headResponse.status >= 200 &&
+          headResponse.status < 600
+        ) {
+          redirectedUrl = headResponse.url || requestUrl;
+          console.log('Redirected URL:', redirectedUrl);
+        } else {
+          console.log(
+            'HEAD request returned invalid status, using original URL:',
+            headResponse?.status,
+          );
+          redirectedUrl = requestUrl;
+        }
       } catch (error) {
         const err = error as any;
         console.error('HEAD Request Error:', {
           message: err.message,
           stack: err.stack,
         });
-        throw new Error(`Failed to resolve redirect: ${err.message}`);
+        console.log('HEAD request failed, using original URL as fallback');
+        redirectedUrl = requestUrl; // Use original URL as fallback instead of throwing
       }
 
       // Enhance headers for the target site
@@ -953,18 +969,30 @@ class NovelUpdates implements Plugin.PluginBase {
         console.log(`Fetch Attempt ${attempt} for URL:`, url);
         result = await fetchApi(url, options);
         console.log('Response Status:', result?.status);
+        console.log('Response OK:', result?.ok);
 
-        if (!result || result.status === 0 || result.status === undefined) {
+        // Check for valid response
+        if (!result) {
+          throw new Error('No response received');
+        }
+
+        if (result.status === 0) {
           throw new Error(
-            'Invalid response status: ' + (result?.status || 'undefined'),
+            'Network error: status 0 (possibly CORS or network issue)',
           );
         }
+
+        if (result.status < 200 || result.status > 599) {
+          throw new Error(`Invalid status code: ${result.status}`);
+        }
+
         break; // Success, exit retry loop
       } catch (error) {
         const err = error as any;
         console.error(`Fetch Attempt ${attempt} Error:`, {
           message: err.message,
           stack: err.stack,
+          status: result?.status,
         });
 
         if (attempt === maxRetries) {
