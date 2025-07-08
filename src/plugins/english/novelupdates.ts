@@ -22,7 +22,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.9';
+  version = '0.10.10';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -741,6 +741,18 @@ class NovelUpdates implements Plugin.PluginBase {
     return chapterText;
   }
 
+  // Helper to generate a random User-Agent string
+  getRandomUserAgent() {
+    const userAgents = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
+      'Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+    ];
+    return userAgents[Math.floor(Math.random() * userAgents.length)];
+  }
+
   async parseChapter(chapterPath: string): Promise<string> {
     let chapterText;
     try {
@@ -752,10 +764,19 @@ class NovelUpdates implements Plugin.PluginBase {
       const urlWithBypass =
         requestUrl + (requestUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
 
+      // Clone fetchOptions and randomize User-Agent for this request
+      const fetchOptionsWithRandomUA = {
+        ...this.fetchOptions,
+        headers: {
+          ...this.fetchOptions.headers,
+          'User-Agent': this.getRandomUserAgent(),
+        },
+      };
+
       // Always use GET, let the server handle redirects
       const result = await this.fetchWithRetry(
         urlWithBypass,
-        this.fetchOptions,
+        fetchOptionsWithRandomUA,
       );
 
       const headersObj: Record<string, string> = {};
@@ -948,42 +969,11 @@ class NovelUpdates implements Plugin.PluginBase {
     maxRetries = 3,
   ): Promise<Response> {
     let result;
-    let storedCookies = '';
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`Fetch Attempt ${attempt} for URL:`, url);
-
-        // Add Cookie header if we have stored cookies
-        if (storedCookies) {
-          options.headers = {
-            ...options.headers,
-            Cookie: storedCookies,
-          };
-        }
-
         result = await fetchApi(url, options);
         console.log('Response Status:', result?.status);
-
-        // Extract and store cookies from set-cookie header
-        let setCookie: string | null | undefined = undefined;
-        if (result?.headers?.get) {
-          setCookie = result.headers.get('set-cookie');
-        }
-        if (setCookie) {
-          // If multiple cookies, join them with '; '
-          if (Array.isArray(setCookie)) {
-            storedCookies = setCookie
-              .map((c: string) => c.split(';')[0])
-              .join('; ');
-          } else {
-            storedCookies = setCookie
-              .split(',')
-              .map((c: string) => c.split(';')[0])
-              .join('; ');
-          }
-          console.log('Stored Cookies:', storedCookies);
-        }
-
         if (!result || result.status === 0 || result.status === undefined) {
           throw new Error(
             'Invalid response status: ' + (result?.status || 'undefined'),
