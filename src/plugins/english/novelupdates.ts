@@ -22,7 +22,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.13';
+  version = '0.10.14';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -747,20 +747,28 @@ class NovelUpdates implements Plugin.PluginBase {
       const requestUrl = this.site + chapterPath;
       console.log('Request URL:', requestUrl);
 
-      const result = await fetchApi(requestUrl, this.fetchOptions);
-      console.log('Response Status:', result.status);
-      console.log('Final URL:', result.url);
-      if (result.headers && typeof result.headers.forEach === 'function') {
+      const result = await fetchApi(requestUrl, {
+        ...this.fetchOptions,
+        method: 'HEAD',
+      });
+      const redirectUrl = result.url;
+      const finalResult = await fetchApi(redirectUrl, this.fetchOptions);
+      console.log('Response Status:', finalResult.status);
+      console.log('Final URL:', finalResult.url);
+      if (
+        finalResult.headers &&
+        typeof finalResult.headers.forEach === 'function'
+      ) {
         const headersObj: Record<string, string> = {};
-        result.headers.forEach((value, key) => {
+        finalResult.headers.forEach((value, key) => {
           headersObj[key] = value;
         });
         console.log('Response Headers:', headersObj);
       }
 
-      const body = await result.text();
+      const body = await finalResult.text();
       console.log('Response Body (first 500 chars):', body.substring(0, 500));
-      const url = result.url;
+      const url = finalResult.url;
       const domainParts = url.toLowerCase().split('/')[2].split('.');
 
       const loadedCheerio = parseHTML(body);
@@ -781,10 +789,14 @@ class NovelUpdates implements Plugin.PluginBase {
       }
 
       // Check if chapter url is wrong or site is down
-      if (!result.ok) {
-        console.log('Fetch failed:', result.status, result.statusText);
+      if (!finalResult.ok) {
+        console.log(
+          'Fetch failed:',
+          finalResult.status,
+          finalResult.statusText,
+        );
         throw new Error(
-          `Failed to fetch ${result.url}: ${result.status} ${result.statusText}`,
+          `Failed to fetch ${finalResult.url}: ${finalResult.status} ${finalResult.statusText}`,
         );
       }
 
@@ -976,7 +988,7 @@ class NovelUpdates implements Plugin.PluginBase {
       // Convert relative URLs to absolute
       chapterText = chapterText.replace(
         /href="\//g,
-        `href="${this.getLocation(result.url)}/`,
+        `href="${this.getLocation(finalResult.url)}/`,
       );
 
       // Process images
