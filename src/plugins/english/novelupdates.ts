@@ -22,7 +22,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.12';
+  version = '0.10.13';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -747,7 +747,7 @@ class NovelUpdates implements Plugin.PluginBase {
       const requestUrl = this.site + chapterPath;
       console.log('Request URL:', requestUrl);
 
-      const result = await fetchApi(requestUrl);
+      const result = await fetchApi(requestUrl, this.fetchOptions);
       console.log('Response Status:', result.status);
       console.log('Final URL:', result.url);
       if (result.headers && typeof result.headers.forEach === 'function') {
