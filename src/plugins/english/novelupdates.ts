@@ -18,7 +18,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.7';
+  version = '0.10.8';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -745,13 +745,26 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Fetch Options:', this.fetchOptions);
 
       // Perform a HEAD request to get the redirected URL
-      let redirectedUrl;
+      let redirectedUrl: string | undefined = undefined;
+      let headResponse: any = undefined;
       try {
-        const headResponse = await fetchApi(requestUrl, {
+        headResponse = await fetchApi(requestUrl, {
           ...this.fetchOptions,
           method: 'HEAD',
         });
-        redirectedUrl = headResponse.url;
+        // Only use the response if status is in [200, 599]
+        if (
+          headResponse &&
+          typeof headResponse.status === 'number' &&
+          headResponse.status >= 200 &&
+          headResponse.status <= 599 &&
+          headResponse.url
+        ) {
+          redirectedUrl = headResponse.url;
+        } else {
+          // HEAD failed or returned invalid status, fallback to GET
+          redirectedUrl = requestUrl;
+        }
         console.log('Redirected URL:', redirectedUrl);
       } catch (error) {
         const err = error as any;
@@ -759,7 +772,8 @@ class NovelUpdates implements Plugin.PluginBase {
           message: err.message,
           stack: err.stack,
         });
-        throw new Error(`Failed to resolve redirect: ${err.message}`);
+        // Fallback to GET if HEAD fails
+        redirectedUrl = requestUrl;
       }
 
       // Enhance headers for the target site
@@ -777,7 +791,7 @@ class NovelUpdates implements Plugin.PluginBase {
 
       // Retry fetch with delay to handle intermittent failures
       const result = await this.fetchWithRetry(
-        redirectedUrl,
+        redirectedUrl || requestUrl,
         enhancedFetchOptions,
       );
 
