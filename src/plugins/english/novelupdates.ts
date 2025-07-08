@@ -948,11 +948,41 @@ class NovelUpdates implements Plugin.PluginBase {
     maxRetries = 3,
   ): Promise<Response> {
     let result;
+    let storedCookies = '';
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`Fetch Attempt ${attempt} for URL:`, url);
+
+        // Add Cookie header if we have stored cookies
+        if (storedCookies) {
+          options.headers = {
+            ...options.headers,
+            Cookie: storedCookies,
+          };
+        }
+
         result = await fetchApi(url, options);
         console.log('Response Status:', result?.status);
+
+        // Extract and store cookies from set-cookie header
+        let setCookie: string | null | undefined = undefined;
+        if (result?.headers?.get) {
+          setCookie = result.headers.get('set-cookie');
+        }
+        if (setCookie) {
+          // If multiple cookies, join them with '; '
+          if (Array.isArray(setCookie)) {
+            storedCookies = setCookie
+              .map((c: string) => c.split(';')[0])
+              .join('; ');
+          } else {
+            storedCookies = setCookie
+              .split(',')
+              .map((c: string) => c.split(';')[0])
+              .join('; ');
+          }
+          console.log('Stored Cookies:', storedCookies);
+        }
 
         if (!result || result.status === 0 || result.status === undefined) {
           throw new Error(
