@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.19';
+  version = '0.10.20';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -767,14 +767,52 @@ class NovelUpdates implements Plugin.PluginBase {
       }
 
       // Detect platforms
-      let isBlogspot = ['blogspot', 'blogger'].some(keyword =>
-        [
-          loadedCheerio('meta[name="google-adsense-platform-domain"]').attr(
-            'content',
-          ),
-          loadedCheerio('meta[name="generator"]').attr('content'),
-        ].some(meta => meta?.toLowerCase().includes(keyword)),
-      );
+      let isBlogspot = false;
+      const blogspotEvidence: string[] = [];
+      const blogspotChecks = [
+        {
+          label: 'meta[name="google-adsense-platform-domain"]',
+          value: loadedCheerio(
+            'meta[name="google-adsense-platform-domain"]',
+          ).attr('content'),
+        },
+        {
+          label: 'meta[name="generator"]',
+          value: loadedCheerio('meta[name="generator"]').attr('content'),
+        },
+        { label: 'body class', value: loadedCheerio('body').attr('class') },
+        {
+          label: 'blogspot in html',
+          value: loadedCheerio.html().includes('blogspot')
+            ? 'blogspot found'
+            : '',
+        },
+        {
+          label: 'blogger in html',
+          value: loadedCheerio.html().includes('blogger')
+            ? 'blogger found'
+            : '',
+        },
+      ];
+      for (const check of blogspotChecks) {
+        if (
+          check.value &&
+          typeof check.value === 'string' &&
+          (check.value.toLowerCase().includes('blogspot') ||
+            check.value.toLowerCase().includes('blogger'))
+        ) {
+          isBlogspot = true;
+          blogspotEvidence.push(`${check.label}: ${check.value}`);
+        }
+      }
+      if (isBlogspot) {
+        console.log('Blogspot detected! Evidence:', blogspotEvidence);
+      } else {
+        console.log(
+          'Blogspot NOT detected. Evidence checked:',
+          blogspotChecks.map(c => `${c.label}: ${c.value}`),
+        );
+      }
 
       // Improved WordPress detection with debug logs
       let isWordPress = false;
@@ -826,16 +864,6 @@ class NovelUpdates implements Plugin.PluginBase {
         );
       }
 
-      // Manually set WordPress flag for known sites
-      const manualWordPress = ['etherreads', 'greenztl2', 'soafp'];
-      if (
-        !isWordPress &&
-        domainParts.some(wp => manualWordPress.includes(wp))
-      ) {
-        isWordPress = true;
-        console.log('WordPress manually set for domain:', domainParts);
-      }
-
       // Handle outlier sites
       const outliers = [
         'anotivereads',
@@ -873,11 +901,12 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Blossom Translation
        * - Dumah's Translations
        * - ElloMTL
+       * - Ether Reads
        * - Femme Fables
        * - Gadgetized Panda Translation
        * - Gem Novels
        * - Goblinslate
-       * - GreenzTL
+       * - GreenzTL (Taken down)
        * - Hel Scans (Outlier)
        * - Hiraeth Translation
        * - ippotranslations
@@ -887,7 +916,7 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Neosekai Translations
        * - Noice Translations
        * - Shanghai Fantasy
-       * - Soafp (Manually added)
+       * - Soafp
        * - Stabbing with a Syringe (Outlier)
        * - StoneScape
        * - TinyTL (Outlier)
