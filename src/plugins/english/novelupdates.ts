@@ -580,7 +580,7 @@ class NovelUpdates implements Plugin.PluginBase {
         }
         break;
       }
-      // Last edited in 0.10.0 by Batorian - 02/07/2025
+      // Last edited in 0.10.0 by Batorian - 08/07/2025
       case 'stellarrealm': {
         // Modular extraction inspired by W2e
         const extractStellarRealmContent = (cheerioInstance: CheerioAPI) => {
@@ -820,7 +820,12 @@ class NovelUpdates implements Plugin.PluginBase {
       );
 
       // Manually set WordPress flag for known sites
-      const manualWordPress = ['etherreads', 'greenztl2', 'soafp'];
+      const manualWordPress = [
+        'etherreads',
+        'greenztl2',
+        'noicetranslations',
+        'soafp',
+      ];
       if (
         !isWordPress &&
         domainParts.some(wp => manualWordPress.includes(wp))
@@ -850,7 +855,7 @@ class NovelUpdates implements Plugin.PluginBase {
         isBlogspot = false;
       }
 
-      // Last edited in 0.9.0 - 19/03/2025
+      // Last edited in 0.10.0 - 08/07/2025
       /**
        * Blogspot sites:
        * - ¼-Assed
@@ -878,6 +883,7 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Light Novels Translations
        * - Mirilu - Novel Reader Attempts Translating (Outlier)
        * - Neosekai Translations
+       * - Noice Translations
        * - Shanghai Fantasy
        * - Soafp (Manually added)
        * - Stabbing with a Syringe (Outlier)
