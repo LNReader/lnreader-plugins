@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.18';
+  version = '0.10.19';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -221,20 +221,6 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'daoist': {
         chapterTitle = loadedCheerio('.chapter__title').first().text();
         chapterContent = loadedCheerio('.chapter__content').html()!;
-        break;
-      }
-      // Last edited in 0.9.0 by Batorian - 19/03/2025
-      case 'darkstartranslations': {
-        chapterTitle = loadedCheerio('ol.breadcrumb li').last().text().trim();
-        chapterContent = loadedCheerio('.text-left').html()!;
-        // Load the extracted chapter content into Cheerio
-        const chapterCheerio = parseHTML(chapterContent);
-        // Add an empty row (extra <br>) after each <br> element
-        chapterCheerio('br').each((_, el) => {
-          chapterCheerio(el).after('<br>'); // Add one more <br> for an empty row
-        });
-        // Get the updated content
-        chapterContent = chapterCheerio.html();
         break;
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
@@ -855,7 +841,6 @@ class NovelUpdates implements Plugin.PluginBase {
         'anotivereads',
         'arcanetranslations',
         'asuratls',
-        'darkstartranslations',
         'fictionread',
         'helscans',
         'infinitenoveltranslations',
@@ -886,7 +871,6 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Anomlaously Creative (Outlier)
        * - Arcane Translations (Outlier)
        * - Blossom Translation
-       * - Darkstar Translations (Outlier)
        * - Dumah's Translations
        * - ElloMTL
        * - Femme Fables
@@ -895,6 +879,7 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Goblinslate
        * - GreenzTL
        * - Hel Scans (Outlier)
+       * - Hiraeth Translation
        * - ippotranslations
        * - JATranslations
        * - Light Novels Translations
@@ -951,6 +936,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const titleSelectors = isBlogspot
           ? ['.entry-title', '.post-title', 'head title']
           : [
+              'li.active',
               '.entry-title',
               '.chapter__title',
               '.title-content',
