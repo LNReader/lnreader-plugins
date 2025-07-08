@@ -6,13 +6,10 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   private fetchOptions = {
     headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0',
       'Accept':
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,us;q=0.5',
-      'DNT': '1', // Do Not Track
-      'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
+      'Upgrade-Insecure-Requests': '1',
       'Sec-Fetch-Dest': 'document',
       'Sec-Fetch-Mode': 'navigate',
       'Sec-Fetch-Site': 'none',
@@ -20,6 +17,7 @@ class NovelUpdates implements Plugin.PluginBase {
       'Accept-Encoding': 'gzip, deflate',
       'Referer': 'https://www.novelupdates.com/',
     },
+    redirect: 'follow',
   };
 
   id = 'novelupdates';
@@ -750,8 +748,15 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Request URL:', requestUrl);
       console.log('Fetch Options:', this.fetchOptions);
 
+      // Add a random query parameter to bypass cache/network issues
+      const urlWithBypass =
+        requestUrl + (requestUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+
       // Always use GET, let the server handle redirects
-      const result = await this.fetchWithRetry(requestUrl, this.fetchOptions);
+      const result = await this.fetchWithRetry(
+        urlWithBypass,
+        this.fetchOptions,
+      );
 
       const headersObj: Record<string, string> = {};
       result?.headers.forEach((value, key) => {
