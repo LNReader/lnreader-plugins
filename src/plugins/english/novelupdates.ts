@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.17';
+  version = '0.10.18';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -790,27 +790,64 @@ class NovelUpdates implements Plugin.PluginBase {
         ].some(meta => meta?.toLowerCase().includes(keyword)),
       );
 
-      let isWordPress = ['wordpress', 'site kit by google'].some(keyword =>
-        [
-          loadedCheerio('#dcl_comments-js-extra').html(),
-          loadedCheerio('meta[name="generator"]').attr('content'),
-          loadedCheerio('.powered-by').text(),
-          loadedCheerio('footer').text(),
-        ].some(meta => meta?.toLowerCase().includes(keyword)),
-      );
+      // Improved WordPress detection with debug logs
+      let isWordPress = false;
+      const wpEvidence: string[] = [];
+      const wpChecks = [
+        {
+          label: 'meta[name="generator"]',
+          value: loadedCheerio('meta[name="generator"]').attr('content'),
+        },
+        {
+          label: '#dcl_comments-js-extra',
+          value: loadedCheerio('#dcl_comments-js-extra').html(),
+        },
+        { label: '.powered-by', value: loadedCheerio('.powered-by').text() },
+        { label: 'footer', value: loadedCheerio('footer').text() },
+        { label: 'body class', value: loadedCheerio('body').attr('class') },
+        {
+          label: 'wp-content in html',
+          value: loadedCheerio.html().includes('wp-content')
+            ? 'wp-content found'
+            : '',
+        },
+        {
+          label: 'window._wpemojiSettings',
+          value: loadedCheerio.html().includes('_wpemojiSettings')
+            ? '_wpemojiSettings found'
+            : '',
+        },
+      ];
+      for (const check of wpChecks) {
+        if (
+          check.value &&
+          typeof check.value === 'string' &&
+          (check.value.toLowerCase().includes('wordpress') ||
+            check.value.toLowerCase().includes('site kit by google') ||
+            check.value.toLowerCase().includes('wp-content') ||
+            check.value.toLowerCase().includes('wpemoji'))
+        ) {
+          isWordPress = true;
+          wpEvidence.push(`${check.label}: ${check.value}`);
+        }
+      }
+      if (isWordPress) {
+        console.log('WordPress detected! Evidence:', wpEvidence);
+      } else {
+        console.log(
+          'WordPress NOT detected. Evidence checked:',
+          wpChecks.map(c => `${c.label}: ${c.value}`),
+        );
+      }
 
       // Manually set WordPress flag for known sites
-      const manualWordPress = [
-        'etherreads',
-        'greenztl2',
-        'noicetranslations',
-        'soafp',
-      ];
+      const manualWordPress = ['etherreads', 'greenztl2', 'soafp'];
       if (
         !isWordPress &&
         domainParts.some(wp => manualWordPress.includes(wp))
       ) {
         isWordPress = true;
+        console.log('WordPress manually set for domain:', domainParts);
       }
 
       // Handle outlier sites
@@ -850,7 +887,7 @@ class NovelUpdates implements Plugin.PluginBase {
        * - Arcane Translations (Outlier)
        * - Blossom Translation
        * - Darkstar Translations (Outlier)
-       * - Dumahs Translations
+       * - Dumah's Translations
        * - ElloMTL
        * - Femme Fables
        * - Gadgetized Panda Translation
