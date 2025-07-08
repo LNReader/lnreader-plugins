@@ -4,23 +4,9 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 
 class NovelUpdates implements Plugin.PluginBase {
-  private fetchOptions = {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0',
-      'Accept':
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-      'Accept-Language': 'en-US,us;q=0.5',
-      'Referer': 'https://www.novelupdates.com/', // Referer
-      'DNT': '1', // Do Not Track
-      'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
-    },
-    redirect: 'follow',
-  };
-
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.16';
+  version = '0.10.17';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -277,9 +263,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const url = `${chapterPath}/__data.json?x-sveltekit-invalidated=001`;
         try {
           // Fetch the chapter's data in JSON format
-          const json = await fetchApi(url, this.fetchOptions).then(r =>
-            r.json(),
-          );
+          const json = await fetchApi(url).then(r => r.json());
           const nodes = json.nodes;
           const data = nodes
             .filter((node: { type: string }) => node.type === 'data')
@@ -351,7 +335,7 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('article > p > a').first().attr('href')!;
         if (url) {
-          const result = await fetchApi(url, this.fetchOptions);
+          const result = await fetchApi(url);
           const body = await result.text();
           loadedCheerio = parseHTML(body);
         }
@@ -447,7 +431,7 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'raeitranslations': {
         const parts = chapterPath.split('/');
         const url = `${parts[0]}//api.${parts[2]}/api/chapters/single?id=${parts[3]}&num=${parts[4]}`;
-        const json = await fetchApi(url, this.fetchOptions).then(r => r.json());
+        const json = await fetchApi(url).then(r => r.json());
         const titleElement = `Chapter ${json.currentChapter.chapTag}`;
         chapterTitle = json.currentChapter.chapTitle
           ? `${titleElement} - ${json.currentChapter.chapTitle}`
@@ -495,7 +479,7 @@ class NovelUpdates implements Plugin.PluginBase {
         const chapterId = chapterPath.split('/').pop();
         chapterTitle = `Chapter ${chapterId}`;
         const url = `${chapterPath.split('chapter')[0]}txt/${chapterId}.txt`;
-        chapterContent = await fetchApi(url, this.fetchOptions)
+        chapterContent = await fetchApi(url)
           .then(r => r.text())
           .then(text => {
             // Split text into sentences based on newline characters
@@ -558,7 +542,7 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('.entry-content a').attr('href')!;
         if (url) {
-          const result = await fetchApi(url, this.fetchOptions);
+          const result = await fetchApi(url);
           const body = await result.text();
           loadedCheerio = parseHTML(body);
         }
@@ -662,7 +646,7 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('.entry-content a').attr('href')!;
         if (url) {
-          const result = await fetchApi(chapterPath + url, this.fetchOptions);
+          const result = await fetchApi(chapterPath + url);
           const body = await result.text();
           loadedCheerio = parseHTML(body);
         }
@@ -709,10 +693,8 @@ class NovelUpdates implements Plugin.PluginBase {
       case 'yoru': {
         const chapterId = chapterPath.split('/').pop();
         const url = `https://pxp-main-531j.onrender.com/api/v1/book_chapters/${chapterId}/content`;
-        const json = await fetchApi(url, this.fetchOptions).then(r => r.json());
-        chapterText = await fetchApi(json, this.fetchOptions).then(r =>
-          r.text(),
-        );
+        const json = await fetchApi(url).then(r => r.json());
+        chapterText = await fetchApi(json).then(r => r.text());
         break;
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
@@ -745,7 +727,19 @@ class NovelUpdates implements Plugin.PluginBase {
       const requestUrl = this.site + chapterPath;
       console.log('Request URL:', requestUrl);
 
-      const result = await fetchApi(requestUrl, this.fetchOptions);
+      // HEAD fetch to get the final redirect URL
+      let headUrl = requestUrl;
+      try {
+        const headResult = await fetchApi(requestUrl, { method: 'HEAD' });
+        if (headResult && headResult.url) {
+          headUrl = headResult.url;
+          console.log('HEAD redirect URL:', headUrl);
+        }
+      } catch (e) {
+        console.log('HEAD fetch failed, using original URL');
+      }
+
+      const result = await fetchApi(headUrl);
       console.log('Response Status:', result.status);
       console.log('Final URL:', result.url);
       if (result.headers && typeof result.headers.forEach === 'function') {
