@@ -13,12 +13,18 @@ class NovelUpdates implements Plugin.PluginBase {
       'Accept-Language': 'en-US,us;q=0.5',
       'DNT': '1', // Do Not Track
       'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-User': '?1',
+      'Accept-Encoding': 'gzip, deflate',
+      'Referer': 'https://www.novelupdates.com/',
     },
   };
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.8';
+  version = '0.10.9';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -744,56 +750,8 @@ class NovelUpdates implements Plugin.PluginBase {
       console.log('Request URL:', requestUrl);
       console.log('Fetch Options:', this.fetchOptions);
 
-      // Perform a HEAD request to get the redirected URL
-      let redirectedUrl: string | undefined = undefined;
-      let headResponse: any = undefined;
-      try {
-        headResponse = await fetchApi(requestUrl, {
-          ...this.fetchOptions,
-          method: 'HEAD',
-        });
-        // Only use the response if status is in [200, 599]
-        if (
-          headResponse &&
-          typeof headResponse.status === 'number' &&
-          headResponse.status >= 200 &&
-          headResponse.status <= 599 &&
-          headResponse.url
-        ) {
-          redirectedUrl = headResponse.url;
-        } else {
-          // HEAD failed or returned invalid status, fallback to GET
-          redirectedUrl = requestUrl;
-        }
-        console.log('Redirected URL:', redirectedUrl);
-      } catch (error) {
-        const err = error as any;
-        console.error('HEAD Request Error:', {
-          message: err.message,
-          stack: err.stack,
-        });
-        // Fallback to GET if HEAD fails
-        redirectedUrl = requestUrl;
-      }
-
-      // Enhance headers for the target site
-      const enhancedFetchOptions = {
-        headers: {
-          ...this.fetchOptions.headers,
-          'Sec-Fetch-Dest': 'document',
-          'Sec-Fetch-Mode': 'navigate',
-          'Sec-Fetch-Site': 'none',
-          'Sec-Fetch-User': '?1',
-          'Accept-Encoding': 'gzip, deflate',
-          'Referer': 'https://www.novelupdates.com/',
-        },
-      };
-
-      // Retry fetch with delay to handle intermittent failures
-      const result = await this.fetchWithRetry(
-        redirectedUrl || requestUrl,
-        enhancedFetchOptions,
-      );
+      // Always use GET, let the server handle redirects
+      const result = await this.fetchWithRetry(requestUrl, this.fetchOptions);
 
       const headersObj: Record<string, string> = {};
       result?.headers.forEach((value, key) => {
@@ -823,9 +781,9 @@ class NovelUpdates implements Plugin.PluginBase {
         'you are being redirected...',
       ];
       if (blockedTitles.includes(title)) {
-        console.log('Falling back to webview for URL:', redirectedUrl);
+        console.log('Falling back to webview for URL:', requestUrl);
         throw new Error(
-          `Captcha detected, please open in webview: ${redirectedUrl}`,
+          `Captcha detected, please open in webview: ${requestUrl}`,
         );
       }
 
