@@ -6,23 +6,21 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   private fetchOptions = {
     headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0',
       'Accept':
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,us;q=0.5',
-      'Upgrade-Insecure-Requests': '1',
-      'Sec-Fetch-Dest': 'document',
-      'Sec-Fetch-Mode': 'navigate',
-      'Sec-Fetch-Site': 'none',
-      'Sec-Fetch-User': '?1',
-      'Accept-Encoding': 'gzip, deflate',
-      'Referer': 'https://www.novelupdates.com/',
+      'Referer': 'https://www.novelupdates.com/', // Referer
+      'DNT': '1', // Do Not Track
+      'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
     },
     redirect: 'follow',
   };
 
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.10.15';
+  version = '0.10.16';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
