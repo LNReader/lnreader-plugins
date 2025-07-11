@@ -28,7 +28,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.8';
+  version = '1.0.9';
 
   _chapSite = 'https://chap.heliosarchive.online/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
@@ -226,7 +226,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
         avgReview: novel['average-review'],
         reviewCount: novel['total-reviews'],
         chapterCount: novel['total-chapters'],
-        created: new Date(novel['created']).getTime(),
+        created: new Date(novel['createdOn']).getTime(),
         genres: novel.genre,
         tags: novel.tags,
       };
