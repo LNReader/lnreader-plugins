@@ -3,6 +3,7 @@ import { Connect } from 'vite';
 import httpProxy from 'http-proxy';
 import { exec } from 'child_process';
 import { brotliDecompressSync, gunzipSync } from 'zlib';
+import { createBrotliDecompress } from 'zlib';
 
 const proxy = httpProxy.createProxyServer({});
 
@@ -85,6 +86,8 @@ const proxyHandlerMiddle: Connect.NextHandleFunction = (req, res) => {
         }
       }
       req.headers['sec-fetch-mode'] = 'cors';
+      // Force gzip only to avoid zstd compression
+      req.headers['accept-encoding'] = 'gzip, deflate';
       if (settings.cookies) {
         req.headers['cookie'] = settings.cookies;
       }
@@ -194,6 +197,14 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
   var statusCode = proxyRes.statusCode;
+
+  console.log('\x1b[33m', '=== PROXY RESPONSE ===');
+  console.log('Status:', statusCode);
+  console.log('Content-Encoding:', proxyRes.headers['content-encoding']);
+  console.log('Content-Type:', proxyRes.headers['content-type']);
+  console.log('Content-Length:', proxyRes.headers['content-length']);
+  console.log('\x1b[33m', '=====================');
+
   // Redirect
   if (
     statusCode === 301 ||
@@ -226,7 +237,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
       ? contentEncoding.some(enc => enc.includes('gzip'))
       : contentEncoding.includes('gzip'));
 
-  if (isBrotli || isGzip) {
+  const isZstd =
+    contentEncoding &&
+    (Array.isArray(contentEncoding)
+      ? contentEncoding.some(enc => enc.includes('zstd'))
+      : contentEncoding.includes('zstd'));
+
+  if (isBrotli || isGzip || isZstd) {
     delete proxyRes.headers['content-encoding'];
     delete proxyRes.headers['content-length'];
 
@@ -245,8 +262,15 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
 
         if (isBrotli) {
           decompressed = brotliDecompressSync(buffer);
-        } else {
+        } else if (isGzip) {
           decompressed = gunzipSync(buffer);
+        } else if (isZstd) {
+          // For zstd, we'll need to use a different approach since Node.js doesn't have built-in zstd support
+          // For now, let's try to handle it as uncompressed or use a workaround
+          console.log(
+            '⚠️ ZSTD compression detected but not supported, trying to handle as uncompressed',
+          );
+          decompressed = buffer;
         }
 
         res.write(Buffer.from(decompressed));

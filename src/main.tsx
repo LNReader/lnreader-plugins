@@ -14,8 +14,28 @@ import 'protobufjs';
 const { fetch: originalFetch } = window;
 window.fetch = async (...args) => {
   const [resource, config] = args;
-  if (resource.toString().includes('localhost'))
+  const resourceStr = resource.toString();
+
+  // Route external URLs through the proxy
+  if (resourceStr.startsWith('https://')) {
+    // Convert https://example.com/path to /https://example.com/path for proxy
+    const proxyUrl = resourceStr.replace('https://', '/https://');
+    const _res = await originalFetch('http://localhost:3000' + proxyUrl, {
+      ...config,
+      credentials: 'include',
+      mode: 'cors',
+    });
+    Object.defineProperty(_res, 'url', {
+      value: resourceStr,
+    });
+    return _res;
+  }
+
+  // Don't modify URLs that are already absolute URLs (http) or contain localhost
+  if (resourceStr.startsWith('http://') || resourceStr.includes('localhost')) {
     return await originalFetch(resource, config);
+  }
+
   const _res = await originalFetch('http://localhost:3000/' + resource, {
     ...config,
     credentials: 'include',
