@@ -16,7 +16,6 @@ const parserData: {
     avgReview?: string;
     reviewCount?: string;
     chapterCount?: string;
-    updated?: string;
     created?: string;
     genres?: string;
     tags?: string;
@@ -29,9 +28,9 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   name = 'MVLEMPYR';
   icon = 'src/en/mvlempyr/icon.png';
   site = 'https://www.mvlempyr.com/';
-  version = '1.0.7';
+  version = '1.0.9';
 
-  _chapSite = 'https://chap.mvlempyr.space/';
+  _chapSite = 'https://chap.heliosarchive.online/';
   _allNovels: (Plugin.NovelItem & ExtraNovelData)[] | undefined;
   _allNovelsPromise: Promise<(Plugin.NovelItem & ExtraNovelData)[]> | undefined;
 
@@ -42,194 +41,6 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       title === 'Just a moment...'
     )
       throw new Error('Captcha error, please open in webview');
-  }
-
-  parseNovels(
-    loadedCheerio: CheerioAPI,
-    nextPageConsumer?: (nextPage: string, pageCount: number) => void,
-  ) {
-    this.checkCaptcha(loadedCheerio);
-
-    if (nextPageConsumer) {
-      const nextPage = loadedCheerio('a.w-pagination-next.next').attr('href');
-      if (nextPage)
-        nextPageConsumer(
-          nextPage,
-          parseInt(
-            loadedCheerio('div.w-page-count.hide').text().split(' / ').pop()!,
-          ),
-        );
-    }
-
-    return loadedCheerio('.novelcolumn')
-      .map((i, el) => this.parseNovelHtml(parseHTML(el)))
-      .toArray();
-  }
-
-  parseNovelsFast(body: string) {
-    const novelInfosStart = body.split('<div class="novelcolumn">');
-    novelInfosStart.shift(); //remove first element that doesn't have a novel
-
-    const ret = [];
-    for (const novelInfo of novelInfosStart) {
-      const realNovelInfo =
-        novelInfo.split('READ</a></div></div></div>')[0] +
-        'READ</a></div></div></div>';
-
-      const cheerio = parseHTML(realNovelInfo);
-      ret.push(this.parseNovelHtml(cheerio));
-    }
-
-    return ret;
-  }
-
-  /**
-   * Equivalent to parseNovelsFast except uses htmlparser2 instead of cheerio for even more fast-fast
-   */
-  parseNovelsFastNew(body: string) {
-    const novelInfosStart = body.split('<div class="novelcolumn">');
-    novelInfosStart.shift(); //remove first element that doesn't have a novel
-
-    const ret = [];
-    for (const novelInfo of novelInfosStart) {
-      const realNovelInfo =
-        novelInfo.split('READ</a></div></div></div>')[0] +
-        'READ</a></div></div></div>';
-
-      ret.push(this.parseNovelHtmlNew(realNovelInfo));
-    }
-
-    // console.log(ret);
-    return ret;
-  }
-
-  parseNovelHtmlNew(el: string): Plugin.NovelItem & ExtraNovelData {
-    parserData.ret = {
-      name: '',
-      path: '',
-      cover: '',
-      avgReview: '',
-      reviewCount: '',
-      chapterCount: '',
-      updated: '',
-      created: '',
-      genres: '',
-      tags: '',
-    };
-    parserData.inTag = '';
-    parserData.depth = 0;
-    parserData.depthRatingWrapper = 0;
-    if (!parserData.parser) {
-      parserData.parser = new Parser({
-        onopentag(
-          name: string,
-          attribs: Record<string, string>,
-          isImplied: boolean,
-        ) {
-          if (parserData.depthRatingWrapper) parserData.depthRatingWrapper++;
-          if (parserData.inTag) {
-            parserData.depth++;
-            return;
-          }
-
-          if (attribs['class']?.includes?.('ratingwrapper'))
-            parserData.depthRatingWrapper = 1;
-
-          if (name === 'h2' && attribs['fs-cmsfilter-field'] === 'name')
-            parserData.inTag = 'name';
-          if (name === 'a' && !parserData.ret!.path)
-            parserData.ret!.path = attribs['href'].replace(/^\//, '');
-          if (name === 'img' && !parserData.ret!.cover)
-            parserData.ret!.cover = attribs['src'];
-          if (
-            name === 'div' &&
-            attribs['fs-cmssort-field'] === 'avgr' &&
-            parserData.depthRatingWrapper
-          )
-            parserData.inTag = 'avgReview';
-          if (
-            name === 'div' &&
-            attribs['fs-cmssort-field'] === 'reviews' &&
-            parserData.depthRatingWrapper
-          )
-            parserData.inTag = 'reviewCount';
-          if (
-            name === 'div' &&
-            attribs['fs-cmssort-field'] === 'chapter' &&
-            attribs['class']?.includes?.('chapter-count')
-          )
-            parserData.inTag = 'chapterCount';
-          if (name === 'div' && attribs['fs-cmssort-field'] === 'update')
-            parserData.inTag = 'updated';
-          if (name === 'div' && attribs['fs-cmssort-field'] === 'crdate')
-            parserData.inTag = 'created';
-          if (name === 'div' && attribs['fs-cmsnest-collection'] === 'genre')
-            parserData.inTag = 'genres';
-          if (name === 'div' && attribs['fs-cmsnest-collection'] === 'tags')
-            parserData.inTag = 'tags';
-
-          if (parserData.inTag) {
-            parserData.depth++;
-          }
-        },
-        ontext(data: string) {
-          if (!parserData.inTag) return;
-
-          // @ts-ignore
-          parserData.ret[parserData.inTag] =
-            (parserData.ret[parserData.inTag] || '') + data;
-        },
-        onclosetag(name: string, isImplied: boolean) {
-          if (parserData.depthRatingWrapper) parserData.depthRatingWrapper--;
-          if (!parserData.inTag) return;
-          parserData.depth--;
-          if (!parserData.depth) parserData.inTag = '';
-        },
-      });
-    }
-
-    parserData.parser.reset();
-    parserData.parser.write(el);
-    parserData.parser.end();
-
-    // @ts-ignore
-    parserData.ret.avgReview = parseFloat(parserData.ret.avgReview);
-    // @ts-ignore
-    parserData.ret.reviewCount = parseFloat(parserData.ret.reviewCount);
-    // @ts-ignore
-    parserData.ret.chapterCount = parseFloat(parserData.ret.chapterCount);
-    // @ts-ignore
-    parserData.ret.updated = new Date(parserData.ret.updated).getTime();
-    // @ts-ignore
-    parserData.ret.created = new Date(parserData.ret.created).getTime();
-    // @ts-ignore
-    parserData.ret.genres = parserData.ret.genres.split(', ');
-    // @ts-ignore
-    parserData.ret.tags = parserData.ret.tags.split(', ');
-
-    // @ts-ignore
-    return parserData.ret;
-  }
-
-  parseNovelHtml(el: CheerioAPI) {
-    return {
-      name: el('h2[fs-cmsfilter-field="name"]').text(),
-      path: el('a').attr('href')!.replace(/^\//, ''),
-      cover: el('img').attr('src'),
-      avgReview: parseFloat(
-        el('.ratingwrapper > div[fs-cmssort-field="avgr"]').text(),
-      ),
-      reviewCount: parseFloat(
-        el('.ratingwrapper > div[fs-cmssort-field="reviews"]').text(),
-      ),
-      chapterCount: parseFloat(
-        el('div[fs-cmssort-field="chapter"].chapter-count').text(),
-      ),
-      updated: new Date(el('div[fs-cmssort-field="update"]').text()).getTime(),
-      created: new Date(el('div[fs-cmssort-field="crdate"]').text()).getTime(),
-      genres: el('div[fs-cmsnest-collection="genre"]').text().split(', '),
-      tags: el('div[fs-cmsnest-collection="tags"]').text().split(', '),
-    };
   }
 
   async popularNovels(
@@ -275,25 +86,6 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
     return this.paginate(sorted, pageNo);
   }
 
-  async parseNovelListPage(
-    url: string,
-    nextPageConsumer?: (nextPage: string, pageCount: number) => void,
-  ): Promise<(Plugin.NovelItem & ExtraNovelData)[]> {
-    const result = await fetchApi(url, {
-      headers: {
-        origin2: this.site.replace(/\/$/, ''),
-        origin: this.site.replace(/\/$/, ''),
-      },
-    });
-    const body = await result.text();
-    if (!nextPageConsumer) {
-      return this.parseNovelsFastNew(body);
-    }
-
-    const loadedCheerio = parseHTML(body);
-    return this.parseNovels(loadedCheerio, nextPageConsumer);
-  }
-
   convertNovelId(e: bigint) {
     let t = 1999999997n;
     let u = 1n,
@@ -323,15 +115,9 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
         'wp-json/wp/v2/posts?tags=' +
         newNovelId +
         '&per_page=500&page=1',
-      {
-        headers: {
-          origin2: this.site.replace(/\/$/, ''),
-          origin: this.site.replace(/\/$/, ''),
-        },
-      },
     );
 
-    const pages = parseInt(firstPostsReq.headers.get('x-wp-totalpages'));
+    const pages = parseInt(firstPostsReq.headers.get('X-Wp-Totalpages')) || 1;
 
     const posts = [
       await firstPostsReq.json(),
@@ -346,12 +132,6 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
                 newNovelId +
                 '&per_page=500&page=' +
                 page,
-              {
-                headers: {
-                  origin2: this.site.replace(/\/$/, ''),
-                  origin: this.site.replace(/\/$/, ''),
-                },
-              },
             ).then(res => res.json()),
           ),
       )),
@@ -359,16 +139,9 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
 
     return {
       path: novelPath,
-      name:
-        loadedCheerio(
-          '.novelpaewrapper div.image-container.w-embed > img',
-        ).attr('alt') || 'Untitled',
-      cover: loadedCheerio(
-        '.novelpaewrapper div.image-container.w-embed > img',
-      ).attr('src'),
-      summary: loadedCheerio('.novelpaewrapper div.synopsis.w-richtext')
-        .text()
-        .trim(),
+      name: loadedCheerio('h1.novel-title').text() || 'Untitled',
+      cover: loadedCheerio('img.novel-image').attr('src'),
+      summary: loadedCheerio('div.synopsis.w-richtext').text().trim(),
       chapters: posts
         .map(chap => ({
           name: chap.acf.ch_name,
@@ -378,13 +151,18 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
           chapterNumber: chap.acf.chapter_number,
         }))
         .reverse(),
-      status: loadedCheerio(
-        '.novelpaewrapper div.novelstatustextmedium',
-      ).text(),
-      author: loadedCheerio('.novelpaewrapper div.mobileauthorname').text(),
-      genres: loadedCheerio(
-        '.novelpaewrapper div.novelgenre.mobile > div > div > a > div',
+      status: loadedCheerio('.novelstatustextlarge').text(),
+      author: loadedCheerio(
+        'div.additionalinfo.tm10 > div.textwrapper:nth-child(1)',
       )
+        .toArray()
+        .filter(e => {
+          return (
+            e.children.length == 2 &&
+            e.children[0].children[0].data === 'Author:'
+          );
+        })[0].children[1].children[0].data,
+      genres: loadedCheerio('.genre-tags')
         .map((i, el) => loadedCheerio(el).text())
         .toArray()
         .join(','),
@@ -436,31 +214,23 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   }
 
   async loadAll() {
-    let pageQueryId;
-    let pageCount = 1;
-    const pages = [
-      ...(await this.parseNovelListPage(
-        `${this.site}advance-search`,
-        (a, b) => {
-          pageQueryId = a.split('_page=')[0];
-          pageCount = b;
-        },
-      )),
-    ];
-
-    const followingPages = [];
-    for (let i = 2; i <= pageCount; i++) {
-      followingPages.push(
-        this.parseNovelListPage(
-          `${this.site}advance-search${pageQueryId}_page=${i}`,
-        ),
-      );
-    }
-
-    const pagesAwaited = await Promise.all(followingPages);
-    pagesAwaited.forEach(page => pages.push(...page));
-
-    return pages;
+    const data = await fetchApi(
+      this._chapSite + 'wp-json/wp/v2/mvl-novels?per_page=10000',
+    ).then(r => r.json());
+    // @ts-ignore
+    return data.map(novel => {
+      return {
+        name: novel.name,
+        path: 'novel/' + novel.slug,
+        cover: `https://assets.mvlempyr.app/images/600/${novel['novel-code']}.webp`,
+        avgReview: novel['average-review'],
+        reviewCount: novel['total-reviews'],
+        chapterCount: novel['total-chapters'],
+        created: new Date(novel['createdOn']).getTime(),
+        genres: novel.genre,
+        tags: novel.tags,
+      };
+    });
   }
 
   filters = {
@@ -470,7 +240,6 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
       label: 'Order by',
       options: [
         { label: 'Latest Added', value: 'created' },
-        { label: 'Latest Updated', value: 'updated' },
         { label: 'Best Rated', value: 'avgReview' },
         { label: 'Most Reviewed', value: 'reviewCount' },
         { label: 'Chapter Count', value: 'chapterCount' },
@@ -1468,7 +1237,6 @@ type ExtraNovelData = {
   avgReview: number;
   reviewCount: number;
   chapterCount: number;
-  updated: number;
   created: number;
   genres: string[];
   tags: string[];
