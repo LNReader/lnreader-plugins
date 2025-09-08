@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.4';
+  version = '0.9.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -274,6 +274,19 @@ class NovelUpdates implements Plugin.PluginBase {
           fallbackContent = fallbackCheerio.html()!;
           chapterText = fallbackContent;
         }
+        break;
+      }
+      // Last edited in 0.9.2 by Batorian - 08/09/2025
+      case 'canonstory': {
+        const parts = chapterPath.split('/');
+        const url = `${parts[0]}//${parts[2]}/api/public/chapter-by-slug/${parts[4]}/${parts[6]}`;
+        const json = await fetchApi(url).then(r => r.json());
+        const titleElement = `Chapter ${json.currentChapter.chapterNumber}`;
+        chapterTitle = json.currentChapter.title
+          ? `${titleElement} - ${json.currentChapter.title}`
+          : titleElement;
+        chapterContent = json.currentChapter.content;
+        chapterContent = chapterContent.replace(/\n/g, '<br>');
         break;
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
