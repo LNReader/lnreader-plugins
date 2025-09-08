@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.5';
+  version = '0.9.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -278,16 +278,41 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       // Last edited in 0.9.2 by Batorian - 08/09/2025
       case 'canonstory': {
-        const parts = chapterPath.split('/');
-        const url = `${parts[0]}//${parts[2]}/api/public/chapter-by-slug/${parts[4]}/${parts[6]}`;
-        const json = await fetchApi(url).then(r => r.json());
-        const titleElement = `Chapter ${json.currentChapter.chapterNumber}`;
-        chapterTitle = json.currentChapter.title
-          ? `${titleElement} - ${json.currentChapter.title}`
-          : titleElement;
-        chapterContent = json.currentChapter.content;
-        chapterContent = chapterContent.replace(/\n/g, '<br>');
-        break;
+        try {
+          const parts = chapterPath.split('/');
+          if (parts.length < 7) {
+            throw new Error('Invalid chapter URL structure');
+          }
+
+          const novelSlug = parts[4];
+          const chapterSlug = parts[6];
+          const url = `${parts[0]}//${parts[2]}/api/public/chapter-by-slug/${novelSlug}/${chapterSlug}`;
+
+          const response = await fetchApi(url);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch chapter: ${response.status}`);
+          }
+
+          const json = await response.json();
+          if (!json?.nodes?.length) {
+            throw new Error('Invalid API response structure.');
+          }
+
+          const data = json.nodes.find(
+            (node: { type: string }) => node.type === 'data',
+          )?.data;
+          if (!data?.currentChapter) {
+            throw new Error('Chapter data not found.');
+          }
+
+          const { chapterNumber, title, content } = data.currentChapter;
+          const titleElement = `Chapter ${chapterNumber}`;
+          chapterTitle = title ? `${titleElement} - ${title}` : titleElement;
+          chapterContent = content.replace(/\n/g, '<br>');
+          break;
+        } catch (error) {
+          throw new Error(`Failed to parse Canon Story chapter: ${error}`);
+        }
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
       case 'daoist': {
