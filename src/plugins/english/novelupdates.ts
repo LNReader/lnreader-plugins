@@ -806,6 +806,7 @@ class NovelUpdates implements Plugin.PluginBase {
       'fictionread',
       'helscans',
       'infinitenoveltranslations',
+      'machineslicedbread',
       'mirilu',
       'novelworldtranslations',
       'sacredtexttranslations',
@@ -843,6 +844,7 @@ class NovelUpdates implements Plugin.PluginBase {
      * - ippotranslations
      * - JATranslations
      * - Light Novels Translations
+     * - Machine Sliced Bread (Outlier)
      * - Mirilu - Novel Reader Attempts Translating (Outlier)
      * - Neosekai Translations
      * - Shanghai Fantasy
