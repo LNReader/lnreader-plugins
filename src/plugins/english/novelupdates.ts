@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.6';
+  version = '0.9.7';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -294,13 +294,11 @@ class NovelUpdates implements Plugin.PluginBase {
           }
 
           const json = await response.json();
-          if (!json?.nodes?.length) {
+          if (!json?.data?.length) {
             throw new Error('Invalid API response structure.');
           }
 
-          const data = json.nodes.find(
-            (node: { type: string }) => node.type === 'data',
-          )?.data;
+          const data = json.data;
           if (!data?.currentChapter) {
             throw new Error('Chapter data not found.');
           }
