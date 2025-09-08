@@ -832,6 +832,7 @@ class NovelUpdates implements Plugin.PluginBase {
       'asuratls',
       'fictionread',
       'helscans',
+      'hiraethtranslation',
       'infinitenoveltranslations',
       'machineslicedbread',
       'mirilu',
@@ -847,7 +848,7 @@ class NovelUpdates implements Plugin.PluginBase {
       isBlogspot = false;
     }
 
-    // Last edited in 0.9.0 - 08/09/2025
+    // Last edited in 0.9.2 - 08/09/2025
     /**
      * Blogspot sites:
      * - ¼-Assed
@@ -861,19 +862,22 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Anomlaously Creative (Outlier)
      * - Arcane Translations (Outlier)
      * - Blossom Translation
-     * - Dumahs Translations
+     * - Dumah's Translations
      * - ElloMTL
+     * - Ether Reads
      * - Femme Fables
      * - Gadgetized Panda Translation
      * - Gem Novels
      * - Goblinslate
      * - Hel Scans (Outlier)
+     * - Hiraeth Translation (Outlier)
      * - ippotranslations
      * - JATranslations
      * - Light Novels Translations
      * - Machine Sliced Bread (Outlier)
      * - Mirilu - Novel Reader Attempts Translating (Outlier)
      * - Neosekai Translations
+     * - Noice Translations
      * - Shanghai Fantasy
      * - Soafp (Manually added)
      * - Stabbing with a Syringe (Outlier)
