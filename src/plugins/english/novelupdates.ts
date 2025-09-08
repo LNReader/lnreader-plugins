@@ -425,29 +425,35 @@ class NovelUpdates implements Plugin.PluginBase {
       }
       // Last edited in 0.9.2 by Batorian - 08/09/2025
       case 'machineslicedbread': {
-        const urlPath = chapterPath.toLowerCase().split('/').filter(Boolean);
+        const urlPath = chapterPath.split('/').filter(Boolean);
         const pathSegments = urlPath.slice(2);
         const pathDepth = pathSegments.length;
 
         let loadedCheerioSlicedBread = loadedCheerio;
 
         // Handle redirect pages
-        if (pathDepth == 1) {
-          const chapterPath = loadedCheerio('.entry-content a')
-            .first()
-            .attr('href');
-          if (!chapterPath) {
-            throw new Error('Chapter path not found.');
-          }
+        if (pathDepth === 1) {
+          throw new Error(
+            `redirect page; pathSegments = ${pathSegments}; pathDepth = ${pathDepth}`,
+          );
+          // const chapterPath = loadedCheerio('.entry-content a')
+          //   .first()
+          //   .attr('href');
+          // if (!chapterPath) {
+          //   throw new Error('Chapter path not found.');
+          // }
 
-          const response = await fetchApi(chapterPath);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch chapter: ${response.status}`);
-          }
+          // const response = await fetchApi(chapterPath);
+          // if (!response.ok) {
+          //   throw new Error(`Failed to fetch chapter: ${response.status}`);
+          // }
 
-          const body = await response.text();
-          loadedCheerioSlicedBread = parseHTML(body);
+          // const body = await response.text();
+          // loadedCheerioSlicedBread = parseHTML(body);
         }
+        throw new Error(
+          `content page; pathSegments = ${pathSegments}; pathDepth = ${pathDepth}`,
+        );
 
         // Extract chapter content
         chapterText = loadedCheerioSlicedBread('.entry-content').html()!;
