@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.1';
+  version = '0.9.2';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -72,16 +72,16 @@ class NovelUpdates implements Plugin.PluginBase {
 
     url += '&pg=' + page;
 
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const response = await fetchApi(url);
+    const body = await response.text();
     const loadedCheerio = parseHTML(body);
     return this.parseNovels(loadedCheerio);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const url = this.site + novelPath;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const response = await fetchApi(url);
+    const body = await response.text();
     const loadedCheerio = parseHTML(body);
 
     const novel: Plugin.SourceNovel = {
@@ -217,24 +217,102 @@ class NovelUpdates implements Plugin.PluginBase {
         chapterContent = loadedCheerio('.post-body').html()!;
         break;
       }
+      // Last edited in 0.9.2 by Batorian - 08/09/2025
+      case 'brightnovels': {
+        // Modular extraction inspired by W2e
+        const extractBrightNovelsContent = (cheerioInstance: CheerioAPI) => {
+          // Remove ad-related bloat elements
+          const bloatElements = ['.ad-container', 'script', 'style'];
+          bloatElements.forEach(tag => cheerioInstance(tag).remove());
+
+          // Extract the data-page attribute from <div id="app">
+          const dataPage = cheerioInstance('#app').attr('data-page');
+          if (!dataPage) {
+            throw new Error('data-page attribute not found on Bright Novels.');
+          }
+
+          // Parse the JSON from data-page
+          let pageData;
+          try {
+            pageData = JSON.parse(dataPage) as {
+              component: string;
+              props: {
+                chapter: {
+                  id: number;
+                  title: string;
+                  content: string;
+                };
+              };
+            };
+          } catch (e) {
+            throw new Error(
+              'Failed to parse data-page JSON for Bright Novels.',
+            );
+          }
+
+          let chapterTitle = pageData.props.chapter.title;
+          let chapterContent = pageData.props.chapter.content;
+
+          // Clean up content (remove inline styles/scripts if needed)
+          const chapterCheerio = parseHTML(chapterContent);
+          chapterCheerio('script, style').remove();
+          chapterContent = chapterCheerio.html()!;
+
+          // Return formatted HTML
+          return `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
+        };
+
+        try {
+          chapterText = extractBrightNovelsContent(loadedCheerio);
+        } catch (err) {
+          // Fallback: try to extract whatever is in #app or body
+          let fallbackContent =
+            loadedCheerio('#app').html() || loadedCheerio('body').html() || '';
+          // Remove scripts/styles
+          const fallbackCheerio = parseHTML(fallbackContent);
+          fallbackCheerio('script, style').remove();
+          fallbackContent = fallbackCheerio.html()!;
+          chapterText = fallbackContent;
+        }
+        break;
+      }
+      // Last edited in 0.9.2 by Batorian - 08/09/2025
+      case 'canonstory': {
+        try {
+          const parts = chapterPath.split('/');
+          if (parts.length < 7) {
+            throw new Error('Invalid chapter URL structure');
+          }
+
+          const novelSlug = parts[4];
+          const chapterSlug = parts[6];
+          const url = `${parts[0]}//${parts[2]}/api/public/chapter-by-slug/${novelSlug}/${chapterSlug}`;
+
+          const response = await fetchApi(url);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch chapter: ${response.status}`);
+          }
+
+          const json = await response.json();
+          if (!json?.data?.currentChapter) {
+            throw new Error('Invalid API response structure.');
+          }
+
+          const data = json.data.currentChapter;
+          const { chapterNumber, title, content } = data;
+
+          const titleElement = `Chapter ${chapterNumber}`;
+          chapterTitle = title ? `${titleElement} - ${title}` : titleElement;
+          chapterContent = content.replace(/\n/g, '<br>');
+          break;
+        } catch (error) {
+          throw new Error(`Failed to parse Canon Story chapter: ${error}`);
+        }
+      }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
       case 'daoist': {
         chapterTitle = loadedCheerio('.chapter__title').first().text();
         chapterContent = loadedCheerio('.chapter__content').html()!;
-        break;
-      }
-      // Last edited in 0.9.0 by Batorian - 19/03/2025
-      case 'darkstartranslations': {
-        chapterTitle = loadedCheerio('ol.breadcrumb li').last().text().trim();
-        chapterContent = loadedCheerio('.text-left').html()!;
-        // Load the extracted chapter content into Cheerio
-        const chapterCheerio = parseHTML(chapterContent);
-        // Add an empty row (extra <br>) after each <br> element
-        chapterCheerio('br').each((_, el) => {
-          chapterCheerio(el).after('<br>'); // Add one more <br> for an empty row
-        });
-        // Get the updated content
-        chapterContent = chapterCheerio.html();
         break;
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
@@ -335,8 +413,8 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('article > p > a').first().attr('href')!;
         if (url) {
-          const result = await fetchApi(url);
-          const body = await result.text();
+          const response = await fetchApi(url);
+          const body = await response.text();
           loadedCheerio = parseHTML(body);
         }
         chapterContent = loadedCheerio('.hentry').html()!;
@@ -376,6 +454,36 @@ class NovelUpdates implements Plugin.PluginBase {
         if (matchResult && matchResult[1]) {
           chapterText = matchResult[1];
         }
+        break;
+      }
+      // Last edited in 0.9.2 by Batorian - 08/09/2025
+      case 'machineslicedbread': {
+        const urlPath = chapterPath.split('/').filter(Boolean);
+        const pathSegments = urlPath.slice(2);
+        const pathDepth = pathSegments.length;
+
+        let loadedCheerioSlicedBread = loadedCheerio;
+
+        // Handle redirect pages
+        if (pathDepth === 1) {
+          const chapterPath = loadedCheerio('.entry-content a')
+            .first()
+            .attr('href');
+          if (!chapterPath) {
+            throw new Error('Chapter path not found.');
+          }
+
+          const response = await fetchApi(chapterPath);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch chapter: ${response.status}`);
+          }
+
+          const body = await response.text();
+          loadedCheerioSlicedBread = parseHTML(body);
+        }
+
+        // Extract chapter content
+        chapterText = loadedCheerioSlicedBread('.entry-content').html()!;
         break;
       }
       // Last edited in 0.9.0 by Batorian - 19/03/2025
@@ -542,8 +650,8 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('.entry-content a').attr('href')!;
         if (url) {
-          const result = await fetchApi(url);
-          const body = await result.text();
+          const response = await fetchApi(url);
+          const body = await response.text();
           loadedCheerio = parseHTML(body);
         }
         bloatElements = [
@@ -587,8 +695,8 @@ class NovelUpdates implements Plugin.PluginBase {
         // Get the chapter link from the main page
         const url = loadedCheerio('.entry-content a').attr('href')!;
         if (url) {
-          const result = await fetchApi(chapterPath + url);
-          const body = await result.text();
+          const response = await fetchApi(chapterPath + url);
+          const body = await response.text();
           loadedCheerio = parseHTML(body);
         }
         chapterTitle = loadedCheerio('.entry-title').first().text();
@@ -665,9 +773,9 @@ class NovelUpdates implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     let chapterText;
 
-    const result = await fetchApi(this.site + chapterPath);
-    const body = await result.text();
-    const url = result.url;
+    const response = await fetchApi(this.site + chapterPath);
+    const body = await response.text();
+    const url = response.url;
     const domainParts = url.toLowerCase().split('/')[2].split('.');
 
     const loadedCheerio = parseHTML(body);
@@ -686,9 +794,9 @@ class NovelUpdates implements Plugin.PluginBase {
     }
 
     // Check if chapter url is wrong or site is down
-    if (!result.ok) {
+    if (!response.ok) {
       throw new Error(
-        `Failed to fetch ${result.url}: ${result.status} ${result.statusText}`,
+        `Failed to fetch ${response.url}: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -722,10 +830,11 @@ class NovelUpdates implements Plugin.PluginBase {
       'anotivereads',
       'arcanetranslations',
       'asuratls',
-      'darkstartranslations',
       'fictionread',
       'helscans',
+      'hiraethtranslation',
       'infinitenoveltranslations',
+      'machineslicedbread',
       'mirilu',
       'novelworldtranslations',
       'sacredtexttranslations',
@@ -739,7 +848,7 @@ class NovelUpdates implements Plugin.PluginBase {
       isBlogspot = false;
     }
 
-    // Last edited in 0.9.0 - 19/03/2025
+    // Last edited in 0.9.2 - 08/09/2025
     /**
      * Blogspot sites:
      * - ¼-Assed
@@ -753,20 +862,22 @@ class NovelUpdates implements Plugin.PluginBase {
      * - Anomlaously Creative (Outlier)
      * - Arcane Translations (Outlier)
      * - Blossom Translation
-     * - Darkstar Translations (Outlier)
-     * - Dumahs Translations
+     * - Dumah's Translations
      * - ElloMTL
+     * - Ether Reads
      * - Femme Fables
      * - Gadgetized Panda Translation
      * - Gem Novels
      * - Goblinslate
-     * - GreenzTL
      * - Hel Scans (Outlier)
+     * - Hiraeth Translation (Outlier)
      * - ippotranslations
      * - JATranslations
      * - Light Novels Translations
+     * - Machine Sliced Bread (Outlier)
      * - Mirilu - Novel Reader Attempts Translating (Outlier)
      * - Neosekai Translations
+     * - Noice Translations
      * - Shanghai Fantasy
      * - Soafp (Manually added)
      * - Stabbing with a Syringe (Outlier)
@@ -819,6 +930,7 @@ class NovelUpdates implements Plugin.PluginBase {
             '.wp-block-post-title',
             '.title_story',
             '#chapter-heading',
+            '.chapter-title',
             'head title',
             'h1:first-of-type',
             'h2:first-of-type',
@@ -849,12 +961,13 @@ class NovelUpdates implements Plugin.PluginBase {
             '#content',
             '#the-content',
             'article.post',
+            '.chp_raw',
           ];
       const chapterContent = contentSelectors
         .map(sel => loadedCheerio(sel).html()!)
         .find(html => html);
 
-      if (chapterTitle) {
+      if (chapterTitle && chapterContent) {
         chapterText = `<h2>${chapterTitle}</h2><hr><br>${chapterContent}`;
       } else {
         chapterText = chapterContent;
@@ -872,7 +985,7 @@ class NovelUpdates implements Plugin.PluginBase {
     // Convert relative URLs to absolute
     chapterText = chapterText.replace(
       /href="\//g,
-      `href="${this.getLocation(result.url)}/`,
+      `href="${this.getLocation(response.url)}/`,
     );
 
     // Process images
@@ -912,8 +1025,8 @@ class NovelUpdates implements Plugin.PluginBase {
     searchTerm = longestSearchTerm.replace(/[‘’]/g, "'").replace(/\s+/g, '+');
 
     const url = `${this.site}series-finder/?sf=1&sh=${searchTerm}&sort=srank&order=asc&pg=${page}`;
-    const result = await fetchApi(url);
-    const body = await result.text();
+    const response = await fetchApi(url);
+    const body = await response.text();
 
     const loadedCheerio = parseHTML(body);
 
