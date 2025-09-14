@@ -241,8 +241,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
             novel.genres += data + ', ';
           }
         } // summary
-        else if (isReadingSummary === 1) {
-          novel.summary += data.trim();
+        else if (isReadingSummary === 1 && data.trim()) {
+          novel.summary += data.trim() + '\n';
         } // author and status
         else if (isParsingInfo) {
           if (isReadingInfo) {
