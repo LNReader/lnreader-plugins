@@ -101,7 +101,7 @@ class RLIB implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const { data }: { data: DataClass } = await fetchApi(
-      `${this.apiSite}/${novelPath}?fields[]=summary&fields[]=genres&fields[]=tags&fields[]=teams&fields[]=authors&fields[]=status_id&fields[]=artists`,
+      `${this.apiSite}${novelPath}?fields[]=summary&fields[]=genres&fields[]=tags&fields[]=teams&fields[]=authors&fields[]=status_id&fields[]=artists`,
       { headers: { ...this.user?.token, 'Site-Id': '3' } },
     ).then(res => res.json());
 
