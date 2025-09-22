@@ -275,6 +275,14 @@
       "lang": "Spanish",
       "reverseChapters": true
     }
+  },
+  {
+    "id": "transweaver",
+    "sourceSite": "https://transweaver.com/",
+    "sourceName": "Translation Weaver",
+    "options": {
+      "lang": "English",
+      "reverseChapters": true
+    }
   }
-
 ]
