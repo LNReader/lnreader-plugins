@@ -45,7 +45,7 @@ class MadaraPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/madara/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.0.${7 + versionIncrements}`;
+    this.version = `1.0.${8 + versionIncrements}`;
     this.options = metadata.options;
     this.filters = metadata.filters;
 
@@ -186,7 +186,9 @@ class MadaraPlugin implements Plugin.PluginBase {
       path: novelPath,
       name:
         loadedCheerio('.post-title h1').text().trim() ||
-        loadedCheerio('#manga-title h1').text().trim(),
+        loadedCheerio('#manga-title h1').text().trim() ||
+        loadedCheerio('.manga-title').text().trim() ||
+        '',
     };
 
     novel.cover =
@@ -197,7 +199,9 @@ class MadaraPlugin implements Plugin.PluginBase {
 
     loadedCheerio('.post-content_item, .post-content').each(function () {
       const detailName = loadedCheerio(this).find('h5').text().trim();
-      const detail = loadedCheerio(this).find('.summary-content');
+      const detail =
+        loadedCheerio(this).find('.summary-content') ||
+        loadedCheerio(this).find('.summary_content');
 
       switch (detailName) {
         case 'Genre(s)':
@@ -206,6 +210,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         case 'Tag(s)':
         case 'Tags':
         case 'Género(s)':
+        case 'Kategori':
         case 'التصنيفات':
           if (novel.genres)
             novel.genres +=
@@ -232,6 +237,7 @@ class MadaraPlugin implements Plugin.PluginBase {
         case 'Status':
         case 'Novel':
         case 'Estado':
+        case 'Durum':
           novel.status =
             detail.text().trim().includes('OnGoing') ||
             detail.text().trim().includes('مستمرة')
@@ -243,6 +249,25 @@ class MadaraPlugin implements Plugin.PluginBase {
           break;
       }
     });
+
+    // Checks for "Madara NovelHub" version
+    {
+      if (!novel.genres)
+        novel.genres = loadedCheerio('.genres-content').text().trim();
+      if (!novel.status)
+        novel.status = loadedCheerio('.manga-status')
+          .text()
+          .trim()
+          .includes('OnGoing')
+          ? NovelStatus.Ongoing
+          : NovelStatus.Completed;
+      if (!novel.author)
+        novel.author = loadedCheerio('.manga-author a').text().trim();
+      if (!novel.rating)
+        novel.rating = parseFloat(
+          loadedCheerio('.post-rating span').text().trim(),
+        );
+    }
 
     if (!novel.author)
       novel.author = loadedCheerio('.manga-authors').text().trim();
