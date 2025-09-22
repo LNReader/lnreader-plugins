@@ -1,0 +1,292 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "action",
+          "value": "action"
+        },
+        {
+          "label": "Adulte",
+          "value": "adulte"
+        },
+        {
+          "label": "adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "Alchimie",
+          "value": "alchimie"
+        },
+        {
+          "label": "Arts Martiaux",
+          "value": "arts-martiaux"
+        },
+        {
+          "label": "boys",
+          "value": "boys"
+        },
+        {
+          "label": "chinese",
+          "value": "chinese"
+        },
+        {
+          "label": "Comédie",
+          "value": "comedie"
+        },
+        {
+          "label": "Cultivation",
+          "value": "cultivation"
+        },
+        {
+          "label": "drama",
+          "value": "drama"
+        },
+        {
+          "label": "Eastern",
+          "value": "eastern"
+        },
+        {
+          "label": "ecchi",
+          "value": "ecchi"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "fighting",
+          "value": "fighting"
+        },
+        {
+          "label": "fun",
+          "value": "fun"
+        },
+        {
+          "label": "Games",
+          "value": "games"
+        },
+        {
+          "label": "General",
+          "value": "general"
+        },
+        {
+          "label": "girl",
+          "value": "girl"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "History",
+          "value": "history"
+        },
+        {
+          "label": "Horror",
+          "value": "horror"
+        },
+        {
+          "label": "horrow",
+          "value": "horrow"
+        },
+        {
+          "label": "Idole",
+          "value": "idole"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Jeux-vidéos",
+          "value": "jeux-videos"
+        },
+        {
+          "label": "LGBT+",
+          "value": "lgbt"
+        },
+        {
+          "label": "Male Lead",
+          "value": "male-lead"
+        },
+        {
+          "label": "manhwa",
+          "value": "manhwa"
+        },
+        {
+          "label": "Mature",
+          "value": "mature"
+        },
+        {
+          "label": "Mecha",
+          "value": "mecha"
+        },
+        {
+          "label": "Mystère",
+          "value": "mystere"
+        },
+        {
+          "label": "Paranormal",
+          "value": "paranormal"
+        },
+        {
+          "label": "Psychologique",
+          "value": "psychologique"
+        },
+        {
+          "label": "Realistic",
+          "value": "realistic"
+        },
+        {
+          "label": "Réincarnation",
+          "value": "reincarnation"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "School-Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
+        },
+        {
+          "label": "Smut",
+          "value": "smut"
+        },
+        {
+          "label": "Sports",
+          "value": "sports"
+        },
+        {
+          "label": "Surnaturel",
+          "value": "surnaturel"
+        },
+        {
+          "label": "Teen",
+          "value": "teen"
+        },
+        {
+          "label": "Tragédie",
+          "value": "tragedie"
+        },
+        {
+          "label": "Urban",
+          "value": "urban"
+        },
+        {
+          "label": "War",
+          "value": "war"
+        },
+        {
+          "label": "Wuxia&Xianxia",
+          "value": "wuxiaxianxia"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "xuanhuan"
+        },
+        {
+          "label": "Yaoi",
+          "value": "yaoi"
+        }
+      ]
+    },
+    "op": {
+      "type": "Switch",
+      "label": "having all selected genres",
+      "value": false
+    },
+    "author": {
+      "type": "Text",
+      "label": "Author",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Artist",
+      "value": ""
+    },
+    "release": {
+      "type": "Text",
+      "label": "Year of Released",
+      "value": ""
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Status",
+      "value": [],
+      "options": [
+        {
+          "label": "OnGoing",
+          "value": "on-going"
+        },
+        {
+          "label": "Completed",
+          "value": "end"
+        },
+        {
+          "label": "Canceled",
+          "value": "canceled"
+        },
+        {
+          "label": "On Hold",
+          "value": "on-hold"
+        },
+        {
+          "label": "Upcoming",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Relevance",
+          "value": ""
+        }
+      ]
+    }
+  }
+}
