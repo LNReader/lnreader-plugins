@@ -42,8 +42,16 @@
           "value": "fantezi"
         },
         {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
           "label": "Komedi",
           "value": "komedi"
+        },
+        {
+          "label": "Kule",
+          "value": "kule"
         },
         {
           "label": "Macera",
@@ -72,6 +80,10 @@
         {
           "label": "Sistem",
           "value": "sistem"
+        },
+        {
+          "label": "Villan",
+          "value": "villan"
         },
         {
           "label": "Zindan",
@@ -120,7 +132,7 @@
     },
     "status[]": {
       "type": "Checkbox",
-      "label": "Durumu",
+      "label": "Durum",
       "value": [],
       "options": [
         {

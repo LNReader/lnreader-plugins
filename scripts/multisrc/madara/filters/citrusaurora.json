@@ -6,6 +6,14 @@
       "value": [],
       "options": [
         {
+          "label": "[ Completed - Locked ]",
+          "value": "completed-locked"
+        },
+        {
+          "label": "[ Completed - Unlocked ]",
+          "value": "completed-unlocked"
+        },
+        {
           "label": "Action",
           "value": "action"
         },
@@ -16,6 +24,10 @@
         {
           "label": "Comedy",
           "value": "comedy"
+        },
+        {
+          "label": "Dark",
+          "value": "dark"
         },
         {
           "label": "Drama",
@@ -34,8 +46,12 @@
           "value": "modern"
         },
         {
+          "label": "Mystery",
+          "value": "mystery"
+        },
+        {
           "label": "Romance",
-          "value": "romance"
+          "value": "romances"
         },
         {
           "label": "School Life",

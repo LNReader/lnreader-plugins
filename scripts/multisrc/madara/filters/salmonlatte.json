@@ -30,6 +30,10 @@
           "value": "fantasy"
         },
         {
+          "label": "Forbidden",
+          "value": "forbidden"
+        },
+        {
           "label": "Gender Bender",
           "value": "gender-bender"
         },
@@ -178,10 +182,6 @@
         {
           "label": "Upcoming",
           "value": "upcoming"
-        },
-        {
-          "label": "Dropped by Transalator",
-          "value": "dropped_by_translator"
         }
       ]
     },

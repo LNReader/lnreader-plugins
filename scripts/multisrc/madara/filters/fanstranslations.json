@@ -10,6 +10,10 @@
           "value": "action"
         },
         {
+          "label": "Adult",
+          "value": "adult"
+        },
+        {
           "label": "Adventure",
           "value": "adventure"
         },

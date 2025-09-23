@@ -82,6 +82,10 @@
           "value": "smut"
         },
         {
+          "label": "supernatural",
+          "value": "supernatural"
+        },
+        {
           "label": "tragedy",
           "value": "tragedy"
         }

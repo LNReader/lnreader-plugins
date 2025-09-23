@@ -10,56 +10,116 @@
           "value": "action"
         },
         {
-          "label": "Adult",
-          "value": "adult"
-        },
-        {
           "label": "Adventure",
           "value": "adventure"
         },
         {
-          "label": "Comedy",
-          "value": "comedy"
+          "label": "BL",
+          "value": "bl"
+        },
+        {
+          "label": "Chasing Wife/Runaway",
+          "value": "chasing-wife-runaway"
+        },
+        {
+          "label": "Childcare",
+          "value": "childcare"
+        },
+        {
+          "label": "Clean & Wholesome",
+          "value": "clean-wholesome"
+        },
+        {
+          "label": "Dark Romance",
+          "value": "dark-romance"
         },
         {
           "label": "Drama",
           "value": "drama"
         },
         {
-          "label": "Fantasy",
-          "value": "fantasy"
+          "label": "Enemies to Lovers",
+          "value": "enemies-to-lovers"
+        },
+        {
+          "label": "Epistolary",
+          "value": "epistolary"
+        },
+        {
+          "label": "Fake Relationship",
+          "value": "fake-relationship"
+        },
+        {
+          "label": "Forced Proximity",
+          "value": "forced-proximity-cohabitation"
+        },
+        {
+          "label": "Friends to Lovers",
+          "value": "friends-to-lovers"
         },
         {
           "label": "Gender Bender",
           "value": "gender-bender"
         },
         {
-          "label": "Harem",
-          "value": "harem"
-        },
-        {
           "label": "Historical",
           "value": "historical"
         },
         {
-          "label": "Horror",
-          "value": "horror"
+          "label": "Military",
+          "value": "military"
         },
         {
-          "label": "Mature",
-          "value": "mature"
+          "label": "Modern Romance",
+          "value": "modern-romance"
+        },
+        {
+          "label": "Mutual Pining",
+          "value": "mutual-pining"
         },
         {
           "label": "Mystery",
           "value": "mystery"
         },
         {
+          "label": "Non-Human Characters",
+          "value": "non-human-characters"
+        },
+        {
+          "label": "Paranormal Romance",
+          "value": "paranormal-romance"
+        },
+        {
+          "label": "Political Intrigue",
+          "value": "political-intrigue"
+        },
+        {
           "label": "Psychological",
           "value": "psychological"
         },
         {
+          "label": "R19",
+          "value": "r19"
+        },
+        {
+          "label": "Reverse Harem",
+          "value": "reverse-harem"
+        },
+        {
           "label": "Romance",
           "value": "romance"
+        },
+        {
+          "label": "Romantic Comedy",
+          "value": "romantic-comedy"
+        },
+        {
+          "label": "Romantic Fantasy",
+          "value": "romantic-fantasy"
+        },
+        {
+          "label": "Romantic Suspense",
+          "value": "romantic-suspense"
         },
         {
           "label": "School Life",
@@ -70,12 +130,20 @@
           "value": "sci-fi"
         },
         {
-          "label": "Slice of Life",
-          "value": "slice-of-life"
+          "label": "Second Chance Romance",
+          "value": "second-chance-romance"
         },
         {
-          "label": "Smut",
-          "value": "smut"
+          "label": "Secret Baby",
+          "value": "secret-baby"
+        },
+        {
+          "label": "Short Story",
+          "value": "short-story"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
         },
         {
           "label": "Supernatural",
@@ -84,6 +152,10 @@
         {
           "label": "Tragedy",
           "value": "tragedy"
+        },
+        {
+          "label": "Workplace Romance",
+          "value": "workplace-romance"
         }
       ]
     },
@@ -171,20 +243,8 @@
           "value": "alphabet"
         },
         {
-          "label": "Rating",
-          "value": "rating"
-        },
-        {
-          "label": "Trending",
-          "value": "trending"
-        },
-        {
           "label": "Most Views",
           "value": "views"
-        },
-        {
-          "label": "New",
-          "value": "new-manga"
         }
       ]
     }
