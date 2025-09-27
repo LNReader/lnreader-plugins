@@ -34,12 +34,36 @@
           "value": "fantastik"
         },
         {
+          "label": "Gender-bender",
+          "value": "gender-bender"
+        },
+        {
+          "label": "Gizem",
+          "value": "gizem"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "Hayattan Kesitler",
+          "value": "hayattan-kesitler"
+        },
+        {
           "label": "İsekai",
           "value": "isekai"
         },
         {
+          "label": "Josei",
+          "value": "josei"
+        },
+        {
           "label": "Komedi",
           "value": "komedi"
+        },
+        {
+          "label": "Korku",
+          "value": "korku"
         },
         {
           "label": "Macera",
@@ -54,8 +78,20 @@
           "value": "novel"
         },
         {
+          "label": "Okul Hayatı",
+          "value": "okul-hayati"
+        },
+        {
+          "label": "Oneshot",
+          "value": "oneshot"
+        },
+        {
           "label": "Oyun",
           "value": "oyun"
+        },
+        {
+          "label": "Psikolojik",
+          "value": "psikolojik"
         },
         {
           "label": "Renkli",
@@ -64,103 +100,123 @@
         {
           "label": "Romantizm",
           "value": "romantizm"
+        },
+        {
+          "label": "Sci-fi",
+          "value": "sci-fi"
+        },
+        {
+          "label": "Seinen",
+          "value": "seinen"
+        },
+        {
+          "label": "Shoujo",
+          "value": "shoujo"
+        },
+        {
+          "label": "Shoujo-ai",
+          "value": "shoujo-ai"
+        },
+        {
+          "label": "Shounen",
+          "value": "shounen"
+        },
+        {
+          "label": "Tarihi",
+          "value": "tarihi"
+        },
+        {
+          "label": "Trajedi",
+          "value": "trajedi"
+        },
+        {
+          "label": "Xuanhuan",
+          "value": "xuanhuan"
+        },
+        {
+          "label": "Yetişkin",
+          "value": "yetiskin"
         }
       ]
     },
     "op": {
       "type": "Switch",
-      "label": "having all selected genres",
+      "label": "VE seçilen tüm türlere sahip olmak",
       "value": false
     },
     "author": {
       "type": "Text",
-      "label": "Author",
+      "label": "Yazar",
       "value": ""
     },
     "artist": {
       "type": "Text",
-      "label": "Artist",
+      "label": "Sanatçı",
       "value": ""
     },
     "release": {
       "type": "Text",
-      "label": "Year of Released",
+      "label": "Çıkış Yılı",
       "value": ""
     },
     "adult": {
       "type": "Picker",
-      "label": "Adult content",
+      "label": "Yetişkinlere yönelik içerik",
       "value": "",
       "options": [
         {
-          "label": "All",
+          "label": "Tüm",
           "value": ""
         },
         {
-          "label": "None adult content",
+          "label": "Yetişkinlere uygun içerik yok",
           "value": "0"
         },
         {
-          "label": "Only adult content",
+          "label": "Yalnızca yetişkinlere yönelik içerik",
           "value": "1"
         }
       ]
     },
     "status[]": {
       "type": "Checkbox",
-      "label": "Status",
+      "label": "Durum",
       "value": [],
       "options": [
         {
-          "label": "Completed",
-          "value": "complete"
-        },
-        {
-          "label": "Ongoing",
+          "label": "devam eden",
           "value": "on-going"
         },
         {
-          "label": "Canceled",
+          "label": "Tamamlandı",
+          "value": "end"
+        },
+        {
+          "label": "İptal edildi",
           "value": "canceled"
         },
         {
-          "label": "On Hold",
+          "label": "Beklemede",
           "value": "on-hold"
+        },
+        {
+          "label": "Yaklaşan",
+          "value": "upcoming"
         }
       ]
     },
     "m_orderby": {
       "type": "Picker",
-      "label": "Order by",
+      "label": "Sipariş ver",
       "value": "",
       "options": [
         {
-          "label": "Relevance",
+          "label": "Alaka",
           "value": ""
         },
         {
-          "label": "Latest",
+          "label": "En son",
           "value": "latest"
-        },
-        {
-          "label": "A-Z",
-          "value": "alphabet"
-        },
-        {
-          "label": "Rating",
-          "value": "rating"
-        },
-        {
-          "label": "Trending",
-          "value": "trending"
-        },
-        {
-          "label": "Most Views",
-          "value": "views"
-        },
-        {
-          "label": "New",
-          "value": "new-manga"
         }
       ]
     }

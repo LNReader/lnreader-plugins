@@ -34,6 +34,14 @@
           "value": "fantazi"
         },
         {
+          "label": "Gerilim",
+          "value": "gerilim"
+        },
+        {
+          "label": "Gizem",
+          "value": "gizem"
+        },
+        {
           "label": "harem",
           "value": "harem"
         },
@@ -84,6 +92,10 @@
         {
           "label": "Tarihi",
           "value": "tarihi"
+        },
+        {
+          "label": "Web Novel",
+          "value": "web-novel"
         },
         {
           "label": "Yaşamdan kesitler",

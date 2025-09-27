@@ -38,8 +38,20 @@
           "value": "gl"
         },
         {
+          "label": "Horror",
+          "value": "horror"
+        },
+        {
+          "label": "Mature",
+          "value": "mature"
+        },
+        {
           "label": "Mystery",
           "value": "mystery"
+        },
+        {
+          "label": "Psychological",
+          "value": "psychological"
         },
         {
           "label": "Romance",

@@ -6,6 +6,10 @@
       "value": [],
       "options": [
         {
+          "label": "Action",
+          "value": "action"
+        },
+        {
           "label": "Adult",
           "value": "adult"
         },
@@ -42,6 +46,14 @@
           "value": "romance"
         },
         {
+          "label": "School Life",
+          "value": "school-life"
+        },
+        {
+          "label": "Slice of Life",
+          "value": "slice-of-life"
+        },
+        {
           "label": "Smut",
           "value": "smut"
         },
@@ -56,6 +68,10 @@
         {
           "label": "Tragedy",
           "value": "tragedy"
+        },
+        {
+          "label": "[Completed]",
+          "value": "completed"
         }
       ]
     },

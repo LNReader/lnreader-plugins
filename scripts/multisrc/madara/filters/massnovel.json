@@ -6,39 +6,43 @@
       "value": [],
       "options": [
         {
-          "label": "academy",
-          "value": "academy"
-        },
-        {
-          "label": "Accelerated Growth",
-          "value": "accelerated-growth"
-        },
-        {
-          "label": "Action",
+          "label": "action",
           "value": "action"
         },
         {
-          "label": "Adventure",
+          "label": "Adulte",
+          "value": "adulte"
+        },
+        {
+          "label": "adventure",
           "value": "adventure"
         },
         {
-          "label": "Ag Jung Seon",
-          "value": "ag-jung-seon"
+          "label": "Alchimie",
+          "value": "alchimie"
         },
         {
-          "label": "bloodline",
-          "value": "bloodline"
+          "label": "Arts Martiaux",
+          "value": "arts-martiaux"
         },
         {
-          "label": "Can Can",
-          "value": "can-can"
+          "label": "boys",
+          "value": "boys"
         },
         {
-          "label": "Comedy",
-          "value": "comedy"
+          "label": "chinese",
+          "value": "chinese"
         },
         {
-          "label": "Drama",
+          "label": "Comédie",
+          "value": "comedie"
+        },
+        {
+          "label": "Cultivation",
+          "value": "cultivation"
+        },
+        {
+          "label": "drama",
           "value": "drama"
         },
         {
@@ -46,7 +50,7 @@
           "value": "eastern"
         },
         {
-          "label": "Ecchi",
+          "label": "ecchi",
           "value": "ecchi"
         },
         {
@@ -54,36 +58,64 @@
           "value": "fantasy"
         },
         {
-          "label": "Free",
-          "value": "free"
+          "label": "fighting",
+          "value": "fighting"
         },
         {
-          "label": "Gender Bender",
-          "value": "gender-bender"
+          "label": "fun",
+          "value": "fun"
+        },
+        {
+          "label": "Games",
+          "value": "games"
+        },
+        {
+          "label": "General",
+          "value": "general"
+        },
+        {
+          "label": "girl",
+          "value": "girl"
         },
         {
           "label": "Harem",
           "value": "harem"
         },
         {
-          "label": "Historical",
-          "value": "historical"
+          "label": "History",
+          "value": "history"
         },
         {
           "label": "Horror",
           "value": "horror"
         },
         {
+          "label": "horrow",
+          "value": "horrow"
+        },
+        {
+          "label": "Idole",
+          "value": "idole"
+        },
+        {
           "label": "Isekai",
           "value": "isekai"
         },
         {
-          "label": "Josei",
-          "value": "josei"
+          "label": "Jeux-vidéos",
+          "value": "jeux-videos"
         },
         {
-          "label": "Martial Arts",
-          "value": "martial-arts"
+          "label": "LGBT+",
+          "value": "lgbt"
+        },
+        {
+          "label": "Male Lead",
+          "value": "male-lead"
+        },
+        {
+          "label": "manhwa",
+          "value": "manhwa"
         },
         {
           "label": "Mature",
@@ -94,19 +126,31 @@
           "value": "mecha"
         },
         {
-          "label": "Mystery",
-          "value": "mystery"
+          "label": "Mystère",
+          "value": "mystere"
         },
         {
-          "label": "Psychological",
-          "value": "psychological"
+          "label": "Paranormal",
+          "value": "paranormal"
+        },
+        {
+          "label": "Psychologique",
+          "value": "psychologique"
+        },
+        {
+          "label": "Realistic",
+          "value": "realistic"
+        },
+        {
+          "label": "Réincarnation",
+          "value": "reincarnation"
         },
         {
           "label": "Romance",
           "value": "romance"
         },
         {
-          "label": "School Life",
+          "label": "School-Life",
           "value": "school-life"
         },
         {
@@ -116,10 +160,6 @@
         {
           "label": "Seinen",
           "value": "seinen"
-        },
-        {
-          "label": "Shoujo",
-          "value": "shoujo"
         },
         {
           "label": "Shounen",
@@ -138,20 +178,28 @@
           "value": "sports"
         },
         {
-          "label": "Supernatural",
-          "value": "supernatural"
+          "label": "Surnaturel",
+          "value": "surnaturel"
         },
         {
-          "label": "Tragedy",
-          "value": "tragedy"
+          "label": "Teen",
+          "value": "teen"
         },
         {
-          "label": "Wuxia",
-          "value": "wuxia"
+          "label": "Tragédie",
+          "value": "tragedie"
         },
         {
-          "label": "Xianxia",
-          "value": "xianxia"
+          "label": "Urban",
+          "value": "urban"
+        },
+        {
+          "label": "War",
+          "value": "war"
+        },
+        {
+          "label": "Wuxia&Xianxia",
+          "value": "wuxiaxianxia"
         },
         {
           "label": "Xuanhuan",
@@ -237,30 +285,6 @@
         {
           "label": "Relevance",
           "value": ""
-        },
-        {
-          "label": "Latest",
-          "value": "latest"
-        },
-        {
-          "label": "A-Z",
-          "value": "alphabet"
-        },
-        {
-          "label": "Rating",
-          "value": "rating"
-        },
-        {
-          "label": "Trending",
-          "value": "trending"
-        },
-        {
-          "label": "Most Views",
-          "value": "views"
-        },
-        {
-          "label": "New",
-          "value": "new-manga"
         }
       ]
     }

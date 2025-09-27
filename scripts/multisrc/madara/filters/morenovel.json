@@ -91,11 +91,19 @@
         },
         {
           "label": "Shoujo Ai",
+          "value": "yuri"
+        },
+        {
+          "label": "Shoujo Ai",
           "value": "shoujo-ai"
         },
         {
           "label": "Shounen",
           "value": "shounen"
+        },
+        {
+          "label": "Shounen Ai",
+          "value": "yaoi"
         },
         {
           "label": "Shounen Ai",
@@ -128,14 +136,6 @@
         {
           "label": "Xuanhuan",
           "value": "xuanhuan"
-        },
-        {
-          "label": "Yaoi",
-          "value": "yaoi"
-        },
-        {
-          "label": "Yuri",
-          "value": "yuri"
         }
       ]
     },

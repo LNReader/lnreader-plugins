@@ -548,5 +548,42 @@
       "lang": "Turkish",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "ranovel",
+    "sourceSite": "https://ranovel.com/",
+    "sourceName": "Ranovel",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true,
+      "customJs": "loadedCheerio('img[alt=\"Buy Me a Coffee at ko-fi.com\"]').parent().remove(); loadedCheerio('*').contents().each(function() {if (this.type === 'comment' && this.data.trim() === 'Text Ranovel') {let currentNode = this.next;for (let i = 0; i < 2 && currentNode; i++) {const nextNode = currentNode.next;loadedCheerio(currentNode).remove();currentNode = nextNode;}}});"
+    }
+  },
+  {
+    "id": "dragonholic",
+    "sourceSite": "https://dragonholic.com/",
+    "sourceName": "Dragonholic",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "etudetranslations",
+    "sourceSite": "https://etudetranslations.com/",
+    "sourceName": "Etude Translations",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "massnovel",
+    "sourceSite": "https://massnovel.fr/",
+    "sourceName": "MassNovel",
+    "options": {
+      "lang": "French",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
