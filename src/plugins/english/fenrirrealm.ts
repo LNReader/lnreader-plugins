@@ -3,13 +3,14 @@ import { Plugin } from '@typings/plugin';
 import { load as loadCheerio } from 'cheerio';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@libs/storage';
+import { defaultCover } from '@libs/defaultCover';
 
 class FenrirRealmPlugin implements Plugin.PluginBase {
   id = 'fenrir';
   name = 'Fenrir Realm';
   icon = 'src/en/fenrirrealm/icon.png';
   site = 'https://fenrirealm.com';
-  version = '1.0.8';
+  version = '1.0.9';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   hideLocked = storage.get('hideLocked');
@@ -38,7 +39,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       .map(g => '&genres%5B%5D=' + g)
       .join('');
     const res = await fetchApi(
-      `${this.site}/api/novels/filter?page=${pageNo}&per_page=20&status=${filters.status.value}&order=${sort}${genresFilter}`,
+      `${this.site}/api/series/filter?page=${pageNo}&per_page=20&status=${filters.status.value}&order=${sort}${genresFilter}`,
     ).then(r => r.json());
 
     return res.data.map(r => this.parseNovelFromApi(r));
@@ -52,26 +53,24 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     }).then(r => r.text());
     const loadedCheerio = loadCheerio(html);
 
-    loadedCheerio(
-      'div.overflow-hidden.transition-all.max-h-\\[108px\\] > br',
-    ).replaceWith('%%NEWLINE%%');
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: loadedCheerio('h1.my-2').text(),
       summary: loadedCheerio(
-        'div.overflow-hidden.transition-all.max-h-\\[108px\\]',
+        'div.overflow-hidden.transition-all.max-h-\\[108px\\] p',
       )
-        .text()
-        .replaceAll('%%NEWLINE%%', '\n'),
+        .map((i, el) => loadCheerio(el).text())
+        .get()
+        .join('\n\n'),
     };
     // novel.artist = '';
     novel.author = loadedCheerio(
       'div.flex-1 > div.mb-3 > a.inline-flex',
     ).text();
-    novel.cover =
-      this.site +
-      '/storage/' +
-      html.match(/,cover:"storage\/(.+?)",cover_data_url/)[1];
+    const coverMatch = html.match(/,cover:"storage\/(.+?)",cover_data_url/);
+    novel.cover = coverMatch
+      ? this.site + '/storage/' + coverMatch[1]
+      : defaultCover;
     novel.genres = loadedCheerio('div.flex-1 > div.flex:not(.mb-3, .mt-5) > a')
       .map((i, el) => loadCheerio(el).text())
       .toArray()
@@ -111,7 +110,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
         'User-Agent': '',
       },
     }).then(r => r.text());
-    return loadCheerio(page)('#reader-area').html();
+    return loadCheerio(page)('#reader-area').html() || '';
   }
 
   async searchNovels(
@@ -119,7 +118,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
     return await fetchApi(
-      `${this.site}/api/novels/filter?page=${pageNo}&per_page=20&search=${encodeURIComponent(searchTerm)}`,
+      `${this.site}/api/series/filter?page=${pageNo}&per_page=20&search=${encodeURIComponent(searchTerm)}`,
     )
       .then(r => r.json())
       .then(r => r.data.map(novel => this.parseNovelFromApi(novel)));
