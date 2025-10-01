@@ -1932,7 +1932,7 @@
 		"name": "SkyNovels",
 		"site": "https://www.skynovels.net/",
 		"lang": "Español",
-		"version": "1.0.0",
+		"version": "1.0.1",
 		"url": "https://raw.githubusercontent.com/LNReader/lnreader-plugins/plugins/v3.0.0/.js/src/plugins/spanish/skynovels.js",
 		"iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-plugins/plugins/v3.0.0/public/static/src/es/skynovels/icon.png"
 	},
