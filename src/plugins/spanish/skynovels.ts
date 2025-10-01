@@ -6,34 +6,30 @@ class SkyNovels implements Plugin.PluginBase {
   name = 'SkyNovels';
   site = 'https://www.skynovels.net/';
   apiSite = 'https://api.skynovels.net/api/';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/es/skynovels/icon.png';
 
   async popularNovels(): Promise<Plugin.NovelItem[]> {
     const url = this.apiSite + 'novels?&q';
-
     const result = await fetchApi(url);
     const body = (await result.json()) as response;
-
     const novels: Plugin.NovelItem[] = [];
 
     body.novels?.forEach(res => {
       const name = res.nvl_title;
       const cover = this.apiSite + 'get-image/' + res.image + '/novels/false';
       const path = 'novelas/' + res.id + '/' + res.nvl_name + '/';
-
       novels.push({ name, cover, path });
     });
 
     return novels;
   }
+
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novelId = novelPath.split('/')[1];
     const url = this.apiSite + 'novel/' + novelId + '/reading?&q';
-
     const result = await fetchApi(url);
     const body = (await result.json()) as responseBook;
-
     const item = body?.novel?.[0];
 
     const novel: Plugin.SourceNovel = {
@@ -42,10 +38,7 @@ class SkyNovels implements Plugin.PluginBase {
     };
 
     novel.cover = this.apiSite + 'get-image/' + item?.image + '/novels/false';
-
-    const genres: string[] = [];
-    item?.genres?.forEach(genre => genres.push(genre.genre_name));
-    novel.genres = genres.join(',');
+    novel.genres = item?.genres?.map(g => g.genre_name).join(',') || '';
     novel.author = item?.nvl_writer;
     novel.summary = item?.nvl_content;
     novel.status = item?.nvl_status;
@@ -67,19 +60,25 @@ class SkyNovels implements Plugin.PluginBase {
     });
 
     novel.chapters = novelChapters;
-
     return novel;
   }
+
   async parseChapter(chapterPath: string): Promise<string> {
     const chapterId: string = chapterPath.split('/')[3];
     const url = `${this.apiSite}novel-chapter/${chapterId}`;
-
     const result = await fetchApi(url);
     const body = (await result.json()) as responseChapter;
-
     const item = body?.chapter?.[0];
 
-    const chapterText = item?.chp_content || '404';
+    let chapterText = item?.chp_content || '404';
+    // FIX: Convertir saltos de línea a párrafos <p>
+    chapterText = chapterText
+      .replace(/<br\s*\/?>/gi, '\n')
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .map(line => `<p>${line}</p>`)
+      .join('');
 
     return chapterText;
   }
@@ -87,7 +86,6 @@ class SkyNovels implements Plugin.PluginBase {
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     searchTerm = searchTerm.toLowerCase();
     const url = this.apiSite + 'novels?&q';
-
     const result = await fetchApi(url);
     const body = (await result.json()) as response;
 
@@ -96,12 +94,10 @@ class SkyNovels implements Plugin.PluginBase {
     );
 
     const novels: Plugin.NovelItem[] = [];
-
     results?.forEach(res => {
       const name = res.nvl_title;
       const cover = this.apiSite + 'get-image/' + res.image + '/novels/false';
       const path = 'novelas/' + res.id + '/' + res.nvl_name + '/';
-
       novels.push({ name, cover, path });
     });
 
@@ -111,9 +107,9 @@ class SkyNovels implements Plugin.PluginBase {
 
 export default new SkyNovels();
 
-type response = {
-  novels?: NovelsEntity[] | null;
-};
+// ---------- TIPOS ----------
+
+type response = { novels?: NovelsEntity[] | null };
 type NovelsEntity = {
   id: number;
   nvl_author?: number | null;
@@ -136,14 +132,9 @@ type NovelsEntity = {
   nvl_ratings_count: number;
   genres?: GenresEntity[] | null;
 };
-type GenresEntity = {
-  id: number;
-  genre_name: string;
-};
+type GenresEntity = { id: number; genre_name: string };
 
-type responseBook = {
-  novel?: NovelEntity[] | null;
-};
+type responseBook = { novel?: NovelEntity[] | null };
 type NovelEntity = {
   id: number;
   nvl_author: number;
@@ -169,52 +160,14 @@ type NovelEntity = {
   collaborators?: CollaboratorsEntity[] | null;
   genres?: GenresEntity[] | null;
 };
-type BookmarksEntity = {
-  id: number;
-  user_id: number;
-  chp_id: number;
-  chp_name: string;
-};
-type VolumesEntity = {
-  vlm_title: string;
-  id: number;
-  nvl_id: number;
-  user_id?: number | null;
-  chapters?: ChaptersEntity[] | null;
-};
-type ChaptersEntity = {
-  id: number;
-  chp_index_title: string;
-  chp_name: string;
-  chp_number: number;
-  chp_status: string;
-  createdAt: string;
-};
-type NovelRatingsEntity = {
-  user_id: number;
-  rate_value: number;
-  rate_comment: string;
-  replys_count: string;
-  createdAt: string;
-  updatedAt: string;
-  id: number;
-  user_login: string;
-  image?: string | null;
-  likes?: (LikesEntity | null)[] | null;
-};
-type LikesEntity = {
-  id: number;
-  user_id: number;
-  user_login: string;
-};
-type CollaboratorsEntity = {
-  user_id: number;
-  user_login: string;
-};
+type BookmarksEntity = { id: number; user_id: number; chp_id: number; chp_name: string };
+type VolumesEntity = { vlm_title: string; id: number; nvl_id: number; user_id?: number | null; chapters?: ChaptersEntity[] | null };
+type ChaptersEntity = { id: number; chp_index_title: string; chp_name: string; chp_number: number; chp_status: string; createdAt: string };
+type NovelRatingsEntity = { user_id: number; rate_value: number; rate_comment: string; replys_count: string; createdAt: string; updatedAt: string; id: number; user_login: string; image?: string | null; likes?: (LikesEntity | null)[] | null };
+type LikesEntity = { id: number; user_id: number; user_login: string };
+type CollaboratorsEntity = { user_id: number; user_login: string };
 
-type responseChapter = {
-  chapter?: ChapterEntity[] | null;
-};
+type responseChapter = { chapter?: ChapterEntity[] | null };
 type ChapterEntity = {
   id: number;
   chp_author: number;
@@ -238,8 +191,4 @@ type ChapterEntity = {
   reactions?: null[] | null;
   total_reactions?: TotalReactionsEntity[] | null;
 };
-type TotalReactionsEntity = {
-  reaction_id: number;
-  reaction_name: string;
-  reaction_count: number;
-};
+type TotalReactionsEntity = { reaction_id: number; reaction_name: string; reaction_count: number };
