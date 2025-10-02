@@ -363,8 +363,10 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           }
         } // summary
         else if (isReadingSummary) {
-          if (name === 'br' || name === 'p') {
+          if (name === 'p') {
             novel.summary += '\n\n';
+          } else if (name === 'br') {
+            novel.summary += '\n';
           } else if (name === 'div' || name === 'script') {
             isReadingSummary--;
           }
