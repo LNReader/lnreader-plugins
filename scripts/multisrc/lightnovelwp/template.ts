@@ -42,7 +42,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${8 + versionIncrements}`;
+    this.version = `1.1.${9 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
 
@@ -242,7 +242,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           }
         } // summary
         else if (isReadingSummary === 1 && data.trim()) {
-          novel.summary += data.trim() + '\n';
+          novel.summary += data;
         } // author and status
         else if (isParsingInfo) {
           if (isReadingInfo) {
@@ -363,8 +363,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           }
         } // summary
         else if (isReadingSummary) {
-          if (name === 'br') {
-            novel.summary += '\n';
+          if (name === 'br' || name === 'p') {
+            novel.summary += '\n\n';
           } else if (name === 'div' || name === 'script') {
             isReadingSummary--;
           }
@@ -418,6 +418,8 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
       if (this.options?.reverseChapters) chapters.reverse();
       novel.chapters = chapters;
     }
+
+    novel.summary = novel.summary.trim();
 
     return novel;
   }
