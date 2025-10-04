@@ -4,9 +4,7 @@ import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelItem } from '../../test_web/static/js';
-import { load } from 'protobufjs';
 import { NovelStatus } from '@libs/novelStatus';
-// import { isUrlAbsolute } from "@libs/isAbsoluteUrl";
 
 type FuzzySearchOptions = {
   caseSensitive: boolean;
