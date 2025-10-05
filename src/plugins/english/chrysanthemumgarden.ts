@@ -9,7 +9,7 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
   name = 'Chrysanthemum Garden';
   icon = 'src/en/chrysanthemumgarden/icon.png';
   site = 'https://chrysanthemumgarden.com';
-  version = '1.0.0';
+  version = '1.0.1';
   filters: Filters | undefined = undefined;
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
@@ -37,17 +37,18 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
             .includes('Manhua')
         )
           return;
+        const href = loadedCheerio(el).find('h2.novel-title > a').attr('href');
+        if (!href) return;
         return {
           name: loadedCheerio(el).find('h2.novel-title > a').text(),
-          path: loadedCheerio(el)
-            .find('h2.novel-title > a')
-            .attr('href')
-            ?.replace(this.site, '')
+          path: href
+            .replace(this.site, '')
             .replace(/^\//, '')
             .replace(/\/$/, ''),
-          cover: loadedCheerio(el)
-            .find('div.novel-cover > img')
-            .attr('data-breeze'),
+          cover:
+            loadedCheerio(el)
+              .find('div.novel-cover > img')
+              .attr('data-breeze') || defaultCover,
         };
       })
       .toArray()
@@ -63,13 +64,16 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
       path: novelPath,
       name: loadedCheerio('h1.novel-title').text(),
       cover: loadedCheerio('div.novel-cover > img').attr('data-breeze'),
-      summary: loadedCheerio('div.entry-content').text(),
+      summary: loadedCheerio('div.entry-content > p')
+        .map((i, el) => loadedCheerio(el).text())
+        .toArray()
+        .join('\n\n'),
     };
 
-    novel.author = loadedCheerio('div.novel-info')
-      .html()
-      .match(/Author:\s*([^<]*)<br>/)?.[1]
-      .trim();
+    const novelInfoHtml = loadedCheerio('div.novel-info').html();
+    novel.author = novelInfoHtml
+      ? novelInfoHtml.match(/Author:\s*([^<]*)<br>/)?.[1]?.trim()
+      : undefined;
     novel.genres = [
       ...loadedCheerio('div.series-genres > a')
         .map((i, el) => loadedCheerio(el).text())
@@ -79,16 +83,19 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
         .toArray(),
     ].join(', ');
 
-    novel.chapters = loadedCheerio('div.chapter-item > a').map((i, el) => {
-      return {
-        name: loadedCheerio(el).text().trim(),
-        path: loadedCheerio(el)
-          .attr('href')
-          ?.replace(this.site, '')
-          .replace(/^\//, '')
-          .replace(/\/$/, ''),
-      };
-    });
+    novel.chapters = loadedCheerio('div.chapter-item > a')
+      .map((i, el) => {
+        const href = loadedCheerio(el).attr('href');
+        if (!href) return;
+        return {
+          name: loadedCheerio(el).text().trim(),
+          path: href
+            .replace(this.site, '')
+            .replace(/^\//, '')
+            .replace(/\/$/, ''),
+        };
+      })
+      .toArray();
     return novel;
   }
 
@@ -104,39 +111,46 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    return this.paginate(
-      (await this.getAllNovels()).filter(novel =>
-        novel.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-      pageNo,
+    if (pageNo !== 1) return [];
+
+    const req = await fetchApi(this.site + '/wp-json/cg/novels');
+    const body = await req.json();
+
+    const allNovels: ChrysanthemumGardenNovelItem[] = (
+      body as ChrysanthemumGardenNovel[]
+    ).map(
+      (novel: ChrysanthemumGardenNovel): ChrysanthemumGardenNovelItem => ({
+        name: novel.name,
+        path: novel.link
+          .replace(this.site, '')
+          .replace(/\/$/, '')
+          .replace(/^\//, ''),
+        cover: defaultCover,
+      }),
+    );
+
+    if (!allNovels) return [];
+
+    return allNovels.filter(novel =>
+      novel.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }
 
-  paginate<T>(data: T[], page: number): T[] {
-    const startIndex = (page - 1) * 20;
-    const endIndex = startIndex + 20;
-    return data.slice(startIndex, endIndex);
-  }
-
-  allNovelsCache: { name: string; path: string; cover: string }[] | undefined;
-
-  async getAllNovels() {
-    if (this.allNovelsCache) return this.allNovelsCache;
-    const req = await fetchApi(this.site + '/wp-json/melimeli/novels');
-    const body = await req.json();
-    this.allNovelsCache = body.map(novel => ({
-      name: novel.name,
-      path: novel.link
-        .replace(this.site, '')
-        .replace(/\/$/, '')
-        .replace(/^\//, ''),
-      cover: defaultCover,
-    }));
-    return this.allNovelsCache;
-  }
+  async getAllNovels() {}
 
   resolveUrl = (path: string, isNovel?: boolean) =>
     this.site + (isNovel ? '/book/' : '/chapter/') + path;
 }
 
 export default new Chrysanthemumgarden();
+
+interface ChrysanthemumGardenNovel {
+  name: string;
+  link: string;
+}
+
+interface ChrysanthemumGardenNovelItem {
+  name: string;
+  path: string;
+  cover: string;
+}
