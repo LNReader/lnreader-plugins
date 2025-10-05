@@ -6,7 +6,7 @@ class SkyNovels implements Plugin.PluginBase {
   name = 'SkyNovels';
   site = 'https://www.skynovels.net/';
   apiSite = 'https://api.skynovels.net/api/';
-  version = '1.0.0';
+  version = '1.0.1';
   icon = 'src/es/skynovels/icon.png';
 
   async popularNovels(): Promise<Plugin.NovelItem[]> {
@@ -79,9 +79,9 @@ class SkyNovels implements Plugin.PluginBase {
 
     const item = body?.chapter?.[0];
 
-    const chapterText = item?.chp_content || '404';
+    const chapterText = item?.chp_content || '';
 
-    return chapterText;
+    return chapterText.replace(/\n/g, '<br>');
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
