@@ -99,7 +99,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
             : ''),
         path:
           novelPath +
-          (c.group?.index === null ? '' : ('/vol-' + c.group.index)) +
+          (c.group?.index === null ? '' : ('/' + c.group.slug)) +
           '/chapter-' + c.number,
         releaseTime: c.created_at,
         chapterNumber: c.number + (c.group?.index * 1000000000000),
