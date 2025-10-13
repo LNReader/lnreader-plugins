@@ -91,7 +91,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       .map(c => ({
         name:
           (c.locked?.price ? '🔒 ' : '') +
-          (c.group?.index === null ? '' : ('Vol ' + c.group.index + ' ')) +
+          (c.group?.index === null ? '' : 'Vol ' + c.group.index + ' ') +
           'Chapter ' +
           c.number +
           (c.title && c.title.trim() != 'Chapter ' + c.number
@@ -99,10 +99,11 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
             : ''),
         path:
           novelPath +
-          (c.group?.index === null ? '' : ('/' + c.group.slug)) +
-          '/chapter-' + c.number,
+          (c.group?.index === null ? '' : '/' + c.group.slug) +
+          '/chapter-' +
+          c.number,
         releaseTime: c.created_at,
-        chapterNumber: c.number + (c.group?.index * 1000000000000),
+        chapterNumber: c.number + c.group?.index * 1000000000000,
       }))
       .sort((a, b) => a.chapterNumber - b.chapterNumber);
     return novel;
