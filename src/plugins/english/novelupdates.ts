@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.5';
+  version = '0.9.6';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -190,7 +190,7 @@ class NovelUpdates implements Plugin.PluginBase {
             .map((p: string) => p.trim())
             .filter((p: string) => p.length > 0)
             .map((p: string) => `<p>${p}</p>`)
-            .join('<br><br>');
+            .join('<br>');
           break;
         } catch (error) {
           throw new Error(`Failed to parse AkuTranslations chapter: ${error}`);
