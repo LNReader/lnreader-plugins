@@ -6,7 +6,7 @@ import { Plugin } from '@typings/plugin';
 class NovelUpdates implements Plugin.PluginBase {
   id = 'novelupdates';
   name = 'Novel Updates';
-  version = '0.9.4';
+  version = '0.9.5';
   icon = 'src/en/novelupdates/icon.png';
   customCSS = 'src/en/novelupdates/customCSS.css';
   site = 'https://www.novelupdates.com/';
@@ -183,7 +183,14 @@ class NovelUpdates implements Plugin.PluginBase {
             throw new Error('Invalid API response structure.');
           }
 
-          chapterContent = json.content.replace(/\n/g, '<br>');
+          const rawContent = json.content.trim();
+
+          chapterContent = rawContent
+            .split(/\n+/)
+            .map((p: string) => p.trim())
+            .filter((p: string) => p.length > 0)
+            .map((p: string) => `<p>${p}</p>`)
+            .join('<br><br>');
           break;
         } catch (error) {
           throw new Error(`Failed to parse AkuTranslations chapter: ${error}`);
