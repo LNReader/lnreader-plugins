@@ -1,5 +1,4 @@
 import React from 'react';
-import { BookMarked } from 'lucide-react';
 
 import { Plugin } from '@/types/plugin';
 
@@ -12,9 +11,9 @@ export default function PluginHeader({ selectedPlugin }: PluginHeaderProps) {
     <header className="border-b">
       <div className="px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-            <BookMarked className="w-6 h-6 text-foreground" />
-          </div>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-[var(--color-accent-soft)] text-xl font-semibold text-[var(--color-accent-strong)] transition-colors">
+            読
+          </span>
           <div>
             <h1 className="text-sm font-semibold text-foreground">
               Plugin Playground

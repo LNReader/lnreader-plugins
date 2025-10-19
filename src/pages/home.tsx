@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
-import { BookOpen, Search, Settings, Zap } from 'lucide-react';
+import { BookOpen, Search, Settings, Zap, Globe } from 'lucide-react';
 import PluginHeader from '../components/plugin-header';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -31,23 +31,28 @@ function Home() {
   return (
     <div className="min-h-screen bg-background">
       <PluginHeader selectedPlugin={plugin} />
-      <div className="flex">
-        <aside className="w-64 border-r bg-background">
-          <div className="p-6">
-            <div className="mb-8">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+      <div className="flex h-[calc(100vh-64px)]">
+        <aside className="w-64 border-r bg-background flex flex-col">
+          <div className="p-6 flex-shrink-0 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Plugins
               </h2>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search plugin..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="pl-10 h-9"
-                />
-              </div>
+              <span className="text-xs text-muted-foreground">
+                {filteredPlugins.length}
+              </span>
             </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search plugin..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 h-9"
+              />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
             <div className="space-y-2">
               {filteredPlugins.map(filteredPlugin => (
                 <button
