@@ -7,3 +7,6 @@ export const NovelStatus = {
   Cancelled: 'Cancelled',
   OnHiatus: 'On Hiatus',
 } as const;
+
+export const defaultCover =
+  'https://github.com/LNReader/lnreader-plugins/blob/main/icons/src/coverNotAvailable.jpg?raw=true';

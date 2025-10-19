@@ -1,9 +1,9 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { defaultCover } from '@libs/defaultCover';
-import { Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { defaultCover } from '@typings/constants';
+import { Filters } from '@typings/filters';
 
 type MTLNovelOptions = {
   lang?: string;

@@ -1,7 +1,7 @@
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@typings/filters';
 
 class PawRead implements Plugin.PluginBase {
   id = 'pawread';

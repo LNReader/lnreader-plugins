@@ -1,7 +1,7 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { Filters, FilterTypes } from '@typings/filters';
 import dayjs from 'dayjs';
 
 type NovelCoolOptions = {

@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi, fetchFile } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@libs/defaultCover';
-import { NovelStatus } from '@libs/novelStatus';
+import { defaultCover } from '@typings/constants';
+import { NovelStatus } from '@typings/constants';
 
 const makeAbsolute = (
   relativeUrl: string | undefined,

@@ -1,8 +1,8 @@
 import { CheerioAPI, load as loadCheerio, load } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { Filters } from '../../../src/libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { Filters } from '@typings/filters';
 
 type FictioneerOptions = {
   browsePage: string;

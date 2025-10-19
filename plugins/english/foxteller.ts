@@ -1,9 +1,9 @@
 import { Plugin } from '@typings/plugin';
 import { Parser } from 'htmlparser2';
-import { FilterTypes, Filters } from '@libs/filterInputs';
-import { defaultCover } from '@libs/defaultCover';
+import { FilterTypes, Filters } from '@typings/filters';
+import { defaultCover } from '@typings/constants';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 
 class Foxteller implements Plugin.PluginBase {
   id = 'foxteller';

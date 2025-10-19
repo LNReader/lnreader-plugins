@@ -1,9 +1,9 @@
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
-import { NovelStatus } from '@libs/novelStatus';
-import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+import { Filters, FilterTypes } from '@typings/filters';
+import { NovelStatus } from '@typings/constants';
+import { isUrlAbsolute } from '@libs/utils';
 
 class RoyalRoad implements Plugin.PluginBase {
   id = 'royalroad';

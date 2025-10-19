@@ -1,10 +1,10 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 import { NovelItem } from '../../test_web/static/js';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 
 type FuzzySearchOptions = {
   caseSensitive: boolean;

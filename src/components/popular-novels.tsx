@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Filter } from 'lucide-react';
 import { useAppStore } from '@store';
 import { Plugin } from '@typings/plugin';
-import { FilterToValues, Filters } from '@libs/filterInputs';
+import { FilterToValues, Filters } from '@typings/filters';
+import { FiltersSheet } from '@/components/filters/filters-sheet';
 
 export default function PopularNovelsSection() {
   const plugin = useAppStore(state => state.plugin);
@@ -14,6 +15,7 @@ export default function PopularNovelsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLatest, setIsLatest] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [filterValues, setFilterValues] = useState<
     FilterToValues<Filters> | undefined
   >();
@@ -87,6 +89,7 @@ export default function PopularNovelsSection() {
               size="sm"
               className="gap-2 bg-transparent"
               disabled={!plugin || isLatest || !plugin.filters}
+              onClick={() => setFiltersOpen(true)}
             >
               <Filter className="w-4 h-4" />
               Filters
@@ -173,6 +176,15 @@ export default function PopularNovelsSection() {
           </div>
         )}
       </Card>
+
+      <FiltersSheet
+        open={filtersOpen}
+        onOpenChange={setFiltersOpen}
+        values={filterValues}
+        filters={plugin?.filters}
+        setValues={setFilterValues}
+        refetch={() => fetchNovelsByIndex(1)}
+      />
     </div>
   );
 }

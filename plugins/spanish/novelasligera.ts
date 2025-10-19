@@ -1,7 +1,7 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 
 class Ligera implements Plugin.PluginBase {
   id = 'novelasligera';

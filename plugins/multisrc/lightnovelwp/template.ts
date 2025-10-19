@@ -2,9 +2,9 @@ import { load } from 'cheerio';
 import { Parser } from 'htmlparser2';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { defaultCover } from '@libs/defaultCover';
-import { Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { defaultCover } from '@typings/constants';
+import { Filters } from '@typings/filters';
 import { storage } from '@libs/storage';
 
 type LightNovelWPOptions = {

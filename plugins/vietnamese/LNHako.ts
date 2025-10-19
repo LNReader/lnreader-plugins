@@ -1,8 +1,8 @@
 import { fetchApi } from '@libs/fetch';
 import { Parser } from 'htmlparser2';
 import { HTMLParser2Util, Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { FilterTypes, Filters } from '@typings/filters';
 
 enum ParseNovelAction {
   Unknown = 'Unknown',

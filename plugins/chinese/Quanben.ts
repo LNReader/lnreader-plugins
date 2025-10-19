@@ -1,9 +1,9 @@
 import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { FilterTypes, Filters } from '@typings/filters';
 import { fetchApi, fetchFile } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 import { load as parseHTML } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 
 const getStandardNovelPath = (url: string | undefined): string | undefined => {
   if (!url) return undefined;

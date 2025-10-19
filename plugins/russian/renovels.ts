@@ -1,7 +1,7 @@
 import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { FilterTypes, Filters } from '@typings/filters';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 import dayjs from 'dayjs';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));

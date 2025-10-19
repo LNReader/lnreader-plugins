@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
-import { defaultCover } from '@libs/defaultCover';
+import { Filters, FilterTypes } from '@typings/filters';
+import { defaultCover } from '@typings/constants';
 
 class ArchiveOfOurOwn implements Plugin.PluginBase {
   id = 'archiveofourown';

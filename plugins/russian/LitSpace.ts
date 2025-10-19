@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@libs/filterInputs';
-import { defaultCover } from '@libs/defaultCover';
+import { FilterTypes, Filters } from '@typings/filters';
+import { defaultCover } from '@typings/constants';
 import { fetchApi } from '@libs/fetch';
 
 const headers: any = {

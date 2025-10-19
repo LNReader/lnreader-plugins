@@ -1,7 +1,7 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@typings/filters';
 import { Parser } from 'htmlparser2';
 
 //has to be here cus this scoping moment

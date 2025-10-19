@@ -1,9 +1,9 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { FilterTypes, Filters } from '@typings/filters';
 
 class BLN implements Plugin.PluginBase {
   id = 'BLN';

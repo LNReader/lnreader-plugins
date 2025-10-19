@@ -1,6 +1,6 @@
 import { Plugin } from '@typings/plugin';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 import dayjs from 'dayjs';
 
 class Smakolykytl implements Plugin.PluginBase {

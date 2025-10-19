@@ -1,8 +1,8 @@
 import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 
 class Chrysanthemumgarden implements Plugin.PluginBase {
   id = 'chrysanthemumgarden';

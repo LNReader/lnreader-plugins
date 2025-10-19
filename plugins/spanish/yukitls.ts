@@ -1,5 +1,5 @@
 import { fetchApi } from '@libs/fetch';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 

@@ -1,10 +1,10 @@
 import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
-import { NovelStatus } from '@libs/novelStatus';
-// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+import { defaultCover } from '@typings/constants';
+import { NovelStatus } from '@typings/constants';
+// import { isUrlAbsolute } from '@libs/utils';
 // import { storage, localStorage, sessionStorage } from '@libs/storage';
 // import { encode, decode } from 'urlencode';
 // import dayjs from 'dayjs';

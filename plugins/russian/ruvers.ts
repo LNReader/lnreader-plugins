@@ -1,8 +1,8 @@
 import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@libs/filterInputs';
-import { defaultCover } from '@libs/defaultCover';
+import { FilterTypes, Filters } from '@typings/filters';
+import { defaultCover } from '@typings/constants';
 import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 

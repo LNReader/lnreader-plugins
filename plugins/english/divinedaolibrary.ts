@@ -1,6 +1,6 @@
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes, FilterValueWithType } from '@libs/filterInputs';
+import { Filters, FilterTypes, FilterValueWithType } from '@typings/filters';
 import { Plugin } from '@typings/plugin';
 import { load as parseHTML } from 'cheerio';
 

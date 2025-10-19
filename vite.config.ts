@@ -25,7 +25,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(dirname, './src'),
-      '@libs': path.resolve(dirname, './src/libs'),
+      '@libs': path.resolve(dirname, './src/lib'),
       '@icons': path.resolve(dirname, './src/icons'),
       '@components': path.resolve(dirname, './src/components'),
       '@redux': path.resolve(dirname, './src/redux'),

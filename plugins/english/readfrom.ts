@@ -1,8 +1,8 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { CheerioAPI, load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 
 class ReadFromPlugin implements Plugin.PluginBase {
   id = 'readfrom';

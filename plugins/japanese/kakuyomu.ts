@@ -1,9 +1,9 @@
 import { fetchText } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@typings/filters';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@libs/defaultCover';
-import { NovelStatus } from '@libs/novelStatus';
+import { defaultCover } from '@typings/constants';
+import { NovelStatus } from '@typings/constants';
 
 class KakuyomuPlugin implements Plugin.PluginBase {
   id = 'kakuyomu';

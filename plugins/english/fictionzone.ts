@@ -1,8 +1,8 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters } from '@libs/filterInputs';
+import { Filters } from '@typings/filters';
 import { load as loadCheerio } from 'cheerio';
-import { NovelStatus } from '@libs/novelStatus';
+import { NovelStatus } from '@typings/constants';
 import dayjs from 'dayjs';
 
 class FictionZonePlugin implements Plugin.PagePlugin {

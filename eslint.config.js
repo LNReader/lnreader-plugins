@@ -129,7 +129,12 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   prettierConfig,
   {
-    ignores: ['.js', 'docs', 'proxy_server.js'],
+    ignores: [
+      '.js',
+      'docs',
+      'proxy_server.js',
+      'plugins/*/*\\[*\\]*.ts', // Files with square brackets in their names
+    ],
   },
   {
     files: ['./plugins/*/*.ts', './plugins/multisrc/*/template.ts'],

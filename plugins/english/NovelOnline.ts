@@ -1,7 +1,7 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@typings/filters';
 
 class NovelsOnline implements Plugin.PluginBase {
   id = 'NO.net';

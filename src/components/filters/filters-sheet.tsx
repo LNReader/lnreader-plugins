@@ -1,28 +1,25 @@
-import React, {
-  forwardRef,
-  ReactNode,
-  useEffect,
-  useImperativeHandle,
-} from 'react';
+import React, { useEffect, useState, ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material';
-import { useState } from 'react';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import {
   AnyFilterValue,
   Filters,
   FilterToValues,
   FilterTypes,
-} from '@libs/filterInputs';
-import { PickerFilter } from './PickerFilter';
-import { SwitchFilter } from './SwitchFilter';
-import { TextFilter } from './TextFilter';
-import { CheckboxFilter } from './CheckboxFilter';
-import { XCheckboxFilter } from './XCheckboxFilter';
+} from '@typings/filters';
+import { PickerFilter } from './picker-filter';
+import { SwitchFilter } from './switch-filter';
+import { TextFilter } from './text-filter';
+import { CheckboxFilter } from './checkbox-filter';
+import { ExcludableCheckboxFilter } from './excludable-checkbox-filter';
+import { RotateCcw } from 'lucide-react';
 
 const renderFilters = (
   filters: Filters | undefined,
@@ -41,7 +38,8 @@ const renderFilters = (
     return typeof o === typeof f || checkIfIsCorrectObjectType(o, f);
   };
 
-  if (!filters || !values) return false;
+  if (!filters || !values) return null;
+
   return (
     <>
       {Object.entries(filters).map(([key, filter]) => {
@@ -51,17 +49,13 @@ const renderFilters = (
         }
         switch (filter.type) {
           case FilterTypes.Picker: {
-            // Check if filterValues have correct type
-            // this needs to be inside of every case in this switch to get correct value type
-            const value = values[key].value; // here value has every possible value type
-            // We could just do `as typeof filter.value` but just to be sure I made a typeguard
+            const value = values[key].value;
             if (!isValueCorrectType<typeof filter.value>(value, filter.value)) {
               console.error(
                 `FilterValue for filter [${key}] has a wrong type!`,
               );
               return null;
             }
-            // value; // here value has only Picker's value
             return (
               <PickerFilter
                 key={`picker_filter_${key}`}
@@ -72,17 +66,13 @@ const renderFilters = (
             );
           }
           case FilterTypes.Switch: {
-            // Check if filterValues have correct type
-            // this needs to be inside of every case in this switch to get correct value type
-            const value = values[key].value; // here value has every possible value type
-            // We could just do `as typeof filter.value` but just to be sure I made a typeguard
+            const value = values[key].value;
             if (!isValueCorrectType<typeof filter.value>(value, filter.value)) {
               console.error(
                 `FilterValue for filter [${key}] has a wrong type!`,
               );
               return null;
             }
-            // value; // here value has only Picker's value
             return (
               <SwitchFilter
                 filter={{ key, filter }}
@@ -135,11 +125,11 @@ const renderFilters = (
               return null;
             }
             return (
-              <XCheckboxFilter
+              <ExcludableCheckboxFilter
                 filter={{ key, filter }}
                 set={newValue => set(key, newValue)}
                 value={value}
-                key={`checkbox_filter_${key}`}
+                key={`xcheсkbox_filter_${key}`}
               />
             );
           }
@@ -149,21 +139,27 @@ const renderFilters = (
   );
 };
 
-export type DialogRef = { show(): void; hide(): void };
+interface FiltersSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  values: FilterToValues<Filters> | undefined;
+  filters: Filters | undefined;
+  setValues: React.Dispatch<
+    React.SetStateAction<FilterToValues<Filters> | undefined>
+  >;
+  refetch: () => void;
+}
 
-export const FiltersDialog = forwardRef<
-  DialogRef,
-  {
-    values: FilterToValues<Filters> | undefined;
-    filters: Filters | undefined;
-    setValues: React.Dispatch<
-      React.SetStateAction<FilterToValues<Filters> | undefined>
-    >;
-    refetch(): void;
-  }
->(function FiltersDialog({ values, setValues, filters, refetch }, ref) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [filterElements, setFilterElements] = useState<ReactNode>(false);
+export function FiltersSheet({
+  open,
+  onOpenChange,
+  values,
+  setValues,
+  filters,
+  refetch,
+}: FiltersSheetProps) {
+  const [filterElements, setFilterElements] = useState<ReactNode>(null);
+
   const setFilterWithKey = (key: string, newValue: AnyFilterValue) =>
     setValues(fValues =>
       !fValues
@@ -177,35 +173,58 @@ export const FiltersDialog = forwardRef<
           },
     );
 
-  useImperativeHandle(ref, () => ({
-    show() {
-      setDialogOpen(true);
-    },
-    hide() {
-      setDialogOpen(false);
-    },
-  }));
+  const resetFilters = () => {
+    if (filters) {
+      const resetValues: FilterToValues<typeof filters> = {};
+      for (const fKey in filters) {
+        resetValues[fKey as keyof typeof resetValues] = {
+          type: filters[fKey].type,
+          value: filters[fKey].value,
+        };
+      }
+      setValues(resetValues);
+    }
+  };
 
   useEffect(() => {
     setFilterElements(renderFilters(filters, values, setFilterWithKey));
-  }, [values]);
+  }, [values, filters]);
+
+  const handleApply = () => {
+    refetch();
+    onOpenChange(false);
+  };
 
   return (
-    <Dialog
-      scroll="paper"
-      open={dialogOpen}
-      onClose={() => setDialogOpen(false)}
-    >
-      <DialogTitle>Filters</DialogTitle>
-      <DialogContent dividers id="filtersContent">
-        {filterElements}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => refetch()}>Refetch</Button>
-        <Button style={{ color: 'red' }} onClick={() => setDialogOpen(false)}>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Filters</SheetTitle>
+          <SheetDescription>
+            Customize your search with these filter options
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-6 space-y-4">
+          {filterElements || (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No filters available
+            </p>
+          )}
+        </div>
+        <SheetFooter className="flex-col sm:flex-col gap-2">
+          <Button onClick={handleApply} className="w-full">
+            Apply Filters
+          </Button>
+          <Button
+            variant="outline"
+            onClick={resetFilters}
+            className="w-full gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset to Default
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
-});
+}

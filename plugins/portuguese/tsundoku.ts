@@ -1,9 +1,9 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@libs/defaultCover';
+import { defaultCover } from '@typings/constants';
 import dayjs from 'dayjs';
-import { Filters, FilterTypes } from '@libs/filterInputs';
+import { Filters, FilterTypes } from '@typings/filters';
 
 class TsundokuPlugin implements Plugin.PluginBase {
   id = 'tsundoku';

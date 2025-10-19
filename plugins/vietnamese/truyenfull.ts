@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@libs/novelStatus';
-import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@typings/constants';
+import { FilterTypes, Filters } from '@typings/filters';
 
 class TruyenFull implements Plugin.PagePlugin {
   id = 'truyenfull';

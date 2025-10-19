@@ -36,9 +36,8 @@
     "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
       "@/*": ["./src/*"],
-      "@libs/*": ["./src/libs/*"],
+      "@libs/*": ["./src/lib/*"],
       "@icons/*": ["./src/icons/*"],
-      // "@components/*": ["./src/components/*"],
       "@redux/*": ["./src/redux/*"],
       "@provider/*": ["./src/provider/*"],
       "@plugins/*": ["./plugins/*"],
