@@ -33,16 +33,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@libs/*": ["./src/libs/*"],
-      "@icons/*": ["./src/icons/*"],
-      // "@components/*": ["./src/components/*"],
-      "@redux/*": ["./src/redux/*"],
-      "@provider/*": ["./src/provider/*"],
-      "@plugins/*": ["./plugins/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@scripts/*": ["./scripts/*"],
-      "@typings/*": ["./src/types/*"],
-      "@store": ["./src/store"]
+      "@plugins/*": ["./plugins/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */

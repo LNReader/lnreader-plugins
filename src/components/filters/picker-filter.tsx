@@ -7,8 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FilterTypes } from '@typings/filters';
-import type { Filter } from '@typings/filters';
+import { FilterTypes } from '@/types/filters';
+import type { Filter } from '@/types/filters';
 
 interface PickerFilterProps {
   filter: {

@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@typings/filters';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { FilterTypes, Filters } from '@/types/filters';
+import { NovelStatus } from '@/types/constants';
 
 type VolumeData = {
   story: string;

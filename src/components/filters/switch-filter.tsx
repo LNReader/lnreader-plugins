@@ -1,8 +1,8 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { FilterTypes } from '@typings/filters';
-import type { Filter } from '@typings/filters';
+import { FilterTypes } from '@/types/filters';
+import type { Filter } from '@/types/filters';
 
 interface SwitchFilterProps {
   filter: {

@@ -1,8 +1,8 @@
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters, FilterTypes } from '@/types/filters';
 import { load as loadCheerio } from 'cheerio';
-import { NovelStatus } from '@typings/constants';
+import { NovelStatus } from '@/types/constants';
 
 class InkittPlugin implements Plugin.PluginBase {
   id = 'inkitt';

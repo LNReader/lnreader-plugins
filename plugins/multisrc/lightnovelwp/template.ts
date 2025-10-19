@@ -1,11 +1,11 @@
 import { load } from 'cheerio';
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@typings/constants';
-import { defaultCover } from '@typings/constants';
-import { Filters } from '@typings/filters';
-import { storage } from '@libs/storage';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@/types/constants';
+import { Filters } from '@/types/filters';
+import { storage } from '@/lib/storage';
 
 type LightNovelWPOptions = {
   reverseChapters?: boolean;

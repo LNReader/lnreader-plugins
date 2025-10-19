@@ -1,6 +1,6 @@
-import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@typings/filters';
-import { fetchApi } from '@libs/fetch';
+import { Plugin } from '@/types/plugin';
+import { FilterTypes, Filters } from '@/types/filters';
+import { fetchApi } from '@/lib/fetch';
 import { load as parseHTML } from 'cheerio';
 
 class TopLiba implements Plugin.PluginBase {

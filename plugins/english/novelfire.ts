@@ -1,8 +1,8 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@typings/constants';
-import { Filters, FilterTypes } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { NovelStatus } from '@/types/constants';
+import { Filters, FilterTypes } from '@/types/filters';
 
 class NovelFire implements Plugin.PluginBase {
   id = 'novelfire';

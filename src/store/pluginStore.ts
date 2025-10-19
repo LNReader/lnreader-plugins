@@ -1,6 +1,6 @@
-import { Plugin } from '@typings/plugin';
+import { Plugin } from '@/types/plugin';
 import { StoreCreator } from '.';
-import { getPlugin } from '@provider/plugins';
+import { getPlugin } from '@/provider/plugins';
 import plugins from '@plugins/index';
 
 export type PluginStore = {

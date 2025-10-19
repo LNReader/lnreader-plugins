@@ -1,8 +1,8 @@
-import { fetchText } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters } from '@typings/filters';
+import { fetchText } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters } from '@/types/filters';
 import { load as parseHTML } from 'cheerio';
-import { NovelStatus } from '@typings/constants';
+import { NovelStatus } from '@/types/constants';
 
 class LinovelPlugin implements Plugin.PluginBase {
   id = 'linovel';

@@ -1,5 +1,5 @@
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
 
 const UA_RANOBE_ID = 'uaranobeclub' as const;
 const UA_RANOBE_URL = 'https://uaranobe.club/' as const;

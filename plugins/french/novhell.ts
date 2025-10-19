@@ -1,8 +1,8 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 
 class NovhellPlugin implements Plugin.PluginBase {
   id = 'novhell';

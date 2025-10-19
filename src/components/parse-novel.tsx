@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { BookOpen, ChevronLeft, ChevronRight, Copy, Zap } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+
 import { Badge } from '@/components/ui/badge';
-import { Copy, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
-import { useAppStore } from '@store';
-import { Plugin } from '@typings/plugin';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useAppStore } from '@/store';
+import { Plugin } from '@/types/plugin';
 
 type ParseNovelSectionProps = {
   onNavigateToParseChapter?: () => void;
@@ -161,8 +168,36 @@ export default function ParseNovelSection({
         )}
 
         {loading && !sourceNovel ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading novel details...</p>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="md:col-span-2 space-y-4">
+                <div className="flex gap-4">
+                  <Skeleton className="w-32 h-48 rounded-lg" />
+                  <div className="flex-1 space-y-3">
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </div>
+                <Skeleton className="h-32 w-full" />
+              </div>
+              <Skeleton className="h-64" />
+            </div>
+          </div>
+        ) : !sourceNovel ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <BookOpen className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {plugin ? 'Ready to parse' : 'No plugin selected'}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              {plugin
+                ? 'Enter a novel path in the field above and click "Fetch" to load detailed information, including chapters, metadata, and more.'
+                : 'Please select a plugin from the sidebar to get started.'}
+            </p>
           </div>
         ) : sourceNovel ? (
           <div className="space-y-6">
@@ -186,41 +221,43 @@ export default function ParseNovelSection({
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-foreground mb-2 line-clamp-3">
+                    <h3 className="text-2xl font-bold text-foreground mb-3 line-clamp-3">
                       {sourceNovel.name}
                     </h3>
-                    <div className="space-y-2 mb-4">
+                    <div className="grid grid-cols-2 gap-3 mb-4">
                       {sourceNovel.status && (
                         <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                             Status
                           </p>
-                          <Badge>{sourceNovel.status}</Badge>
+                          <Badge className="text-xs">
+                            {sourceNovel.status}
+                          </Badge>
                         </div>
                       )}
                       {sourceNovel.author && (
                         <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                             Author
                           </p>
-                          <p className="text-sm text-foreground">
+                          <p className="text-sm text-foreground line-clamp-1">
                             {sourceNovel.author}
                           </p>
                         </div>
                       )}
                       {sourceNovel.artist && (
                         <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                             Artist
                           </p>
-                          <p className="text-sm text-foreground">
+                          <p className="text-sm text-foreground line-clamp-1">
                             {sourceNovel.artist}
                           </p>
                         </div>
                       )}
                       {sourceNovel.rating && (
                         <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                             Rating
                           </p>
                           <p className="text-sm text-foreground">
@@ -229,17 +266,24 @@ export default function ParseNovelSection({
                         </div>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2 bg-transparent"
-                      onClick={() =>
-                        copyToClipboard(sourceNovel.path, 'Novel path')
-                      }
-                    >
-                      <Copy className="w-4 h-4" />
-                      Copy Path
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 bg-transparent"
+                          onClick={() =>
+                            copyToClipboard(sourceNovel.path, 'Novel path')
+                          }
+                        >
+                          <Copy className="w-4 h-4" />
+                          Copy Path
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Copy novel path to clipboard</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
 
@@ -358,13 +402,13 @@ export default function ParseNovelSection({
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr className="border-b border-border">
-                        <th className="text-left py-3 px-4 font-semibold text-foreground w-20">
-                          Index
+                        <th className="text-left py-3 px-4 font-semibold text-foreground w-16">
+                          #
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-foreground">
                           Name
                         </th>
-                        <th className="text-left py-3 px-4 font-semibold text-foreground w-40">
+                        <th className="text-left py-3 px-4 font-semibold text-foreground w-28">
                           Actions
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-foreground w-32">
@@ -381,43 +425,62 @@ export default function ParseNovelSection({
                       {chapters.map((chapter, index) => (
                         <tr
                           key={`${chapter.path}-${index}`}
-                          className="border-b border-border hover:bg-muted/50 transition-colors"
+                          className={`border-b border-border hover:bg-muted/70 transition-colors ${
+                            index % 2 === 0 ? 'bg-background' : 'bg-muted/20'
+                          }`}
                         >
-                          <td className="py-3 px-4 text-foreground">{index}</td>
-                          <td className="py-3 px-4 text-foreground">
+                          <td className="py-2.5 px-4 text-muted-foreground text-xs">
+                            {index}
+                          </td>
+                          <td className="py-2.5 px-4 text-foreground">
                             {chapter.name}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-2.5 px-4">
                             <div className="flex gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-auto p-1 text-xs hover:bg-transparent"
-                                onClick={() =>
-                                  copyToClipboard(chapter.path, 'Chapter path')
-                                }
-                                title="Copy chapter path"
-                              >
-                                <Copy className="w-3 h-3 mr-1" />
-                                Copy
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-auto p-1 text-xs hover:bg-transparent"
-                                onClick={() => handleParseChapter(chapter.path)}
-                                title="Parse this chapter"
-                              >
-                                <Zap className="w-3 h-3 mr-1" />
-                                Parse
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0"
+                                    onClick={() =>
+                                      copyToClipboard(
+                                        chapter.path,
+                                        'Chapter path',
+                                      )
+                                    }
+                                  >
+                                    <Copy className="w-3.5 h-3.5" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Copy chapter path</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0"
+                                    onClick={() =>
+                                      handleParseChapter(chapter.path)
+                                    }
+                                  >
+                                    <Zap className="w-3.5 h-3.5" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Parse chapter</p>
+                                </TooltipContent>
+                              </Tooltip>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-muted-foreground">
+                          <td className="py-2.5 px-4 text-muted-foreground text-xs">
                             {formatDate(chapter.releaseTime)}
                           </td>
                           {chapters.some(ch => ch.chapterNumber) && (
-                            <td className="py-3 px-4 text-muted-foreground">
+                            <td className="py-2.5 px-4 text-muted-foreground text-xs">
                               {chapter.chapterNumber || '-'}
                             </td>
                           )}

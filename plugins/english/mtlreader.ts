@@ -1,6 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
 
 class MTLReader implements Plugin.PluginBase {
   id = 'mtlreader';

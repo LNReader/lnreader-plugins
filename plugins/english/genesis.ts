@@ -1,6 +1,6 @@
-import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Filters, FilterTypes } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
 
 /**
  * Example for novel API:

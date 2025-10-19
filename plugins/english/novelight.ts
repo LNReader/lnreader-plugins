@@ -1,10 +1,10 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
 import dayjs from 'dayjs';
-import { storage } from '@libs/storage';
-import { NovelStatus } from '@typings/constants';
+import { storage } from '@/lib/storage';
+import { NovelStatus } from '@/types/constants';
 
 class Novelight implements Plugin.PagePlugin {
   id = 'novelight';

@@ -1,8 +1,8 @@
 import { Cheerio, CheerioAPI, load, Element } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 
 class XiaowazPlugin implements Plugin.PluginBase {
   id = 'xiaowaz';

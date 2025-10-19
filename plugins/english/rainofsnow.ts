@@ -1,8 +1,8 @@
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters, FilterTypes } from '@/types/filters';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { NovelStatus } from '@typings/constants';
+import { NovelStatus } from '@/types/constants';
 
 class Rainofsnow implements Plugin.PagePlugin {
   id = 'rainofsnow';

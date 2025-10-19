@@ -1,7 +1,7 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { NovelStatus } from '@/types/constants';
 
 type RanobesOptions = {
   lang?: string;

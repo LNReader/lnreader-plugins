@@ -1,9 +1,9 @@
-import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@typings/filters';
-import { NovelStatus } from '@typings/constants';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Filters, FilterTypes } from '@/types/filters';
+import { NovelStatus } from '@/types/constants';
+import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
-import { storage } from '@libs/storage';
+import { storage } from '@/lib/storage';
 
 class KomgaPlugin implements Plugin.PluginBase {
   id = 'komga';

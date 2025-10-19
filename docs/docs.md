@@ -11,7 +11,7 @@
 Most of the Plugin/Novel type definitions accessed using the `Plugin` namespace imported via
 
 ```ts
-import { Plugin } from '@typings/plugin';
+import { Plugin } from '@/types/plugin';
 ```
 
 ### PluginBase
@@ -349,7 +349,7 @@ It is an object representing information how to store/access the novel
 You can use the default `Cover not available` cover by importing
 
 ```ts
-import { defaultCover } from '@typings/constants';
+import { defaultCover } from '@/types/constants';
 ```
 
 ---
@@ -377,10 +377,10 @@ import { defaultCover } from '@typings/constants';
 
 ### Filters
 
-`Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@typings/filters` file:
+`Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@/types/filters` file:
 
 ```ts
-import { FilterTypes, Filters } from '@typings/filters';
+import { FilterTypes, Filters } from '@/types/filters';
 ```
 
 There are 2 main objects when using filters:

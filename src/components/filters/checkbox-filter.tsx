@@ -1,8 +1,8 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FilterTypes } from '@typings/filters';
-import type { Filter } from '@typings/filters';
+import { FilterTypes } from '@/types/filters';
+import type { Filter } from '@/types/filters';
 
 interface CheckboxFilterProps {
   filter: {

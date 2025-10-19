@@ -1,6 +1,6 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
 
 class HasulTL implements Plugin.PluginBase {
   id = 'HasuTL';

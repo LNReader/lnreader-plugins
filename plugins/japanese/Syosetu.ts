@@ -1,11 +1,11 @@
 import { load as loadCheerio } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
-import { FilterTypes, Filters } from '@typings/filters';
-import { NovelStatus } from '@typings/constants';
-// const novelStatus = require('@typings/constants');
-// const isUrlAbsolute = require('@libs/utils');
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
+import { FilterTypes, Filters } from '@/types/filters';
+import { NovelStatus } from '@/types/constants';
+// const novelStatus = require('@/types/constants');
+// const isUrlAbsolute = require('@/lib/utils');
 // const parseDate = require('@libs/parseDate');
 
 class Syosetu implements Plugin.PluginBase {

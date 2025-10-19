@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Copy, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Copy } from 'lucide-react';
-import { useAppStore } from '@store';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useAppStore } from '@/store';
 
 export default function ParseChapterSection() {
   const plugin = useAppStore(state => state.plugin);
@@ -113,8 +120,42 @@ export default function ParseChapterSection() {
         )}
 
         {loading && !chapterText ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading chapter content...</p>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-9 w-28" />
+                <Skeleton className="h-9 w-28" />
+              </div>
+            </div>
+            <div className="border border-border rounded-lg">
+              <Skeleton className="h-10 w-full rounded-t-lg" />
+              <div className="p-6 space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-11/12" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-10/12" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-11/12" />
+              </div>
+            </div>
+          </div>
+        ) : !chapterText ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <FileText className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {plugin ? 'Ready to parse' : 'No plugin selected'}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              {plugin
+                ? 'Enter a chapter path in the field above and click "Fetch" to load the chapter content.'
+                : 'Please select a plugin from the sidebar to get started.'}
+            </p>
           </div>
         ) : chapterText ? (
           <div className="space-y-6">
@@ -128,24 +169,42 @@ export default function ParseChapterSection() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 bg-transparent"
-                  onClick={() => copyToClipboard(chapterPath, 'Chapter path')}
-                >
-                  <Copy className="w-4 h-4" />
-                  Copy Path
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 bg-transparent"
-                  onClick={() => copyToClipboard(chapterText, 'Chapter text')}
-                >
-                  <Copy className="w-4 h-4" />
-                  Copy Text
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 bg-transparent"
+                      onClick={() =>
+                        copyToClipboard(chapterPath, 'Chapter path')
+                      }
+                    >
+                      <Copy className="w-4 h-4" />
+                      Copy Path
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy chapter path to clipboard</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 bg-transparent"
+                      onClick={() =>
+                        copyToClipboard(chapterText, 'Chapter text')
+                      }
+                    >
+                      <Copy className="w-4 h-4" />
+                      Copy Text
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy chapter text to clipboard</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
 

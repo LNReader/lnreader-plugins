@@ -1,5 +1,5 @@
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
 
 class Agitoon implements Plugin.PluginBase {

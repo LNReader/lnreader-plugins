@@ -1,9 +1,9 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { FilterTypes, Filters } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { FilterTypes, Filters } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 
 class TuNovelaLigera implements Plugin.PagePlugin {
   id = 'tunovelaligera';

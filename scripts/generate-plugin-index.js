@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-let content = `import { Plugin } from '@typings/plugin';\n`;
+let content = `import { Plugin } from '@/types/plugin';\n`;
 let pluginCounter = 0;
 const PLUGIN_DIR = 'plugins';
 

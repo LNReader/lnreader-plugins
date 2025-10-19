@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Search as SearchIcon } from 'lucide-react';
+
+import { NovelCard } from '@/components/novel-card';
 import { Badge } from '@/components/ui/badge';
-import { Zap } from 'lucide-react';
-import { useAppStore } from '@store';
-import { Plugin } from '@typings/plugin';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAppStore } from '@/store';
+import { Plugin } from '@/types/plugin';
 
 type SearchNovelsSectionProps = {
   onNavigateToParseNovel?: () => void;
@@ -110,59 +112,47 @@ export default function SearchNovelsSection({
         )}
 
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Searching for novels...</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="space-y-3">
+                <Skeleton className="w-full aspect-[3/4] rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <div className="flex gap-1.5">
+                  <Skeleton className="h-8 flex-1" />
+                  <Skeleton className="h-8 flex-1" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : novels.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <SearchIcon className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               {searchTerm
-                ? 'No novels found. Try a different search term.'
+                ? 'No results found'
                 : plugin
-                  ? 'Enter a search term and click "Search" to find novels.'
-                  : 'Please select a plugin first.'}
+                  ? 'Ready to search'
+                  : 'No plugin selected'}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              {searchTerm
+                ? 'Try adjusting your search term or check the spelling. Different sources may have different availability.'
+                : plugin
+                  ? 'Enter a search term in the field above and click "Search" to find novels.'
+                  : 'Please select a plugin from the sidebar to get started.'}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4">
             {novels.map((novel, index) => (
-              <div
+              <NovelCard
                 key={`${novel.path}-${index}`}
-                className="group cursor-pointer"
-              >
-                <div className="relative mb-4 overflow-hidden rounded-lg bg-muted aspect-[3/4]">
-                  <img
-                    src={novel.cover || '/static/coverNotAvailable.webp'}
-                    alt={novel.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
-                  {novel.name}
-                </h3>
-                <div className="flex gap-2 mt-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 bg-transparent"
-                    onClick={() => {
-                      navigator.clipboard.writeText(novel.path);
-                      toast.success('Novel path copied to clipboard!');
-                    }}
-                  >
-                    Copy Path
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => handleParseNovel(novel.path)}
-                    title="Parse this novel"
-                  >
-                    <Zap className="w-3 h-3 mr-1" />
-                    Parse
-                  </Button>
-                </div>
-              </div>
+                novel={novel}
+                onParse={handleParseNovel}
+              />
             ))}
           </div>
         )}

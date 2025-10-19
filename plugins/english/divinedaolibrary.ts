@@ -1,7 +1,7 @@
-import { defaultCover } from '@typings/constants';
-import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes, FilterValueWithType } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
+import { defaultCover } from '@/types/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Filters, FilterTypes, FilterValueWithType } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
 
 //TODO: this looks similar to fictioneer source? maybe use multisrc someday

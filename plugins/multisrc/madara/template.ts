@@ -1,11 +1,11 @@
-import { fetchApi } from '@libs/fetch';
-import { Filters } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Filters } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
 import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 import dayjs from 'dayjs';
-import { storage } from '@libs/storage';
+import { storage } from '@/lib/storage';
 
 const includesAny = (str: string, keywords: string[]) =>
   new RegExp(keywords.join('|')).test(str);

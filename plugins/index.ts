@@ -1,4 +1,4 @@
-import { Plugin } from '@typings/plugin';
+import { Plugin } from '@/types/plugin';
 import p_0 from './arabic/ArNovel[madara]';
 import p_1 from './arabic/Azora[madara]';
 import p_2 from './arabic/HizoManga[madara]';

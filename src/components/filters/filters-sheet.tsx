@@ -13,7 +13,7 @@ import {
   Filters,
   FilterToValues,
   FilterTypes,
-} from '@typings/filters';
+} from '@/types/filters';
 import { PickerFilter } from './picker-filter';
 import { SwitchFilter } from './switch-filter';
 import { TextFilter } from './text-filter';

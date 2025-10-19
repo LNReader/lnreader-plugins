@@ -1,5 +1,5 @@
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
 
 class SkyNovels implements Plugin.PluginBase {
   id = 'skynovels';

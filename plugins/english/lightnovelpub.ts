@@ -1,7 +1,7 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters, FilterTypes } from '@/types/filters';
 import dayjs from 'dayjs';
 
 class LightNovelPub implements Plugin.PagePlugin {

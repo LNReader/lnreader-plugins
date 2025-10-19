@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import { Check } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -9,11 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { CheckedState } from '@radix-ui/react-checkbox';
-import { FetchMode } from '@typings/types';
-import useDebounce from '@hooks/useDebounce';
-import { Check } from 'lucide-react';
+import useDebounce from '@/hooks/useDebounce';
+import { FetchMode } from '@/types/types';
 
 export default function SettingsSection() {
   const [cookies, setCookies] = useState('');
@@ -84,84 +85,112 @@ export default function SettingsSection() {
         </div>
 
         <div className="space-y-6">
-          {/* User Agent */}
-          <div className="space-y-2">
-            <Label className="font-semibold text-foreground">
-              Browser User Agent
-            </Label>
-            <div className="flex items-center gap-3">
-              <Input
-                value={navigator.userAgent}
-                disabled
-                className="font-mono text-xs flex-1 opacity-60"
-                title={navigator.userAgent}
-              />
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Checkbox
-                  id="use-ua"
-                  checked={useUserAgent}
-                  onCheckedChange={setUseUserAgent}
-                />
-                <Label
-                  htmlFor="use-ua"
-                  className="text-sm text-foreground cursor-pointer"
-                >
-                  Use
+          {/* Request Configuration Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-px flex-1 bg-border"></div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Request Configuration
+              </h3>
+              <div className="h-px flex-1 bg-border"></div>
+            </div>
+
+            <div className="space-y-6">
+              {/* User Agent */}
+              <div className="space-y-2">
+                <Label className="font-semibold text-foreground">
+                  Browser User Agent
                 </Label>
+                <div className="flex items-center gap-3">
+                  <Input
+                    value={navigator.userAgent}
+                    disabled
+                    className="font-mono text-xs flex-1 opacity-60"
+                    title={navigator.userAgent}
+                  />
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <Checkbox
+                      id="use-ua"
+                      checked={useUserAgent}
+                      onCheckedChange={setUseUserAgent}
+                    />
+                    <Label
+                      htmlFor="use-ua"
+                      className="text-sm text-foreground cursor-pointer"
+                    >
+                      Use
+                    </Label>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Enable to send your browser's user agent with requests
+                </p>
+              </div>
+
+              {/* Cookies */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="cookies"
+                  className="font-semibold text-foreground"
+                >
+                  Cookies
+                </Label>
+                <Input
+                  id="cookies"
+                  value={cookies}
+                  onChange={e => setCookies(e.target.value.trim())}
+                  placeholder="Enter cookies (optional)..."
+                  className="font-mono text-xs"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Additional cookies to send with requests (optional)
+                </p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Enable to send your browser's user agent with requests
-            </p>
           </div>
 
-          {/* Cookies */}
-          <div className="space-y-2">
-            <Label htmlFor="cookies" className="font-semibold text-foreground">
-              Cookies
-            </Label>
-            <Input
-              id="cookies"
-              value={cookies}
-              onChange={e => setCookies(e.target.value.trim())}
-              placeholder="Enter cookies (optional)..."
-              className="font-mono text-xs"
-            />
-            <p className="text-xs text-muted-foreground">
-              Additional cookies to send with requests (optional)
-            </p>
-          </div>
+          {/* Fetch Settings Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-px flex-1 bg-border"></div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Fetch Settings
+              </h3>
+              <div className="h-px flex-1 bg-border"></div>
+            </div>
 
-          {/* Fetch Mode */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="fetch-mode"
-              className="font-semibold text-foreground"
-            >
-              Fetch Mode
-            </Label>
-            <Select
-              value={fetchMode.toString()}
-              onValueChange={value =>
-                setFetchMode(parseInt(value) as FetchMode)
-              }
-            >
-              <SelectTrigger id="fetch-mode">
-                <SelectValue>{getFetchModeLabel(fetchMode)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FetchMode.PROXY.toString()}>
-                  Proxy
-                </SelectItem>
-                <SelectItem value={FetchMode.NODE_FETCH.toString()}>
-                  Node Fetch
-                </SelectItem>
-                <SelectItem value={FetchMode.CURL.toString()}>Curl</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Select the method used to fetch data from sources
-            </p>
+            <div className="space-y-2">
+              <Label
+                htmlFor="fetch-mode"
+                className="font-semibold text-foreground"
+              >
+                Fetch Mode
+              </Label>
+              <Select
+                value={fetchMode.toString()}
+                onValueChange={value =>
+                  setFetchMode(parseInt(value) as FetchMode)
+                }
+              >
+                <SelectTrigger id="fetch-mode">
+                  <SelectValue>{getFetchModeLabel(fetchMode)}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={FetchMode.PROXY.toString()}>
+                    Proxy
+                  </SelectItem>
+                  <SelectItem value={FetchMode.NODE_FETCH.toString()}>
+                    Node Fetch
+                  </SelectItem>
+                  <SelectItem value={FetchMode.CURL.toString()}>
+                    Curl
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Select the method used to fetch data from sources
+              </p>
+            </div>
           </div>
         </div>
       </Card>

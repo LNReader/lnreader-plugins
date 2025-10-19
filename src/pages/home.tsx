@@ -76,10 +76,10 @@ function Home() {
           <div className="p-8">
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-foreground mb-2">
-                Plugin Tester
+                Plugin Playground
               </h1>
               <p className="text-muted-foreground">
-                Test and debug plugin functionalities for {plugin?.name}
+                Explore and test {plugin?.name || 'plugin'} features
               </p>
             </div>
 

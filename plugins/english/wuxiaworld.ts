@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchProto } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters } from '@typings/filters';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi, fetchProto } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters } from '@/types/filters';
+import { NovelStatus } from '@/types/constants';
 
 type StringValue = {
   value: string;

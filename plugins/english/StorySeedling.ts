@@ -1,8 +1,8 @@
 import { CheerioAPI, load } from 'cheerio';
-import { Plugin } from '@typings/plugin';
-import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@typings/constants';
-import { defaultCover } from '@typings/constants';
+import { Plugin } from '@/types/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@/types/constants';
 
 class StorySeedlingPlugin implements Plugin.PluginBase {
   id = 'storyseedling';

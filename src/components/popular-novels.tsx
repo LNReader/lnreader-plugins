@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { Filter, Zap } from 'lucide-react';
+
+import { FiltersSheet } from '@/components/filters/filters-sheet';
+import { NovelCard } from '@/components/novel-card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Filter, Zap } from 'lucide-react';
-import { useAppStore } from '@store';
-import { Plugin } from '@typings/plugin';
-import { FilterToValues, Filters } from '@typings/filters';
-import { FiltersSheet } from '@/components/filters/filters-sheet';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAppStore } from '@/store';
+import { FilterToValues, Filters } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
 
 type PopularNovelsSectionProps = {
   onNavigateToParseNovel?: () => void;
@@ -125,7 +128,7 @@ export default function PopularNovelsSection({
           </div>
         </div>
 
-        <div className="flex gap-2 mb-6">
+        <div className="flex items-center gap-2 mb-6">
           {['Latest', 'Popular'].map(option => (
             <Badge
               key={option}
@@ -139,64 +142,65 @@ export default function PopularNovelsSection({
             </Badge>
           ))}
           {currentIndex > 0 && (
-            <Badge variant="secondary" className="ml-auto">
-              Page {currentIndex}
-            </Badge>
+            <div className="ml-auto flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Page</span>
+              <Input
+                type="number"
+                min="1"
+                max={maxIndex}
+                value={currentIndex}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const page = parseInt(e.target.value);
+                  if (page > 0 && page <= maxIndex) {
+                    fetchNovelsByIndex(page);
+                  }
+                }}
+                className="w-16 h-7 text-center text-xs"
+                disabled={loading}
+              />
+              <span className="text-xs text-muted-foreground">
+                of {maxIndex}+
+              </span>
+            </div>
           )}
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading novels...</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="space-y-3">
+                <Skeleton className="w-full aspect-[3/4] rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-8 flex-1" />
+                  <Skeleton className="h-8 flex-1" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : novels.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <Zap className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {plugin ? 'No novels to display' : 'No plugin selected'}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
               {plugin
-                ? 'No novels found. Click "Fetch" to load novels.'
-                : 'Please select a plugin first.'}
+                ? 'Click the "Fetch" button above to load the latest or popular novels from this source.'
+                : 'Please select a plugin from the sidebar to get started.'}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4">
             {novels.map((novel, index) => (
-              <div
+              <NovelCard
                 key={`${novel.path}-${index}`}
-                className="group cursor-pointer"
-              >
-                <div className="relative mb-4 overflow-hidden rounded-lg bg-muted aspect-[3/4]">
-                  <img
-                    src={novel.cover || '/static/coverNotAvailable.webp'}
-                    alt={novel.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
-                  {novel.name}
-                </h3>
-                <div className="flex gap-2 mt-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 bg-transparent"
-                    onClick={() => {
-                      navigator.clipboard.writeText(novel.path);
-                      toast.success('Novel path copied to clipboard!');
-                    }}
-                  >
-                    Copy Path
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => handleParseNovel(novel.path)}
-                    title="Parse this novel"
-                  >
-                    <Zap className="w-3 h-3 mr-1" />
-                    Parse
-                  </Button>
-                </div>
-              </div>
+                novel={novel}
+                onParse={handleParseNovel}
+              />
             ))}
           </div>
         )}

@@ -25,16 +25,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(dirname, './src'),
-      '@libs': path.resolve(dirname, './src/lib'),
-      '@icons': path.resolve(dirname, './src/icons'),
-      '@components': path.resolve(dirname, './src/components'),
-      '@redux': path.resolve(dirname, './src/redux'),
-      '@provider': path.resolve(dirname, './src/provider'),
       '@plugins': path.resolve(dirname, './plugins'),
-      '@hooks': path.resolve(dirname, './src/hooks'),
-      '@typings': path.resolve(dirname, './src/types'),
-      '@scripts': path.resolve(dirname, './scripts'),
-      '@store': path.resolve(dirname, './src/store'),
     },
   },
   server: {

@@ -1,9 +1,9 @@
 import { load, CheerioAPI } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { NovelStatus } from '@typings/constants';
-import { Filters, FilterTypes } from '@typings/filters';
-import { defaultCover } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { NovelStatus } from '@/types/constants';
+import { Filters, FilterTypes } from '@/types/filters';
+import { defaultCover } from '@/types/constants';
 
 class NovelDeGlacePlugin implements Plugin.PluginBase {
   id = 'noveldeglace';

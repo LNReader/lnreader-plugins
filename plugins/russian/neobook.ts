@@ -1,8 +1,8 @@
-import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@typings/filters';
-import { defaultCover } from '@typings/constants';
-import { fetchApi } from '@libs/fetch';
-import { NovelStatus } from '@typings/constants';
+import { Plugin } from '@/types/plugin';
+import { FilterTypes, Filters } from '@/types/filters';
+import { defaultCover } from '@/types/constants';
+import { fetchApi } from '@/lib/fetch';
+import { NovelStatus } from '@/types/constants';
 
 const statusKey: Record<string, string> = {
   '0': NovelStatus.Unknown,

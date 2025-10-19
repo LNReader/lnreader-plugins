@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Filters, FilterTypes } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
-import { storage } from '@libs/storage';
+import { fetchApi } from '@/lib/fetch';
+import { Filters, FilterTypes } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
+import { storage } from '@/lib/storage';
 
 class Webnovel implements Plugin.PluginBase {
   id = 'webnovel';

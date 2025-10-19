@@ -1,9 +1,9 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@typings/filters';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters, FilterTypes } from '@/types/filters';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 import dayjs from 'dayjs';
 
 class PhenixScansTradPlugin implements Plugin.PluginBase {

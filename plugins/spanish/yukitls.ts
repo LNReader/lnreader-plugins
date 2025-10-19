@@ -1,6 +1,6 @@
-import { fetchApi } from '@libs/fetch';
-import { Filters } from '@typings/filters';
-import { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import { Filters } from '@/types/filters';
+import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
 
 class Yuuki implements Plugin.PluginBase {

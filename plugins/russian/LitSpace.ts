@@ -1,7 +1,7 @@
-import { Plugin } from '@typings/plugin';
-import { FilterTypes, Filters } from '@typings/filters';
-import { defaultCover } from '@typings/constants';
-import { fetchApi } from '@libs/fetch';
+import { Plugin } from '@/types/plugin';
+import { FilterTypes, Filters } from '@/types/filters';
+import { defaultCover } from '@/types/constants';
+import { fetchApi } from '@/lib/fetch';
 
 const headers: any = {
   'Content-Type': 'application/json',

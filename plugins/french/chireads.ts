@@ -1,10 +1,10 @@
 import { CheerioAPI, load } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { Filters, FilterTypes } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { Filters, FilterTypes } from '@/types/filters';
 import dayjs from 'dayjs';
-import { defaultCover } from '@typings/constants';
-import { NovelStatus } from '@typings/constants';
+import { defaultCover } from '@/types/constants';
+import { NovelStatus } from '@/types/constants';
 
 class ChireadsPlugin implements Plugin.PluginBase {
   id = 'chireads';

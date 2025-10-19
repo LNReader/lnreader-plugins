@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi } from '@libs/fetch';
-import { Plugin } from '@typings/plugin';
-import { defaultCover } from '@typings/constants';
-import { Filters } from '@typings/filters';
+import { fetchApi } from '@/lib/fetch';
+import { Plugin } from '@/types/plugin';
+import { defaultCover } from '@/types/constants';
+import { Filters } from '@/types/filters';
 
 class BlogDoAnonNovelsPlugin implements Plugin.PluginBase {
   id = 'blogdoamonnovels';

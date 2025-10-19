@@ -1,5 +1,5 @@
-import { fetchApi } from '@libs/fetch';
-import type { Plugin } from '@typings/plugin';
+import { fetchApi } from '@/lib/fetch';
+import type { Plugin } from '@/types/plugin';
 
 const API_BASE = 'https://api.reaperscans.com';
 const MEDIA_BASE = 'https://media.reaperscans.com/file/4SRBHm/';
