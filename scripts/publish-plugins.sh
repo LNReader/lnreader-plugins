@@ -48,7 +48,7 @@ if [[ "$1" == "--all-branches" ]]; then
         exit 1
     fi
     git reset
-    git add -f public/static .dist .js/src/plugins total.svg
+    git add -f public/static .dist .js/plugins total.svg
     git commit -m "chore: Publish Plugins From All Branches"
     git push -f origin $dist
     git checkout -f $branch
