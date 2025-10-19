@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Copy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Copy, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
 import { useAppStore } from '@store';
 import { Plugin } from '@typings/plugin';
 
-export default function ParseNovelSection() {
+type ParseNovelSectionProps = {
+  onNavigateToParseChapter?: () => void;
+};
+
+export default function ParseNovelSection({
+  onNavigateToParseChapter,
+}: ParseNovelSectionProps) {
   const plugin = useAppStore(state => state.plugin);
+  const parseNovelPath = useAppStore(state => state.parseNovelPath);
+  const shouldAutoSubmitNovel = useAppStore(
+    state => state.shouldAutoSubmitNovel,
+  );
+  const clearParseNovelPath = useAppStore(state => state.clearParseNovelPath);
+  const setParseChapterPath = useAppStore(state => state.setParseChapterPath);
   const [novelPath, setNovelPath] = useState('');
   const [sourceNovel, setSourceNovel] = useState<
     (Plugin.SourceNovel & { totalPages?: number }) | undefined
@@ -18,12 +31,12 @@ export default function ParseNovelSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [fetchError, setFetchError] = useState('');
 
-  const fetchNovel = async () => {
-    if (plugin && novelPath.trim()) {
+  const fetchNovelByPath = async (path: string) => {
+    if (plugin && path.trim()) {
       setLoading(true);
       setFetchError('');
       try {
-        const result = await plugin.parseNovel(novelPath);
+        const result = await plugin.parseNovel(path);
         setSourceNovel(result);
         setChapters(result.chapters || []);
         setCurrentPage(1);
@@ -36,6 +49,10 @@ export default function ParseNovelSection() {
         setLoading(false);
       }
     }
+  };
+
+  const fetchNovel = async () => {
+    await fetchNovelByPath(novelPath);
   };
 
   const fetchPage = async (page: number) => {
@@ -66,11 +83,29 @@ export default function ParseNovelSection() {
     }
   };
 
-  const copyToClipboard = (text?: string) => {
+  const copyToClipboard = (text?: string, label?: string) => {
     if (text) {
       navigator.clipboard.writeText(text);
+      toast.success(`${label || 'Text'} copied to clipboard!`);
     }
   };
+
+  const handleParseChapter = (path: string) => {
+    setParseChapterPath(path, true);
+    onNavigateToParseChapter?.();
+  };
+
+  useEffect(() => {
+    if (parseNovelPath) {
+      setNovelPath(parseNovelPath);
+
+      if (shouldAutoSubmitNovel && plugin) {
+        fetchNovelByPath(parseNovelPath);
+      }
+
+      clearParseNovelPath();
+    }
+  }, [parseNovelPath, shouldAutoSubmitNovel, plugin, clearParseNovelPath]);
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return 'N/A';
@@ -137,7 +172,9 @@ export default function ParseNovelSection() {
                 <div className="flex gap-4">
                   <div
                     className="cursor-pointer"
-                    onClick={() => copyToClipboard(sourceNovel.cover)}
+                    onClick={() =>
+                      copyToClipboard(sourceNovel.cover, 'Cover URL')
+                    }
                   >
                     <img
                       src={
@@ -196,7 +233,9 @@ export default function ParseNovelSection() {
                       variant="outline"
                       size="sm"
                       className="gap-2 bg-transparent"
-                      onClick={() => copyToClipboard(sourceNovel.path)}
+                      onClick={() =>
+                        copyToClipboard(sourceNovel.path, 'Novel path')
+                      }
                     >
                       <Copy className="w-4 h-4" />
                       Copy Path
@@ -325,8 +364,8 @@ export default function ParseNovelSection() {
                         <th className="text-left py-3 px-4 font-semibold text-foreground">
                           Name
                         </th>
-                        <th className="text-left py-3 px-4 font-semibold text-foreground w-32">
-                          Path
+                        <th className="text-left py-3 px-4 font-semibold text-foreground w-40">
+                          Actions
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-foreground w-32">
                           Release Time
@@ -349,16 +388,30 @@ export default function ParseNovelSection() {
                             {chapter.name}
                           </td>
                           <td className="py-3 px-4">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-1 text-xs hover:bg-transparent"
-                              onClick={() => copyToClipboard(chapter.path)}
-                              title={chapter.path}
-                            >
-                              <Copy className="w-3 h-3 mr-1" />
-                              Copy
-                            </Button>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-1 text-xs hover:bg-transparent"
+                                onClick={() =>
+                                  copyToClipboard(chapter.path, 'Chapter path')
+                                }
+                                title="Copy chapter path"
+                              >
+                                <Copy className="w-3 h-3 mr-1" />
+                                Copy
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-1 text-xs hover:bg-transparent"
+                                onClick={() => handleParseChapter(chapter.path)}
+                                title="Parse this chapter"
+                              >
+                                <Zap className="w-3 h-3 mr-1" />
+                                Parse
+                              </Button>
+                            </div>
                           </td>
                           <td className="py-3 px-4 text-muted-foreground">
                             {formatDate(chapter.releaseTime)}

@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { BookOpen, Search, Settings, Zap, Globe } from 'lucide-react';
+import { BookOpen, Search, Settings, Zap } from 'lucide-react';
 import PluginHeader from '../components/plugin-header';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -125,15 +125,21 @@ function Home() {
               </TabsList>
 
               <TabsContent value="popular" className="space-y-6">
-                <PopularNovelsSection />
+                <PopularNovelsSection
+                  onNavigateToParseNovel={() => setActiveTab('parse-novel')}
+                />
               </TabsContent>
 
               <TabsContent value="search" className="space-y-6">
-                <SearchNovelsSection />
+                <SearchNovelsSection
+                  onNavigateToParseNovel={() => setActiveTab('parse-novel')}
+                />
               </TabsContent>
 
               <TabsContent value="parse-novel" className="space-y-6">
-                <ParseNovelSection />
+                <ParseNovelSection
+                  onNavigateToParseChapter={() => setActiveTab('parse-chapter')}
+                />
               </TabsContent>
 
               <TabsContent value="parse-chapter" className="space-y-6">

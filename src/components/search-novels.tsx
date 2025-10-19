@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Zap } from 'lucide-react';
 import { useAppStore } from '@store';
 import { Plugin } from '@typings/plugin';
 
-export default function SearchNovelsSection() {
+type SearchNovelsSectionProps = {
+  onNavigateToParseNovel?: () => void;
+};
+
+export default function SearchNovelsSection({
+  onNavigateToParseNovel,
+}: SearchNovelsSectionProps) {
   const plugin = useAppStore(state => state.plugin);
+  const setParseNovelPath = useAppStore(state => state.setParseNovelPath);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [novels, setNovels] = useState<Plugin.NovelItem[]>([]);
@@ -44,6 +53,11 @@ export default function SearchNovelsSection() {
     if (e.key === 'Enter' && searchTerm.trim()) {
       fetchNovels(1);
     }
+  };
+
+  const handleParseNovel = (path: string) => {
+    setParseNovelPath(path, true);
+    onNavigateToParseNovel?.();
   };
 
   return (
@@ -126,16 +140,28 @@ export default function SearchNovelsSection() {
                 <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
                   {novel.name}
                 </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full mt-3 bg-transparent"
-                  onClick={() => {
-                    navigator.clipboard.writeText(novel.path);
-                  }}
-                >
-                  Copy Path
-                </Button>
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 bg-transparent"
+                    onClick={() => {
+                      navigator.clipboard.writeText(novel.path);
+                      toast.success('Novel path copied to clipboard!');
+                    }}
+                  >
+                    Copy Path
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleParseNovel(novel.path)}
+                    title="Parse this novel"
+                  >
+                    <Zap className="w-3 h-3 mr-1" />
+                    Parse
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

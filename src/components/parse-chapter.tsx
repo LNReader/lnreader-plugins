@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -7,17 +8,24 @@ import { useAppStore } from '@store';
 
 export default function ParseChapterSection() {
   const plugin = useAppStore(state => state.plugin);
+  const parseChapterPath = useAppStore(state => state.parseChapterPath);
+  const shouldAutoSubmitChapter = useAppStore(
+    state => state.shouldAutoSubmitChapter,
+  );
+  const clearParseChapterPath = useAppStore(
+    state => state.clearParseChapterPath,
+  );
   const [chapterPath, setChapterPath] = useState('');
   const [chapterText, setChapterText] = useState('');
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState('');
 
-  const fetchChapter = async () => {
-    if (plugin && chapterPath.trim()) {
+  const fetchChapterByPath = async (path: string) => {
+    if (plugin && path.trim()) {
       setLoading(true);
       setFetchError('');
       try {
-        const result = await plugin.parseChapter(chapterPath);
+        const result = await plugin.parseChapter(path);
         setChapterText(result);
       } catch (error) {
         const errorMessage =
@@ -30,17 +38,40 @@ export default function ParseChapterSection() {
     }
   };
 
+  const fetchChapter = async () => {
+    await fetchChapterByPath(chapterPath);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && chapterPath.trim()) {
       fetchChapter();
     }
   };
 
-  const copyToClipboard = (text?: string) => {
+  const copyToClipboard = (text?: string, label?: string) => {
     if (text) {
       navigator.clipboard.writeText(text);
+      toast.success(`${label || 'Text'} copied to clipboard!`);
     }
   };
+
+  // Handle pre-filled path from navigation
+  useEffect(() => {
+    if (parseChapterPath) {
+      setChapterPath(parseChapterPath);
+
+      if (shouldAutoSubmitChapter && plugin) {
+        fetchChapterByPath(parseChapterPath);
+      }
+
+      clearParseChapterPath();
+    }
+  }, [
+    parseChapterPath,
+    shouldAutoSubmitChapter,
+    plugin,
+    clearParseChapterPath,
+  ]);
 
   return (
     <div className="space-y-6">
@@ -101,7 +132,7 @@ export default function ParseChapterSection() {
                   variant="outline"
                   size="sm"
                   className="gap-2 bg-transparent"
-                  onClick={() => copyToClipboard(chapterPath)}
+                  onClick={() => copyToClipboard(chapterPath, 'Chapter path')}
                 >
                   <Copy className="w-4 h-4" />
                   Copy Path
@@ -110,7 +141,7 @@ export default function ParseChapterSection() {
                   variant="outline"
                   size="sm"
                   className="gap-2 bg-transparent"
-                  onClick={() => copyToClipboard(chapterText)}
+                  onClick={() => copyToClipboard(chapterText, 'Chapter text')}
                 >
                   <Copy className="w-4 h-4" />
                   Copy Text
