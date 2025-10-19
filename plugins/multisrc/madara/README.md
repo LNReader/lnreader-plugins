@@ -39,6 +39,6 @@ and add it to the folder "public/static/multisrc/madara/{sourceID}/icon.png"
 ### filters
 
 To add filters to a source you need to run the script "get_filters.js" \
-(`npx node scripts/multisrc/madara/get_filters.js`
+(`npx node plugins/multisrc/madara/get_filters.js`
 (if you are at the root of the project) (and you have ran "npm install" before))
 and follow the instructions (url is easier and faster but sometimes it doesn't work)

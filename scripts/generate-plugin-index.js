@@ -3,10 +3,10 @@ import { execSync } from 'child_process';
 
 let content = `import { Plugin } from '@typings/plugin';\n`;
 let pluginCounter = 0;
-const PLUGIN_DIR = 'src/plugins';
+const PLUGIN_DIR = 'plugins';
 
 fs.readdirSync(PLUGIN_DIR)
-  .filter(f => !f.includes('index'))
+  .filter(f => !f.includes('index') && f !== 'multisrc')
   .forEach(langName => {
     const LANG_DIR = PLUGIN_DIR + '/' + langName;
     fs.readdirSync(LANG_DIR)

@@ -84,7 +84,7 @@ if [ ! -d ".dist" ] || [ -z "$(ls -A .dist)" ]; then
     exit 1
 fi
 
-git add -f public/static .dist .js/src/plugins total.svg
+git add -f public/static .dist .js/plugins total.svg
 git commit -m "chore: Publish Plugins"
 git push -f origin $dist 2>&1
 git checkout -f $current 2>&1

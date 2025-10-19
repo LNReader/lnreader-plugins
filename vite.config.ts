@@ -27,7 +27,7 @@ export default defineConfig({
       '@components': path.resolve(dirname, './src/components'),
       '@redux': path.resolve(dirname, './src/redux'),
       '@provider': path.resolve(dirname, './src/provider'),
-      '@plugins': path.resolve(dirname, './src/plugins'),
+      '@plugins': path.resolve(dirname, './plugins'),
       '@hooks': path.resolve(dirname, './src/hooks'),
       '@typings': path.resolve(dirname, './src/types'),
       '@scripts': path.resolve(dirname, './scripts'),

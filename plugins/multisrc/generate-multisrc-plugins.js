@@ -24,7 +24,7 @@ const generate = async name => {
         console.warn(name, ': lang, filename, pluginScript are required!');
         continue;
       }
-      const pluginsDir = './src/plugins';
+      const pluginsDir = './plugins';
       const filePath = path.join(
         pluginsDir,
         lang.toLowerCase(),
@@ -39,7 +39,7 @@ const generate = async name => {
   }
 };
 
-const MULTISRC_DIR = './scripts/multisrc';
+const MULTISRC_DIR = './plugins/multisrc';
 
 const run = async () => {
   const sources = fs

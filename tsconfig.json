@@ -40,7 +40,7 @@
       "@components/*": ["./src/components/*"],
       "@redux/*": ["./src/redux/*"],
       "@provider/*": ["./src/provider/*"],
-      "@plugins/*": ["./src/plugins/*"],
+      "@plugins/*": ["./plugins/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@scripts/*": ["./scripts/*"],
       "@typings/*": ["./src/types/*"],
@@ -125,5 +125,5 @@
 
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "exclude": ["./src/plugins/**/*.broken.ts", "./.js/**/*", "scripts", "docs"]
+  "exclude": ["./plugins/**/*.broken.ts", "./.js/**/*", "scripts", "docs"]
 }
