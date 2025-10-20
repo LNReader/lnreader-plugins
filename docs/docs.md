@@ -349,7 +349,7 @@ It is an object representing information how to store/access the novel
 You can use the default `Cover not available` cover by importing
 
 ```ts
-import { defaultCover } from '@libs/defaultCover;
+import { defaultCover } from '@libs/defaultCover';
 ```
 
 ---
