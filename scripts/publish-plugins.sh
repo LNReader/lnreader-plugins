@@ -53,10 +53,10 @@ if [[ "$1" == "--all-branches" ]]; then
     fi
     git reset
     # Copy plugins to legacy path (.js/src/plugins) for backward compatibility
-    echo "Copying .js/plugins -> .js/src/plugins (backward compatibility)"
+    echo "Copying .js/plugins -> .js/src/plugins"
     mkdir -p .js/src
     cp -r .js/plugins .js/src/plugins
-    git add -f public/static .dist .js/plugins .js/src/plugins total.svg
+    git add -f public/static .dist .js/src/plugins total.svg
     git commit -m "chore: Publish Plugins From All Branches"
     git push -f origin $dist
     git checkout -f $branch
@@ -92,10 +92,10 @@ if [ ! -d ".dist" ] || [ -z "$(ls -A .dist)" ]; then
 fi
 
 # Copy plugins to legacy path (.js/src/plugins) for backward compatibility
-echo "Copying .js/plugins -> .js/src/plugins (backward compatibility)"
+echo "Copying .js/plugins -> .js/src/plugins"
 mkdir -p .js/src
 cp -r .js/plugins .js/src/plugins
-git add -f public/static .dist .js/plugins .js/src/plugins total.svg
+git add -f public/static .dist .js/src/plugins total.svg
 git commit -m "chore: Publish Plugins"
 git push -f origin $dist 2>&1
 git checkout -f $current 2>&1
