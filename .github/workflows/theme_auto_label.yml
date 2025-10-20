@@ -4,21 +4,25 @@ on:
   issues:
     types: [labeled]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   auto-label:
     name: Auto Label Theme
-    if: contains(github.event.issue.labels.*.name, 'Source Request')
+    if: contains(github.event.issue.labels.*.name, 'Plugin Request')
     runs-on: ubuntu-latest
     env:
       REPO: ${{ github.repository }}
       ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
-      - name: Get Source Request URL
+      - name: Get Plugin Website URL
         id: get_url
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          URL=$(echo "$ISSUE_BODY" | sed -n '/### Source link/,+2p' | sed '1,2d' | tr -d '[:space:]')
+          URL=$(echo "$ISSUE_BODY" | sed -n '/### Website URL/,+2p' | sed '1,2d' | tr -d '[:space:]')
           echo "URL=$URL" >> $GITHUB_OUTPUT
           echo "Using URL: \`$URL\`" >> $GITHUB_STEP_SUMMARY
 

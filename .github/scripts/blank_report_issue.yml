@@ -24,11 +24,12 @@ body:
       description: Select the issue severity level.
       multiple: false
       options:
-        - Wrong formatting
-        - Wrong content
-        - Missing chapter
-        - Missing images
-        - Can't load novels
+        - Wrong Formatting
+        - Wrong Content
+        - Missing Chapter
+        - Missing Images
+        - Can't Load Novels
+        - Domain Changed
         - Other
     validations:
       required: true

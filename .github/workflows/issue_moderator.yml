@@ -6,6 +6,10 @@ on:
   issue_comment:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
 jobs:
   autoclose:
     name: Auto Close Invalid Issues
@@ -19,7 +23,7 @@ jobs:
 
           duplicate-check-enabled: true
           duplicate-check-labels: |
-            ["Source Request", "Domain Changed"]
+            ["Plugin Request", "Domain Changed"]
 
           existing-check-enabled: false
 
@@ -37,7 +41,7 @@ jobs:
               },
               {
                 "type": "title",
-                "regex": ".*(Source name|Short description).*",
+                "regex": ".*(Plugin name|Short description).*",
                 "message": "You did not fill out the description in the title"
               }
             ]

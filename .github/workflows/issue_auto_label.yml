@@ -6,6 +6,10 @@ on:
       - opened
       - edited
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   auto-label:
     name: Auto Label Issues
@@ -23,7 +27,7 @@ jobs:
           SELECTED_SEVERITY=""
 
           case "$USER_SELECTED_SEVERITY" in
-              "Wrong formatting"|"Wrong content"|"Missing chapter"|"Missing images"|"Can't load novels")
+              "Wrong Formatting"|"Wrong Content"|"Missing Chapter"|"Missing Images"|"Can't Load Novels"|"Domain Changed")
                   SELECTED_SEVERITY="$USER_SELECTED_SEVERITY"
                   ;;
               *)
