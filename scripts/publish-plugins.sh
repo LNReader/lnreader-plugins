@@ -14,7 +14,7 @@ if [[ "$1" == "--all-branches" ]]; then
     branches=$(git branch -r | grep -v '\->')
     for branch in $branches; do
         # Check if the branch has the same version of publish-plugins.sh as the current branch
-        if ! diff publish-plugins.sh <(git show "$branch:publish-plugins.sh") >/dev/null; then
+        if ! diff scripts/publish-plugins.sh <(git show "$branch:scripts/publish-plugins.sh") >/dev/null; then
             echo "Branch $branch does not have the current version of publish-plugins.sh. Skipping."
             continue
         fi
