@@ -19,7 +19,8 @@ const USER_CONTENT_LINK = process.env.USER_CONTENT_BASE
   : `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${CURRENT_BRANCH}`;
 
 const STATIC_LINK = `${USER_CONTENT_LINK}/public/static`;
-const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/plugins`;
+// Use legacy .js/src/plugins path for backward compatibility
+const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/src/plugins`;
 
 const DIST_DIR = '.dist';
 
