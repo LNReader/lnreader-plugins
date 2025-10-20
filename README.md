@@ -40,4 +40,6 @@ Repository to host plugins and related issues, and requests for
 
 ---
 
-The developer of this application does not have any affiliation with the content providers available.
+The developers of this application are not affiliated with any of the content providers.
+
+If you are a website owner and would like to have a plugin removed from this repository, please reach out via [Discord](https://discord.gg/QdcWN4MD63) or [create a GitHub issue](https://github.com/LNReader/lnreader-plugins/issues/new). We will promptly remove the plugin and add your site to the [blacklist](BLACKLIST.json) to prevent it from being re-added.

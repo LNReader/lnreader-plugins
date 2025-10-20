@@ -1,7 +1,10 @@
 [
-    {
-        "name": "Novel Oku",
-        "site": "https://novelokutr.net/",
-        "lang": "Turkish"
-    }
+  {
+    "name": "Novel Oku",
+    "site": "https://novelokutr.net/",
+    "lang": "Turkish",
+    "reason": "Requested by Owner",
+    "date": "2025-06-28",
+    "aliases": ["novelokutr.net", "www.novelokutr.net"]
+  }
 ]
