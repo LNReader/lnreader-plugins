@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+
+      - name: Install Prettier
+        run: npm install --no-save prettier@3.2.5
 
       - name: Check Code Formatting
-        run: npx prettier@3.2.5 --check "./src/**/*.{ts,tsx,js,css}"
+        run: npx prettier --check "./src/**/*.{ts,tsx,js,css}"
