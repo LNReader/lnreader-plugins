@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install --omit=dev --ignore-scripts
+        run: npm ci
 
       - name: Check Code Formatting
         run: npm run format:check
