@@ -17,10 +17,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
 
       - name: Check Code Formatting
-        run: npm run format:check
+        run: npx prettier@3.2.5 --check "./src/**/*.{ts,tsx,js,css}"
