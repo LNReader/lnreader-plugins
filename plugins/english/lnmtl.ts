@@ -1,6 +1,6 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@/lib/fetch';
-import { FilterTypes, Filters } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 
 class LnMTLPlugin implements Plugin.PagePlugin {

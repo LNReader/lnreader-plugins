@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
+import { Filters, FilterTypes } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 
 class RewayatClub implements Plugin.PagePlugin {
   id = 'rewayatclub';
@@ -141,7 +141,7 @@ class RewayatClub implements Plugin.PagePlugin {
     };
   }
   async parseChapter(chapterUrl: string): Promise<string> {
-    let link = this.site + 'api/chapters/' + chapterUrl.slice(6);
+    const link = this.site + 'api/chapters/' + chapterUrl.slice(6);
     const result = await fetchApi(link).then(r => r.json());
     let chapterText = result.content
       .flat()
@@ -211,7 +211,7 @@ class RewayatClub implements Plugin.PagePlugin {
 
 export default new RewayatClub();
 
-interface NovelEntry {
+type NovelEntry = {
   arabic: string;
   english: string;
   about: string;
@@ -234,14 +234,14 @@ interface NovelEntry {
     poster_url: string;
     original: boolean;
   };
-}
-interface NovelData {
+};
+type NovelData = {
   count?: number;
   next?: string;
   previous?: string;
   results: NovelEntry[];
-}
-interface ChapterEntry {
+};
+type ChapterEntry = {
   number: number;
   title: string;
   date: string;
@@ -254,11 +254,11 @@ interface ChapterEntry {
     id: number;
   };
   read: any[];
-}
+};
 
-interface ChapterData {
+type ChapterData = {
   count: number;
   next: string;
   previous: string;
   results: ChapterEntry[];
-}
+};

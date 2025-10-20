@@ -1,7 +1,7 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Parser } from 'htmlparser2';
 
 //has to be here cus this scoping moment
@@ -87,7 +87,7 @@ class MVLEMPYRPlugin implements Plugin.PluginBase {
   }
 
   convertNovelId(e: bigint) {
-    let t = 1999999997n;
+    const t = 1999999997n;
     let u = 1n,
       c = 7n % t,
       d = e;

@@ -1,10 +1,10 @@
 import { fetchApi, fetchProto, fetchText } from '@/lib/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters } from '@/types/filters';
+import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@/types/constants';
-import { NovelStatus } from '@/types/constants';
-// import { isUrlAbsolute } from '@/lib/utils';
+import { defaultCover } from '@libs/defaultCover';
+import { NovelStatus } from '@libs/novelStatus';
+// import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
 // import { storage, localStorage, sessionStorage } from '@/lib/storage';
 // import { encode, decode } from 'urlencode';
 // import dayjs from 'dayjs';
@@ -41,8 +41,8 @@ class LNTPlugin implements Plugin.PluginBase {
     const baseUrl = this.site;
     const novels: Plugin.NovelItem[] = [];
     loadedCheerio('div.read_list-story-item').each((i, el) => {
-      let tempNovel = {} as Plugin.NovelItem;
-      let img = loadedCheerio(el)
+      const tempNovel = {} as Plugin.NovelItem;
+      const img = loadedCheerio(el)
         .find('.item_thumb')
         .find('img')
         .first()
@@ -53,7 +53,7 @@ class LNTPlugin implements Plugin.PluginBase {
         .first()
         .attr('href');
       path = path ? path.slice(baseUrl.length) : '';
-      let title = loadedCheerio(el)
+      const title = loadedCheerio(el)
         .find('.item_thumb')
         .find('a')
         .first()
@@ -67,7 +67,7 @@ class LNTPlugin implements Plugin.PluginBase {
     return novels;
   }
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let url = this.site + novelPath;
+    const url = this.site + novelPath;
     const body = await fetchApi(url);
     const html = await body.text().then(r => r.replace(/>\s+</g, '><'));
 
@@ -161,7 +161,7 @@ class LNTPlugin implements Plugin.PluginBase {
     const formData = new FormData();
     formData.append('field-search', searchTerm);
 
-    let results = await fetchApi(searchUrl, {
+    const results = await fetchApi(searchUrl, {
       method: 'POST',
       body: formData,
     });
@@ -170,8 +170,8 @@ class LNTPlugin implements Plugin.PluginBase {
     const loadedCheerio = loadCheerio(body);
     const novels: Plugin.NovelItem[] = [];
     loadedCheerio('div.read_list-story-item').each((i, el) => {
-      let tempNovel = {} as Plugin.NovelItem;
-      let img = loadedCheerio(el)
+      const tempNovel = {} as Plugin.NovelItem;
+      const img = loadedCheerio(el)
         .find('.item_thumb')
         .find('img')
         .first()
@@ -182,7 +182,7 @@ class LNTPlugin implements Plugin.PluginBase {
         .first()
         .attr('href');
       path = path ? path.slice(this.site.length) : '';
-      let title = loadedCheerio(el)
+      const title = loadedCheerio(el)
         .find('.item_thumb')
         .find('a')
         .first()

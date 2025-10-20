@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchApi, fetchFile } from '@/lib/fetch';
 import { Plugin } from '@/types/plugin';
-import { defaultCover } from '@/types/constants';
-import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
+import { NovelStatus } from '@libs/novelStatus';
 
 const makeAbsolute = (
   relativeUrl: string | undefined,
@@ -39,7 +39,7 @@ class ixdzs8Plugin implements Plugin.PluginBase {
   };
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-    let url = `${this.site}hot/?page=${pageNo}`;
+    const url = `${this.site}hot/?page=${pageNo}`;
     const result = await fetchApi(url);
     if (!result.ok) return [];
 
@@ -146,7 +146,7 @@ class ixdzs8Plugin implements Plugin.PluginBase {
     const bookId = String(bid);
 
     // POST request to fetch chapter list JSON
-    let url = `${this.site}novel/clist/`;
+    const url = `${this.site}novel/clist/`;
     const res = await fetch(url, {
       method: 'POST',
       headers: {

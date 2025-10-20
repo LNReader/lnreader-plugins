@@ -1,9 +1,9 @@
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
-import { fetchApi } from '@/lib/fetch';
-import { NovelStatus } from '@/types/constants';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { fetchApi } from '@libs/fetch';
+import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 import dayjs from 'dayjs';
 
 class ficbook implements Plugin.PluginBase {

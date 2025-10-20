@@ -1,8 +1,8 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters } from '@/types/filters';
+import { Filters } from '@libs/filterInputs';
 import { CheerioAPI, load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 
 class ReadFromPlugin implements Plugin.PluginBase {
   id = 'readfrom';
@@ -30,11 +30,11 @@ class ReadFromPlugin implements Plugin.PluginBase {
     genres: string;
     author: string;
   })[] {
-    let ret = loadedCheerio(
+    const ret = loadedCheerio(
       (isSearch ? 'div.text' : '#dle-content') + ' > article.box',
     )
       .map((i, el) => {
-        let summary = loadedCheerio(el).find(
+        const summary = loadedCheerio(el).find(
           isSearch ? 'div.text5' : 'div.text3',
         )[0];
         loadedCheerio(summary).find('.coll-ellipsis').remove();
@@ -83,18 +83,18 @@ class ReadFromPlugin implements Plugin.PluginBase {
       filters,
     }: Plugin.PopularNovelsOptions<typeof this.filters>,
   ) {
-    let type = showLatestNovels ? 'last_added_books' : 'allbooks';
-    let res = await fetchApi(
+    const type = showLatestNovels ? 'last_added_books' : 'allbooks';
+    const res = await fetchApi(
       'https://readfrom.net/' + type + '/page/' + pageNo + '/',
     );
-    let text = await res.text();
+    const text = await res.text();
     return this.parseNovels(loadCheerio(text));
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let data = await fetchApi('https://readfrom.net/' + novelPath);
-    let text = await data.text();
-    let loadedCheerio = loadCheerio(text);
+    const data = await fetchApi('https://readfrom.net/' + novelPath);
+    const text = await data.text();
+    const loadedCheerio = loadCheerio(text);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -142,12 +142,12 @@ class ReadFromPlugin implements Plugin.PluginBase {
       novel.author = moreNovelInfo.author;
     }
 
-    let seriesElm = loadedCheerio('center > b:has(a)').filter((i, el) =>
+    const seriesElm = loadedCheerio('center > b:has(a)').filter((i, el) =>
       loadedCheerio(el).find('a').attr('href')!.startsWith('/series.html'),
     )[0];
 
     if (seriesElm) {
-      let seriesText = loadedCheerio(seriesElm).text().trim();
+      const seriesText = loadedCheerio(seriesElm).text().trim();
 
       novel.summary = seriesText + '\n\n' + novel.summary;
     }
@@ -198,11 +198,11 @@ class ReadFromPlugin implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string, pageNo: number) {
     if (pageNo !== 1) return [];
-    let res = await fetchApi(
+    const res = await fetchApi(
       'https://readfrom.net/build_in_search/?q=' +
         encodeURIComponent(searchTerm),
     );
-    let text = await res.text();
+    const text = await res.text();
     return this.parseNovels(loadCheerio(text), true);
   }
 

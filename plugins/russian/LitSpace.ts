@@ -1,7 +1,7 @@
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
-import { fetchApi } from '@/lib/fetch';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
+import { fetchApi } from '@libs/fetch';
 
 const headers: any = {
   'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ class freedlit implements Plugin.PluginBase {
 
 export default new freedlit();
 
-interface Books {
+type Books = {
   current_page: number;
   data: DataEntity[];
   first_page_url: string;
@@ -210,8 +210,8 @@ interface Books {
   prev_page_url?: null;
   to: number;
   total: number;
-}
-interface DataEntity {
+};
+type DataEntity = {
   id: number;
   item_id: number;
   type: string;
@@ -252,29 +252,29 @@ interface DataEntity {
   annotation: string;
   total_comments: number;
   total_libraries: number;
-}
-interface AuthorsNamesEntity {
+};
+type AuthorsNamesEntity = {
   id: number;
   url: string;
   name: string;
   type: string;
-}
-interface GenresEntity {
+};
+type GenresEntity = {
   id: number;
-}
-interface TagsEntity {
+};
+type TagsEntity = {
   id: number;
   name: string;
-}
+};
 
-interface chaptersData {
+type chaptersData = {
   id: number;
   header: string;
   first_published_formated: string;
   intro_snippet_end: number;
-}
+};
 
-interface chapterContent {
+type chapterContent = {
   id: number;
   book_id: number;
   header: string;
@@ -289,9 +289,9 @@ interface chapterContent {
   is_chapter_avalaible: boolean;
   total_characters: number;
   total_characters_clear: string;
-}
+};
 
-export interface book {
+export type book = {
   id: number;
   cover?: string | null;
   title?: string | null;
@@ -307,4 +307,4 @@ export interface book {
   author_name?: string | null;
   user_link?: string | null;
   img?: string | null;
-}
+};

@@ -1,8 +1,8 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 class InkittPlugin implements Plugin.PluginBase {
   id = 'inkitt';
@@ -57,9 +57,9 @@ class InkittPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    let req = await fetchApi(this.site + `/stories/${novelPath}`);
-    let text = await req.text();
-    let loadedCheerio = loadCheerio(text);
+    const req = await fetchApi(this.site + `/stories/${novelPath}`);
+    const text = await req.text();
+    const loadedCheerio = loadCheerio(text);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,

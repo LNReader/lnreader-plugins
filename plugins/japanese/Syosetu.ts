@@ -1,9 +1,9 @@
 import { load as loadCheerio } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { defaultCover } from '@/types/constants';
-import { FilterTypes, Filters } from '@/types/filters';
-import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { NovelStatus } from '@libs/novelStatus';
 // const novelStatus = require('@/types/constants');
 // const isUrlAbsolute = require('@/lib/utils');
 // const parseDate = require('@libs/parseDate');

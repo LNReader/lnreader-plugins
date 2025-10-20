@@ -1,6 +1,6 @@
-import { fetchApi } from '@/lib/fetch';
-import { Filters, FilterTypes } from '@/types/filters';
-import { NovelStatus } from '@/types/constants';
+import { fetchApi } from '@libs/fetch';
+import { Filters, FilterTypes } from '@libs/filterInputs';
+import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
 import { storage } from '@/lib/storage';
@@ -26,10 +26,10 @@ class KomgaPlugin implements Plugin.PluginBase {
     }).then(res => res.text());
   }
 
-  btoa(input: string = '') {
+  btoa(input = '') {
     const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-    let str = input;
+    const str = input;
     let output = '';
 
     for (
@@ -67,11 +67,11 @@ class KomgaPlugin implements Plugin.PluginBase {
   async getSeries(url: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
 
-    var response = await this.makeRequest(url);
+    const response = await this.makeRequest(url);
 
     const series = JSON.parse(response).content;
 
-    for (let s of series) {
+    for (const s of series) {
       novels.push({
         name: s.name,
         path: 'api/v1/series/' + s.id,
@@ -110,7 +110,7 @@ class KomgaPlugin implements Plugin.PluginBase {
 
     const url = this.site + novelPath;
 
-    var response = await this.makeRequest(url);
+    const response = await this.makeRequest(url);
 
     const series = JSON.parse(response);
 
@@ -152,7 +152,7 @@ class KomgaPlugin implements Plugin.PluginBase {
 
     const booksData = JSON.parse(booksResponse).content;
 
-    for (let book of booksData) {
+    for (const book of booksData) {
       const bookManifestResponse = await this.makeRequest(
         this.site + `opds/v2/books/${book.id}/manifest`,
       );
@@ -162,7 +162,7 @@ class KomgaPlugin implements Plugin.PluginBase {
       const toc = this.flattenArray(bookManifest.toc);
 
       let i = 1;
-      for (let page of bookManifest.readingOrder) {
+      for (const page of bookManifest.readingOrder) {
         const tocItem = toc.find(
           (v: any) => v.href?.split('#')[0] === page.href,
         );

@@ -1,10 +1,10 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import type { Plugin } from '@/types/plugin';
 
 const API_BASE = 'https://api.reaperscans.com';
 const MEDIA_BASE = 'https://media.reaperscans.com/file/4SRBHm/';
 
-interface ApiResponse<T> {
+type ApiResponse<T> = {
   data: T;
   meta: {
     total: number;
@@ -12,13 +12,13 @@ interface ApiResponse<T> {
     current_page: number;
     last_page: number;
   };
-}
+};
 
-interface ReaperNovel {
+type ReaperNovel = {
   title: string;
   thumbnail: string;
   series_slug: string;
-}
+};
 
 class ReaperScans implements Plugin.PluginBase {
   id = 'reaperscans.com';

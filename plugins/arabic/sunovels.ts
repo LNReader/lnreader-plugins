@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
+import { Filters, FilterTypes } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 
 class Sunovels implements Plugin.PagePlugin {
   id = 'sunovels';
@@ -22,7 +22,7 @@ class Sunovels implements Plugin.PagePlugin {
         imageUrlList.push(...imageUrlMatched);
       }
     });
-    let counter: number = 0;
+    let counter = 0;
     loadedCheerio('.list-item').each((idx, ele) => {
       loadedCheerio(ele)
         .find('a')
@@ -150,7 +150,7 @@ class Sunovels implements Plugin.PagePlugin {
     const pageUrl = firstUrl + '?activeTab=chapters&page=' + pageCorrected;
     const body = await fetchApi(pageUrl).then(r => r.text());
     const loadedCheerio = parseHTML(body);
-    let dataJson: {
+    const dataJson: {
       pages_count: string;
       chapters: ChapterEntry[];
     } = { pages_count: '', chapters: [] };
@@ -298,9 +298,9 @@ class Sunovels implements Plugin.PagePlugin {
 
 export default new Sunovels();
 
-interface ChapterEntry {
+type ChapterEntry = {
   chapterName: string;
   chapterUrl: string;
   releaseTime: string;
   chapterNumber: string | number;
-}
+};

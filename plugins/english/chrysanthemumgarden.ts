@@ -1,8 +1,8 @@
 import { fetchApi, fetchProto, fetchText } from '@/lib/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters } from '@/types/filters';
+import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 
 class Chrysanthemumgarden implements Plugin.PluginBase {
   id = 'chrysanthemumgarden';
@@ -144,13 +144,13 @@ class Chrysanthemumgarden implements Plugin.PluginBase {
 
 export default new Chrysanthemumgarden();
 
-interface ChrysanthemumGardenNovel {
+type ChrysanthemumGardenNovel = {
   name: string;
   link: string;
-}
+};
 
-interface ChrysanthemumGardenNovelItem {
+type ChrysanthemumGardenNovelItem = {
   name: string;
   path: string;
   cover: string;
-}
+};

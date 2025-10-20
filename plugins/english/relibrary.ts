@@ -1,10 +1,10 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters } from '@/types/filters';
+import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 import { NovelItem } from '../../test_web/static/js';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 type FuzzySearchOptions = {
   caseSensitive: boolean;
@@ -290,7 +290,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
             .startsWith('status')
         ) {
           loadedCheerio(el).find('strong').remove();
-          let status = loadedCheerio(el).text().toLowerCase().trim();
+          const status = loadedCheerio(el).text().toLowerCase().trim();
           if (status.includes('on-going')) {
             novel.status = NovelStatus.Ongoing;
           } else if (status.includes('completed')) {

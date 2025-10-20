@@ -1,8 +1,8 @@
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { NovelStatus } from '@/types/constants';
-import { Filters } from '@/types/filters';
+import { NovelStatus } from '@libs/novelStatus';
+import { Filters } from '@libs/filterInputs';
 
 type ReadNovelFullOptions = {
   lang?: string;

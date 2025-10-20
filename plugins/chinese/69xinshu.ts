@@ -1,9 +1,9 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchText } from '@/lib/fetch';
-import { FilterTypes, Filters } from '@/types/filters';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 import { encode } from 'urlencode';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 class XinShu69 implements Plugin.PluginBase {
   id = '69xinshu';

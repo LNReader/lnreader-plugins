@@ -1,9 +1,9 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { load as loadCheerio } from 'cheerio';
-import { Filters, FilterTypes } from '@/types/filters';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@/lib/storage';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 
 class FenrirRealmPlugin implements Plugin.PluginBase {
   id = 'fenrir';

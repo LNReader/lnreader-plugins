@@ -26,6 +26,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(dirname, './src'),
       '@plugins': path.resolve(dirname, './plugins'),
+      '@libs': path.resolve(dirname, './src/libs'),
     },
   },
   server: {

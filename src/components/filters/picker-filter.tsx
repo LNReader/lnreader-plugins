@@ -7,17 +7,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FilterTypes } from '@/types/filters';
-import type { Filter } from '@/types/filters';
+import { FilterTypes } from '@libs/filterInputs';
+import type { Filter } from '@libs/filterInputs';
 
-interface PickerFilterProps {
+type PickerFilterProps = {
   filter: {
     key: string;
     filter: Filter<FilterTypes.Picker>;
   };
   value: string;
   set: (value: string) => void;
-}
+};
 
 const EMPTY_VALUE_PLACEHOLDER = '__lnreader_empty__';
 

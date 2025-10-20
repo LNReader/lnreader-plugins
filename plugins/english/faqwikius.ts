@@ -1,7 +1,7 @@
 import { Plugin } from '@/types/plugin';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 class FaqWikiUs implements Plugin.PluginBase {
   id = 'FWK.US';

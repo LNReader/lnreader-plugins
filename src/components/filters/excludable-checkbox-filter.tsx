@@ -1,10 +1,10 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { FilterTypes } from '@/types/filters';
-import type { Filter } from '@/types/filters';
+import { FilterTypes } from '@libs/filterInputs';
+import type { Filter } from '@libs/filterInputs';
 
-interface ExcludableCheckboxFilterProps {
+type ExcludableCheckboxFilterProps = {
   filter: {
     key: string;
     filter: Filter<FilterTypes.ExcludableCheckboxGroup>;
@@ -14,7 +14,7 @@ interface ExcludableCheckboxFilterProps {
     exclude?: string[];
   };
   set: (value: { include?: string[]; exclude?: string[] }) => void;
-}
+};
 
 type CheckState = 'unchecked' | 'included' | 'excluded';
 

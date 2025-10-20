@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
-import { isUrlAbsolute } from '@/lib/utils';
-import { fetchApi } from '@/lib/fetch';
+import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import dayjs from 'dayjs';
 
 class ReadLiteNovel implements Plugin.PluginBase {

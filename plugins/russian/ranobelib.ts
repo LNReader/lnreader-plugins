@@ -1,8 +1,8 @@
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
-import { fetchApi } from '@/lib/fetch';
-import { NovelStatus } from '@/types/constants';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
+import { fetchApi } from '@libs/fetch';
+import { NovelStatus } from '@libs/novelStatus';
 import { storage, localStorage } from '@/lib/storage';
 import dayjs from 'dayjs';
 

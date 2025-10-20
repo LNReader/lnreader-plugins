@@ -1,6 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
-import { Filters, FilterTypes } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 
 class NovelUpdates implements Plugin.PluginBase {
@@ -273,7 +273,7 @@ class NovelUpdates implements Plugin.PluginBase {
             );
           }
 
-          let chapterTitle = pageData.props.chapter.title;
+          const chapterTitle = pageData.props.chapter.title;
           let chapterContent = pageData.props.chapter.content;
 
           // Clean up content (remove inline styles/scripts if needed)

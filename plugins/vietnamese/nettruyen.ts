@@ -1,5 +1,5 @@
-import { fetchApi } from '@/lib/fetch';
-import { NovelStatus } from '@/types/constants';
+import { fetchApi } from '@libs/fetch';
+import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@/types/plugin';
 import { CheerioAPI, load as parseHTML } from 'cheerio';
 

@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
+import { Filters, FilterTypes } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 
 class dilartube implements Plugin.PluginBase {
   id = 'dilartube';
@@ -80,8 +80,8 @@ class dilartube implements Plugin.PluginBase {
 
   async parseNovel(novelUrl: string): Promise<Plugin.SourceNovel> {
     const chapterItems: Plugin.ChapterItem[] = [];
-    let fullUrl = this.site + 'api/' + novelUrl;
-    let chapterUrl = this.site + 'api/' + novelUrl + '/releases';
+    const fullUrl = this.site + 'api/' + novelUrl;
+    const chapterUrl = this.site + 'api/' + novelUrl + '/releases';
     const manga = await fetchApi(fullUrl).then(r => r.json());
     const chapters = await fetchApi(chapterUrl).then(r => r.json());
     const mangaData = manga.mangaData;
@@ -199,21 +199,21 @@ class dilartube implements Plugin.PluginBase {
 
 export default new dilartube();
 
-interface Category {
+type Category = {
   id: number;
   name: string;
   icon: string | null;
   manga_id: number;
-}
+};
 
-interface Type {
+type Type = {
   id: number;
   name: string;
   reading_direction: string;
   title: string;
-}
+};
 
-interface Manga {
+type Manga = {
   id: number;
   title: string;
   summary: string;
@@ -249,8 +249,8 @@ interface Manga {
   artists: any[];
   categories: Category[];
   type: Type;
-}
-interface Release {
+};
+type Release = {
   id: number;
   manga_id: number;
   created_at: string;
@@ -272,11 +272,11 @@ interface Release {
   team_paypal: string | null;
   has_rev_link: boolean;
   manga: Manga;
-}
-interface ApiResponse {
+};
+type ApiResponse = {
   releases: Release[];
   data: searchManga[];
-}
+};
 type MangaCategory = {
   id: number;
   name: string;
@@ -384,7 +384,7 @@ type ChapterRelease = {
   team_name: string;
   has_rev_link: boolean;
 };
-interface searchManga {
+type searchManga = {
   filter: any;
   id: number;
   title: string;
@@ -421,4 +421,4 @@ interface searchManga {
   artists: any[];
   categories: Category[];
   type: Type;
-}
+};

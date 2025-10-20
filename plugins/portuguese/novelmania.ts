@@ -1,9 +1,9 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { load as parseHTML } from 'cheerio';
-import { defaultCover } from '@/types/constants';
-import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
+import { NovelStatus } from '@libs/novelStatus';
 
 class NovelMania implements Plugin.PluginBase {
   id = 'novelmania.com.br';

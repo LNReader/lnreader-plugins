@@ -1,9 +1,9 @@
-import { fetchApi } from '@/lib/fetch';
-import { Filters } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { Filters } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 import { Cheerio, AnyNode, CheerioAPI, load as parseHTML } from 'cheerio';
-import { defaultCover } from '@/types/constants';
-import { NovelStatus } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
+import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 import { storage } from '@/lib/storage';
 

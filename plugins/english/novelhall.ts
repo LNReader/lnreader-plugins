@@ -1,7 +1,7 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 
 class NovelHall implements Plugin.PluginBase {
   id = 'novelhall';

@@ -1,4 +1,4 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 
 const UA_RANOBE_ID = 'uaranobeclub' as const;

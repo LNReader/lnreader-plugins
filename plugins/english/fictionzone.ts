@@ -1,8 +1,8 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters } from '@/types/filters';
+import { Filters } from '@libs/filterInputs';
 import { load as loadCheerio } from 'cheerio';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
 class FictionZonePlugin implements Plugin.PagePlugin {
@@ -17,7 +17,7 @@ class FictionZonePlugin implements Plugin.PagePlugin {
   //flag indicates whether access to LocalStorage, SesesionStorage is required.
   webStorageUtilized?: boolean;
 
-  cachedNovelIds: Map<string, string> = new Map();
+  cachedNovelIds = new Map<string, string>();
 
   async popularNovels(
     pageNo: number,
@@ -79,10 +79,10 @@ class FictionZonePlugin implements Plugin.PagePlugin {
     if (status === 'Ongoing') novel.status = NovelStatus.Ongoing;
     novel.summary = loadedCheerio('#synopsis > div.content').text();
 
-    let nuxtData = loadedCheerio('script#__NUXT_DATA__').html();
-    let parsed = JSON.parse(nuxtData!);
+    const nuxtData = loadedCheerio('script#__NUXT_DATA__').html();
+    const parsed = JSON.parse(nuxtData!);
     let last = null;
-    for (let a of parsed) {
+    for (const a of parsed) {
       if (typeof a === 'string' && a.startsWith('novel_covers/')) break;
       last = a;
     }

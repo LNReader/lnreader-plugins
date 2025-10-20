@@ -1,4 +1,4 @@
-import { FilterToValues, Filters } from '@/types/filters';
+import { FilterToValues, Filters } from '@libs/filterInputs';
 export namespace Plugin {
   export type ChapterItem = {
     name: string;

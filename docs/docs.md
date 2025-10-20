@@ -349,7 +349,7 @@ It is an object representing information how to store/access the novel
 You can use the default `Cover not available` cover by importing
 
 ```ts
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover;
 ```
 
 ---
@@ -377,10 +377,10 @@ import { defaultCover } from '@/types/constants';
 
 ### Filters
 
-`Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@/types/filters` file:
+`Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@libs/filterInputs` file:
 
 ```ts
-import { FilterTypes, Filters } from '@/types/filters';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 ```
 
 There are 2 main objects when using filters:

@@ -1,8 +1,8 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchText } from '@/lib/fetch';
-import { FilterTypes, Filters } from '@/types/filters';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 class Shu69 implements Plugin.PluginBase {
   private fetchOptions = {

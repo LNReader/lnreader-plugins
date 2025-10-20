@@ -12,7 +12,7 @@ fs.readdirSync(PLUGIN_DIR)
     fs.readdirSync(LANG_DIR)
       .filter(f => !f.includes('broken') && !f.startsWith('.'))
       .forEach(pluginName => {
-        content += `import p_${pluginCounter} from './${langName}/${pluginName.replace(/\.ts$/, '')}';\n`;
+        content += `import p_${pluginCounter} from '@plugins/${langName}/${pluginName.replace(/\.ts$/, '')}';\n`;
         pluginCounter += 1;
       });
   });
@@ -22,7 +22,7 @@ content += `\nconst PLUGINS: Plugin.PluginBase[] = [${Array(pluginCounter)
   .map((v, index) => 'p_' + index.toString())
   .join(', ')}];\nexport default PLUGINS`;
 
-const outputPath = './src/plugins/index.ts';
+const outputPath = './plugins/index.ts';
 fs.writeFileSync(outputPath, content, { encoding: 'utf-8' });
 
 execSync(`npx prettier --write ${outputPath}`, { stdio: 'inherit' });

@@ -2,7 +2,7 @@ require('module-alias/register');
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 import * as path from 'path';
-import { FilterTypes, FilterOption } from '@/types/filters';
+import { FilterTypes, FilterOption } from '@libs/filterInputs';
 const type: string[] = ['genres', 'status', 'sort'];
 
 async function getFilters(name: string, url: string) {

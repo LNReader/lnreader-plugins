@@ -1,5 +1,5 @@
-import { fetchApi } from '@/lib/fetch';
-import { Filters, FilterTypes } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 
 /**

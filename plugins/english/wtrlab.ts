@@ -1,6 +1,6 @@
 import { Plugin } from '@/types/plugin';
-import { fetchApi } from '@/lib/fetch';
-import { FilterTypes, Filters } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { load as parseHTML } from 'cheerio';
 
 class WTRLAB implements Plugin.PluginBase {

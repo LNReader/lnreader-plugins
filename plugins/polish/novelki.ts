@@ -1,8 +1,8 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { load as parseHTML } from 'cheerio';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 
 class NovelkiPL implements Plugin.PluginBase {
   id = 'novelki.pl';

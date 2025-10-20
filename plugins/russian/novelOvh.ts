@@ -1,7 +1,7 @@
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
-import { fetchApi } from '@/lib/fetch';
-import { NovelStatus } from '@/types/constants';
+import { FilterTypes, Filters } from '@libs/filterInputs';
+import { fetchApi } from '@libs/fetch';
+import { NovelStatus } from '@libs/novelStatus';
 import dayjs from 'dayjs';
 
 class novelOvh implements Plugin.PluginBase {

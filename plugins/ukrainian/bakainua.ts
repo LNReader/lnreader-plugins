@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { NovelStatus } from '@/types/constants';
-import { Filters, FilterTypes } from '@/types/filters';
+import { NovelStatus } from '@libs/novelStatus';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 
 class BakaInUa implements Plugin.PluginBase {
   id = 'bakainua';
@@ -20,7 +20,7 @@ class BakaInUa implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const fictionIds: string[] = [];
 
-    let url: URL = new URL(this.site + '/fictions/alphabetical');
+    const url: URL = new URL(this.site + '/fictions/alphabetical');
 
     if (pageNo > 1) url.searchParams.append('page', pageNo.toString());
     if (showLatestNovels || (filters && filters.only_new.value))
@@ -100,7 +100,7 @@ class BakaInUa implements Plugin.PluginBase {
         break;
     }
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     $('li.group a').each((index, elem) => {
       const chapter: Plugin.ChapterItem = {
         name: $(elem).find('span').eq(1).text().trim(),
@@ -123,7 +123,7 @@ class BakaInUa implements Plugin.PluginBase {
   }
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
-    let novels: Plugin.NovelItem[] = [];
+    const novels: Plugin.NovelItem[] = [];
 
     const result = await fetchApi(
       this.site + '/search?search%5B%5D=' + searchTerm + '&only_fictions=true',

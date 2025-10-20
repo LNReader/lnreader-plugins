@@ -1,17 +1,17 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { FilterTypes } from '@/types/filters';
-import type { Filter } from '@/types/filters';
+import { FilterTypes } from '@libs/filterInputs';
+import type { Filter } from '@libs/filterInputs';
 
-interface TextFilterProps {
+type TextFilterProps = {
   filter: {
     key: string;
     filter: Filter<FilterTypes.TextInput>;
   };
   value: string;
   set: (value: string) => void;
-}
+};
 
 export function TextFilter({ filter, value, set }: TextFilterProps) {
   return (

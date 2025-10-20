@@ -1,17 +1,17 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { FilterTypes } from '@/types/filters';
-import type { Filter } from '@/types/filters';
+import { FilterTypes } from '@libs/filterInputs';
+import type { Filter } from '@libs/filterInputs';
 
-interface SwitchFilterProps {
+type SwitchFilterProps = {
   filter: {
     key: string;
     filter: Filter<FilterTypes.Switch>;
   };
   value: boolean;
   set: (value: boolean) => void;
-}
+};
 
 export function SwitchFilter({ filter, value, set }: SwitchFilterProps) {
   return (

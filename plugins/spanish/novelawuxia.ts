@@ -1,8 +1,8 @@
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
-import { defaultCover } from '@/types/constants';
-import { Filters } from '@/types/filters';
+import { defaultCover } from '@libs/defaultCover';
+import { Filters } from '@libs/filterInputs';
 
 class ReinoWuxia implements Plugin.PluginBase {
   id = 'reinowuxia';

@@ -1,9 +1,9 @@
 import { Plugin } from '@/types/plugin';
-import { FilterTypes, Filters } from '@/types/filters';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { fetchApi, fetchFile } from '@/lib/fetch';
-import { NovelStatus } from '@/types/constants';
+import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
-import { defaultCover } from '@/types/constants';
+import { defaultCover } from '@libs/defaultCover';
 
 const getStandardNovelPath = (url: string | undefined): string | undefined => {
   if (!url) return undefined;
@@ -207,7 +207,7 @@ class QuanbenPlugin implements Plugin.PluginBase {
     const chapterListHtml = await chapterListResult.text();
     const $ = parseHTML(chapterListHtml);
 
-    let chapters: Plugin.ChapterItem[] = [];
+    const chapters: Plugin.ChapterItem[] = [];
     // Extract standard novel name from AMP path for chapter path storage
     const standardNovelPathMatch = novelPath.match(/(\/n\/[^\/]+\/)/);
     if (!standardNovelPathMatch || !standardNovelPathMatch[1]) {
@@ -385,7 +385,7 @@ class QuanbenPlugin implements Plugin.PluginBase {
 
       const novelName = nameLink.text().trim();
       const novelHref = nameLink.attr('href');
-      let novelCover = img.attr('src') || img.attr('data-src');
+      const novelCover = img.attr('src') || img.attr('data-src');
 
       if (novelHref && novelName) {
         const absoluteUrl = makeAbsolute(novelHref, this.site);

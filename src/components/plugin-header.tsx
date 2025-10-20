@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Plugin } from '@/types/plugin';
 
-interface PluginHeaderProps {
+type PluginHeaderProps = {
   selectedPlugin?: Plugin.PluginBase;
-}
+};
 
 export default function PluginHeader({ selectedPlugin }: PluginHeaderProps) {
   return (

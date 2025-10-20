@@ -13,7 +13,7 @@ import {
   Filters,
   FilterToValues,
   FilterTypes,
-} from '@/types/filters';
+} from '@libs/filterInputs';
 import { PickerFilter } from './picker-filter';
 import { SwitchFilter } from './switch-filter';
 import { TextFilter } from './text-filter';
@@ -139,7 +139,7 @@ const renderFilters = (
   );
 };
 
-interface FiltersSheetProps {
+type FiltersSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   values: FilterToValues<Filters> | undefined;
@@ -148,7 +148,7 @@ interface FiltersSheetProps {
     React.SetStateAction<FilterToValues<Filters> | undefined>
   >;
   refetch: () => void;
-}
+};
 
 export function FiltersSheet({
   open,

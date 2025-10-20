@@ -1,8 +1,8 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { Filters, FilterTypes } from '@/types/filters';
-import { defaultCover } from '@/types/constants';
+import { Filters, FilterTypes } from '@libs/filterInputs';
+import { defaultCover } from '@libs/defaultCover';
 
 class ArchiveOfOurOwn implements Plugin.PluginBase {
   id = 'archiveofourown';
@@ -172,7 +172,7 @@ class ArchiveOfOurOwn implements Plugin.PluginBase {
     const releaseTime = releaseTimeText
       ? new Date(releaseTimeText).toISOString()
       : '';
-    let dateCounter: number = 0;
+    let dateCounter = 0;
     if (loadedCheerio('#chapter_index select').length > 0) {
       loadedCheerio('#chapter_index select').each((i, selectEl) => {
         loadedCheerio(selectEl)

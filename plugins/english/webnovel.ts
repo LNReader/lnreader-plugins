@@ -1,6 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
-import { Filters, FilterTypes } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 import { storage } from '@/lib/storage';
 
@@ -138,9 +138,9 @@ class Webnovel implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.volume-item').each((i_v_, ele_v) => {
-      let originalVolumeName = loadedCheerio(ele_v).first().text().trim();
-      let volumeNameMatch = originalVolumeName.match(/Volume\s(\d+)/);
-      let volumeName = volumeNameMatch
+      const originalVolumeName = loadedCheerio(ele_v).first().text().trim();
+      const volumeNameMatch = originalVolumeName.match(/Volume\s(\d+)/);
+      const volumeName = volumeNameMatch
         ? `Volume ${volumeNameMatch[1]}`
         : 'Unknown Volume';
 

@@ -1,6 +1,6 @@
 import { CheerioAPI, load as parseHTML } from 'cheerio';
-import { fetchApi } from '@/lib/fetch';
-import { FilterTypes, Filters } from '@/types/filters';
+import { fetchApi } from '@libs/fetch';
+import { FilterTypes, Filters } from '@libs/filterInputs';
 import { Plugin } from '@/types/plugin';
 
 class EarlyNovelPlugin implements Plugin.PagePlugin {

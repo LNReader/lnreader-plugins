@@ -1,10 +1,10 @@
 import { load } from 'cheerio';
 import { Parser } from 'htmlparser2';
-import { fetchApi } from '@/lib/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
-import { NovelStatus } from '@/types/constants';
-import { defaultCover } from '@/types/constants';
-import { Filters } from '@/types/filters';
+import { NovelStatus } from '@libs/novelStatus';
+import { defaultCover } from '@libs/defaultCover';
+import { Filters } from '@libs/filterInputs';
 import { storage } from '@/lib/storage';
 
 type LightNovelWPOptions = {
@@ -112,7 +112,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           novelPath = novelUrl.replace(this.site, '');
         } else {
           // TODO: report website new url to server
-          let novelParts = novelUrl.split('/');
+          const novelParts = novelUrl.split('/');
           novelParts.shift();
           novelParts.shift();
           novelParts.shift();
