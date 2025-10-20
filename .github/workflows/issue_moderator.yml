@@ -1,4 +1,4 @@
-name: Issue moderator
+name: Issue Moderator
 
 on:
   issues:
@@ -8,9 +8,10 @@ on:
 
 jobs:
   autoclose:
+    name: Auto Close Invalid Issues
     runs-on: ubuntu-latest
     steps:
-      - name: Moderate issues
+      - name: Moderate Issues
         uses: tachiyomiorg/issue-moderator-action@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -21,7 +22,7 @@ jobs:
             ["Source Request", "Domain Changed"]
 
           existing-check-enabled: false
-            
+
           auto-close-rules: |
             [
               {

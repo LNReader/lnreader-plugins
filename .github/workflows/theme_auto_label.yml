@@ -6,6 +6,7 @@ on:
 
 jobs:
   auto-label:
+    name: Auto Label Theme
     if: contains(github.event.issue.labels.*.name, 'Source Request')
     runs-on: ubuntu-latest
     env:
@@ -36,7 +37,7 @@ jobs:
           CHROME_VERSION=$(curl -s https://chromiumdash.appspot.com/fetch_releases?channel=Stable\&platform=Windows\&num=1 | jq -r '.[0].version // "126.0.6478.36"')
           echo "USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROME_VERSION Safari/537.36" >> $GITHUB_OUTPUT
 
-      - name: Check Madara theme
+      - name: Check Madara Theme
         id: check_madara
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -52,7 +53,7 @@ jobs:
             echo "madara=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check Lighnovelwp theme
+      - name: Check Lightnovelwp Theme
         id: check_lighnovelwp
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -68,7 +69,7 @@ jobs:
             echo "lighnovelwp=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check HotNovelPub theme
+      - name: Check HotNovelPub Theme
         id: check_hotnovelpub
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -84,7 +85,7 @@ jobs:
           echo "hotnovelpub=false" >> $GITHUB_OUTPUT
             fi
 
-      - name: Check Fictioneer theme
+      - name: Check Fictioneer Theme
         id: check_fictioneer
         env:
           BASE_URL: ${{ steps.get_base_url.outputs.BASE_URL }}
@@ -100,7 +101,7 @@ jobs:
             echo "fictioneer=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Add Label
+      - name: Add Theme Label To Issue
         env:
           MADARA: ${{ steps.check_madara.outputs.madara }}
           LIGHNOVELWP: ${{ steps.check_lighnovelwp.outputs.lighnovelwp }}

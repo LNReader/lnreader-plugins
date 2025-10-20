@@ -1,29 +1,26 @@
-name: Prettier
+name: Format Check
 
 on:
   pull_request:
     branches: [master]
 
 jobs:
-  Prettier:
+  format-check:
+    name: Check Code Formatting
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: |
-          rm package.json
-          rm package-lock.json
-          npm init -y
-          npm pkg set type="module"
-          npm i prettier@3.2.5
+        run: npm install --omit=dev --ignore-scripts
 
-      - name: Prettier
-        run: npx prettier --check "./src/**/*.{ts,tsx,js,css}"
+      - name: Check Code Formatting
+        run: npm run format:check
