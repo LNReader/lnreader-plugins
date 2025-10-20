@@ -3,7 +3,7 @@ import { Filters, FilterTypes } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 import { Plugin } from '@/types/plugin';
 import { load as parseHTML } from 'cheerio';
-import { storage } from '@/lib/storage';
+import { storage } from '@libs/storage';
 
 class KomgaPlugin implements Plugin.PluginBase {
   id = 'komga';

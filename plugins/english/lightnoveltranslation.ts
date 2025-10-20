@@ -5,7 +5,7 @@ import { load as loadCheerio } from 'cheerio';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 // import { isUrlAbsolute } from '@libs/isAbsoluteUrl';
-// import { storage, localStorage, sessionStorage } from '@/lib/storage';
+// import { storage, localStorage, sessionStorage } from '@libs/storage';
 // import { encode, decode } from 'urlencode';
 // import dayjs from 'dayjs';
 import { Parser } from 'htmlparser2';

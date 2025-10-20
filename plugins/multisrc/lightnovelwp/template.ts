@@ -5,7 +5,7 @@ import { Plugin } from '@/types/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 import { Filters } from '@libs/filterInputs';
-import { storage } from '@/lib/storage';
+import { storage } from '@libs/storage';
 
 type LightNovelWPOptions = {
   reverseChapters?: boolean;

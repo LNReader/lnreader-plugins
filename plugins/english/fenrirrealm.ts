@@ -2,7 +2,7 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { load as loadCheerio } from 'cheerio';
 import { Filters, FilterTypes } from '@libs/filterInputs';
-import { storage } from '@/lib/storage';
+import { storage } from '@libs/storage';
 import { defaultCover } from '@libs/defaultCover';
 
 class FenrirRealmPlugin implements Plugin.PluginBase {

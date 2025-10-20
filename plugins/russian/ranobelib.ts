@@ -3,7 +3,7 @@ import { FilterTypes, Filters } from '@libs/filterInputs';
 import { defaultCover } from '@libs/defaultCover';
 import { fetchApi } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { storage, localStorage } from '@/lib/storage';
+import { storage, localStorage } from '@libs/storage';
 import dayjs from 'dayjs';
 
 const statusKey: Record<number, string> = {

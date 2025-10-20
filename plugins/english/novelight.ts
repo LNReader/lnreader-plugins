@@ -3,7 +3,7 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import dayjs from 'dayjs';
-import { storage } from '@/lib/storage';
+import { storage } from '@libs/storage';
 import { NovelStatus } from '@libs/novelStatus';
 
 class Novelight implements Plugin.PagePlugin {
