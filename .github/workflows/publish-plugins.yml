@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'plugins/**'
+      - 'public/**'
       - 'scripts/publish-plugins.sh'
       - '.github/workflows/publish-plugins.yml'
 
