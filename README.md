@@ -56,4 +56,4 @@ Add `http://10.0.2.2/.dist/plugins.min.json` (Android emulator) to the app. Requ
 
 ## Disclaimer
 
-The developers are not affiliated with any content providers. Website owners may request plugin removal via [Discord](https://discord.gg/QdcWN4MD63) or by [creating an issue](https://github.com/LNReader/lnreader-plugins/issues/new). Removed sites are added to the [blacklist](BLACKLIST.json).
+The developers are not affiliated with any content providers. If you are a non-aggregator website owner, you may request plugin removal via [Discord](https://discord.gg/QdcWN4MD63) or by [creating an issue](https://github.com/LNReader/lnreader-plugins/issues/new). Removed sites are added to the [blacklist](BLACKLIST.json).
