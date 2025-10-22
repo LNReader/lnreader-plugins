@@ -5,6 +5,10 @@ import { dirname, join } from 'path';
 
 const folder = dirname(fileURLToPath(import.meta.url));
 
+const LightNovelWPTemplate = readFileSync(join(folder, 'template.ts'), {
+  encoding: 'utf-8',
+});
+
 export const generateAll = function () {
   return list.map(source => {
     const exist = existsSync(join(folder, 'filters', source.id + '.json'));
@@ -15,21 +19,18 @@ export const generateAll = function () {
       source.filters = JSON.parse(filters).filters;
     }
     console.log(
-      `[lightnovelwp] Generating: ${source.id}${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
+      `[lightnovelwp] Generating: ${source.id} ${' '.repeat(20 - source.id.length)} ${source.filters ? '🔎with filters🔍' : '🚫no filters🚫'}`,
     );
     return generator(source);
   });
 };
 
 const generator = function generator(source) {
-  const LightNovelWPTemplate = readFileSync(join(folder, 'template.ts'), {
-    encoding: 'utf-8',
-  });
 
   const pluginScript = `
 ${LightNovelWPTemplate.replace(
   '// CustomJS HERE',
-  source.options?.customJs || '',
+  source.options?.customTransformJs || '',
 )}
 const plugin = new LightNovelWPPlugin(${JSON.stringify(source)});
 export default plugin;

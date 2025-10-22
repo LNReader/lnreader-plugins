@@ -1,0 +1,7 @@
+blockquote, q {
+  padding: 5px 10px;
+  background-color: var(--theme-surfaceVariant);
+  color: var(--theme-onSurfaceVariant);
+  border-left: 4px solid var(--theme-outline);
+  quotes: none;
+}

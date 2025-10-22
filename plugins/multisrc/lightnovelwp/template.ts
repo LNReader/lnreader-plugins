@@ -12,8 +12,10 @@ type LightNovelWPOptions = {
   lang?: string;
   versionIncrements?: number;
   seriesPath?: string;
-  customJs?: string;
+  customTransformJs?: string;
   hasLocked?: boolean;
+  customRuntimeJs?: string;
+  customCss?: string;
 };
 
 export type LightNovelWPMetadata = {
@@ -32,7 +34,10 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   version: string;
   options?: LightNovelWPOptions;
   filters?: Filters;
+  customJS?: string;
+  customCSS?: string;
 
+  // TODO: this probably needs to be done at use time, otherwise changes won't be reflected
   hideLocked = storage.get('hideLocked');
   pluginSettings?: Record<string, any>;
 
@@ -42,9 +47,11 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.icon = `multisrc/lightnovelwp/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
     const versionIncrements = metadata.options?.versionIncrements || 0;
-    this.version = `1.1.${9 + versionIncrements}`;
+    this.version = `1.1.${10 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
+    this.customJS = this.options.customRuntimeJs;
+    this.customCSS = this.options.customCss;
 
     if (this.options?.hasLocked) {
       this.pluginSettings = {
@@ -64,7 +71,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     return url_parts.join('.');
   }
 
-  async safeFecth(url: string, search: boolean): Promise<string> {
+  async safeFetch(url: string, search: boolean): Promise<string> {
     const urlParts = url.split('://');
     const protocol = urlParts.shift();
     const sanitizedUri = urlParts[0].replace(/\/\//g, '/');
@@ -147,13 +154,13 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
           url += `&${key}=${value}`;
       else if (filters[key].value) url += `&${key}=${filters[key].value}`;
     }
-    const html = await this.safeFecth(url, false);
+    const html = await this.safeFetch(url, false);
     return this.parseNovels(html);
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const baseURL = this.site;
-    const html = await this.safeFecth(baseURL + novelPath, false);
+    const html = await this.safeFetch(baseURL + novelPath, false);
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
@@ -180,7 +187,10 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     let hasLockItemOnChapterNum = false;
     const chapters: Plugin.ChapterItem[] = [];
     let tempChapter = {} as Plugin.ChapterItem;
-    const hideLocked = this.hideLocked;
+
+    const hideLocked = !!(
+      storage.get('hideLocked') ?? this.pluginSettings?.['hideLocked'].value
+    );
 
     const parser = new Parser({
       onopentag(name, attribs) {
@@ -421,29 +431,28 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
       novel.chapters = chapters;
     }
 
-    novel.summary = novel.summary.trim();
+    novel.summary = novel.summary?.trim();
 
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    let data = await this.safeFecth(this.site + chapterPath, false);
-    if (this.options?.customJs) {
+    let data = await this.safeFetch(this.site + chapterPath, false);
+    const $ = load(data);
+    if (this.options?.customTransformJs) {
       try {
-        const $ = load(data);
         // CustomJS HERE
-        data = $.html();
       } catch (error) {
         console.error('Error executing customJs:', error);
         throw error;
       }
     }
-    return (
-      data
-        .match(/<div.*?class="epcontent ([^]*?)<div.*?class="?bottomnav/g)?.[0]
-        .match(/<p[^>]*>([^]*?)<\/p>/g)
-        ?.join('\n') || ''
-    );
+    const content = $('div.epcontent');
+    // content.find('h1:first-child').remove();
+
+    // content.find('> :not(p)').remove();
+
+    return content.html() ?? '';
   }
 
   async searchNovels(
@@ -452,7 +461,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     const url =
       this.site + 'page/' + page + '/?s=' + encodeURIComponent(searchTerm);
-    const html = await this.safeFecth(url, true);
+    const html = await this.safeFetch(url, true);
     return this.parseNovels(html);
   }
 }

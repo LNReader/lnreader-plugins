@@ -15,7 +15,7 @@
     "options": {
       "lang": "Arabic",
       "reverseChapters": true,
-      "customJs": "$('article > style').text().match(/\\.\\w+(?=\\s*[,{])/g)?.forEach(tag => $(`p${tag}`).remove());$('.epcontent .code-block').remove();",
+      "customTransformJs": "$('article > style').text().match(/\\.\\w+(?=\\s*[,{])/g)?.forEach(tag => $(`p${tag}`).remove());$('.epcontent .code-block').remove();",
       "versionIncrements": 9
     }
   },
@@ -107,7 +107,7 @@
       "lang": "English",
       "reverseChapters": true,
       "versionIncrements": 2,
-      "customJs": "$('.announ').remove();         return $('.epcontent').eq(-1).find('p').map(function (i, el) {          return '<p>' + $(this).text() + '</p>';        }).toArray().join('\\n') || '';"
+      "customTransformJs": "$('.announ').remove();         return $('.epcontent').eq(-1).find('p').map(function (i, el) {          return '<p>' + $(this).text() + '</p>';        }).toArray().join('\\n') || '';"
     }
   },
   {
@@ -199,7 +199,7 @@
     "options": {
       "lang": "English",
       "reverseChapters": true,
-      "customJs": "\n        $('div.entry-content script').remove();\n\n        const url = this.site + chapterPath.slice(0, -1);\n        const offsets = [[0, 12368, 12462], [1, 6960, 7054], [2, 4176, 4270]];\n        const idx = url.length * url.charCodeAt(url.length - 1) * 2 % 3;\n        const [_, offsetLower, offsetCap] = offsets[idx] ?? offsets[0];\n\n        const asciiA = 'A'.charCodeAt(0);\n        const asciiz = 'z'.charCodeAt(0);\n\n        $('div.entry-content > p').text((_, txt) =>\n            txt.split('').map(char => {\n                const code = char.charCodeAt(0);\n                const offset = (code >= offsetLower + asciiA && code <= offsetLower + asciiz)\n                    ? offsetLower\n                    : offsetCap;\n                const decoded = code - offset;\n                return (decoded >= 32 && decoded <= 126) ? String.fromCharCode(decoded) : char;\n            }).join('')\n        );\n",
+      "customTransformJs": "\n        $('div.entry-content script').remove();\n\n        const url = this.site + chapterPath.slice(0, -1);\n        const offsets = [[0, 12368, 12462], [1, 6960, 7054], [2, 4176, 4270]];\n        const idx = url.length * url.charCodeAt(url.length - 1) * 2 % 3;\n        const [_, offsetLower, offsetCap] = offsets[idx] ?? offsets[0];\n\n        const asciiA = 'A'.charCodeAt(0);\n        const asciiz = 'z'.charCodeAt(0);\n\n        $('div.entry-content > p').text((_, txt) =>\n            txt.split('').map(char => {\n                const code = char.charCodeAt(0);\n                const offset = (code >= offsetLower + asciiA && code <= offsetLower + asciiz)\n                    ? offsetLower\n                    : offsetCap;\n                const decoded = code - offset;\n                return (decoded >= 32 && decoded <= 126) ? String.fromCharCode(decoded) : char;\n            }).join('')\n        );\n",
       "versionIncrements": 4
     }
   },
@@ -283,6 +283,20 @@
     "options": {
       "lang": "English",
       "reverseChapters": true
+    }
+  },
+  {
+    "id": "katreadingarchive",
+    "sourceSite": "https://katreadingarchive.me",
+    "sourceName": "Kat Reading Archive",
+    "options": {
+      "lang": "English",
+      "versionIncrements": 1,
+      "reverseChapters": true,
+      "hasLocked": true,
+      "customTransformJs": "$('div.epcontent > span:first-of-type').remove(); $('.ckb-wrap').remove();",
+      "customRuntimeJs": "multisrc/lightnovelwp/katreadingarchive/customJs.js",
+      "customCss": "multisrc/lightnovelwp/katreadingarchive/customCss.css"
     }
   }
 ]
