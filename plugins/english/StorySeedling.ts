@@ -1,6 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
 import { Plugin } from '@/types/plugin';
-import { fetchApi } from '@libs/fetch';
+import { fetchApi, fetchText } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 
@@ -9,7 +9,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   name = 'StorySeedling';
   icon = 'src/en/storyseedling/icon.png';
   site = 'https://storyseedling.com/';
-  version = '1.0.3';
+  version = '1.0.4';
 
   async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
     const r = await fetchApi(url);
@@ -163,23 +163,37 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const $ = await this.getCheerio(this.site + chapterPath, false);
+    let html = (
+      await fetchText(this.site + chapterPath + '/content', {
+        method: 'POST',
+        headers: {
+          'referrer': this.site + chapterPath + '/',
+          'x-nonce': '5c3a4f0004', //TODO: is this actually constant?
+        },
+        body: JSON.stringify({ 'captcha_response': '' }),
+      })
+    )
+      .replace(/cls[a-f0-9]+/g, '')
+      .split('')
+      .map(char => {
+        const code = char.charCodeAt(0);
+        const offset = code > 12123 ? 12027 : 12033;
+        const decoded = code - offset;
+        return decoded >= 32 && decoded <= 126
+          ? String.fromCharCode(decoded)
+          : char;
+      })
+      .join('');
+    let $ = load(html);
 
-    const xdata = $('div[ax-load][x-data]').attr('x-data');
+    $('span').text((_, txt) =>
+      txt.toLowerCase().includes('storyseedling') ||
+      txt.toLowerCase().includes('story seedling')
+        ? ''
+        : txt,
+    );
 
-    const t = $('div.justify-center > div.mb-4');
-    let chapterText = t.html() || '';
-
-    if (xdata) {
-      chapterText =
-        chapterText +
-        "\n\n Error parsing chapter: Turnstile detected. Advise just reading in web view until there's a fix.";
-      //   const listXdata = xdata?.split("'");
-      //   const dataNovelId = listXdata[1];
-      //   const dataNovelN = listXdata[3];
-    }
-
-    return chapterText;
+    return $.html();
   }
 
   async searchNovels(

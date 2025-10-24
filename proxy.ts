@@ -23,8 +23,8 @@ const settings: ServerSetting = {
     'link',
     'set-cookie',
     'set-cookie2',
-    'content-encoding',
-    'content-length',
+    // 'content-encoding',
+    // 'content-length',
   ],
   useUserAgent: true,
 };
