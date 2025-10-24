@@ -1,6 +1,6 @@
 import { CheerioAPI, load } from 'cheerio';
 import { Plugin } from '@/types/plugin';
-import { fetchApi } from '@libs/fetch';
+import { fetchApi, fetchText } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
 
@@ -163,23 +163,14 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const $ = await this.getCheerio(this.site + chapterPath, false);
-
-    const xdata = $('div[ax-load][x-data]').attr('x-data');
-
-    const t = $('div.justify-center > div.mb-4');
-    let chapterText = t.html() || '';
-
-    if (xdata) {
-      chapterText =
-        chapterText +
-        "\n\n Error parsing chapter: Turnstile detected. Advise just reading in web view until there's a fix.";
-      //   const listXdata = xdata?.split("'");
-      //   const dataNovelId = listXdata[1];
-      //   const dataNovelN = listXdata[3];
-    }
-
-    return chapterText;
+    return await fetchText(this.site + chapterPath + '/content', {
+      method: 'POST',
+      headers: {
+        'referrer': this.site + chapterPath + '/',
+        'x-nonce': '5c3a4f0004', //TODO: turnstyle bypass
+      },
+      body: JSON.stringify({ 'captcha_response': '' }),
+    }); //TODO: remap chars
   }
 
   async searchNovels(
