@@ -163,7 +163,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    return (
+    let html = (
       await fetchText(this.site + chapterPath + '/content', {
         method: 'POST',
         headers: {
@@ -184,6 +184,16 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
           : char;
       })
       .join('');
+    let $ = load(html);
+
+    $('span').text((_, txt) =>
+      txt.toLowerCase().includes('storyseedling') ||
+      txt.toLowerCase().includes('story seedling')
+        ? ''
+        : txt,
+    );
+
+    return $.html();
   }
 
   async searchNovels(
