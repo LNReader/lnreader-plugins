@@ -163,14 +163,26 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    return await fetchText(this.site + chapterPath + '/content', {
-      method: 'POST',
-      headers: {
-        'referrer': this.site + chapterPath + '/',
-        'x-nonce': '5c3a4f0004', //TODO: turnstyle bypass
-      },
-      body: JSON.stringify({ 'captcha_response': '' }),
-    }); //TODO: remap chars
+    return (
+      await fetchText(this.site + chapterPath + '/content', {
+        method: 'POST',
+        headers: {
+          'referrer': this.site + chapterPath + '/',
+          'x-nonce': '5c3a4f0004', //TODO: is this actually constant?
+        },
+        body: JSON.stringify({ 'captcha_response': '' }),
+      })
+    )
+      .split('')
+      .map(char => {
+        const code = char.charCodeAt(0);
+        const offset = code > 12123 ? 12027 : 12033;
+        const decoded = code - offset;
+        return decoded >= 32 && decoded <= 126
+          ? String.fromCharCode(decoded)
+          : char;
+      })
+      .join('');
   }
 
   async searchNovels(
