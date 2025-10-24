@@ -173,6 +173,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
         body: JSON.stringify({ 'captcha_response': '' }),
       })
     )
+      .replace(/cls[a-f0-9]+/g, '')
       .split('')
       .map(char => {
         const code = char.charCodeAt(0);
