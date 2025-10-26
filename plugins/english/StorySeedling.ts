@@ -2,7 +2,6 @@ import { CheerioAPI, load } from 'cheerio';
 import { Plugin } from '@/types/plugin';
 import { fetchApi, fetchText } from '@libs/fetch';
 import { NovelStatus } from '@libs/novelStatus';
-import { defaultCover } from '@libs/defaultCover';
 
 class StorySeedlingPlugin implements Plugin.PluginBase {
   id = 'storyseedling';
@@ -10,6 +9,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   icon = 'src/en/storyseedling/icon.png';
   site = 'https://storyseedling.com/';
   version = '1.0.4';
+  nonce: string | undefined;
 
   async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
     const r = await fetchApi(url);
@@ -162,17 +162,32 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     return novel as Plugin.SourceNovel;
   }
 
+  async updateNonce(chapterPath: string) {
+    const $ = await this.getCheerio(this.site + chapterPath, false);
+    this.nonce = $('div.mb-4:has(h1.text-xl) > div')
+      .attr('x-data')
+      ?.match(/loadChapter\('.+?', '(.+?)'\)/)[1];
+  }
+
   async parseChapter(chapterPath: string): Promise<string> {
-    let html = (
-      await fetchText(this.site + chapterPath + '/content', {
-        method: 'POST',
-        headers: {
-          'referrer': this.site + chapterPath + '/',
-          'x-nonce': '5c3a4f0004', //TODO: is this actually constant?
-        },
-        body: JSON.stringify({ 'captcha_response': '' }),
-      })
-    )
+    const updatedNonce = !!this.nonce;
+    if (!this.nonce) await this.updateNonce(chapterPath);
+    const text = await fetchApi(this.site + chapterPath + '/content', {
+      method: 'POST',
+      headers: {
+        'referrer': this.site + chapterPath + '/',
+        'x-nonce': this.nonce,
+      },
+      body: JSON.stringify({ 'captcha_response': '' }),
+    }).then(r => r.text());
+    if (text == '{"success":false,"message":"Invalid security."}') {
+      if (updatedNonce) {
+        throw new Error(`Failed to bypass captcha!`);
+      }
+      this.nonce = '';
+      return await this.parseChapter(chapterPath, true);
+    }
+    let html = text
       .replace(/cls[a-f0-9]+/g, '')
       .split('')
       .map(char => {
