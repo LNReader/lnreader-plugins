@@ -180,22 +180,26 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
       },
       body: JSON.stringify({ 'captcha_response': '' }),
     }).then(r => r.text());
-    if (text == '{"success":false,"message":"Invalid security."}') {
-      if (updatedNonce) {
-        throw new Error(`Failed to find code!`);
+    try {
+      const textJson = JSON.parse(text);
+      if (!textJson.success) {
+        if (textJson.message === 'Invalid security.') {
+          if (updatedNonce) {
+            throw new Error(`Failed to find code!`);
+          }
+          this.nonce = '';
+          return await this.parseChapter(chapterPath);
+        }
+        if (textJson.captcha) {
+          if (updatedNonce) {
+            throw new Error(
+              `Failed to bypass turnstile captcha (read in webview until it stops ig)`,
+            );
+          }
+        }
       }
-      this.nonce = '';
-      return await this.parseChapter(chapterPath);
-    }
-    if (
-      text ==
-      '{"success":false,"message":"Captcha verification required.","captcha":true}'
-    ) {
-      if (updatedNonce) {
-        throw new Error(
-          `Failed to bypass turnstile captcha (read in webview until it stops ig)`,
-        );
-      }
+    } catch (_) {
+      //not json :fire: we have chapter
     }
     let html = text
       .replace(/cls[a-f0-9]+/g, '')
