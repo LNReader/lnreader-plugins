@@ -184,11 +184,20 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
         res.end();
       });
   } else if (settings.fetchMode === FetchMode.PROXY) {
-    proxy.web(req, res, {
-      target: _url.origin,
-      selfHandleResponse: true,
-      followRedirects: true,
-    });
+    proxy.web(
+      req,
+      res,
+      {
+        target: _url.origin,
+        selfHandleResponse: true,
+        followRedirects: true,
+      },
+      err => {
+        console.error(err);
+        res.statusCode = 500;
+        res.end();
+      },
+    );
   }
 };
 
