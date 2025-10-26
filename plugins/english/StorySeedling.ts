@@ -182,10 +182,20 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
     }).then(r => r.text());
     if (text == '{"success":false,"message":"Invalid security."}') {
       if (updatedNonce) {
-        throw new Error(`Failed to bypass captcha!`);
+        throw new Error(`Failed to find code!`);
       }
       this.nonce = '';
-      return await this.parseChapter(chapterPath, true);
+      return await this.parseChapter(chapterPath);
+    }
+    if (
+      text ==
+      '{"success":false,"message":"Captcha verification required.","captcha":true}'
+    ) {
+      if (updatedNonce) {
+        throw new Error(
+          `Failed to bypass turnstile captcha (read in webview until it stops ig)`,
+        );
+      }
     }
     let html = text
       .replace(/cls[a-f0-9]+/g, '')
