@@ -170,7 +170,7 @@ class StorySeedlingPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const updatedNonce = !!this.nonce;
+    const updatedNonce = !this.nonce;
     if (!this.nonce) await this.updateNonce(chapterPath);
     const text = await fetchApi(this.site + chapterPath + '/content', {
       method: 'POST',
