@@ -19,13 +19,7 @@ const settings: ServerSetting = {
     'sec-fetch-dest',
     'pragma',
   ],
-  disAllowResponseHeaders: [
-    'link',
-    'set-cookie',
-    'set-cookie2',
-    // 'content-encoding',
-    // 'content-length',
-  ],
+  disAllowResponseHeaders: ['link', 'set-cookie', 'set-cookie2'],
   useUserAgent: true,
 };
 
@@ -171,7 +165,11 @@ const proxyRequest: Connect.SimpleHandleFunction = (req, res) => {
       .then(([res2, text]) => {
         res.statusCode = res2.status;
         res2.headers.forEach((val, key) => {
-          if (!settings.disAllowResponseHeaders.includes(key)) {
+          if (
+            !settings.disAllowResponseHeaders.includes(key) &&
+            key !== 'content-encoding' &&
+            key !== 'content-length'
+          ) {
             res.setHeader(key, val);
           }
         });
