@@ -7,7 +7,7 @@ fi
 current=`git rev-parse --abbrev-ref HEAD`
 version=`node -e "console.log(require('./package.json').version);"`
 
-if [ "$current" -eq "master"]; then
+if [ "$current" -eq "master" ]; then
     dist="plugins/v$version"
 else
     dist="dist/$current/v$version"
