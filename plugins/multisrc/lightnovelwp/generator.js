@@ -1,7 +1,7 @@
 import list from './sources.json' with { type: 'json' };
 import { existsSync, readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
 
 const folder = dirname(fileURLToPath(import.meta.url));
 
@@ -26,12 +26,16 @@ export const generateAll = function () {
 };
 
 const generator = function generator(source) {
+  const chapterTransformJsOrPath = source.options?.customJs?.chapterTransform;
+  const chapterTransformPath = chapterTransformJsOrPath
+    ? join(folder, chapterTransformJsOrPath)
+    : '';
+  const chapterTransformJs = existsSync(chapterTransformPath)
+    ? readFileSync(chapterTransformPath, { encoding: 'utf-8' })
+    : chapterTransformJsOrPath;
 
   const pluginScript = `
-${LightNovelWPTemplate.replace(
-  '// CustomJS HERE',
-  source.options?.customTransformJs || '',
-)}
+${LightNovelWPTemplate.replace('// CustomJS HERE', chapterTransformJs || '')}
 const plugin = new LightNovelWPPlugin(${JSON.stringify(source)});
 export default plugin;
     `.trim();

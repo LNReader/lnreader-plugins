@@ -12,9 +12,11 @@ type LightNovelWPOptions = {
   lang?: string;
   versionIncrements?: number;
   seriesPath?: string;
-  customTransformJs?: string;
+  customJs?: {
+    runtime?: string;
+    chapterTransform?: string;
+  };
   hasLocked?: boolean;
-  customRuntimeJs?: string;
   customCss?: string;
 };
 
@@ -50,7 +52,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
     this.version = `1.1.${10 + versionIncrements}`;
     this.options = metadata.options ?? ({} as LightNovelWPOptions);
     this.filters = metadata.filters satisfies Filters;
-    this.customJS = this.options.customRuntimeJs;
+    this.customJS = this.options.customJs?.runtime;
     this.customCSS = this.options.customCss;
 
     if (this.options?.hasLocked) {
@@ -439,7 +441,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     let data = await this.safeFetch(this.site + chapterPath, false);
     const $ = load(data);
-    if (this.options?.customTransformJs) {
+    if (this.options?.customJs?.chapterTransform) {
       try {
         // CustomJS HERE
       } catch (error) {
