@@ -7,28 +7,7 @@ fi
 current=`git rev-parse --abbrev-ref HEAD`
 version=`node -e "console.log(require('./package.json').version);"`
 
-if [ "$current" == "master" ]; then
-    dist="plugins/v$version"
-else
-    dist="dist/$current/v$version"
-fi
 
-echo "Publishing plugins: $current -> $dist (v$version)"
-
-exists=`git show-ref refs/heads/$dist`
-
-if [ -n "$exists" ]; then
-    git branch -D $dist
-fi
-
-git checkout --orphan $dist 2>&1
-
-if [ $? -eq 1 ]; then
-    echo "❌ ERROR: Failed to create branch $dist"
-    exit 1
-fi
-
-git reset
 rm -rf .js
 npm run clean:multisrc
 npm run build:multisrc
@@ -45,9 +24,43 @@ fi
 echo "Copying .js/plugins -> .js/src/plugins"
 mkdir -p .js/src
 cp -r .js/plugins .js/src/plugins
-git add -f public/static .dist .js/src/plugins total.svg
-git commit -m "chore: Publish Plugins"
-git push -f origin $dist 2>&1
+
+
+commit-to-target () {
+    
+    target=$1
+
+    echo "Publishing plugins: $current -> $target (v$version)"
+
+    # switch to target branch
+    exists=`git show-ref refs/heads/$target`
+
+    if [ -n "$exists" ]; then
+        git branch -D $target
+    fi
+
+    git checkout --orphan $target 2>&1
+
+    if [ $? -eq 1 ]; then
+        echo "❌ ERROR: Failed to create branch $target"
+        exit 1
+    fi
+
+    # publish only the built files to the target branch
+    git reset
+    git add -f public/static .dist .js/src/plugins total.svg
+    git commit -m "chore: Publish Plugins"
+    git push -f origin $target 2>&1
+}
+
+
+commit-to-target "dist/$current"
+
+if [ "$current" == "master" ]; then
+    commit-to-target "plugins/v$version"
+fi
+
+# switch back
 git checkout -f $current 2>&1
 echo "✅ Published to $dist"
 
