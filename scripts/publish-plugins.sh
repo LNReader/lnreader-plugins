@@ -13,12 +13,6 @@ npm run clean:multisrc
 npm run build:multisrc
 echo "Compiling TypeScript..."
 npx tsc --project tsconfig.production.json
-npm run build:manifest
-
-if [ ! -d ".dist" ] || [ -z "$(ls -A .dist)" ]; then
-    echo "❌ ERROR: Manifest generation failed - .dist is missing or empty"
-    exit 1
-fi
 
 # Copy plugins to legacy path (.js/src/plugins) for backward compatibility
 echo "Copying .js/plugins -> .js/src/plugins"
@@ -43,6 +37,15 @@ commit-to-target () {
 
     if [ $? -eq 1 ]; then
         echo "❌ ERROR: Failed to create branch $target"
+        exit 1
+    fi
+
+    # The manifest needs to be built separately for each target branch,
+    # because the raw.githubusercontent.com URLs will be different
+    npm run build:manifest
+
+    if [ ! -d ".dist" ] || [ -z "$(ls -A .dist)" ]; then
+        echo "❌ ERROR: Manifest generation failed - .dist is missing or empty"
         exit 1
     fi
 
