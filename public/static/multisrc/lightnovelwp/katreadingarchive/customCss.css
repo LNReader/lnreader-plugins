@@ -5,3 +5,16 @@ blockquote, q {
   border-left: 4px solid var(--theme-outline);
   quotes: none;
 }
+
+span.modern-footnotes-footnote__note {
+  display: none;
+  font-size: 80%;
+  margin: 1em;
+  padding: 1em;
+  background: var(--theme-surfaceVariant);
+  color: var(--theme-onSurfaceVariant);
+}
+
+span.modern-footnotes-footnote__note.active {
+  display: block;
+} 

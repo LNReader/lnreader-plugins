@@ -329,7 +329,7 @@ class LightNovelWPPlugin implements Plugin.PluginBase {
               } else if (hasLockItemOnChapterNum) {
                 isPaidChapter = false;
               }
-              extractChapterNumber(data, tempChapter);
+              extractChapterNumber(data.replace('🔒', '').trim(), tempChapter);
             } else if (isReadingChapterInfo === 2) {
               tempChapter.name =
                 data

@@ -20,7 +20,7 @@ const USER_CONTENT_LINK = process.env.USER_CONTENT_BASE
 
 const STATIC_LINK = `${USER_CONTENT_LINK}/public/static`;
 // Use legacy .js/src/plugins path for backward compatibility
-const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/src/plugins`;
+const PLUGIN_LINK = `${USER_CONTENT_LINK}/.js/plugins`;
 
 const DIST_DIR = '.dist';
 

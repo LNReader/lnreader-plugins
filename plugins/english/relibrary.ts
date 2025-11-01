@@ -215,12 +215,8 @@ class ReLibraryPlugin implements Plugin.PluginBase {
       novel.path = $(el).find('table > tbody > tr > td > a').attr('href');
       if (novel.name === undefined || novel.path === undefined) return;
       novel.cover = this.ensureCover(
-        $(el)
-          .find('table > tbody > tr > td > a > img')
-          .attr('data-cfsrc') ||
-        $(el)
-          .find('table > tbody > tr > td > a > img')
-          .attr('src')
+        $(el).find('table > tbody > tr > td > a > img').attr('data-cfsrc') ||
+          $(el).find('table > tbody > tr > td > a > img').attr('src'),
       );
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
@@ -246,9 +242,9 @@ class ReLibraryPlugin implements Plugin.PluginBase {
         $(el)
           .find('.entry-content > table > tbody > tr > td > a >img')
           .attr('data-cfsrc') ||
-        $(el)
-          .find('.entry-content > table > tbody > tr > td > a >img')
-          .attr('src')
+          $(el)
+            .find('.entry-content > table > tbody > tr > td > a >img')
+            .attr('src'),
       );
       if (novel.path.startsWith(this.site)) {
         novel.path = novel.path.slice(this.site.length);
@@ -290,9 +286,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     const $ = loadCheerio(body);
 
     // If it doesn't find the name I should just throw an error (or early return) since the scraping is broken
-    novel.name = $('header.entry-header > .entry-title')
-      .text()
-      .trim();
+    novel.name = $('header.entry-header > .entry-title').text().trim();
 
     if (novel.name === undefined || novel.name === '404 – Page not found')
       throw new Error(`Invalid novel for url ${novelPath}`);
@@ -301,51 +295,39 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     novel.cover = this.ensureCover(
       // $('.entry-content > table > tbody > tr > td > a > img')
       $('.entry-content > table img').attr('data-cfsrc') ||
-      $('.entry-content > table img').attr('src')
+        $('.entry-content > table img').attr('src'),
     );
 
     novel.status = NovelStatus.Unknown;
-    $('.entry-content > table > tbody > tr > td > p').each(
-      function (_i, el) {
-        // Handle the novel status
-        // Sadly some novels just state the status inside the summary...
-        if (
-          $(el)
-            .find('strong')
-            .text()
-            .toLowerCase()
-            .trim()
-            .startsWith('status')
-        ) {
-          $(el).find('strong').remove();
-          const status = $(el).text().toLowerCase().trim();
-          if (status.includes('on-going')) {
-            novel.status = NovelStatus.Ongoing;
-          } else if (status.includes('completed')) {
-            novel.status = NovelStatus.Completed;
-          } else if (status.includes('hiatus')) {
-            novel.status = NovelStatus.OnHiatus;
-          } else if (status.includes('cancelled')) {
-            novel.status = NovelStatus.Cancelled;
-          } else {
-            novel.status = loadCheerio(el).text();
-          }
+    $('.entry-content > table > tbody > tr > td > p').each(function (_i, el) {
+      // Handle the novel status
+      // Sadly some novels just state the status inside the summary...
+      if (
+        $(el).find('strong').text().toLowerCase().trim().startsWith('status')
+      ) {
+        $(el).find('strong').remove();
+        const status = $(el).text().toLowerCase().trim();
+        if (status.includes('on-going')) {
+          novel.status = NovelStatus.Ongoing;
+        } else if (status.includes('completed')) {
+          novel.status = NovelStatus.Completed;
+        } else if (status.includes('hiatus')) {
+          novel.status = NovelStatus.OnHiatus;
+        } else if (status.includes('cancelled')) {
+          novel.status = NovelStatus.Cancelled;
+        } else {
+          novel.status = loadCheerio(el).text();
         }
-        // Handle the genres
-        else if (
-          $(el)
-            .find('strong')
-            .text()
-            .toLowerCase()
-            .trim()
-            .startsWith('Category')
-        ) {
-          $(el).find('strong').remove();
-          // previously, list of '> span > a'
-          novel.genres = $(el).text();
-        }
-      },
-    );
+      }
+      // Handle the genres
+      else if (
+        $(el).find('strong').text().toLowerCase().trim().startsWith('Category')
+      ) {
+        $(el).find('strong').remove();
+        // previously, list of '> span > a'
+        novel.genres = $(el).text();
+      }
+    });
 
     // Handle the author names
     // Both the author and the translator (if present) seem to be written out as links,
@@ -379,7 +361,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
           if (chap_path.startsWith(this.site)) {
             chap_path = chap_path.slice(this.site.length);
           }
-          
+
           const epochStr = $(chap_el).attr('data-date');
           // if we can't get the released time (at least without any additional fetches), set it to null purposfully
           let epoch = null;
@@ -452,7 +434,7 @@ class ReLibraryPlugin implements Plugin.PluginBase {
     // edge cases like this.
     content.find('p:has(>code)+code:has(+p:has(>code))').each((_i, el) => {
       if (
-        el.attribs.style.match(/(.*;)?font-family: 'Merriweather', serif;.*/)
+        el.attribs.style.match(/(.*?;)?font-family: 'Merriweather', serif.*/)
       ) {
         $(el.prev!!).remove();
         $(el.next!!).remove();
