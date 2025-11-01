@@ -48,7 +48,7 @@ commit-to-target () {
 
     # publish only the built files to the target branch
     git reset
-    git add -f public/static .dist .js/src/plugins total.svg
+    git add -f public/static .dist .js/src/plugins .js/plugins total.svg
     git commit -m "chore: Publish Plugins"
     git push -f origin $target 2>&1
 }
