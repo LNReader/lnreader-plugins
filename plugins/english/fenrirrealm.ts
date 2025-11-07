@@ -10,7 +10,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   name = 'Fenrir Realm';
   icon = 'src/en/fenrirrealm/icon.png';
   site = 'https://fenrirealm.com';
-  version = '1.0.10';
+  version = '1.0.11';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   hideLocked = storage.get('hideLocked');
@@ -40,17 +40,21 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
       .join('');
     const res = await fetchApi(
       `${this.site}/api/series/filter?page=${pageNo}&per_page=20&status=${filters.status.value}&order=${sort}${genresFilter}`,
-    ).then(r => r.json());
+    ).then(r =>
+      r.json().catch(() => {
+        throw new Error(
+          'There was an error fetching the data from the server. Please try to open it in WebView',
+        );
+      }),
+    );
 
     return res.data.map(r => this.parseNovelFromApi(r));
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const html = await fetchApi(`${this.site}/series/${novelPath}`, {
-      headers: {
-        'User-Agent': '',
-      },
-    }).then(r => r.text());
+    const html = await fetchApi(`${this.site}/series/${novelPath}`, {}).then(
+      r => r.text(),
+    );
     const loadedCheerio = loadCheerio(html);
 
     const novel: Plugin.SourceNovel = {
@@ -110,11 +114,9 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const page = await fetchApi(this.site + '/series/' + chapterPath, {
-      headers: {
-        'User-Agent': '',
-      },
-    }).then(r => r.text());
+    const page = await fetchApi(this.site + '/series/' + chapterPath, {}).then(
+      r => r.text(),
+    );
     return loadCheerio(page)('#reader-area').html() || '';
   }
 
