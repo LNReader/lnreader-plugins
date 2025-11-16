@@ -1,5 +1,6 @@
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
+import { Node } from 'domhandler';
 import { load as loadCheerio } from 'cheerio';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@libs/storage';
@@ -10,7 +11,7 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
   name = 'Fenrir Realm';
   icon = 'src/en/fenrirrealm/icon.png';
   site = 'https://fenrirealm.com';
-  version = '1.0.11';
+  version = '1.0.12';
   imageRequestInit?: Plugin.ImageRequestInit | undefined = undefined;
 
   hideLocked = storage.get('hideLocked');
@@ -117,7 +118,15 @@ class FenrirRealmPlugin implements Plugin.PluginBase {
     const page = await fetchApi(this.site + '/series/' + chapterPath, {}).then(
       r => r.text(),
     );
-    return loadCheerio(page)('#reader-area').html() || '';
+    const chapter = loadCheerio(page)('[id^="reader-area-"]');
+    chapter
+      .contents()
+      .filter((_, node: Node) => {
+        return node.type === 'comment';
+      })
+      .remove();
+
+    return chapter.html() || '';
   }
 
   async searchNovels(
