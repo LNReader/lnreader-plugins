@@ -1,3 +1,5 @@
+import process from 'node:process';
+import { Buffer } from 'buffer';
 import { FetchMode, ServerSetting } from './src/types/types';
 import { Connect } from 'vite';
 import httpProxy from 'http-proxy';
