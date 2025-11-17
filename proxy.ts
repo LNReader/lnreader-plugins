@@ -1,8 +1,10 @@
+import process from 'node:process';
+import { Buffer } from 'buffer';
 import { FetchMode, ServerSetting } from './src/types/types';
 import { Connect } from 'vite';
 import httpProxy from 'http-proxy';
 import { exec } from 'child_process';
-import { brotliDecompressSync, gunzipSync } from 'zlib';
+import { brotliDecompressSync, gunzipSync, zstdDecompressSync } from 'zlib';
 
 const proxy = httpProxy.createProxyServer({});
 
@@ -226,7 +228,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
       ? contentEncoding.some(enc => enc.includes('gzip'))
       : contentEncoding.includes('gzip'));
 
-  if (isBrotli || isGzip) {
+  const isZstd =
+    contentEncoding &&
+    (Array.isArray(contentEncoding)
+      ? contentEncoding.some(enc => enc.includes('zstd'))
+      : contentEncoding.includes('zstd'));
+
+  if (isBrotli || isGzip || isZstd) {
     delete proxyRes.headers['content-encoding'];
     delete proxyRes.headers['content-length'];
 
@@ -245,6 +253,8 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
 
         if (isBrotli) {
           decompressed = brotliDecompressSync(buffer);
+        } else if (isZstd) {
+          decompressed = zstdDecompressSync(buffer);
         } else {
           decompressed = gunzipSync(buffer);
         }
