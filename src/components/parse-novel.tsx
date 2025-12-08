@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, ChevronLeft, ChevronRight, Copy, Zap } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Zap,
+  Download,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +21,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useAppStore } from '@/store';
 import { Plugin } from '@/types/plugin';
+import { useEpubExport } from '@/hooks/useEpubExport';
 
 type ParseNovelSectionProps = {
   onNavigateToParseChapter?: () => void;
@@ -37,6 +45,13 @@ export default function ParseNovelSection({
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [fetchError, setFetchError] = useState('');
+
+  const { exportEpub, isExporting } = useEpubExport({
+    plugin: plugin || null,
+    sourceNovel,
+    chapters,
+    novelPath,
+  });
 
   const fetchNovelByPath = async (path: string) => {
     if (plugin && path.trim()) {
@@ -267,24 +282,47 @@ export default function ParseNovelSection({
                         </div>
                       )}
                     </div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-2 bg-transparent"
-                          onClick={() =>
-                            copyToClipboard(sourceNovel.path, 'Novel path')
-                          }
-                        >
-                          <Copy className="w-4 h-4" />
-                          Copy Path
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Copy novel path to clipboard</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className="flex gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 bg-transparent"
+                            onClick={() =>
+                              copyToClipboard(sourceNovel.path, 'Novel path')
+                            }
+                          >
+                            <Copy className="w-4 h-4" />
+                            Copy Path
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Copy novel path to clipboard</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 bg-transparent"
+                            onClick={exportEpub}
+                            disabled={isExporting || chapters.length === 0}
+                          >
+                            <Download className="w-4 h-4" />
+                            {isExporting ? 'Exporting...' : 'Export EPUB'}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            {isExporting
+                              ? 'Exporting chapters to EPUB...'
+                              : 'Export all chapters as EPUB file'}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </div>
 
